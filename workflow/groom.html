@@ -93,81 +93,27 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="groom.html">How to Groom Your Dataset?</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#image-pre-processing">Image Pre-Processing</a>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pre-processing-steps-for-segmentations">Common Pre-Processing Steps for Segmentations</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#antialias">Antialias</a>
+    <li class="toctree-l3"><a class="reference internal" href="#resampling-images-and-segmentations">Resampling images and segmentations</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#resample">Resample</a>
+    <li class="toctree-l3"><a class="reference internal" href="#aligning-segmentations">Aligning segmentations</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#recenter">Recenter</a>
+    <li class="toctree-l3"><a class="reference internal" href="#clip-segmentations">Clip segmentations</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#pad">Pad</a>
+    <li class="toctree-l3"><a class="reference internal" href="#cropping-and-padding-segmentations">Cropping and padding segmentations</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#translate">Translate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#scale">Scale</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#rotate">Rotate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#extract-label">Extract Label</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#close-holes">Close Holes</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#binarize">Binarize</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#compute-dt">Compute DT</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#curvature">Curvature</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gradient">Gradient</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sigmoid">Sigmoid</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tplevelsetfilter">TPLevelSetFilter</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#topologypreservingfilter">TopologyPreservingFilter</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#blur">Blur</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#icprigid">ICPRigid</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#bounding-box">Bounding Box</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#crop">Crop</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#clip-volume">Clip Volume</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#reflect-images">Reflect Images</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#set-origin">Set Origin</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#warp">Warp</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#compare">Compare</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#negate">Negate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#add">Add</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#subtract">Subtract</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#multiply">Multiply</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#divide">Divide</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#imagetomesh">ImageToMesh</a>
+    <li class="toctree-l3"><a class="reference internal" href="#converting-segmentations-to-smooth-signed-distance-transforms">Converting segmentations to smooth signed distance transforms</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#mesh-pre-processing">Mesh Pre-Processing</a>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pre-processing-steps-for-meshes">Common Pre-Processing Steps for Meshes</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#reflect-mesh">Reflect Mesh</a>
+    <li class="toctree-l3"><a class="reference internal" href="#reflect-meshes">Reflect meshes</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mesh-to-volume">Mesh to volume</a>
+    <li class="toctree-l3"><a class="reference internal" href="#meshes-to-volumes">Meshes to volumes</a>
     </li>
         </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#alignment">Alignment</a>
     </li>
     </ul>
                     </li>
@@ -178,7 +124,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -190,10 +136,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -243,6 +193,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -330,300 +290,222 @@
             <div class="section">
               
                 <h1 id="how-to-groom-your-dataset">How to Groom Your Dataset?</h1>
-<p>ShapeWorks needs suitable distance transforms for establishing shape correspondence. The groom stage has the pipeline to generate the distance transforms from input images (binary segmentation or mesh).  It consists of image and mesh pre-processing tools.</p>
-<h2 id="image-pre-processing">Image Pre-Processing</h2>
-<h3 id="antialias">Antialias</h3>
-<p>This tool antialiases binary volumes.</p>
-<p>Command Line Interface:<br />
-<code>shapeworks readimage --name $1 antialias maxrmserror $2 iterations $3 layers $4 writeimage --name $5</code></p>
-<p>Python Interface:<br />
-<div class="highlight"><pre><span></span><code>image = sw.Image(&lt;input path&gt;)
-image.antialias(iterations, maxRMSErr, layers).write(&lt;output path&gt;)
-</code></pre></div></p>
-<p>Here is the list of arguments.</p>
+<p>ShapeWorks needs suitable distance transforms or meshes for establishing shape correspondence. The groom stage has the pipeline to generate aligned distance transforms from binary segmentations or groomed meshes from unaligned meshes.  Common grooming steps are outlined below. For descriptions of the ShapeWorks commands used, see: <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a>.</p>
+<h2 id="common-pre-processing-steps-for-segmentations">Common Pre-Processing Steps for Segmentations</h2>
+<h3 id="resampling-images-and-segmentations">Resampling images and segmentations</h3>
+<p>This grooming step resamples all the binary volumes, which in a raw setting could be in different physical spaces (different dimensions and voxel spacing). This grooming step brings all segmentations to the same voxel spacing, typically isotropic spacing (e.g., 1,1,1).</p>
+<p>A smaller voxel spacing than the original spacing improves the resolution of the segmentations and reduces the aliasing (i.e., staircase) artifact resulting from the thresholding/binarization process. </p>
+<div class="admonition note">
+<p class="admonition-title">Resampling both images and segmentations</p>
+<p>If your dataset contains both images (e.g., CTs, MRIs) and binary segmentations, it is recommended that resampling is performed on both to keep them aligned for subsequent analyses that might entail/need imaging data. </p>
+</div>
+<p>Since image resampling entails interpolation, directly resampling binary segmentations will not result in a binary segmentation, but rather an interpolated version that does not have two distinct labels (i.e., foreground and background).</p>
+<p>To mitigate this behavior, we need first to convert the binary segmentations (with zero-one voxels) to a continuous-valued (gray-scale) image. This can be done by either antialiasing the segmentations, which smooths the foreground-background interface, or converting a segmentation to a signed distance transform, where each voxel encodes the physical distance to the closest surface point (zero-one interface) with the sign indicating whether the voxel is inside or outside the foreground region.</p>
+<p>Here is a resampling pipeline example for binary segmentation that uses antialiasing:</p>
 <ul>
-<li>maxrmserror/maxRMSErr: Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].</li>
-<li>iterations: Maximum number of iterations [default: 50].</li>
-<li>layers: Number of layers around a 3d pixel to use for this computation [default: 3].</li>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>resample</code> the antialiased image using the same (and possible smaller) voxel spacing for all dimensions</li>
+<li><code>binarize</code> (aka thresholding) the resampled image to results in a binary segmentation with the desired voxel spacing</li>
 </ul>
-<h3 id="resample">Resample</h3>
-<p>This tool uses an interpolation process to resample anisotropic voxels into isotropic-sized voxels.</p>
-<p><code>shapeworks readimage --name $1 resample --isospacing $2 --spacex $3 --spacey $4 --spacez $5 --sizex $6 --sizey $7 --sizez $8 writeimage --name $9</code></p>
-<p>Here is the list of arguments.</p>
+<p>Here is an example of resampling an ellipsoid with spacing (1,1,2) to have spacing (1,1,1):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">resample</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Resample example" src="../img/workflow/resampling.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Resampling images</p>
+<p>Images are already given as a continued-valued grid of pixels. Hence, images can be directly resampled without any pre- or post-processing steps.</p>
+</div>
+<p><em>Resampling images reduces pixelation and smooths out intensity noise.</em> <br />
+<img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
+<p><em>Resampling segmentations smooths out shape boundaries and reduces binarization aliasing.</em>
+<img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
+<h3 id="aligning-segmentations">Aligning segmentations</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Rigid alignment (aka registration) is an optimization process that might get stuck in a bad local minima if shapes are significantly out of alignment. To bring shapes closer, we can remove translation differences using center-of-mass alignment. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for subsequent rigid alignment.</p>
+<div class="admonition note">
+<p class="admonition-title">Applying transformation to segmentations</p>
+<p>Applying a transformation to segmentations entails interpolation due to image resampling in the new coordinate frame. Similar to the resampling workflow, we will first antialias the segmentation to convert it to a continuous-valued image with a smooth foreground-background interface, then apply the transformation, and finally binarize the tranformed image.</p>
+</div>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
 <ul>
-<li>isospacing: The isotropic spacing in all dimensions.</li>
-<li>spacex: Pixel spacing in x-direction [default: 1.0].</li>
-<li>spacey: Pixel spacing in y-direction [default: 1.0].</li>
-<li>spacez: Pixel spacing in z-direction [default: 1.0].</li>
-<li>sizex: Output size in x-direction [default: calculated using current size and desired spacing].</li>
-<li>sizey: Output size in y-direction [default: calculated using current size and desired spacing].</li>
-<li>sizez: Output size in z-direction [default: calculated using current size and desired spacing].</li>
+<li><em>Center-of-mass alignment for segmentations:</em> <ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>translate</code> the binary segmentation so that the center of the image doamin is the center of mass of the shape.</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
 </ul>
-<h3 id="recenter">Recenter</h3>
-<p>This tool recenters an image by changing its origin in the image header to the physical coordinates of the center of the image.</p>
-<p><code>shapeworks readimage --name $1 recenter writeimage --name $2</code></p>
-<h3 id="pad">Pad</h3>
-<p>This tool pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted).</p>
-<p><code>shapeworks readimage --name $1 pad --padding $2 --value $3 writeimage --name $4</code></p>
-<p><code>shapeworks readimage --name $1 pad --padx $2 --pady $3 --padz $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
+</li>
+<li>
+<p><code>recenter</code> moves the center of the image (which is now the center of mass) to (0,0,0)</p>
+</li>
+<li>
+<p><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</p>
 <ul>
-<li>padding: Pad this many voxels in ALL directions (used if set) [default: 0].</li>
-<li>padx: Pad this many voxels in the x-direction [default: 0].</li>
-<li>pady: Pad this many voxels in the y-direction [default: 0].</li>
-<li>padz: Pad this many voxels in the z-direction [default: 0].</li>
-<li>value: Value used to fill padded voxels [default: 0.0].</li>
+<li>Use the pymodule function <code>find_reference_image_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+<!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.--></li>
 </ul>
-<h3 id="translate">Translate</h3>
-<p>This tool translates image by specified physical (image space) distance.</p>
-<p><code>shapeworks readimage --name $1 translate --centerofmass writeimage --name $2</code></p>
-<p><code>shapeworks readimage --name $1 translate --tx $2 --ty $3 --tz $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
 <ul>
-<li>centerofmass: Use center of mass [default: false].</li>
-<li>tx: X distance</li>
-<li>ty: Y distance</li>
-<li>tz: Z distance</li>
+<li><code>antialias</code> the binary segmentation and reference to convert them to a smooth continuous-valued image</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
 </ul>
-<h3 id="scale">Scale</h3>
-<p>This tool scales image by specified value.</p>
-<p><code>shapeworks readimage --name $1 scale --sx $2 --sy $3 --sz $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
+</li>
+</ul>
+<p>Here is an example of performing center of mass alignment on one ellipsoid:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">translation_vector</span>   <span class="o">=</span>  <span class="n">shape_seg</span><span class="o">.</span><span class="n">center</span><span class="p">()</span> <span class="o">-</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">centerOfMass</span><span class="p">()</span> 
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translation_vector</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Center of mass alignment example" src="../img/workflow/com.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-com-pv.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p>Finding the reference:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_image_index</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">)</span>
+<span class="n">ref_seg</span>   <span class="o">=</span> <span class="n">shape_seg_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;reference.nrrd&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reference selection example" src="../img/workflow/ref.png" /></p>
+<p>Rigid alignment:</p>
+<div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">ref_seg</span>    <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">ref_shape_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">ref_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+
+<span class="n">iso_value</span>      <span class="o">=</span> <span class="mf">1e-20</span>
+<span class="n">icp_iterations</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">rigidTransform</span> <span class="o">=</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_seg</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">TransformType</span><span class="o">.</span><span class="n">IterativeClosestPoint</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">,</span> <span class="n">icp_iterations</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigidTransform</span><span class="p">,</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">origin</span><span class="p">(),</span>  <span class="n">ref_seg</span><span class="o">.</span><span class="n">dims</span><span class="p">(),</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">spacing</span><span class="p">(),</span> <span class="n">ref_seg</span><span class="o">.</span><span class="n">coordsys</span><span class="p">(),</span>
+                         <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Rigid alignment example" src="../img/workflow/rigid.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-align.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="clip-segmentations">Clip segmentations</h3>
+<p>In some cases, binary segmentations need to be clipped with a cutting plane so that only the desired part of the shape is reflected in the shape model. To perform this step, you can use <code>clip</code> defined the cutting plane defined using three points.</p>
+<p>Example of clipping:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">cutting_plane_point_1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_2</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cutting_plane_point_1</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_2</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_3</span><span class="p">,</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[]()))</span>
+              <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="RClip segmentation example" src="../img/workflow/clip.png" /></p>
+<h3 id="cropping-and-padding-segmentations">Cropping and padding segmentations</h3>
+<p>In many cases, image boundaries are not tight around shapes. This leaves too much irrelevant background voxels that might increase the memory footprint when optimizing the shape model. We can remove this irrelevant background while keeping our segmentations intact and avoid cropped segmentations to touch image boundaries, which results in artifical holes in the shape boundary and does not allow particles to be distributed in regions touching the image boundary. </p>
+<p>This cropping and padding step entails the following steps:</p>
 <ul>
-<li>tx: X scale</li>
-<li>ty: Y scale</li>
-<li>tz: Z scale</li>
+<li><code>ImageUtils.boundingBox</code>: computes the smallest bounding box (ShapeWorks region) that fits all segmentations in the given shape cohort. Note that this step should be applied to at segmentations that share the same coordinate frame (i.e., aligned)</li>
+<li><code>crop</code> the segmentation using the computed bounding box</li>
+<li><code>pad</code> the cropped segmentation to ensure the shape is not touching the image boundary</li>
 </ul>
-<h3 id="rotate">Rotate</h3>
-<p>This tool rotates image by specified value.</p>
-<p><code>shapeworks readimage --name $1 rotate --rx $2 --radians $3 writeimage --name $4</code></p>
-<p><code>shapeworks readimage --name $1 rotate --degrees $2 writeimage --name $3</code></p>
-<p>Here is the list of arguments.</p>
+<p>Example of cropping and padding:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span>         <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># a threshold value between 0 and 1 for binary segmentations</span>
+<span class="n">padding_size</span>      <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># number of voxels to pad for each dimension</span>
+<span class="n">padding_value</span>     <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># the constant value used to pad the segmentations</span>
+
+<span class="n">segs_bounding_box</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ImageUtils</span><span class="o">.</span><span class="n">boundingBox</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">)</span>
+<span class="n">shape_seg</span>         <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">segs_bounding_box</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">padding_size</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Cropping and padding example" src="../img/workflow/crop.png" /></p>
+<h3 id="converting-segmentations-to-smooth-signed-distance-transforms">Converting segmentations to smooth signed distance transforms</h3>
+<p>For numerical computations for correspondences optimization, we need to convert binary segmentations to a continuous-valued image that satisfies the following requirements.</p>
 <ul>
-<li>rx: Physical axis around which to rotate [default: z-axis]</li>
-<li>ry: Physical axis around which to rotate [default: z-axis]</li>
-<li>rz: Physical axis around which to rotate [default: z-axis]</li>
-<li>radians: Angle in radians</li>
-<li>degrees: Angle in degrees</li>
+<li>smooth for gradient updates stability</li>
+<li>reflect the shape's surface (i.e., foreground-background) interface</li>
+<li>provide a signal for the particle to snap (move back) to the surface in case particles gets off the surface during optimization, which is a typical scenario when using gradient descent based optimization</li>
 </ul>
-<h3 id="extract-label">Extract Label</h3>
-<p>This tool extracts/isolates the specific voxel label from a given multi-label volume and outputs the corresponding binary image.</p>
-<p><code>shapeworks readimage --name $1 extractlabel label $2 writeimage --name $3</code></p>
-<p>Here is the list of arguments.</p>
+<p>An antialiased segmentation satisfies the first two requirements. However, if a particles leaves the surface (i.e., the zero-level set) during model optimization, which is typical in gradient descent based optimization, it would be challenging to snap it back to the surface.</p>
+<p>A representation that satisfies all the requirements is the <em>signed distance transform</em>. </p>
 <ul>
-<li>label: Label value to be extracted [default: 1.0].</li>
+<li>A signed distance transform assigns to each voxel the physical distance to the closest point on the surface (i.e., the minimum distance from that voxel to nearest voxel on the foreground-background interface).</li>
+<li>The sign is used to indicate whether that voxel is inside or outside the foreground object.</li>
+<li>The zero-level set (zero-distance to the surface) indicates the foreground-background interface (i.e., the shape's surface).</li>
+<li>The gradient of a signed distance transform at a voxels indicates what direction to move in from that voxels to most rapidly increase the value of this distance. Hence, we can use the negative of this gradient as a signal to move a particle back to the surface.</li>
 </ul>
-<h3 id="close-holes">Close Holes</h3>
-<p>This tool closes holes in a volume defined by values larger than specified value.</p>
-<p><code>shapeworks readimage --name $1 closeholes writeimage --name $2</code></p>
-<h3 id="binarize">Binarize</h3>
-<p>This tool sets portion of image greater than min and less than or equal to max to the specified value. </p>
-<p><code>shapeworks readimage --name $1 binarize --min $2 --max $3 --value $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
+<p>The <code>computeDT</code> API needs an <code>iso_value</code> that defines the foreground-background interface. To create  a smoother interface, we first antialias the segmentation then compute the distance transform at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect of binarization. </p>
+<p>So the steps are:</p>
 <ul>
-<li>min: Lower threshold level [default: 0.0].</li>
-<li>max: Upper threshold level [default: inf ]. </li>
-<li>value: Value to set region [default: 1.0].</li>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>computeDT</code>: Compute distance transform</li>
+<li><code>gaussianBlur</code>: Apply smoothing by convolving the image with a 3D gaussian filter with a given sigma (in physical coordinates)</li>
+<li>Save the distance transform</li>
 </ul>
-<h3 id="compute-dt">Compute DT</h3>
-<p>This tool computes signed distance transform volume from an image at the specified isovalue.</p>
-<p><code>shapeworks readimage --name $1 computedt --isovalue $2 writeimage --name $3</code> </p>
-<p>Here is the list of arguments.</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">sigma</span>     <span class="o">=</span> <span class="mf">1.3</span>
+
+<span class="n">shape_seg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">computeDT</span><span class="p">(</span><span class="n">iso_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">gaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Distance transform example" src="../img/workflow/dt.png" /></p>
+<p><em>Gaussian blur with a small sigma. Note aliasing left-overs!</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth-small-sigma2.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p><em>Gaussian blur with a larger sigma. Note a smooth surface.</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<div class="admonition note">
+<p class="admonition-title">Caution when using Gaussian blur</p>
+<p>The <code>gaussianBlur</code> method could be use for blobby-like structures. However, for shapes with thin features and high curvature regions, the gaussian blurring method could impact the underlying geometrical features. For these shapes, topology-preserving smoothing is recommended. Topology-preserving smoothing is currently under developement and will be released soon.</p>
+</div>
+<h2 id="common-pre-processing-steps-for-meshes">Common Pre-Processing Steps for Meshes</h2>
+<h3 id="reflect-meshes">Reflect meshes</h3>
+<p>It is common in medical imaging data to have a left and right anatomy. To align and model all such shapes, we must reflect some meshes so that all are oriented the same.</p>
 <ul>
-<li>isovalue: Level set value that defines the interface between foreground and background [default: 0.0].</li>
+<li><code>reflect</code>: reflects the mesh across the given axis (typically x-axis for anatomy)</li>
 </ul>
-<h3 id="curvature">Curvature</h3>
-<p>This tool denoises an image using curvature driven flow using curvature flow image filter.</p>
-<p><code>shapeworks readimage --name $1 curvature --iterations $2 writeimage --name $3</code> </p>
-<p>Here is the list of arguments.</p>
+<p>Here is an example of reflecting a mesh:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_mesh</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_mesh_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reflect mesh example" src="../img/workflow/reflect.png" /></p>
+<h3 id="meshes-to-volumes">Meshes to volumes</h3>
+<p>Meshes can be converted to binary segmentations if desired so that grooming can be done on segmentations and optimization on distance transforms. </p>
+<p>The steps to convert meshes to volumes are:</p>
 <ul>
-<li>iterations: Number of iterations [default: 10].</li>
+<li><code>toImage</code> convert the mesh to a signed distance transform</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
 </ul>
-<h3 id="gradient">Gradient</h3>
-<p>This tool computes gradient magnitude of an image region at each pixel using gradient magnitude filter.</p>
-<p><code>shapeworks readimage --name $1 curvature --iterations $2 writeimage --name $3</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>iterations: Number of iterations [default: 10].</li>
-</ul>
-<h3 id="sigmoid">Sigmoid</h3>
-<p>This tool computes sigmoid function pixel-wise using sigmoid image filter.</p>
-<p><code>shapeworks readimage --name $1 sigmoid --alpha $2 --beta $3 writeimage --name $4</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>alpha: Value of alpha [default: 10.0].</li>
-<li>beta: Value of beta [default: 10.0].</li>
-</ul>
-<h3 id="tplevelsetfilter">TPLevelSetFilter</h3>
-<p>This tool segments structures in image using topology preserving geodesic active contour level set filter.</p>
-<p><code>shapeworks readimage --name $1 tplevelset --featureimage $2 --scaling $3 writeimage --name $4</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>featureimage: Path of feature image for filter</li>
-<li>scaling: Value of scale [default: 20.0].</li>
-</ul>
-<h3 id="topologypreservingfilter">TopologyPreservingFilter</h3>
-<p>This tool is a helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that the curvature flow filter is sometimes applied to the image before this.</p>
-<p><code>shapeworks readimage --name $1 topopreservingsmooth --scaling $2 --alpha $3 --beta $4 writeimage --name $5</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>scaling: Scale for TPLevelSet level set filter [default: 20.0].</li>
-<li>alpha: Value of alpha for sigmoid fitler [default: 10.0].</li>
-<li>beta: Value of beta for sigmoid fitler [default: 10.0.0].</li>
-</ul>
-<h3 id="blur">Blur</h3>
-<p>This tool applies gaussian blur.</p>
-<p><code>shapeworks readimage --name $1 blur --sigma $2 writeimage --name $3</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>sigma: Value of sigma [default: 0.0].</li>
-</ul>
-<h3 id="icprigid">ICPRigid</h3>
-<p>This tool transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps.</p>
-<p><code>shapeworks readimage --name $1 icp --source $2 --target $3 --isovalue $4 --iterations $5 writeimage --name $6</code> </p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>source: Distance map of source image.</li>
-<li>target: Distance map of target image.</li>
-<li>isovalue: Isovalue of distance maps used to create ICPtransform [default: 0.0].</li>
-<li>iterations: Number of iterations run ICP registration [default: 20].</li>
-</ul>
-<h3 id="bounding-box">Bounding Box</h3>
-<p>This tool computes the largest bounding box for the shape population needed for cropping all the images.</p>
-<p><code>shapeworks readimage --name $1 boundingbox --names $2 -- --padding $3 --isovalue $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>names: Paths to images (must be followed by <code>--</code>), ex: \"bounding-box --names *.nrrd -- --isovalue 1.5\").</li>
-<li>padding: Number of extra voxels in each direction to pad the largest bounding box [default: 0].</li>
-<li>isovalue: Threshold value [default: 1.0].</li>
-</ul>
-<h3 id="crop">Crop</h3>
-<p>This tool crops image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions].</p>
-<p><code>shapeworks readimage --name $1 crop --xmin $2 --xmax $3 --ymin $4 --ymax $5 --zmin $6 --zmax $7 writeimage --name $8</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>xmin: Minimum X.</li>
-<li>xmax: Maximum X.</li>
-<li>ymin: Minimum Y.</li>
-<li>ymax: Maximum Y.</li>
-<li>zmin: Minimum Z.</li>
-<li>zmax: Maximum Z.</li>
-</ul>
-<h3 id="clip-volume">Clip Volume</h3>
-<p>This tool clips volume with the specified cutting planes defined by three 3D points</p>
-<p><code>shapeworks readimage --name $1 clip --x1 $2 --y1 $3 --z1 $4 --x2 $5 --y2 $6 --z2 $7 --x3 $8 --y3 $9 --z3 $10 writeimage --name $11</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>x1: Value of x1 for cutting plane [default: 0.0].</li>
-<li>y1: Value of y1 for cutting plane [default: 0.0].</li>
-<li>z1: Value of z1 for cutting plane [default: 0.0].</li>
-<li>x2: Value of x2 for cutting plane [default: 0.0].</li>
-<li>y2: Value of y2 for cutting plane [default: 0.0].</li>
-<li>z2: Value of z2 for cutting plane [default: 0.0].</li>
-<li>x3: Value of x3 for cutting plane [default: 0.0].</li>
-<li>y3: Value of y3 for cutting plane [default: 0.0].</li>
-<li>z3: Value of z3 for cutting plane [default: 0.0].</li>
-</ul>
-<h3 id="reflect-images">Reflect Images</h3>
-<p>This tool reflects image with respect to logical image center and the specified axis.</p>
-<p><code>shapeworks readimage --name $1 reflect --axis $2 writeimage --name $3</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>axis: Axis along which to reflect (X, Y, or Z).</li>
-</ul>
-<h3 id="set-origin">Set Origin</h3>
-<p>This tool sets origin.</p>
-<p><code>shapeworks readimage --name $1 setorigin --x $2 --y $3 --z $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>x: x value of origin [default: 0.0].</li>
-<li>y: y value of origin [default: 0.0].</li>
-<li>z: z value of origin [default: 0.0].</li>
-</ul>
-<h3 id="warp">Warp</h3>
-<p>This tool finds the warp between the source and target landmarks and transforms image by this warp.</p>
-<p><code>shapeworks readimage --name $1 warpimage --source $2 --target $3 --landmarks $4 writeimage --name $5</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>source: Path to source landmarks.</li>
-<li>target: Path to target landmarks.</li>
-<li>landmarks: Every <em>stride</em> points will be used for warping [default: 1].</li>
-</ul>
-<h3 id="compare">Compare</h3>
-<p>This tool compares two images.</p>
-<p><code>shapeworks readimage --name $1 compare --name $2 --verifyall $4 --tolerance $4 --precision $5 writeimage --name $6</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>name: Compare this image with another</li>
-<li>verifyall: Also verify origin, spacing, and direction matches [default: true].</li>
-<li>tolerance: Allowed percentage of pixel differences [default: 0.0].</li>
-<li>precision: Allowed difference between two pixels for them to still be considered equal [default: 0.0].</li>
-</ul>
-<h3 id="negate">Negate</h3>
-<p>This tool negates the values in the given image.</p>
-<p><code>shapeworks readimage --name $1 negate writeimage --name $2</code></p>
-<h3 id="add">Add</h3>
-<p>This tool adds a value to each pixel in the given image and/or add another image in a pixelwise manner.</p>
-<p><code>shapeworks readimage --name $1 add --value $2 --name $3 writeimage --name $4</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>value: Value to add to each pixel.</li>
-<li>name: Name of image to add pixelwise.</li>
-</ul>
-<h3 id="subtract">Subtract</h3>
-<p>This tool subtracts a value from each pixel in the given image and/or subtract another image in a pixelwise manner.</p>
-<p><code>shapeworks readimage --name $1 subtract --value $2 --name $3 writeimage --name $4</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>value: Value to add to each pixel.</li>
-<li>name: Name of image to subtract pixelwise.</li>
-</ul>
-<h3 id="multiply">Multiply</h3>
-<p>This tool multiplies an image by a constant.</p>
-<p><code>shapeworks readimage --name $1 multiply --value $2 writeimage --name $3</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>value: Value with which to multiply.</li>
-</ul>
-<h3 id="divide">Divide</h3>
-<p>This tool divides an image by a constant.</p>
-<p><code>shapeworks readimage --name $1 divide --value $2 writeimage --name $3</code></p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>value: Value with which to divide.</li>
-</ul>
-<h3 id="imagetomesh">ImageToMesh</h3>
-<p>This tool converts the current image to a mesh.</p>
-<p>Here is the list of arguments.</p>
-<ul>
-<li>isovalue: Isovalue to determine mesh boundary [default: 1.0].</li>
-</ul>
-<h2 id="mesh-pre-processing">Mesh Pre-Processing</h2>
-<h4 id="reflect-mesh">Reflect Mesh</h4>
-<p>This tool reflects a mesh segmentation. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.</p>
-<p><code>ReflectMesh --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputDirection $4 --meshFormat $5</code></p>
-<ul>
-<li>inFilename: The filename of the input mesh to be reflected.</li>
-<li>outFilename: The filename of the output reflected mesh.</li>
-<li>reflectCenterFilename: The filename where the image center about which reflection occured will be stored.</li>
-<li>inputDirection: Direction along which to reflect.</li>
-<li>meshFormat: Mesh file format such as "vtk" or "ply"</li>
-</ul>
-<h3 id="mesh-to-volume">Mesh to volume</h3>
-<p>This tool generates a binary volume and distance transform from a ".ply" mesh. If an image corresponding to the mesh exists, the origin, spacing, and size settings should be the same as this image. This information can be acquired using the WriteImageInfoToText tool.</p>
-<p><code>TopologyPreservingSmoothing parameterFile.xml</code> </p>
-<p>Here is the list of all parameters in the parameter file.
-* mesh: The file name of the input mesh.
-* origin_x: The x origin of the output ".nrrd" files.
-* origin_y: The y origin of the output ".nrrd" files.
-* origin_z: The z origin of the output ".nrrd" files.
-* size_x: The x size of the output ".nrrd" files.
-* size_y: The y size of the output ".nrrd" files.
-* size_z: The z size of the output ".nrrd" files.
-* spacing_x: The x spacing of the output ".nrrd" files.
-* spacing_y: The y spacing of the output ".nrrd" files.
-* spacing_z: The z spacing of the output ".nrrd" files.</p>
-<h2 id="alignment">Alignment</h2>
+<p>Example of turning a mesh to a segmentation:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">shape_mesh</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">binarize</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Mesh to volume example" src="../img/workflow/mesh2seg.png" /></p>
+<p>For list of commands, check out <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a></p>
               
             </div>
           </div>

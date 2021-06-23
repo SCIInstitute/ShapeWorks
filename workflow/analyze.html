@@ -99,7 +99,7 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#surface-correspondences">Surface Correspondences</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#running-shapeworksstudio">Running ShapeWorksStudio</a>
+    <li class="toctree-l2"><a class="reference internal" href="#running-shapeworks-studio">Running ShapeWorks Studio</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#using-xml-files">Using XML Files</a>
     </li>
@@ -120,7 +120,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -132,10 +132,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -185,6 +189,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -273,19 +287,19 @@
               
                 <h1 id="how-to-analyze-your-shape-model">How to Analyze Your Shape Model?</h1>
 <h2 id="surface-correspondences">Surface Correspondences</h2>
-<p>ShapeWorks includes a Qt and VTK-based graphical user interface (GUI), <strong>ShapeWorksStudio</strong>, that allows visualizing the optimized particle system (i.e., correspondence model) for each shape sample where particle coloring is used to reflect correspondence among shapes. </p>
+<p>ShapeWorks includes a Qt and VTK-based graphical user interface (GUI), <strong>ShapeWorks Studio</strong>, that allows visualizing the optimized particle system (i.e., correspondence model) for each shape sample where particle coloring is used to reflect correspondence among shapes. </p>
 <p><em>Particles' coloring reflects surface correspondences across different shape samples</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/corres.png" /></p>
-<p>You can scroll through the dataset and zoom in and out to inspect fewer or more samples. ShapeWorksStudio keeps a consistent camera view across all shape samples to facilitate qualitative comparisons of different samples relative to each other.</p>
+<p>You can scroll through the dataset and zoom in and out to inspect fewer or more samples. ShapeWorks Studio keeps a consistent camera view across all shape samples to facilitate qualitative comparisons of different samples relative to each other.</p>
 <p><em>Correspondence model inspectation by scrolling though the dataset and zooming in &amp; out</em></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<h2 id="running-shapeworksstudio">Running ShapeWorksStudio</h2>
-<p>When you open ShapeWorksStudio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.</p>
-<p><em>ShapeWorksStudio splash screen</em>
+<h2 id="running-shapeworks-studio">Running ShapeWorks Studio</h2>
+<p>When you open ShapeWorks Studio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.</p>
+<p><em>ShapeWorks Studio splash screen</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/studio_splash.png" /></p>
 <h3 id="using-xml-files">Using XML Files</h3>
-<p>You can run ShapeWorksStudio using an <em>XML</em> parameter file that includes the following tags.</p>
+<p>You can run ShapeWorks Studio using an <em>XML</em> parameter file that includes the following tags.</p>
 <ul>
 <li><code>&lt;point_files&gt;</code> [required]: list of <code>_world.particles</code> files (output of the <code>shapeworks optimize</code>)</li>
 <li><code>&lt;group_ids&gt;</code> [optional]: the group id (1 or 2) in case the data contains groups</li>
@@ -300,12 +314,12 @@
 <li><code>Examples/Python/&lt;use-case-name&gt;.py</code> include an analyze step that generates <em><code>analyze.xml</code></em>, which includes the path to the input data and corresponding particles. </li>
 <li>All lists should have the same order of shape samples</li>
 </ul>
-<p>Given the XML files, you can launch ShapeWorksStudio through the terminal using the following command.</p>
+<p>Given the XML files, you can launch ShapeWorks Studio through the terminal using the following command.</p>
 <div class="highlight"><pre><span></span><code>$ ShapeWorksStudio analyze.xml
 </code></pre></div>
 <h3 id="using-spreadsheets">Using Spreadsheets</h3>
-<p>ShapeWorksStudio can also load datasets (and shape models) using spreadsheets, a more user-friendly user-editable file format. See the ellipsoid studio example in <code>Examples/Studio/ellipsoid.xlsx</code> for an example. </p>
-<p><em>ShapeWorksStudio keeps track of results from different phases in individual sheets</em></p>
+<p>ShapeWorks Studio can also load datasets (and shape models) using spreadsheets, a more user-friendly user-editable file format. See the ellipsoid studio example in <code>Examples/Studio/ellipsoid.xlsx</code> for an example. </p>
+<p><em>ShapeWorks Studio keeps track of results from different phases in individual sheets</em></p>
 <p><img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/studio_ellipsoid_sheet.png" /></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
 
@@ -317,7 +331,7 @@
 <li>A mean distance transform (DT) computed by averaging warped sample-specific DT. </li>
 </ul>
 <p>The template mesh will then be constructed by triangulating the isosurface of this mean DT. A warping function is constructed to deform the dense template mesh to the sample space using the sample's and mean particle systems as control points to reconstruct a sample-specific surface mesh.</p>
-<p><em>Particle-based surface reconstruction currently supported by ShapeWorksStudio</em>
+<p><em>Particle-based surface reconstruction currently supported by ShapeWorks Studio</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/dt_based_recons.png" /></p>
 <p><em>(old) VTK-based surface reconstruction</em></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/vtk_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p>
@@ -333,10 +347,10 @@
 
 <p>You can also export the eigenvalues and each shape's PCA loadings in an excel sheet for further analysis. </p>
 <h2 id="group-differences">Group Differences</h2>
-<p>If there are groups in the data, ShapeWorksStudio can visualize significant group differences. </p>
+<p>If there are groups in the data, ShapeWorks Studio can visualize significant group differences. </p>
 <p><em>Statistical group differences for characterizing scapular morphology in Hill-Sachs patients</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/scapula_mean_gdiff.png" /></p>
-<p>If you are using an XML file to <a href="#running-shapeworksstudio">load your data into ShapeWorksStudio</a>, a group id (1 or 2) should be given to each sample. If you are using a spreadsheet, specify group columns in the <code>data</code> (first) sheet in the spreadsheet with the prefix <code>group_</code>, which enables adding multiple groups to your project and selecting the group-of-interest within ShapeWorksStudio. </p>
+<p>If you are using an XML file to <a href="#running-shapeworksstudio">load your data into ShapeWorks Studio</a>, a group id (1 or 2) should be given to each sample. If you are using a spreadsheet, specify group columns in the <code>data</code> (first) sheet in the spreadsheet with the prefix <code>group_</code>, which enables adding multiple groups to your project and selecting the group-of-interest within ShapeWorks Studio. </p>
 <p><em>Groups as columns in the project spreadsheet</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/sheet_groups.png" /></p>
 <p><em>In the Group tab of the Analyze panel, choose which column to indicate the group set of interest</em>
@@ -344,7 +358,7 @@
 <p><em>Then, select which groups you would like to compare (now support more than two groups)</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/studio_select_group.png" /></p>
 <h2 id="feature-maps">Feature Maps</h2>
-<p>ShapeWorksStudio has the ability to integrate <strong>feature maps</strong>.  A <strong>feature map</strong> is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
+<p>ShapeWorks Studio has the ability to integrate <strong>feature maps</strong>.  A <strong>feature map</strong> is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
 After the correspondence is generated, the average feature map can be displayed on the mean shape in the analysis tab.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_map.mp4" autoplay muted loop controls style="width:100%"></p>
               
@@ -354,7 +368,7 @@ After the correspondence is generated, the average feature map can be displayed 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../new/new-studio.html" class="btn btn-neutral float-right" title="New in ShapeWorksStudio">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../new/new-studio.html" class="btn btn-neutral float-right" title="New in ShapeWorks Studio">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="optimize.html" class="btn btn-neutral" title="How to Optimize Your Shape Model?"><span class="icon icon-circle-arrow-left"></span> Previous</a>

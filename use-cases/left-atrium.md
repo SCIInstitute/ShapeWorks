@@ -13,7 +13,6 @@ For this use case, we have 58 MRI images and their corresponding binary segmenta
 
 The use case is located at: `Examples/Python/left_atrium.py`
 
-
 ## Running the Use Case
 
 !!! important
@@ -25,50 +24,45 @@ To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tag
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
 * `--skip_grooming`: to run the optimization on previously processed/groomed data
 
-
 To run the full pipeline with multi-scale:
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case left_atrium 
+$python RunUseCase.py left_atrium 
 ```
 
 This calls `left_atrium.py` (in `Examples/Python/`) to perform the following.
             
 * Loads the left atrium dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and segmentations by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Grooms the images and segmentations by calling data preprocessing functions. See [Grooming Data](#grooming-data) for details about these preprocessing steps.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
+* Launches ShapeWorks Studio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 If you wish to start with the optimization step using a previously groomed data, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case left_atrium --skip_grooming
+$ python RunUseCase.py left_atrium --skip_grooming
 ```
 
 ## Grooming Data
 
 The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. It also changes the origin, voxel size, image size, orientation, etc. of the shape data. Imaging data (CT/MRI) soon becomes out of alignment and cannot be tied to the resulting shape models. Although we do not need the raw images for the shape model optimization, carrying over images. However, the grooming stage enables streamlined construction of a correspondence model of surface geometry that simultaneously map imaging data and physical properties (e.g., functional measurements, cortical thickness, cartilage thickness, etc.) to each correspondence point. 
 
-
 ShapeWorks image-based grooming tools and associated python scripts are developed to carry volumetric data through each grooming step with the shapes (meshes or segmentations) to be used for subsequent analysis visualization. In each step of grooming, we use the segmentation files to find the grooming parameters such as finding the reference shape for alignment or the bounding box for cropping. We save them in a TXT file and use the same set of parameters to groom the raw images. 
 
-
-The following preprocessing steps are only performed when you start with *unprepped* data, i.e., the tag `--start_with_prepped_data` is not used. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
-
-1. **Isotropic Resampling**: Both binary segmentations in `left_atrium/segmentations/` and their corresponding images in `left_atrium/images/` are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.
-2. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
-3. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
-4. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-5. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.
-6. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulate all the segmentations of the given dataset.
-7. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
-
+1. **Isotropic Resampling**: Both binary segmentations in `left_atrium/segmentations/` and their corresponding images in `left_atrium/images/` are resampled to have an isotropic voxel spacing.
+2. **Centering**: Segmenations and images are translated to have an origin at (0,0,0).
+3. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
+4. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
+5. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
+6. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.
+7. **Bounding Box**: The smallest region which fits all of the samples is found.
+8. **Cropping**: The segmentations are cropped to the size of the bounding box.
+9. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
 ![left Atrium Groom](../img/use-cases/leftatrium_groom.png)
 
 At the end of the grooming stage, both segmentations, which are turned into distance transforms, and corresponding images data, are groomed and ready for the optimize stage.
-
 
 ## Optimizing Shape Model
 
@@ -84,13 +78,12 @@ The differences between *initialization* and *optimization* stages are:
 
 - How the notion of correspondence (inter-surface) is quantified. In initialization, especially when we do not have enough particles to describe the geometry of each surface, we use mean energy (i.e., pushing all shapes in the shape space to the mean shape or, in other words, the covariance matrix is assumed to be identity). In optimization, we use the entropy of the distribution of the shapes (assuming Gaussian-distributed shapes), which is quantified based on the covariance matrix. In the multi-scale setting, we have the option to use shape statistics at later scales using the `use_shape_statistics_after` parameter, where we have more particles that can reveal the covariance structure.
 
-
 ### Single-Scale Optimization
 
 Below are the default optimization parameters when running this use case using the `--use_single_scale` tag.
 
 ```
-$python RunUseCase.py --use_case left_atrium --use_single_scale
+$python RunUseCase.py left_atrium --use_single_scale
 ```
 
 ```
@@ -118,7 +111,7 @@ $python RunUseCase.py --use_case left_atrium --use_single_scale
 This use case can be run using the multi-scale optimization without the `--use_single_scale` tag as follows.
 
 ```
-$python RunUseCase.py --use_case left_atrium 
+$python RunUseCase.py left_atrium 
 ```
 The `use_shape_statistics_after` parameter is used to trigger the multi-scale optimization mode.
 
@@ -126,10 +119,9 @@ The `use_shape_statistics_after` parameter is used to trigger the multi-scale op
         "use_shape_statistics_after": 128
 ```
 
-
 ## Analyzing Shape Model
 
-ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
+ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
 
 ### Single-Scale Optimization
 

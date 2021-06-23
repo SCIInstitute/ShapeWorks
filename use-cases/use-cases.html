@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -112,10 +112,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -179,6 +183,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -311,49 +325,43 @@ $ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
 </div>
 <p>To run a use case, run the following command from the <code>Examples/Python/</code> directory:</p>
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case [insert name of use case here]
+$ python RunUseCase.py [insert name of use case here]
 </code></pre></div>
 <p>For names for the use cases that are currently released and the full list of optional tags, run:</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Using <strong>bash</strong> on Windows</p>
+<p>Windows also has a number of unix shells such as <strong>git-bash</strong> available. These also work with <code>conda activate shapeworks</code> in the same way. However, there is one important issue: running Python scripts requires prefixing with <code>winpty</code>. For example, <code>winpty python RunUseCase.py ...</code>.</p>
+</div>
 <ul>
 <li><code>--use_subsample</code>: To run on a subset of the data in the use case, add the <code>--use_subsample</code> tag followed by the <code>--num_subsample</code> tag with the number of samples you wish to use. For example:</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --use_subsample --num_subsample 10
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --use_subsample --num_subsample 10
 </code></pre></div>
 <p>This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code> it will use the default number of subsamples which is 3.In order to run the clustering, the entire dataset will be downloaded.</p>
 <ul>
-<li><code>--interactive</code>: When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the intermediate output between steps of the pipeline.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --interactive
-</code></pre></div>
-<ul>
 <li><code>--skip_grooming</code>: When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add <code>--skip_grooming</code> tag.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --skip_grooming
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --skip_grooming
 </code></pre></div>
 <ul>
 <li><code>--groom_images</code>: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the images through the grooming process with the segmentation, the <code>--groom_images</code> tag must be used. Note if this tag is used with a use case that does not have images, a warning will be printed and the tag will be ignored.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --groom_images
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --groom_images
 </code></pre></div>
 <ul>
 <li><code>--use_single_scale</code>: Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. The multi-scale triggers both the initialization and optimization stages, while the single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). The default mode is mutli-scale. To run single-scale, use the <code>--use_single_scale</code> tag.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --use_single_scale
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --use_single_scale
 </code></pre></div>
 <ul>
 <li><code>--tiny_test</code>: Users can run a fast version of the use case by using the <code>--tiny_test tag</code>. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.For tiny test,only a subset of the data will be downloaded directly in the <code>Output</code> folder and no zip file will be donwloaded in the <code>Data</code> folder.If the data has already been unzipped in <code>Output</code> folder, no new data will be downloaded.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --tiny_test
-</code></pre></div>
-<ul>
-<li><code>--shapeworks_path</code>: This can be used to automatically add the ShapeWorks executable to the user's PATH variable if it has not already been set. To use this tag, add the <code>--shapeworks_path</code> tag followed by the path to the bin folder that contains ShapeWorks executables.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] shapeworks_path [path to shapeworks bin folder here]
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --tiny_test
 </code></pre></div>
 <h2 id="running-subsequent-analysis">Running Subsequent Analysis</h2>
-<p>To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the <code>Examples/Python/</code> directory, and then run ShapeWorksStudio on the appropriate analysis XML file.  For example:</p>
+<p>To run ShapeWorks Studio again without running the full pipeline, you must first navigate to the <code>Examples/Python/</code> directory, and then run ShapeWorks Studio on the appropriate analysis XML file.  For example:</p>
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
 $ ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
 </code></pre></div>

@@ -76,7 +76,15 @@
      <lastmod>2021-06-23</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/new/ellipsoid-joint-generation.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
      <loc>http://www.sci.utah.edu/software/shapeworks.html/studio/getting-started-with-studio.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/studio/multiple-domains.html</loc>
      <lastmod>2021-06-23</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
@@ -157,6 +165,26 @@
      <changefreq>daily</changefreq>
     </url><url>
      <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/deep-ssm-femur.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/ellipsoid-multiple-domain.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/ellipsoid-multiple-domain-mesh.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/ellipsoid-pca.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/thin-cavity-bean.html</loc>
+     <lastmod>2021-06-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>http://www.sci.utah.edu/software/shapeworks.html/use-cases/supershapes-contour.html</loc>
      <lastmod>2021-06-23</lastmod>
      <changefreq>daily</changefreq>
     </url><url>

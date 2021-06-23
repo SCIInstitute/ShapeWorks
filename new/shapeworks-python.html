@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -122,18 +122,26 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-meshes">Getting Started with Meshes</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-segmentations_1">Getting Started with Segmentations</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-exploring-segmentations">Getting Started with Exploring Segmentations</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-grooming-segmentations">Getting Started with Grooming Segmentations</a>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-shape-cohort-generation">Getting Started with Shape Cohort Generation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-data-augmentation">Getting Started with Data Augmentation</a>
     </li>
         </ul>
     </li>
     </ul>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -183,6 +191,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -284,8 +302,9 @@
 <p>One primary goal of the ShapeWorks Python library is to open and reveal what is in the ShapeWorks black box and lay down all steps involved in preprocessing your data, optimizing and analyzing your statistical shape models in a way that supports interactive workflow discovery and makes you as a user takes the full control of your own study and analysis.</p>
 <p>In <code>Examples/notebooks/tutorials</code>, we provide step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner. For this purpose, we have chosen Juypter Notebooks as the front-end tools for these demonstrations. These hands-on tutorials are designed to reflect the thought process that a non-expert user could go through at different shape modeling phases, starting from processing or grooming your data to analyzing your optimized shape model.</p>
 <h2 id="diving-into-shapeworks-clear-box">Diving into ShapeWorks' "Clear" Box</h2>
-<p>A growing list of fully-documented and self-contained notebooks demonstrate various ShapeWorks tools and shape modeling workflows.</p>
-<h3 id="getting-started-with-juypter-notebooks"><a href="../notebooks/getting-started-with-jupyter-notebooks.html">Getting Started with Juypter Notebooks</a></h3>
+<p>A growing list of fully-documented and self-contained notebooks demonstrate various ShapeWorks tools and shape modeling workflows.  </p>
+<p>To actually try the following notebooks out, open a terminal, <code>conda activate shapeworks</code>, change to the <code>Examples\Python\notebooks\tutorials</code> directory and run <code>jupyter notebook</code> to start the notebook server. </p>
+<h3 id="getting-started-with-juypter-notebooks"><a href="../notebooks/getting-started-with-notebooks.html">Getting Started with Juypter Notebooks</a></h3>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/jupyter-run-cell.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h3 id="getting-started-with-segmentations"><a href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a></h3>
@@ -294,10 +313,16 @@
 <h3 id="getting-started-with-meshes"><a href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a></h3>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw-2surfs-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
 
+<h3 id="getting-started-with-segmentations_1"><a href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
+
 <h3 id="getting-started-with-exploring-segmentations"><a href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a></h3>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-explore-iso-align-pv.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<h3 id="getting-started-with-grooming-segmentations"><a href="../notebooks/getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a></h3>
+<h3 id="getting-started-with-shape-cohort-generation"><a href="../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generation</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="getting-started-with-data-augmentation"><a href="../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a></h3>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
               
             </div>
@@ -306,7 +331,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../studio/getting-started-with-studio.html" class="btn btn-neutral float-right" title="Getting Started With ShapeWorks Studio">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="ellipsoid-joint-generation.html" class="btn btn-neutral float-right" title="Ellipsoid Joint Generation">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="ssm-eval.html" class="btn btn-neutral" title="Shape Model Evaluation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -342,7 +367,7 @@
         <span><a href="ssm-eval.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../studio/getting-started-with-studio.html" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="ellipsoid-joint-generation.html" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

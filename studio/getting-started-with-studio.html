@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -111,6 +111,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
@@ -158,6 +160,8 @@
     <li class="toctree-l2"><a class="reference internal" href="#project-setup">Project setup</a>
     </li>
     </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -207,6 +211,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -293,7 +307,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="shapeworks-studio">ShapeWorks Studio</h1>
+                <h1 id="getting-started-with-shapeworks-studio">Getting Started With ShapeWorks Studio</h1>
 <p>ShapeWorks Studio provides an all-in-one GUI based interface to the
 ShapeWorks toolkit.  In Studio, you can Groom, Optimize and Analyze
 your data all within a single interface.</p>
@@ -305,7 +319,10 @@ your data all within a single interface.</p>
 <p><img alt="ShapeWorks Studio Data Module" src="../img/studio/studio_data.png" width="300" /></p>
 <h2 id="groom-module">Groom Module</h2>
 <p>The Groom module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes. You also have the option of skipping grooming if your data is already prepped.</p>
+<p>Grooming options for binary segmentation volumes:</p>
 <p><img alt="ShapeWorks Studio Groom Module" src="../img/studio/studio_groom.png" width="300" /></p>
+<p>Grooming options for meshes:</p>
+<p><img alt="ShapeWorks Studio Groom Module for Meshes" src="../img/studio/studio_groom_mesh.png" width="300" /></p>
 <h2 id="optimize-module">Optimize Module</h2>
 <p>The Optimize module provides options for the particle-based optimization.  After selecting options and clicking "Run Optimize", you can monitor the process of the optimization in real-time.  Particle positions will be displayed on individual shapes as they progress where color encodes surface correspondences across different shapes in your cohort.</p>
 <p><img alt="ShapeWorks Studio Optimize Module" src="../img/studio/studio_optimize.png" width="300" /></p>
@@ -451,8 +468,8 @@ your data all within a single interface.</p>
 </thead>
 <tbody>
 <tr>
-<td>segmentation_&lt;name&gt;</td>
-<td>An input segmentation with a given name</td>
+<td>shape_&lt;name&gt;</td>
+<td>An input shape (segmentation/mesh) with a given name.<br>* Specify multiple shape_&lt;name&gt; columns to input multiple anatomies for each subject</td>
 </tr>
 <tr>
 <td>group_&lt;name&gt;</td>
@@ -467,7 +484,7 @@ your data all within a single interface.</p>
 <p><br/>
 Many other columns will be filled in automatically by the ShapeWorks tools.</p>
 <p>A more complete example is provided in Examples/Studio/FeatureMap/feature_map_example.xlsx :</p>
-<p><img alt="ShapeWorks Studio FeatureMap Example" src="../img/studio/studio_feature_map_example.png" /></p>
+<p><img alt="ShapeWorks Studio FeatureMap Example" src="../img/studio/studio_feature_map_example.png" width="300" /></p>
 <p>After completing groom and optimize steps, this worksheet will look like this:</p>
 <p><img alt="ShapeWorks Studio FeatureMap Example Complete" src="../img/studio/studio_feature_map_example_complete.png" /></p>
 <p>There will also be new worksheets with parameters from those tools and other studio settings.</p>
@@ -478,10 +495,10 @@ Many other columns will be filled in automatically by the ShapeWorks tools.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../notebooks/getting-started-with-notebooks.html" class="btn btn-neutral float-right" title="Getting Started with Jupyter Notebooks">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="multiple-domains.html" class="btn btn-neutral float-right" title="Multiple Domains SSM">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../new/shapeworks-python.html" class="btn btn-neutral" title="ShapeWorks in Python"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../new/ellipsoid-joint-generation.html" class="btn btn-neutral" title="Ellipsoid Joint Generation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -511,10 +528,10 @@ Many other columns will be filled in automatically by the ShapeWorks tools.</p>
           <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../new/shapeworks-python.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../new/ellipsoid-joint-generation.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../notebooks/getting-started-with-notebooks.html" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="multiple-domains.html" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

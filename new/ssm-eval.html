@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -112,16 +112,22 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-commands">ShapeWorks Commands</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-python-tools">ShapeWorks Python tools</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#model-evaluation-in-studio">Model Evaluation in Studio</a>
     </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -171,6 +177,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -289,6 +305,15 @@
 shapeworks readparticlesystem --name *.particles -- generalization --nmodes 1
 shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
 </code></pre></div>
+<h2 id="shapeworks-python-tools">ShapeWorks Python tools</h2>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
+<span class="n">particle_data</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleSystem</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">local</span> <span class="n">point</span> <span class="n">files</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="c1">#evaluation tools</span>
+<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="s2">&quot;scree.txt&quot;</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeGeneralization</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+</code></pre></div>
+See the <code>ellipsoid_evaluate</code> use case for detailed examples. </p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="model-evaluation-in-studio">Model Evaluation in Studio</h2>

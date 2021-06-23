@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -122,10 +122,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -175,6 +179,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -262,8 +276,8 @@
             <div class="section">
               
                 <h1 id="shapeworks-command">ShapeWorks Command</h1>
-<p>ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorksStudio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.</p>
-<p>We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorksStudio to use the same underlying libraries.</p>
+<p>ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorks Studio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.</p>
+<p>We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorks Studio to use the same underlying libraries.</p>
 <p>To retain command line usage, we have created a single <a href="../tools/ShapeWorksCommands.html"><code>shapeworks</code></a> command with subcommands exposing this functionality along with greater flexibility and interactive <code>--help</code> for each subcommand. </p>
 <p>This consolidation makes the framework more powerful and flexible. It also enables ShapeWorks functionality to be used as libraries linked to new applications. </p>
 <p>All the executables used for the segmentation-driven grooming have been consolidated, documented, tested against the original command line tools, and functionally debugged</p>

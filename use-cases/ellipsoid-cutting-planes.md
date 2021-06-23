@@ -22,13 +22,13 @@ To run the full pipeline with multi-scale:
             
 ```python
 $ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case ellipsoid_cut 
+$ python RunUseCase.py ellipsoid_cut 
 ```
 
 This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Creates distance transforms from the aleardy aligned segmentations by calling the function in `GroomUtils.py` (in `Examples/Python/`).
+* Creates distance transforms from the aleardy aligned segmentations.
 * Defines two cutting planes to be used to constrain the particle optimization on all ellipsoid. Note that this dataset contains a set of roughly aligned ellispoids; hence a common set of cutting planes can be used for all samples. 
 ```
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
@@ -36,12 +36,12 @@ This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
     cp = [cutting_plane_points1, cutting_plane_points2]
 ```
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model. 
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
+* Launches ShapeWorks Studio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
 
 ```
-$ python RunUseCase.py --use_case ellipsoid_cut --start_with_prepped_data
+$ python RunUseCase.py ellipsoid_cut --start_with_prepped_data
 ```
 
 ## Grooming Data
@@ -78,8 +78,7 @@ Below are the default optimization parameters for this use case. For a descripti
 
 ## Analyzing Shape Model
 
-ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md). 
+ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md). 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_studio.mp4" autoplay muted loop controls style="width:100%"></p>
-
 

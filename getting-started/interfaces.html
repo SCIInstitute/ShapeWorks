@@ -110,7 +110,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -122,10 +122,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -175,6 +179,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -264,7 +278,7 @@
                 <h1 id="shapeworks-interfaces">ShapeWorks Interfaces</h1>
 <p>ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through the terminal (<a href="#shapeworks-commands">command line</a>) and the user-friendly <a href="#shapeworksstudio">Studio</a> application, APIs including <a href="#shapeworks-in-python">Python</a>, and remote systems such as private or public <a href="#shapeworks-in-the-cloud">clouds</a>. </p>
 <h2 id="shapeworks-command">ShapeWorks Command</h2>
-<p>ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes (<a href="../workflow/groom.html">Groom</a>) and computing landmark-based shape models (<a href="../workflow/optimize.html">Optimize</a>). It also includes an interactive user interface called <a href="#shapeworksstudio">ShapeWorksStudio</a> to analyze and visualize the optimized shape models (<a href="../workflow/analyze.html">Analyze</a>). </p>
+<p>ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes (<a href="../workflow/groom.html">Groom</a>) and computing landmark-based shape models (<a href="../workflow/optimize.html">Optimize</a>). It also includes an interactive user interface called <a href="#shapeworksstudio">ShapeWorks Studio</a> to analyze and visualize the optimized shape models (<a href="../workflow/analyze.html">Analyze</a>). </p>
 <p>We are consolidating these tools into a <a href="../new/shapeworks-command.html">single, reusable API</a> that is shared across different computational libraries in ShapeWorks, and a standalone <code>shapeworks</code> command. Visit <a href="../new/shapeworks-command.html">ShapeWorks Command</a> for an illustrative example.</p>
 <p>The <code>shapeworks</code> executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see <a href="../tools/ShapeWorksCommands.html">shapeworks commands documentation</a> for the list of available commands.</p>
 <div class="admonition danger">
@@ -282,13 +296,13 @@
 <p>Exemplar <a href="../use-cases/use-cases.html">use cases</a> will be updated to use these Python APIs to showcase their use and flexibility.</p>
 </div>
 <h2 id="shapeworks-studio">ShapeWorks Studio</h2>
-<p>ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.</p>
+<p>ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorks Studio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_demo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <p>For more information about ShapeWorks Studio, see <a href="../studio/getting-started-with-studio.html">here</a></p>
 <h2 id="shapeworks-in-the-cloud">ShapeWorks in the Cloud</h2>
 <p><em>Work in progress ... Stay tuned!</em></p>
-<p><img alt="In Progress" src="../img/misc/in-progress.pdf" /></p>
+<p><img alt="In Progress" src="../img/misc/in-progress.png" /></p>
               
             </div>
           </div>

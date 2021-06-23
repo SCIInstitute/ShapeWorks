@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -112,10 +112,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -159,10 +163,6 @@
     <li class="toctree-l2"><a class="reference internal" href="#what-and-where-is-the-use-case">What and Where is the Use Case?</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#running-the-use-case">Running the Use Case</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#running-with-interactivity">Running with Interactivity</a>
-    </li>
-        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#grooming-data">Grooming Data</a>
     </li>
@@ -181,6 +181,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -273,9 +283,8 @@
 <ul>
 <li>Build a shape model where shapes are given as triangular surface meshes</li>
 <li>Groom a dataset that contains both shapes (meshes) and their corresponding imaging data (e.g., CT)</li>
-<li>Interactive cutting plane selection for data grooming</li>
 </ul>
-<p>The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane, but you can choose to overwrite it and define the cutting plane interactively by running the use case with the <code>--interactive</code> tag. There are two ways to define the cutting plane interactively, as explained below.
+<p>The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane.
 <img alt="Femur Lengths" src="../img/use-cases/femurLengths.png" /></p>
 <p>The use case is located at: <code>Examples/Python/femur.py</code></p>
 <h2 id="running-the-use-case">Running the Use Case</h2>
@@ -284,55 +293,26 @@
 <p>Minimum of 32GB of RAM required to run the full use case.</p>
 </div>
 <p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
-<ul>
-<li><code>--skip_grooming</code>: to run the optimization on previously processed/groomed data.</li>
-<li><code>--interactive</code>: This tag is used to allow you to interactively select the cutting plane to be used for clipping all meshes. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.</li>
-</ul>
 <p>To run the full pipeline with multi-scale and the pre-defined cutting plane:</p>
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case femur 
+$ python RunUseCase.py femur 
 </code></pre></div>
 <p>This calls <code>femur.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
-<li>Grooms the images and meshes by calling data preprocessing functions in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
+<li>Grooms the images and meshes. See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
 <li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
-<li>Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
+<li>Launches ShapeWorks Studio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
 </ul>
 <p>If you wish to start with the optimization step using previously groomed data, add <code>--skip_grooming</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur --skip_grooming
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py femur --skip_grooming
 </code></pre></div>
 <p>To groom both the meshes and their corresponding images, use <code>--groom_images</code> tag. The image origin, size, and spacing will be used in mesh rasterization. </p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur --groom_images
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py femur --groom_images
 </code></pre></div>
 <p>If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes, and isotropic spacing will be used unless the user specifies otherwise for rasterization.</p>
-<h3 id="running-with-interactivity">Running with Interactivity</h3>
-<p>To run the use case interactively, run:</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur --interactive
-</code></pre></div>
-<p>In interactive mode, you are presented with two options to choose between for defining the cutting plane interactively.</p>
-<p><strong>Option 1</strong>: The first option is to select the cutting plane at the beginning of the grooming steps on a sample of your choice. You will be prompted with:</p>
-<p><div class="highlight"><pre><span></span><code>Type the prefix of the sample you wish to use to select 
-the cutting plane from listed options and press enter.
-</code></pre></div>
-Then the options are listed. After you have typed in the chosen sample prefix, an interactive window will pop up in which you can select the cutting plane. When you are content with your selection, you simply close this window, and the grooming process will continue. This process can be seen below.</p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option1.mp4" autoplay muted loop controls style="width:100%"></p>
-
-<p>Note that internally, whatever transformations are applied to the sample, you have defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples, the cutting plane is still well-defined. </p>
-<p><strong>Option 2</strong>: If option 2 is selected, you will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample to define the cutting plane. Closing the window will continue the grooming process. </p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option2.mp4" autoplay muted loop controls style="width:100%"></p>
-
 <h2 id="grooming-data">Grooming Data</h2>
-<p>We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations).</p>
-<p>Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis.</p>
-<p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. Each step's results are shown for the meshes (note every step is performed on both the meshes the images, although the resulting images are not shown here). For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
-<p><strong>Cutting Plane</strong>: If interactive, define cutting plane either in the beginning or after rigid alignment using the interactive window. </p>
-<div class="highlight"><pre><span></span><code>    Within this window:
-            - Zoom in and out by scrolling 
-            - Rotate viewpoint by clicking in the surrounding area
-            - Move the cutting plane by clicking on it and dragging
-            - Change normal vector (represented with arrow) by clicking on it and dragging
-</code></pre></div>
+<p>We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations). Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis. Each step's results are shown for the meshes (note every step is performed on both the meshes the images, although the resulting images are not shown here). For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
 <ol>
 <li><strong>Reflect Meshes</strong>: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.</li>
 <li><strong>Meshes to Volumes</strong>: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. </li>
@@ -342,13 +322,13 @@ Then the options are listed. After you have typed in the chosen sample prefix, a
 <li><strong>Reference Selection</strong>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
 <li><strong>Rigid Alignment</strong>: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images. The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case, we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.</li>
 <li><strong>Clip Segmentations</strong>: Because the femur segmentations vary in shaft lengths, we use the defined cutting plane to clip them, so only the region of interest remains.</li>
-<li><strong>Cropping</strong>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulates all the given dataset segmentations.</li>
+<li><strong>Cropping</strong>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.</li>
 <li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
 </ol>
 <p><img alt="Grooming steps" src="../img/use-cases/FemurGroomPipeline.PNG" /></p>
 <h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
 <p>Below are the default optimization parameters when running this use case using the <code>--use_single_scale</code> tag. For a description of the optimize tool and its algorithmic parameters, see: <a href="../workflow/optimize.html">How to Optimize Your Shape Model</a>. Note that <code>use_shape_statistics_after</code> parameter is not used when <code>--use_single_scale</code> tag is given to the <code>RunUseCase.py</code> (in <code>Examples/Python/</code>).</p>
-<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case femur --use_single_scale
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py femur --use_single_scale
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot; : 1024,
         &quot;use_normals&quot;: 0,
@@ -371,13 +351,13 @@ Then the options are listed. After you have typed in the chosen sample prefix, a
         &quot;use_statistics_in_init&quot; : 0
 </code></pre></div>
 <p>This use case can be run using the multi-scale optimization without the <code>--use_single_scale</code> tag as follows.</p>
-<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case femur 
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py femur 
 </code></pre></div>
 <p>The <code>use_shape_statistics_after</code> parameter is used to trigger the multi-scale optimization mode.</p>
 <div class="highlight"><pre><span></span><code>        &quot;use_shape_statistics_after&quot;: 64
 </code></pre></div>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
+<p>ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
 <p>Here is the mean shape of the optimized shape mode using single-scale optimization.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mean.mp4" autoplay muted loop controls style="width:100%"></p>
 

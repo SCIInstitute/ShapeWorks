@@ -9,7 +9,7 @@
   <meta name="author" content="Shireen Elhabian et al.">
   <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/new/new-studio.html">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>New in ShapeWorksStudio - ShapeWorks</title>
+  <title>New in ShapeWorks Studio - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -19,7 +19,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "New in ShapeWorksStudio";
+    var mkdocs_page_name = "New in ShapeWorks Studio";
     var mkdocs_page_input_path = "new/new-studio.md";
     var mkdocs_page_url = "/software/shapeworks.html/new/new-studio.html";
   </script>
@@ -100,8 +100,12 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="new-studio.html">New in ShapeWorks Studio</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#multiple-domains">Multiple Domains</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mesh-grooming">Mesh Grooming</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#mesh-support">Mesh Support</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#improved-studio-interface">Improved Studio Interface</a>
@@ -126,10 +130,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -179,6 +187,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -251,7 +269,7 @@
         
       
     
-    <li>New in ShapeWorksStudio</li>
+    <li>New in ShapeWorks Studio</li>
     <li class="wy-breadcrumbs-aside">
       
         <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/new/new-studio.md"
@@ -265,9 +283,17 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="new-in-shapeworksstudio">New in ShapeWorksStudio</h1>
+                <h1 id="new-in-shapeworks-studio">New in ShapeWorks Studio</h1>
+<h2 id="multiple-domains">Multiple Domains</h2>
+<p>As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.</p>
+<p><img alt="ShapeWorks Project with Multiple Domains - Analyze" src="../img/studio/studio_multiple_domain_analyze.png" /></p>
+<p>See <a href="../studio/multiple-domains.html">Multiple Domains</a> for more information.</p>
+<h2 id="mesh-grooming">Mesh Grooming</h2>
+<p>As of ShapeWorks 6.1, we added support in ShapeWorks Studio for mesh grooming, including smoothing, hole filling, and iterative closest point pre-alignment.</p>
+<p><img alt="ShapeWorks Studio Groom Module for Meshes" src="../img/studio/studio_groom_mesh.png" width="300" /></p>
+<p>See <a href="../studio/getting-started-with-studio.html#groom-module">Groom Module</a> for more information.</p>
 <h2 id="mesh-support">Mesh Support</h2>
-<p>As of ShapeWorks 6.0, we added mesh support to ShapeWorksStudio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorksStudio uses them in a similar manner as feature maps/volumes.</p>
+<p>As of ShapeWorks 6.0, we added mesh support to ShapeWorks Studio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorks Studio uses them in a similar manner as feature maps/volumes.</p>
 <p><em>Open meshes in Studio</em>
 <img alt="Screenshot showing open meshes in Studio" src="../img/new/open-mesh-studio.png" /></p>
 <p><em>Visualizing features on surface mesh</em>
@@ -280,7 +306,7 @@
 <p><em>Samples names color is opposite of the background color for a better contrast</em>
 <img alt="Studio background" src="../img/new/studio-background.png" /></p>
 <h2 id="surface-reconstruction">Surface Reconstruction</h2>
-<p>ShapeWorksStudio provides a particle-based surface reconstruction that can reconstruct high quality surface meshes with fewer number of particles. See <a href="../workflow/analyze.html#surface-reconstruction">How to Analyze Your Shape Model?</a> for details about the method.</p>
+<p>ShapeWorks Studio provides a particle-based surface reconstruction that can reconstruct high quality surface meshes with fewer number of particles. See <a href="../workflow/analyze.html#surface-reconstruction">How to Analyze Your Shape Model?</a> for details about the method.</p>
 <p><em>With particle-based surface reconstruction, there is not need to optimize denser particle systems (i.e., with more particles) to reconstruct surface meshes with subvoxel accuracy</em>
 <img alt="Reconstruction error vs number of particles" src="../img/new/recon_error.png" /></p>
 <p><em>(old) VTK-based surface reconstruction</em></p>
@@ -290,7 +316,7 @@
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/particles_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="dynamic-loading">Dynamic Loading</h2>
-<p>ShapeWorksStudio support load-on-demand, which makes it more scalable by supporting loading in order of 100s of samples. For instance, an old small project that took 10+ seconds to load now starts instantly in Studio.</p>
+<p>ShapeWorks Studio support load-on-demand, which makes it more scalable by supporting loading in order of 100s of samples. For instance, an old small project that took 10+ seconds to load now starts instantly in Studio.</p>
 <p><em>(old) without dynamic loading</em></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_load_old.mp4" autoplay muted loop controls style="width:100%"></p>
 
@@ -298,11 +324,11 @@
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_load_new.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="live-particles-movement">Live Particles Movement</h2>
-<p>ShapeWorksStudio allows for live introspection of the correpsondence placement optimization process and the ability to abort the optimization at any time (e.g., changing algorithmic parameters).</p>
+<p>ShapeWorks Studio allows for live introspection of the correpsondence placement optimization process and the ability to abort the optimization at any time (e.g., changing algorithmic parameters).</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_optimize_live.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="feature-maps">Feature Maps</h2>
-<p>ShapeWorksStudio has the ability to integrate <strong>feature maps</strong>.  A <strong>feature map</strong> is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
+<p>ShapeWorks Studio has the ability to integrate <strong>feature maps</strong>.  A <strong>feature map</strong> is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
 After the correspondence is generated, the average feature map can be displayed on the mean shape in the analysis tab.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_map.mp4" autoplay muted loop controls style="width:100%"></p>
               

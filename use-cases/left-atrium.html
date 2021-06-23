@@ -100,7 +100,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">What is New?</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
                     </li>
@@ -112,10 +112,14 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -189,6 +193,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -298,29 +312,30 @@
 </ul>
 <p>To run the full pipeline with multi-scale:</p>
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case left_atrium 
+$python RunUseCase.py left_atrium 
 </code></pre></div>
 <p>This calls <code>left_atrium.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the left atrium dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
-<li>Grooms the images and segmentations by calling data preprocessing functions in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
+<li>Grooms the images and segmentations by calling data preprocessing functions. See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
 <li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
-<li>Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
+<li>Launches ShapeWorks Studio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
 </ul>
 <p>If you wish to start with the optimization step using a previously groomed data, add <code>--skip_grooming</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case left_atrium --skip_grooming
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py left_atrium --skip_grooming
 </code></pre></div>
 <h2 id="grooming-data">Grooming Data</h2>
 <p>The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. It also changes the origin, voxel size, image size, orientation, etc. of the shape data. Imaging data (CT/MRI) soon becomes out of alignment and cannot be tied to the resulting shape models. Although we do not need the raw images for the shape model optimization, carrying over images. However, the grooming stage enables streamlined construction of a correspondence model of surface geometry that simultaneously map imaging data and physical properties (e.g., functional measurements, cortical thickness, cartilage thickness, etc.) to each correspondence point. </p>
 <p>ShapeWorks image-based grooming tools and associated python scripts are developed to carry volumetric data through each grooming step with the shapes (meshes or segmentations) to be used for subsequent analysis visualization. In each step of grooming, we use the segmentation files to find the grooming parameters such as finding the reference shape for alignment or the bounding box for cropping. We save them in a TXT file and use the same set of parameters to groom the raw images. </p>
-<p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
 <ol>
-<li><strong>Isotropic Resampling</strong>: Both binary segmentations in <code>left_atrium/segmentations/</code> and their corresponding images in <code>left_atrium/images/</code> are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.</li>
+<li><strong>Isotropic Resampling</strong>: Both binary segmentations in <code>left_atrium/segmentations/</code> and their corresponding images in <code>left_atrium/images/</code> are resampled to have an isotropic voxel spacing.</li>
+<li><strong>Centering</strong>: Segmenations and images are translated to have an origin at (0,0,0).</li>
 <li><strong>Apply Padding</strong>: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.</li>
 <li><strong>Center-of-Mass Alignment</strong>: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.</li>
 <li><strong>Reference Selection</strong>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
 <li><strong>Rigid Alignment</strong>: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.</li>
-<li><strong>Cropping</strong>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulate all the segmentations of the given dataset.</li>
+<li><strong>Bounding Box</strong>: The smallest region which fits all of the samples is found.</li>
+<li><strong>Cropping</strong>: The segmentations are cropped to the size of the bounding box.</li>
 <li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
 </ol>
 <p><img alt="left Atrium Groom" src="../img/use-cases/leftatrium_groom.png" /></p>
@@ -340,7 +355,7 @@ $python RunUseCase.py --use_case left_atrium
 </ul>
 <h3 id="single-scale-optimization">Single-Scale Optimization</h3>
 <p>Below are the default optimization parameters when running this use case using the <code>--use_single_scale</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case left_atrium --use_single_scale
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py left_atrium --use_single_scale
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>    &quot;number_of_particles&quot; : 512, 
     &quot;use_normals&quot;: 0,
@@ -362,13 +377,13 @@ $python RunUseCase.py --use_case left_atrium
 </code></pre></div>
 <h3 id="multi-scale-optimization">Multi-Scale Optimization</h3>
 <p>This use case can be run using the multi-scale optimization without the <code>--use_single_scale</code> tag as follows.</p>
-<p><div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case left_atrium 
+<p><div class="highlight"><pre><span></span><code>$python RunUseCase.py left_atrium 
 </code></pre></div>
 The <code>use_shape_statistics_after</code> parameter is used to trigger the multi-scale optimization mode.</p>
 <div class="highlight"><pre><span></span><code>        &quot;use_shape_statistics_after&quot;: 128
 </code></pre></div>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
+<p>ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
 <h3 id="single-scale-optimization_1">Single-Scale Optimization</h3>
 <p>Here is the mean shape of the optimized shape mode using single-scale optimization.
 <img alt="left Atrium singleScale" src="../img/use-cases/leftatrium_singlescale.png" /></p>
