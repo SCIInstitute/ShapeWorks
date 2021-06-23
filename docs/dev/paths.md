@@ -34,6 +34,9 @@ On Windows, to point to the RelWithDebInfo binaries in a build directory inside 
 (shapeworks) ~/code/ShapeWorks> devenv .\build\bin\RelWithDebInfo
 ```
 
+!!! note "Using **git-bash** on Windows"
+    Windows may also have a **git-bash** command line available. This also works with `devenv`: just `source ./devenv.sh` like you would on linux/osx.  
+
 Any path can be passed as the parameter for this script and it can be called from any location. Another example:
 ```
 (shapeworks) ~/code/ShapeWorks/build_xcode/bin/Debug$ source ../../devenv.sh Debug

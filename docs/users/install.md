@@ -86,7 +86,8 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
 !!! note "Important"
     Your shapeworks conda environment must always be activated before using ShapeWorks.
 
-
+!!! note "Using **git-bash** on Windows"
+    Windows may also have a **git-bash** command line available. This also works with conda, and environments are activated in the same way. However, there is one important issue: running Python scripts requires prefixing with `winpty`. For example, `winpty python RunUseCase.py ...`.
 
 ## Installing ShapeWorks on Mac
 
