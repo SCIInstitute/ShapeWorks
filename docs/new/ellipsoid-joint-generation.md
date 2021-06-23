@@ -2,7 +2,7 @@
 
 ##About ShapeCohortGenerator
 
-`ShapeCohortGenerator` is a python package that generates synthetic shape cohorts with groundtruth surface correspondences by varying different parameters describing such shape families.
+`ShapeCohortGenerator` is a python package that generates synthetic shape cohorts with ground truth surface correspondences by varying different parameters describing such shape families.
 
 ## What is new?
 We have added a new family of shapes in the `ShapeCohortGenerator` package. You can now generate ellipsoid joints (two anatomies per shape) which can be used for troubleshooting multiple domain shape modeling workflows.
@@ -17,9 +17,9 @@ Please refer to this notebook for all the options for generating the cohorts.
 
 Arguments specific to ellipsoid joint generation are:
 
-- `mode_size`: use size as the mode of variation 
-- `mode_rotation`: use rotation as the mode of variation
+- `mode_size`: uses size as the mode of variation 
+- `mode_rotation`: uses rotation as the mode of variation
 - `separation`: distance between the two anatomies of the joint
 
 
-The [notebook](../notebooks/getting-started-with-shape-cohort-generation.html) will soon be updates with examples of ellipsoid joint generation
+The [notebook](../notebooks/getting-started-with-shape-cohort-generation.html) will soon be updated with examples of ellipsoid joint generation

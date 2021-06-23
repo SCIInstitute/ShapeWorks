@@ -10,7 +10,6 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane.
 ![Femur Lengths](../img/use-cases/femurLengths.png)
 
-
 The use case is located at: `Examples/Python/femur.py`
  
 ## Running the Use Case
@@ -18,14 +17,13 @@ The use case is located at: `Examples/Python/femur.py`
 !!! important 
     Minimum of 32GB of RAM required to run the full use case.
 
-
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
 To run the full pipeline with multi-scale and the pre-defined cutting plane:
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case femur 
+$ python RunUseCase.py femur 
 ```
 
 This calls `femur.py` (in `Examples/Python/`) to perform the following.
@@ -39,13 +37,13 @@ This calls `femur.py` (in `Examples/Python/`) to perform the following.
 If you wish to start with the optimization step using previously groomed data, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case femur --skip_grooming
+$ python RunUseCase.py femur --skip_grooming
 ```
 
 To groom both the meshes and their corresponding images, use `--groom_images` tag. The image origin, size, and spacing will be used in mesh rasterization. 
 
 ```
-$ python RunUseCase.py --use_case femur --groom_images
+$ python RunUseCase.py femur --groom_images
 ```
 
 If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes, and isotropic spacing will be used unless the user specifies otherwise for rasterization.
@@ -63,20 +61,18 @@ We start with full unsegmented images (CT scans) of each femur's hip and segment
 6. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
 7. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images. The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case, we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.
 8. **Clip Segmentations**: Because the femur segmentations vary in shaft lengths, we use the defined cutting plane to clip them, so only the region of interest remains.
-9. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smalles bounding box that encapsulates all the given dataset segmentations.
+9. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.
 10. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
 ![Grooming steps](../img/use-cases/FemurGroomPipeline.PNG)
-
 
 ## Optimizing Shape Model
 
 Below are the default optimization parameters when running this use case using the `--use_single_scale` tag. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md). Note that `use_shape_statistics_after` parameter is not used when `--use_single_scale` tag is given to the `RunUseCase.py` (in `Examples/Python/`).
 
 ```
-$python RunUseCase.py --use_case femur --use_single_scale
+$python RunUseCase.py femur --use_single_scale
 ```
-
 
 ```
         "number_of_particles" : 1024,
@@ -103,7 +99,7 @@ $python RunUseCase.py --use_case femur --use_single_scale
 This use case can be run using the multi-scale optimization without the `--use_single_scale` tag as follows.
 
 ```
-$python RunUseCase.py --use_case femur 
+$python RunUseCase.py femur 
 ```
 
 The `use_shape_statistics_after` parameter is used to trigger the multi-scale optimization mode.

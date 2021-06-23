@@ -19,7 +19,7 @@ To run the full pipeline with multi-scale:
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case ellipsoid 
+$python RunUseCase.py ellipsoid 
 ```
 
 This calls `ellipsoid.py` (in `Examples/Python/`) to perform the following.
@@ -32,7 +32,7 @@ This calls `ellipsoid.py` (in `Examples/Python/`) to perform the following.
 If you wish to start with the optimization step using a previously groomed data, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case ellipsoid --skip_grooming
+$ python RunUseCase.py ellipsoid --skip_grooming
 ```
 
 ## Grooming Data

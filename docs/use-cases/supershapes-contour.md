@@ -16,16 +16,14 @@ To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
 
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case supershapes_1mode_contour
+$ python RunUseCase.py supershapes_1mode_contour
 ```
 
 This calls `supershapes_1mode_contour.py` (in `Examples/Python/`) to perform the following.
  
-
 * Loads the `supershapes_1mode_contour` dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorks Studio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
-
 
 ## Grooming Data
 

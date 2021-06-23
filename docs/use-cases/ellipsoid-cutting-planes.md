@@ -22,7 +22,7 @@ To run the full pipeline with multi-scale:
             
 ```python
 $ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case ellipsoid_cut 
+$ python RunUseCase.py ellipsoid_cut 
 ```
 
 This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
@@ -41,7 +41,7 @@ This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
 If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
 
 ```
-$ python RunUseCase.py --use_case ellipsoid_cut --start_with_prepped_data
+$ python RunUseCase.py ellipsoid_cut --start_with_prepped_data
 ```
 
 ## Grooming Data
@@ -81,5 +81,4 @@ Below are the default optimization parameters for this use case. For a descripti
 ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md). 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_studio.mp4" autoplay muted loop controls style="width:100%"></p>
-
 

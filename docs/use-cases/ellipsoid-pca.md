@@ -3,6 +3,7 @@
 ## What and Where is the Use Case? 
 
 This use case is designed to demonstrate the functionality of python APIs for shape statistics tools of ShapeWorks. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings
+
 The use case is located at: `Examples/Python/ellipsoid_pca.py`
 
 ## Running the Use Case
@@ -14,7 +15,7 @@ Before you run the `ellipsoid_pca` use case, make sure you have the run the `ell
 Run the following command to run this use case.
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$python RunUseCase.py --use_case ellipsoid_pca 
+$ python RunUseCase.py ellipsoid_pca 
 ```
 
 This calls `ellipsoid_pca.py` (in `Examples/Python/`) to perform the following.
@@ -22,8 +23,6 @@ This calls `ellipsoid_pca.py` (in `Examples/Python/`) to perform the following.
 * Loads the existing (pre-trained) ellipsoid shape model 
 * Performs shape statistics using the python API and saves relevant data
 * Plots the shape statistics metrics similar to `ShapeWorks Studio.`
-
-
 
 ## Grooming Data
 
@@ -35,7 +34,7 @@ Since this use case directly loads an existing shape model, there is no optimiza
 
 ## Analyzing Shape Model
 
-The `ParticleShapeStatistics() ` of `ShapeWorks` python API analyzes the optimized particle-based shape model by calculating the principal components of the shape model, eigenvalues, eigenvectors, and PCA loadings. This tool also estimates the variance explained by each mode and generates plots for PCA metrics similar to `ShapeWorks Studio.` 
+The `ParticleShapeStatistics()` of `ShapeWorks` python API analyzes the optimized particle-based shape model by calculating the principal components of the shape model, eigenvalues, eigenvectors, and PCA loadings. This tool also estimates the variance explained by each mode and generates plots for PCA metrics similar to `ShapeWorks Studio.` 
 
 ```python
 # Read the particle files from a pre-trained shape model

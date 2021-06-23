@@ -4,9 +4,7 @@
 
 This use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use the example dataset in `ellipsoid_fd.zip`, which contains a previously generated shape model on ellipsoids and prepped segmentations of two new ellipsoids.
 
-
 ![Fixed Domains](../img/use-cases/fixed-domains.png)
-
 
 The use case is located at: `Examples/Python/ellipsoid_fd.py`
 
@@ -19,7 +17,7 @@ Run the following command to run this use case. This optimization is done only w
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case ellipsoid_fd
+$ python RunUseCase.py ellipsoid_fd
 ```
 
 This calls `ellipsoid_fd.py` (in `Examples/Python/`) to perform the following.
@@ -64,9 +62,8 @@ Below are the default optimization parameters for this use case. For a descripti
 In `ellipsoid_fd.py` (in `Examples/Python/`), the following is defined.
 
 - `fileListDT` is the list of distance transforms for the existing shape model
--  `shapemodelDir` is the directory path to the new shape model
--  `meanShapePath` is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape
-
+- `shapemodelDir` is the directory path to the new shape model
+- `meanShapePath` is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape
 
 ## Analyzing Shape Model
 

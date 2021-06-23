@@ -17,7 +17,7 @@ To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tag
 
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case deep_ssm
+$ python RunUseCase.py deep_ssm
 ```
 
 See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags. Note the following tags are not applicable to this use case:
