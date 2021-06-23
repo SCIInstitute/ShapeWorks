@@ -344,8 +344,9 @@ bool MeshWarper::generate_warp()
   this->find_good_particles();
   this->vertices_ = this->remove_bad_particles(this->vertices_);
 
-  Eigen::MatrixXd vertices = MeshWarper::distill_vertex_info(this->reference_mesh_);
-  this->faces_ = MeshWarper::distill_face_info(this->reference_mesh_);
+  Mesh referenceMesh(reference_mesh_);
+  Eigen::MatrixXd vertices = referenceMesh.vertexInfo();
+  this->faces_ = referenceMesh.faceInfo();
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,
@@ -357,41 +358,6 @@ bool MeshWarper::generate_warp()
   this->update_progress(1.0);
   this->needs_warp_ = false;
   return true;
-}
-
-//---------------------------------------------------------------------------
-Eigen::MatrixXd MeshWarper::distill_vertex_info(vtkSmartPointer<vtkPolyData> poly_data)
-{
-  vtkSmartPointer<vtkPoints> points = poly_data->GetPoints();
-  vtkSmartPointer<vtkDataArray> data_array = points->GetData();
-
-  int num_vertices = points->GetNumberOfPoints();
-
-  Eigen::MatrixXd vertices(num_vertices, 3);
-
-  for (int i = 0; i < num_vertices; i++) {
-    vertices(i, 0) = data_array->GetComponent(i, 0);
-    vertices(i, 1) = data_array->GetComponent(i, 1);
-    vertices(i, 2) = data_array->GetComponent(i, 2);
-  }
-  return vertices;
-}
-
-//---------------------------------------------------------------------------
-Eigen::MatrixXi MeshWarper::distill_face_info(vtkSmartPointer<vtkPolyData> poly_data)
-{
-  int num_faces = poly_data->GetNumberOfCells();
-  Eigen::MatrixXi faces(num_faces, 3);
-
-  vtkSmartPointer<vtkIdList> cells = vtkSmartPointer<vtkIdList>::New();
-
-  for (int j = 0; j < num_faces; j++) {
-    poly_data->GetCellPoints(j, cells);
-    faces(j, 0) = cells->GetId(0);
-    faces(j, 1) = cells->GetId(1);
-    faces(j, 2) = cells->GetId(2);
-  }
-  return faces;
 }
 
 //---------------------------------------------------------------------------
