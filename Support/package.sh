@@ -97,7 +97,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     conda_libs="libpython libboost_filesystem"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* .
+        cp ${CONDA_PREFIX}/lib/${clib}* ../bin/ShapeWorksStudio.app/Contents/Frameworks
     done
+    # remove static libs
+    rm *.a ../bin/ShapeWorksStudio.app/Contents/Frameworks/*.a
+    
     # Fix transitive loaded libs
     for i in *.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
@@ -112,6 +116,9 @@ else
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
 
+    # remove static libs
+    rm lib/*.a
+    
     cd bin
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
