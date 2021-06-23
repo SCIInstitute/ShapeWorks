@@ -27,14 +27,16 @@ nav:
    - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
-   - 'New in ShapeWorksStudio':              'new/new-studio.md'
+   - 'New in ShapeWorks Studio':             'new/new-studio.md'
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
    - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
    - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
+   - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
+   - 'Multiple Domains SSM': 'studio/multiple-domains.md'
 - ShapeWorks in Python:
    - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'  
    - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  
@@ -57,7 +59,13 @@ nav:
    - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
    - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
-   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'         
+   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'
+   - 'Shape Model for Multiple Domains':        'use-cases/ellipsoid-multiple-domain.md'
+   - 'Shape Model for Multiple Domains directly from Meshes':     'use-cases/ellipsoid-multiple-domain-mesh.md'
+   - 'Ellipsoid: Shape Statistics in Python':    'use-cases/ellipsoid-pca.md'   
+   - 'Shape Models with Geodesic Distance based Repulsion':   'use-cases/thin-cavity-bean.md'
+   - 'Shape Models for N-dimensional Contours':  'use-cases/supershapes-contour.md'
+     
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
