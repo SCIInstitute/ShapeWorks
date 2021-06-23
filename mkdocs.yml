@@ -27,7 +27,7 @@ nav:
    - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
-   - 'New in ShapeWorksStudio':              'new/new-studio.md'
+   - 'New in ShapeWorks Studio':             'new/new-studio.md'
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
    - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
    - 'ShapeWorks Command':                   'new/shapeworks-command.md'
