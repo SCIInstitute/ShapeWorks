@@ -116,6 +116,9 @@ else
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
 
+    # remove static libs
+    rm lib/*.a
+    
     cd bin
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
