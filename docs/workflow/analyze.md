@@ -17,7 +17,7 @@ You can scroll through the dataset and zoom in and out to inspect fewer or more 
 
 ## Running ShapeWorks Studio
 
-When you open ShapeWorks Studio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project. **NOTE:** on OSX there are currently two files named `ShapeWorksStudio` in **/Applications/ShapeWorks** and the one without an icon is the one that must be double-clicked.
+When you open ShapeWorks Studio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.
 
 *ShapeWorks Studio splash screen*
 ![Template-deformation approach for surface reconstruction](../img/workflow/studio_splash.png)
