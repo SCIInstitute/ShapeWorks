@@ -27,7 +27,7 @@ This calls `ellipsoid_fd.py` (in `Examples/Python/`) to perform the following.
 * Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Loads the existing (pre-trained) shape model and converts the new segmentations into signed distance transforms.
 * Optimizes particle distribution (i.e., the shape/correspondence model) on the new shape samples by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
+* Launches ShapeWorks Studio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 ## Grooming Data
 
@@ -70,4 +70,4 @@ In `ellipsoid_fd.py` (in `Examples/Python/`), the following is defined.
 
 ## Analyzing Shape Model
 
-ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   
+ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   

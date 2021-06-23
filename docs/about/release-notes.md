@@ -115,9 +115,9 @@
 
 #### All-in-one Studio Front-end
 
-* **Mesh support in Studio:** Added support for mesh inputs with minimal grooming. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
-* **New and faster surface reconstruction:** Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
-* **Feature maps support for meshes:** Added support for loading and displaying scalar values from mesh inputs. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **Mesh support in Studio:** Added support for mesh inputs with minimal grooming. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **New and faster surface reconstruction:** Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **Feature maps support for meshes:** Added support for loading and displaying scalar values from mesh inputs. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
 * **User help in Studio:** Added user interface tooltips and Help->Keyboard shortcuts.
 * **Detailed optimization progress:** Added particle count, initialization/optimization phase, and iteration count on the status bar in addition to the progress bar. (user feature request)
 * **Enabled aborting grooming:** Added ability to abort grooming step.
@@ -202,9 +202,9 @@
 
 #### All-in-one Studio Front-end
 
-* **Feature maps support:** Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps) for more details.
+* **Feature maps support:** Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps) for more details.
 
-* **New interface for group analysis:** Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences) for more details.
+* **New interface for group analysis:** Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences) for more details.
 
 * **User notes in Studio:** Studio stores/loads a rich text notes section in the spreadsheet.
 
@@ -249,7 +249,7 @@
 ## ShapeWorks 5.4.1 - 2020-06-15
 
 ### Fixes
-* **ShapeWorksStudio:** Fixed crash when importing data on a new/blank project.	
+* **ShapeWorks Studio:** Fixed crash when importing data on a new/blank project.	
 
 -------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.4.0 - 2020-06-10

@@ -114,7 +114,7 @@ Higher regularization values would undermine the ensemble's underlying covarianc
 
 ## Optimizing Correspondences 
 
-You can use either ShapeWorksStudio or `shapeworks optimize <parameters.xml>` command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.
+You can use either ShapeWorks Studio or `shapeworks optimize <parameters.xml>` command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.
 
 ![Optimization Parameters](../img/workflow/params.png)
 

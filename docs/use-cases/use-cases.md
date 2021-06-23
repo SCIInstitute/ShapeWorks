@@ -107,7 +107,7 @@ $ python RunUseCase.py [insert name of use case here] --tiny_test
 
 ## Running Subsequent Analysis
 
-To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the `Examples/Python/` directory, and then run ShapeWorksStudio on the appropriate analysis XML file.  For example:
+To run ShapeWorks Studio again without running the full pipeline, you must first navigate to the `Examples/Python/` directory, and then run ShapeWorks Studio on the appropriate analysis XML file.  For example:
 
 ```
 $ cd /path/to/shapeworks/Examples/Python

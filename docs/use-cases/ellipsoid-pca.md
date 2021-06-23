@@ -21,7 +21,7 @@ This calls `ellipsoid_pca.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the existing (pre-trained) ellipsoid shape model 
 * Performs shape statistics using the python API and saves relevant data
-* Plots the shape statistics metrics similar to `ShapeWorksStudio.`
+* Plots the shape statistics metrics similar to `ShapeWorks Studio.`
 
 
 
@@ -35,7 +35,7 @@ Since this use case directly loads an existing shape model, there is no optimiza
 
 ## Analyzing Shape Model
 
-The `ParticleShapeStatistics() ` of `ShapeWorks` python API analyzes the optimized particle-based shape model by calculating the principal components of the shape model, eigenvalues, eigenvectors, and PCA loadings. This tool also estimates the variance explained by each mode and generates plots for PCA metrics similar to `ShapeWorksStudio.` 
+The `ParticleShapeStatistics() ` of `ShapeWorks` python API analyzes the optimized particle-based shape model by calculating the principal components of the shape model, eigenvalues, eigenvectors, and PCA loadings. This tool also estimates the variance explained by each mode and generates plots for PCA metrics similar to `ShapeWorks Studio.` 
 
 ```python
 # Read the particle files from a pre-trained shape model

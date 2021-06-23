@@ -7,7 +7,7 @@ ShapeWorks tools are designed to support different usage scenarios, including ex
 ## ShapeWorks Command
 
 
-ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](../workflow/groom.md)) and computing landmark-based shape models ([Optimize](../workflow/optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](../workflow/analyze.md)). 
+ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](../workflow/groom.md)) and computing landmark-based shape models ([Optimize](../workflow/optimize.md)). It also includes an interactive user interface called [ShapeWorks Studio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](../workflow/analyze.md)). 
 
 We are consolidating these tools into a [single, reusable API](../new/shapeworks-command.md) that is shared across different computational libraries in ShapeWorks, and a standalone `shapeworks` command. Visit [ShapeWorks Command](../new/shapeworks-command.md) for an illustrative example.
 
@@ -31,7 +31,7 @@ We are developing Python bindings to enable users to script their customized sha
 ## ShapeWorks Studio
 
 
-ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
+ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorks Studio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_demo.mp4" autoplay muted loop controls style="width:100%"></p>

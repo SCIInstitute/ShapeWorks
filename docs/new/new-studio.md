@@ -18,7 +18,7 @@ See [Groom Module](../studio/getting-started-with-studio.md#groom-module) for mo
 
 ## Mesh Support 
 
-As of ShapeWorks 6.0, we added mesh support to ShapeWorks Studio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorksStudio uses them in a similar manner as feature maps/volumes.
+As of ShapeWorks 6.0, we added mesh support to ShapeWorks Studio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorks Studio uses them in a similar manner as feature maps/volumes.
 
 *Open meshes in Studio*
 ![Screenshot showing open meshes in Studio](../img/new/open-mesh-studio.png)
