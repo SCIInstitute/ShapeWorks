@@ -65,7 +65,7 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
 `cd %HOMEPATH%\ShapeWorks-Examples\Python`
 
 4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.  
-`python RunUseCase.py --use_case <insert name of use case here>`
+`python RunUseCase.py <insert name of use case here>`
 
 - More information about running use cases can be found [here](../use-cases/use-cases.md#running-the-use-cases).
 
@@ -87,7 +87,8 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
     Your shapeworks conda environment must always be activated before using ShapeWorks.
 
 !!! note "Using **git-bash** on Windows"
-    Windows may also have a **git-bash** command line available. This also works with conda, and environments are activated in the same way. However, there is one important issue: running Python scripts requires prefixing with `winpty`. For example, `winpty python RunUseCase.py ...`.
+    Windows may also have a **git-bash** command line available. This also works with conda, and environments are activated in the same way. However, there is one important issue: running Python scripts requires prefixing with `winpty`. For example, `winpty 
+    ...`.
 
 ## Installing ShapeWorks on Mac
 
@@ -118,7 +119,7 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
 `cd $HOME/ShapeWorks-Examples/Python`
 
 4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.  
-`python RunUseCase.py --use_case  <insert name of use case here>`
+`python RunUseCase.py <insert name of use case here>`
 
 - More information about running use cases can be found [here](../use-cases/use-cases.md#running-the-use-cases).
 
@@ -168,7 +169,7 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
 `cd $HOME/ShapeWorks-Examples/Python`
 
 4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.  
-`python RunUseCase.py --use_case  <insert name of use case here>`
+`python RunUseCase.py <insert name of use case here>`
 
 - More information about running use cases can be found [here](../use-cases/use-cases.md#running-the-use-cases).
 
