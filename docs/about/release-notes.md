@@ -47,11 +47,12 @@
  
 #### ShapeWorks Front-end
 
-* **Clean installation for ShapeWorks Python module:** ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. 
+* **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
+* **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
 * **Improved ShapeWorks Python module library coverage:** The entire ShapeWorks library framework now accessible via Python bindings. 
 * **Python types support in ShapeWorks Python module:** ShapeWorks Python module uses generic Python types (e.g., numpy, arrays, lists) rather than opaque wrappers for parameters to/from ShapeWorks objects. It is now possible to instantiate shapeworks.Image from a numpy array. One can now request raw image data as a numpy array. 
 * **Safe dot-chain operations in ShapeWorks Python module:**  The “dot chain” operations are now safely enabled (e.g., `img.translate([tx, ty, tz]).rotate(45, shapeworks::Z).scale([sx, sy, sz))`)
-
+* **`RunUseCase` improvements:** `RunUseCase` no longer requires `--use_case` before the use case name. This makes it simpler to use since omitting a use case name immediately prints help, which itself shows the list of use cases as a required argument rather than listing them with the other optional args. `RunUseCase` no longer accepts paths to shapeworks executables or Python modules. All of these are in the user's conda environment, or set using the `devenv` for testing by developers.
 
 
 #### Deep Learning & Shape Modeling
@@ -64,12 +65,11 @@
 
 #### User's Support
 
-* **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
-* **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
 * **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
 * **Improved notebooks:** Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. 
 * **Improved installation:** Users no longer are required to modify PATHs or pass parameters to find executables or import the ShapeWorks Python module. Installation works even if non-standard installation directories are used and it works on all platforms.
 * **New shapeworks environments can now be created using `install_shapeworks [name]`:** This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.
+* **Clean installation for ShapeWorks Python module:** ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. 
 
 ### Fixes
 
