@@ -25,15 +25,15 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   connect(ui_->mesh_center, &QCheckBox::stateChanged,
           this, &GroomTool::centering_changed);
-  connect(ui_->center_checkbox, &QCheckBox::stateChanged,
-          this, &GroomTool::centering_changed);
+  //connect(ui_->center_checkbox, &QCheckBox::stateChanged,
+    //      this, &GroomTool::centering_changed);
 
   connect(ui_->fill_holes_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::fill_holes_changed);
   connect(ui_->mesh_fill_holes, &QCheckBox::stateChanged,
           this, &GroomTool::fill_holes_changed);
 
-  ui_->center_checkbox->setToolTip("Center image segmentations");
+  //ui_->center_checkbox->setToolTip("Center image segmentations");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
   ui_->fill_holes_checkbox->setToolTip("Fill small holes in the image segmentation");
   ui_->autopad_checkbox->setToolTip("Add padding around the edges of the image");
@@ -74,7 +74,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   update_ui();
 
-  ui_->center_checkbox->hide();
+  //ui_->center_checkbox->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void GroomTool::on_restore_defaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::set_ui_from_params(GroomParameters params)
 {
-  ui_->center_checkbox->setChecked(params.get_center_tool());
+  //ui_->center_checkbox->setChecked(params.get_center_tool());
   ui_->mesh_center->setChecked(params.get_center_tool());
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
@@ -205,7 +205,7 @@ void GroomTool::store_params()
 
   auto params = GroomParameters(session_->get_project(), current_domain_);
 
-  params.set_center_tool(ui_->center_checkbox->isChecked());
+  //params.set_center_tool(ui_->center_checkbox->isChecked());
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());
   params.set_padding_amount(ui_->padding_amount->value());
@@ -357,7 +357,7 @@ void GroomTool::activate()
 void GroomTool::centering_changed(int state)
 {
   ui_->mesh_center->setChecked(state);
-  ui_->center_checkbox->setChecked(state);
+  //ui_->center_checkbox->setChecked(state);
 }
 
 //---------------------------------------------------------------------------

@@ -60,22 +60,38 @@ background: rgb(255, 255, 127)
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
-          <widget class="QGroupBox" name="alignment_groupbox">
-           <property name="title">
-            <string>Alignment</string>
+          <widget class="Line" name="line_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_6">
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="alignment_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>15</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_8">
             <property name="leftMargin">
-             <number>3</number>
+             <number>0</number>
             </property>
             <property name="topMargin">
              <number>0</number>
@@ -86,35 +102,31 @@ background: rgb(255, 255, 127)
             <property name="bottomMargin">
              <number>0</number>
             </property>
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item row="0" column="0">
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QCheckBox" name="isolate_checkbox_2">
               <property name="text">
-               <string>None</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="center_checkbox">
-              <property name="text">
-               <string>Center</string>
+               <string>Alignment</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="text">
-               <string>Center</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="radioButton_3">
-              <property name="text">
-               <string>Iterative Closest Point</string>
-              </property>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="alignment_box">
+              <item>
+               <property name="text">
+                <string>Center</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Iterative Closest Point</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
