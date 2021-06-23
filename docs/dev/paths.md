@@ -36,6 +36,7 @@ On Windows, to point to the RelWithDebInfo binaries in a build directory inside 
 
 !!! note "Using **git-bash** on Windows"
     Windows may also have a **git-bash** command line available. This also works with `devenv`: just `source ./devenv.sh` like you would on linux/osx.  
+    There is one important issue: running Python scripts requires prefixing with `winpty`. For example, `winpty python RunUseCase.py ...`.
 
 Any path can be passed as the parameter for this script and it can be called from any location. Another example:
 ```
