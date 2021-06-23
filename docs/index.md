@@ -46,14 +46,14 @@ Its optimized approach offers increased power for testing biological hypotheses 
 
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that consider variability in the entire cohort of images. 
 
-*ShapeWorks 6.0 tour - mesh support and more in ShapeWorksStudio*
+*ShapeWorks 6.0 tour - mesh support and more in ShapeWorks Studio*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
-*ShapeWorks 5.5 tour - feature support in ShapeWorksStudio*
+*ShapeWorks 5.5 tour - feature support in ShapeWorks Studio*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" autoplay muted loop controls style="width:100%"></p>
     
-*Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorksStudio*   
+*Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorks Studio*   
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
 
 ShapeWorks uses a set of interacting particle systems, one for each shape, to produce optimal sets of surface correspondences in an ensemble. Particles interact with one another via mutually repelling forces to cover and, therefore, describe surface geometry optimally. Particles are positioned on surfaces automatically by optimizing the model's information content via an entropy optimization scheme. 
