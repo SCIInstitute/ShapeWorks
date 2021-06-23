@@ -130,3 +130,4 @@ jobs:
         title: "Development Build for Mac"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
