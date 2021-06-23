@@ -6,10 +6,8 @@
 
 
 `shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.
-!!! danger "Activate shapeworks environment"
+!!! note "Activate shapeworks environment"
 	 Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal. 
-!!! danger "Add shapeworks to your path"
-	 Please make sure that `shapeworks` is in your path. See [Adding to PATH Environment Variable](../dev/paths.md). 
 
 ## shapeworks
 

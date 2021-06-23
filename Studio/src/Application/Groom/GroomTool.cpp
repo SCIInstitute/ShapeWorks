@@ -98,7 +98,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state)
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::handle_error(std::string msg)
+void GroomTool::handle_error(QString msg)
 {
   this->groom_is_running_ = false;
   emit error_message(msg);
@@ -253,7 +253,7 @@ void GroomTool::on_run_groom_button_clicked()
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, &ShapeworksWorker::error_message, this, &GroomTool::handle_error);
   connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -267,8 +267,7 @@ void GroomTool::handle_thread_complete()
 {
   emit progress(95);
 
-  std::string duration = QString::number(this->timer_.elapsed() / 1000.0, 'f',
-                                         1).toStdString();
+  QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
@@ -286,6 +285,29 @@ void GroomTool::handle_thread_complete()
 //---------------------------------------------------------------------------
 void GroomTool::on_skip_button_clicked()
 {
+  bool has_image = false;
+  auto subjects = session_->get_project()->get_subjects();
+  auto domain_names = session_->get_project()->get_domain_names();
+  if (subjects.size() > 0) {
+    for (int domain = 0; domain < domain_names.size(); domain++) {
+      if (subjects[0]->get_domain_types()[domain] == DomainType::Image) {
+        has_image = true;
+      }
+    }
+  }
+
+  if (has_image) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Are you sure your input data is already groomed?\n\n"
+                                  "The image volumes must already be distance transforms.\n\n"
+                                  "Is that correct?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+      return;
+    }
+  }
+
   store_params();
   groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
   groom_->set_skip_grooming(true);
@@ -374,7 +396,6 @@ void GroomTool::update_ui()
 {
   ui_->mesh_smooth_stack->setCurrentIndex(ui_->mesh_smooth_method->currentIndex());
   ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
-
 }
 
 }

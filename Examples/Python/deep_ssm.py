@@ -159,7 +159,7 @@ def Run_Pipeline(args):
     Test DeepSSM
     '''
     PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
-    prediction_dir = out_dir + 'Results/PredictedParticles/'
+    prediction_dir = out_dir + model_name + '/predictions/'
     DeepSSMUtils.testDeepSSM(config_file)
     print('Predicted particles saved at: ' + prediction_dir)
 

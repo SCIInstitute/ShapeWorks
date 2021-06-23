@@ -14,19 +14,11 @@ ManifestDPIAware true
 ;--------------------------------
 
 ;--------------------------------
-; Initialization function to properly set the installation directory
-Function .onInit
-  ${If} ${RunningX64}
-    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
-    SetRegView 64
-  ${EndIf}
-FunctionEnd
-
-;--------------------------------
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-$%SW_VERSION%"
+!define PRODUCT "ShapeWorks"
+Name "$%SW_VERSION%"
 
 ; The file to write
 OutFile "$%SW_VERSION%.exe"
@@ -72,13 +64,13 @@ Section "ShapeWorks (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "conda_installs.bat"
-  File "install_python_module.sh"
+  File "install_shapeworks.bat"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
   File /r "Python"
   File /r "Documentation"
+  File /r "Installation"
 
   
   ; Write the installation path into the registry
@@ -103,7 +95,6 @@ Section "Start Menu Shortcuts"
 SectionEnd
 
 ;--------------------------------
-
 ; Uninstaller
 
 Section "Uninstall"
@@ -123,3 +114,23 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
 SectionEnd
+
+;--------------------------------
+;After Initialization Function
+Function .onInit
+  ${If} ${RunningX64}
+    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
+    SetRegView 64
+  ${EndIf}
+
+  IfFileExists "$INSTDIR/uninstall.exe" AlreadyExists DoesNotExist
+  AlreadyExists:
+    MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). If you proceed, it will be uninstalled.  Proceed?" /SD IDYES IDYES Proceed IDNO PleaseAbort
+      Proceed:
+        ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
+        goto Done
+      PleaseAbort:
+	      Abort
+  DoesNotExist:
+  Done:
+FunctionEnd

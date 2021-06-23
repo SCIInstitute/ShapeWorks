@@ -1,8 +1,12 @@
 import pyvista as pv
 import numpy as np
+import subprocess
 from shapeworks import Image, Mesh
 from .utils import num_subplots
 from .conversion import sw2vtkImage, sw2vtkMesh
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 # helper function that addes a vtk image to a pyvista plotter
 def add_volume_to_plotter(pvPlotter,      # pyvista plotter
@@ -360,3 +364,108 @@ def plot_mesh_contour(Image):
     p.add_mesh(contours, color="yellow", line_width=5)
     p.show_bounds(grid=True)
     p.show()
+
+
+# plot the PCA metrics similar to Studio visualization in Analyze pane
+def plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir):
+    N = len(cumulative_variance) 
+    X = np.array(list(range(N))) + 1
+    plt.bar(X, explained_variance)
+    plt.plot(X,cumulative_variance,linewidth=4.0,c='black')
+    fig = plt.gcf()
+    fig.set_size_inches(10, 10)
+    plt.title('Variance Plot')
+    plt.xlabel('Mode')
+    plt.ylabel('Explained Variance')
+    plt.xticks(X)
+    plt.grid()
+    plt.savefig(shape_models_dir+"variance_plot.png")
+    plt.show(block=False)
+    plt.close(fig)
+
+    print("\nPCA metrics plot saved in directory - " + shape_models_dir)
+    print()
+
+
+
+#violin plot for loadings
+def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
+
+    
+    
+    min_dims = np.where(cumulative_variance <=99)[0]
+    #if the first mode is the most dominant, min_dims will be empty
+    if(min_dims.size==0):
+        min_dims = 1
+    else:
+        min_dims = min_dims[-1]+1
+    print("\nNumber of modes covering 99% varaince - ", min_dims)
+    
+    loadings = loadings[:,:min_dims]
+    dims = []
+    for i in range(len(loadings)):
+        for j in range(np.shape(loadings)[1]):
+            dims.append(j+1)
+            
+
+    loadings = loadings.flatten()
+    data = {'PCA Mode':dims, "PCA Score":loadings}
+    df = pd.DataFrame(data) 
+    plt.figure(figsize=(6,4),dpi=300)  
+    ax = sns.violinplot(x='PCA Mode', y='PCA Score',\
+                        data=df, palette="cool_r", split=True, scale="area")
+    fig = plt.gcf()
+    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png")
+    plt.show(block=False)
+    plt.close(fig)
+
+    print("\nLoadings plot saved in directory - " + shape_models_dir)
+    print()
+
+
+
+
+#Function to generate the scree plot based on the explained variance calculated by the ComputeCompactness command
+def plot_scree(save_dir):
+    # Load scree plot data
+    Y = np.loadtxt(save_dir+'/scree.txt')
+    N = len(Y)
+    X = np.arange(1, N+1)
+
+    # Plot data
+    plt.plot(X, Y, linewidth=4.0)
+    fig = plt.gcf()
+    fig.set_size_inches(10, 10)
+    plt.title('Scree Plot')
+    plt.xlabel('Mode')
+    plt.ylabel('Scree')
+    plt.xticks(X)
+    plt.ylim(bottom=0, top=1.2)
+    plt.xlim(left=1, right=N)
+    plt.grid()
+    plt.savefig(save_dir+"scree_plot.png")
+    plt.show(block=False)
+    plt.pause(3)
+    plt.close(fig)
+
+    print("Figure saved in directory -" + save_dir)
+    print()
+
+
+
+#Call to ShapeWorksStudio to visualize the best and the worst reconstruction
+
+
+
+def visualize_reconstruction(save_dir):
+    print("*************************")
+    print("* Best reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', save_dir+'/0perc.xml'])
+
+    print("*************************")
+    print("* Worst reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', save_dir+'/100perc.xml'])
+
+    print()

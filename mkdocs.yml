@@ -96,6 +96,7 @@ theme:
    hljs_languages:
       - yaml
       - python
+      - c++
 
 markdown_extensions:
    - attr_list

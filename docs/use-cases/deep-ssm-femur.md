@@ -33,7 +33,7 @@ This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
 * Creates a DeepSSM model as described in [SSMs Directly from Images](../deep-learning/deep-ssm.md) and uses it to make predictions on unseen images.
 
 !!! danger "On CUDA"
-    This use case uses Pytorch and requires a GPU to run in a timely manner. When you run `conda_installs.sh`, it detects if you have a GPU and and installs the version of Pytorch compatible with your version of CUDA. 
+    This use case uses Pytorch and requires a GPU to run in a timely manner. When you source `install_shapeworks.sh`, it detects if you have a GPU and and installs the version of Pytorch compatible with your version of CUDA. 
     
     Note we only support the three most recent versions of CUDA. If your GPU requires an older CUDA version, you will need to update the Pytorch install in your shapeworks conda environment to the correct CUDA version. For more information on doing so, see [pytorch.org](https://pytorch.org/). 
     

@@ -73,6 +73,7 @@ public:
 
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
+  std::vector<vtkSmartPointer<vtkPolyData>> get_current_meshes_transformed();
 
   //! Get the currently selected feature map
   const std::string& get_feature_map() const;

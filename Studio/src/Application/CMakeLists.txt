@@ -112,8 +112,17 @@ FILE(GLOB STUDIO_ANALYSIS_HDRS Analysis/*.h)
 FILE(GLOB STUDIO_GROOM_SRCS Groom/*.cpp)
 FILE(GLOB STUDIO_GROOM_HDRS Groom/*.h)
 
-FILE(GLOB STUDIO_UTILS_SRCS Utils/*.cpp)
-FILE(GLOB STUDIO_UTILS_HDRS Utils/*.h)
+SET(STUDIO_UTILS_SRCS
+  Utils/StackWalker.cpp
+  Utils/WindowsCrashHandler.cpp
+  Utils/StudioUtils.cpp
+  )
+
+SET(STUDIO_UTILS_HDRS
+  Utils/StackWalker.h
+  Utils/WindowsCrashHandler.h
+  Utils/StudioUtils.h
+  )
 
 SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
