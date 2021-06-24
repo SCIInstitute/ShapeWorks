@@ -239,9 +239,9 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#windows_2">Windows</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#options_1">Options</a>
-    </li>
     <li class="toctree-l4"><a class="reference internal" href="#examples_1">Examples</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#options_1">Options</a>
     </li>
         </ul>
     </li>
@@ -478,7 +478,15 @@ cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Pos
 open ShapeWorks.xcodeproj
 </code></pre></div>
 <h3 id="windows_2">Windows</h3>
-<p>Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  </p>
+<p>Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019). Like with all the other platforms, after running <code>build_dependencies.sh</code> a suggested cmake command is printed. Create a build directory and use it.  </p>
+<h4 id="examples_1">Examples</h4>
+<p>An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks (note that by default a Visual Studio project will be created):<br />
+<div class="highlight"><pre><span></span><code>&gt; conda activate shapeworks
+&gt; ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+&gt; mkdir build
+&gt; cd build
+&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+</code></pre></div></p>
 <h4 id="options_1">Options</h4>
 <p>Required:<br />
 <div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;qt cmake path&gt;  (This is different from qmake path in the Install Qt5 step
@@ -495,14 +503,11 @@ Optional:
   -D CMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 </code></pre></div></p>
-<h4 id="examples_1">Examples</h4>
-<p>An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks:<br />
-<div class="highlight"><pre><span></span><code>&gt; conda activate shapeworks
-&gt; ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
-&gt; mkdir build
-&gt; cd build
-&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
-</code></pre></div></p>
+<p>After cmake the Visual Studio solution can be opened with <code>start ShapeWorks.sln</code> from the build directory.</p>
+<div class="admonition important">
+<p class="admonition-title">RelWithDebInfo only</p>
+<p>Currently it's only possible to build <strong>RelWithDebInfo</strong> on Windows.</p>
+</div>
               
             </div>
           </div>
