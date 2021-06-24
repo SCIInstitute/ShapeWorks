@@ -382,7 +382,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("applyTPLevelSetFilter",
        &Image::applyTPLevelSetFilter,
        "segments structures in image using topology preserving geodesic active contour level set filter",
-       "featureImage"_a, "scaling"_a=20.0)
+       "featureImage"_a, "scaling"_a=20.0, "iterations"_a=20)
 
   .def("applyIntensityFilter",
        &Image::applyIntensityFilter,
@@ -557,7 +557,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
-       "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
+       "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0, "iterations"_a=20)
 
   .def("compare",
        &Image::compare,
