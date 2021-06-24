@@ -34,7 +34,7 @@ Quick Links
 
 
 Using
-=====================
+====================
 [ShapeWorks Commands](http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands)  
 [ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces#shapeworksstudio)  
 [Python API](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces#shapeworks-in-python) _(New!)_  
