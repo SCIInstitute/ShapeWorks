@@ -667,6 +667,7 @@ void TPLevelSetFilter::buildParser()
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default: %default].");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations to run smoothening [default: %default].");
 
   Command::buildParser();
 }
@@ -690,8 +691,9 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
   {
     Image featureImage(featureImagePath);
     double scaling = static_cast<double>(options.get("scaling"));
+    unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-    sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+    sharedData.image.applyTPLevelSetFilter(featureImage, scaling,iterations);
     return true;
   }
 }
@@ -738,6 +740,7 @@ void TopologyPreservingFilter::buildParser()
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default: %default].");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha for sigmoid fitler [default: %default].");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta for sigmoid fitler [default: %default].");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations to run smoothening [default: %default].");
 
   Command::buildParser();
 }
@@ -753,8 +756,9 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  sharedData.image.topologyPreservingSmooth(scaling, alpha, beta);
+  sharedData.image.topologyPreservingSmooth(scaling, alpha, beta,iterations);
   return true;
 }
 
