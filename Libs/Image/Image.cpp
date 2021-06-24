@@ -696,7 +696,7 @@ Image& Image::applySigmoidFilter(double alpha, double beta)
   return *this;
 }
 
-Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
+Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling, unsigned iterations)
 {
   if (!featureImage.image) { throw std::invalid_argument("Invalid feature image"); }
 
@@ -707,7 +707,7 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   filter->SetCurvatureScaling(1.0);
   filter->SetAdvectionScaling(1.0);
   filter->SetMaximumRMSError(0.0);
-  filter->SetNumberOfIterations(20);
+  filter->SetNumberOfIterations(iterations);
   filter->SetInput(this->image);
   filter->SetFeatureImage(featureImage.image);
   filter->Update();
@@ -716,12 +716,12 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   return *this;
 }
 
-Image& Image::topologyPreservingSmooth(float scaling, float sigmoidAlpha, float sigmoidBeta)
+Image& Image::topologyPreservingSmooth(float scaling, float sigmoidAlpha, float sigmoidBeta, unsigned iterations)
 {
   Image featureImage(*this);
   featureImage.applyGradientFilter().applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
 
-  return applyTPLevelSetFilter(featureImage, scaling);
+  return applyTPLevelSetFilter(featureImage, scaling, iterations);
 }
 
 Image& Image::applyIntensityFilter(double minVal, double maxVal)

@@ -142,10 +142,10 @@ public:
   Image& applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
 
   /// segements structures in images using topology preserving geodesic active contour level set filter
-  Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
+  Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0,unsigned iterations=20);
 
   /// creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]
-  Image& topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
+  Image& topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0, unsigned iterations=20);
 
   /// applies intensity windowing image filter
   Image& applyIntensityFilter(double minVal, double maxVal);
