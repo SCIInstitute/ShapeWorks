@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(shapeworksTests, geodesicTest)
+{
+  run_use_case("geodesic.sh");
+}
+
 TEST(shapeworksTests, meshtoimageTest)
 {
   run_use_case("meshtoimage.sh");

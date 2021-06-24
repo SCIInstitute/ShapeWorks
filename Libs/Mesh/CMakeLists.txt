@@ -75,10 +75,6 @@ install(TARGETS Mesh
 #TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ProjectPointsOntoMesh ProjectPointsOntoMesh.cxx)
-#TARGET_LINK_LIBRARIES(ProjectPointsOntoMesh ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ProjectPointsOntoMesh RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
 INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)

@@ -113,8 +113,10 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
+  /// returns matrix with vertex data
   Eigen::MatrixXd vertexInfo();
 
+  /// returns matrix with face data
   Eigen::MatrixXi faceInfo();
 
   /// return (x,y,z) coordinates of vertex at given index

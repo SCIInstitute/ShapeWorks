@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(GenerateNormals::getCommand());
+  shapeworks.addCommand(ProjectPoint::getCommand());
+  shapeworks.addCommand(GeodesicDistance::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());

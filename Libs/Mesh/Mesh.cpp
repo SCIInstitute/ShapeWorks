@@ -2,7 +2,6 @@
 #include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
-#include "MeshWarper.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"

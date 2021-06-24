@@ -822,7 +822,7 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
   unsigned source = static_cast<unsigned>(options.get("source"));
   unsigned target = static_cast<unsigned>(options.get("target"));
 
-  sharedData.mesh->geodesicDistance(source, target);
+  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(source, target) << "\n";
   return sharedData.validMesh();
 }
 
