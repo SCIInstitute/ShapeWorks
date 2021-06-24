@@ -100,10 +100,6 @@ INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFilesFromMeshes RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx)
-#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
-
 # Added to backlog
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
