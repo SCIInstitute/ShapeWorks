@@ -2,6 +2,8 @@
 
 If you encounter problems, have questions, or need help, please contact `<shapeworks-dev-support@sci.utah.edu>`.
 
+!!! note "After you finish building..."
+    While user installations have everything you need in the PATH, developer builds like these need those additions. Please See [Adding Environment Variables for Development](../dev/paths.md) for instructions on the simple **devenv** script that takes care of everything.
 
 ## Minimum Requirements
 
@@ -184,7 +186,17 @@ open ShapeWorks.xcodeproj
 
 ### Windows
 
-Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  
+Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019). Like with all the other platforms, after running `build_dependencies.sh` a suggested cmake command is printed. Create a build directory and use it.  
+
+#### Examples
+An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks (note that by default a Visual Studio project will be created):  
+```
+> conda activate shapeworks
+> ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+> mkdir build
+> cd build
+> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+```
 
 #### Options
 Required:  
@@ -205,12 +217,8 @@ Optional:
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 ```
 
-#### Examples
-An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks:  
-```
-> conda activate shapeworks
-> ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
-> mkdir build
-> cd build
-> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
-```
+After cmake the Visual Studio solution can be opened with `start ShapeWorks.sln` from the build directory.
+
+!!! important "RelWithDebInfo only"
+    Currently it's only possible to build **RelWithDebInfo** on Windows.
+    

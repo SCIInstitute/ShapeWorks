@@ -2,8 +2,9 @@ import setuptools
 
 # Note: our package also needs the compiled portion of the library, which will
 # be in ShapeWorks/bin directory when installed, and environment setup functions
-# automatically add it. For development, just ensure PYTHONPATH begins with
-# `/path/to/code/ShapeWorks/Python/shapeworks` and it should all work.
+# automatically add it.
+#
+# For development, source ../devenv.sh, passing the root source and build dirs.
 
 setuptools.setup(
    name='shapeworks',

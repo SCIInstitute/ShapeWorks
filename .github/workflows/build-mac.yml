@@ -112,7 +112,7 @@ jobs:
 
     - name: make test
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
     - uses: actions/upload-artifact@v1
       with:
@@ -130,3 +130,4 @@ jobs:
         title: "Development Build for Mac"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg

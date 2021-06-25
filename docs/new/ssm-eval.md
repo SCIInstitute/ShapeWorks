@@ -36,6 +36,17 @@ shapeworks readparticlesystem --name *.particles -- generalization --nmodes 1
 shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
 ```
 
+## ShapeWorks Python tools
+```python
+# Read the particle files from a pre-trained shape model
+particle_data = sw.ParticleSystem(<list of local point files>)
+#evaluation tools
+shapeworks.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data, nModes=1, saveTo="scree.txt")
+shapeworks.ShapeEvaluation.ComputeGeneralization(particleSystem=particle_data, nModes=1, saveTo=save_dir)
+shapeworks.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=1, saveTo=save_dir)
+```
+See the `ellipsoid_evaluate` use case for detailed examples. 
+
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
