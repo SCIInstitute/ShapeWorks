@@ -196,7 +196,7 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
   smoother->SetInputData(this->mesh);
   // minimum of 2.  See docs of vtkWindowedSincPolyDataFilter for explanation
-  iterations = std::min<int>(iterations, 2);
+  iterations = std::max<int>(iterations, 2);
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
   smoother->Update();
