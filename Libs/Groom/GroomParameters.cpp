@@ -6,6 +6,10 @@ namespace shapeworks {
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
 const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
 
+const std::string GroomParameters::GROOM_ALIGNMENT_NONE_C("None");
+const std::string GroomParameters::GROOM_ALIGNMENT_CENTER_C("Center");
+const std::string GroomParameters::GROOM_ALIGNMENT_ICP_C("Iterative Closest Point");
+
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
   project_(project), domain_name_(domain_name)
@@ -239,5 +243,31 @@ bool GroomParameters::get_icp()
 void GroomParameters::set_icp(bool value)
 {
   this->params_.set("icp", value);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_alignment_method()
+{
+  if (!this->params_.key_exists("alignment")) {
+    // if alignment doesn't exist, perhaps the old keys "center" or "icp" do, if so use them
+    if (this->params_.key_exists("icp") && this->params_.get("icp", false)) {
+      return GROOM_ALIGNMENT_ICP_C;
+    }
+    if (this->params_.key_exists("center")) {
+      if (this->params_.get("center", false)) {
+        return GROOM_ALIGNMENT_CENTER_C;
+      }
+      else {
+        return GROOM_ALIGNMENT_NONE_C;
+      }
+    }
+  }
+  return this->params_.get("alignment", GROOM_ALIGNMENT_CENTER_C);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_alignment_method(std::string method)
+{
+  return this->params_.set("alignment", method);
 }
 };

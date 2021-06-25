@@ -14,6 +14,9 @@ public:
   std::string get_groom_output_prefix();
   void set_groom_output_prefix(std::string prefix);
 
+  std::string get_alignment_method();
+  void set_alignment_method(std::string method);
+
   bool get_center_tool();
   void set_center_tool(bool value);
 
@@ -70,6 +73,10 @@ public:
   // constants
   const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;
   const static std::string GROOM_SMOOTH_VTK_WINDOWED_SINC_C;
+
+  const static std::string GROOM_ALIGNMENT_NONE_C;
+  const static std::string GROOM_ALIGNMENT_CENTER_C;
+  const static std::string GROOM_ALIGNMENT_ICP_C;
 
 private:
 
