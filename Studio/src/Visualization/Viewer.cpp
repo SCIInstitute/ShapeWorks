@@ -17,15 +17,12 @@
 #include <vtkCellPicker.h>
 #include <vtkCell.h>
 #include <vtkFloatArray.h>
-#include <vtkColorTransferFunction.h>
 #include <vtkArrowSource.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
-#include <vtkColorSeries.h>
 
-#include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>

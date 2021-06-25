@@ -3,7 +3,7 @@
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
 
-#include <Application/Data/Shape.h>
+#include <Data/Shape.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -12,7 +12,6 @@ class vtkImageData;
 class vtkCamera;
 class vtkGlyph3D;
 class vtkSphereSource;
-class vtkColorTransferFunction;
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
