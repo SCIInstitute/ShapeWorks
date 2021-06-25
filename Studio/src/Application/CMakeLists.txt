@@ -130,7 +130,6 @@ SET(STUDIO_INTERFACE_MOC_HDRS
 
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/BarGraph.cpp
-  Visualization/DisplayObject.cpp
   Visualization/Lightbox.cpp
   Visualization/ShapeWorksStudioApp.cpp
   Visualization/ShapeWorksWorker.cpp
