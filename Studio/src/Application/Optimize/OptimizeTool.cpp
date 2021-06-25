@@ -108,6 +108,10 @@ void OptimizeTool::handle_warning(QString msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val, QString progress_message)
 {
+  if (!this->optimization_is_running_) {
+    return;
+  }
+
   emit progress(val);
   emit status(progress_message);
 
@@ -136,8 +140,8 @@ void OptimizeTool::handle_optimize_complete()
 void OptimizeTool::on_run_optimize_button_clicked()
 {
   if (this->optimization_is_running_) {
-    this->shutdown_threads();
     this->optimization_is_running_ = false;
+    this->shutdown_threads();
     this->enable_actions();
     emit progress(100);
     emit message("Optimize Aborted");
@@ -341,6 +345,10 @@ void OptimizeTool::activate()
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_load_progress(int count)
 {
+  if (!this->optimization_is_running_) {
+    return;
+  }
+
   double value = static_cast<double>(count) / this->session_->get_shapes().size() * 100.0f;
   if (value < 100) { // cannot emit 100 or the main interface will think the job is done
     emit progress(static_cast<int>(value));
