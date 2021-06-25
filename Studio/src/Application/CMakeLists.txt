@@ -77,6 +77,7 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/StudioParticles.cpp
   Data/SurfaceReconstructor.cpp
   Data/vtkPolyDataToImageData.cpp
+  Data/ShapeWorksWorker.cpp
   )
 
 FILE(GLOB STUDIO_DATA_MOC_HDRS
@@ -86,6 +87,7 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/Preferences.h
   Data/PreferencesWindow.h
   Data/Session.h
+  Data/ShapeWorksWorker.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -122,29 +124,27 @@ SET(STUDIO_UTILS_SRCS
 SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
   Interface/KeyboardShortcuts.cpp
+  Interface/ShapeWorksStudioApp.cpp
+  Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/SplashScreen.h
   Interface/KeyboardShortcuts.h
+  Interface/ShapeWorksStudioApp.h
+  Interface/WheelEventForwarder.h
   )
 
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/BarGraph.cpp
   Visualization/Lightbox.cpp
-  Visualization/ShapeWorksStudioApp.cpp
-  Visualization/ShapeWorksWorker.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
-  Visualization/WheelEventForwarder.cpp
 )
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/BarGraph.h
   Visualization/Lightbox.h
-  Visualization/ShapeWorksStudioApp.h
-  Visualization/ShapeWorksWorker.h
   Visualization/Visualizer.h
-  Visualization/WheelEventForwarder.h
 )
 
 SET(STUDIO_SRCS

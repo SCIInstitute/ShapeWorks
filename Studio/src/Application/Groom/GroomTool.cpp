@@ -7,8 +7,8 @@
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <Data/ShapeWorksWorker.h>
 #include <Groom/GroomTool.h>
-#include <Visualization/ShapeWorksWorker.h>
 
 #include <Libs/Groom/GroomParameters.h>
 

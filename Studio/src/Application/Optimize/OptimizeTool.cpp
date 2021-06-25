@@ -10,7 +10,7 @@
 #include <Libs/Optimize/OptimizeParameters.h>
 
 #include <Data/Preferences.h>
-#include <Visualization/ShapeWorksWorker.h>
+#include <Data/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
 

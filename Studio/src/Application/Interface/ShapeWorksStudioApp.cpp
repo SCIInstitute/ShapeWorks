@@ -28,12 +28,12 @@
 #include <Data/Shape.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioLog.h>
-#include <Visualization/ShapeWorksStudioApp.h>
-#include <Visualization/Lightbox.h>
-#include <Visualization/Visualizer.h>
-#include <Visualization/WheelEventForwarder.h>
+#include <Interface/ShapeWorksStudioApp.h>
+#include <Interface/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
 #include <Interface/KeyboardShortcuts.h>
+#include <Visualization/Lightbox.h>
+#include <Visualization/Visualizer.h>
 #include <Utils/StudioUtils.h>
 
 // ui
