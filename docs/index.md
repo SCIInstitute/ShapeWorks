@@ -47,6 +47,9 @@ Its optimized approach offers increased power for testing biological hypotheses 
 
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that consider variability in the entire cohort of images. 
 
+*ShapeWorks 6.1 tour - multi-domain support, mesh grooming, improved models for complex anatomies, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" autoplay muted loop controls style="width:100%"></p>
+
 *ShapeWorks 6.0 tour - mesh support and more in ShapeWorks Studio*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
 
