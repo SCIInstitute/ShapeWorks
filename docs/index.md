@@ -44,8 +44,16 @@ Its optimized approach offers increased power for testing biological hypotheses 
 
 ## ShapeWorks in Action!
 
-
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that consider variability in the entire cohort of images. 
+
+ShapeWorks uses a set of interacting particle systems, one for each shape, to produce optimal sets of surface correspondences in an ensemble. Particles interact with one another via mutually repelling forces to cover and, therefore, describe surface geometry optimally. Particles are positioned on surfaces automatically by optimizing the model's information content via an entropy optimization scheme. 
+
+In particular, ShapeWorks explicitly models the inherent trade-off between the model's statistical simplicity (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
+
+ShapeWorks has been effective in various applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md) and [ShapeWorks Success Stories](getting-started/sw-stories.md). 
+
+Now enjoy some tour videos for different recent software releases.
+
 
 *ShapeWorks 6.1 tour - multi-domain support, mesh grooming, improved models for complex anatomies, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" autoplay muted loop controls style="width:100%"></p>
@@ -60,12 +68,6 @@ The underlying scientific premise of ShapeWorks, particle-based shape modeling, 
 *Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorks Studio*   
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
 
-ShapeWorks uses a set of interacting particle systems, one for each shape, to produce optimal sets of surface correspondences in an ensemble. Particles interact with one another via mutually repelling forces to cover and, therefore, describe surface geometry optimally. Particles are positioned on surfaces automatically by optimizing the model's information content via an entropy optimization scheme. 
-
-In particular, ShapeWorks explicitly models the inherent trade-off between the model's statistical simplicity (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
-
-
-ShapeWorks has been effective in various applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md) and [ShapeWorks Success Stories](getting-started/sw-stories.md). 
 
 
 
