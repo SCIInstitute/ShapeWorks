@@ -41,6 +41,25 @@ Its optimized approach offers increased power for testing biological hypotheses 
 !!! note "Where to start? What are the latest features? How to customize existing workflows?"
     A monthly virtual get-together meeting for ShapeWorks users is organized to demonstrate new features, discuss the customization of the shape modeling workflow to users' own use cases, and get suggestions to improve the software and documentation. **If you would like to be added to the invitation list, please send an email to `shireen-at-sci-dot-utah-dot-edu`.**
 
+## ShapeWorks Workshops & Webinars
+
+### ShapeWorks @SB3C 2021
+
+*Part 1: Statistical Shape Modeling & ShapeWorks*  
+Speakers: Shireen Elhabian and Alan Morris
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartA.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*Part 2: ShapeWorks Success Stories in Orthopedics*   
+Speakers: Heath Henninger, Andrew Anderson, and Amy Lenz
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartB.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*Part 3: Next Generation of ShapeWorks*   
+Speakers: Shireen Elhabian, Andrew Anderson, Penny Atkins, and Riddhish Bhalodia
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartC.mp4" autoplay muted loop controls style="width:100%"></p>
+
 
 ## ShapeWorks in Action!
 
