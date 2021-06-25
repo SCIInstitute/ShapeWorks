@@ -43,7 +43,25 @@ Below are another examples of bad surfaces for shape modeling where the surface 
 
 ## What is Shape Modeling?
 
-Shape modeling is about learning population-specific parameterization. 
 
+Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by it s inner and outer radii.
+
+
+Here is a more complex example of parameterized shapes called *supershapes*, which be used to describe many complex shapes and curves that are found in nature. On the left, you can see sliders that control shape parameters describing a supershape. Every time we change any of these parameters, we get a different shape that belongs to the supershapes family. Hence, these parameters fully describe a shape in this family or population. This video was captured using [Andrew Marsh's](http://andrewmarsh.com/apps/releases/supershapes.html) app website for supershapes generation.
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/supershapes-gen.mp4" autoplay muted loop controls style="width:100%"></p>
+
+But, how about anatomies that one would want to study? Most real-world objects have a characteristic shape relative to other objects, and anatomy is no exception. Across a population, instances vary in shape, while retaining the “key features” of the shape, so shape varies statistically. So how can we quantitatively describe a subject’s anatomy within a population? and capture such statistical variations? 
+    
+Or in other words: 
+- How can we define these sliders or knobs for a given anatomical population? What does each knob represent?
+- How many knobs or shape parameters are significant to describe an anatomy of interest?
+- How can we rank these shape parameters based on their significance?
+
+*Answering the above questions for the anatomical population at hand is the crux of shape modeling.* 
+
+!!! note "Shape modeling is about learning population-specific parameterization"
+    Shape modeling is the process of discovering significant shape parameters directly from medical data that can fully describe an anatomy in the context of a population.
+    
 ![Shape Modeling](../img/getting-started/shape-modeling.png)
 
