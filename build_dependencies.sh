@@ -315,7 +315,13 @@ show_shapeworks_build()
     FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
   fi
 
-  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
+  _VXL_DIR=""
+  if [[ $OSTYPE == "msys" ]]; then
+      # since VXL built in INSTALL_DIR on Windows, need to tell CMake where to find it
+      _VXL_DIR="-DVXL_DIR=${VXL_DIR}"
+  fi
+
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${_VXL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
 }
 
 # determine if we can build using the specified or discovered version of Qt
