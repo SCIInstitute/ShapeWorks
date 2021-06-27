@@ -184,9 +184,11 @@ void Lightbox::set_render_window(vtkRenderWindow* renderWindow)
 
   this->render_window_->GetInteractor()->SetInteractorStyle(this->style_);
 
-  this->orientation_marker_widget_->SetInteractor(
-    this->renderer_->GetRenderWindow()->GetInteractor());
-  this->orientation_marker_widget_->InteractiveOff();
+  auto interactor = this->renderer_->GetRenderWindow()->GetInteractor();
+  this->orientation_marker_widget_->SetInteractor(interactor);
+  if (this->orientation_marker_widget_->GetEnabled()) {
+    this->orientation_marker_widget_->InteractiveOff();
+  }
 
   this->setup_renderers();
 }
