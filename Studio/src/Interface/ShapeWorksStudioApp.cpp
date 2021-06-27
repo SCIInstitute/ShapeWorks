@@ -57,6 +57,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
   this->progress_bar_->setVisible(false);
 
+  this->studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
+  vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
+
+  connect(this->studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error,
+          this, &ShapeWorksStudioApp::handle_error);
+
   // default hide
   this->ui_->feature_widget->hide();
   this->recent_file_actions_.append(this->ui_->action_recent1);

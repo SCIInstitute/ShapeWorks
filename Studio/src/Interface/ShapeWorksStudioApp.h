@@ -12,6 +12,7 @@
 #include <QElapsedTimer>
 
 #include <Data/PreferencesWindow.h>
+#include <Visualization/StudioVtkOutputWindow.h>
 
 #include <vnl_vector.h>
 
@@ -193,6 +194,7 @@ private:
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
   //all the preferences
   Preferences preferences_;

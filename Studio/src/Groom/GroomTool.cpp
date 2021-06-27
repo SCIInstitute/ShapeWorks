@@ -130,7 +130,7 @@ void GroomTool::on_restore_defaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::set_ui_from_params(GroomParameters params)
 {
-  ui_->
+  //ui_->
   //ui_->center_checkbox->setChecked(params.get_center_tool());
   //ui_->mesh_center->setChecked(params.get_center_tool());
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());

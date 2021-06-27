@@ -147,11 +147,13 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/StudioInteractorStyle.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
+  Visualization/StudioVtkOutputWindow.cpp
 )
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/BarGraph.h
   Visualization/Lightbox.h
   Visualization/Visualizer.h
+  Visualization/StudioVtkOutputWindow.h
 )
 
 SET(STUDIO_SRCS

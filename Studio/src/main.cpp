@@ -39,8 +39,6 @@ int main(int argc, char** argv)
     ::SetErrorMode( 0 );
 #endif
 
-    vtkObject::GlobalWarningDisplayOff();
-
     QApplication app(argc, argv);
 
     QSharedPointer<shapeworks::ShapeWorksStudioApp> studio_app =
