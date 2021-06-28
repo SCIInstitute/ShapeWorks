@@ -1,6 +1,6 @@
 # Release Notes
 
-## ShapeWorks 6.1 - 2021-06-25
+## ShapeWorks 6.1 - 2021-06-28
 
 ![](../img/about/release6.1.png)
 
