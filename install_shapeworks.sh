@@ -182,7 +182,7 @@ function install_conda() {
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
 
-  if [ -x "$(command -v git)" ]; then  # don't invoke if git is not installed
+  if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes
