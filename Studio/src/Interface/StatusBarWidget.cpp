@@ -26,12 +26,8 @@ StatusBarWidget::StatusBarWidget(QMainWindow* parent) : QWidget(parent)
 
   this->ui_->log_button->setIcon(this->normal_message_icon_);
   this->ui_->progress_bar->setVisible(false);
-}
 
-//---------------------------------------------------------------------------
-void StatusBarWidget::log_button_clicked()
-{
-  Q_EMIT log_button_clicked();
+  connect(this->ui_->log_button, &QToolButton::clicked, this, &StatusBarWidget::toggle_log_window);
 }
 
 //---------------------------------------------------------------------------
@@ -88,7 +84,6 @@ void StatusBarWidget::resizeEvent(QResizeEvent* event)
 //---------------------------------------------------------------------------
 void StatusBarWidget::update_layout()
 {
-  //this->ui_->progress_bar->setMinimumWidth(this->width() * 0.33);
   if (this->ui_->progress_bar->isVisible()) {
     this->ui_->message->setMaximumWidth(this->width() * 0.66);
   }

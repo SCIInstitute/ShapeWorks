@@ -13,6 +13,7 @@
 #include <QPointer>
 #include <QErrorMessage>
 
+#include <Interface/LogWindow.h>
 #include <Data/PreferencesWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 
@@ -119,6 +120,8 @@ public Q_SLOTS:
   void about();
   void keyboard_shortcuts();
 
+  void toggle_log_window();
+
 protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
@@ -186,6 +189,8 @@ private:
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
+  void set_message(MessageType message_type, QString message);
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
@@ -214,11 +219,8 @@ private:
   QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
 
-  QProgressBar* progress_bar_;
-  QPushButton* log_button_;
   QString current_message_;
   QLabel* message_;
-
 
   QPointer<StatusBarWidget> status_bar_;
 
@@ -233,6 +235,7 @@ private:
   qint64 last_render_ = -1;
 
   QErrorMessage error_message_dialog_;
+  LogWindow log_window_;
 
 };
 }

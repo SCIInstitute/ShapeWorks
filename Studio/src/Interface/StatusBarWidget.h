@@ -10,9 +10,16 @@ namespace shapeworks {
 enum class MessageType {
   normal,
   warning,
-  error
+  error,
+  debug
 };
 
+//! StatusBarWidget
+/*!
+ * This widget is used in place of the standard QStatusBar
+ * It supports a log window toggle, current message, with color, and progressbar
+ *
+ */
 class StatusBarWidget : public QWidget {
 Q_OBJECT
 
@@ -22,14 +29,10 @@ public:
   void set_message(MessageType message_type, QString message);
   void set_progress(int value);
 
-  void resizeEvent(QResizeEvent *event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
 Q_SIGNALS:
   void toggle_log_window();
-
-private Q_SLOTS:
-
-  void log_button_clicked();
 
 private:
 

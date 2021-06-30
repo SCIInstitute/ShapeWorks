@@ -56,12 +56,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->setAcceptDrops(true);
 
   this->status_bar_ = new StatusBarWidget(this);
-
-  //this->log_button_ = new QPushButton("Log",this);
-  //this->ui_->statusbar->addWidget(this->log_button_);
-  this->progress_bar_ = new QProgressBar(this);
-  //this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
-  this->progress_bar_->setVisible(false);
+  connect(this->status_bar_, &StatusBarWidget::toggle_log_window,
+          this, &ShapeWorksStudioApp::toggle_log_window);
 
   this->message_ = new QLabel(this);
   this->message_->setMaximumHeight(24);
@@ -747,8 +743,11 @@ void ShapeWorksStudioApp::handle_message(QString str)
 {
   if (str != this->current_message_) {
     STUDIO_LOG_MESSAGE(str);
+    this->set_message(MessageType::normal, str);
   }
-  this->status_bar_->set_message(MessageType::normal, str);
+  else {
+    this->status_bar_->set_message(MessageType::normal, str);
+  }
   this->current_message_ = str;
 }
 
@@ -763,7 +762,7 @@ void ShapeWorksStudioApp::handle_status(QString str)
 void ShapeWorksStudioApp::handle_error(QString str)
 {
   STUDIO_LOG_ERROR(str);
-  this->status_bar_->set_message(MessageType::error, str);
+  this->set_message(MessageType::error, str);
   this->current_message_ = str;
   this->error_message_dialog_.showMessage("Error:\n" + str, "error");
 }
@@ -772,7 +771,7 @@ void ShapeWorksStudioApp::handle_error(QString str)
 void ShapeWorksStudioApp::handle_warning(QString str)
 {
   STUDIO_LOG_MESSAGE(str);
-  this->status_bar_->set_message(MessageType::warning, str);
+  this->set_message(MessageType::warning, str);
   this->current_message_ = str;
   this->error_message_dialog_.showMessage("Warning:\n" + str, "warning");
 }
@@ -782,6 +781,13 @@ void ShapeWorksStudioApp::handle_progress(int value)
 {
   this->status_bar_->set_progress(value);
   this->handle_message(this->current_message_);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_message(MessageType message_type, QString message)
+{
+  this->status_bar_->set_message(message_type, message);
+  this->log_window_.add_message(message_type, message);
 }
 
 //---------------------------------------------------------------------------
@@ -2037,6 +2043,12 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   else {
     event->ignore();
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::toggle_log_window()
+{
+  this->log_window_.setVisible(!this->log_window_.isVisible());
 }
 
 
