@@ -545,9 +545,6 @@
                         <property name="toolTip">
                          <string>Remove shapes</string>
                         </property>
-                        <property name="statusTip">
-                         <string>Remove shapes</string>
-                        </property>
                         <property name="text">
                          <string/>
                         </property>
@@ -572,9 +569,6 @@
                          </size>
                         </property>
                         <property name="toolTip">
-                         <string>Import Shapes</string>
-                        </property>
-                        <property name="statusTip">
                          <string>Import Shapes</string>
                         </property>
                         <property name="text">

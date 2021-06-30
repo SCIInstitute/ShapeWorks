@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QMimeData>
 #include <QProcess>
+#include <QPushButton>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -26,11 +27,11 @@
 #include <Analysis/AnalysisTool.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <Data/StudioMesh.h>
 #include <Data/StudioLog.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
+#include <Interface/StatusBarWidget.h>
 #include <Interface/KeyboardShortcuts.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -53,9 +54,20 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
   this->setAcceptDrops(true);
+
+
+  this->status_bar_ = new StatusBarWidget (this);
+
+  //this->log_button_ = new QPushButton("Log",this);
+  //this->ui_->statusbar->addWidget(this->log_button_);
   this->progress_bar_ = new QProgressBar(this);
-  this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
+  //this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
   this->progress_bar_->setVisible(false);
+
+  this->message_ = new QLabel(this);
+  this->message_->setMaximumHeight(24);
+  this->message_->setWordWrap(false);
+  this->message_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
 
   this->studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
@@ -182,7 +194,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
 
-  this->ui_->statusbar->showMessage("ShapeWorks Studio");
+  //this->ui_->statusbar->showMessage("ShapeWorks Studio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
@@ -737,14 +749,14 @@ void ShapeWorksStudioApp::handle_message(QString str)
   if (str != this->current_message_) {
     STUDIO_LOG_MESSAGE(str);
   }
-  this->ui_->statusbar->showMessage(str);
+  this->status_bar_->set_message(MessageType::normal, str);
   this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_status(QString str)
 {
-  this->ui_->statusbar->showMessage(str);
+  this->status_bar_->set_message(MessageType::normal, str);
   this->current_message_ = str;
 }
 
@@ -752,38 +764,24 @@ void ShapeWorksStudioApp::handle_status(QString str)
 void ShapeWorksStudioApp::handle_error(QString str)
 {
   STUDIO_LOG_ERROR(str);
+  this->status_bar_->set_message(MessageType::error, str);
+  this->current_message_ = str;
   QMessageBox::critical(this, "Critical Error", str);
-  this->handle_message(str);
-  //this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(QString str)
 {
   STUDIO_LOG_MESSAGE(str);
+  this->status_bar_->set_message(MessageType::warning, str);
+  this->current_message_ = str;
   QMessageBox::warning(this, "Warning!", str);
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(int value)
 {
-  if (value < 0) {
-    this->progress_bar_->setVisible(true);
-    this->progress_bar_->setMinimum(0);
-    this->progress_bar_->setMaximum(0);
-    return;
-  }
-  this->progress_bar_->setMinimum(0);
-  this->progress_bar_->setMaximum(100);
-
-  if (value < 100) {
-    this->progress_bar_->setVisible(true);
-    this->progress_bar_->setValue(value);
-  }
-  else {
-    this->progress_bar_->setValue(100);
-    this->progress_bar_->setVisible(false);
-  }
+  this->status_bar_->set_progress(value);
   this->handle_message(this->current_message_);
 }
 

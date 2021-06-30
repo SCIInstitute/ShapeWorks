@@ -10,6 +10,7 @@
 #include <QCheckBox>
 #include <QProgressBar>
 #include <QElapsedTimer>
+#include <QPointer>
 
 #include <Data/PreferencesWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
@@ -31,6 +32,7 @@ class Session;
 class Visualizer;
 class SplashScreen;
 class WheelEventForwarder;
+class StatusBarWidget;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -212,7 +214,12 @@ private:
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
+  QPushButton* log_button_;
   QString current_message_;
+  QLabel* message_;
+
+
+  QPointer<StatusBarWidget> status_bar_;
 
   std::string current_display_mode_;
 
