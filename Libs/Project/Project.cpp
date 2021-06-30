@@ -361,8 +361,7 @@ void Project::store_subjects()
       this->set_list(local_columns, i, local_files);
       this->set_list(world_columns, i, world_files);
     }
-    else
-    {
+    else {
       this->particles_present_ = false;
     }
   }
@@ -598,13 +597,18 @@ std::vector<std::string> Project::get_feature_names()
     for (int d = 0; d < subject->get_domain_types().size(); d++) {
       if (subject->get_domain_types()[d] == DomainType::Mesh) {
         if (subject->get_segmentation_filenames().size() > d) {
-          auto poly_data = MeshUtils::threadSafeReadMesh(
-            subject->get_segmentation_filenames()[d]).getVTKMesh();
-          if (poly_data) {
-            vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-            for (vtkIdType i = 0; i < num_arrays; i++) {
-              this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+          auto filename = subject->get_segmentation_filenames()[d];
+          try {
+            auto poly_data = MeshUtils::threadSafeReadMesh(
+              filename).getVTKMesh();
+            if (poly_data) {
+              vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+              for (vtkIdType i = 0; i < num_arrays; i++) {
+                this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+              }
             }
+          } catch (std::exception& e) {
+            std::cerr << std::string("Error reading: ") + filename;
           }
         }
       }
@@ -766,7 +770,7 @@ int Project::get_or_create_worksheet(std::string name)
 //---------------------------------------------------------------------------
 std::string Project::get_new_file_column(std::string name, int idx)
 {
-  return name + std::to_string(idx+1);
+  return name + std::to_string(idx + 1);
 
   if (idx == 0) {
     return name + "file";
