@@ -59,11 +59,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->status_bar_, &StatusBarWidget::toggle_log_window,
           this, &ShapeWorksStudioApp::toggle_log_window);
 
-  this->message_ = new QLabel(this);
-  this->message_->setMaximumHeight(24);
-  this->message_->setWordWrap(false);
-  this->message_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
-
   this->studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
 
@@ -189,7 +184,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
 
-  //this->ui_->statusbar->showMessage("ShapeWorks Studio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
@@ -283,6 +277,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
+
+  this->handle_message("ShapeWorks Studio Initialized");
 }
 
 //---------------------------------------------------------------------------

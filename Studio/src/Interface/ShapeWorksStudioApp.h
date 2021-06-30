@@ -208,34 +208,29 @@ private:
   Preferences preferences_;
 
   QSharedPointer<Session> session_;
-
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
-  // programatic UI elements
+  // programmatic UI elements
   QSlider* glyph_size_slider_;
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
+  LogWindow log_window_;
+  QPointer<StatusBarWidget> status_bar_;
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
+  QErrorMessage error_message_dialog_;
 
   QString current_message_;
-  QLabel* message_;
-
-  QPointer<StatusBarWidget> status_bar_;
 
   std::string current_display_mode_;
-
-  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
 
   bool block_update_{false};
   bool is_loading_{false};
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
-
-  QErrorMessage error_message_dialog_;
-  LogWindow log_window_;
 
 };
 }
