@@ -45,7 +45,7 @@ You have downloaded a binary distribution of ShapeWorks.
 `cd $HOME/ShapeWorks-Examples/Python`
 
 4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.
-`python RunUseCase.py --use_case ellipsoid_fd`
+`python RunUseCase.py ellipsoid_fd`
 
 
 ### ShapeWorks also includes interactive Jupyter Python notebook examples.
