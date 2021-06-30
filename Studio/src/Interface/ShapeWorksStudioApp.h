@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <QElapsedTimer>
 #include <QPointer>
+#include <QErrorMessage>
 
 #include <Data/PreferencesWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
@@ -230,6 +231,8 @@ private:
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
+
+  QErrorMessage error_message_dialog_;
 
 };
 }

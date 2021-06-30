@@ -55,8 +55,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->setupUi(this);
   this->setAcceptDrops(true);
 
-
-  this->status_bar_ = new StatusBarWidget (this);
+  this->status_bar_ = new StatusBarWidget(this);
 
   //this->log_button_ = new QPushButton("Log",this);
   //this->ui_->statusbar->addWidget(this->log_button_);
@@ -766,7 +765,7 @@ void ShapeWorksStudioApp::handle_error(QString str)
   STUDIO_LOG_ERROR(str);
   this->status_bar_->set_message(MessageType::error, str);
   this->current_message_ = str;
-  QMessageBox::critical(this, "Critical Error", str);
+  this->error_message_dialog_.showMessage("Error:\n" + str, "error");
 }
 
 //---------------------------------------------------------------------------
@@ -775,7 +774,7 @@ void ShapeWorksStudioApp::handle_warning(QString str)
   STUDIO_LOG_MESSAGE(str);
   this->status_bar_->set_message(MessageType::warning, str);
   this->current_message_ = str;
-  QMessageBox::warning(this, "Warning!", str);
+  this->error_message_dialog_.showMessage("Warning:\n" + str, "warning");
 }
 
 //---------------------------------------------------------------------------
