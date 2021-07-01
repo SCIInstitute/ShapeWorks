@@ -68,7 +68,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: "C:\\deps"
-        key: ${{ runner.os }}d-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash -l {0}
