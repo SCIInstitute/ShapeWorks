@@ -1,5 +1,4 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set (CMAKE_AUTOMOC ON)
 
 # Find QT5
 find_package(OpenGL REQUIRED)
@@ -7,9 +6,6 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
-
-### Xlnt
-#find_package (XLNT REQUIRED)
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -83,34 +79,39 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/vtkPolyDataToImageData.cpp
   )
 
-FILE(GLOB STUDIO_DATA_HDRS
-  Data/CustomSurfaceReconstructionFilter.h
-  Data/ItkToVtk.h
-  Data/LegacyMeshGenerator.h
-  Data/MeshCache.h
-  Data/MeshGenerator.h
-  Data/MeshGroup.h
+FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/MeshManager.h
-  Data/MeshSettings.h
   Data/QMeshWarper.h
-  Data/MeshWorkQueue.h
   Data/MeshWorker.h
   Data/Preferences.h
   Data/PreferencesWindow.h
   Data/Session.h
-  Data/Shape.h
-  Data/StudioLog.h
-  Data/StudioMesh.h
-  Data/StudioParticles.h
-  Data/SurfaceReconstructor.h
-  Data/vtkPolyDataToImageData.h
   )
 
-FILE(GLOB STUDIO_ANALYSIS_SRCS Analysis/*.cpp)
-FILE(GLOB STUDIO_ANALYSIS_HDRS Analysis/*.h)
+SET(STUDIO_GROOM_SRCS
+  Groom/GroomTool.cpp
+  Groom/QGroom.cpp
+  )
+SET(STUDIO_GROOM_MOC_HDRS
+  Groom/GroomTool.h
+  Groom/QGroom.h
+  )
 
-FILE(GLOB STUDIO_GROOM_SRCS Groom/*.cpp)
-FILE(GLOB STUDIO_GROOM_HDRS Groom/*.h)
+SET(STUDIO_OPTIMIZE_SRCS
+  Optimize/OptimizeTool.cpp
+  Optimize/QOptimize.cpp
+  )
+SET(STUDIO_OPTIMIZE_MOC_HDRS
+  Optimize/OptimizeTool.h
+  Optimize/QOptimize.h
+  )
+
+SET(STUDIO_ANALYSIS_SRCS
+  Analysis/AnalysisTool.cpp
+  )
+SET(STUDIO_ANALYSIS_MOC_HDRS
+  Analysis/AnalysisTool.h
+  )
 
 SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
@@ -118,26 +119,33 @@ SET(STUDIO_UTILS_SRCS
   Utils/StudioUtils.cpp
   )
 
-SET(STUDIO_UTILS_HDRS
-  Utils/StackWalker.h
-  Utils/WindowsCrashHandler.h
-  Utils/StudioUtils.h
-  )
-
 SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
   Interface/KeyboardShortcuts.cpp
   )
-SET(STUDIO_INTERFACE_HDRS
+SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/SplashScreen.h
   Interface/KeyboardShortcuts.h
   )
 
-FILE(GLOB STUDIO_OPTIMIZE_SRCS Optimize/*.cpp)
-FILE(GLOB STUDIO_OPTIMIZE_HDRS Optimize/*.h)
-
-FILE(GLOB STUDIO_VISUALIZATION_SRCS Visualization/*.cpp)
-FILE(GLOB STUDIO_VISUALIZATION_HDRS Visualization/*.h)
+SET(STUDIO_VISUALIZATION_SRCS
+  Visualization/BarGraph.cpp
+  Visualization/Lightbox.cpp
+  Visualization/ShapeWorksStudioApp.cpp
+  Visualization/ShapeWorksWorker.cpp
+  Visualization/StudioInteractorStyle.cpp
+  Visualization/Viewer.cpp
+  Visualization/Visualizer.cpp
+  Visualization/WheelEventForwarder.cpp
+)
+SET(STUDIO_VISUALIZATION_MOC_HDRS
+  Visualization/BarGraph.h
+  Visualization/Lightbox.h
+  Visualization/ShapeWorksStudioApp.h
+  Visualization/ShapeWorksWorker.h
+  Visualization/Visualizer.h
+  Visualization/WheelEventForwarder.h
+)
 
 SET(STUDIO_SRCS
   ${STUDIO_ANALYSIS_SRCS}
@@ -150,20 +158,17 @@ SET(STUDIO_SRCS
 )
 
 SET(STUDIO_MOC_HDRS
-  ${STUDIO_ANALYSIS_HDRS}
-  ${STUDIO_DATA_HDRS}
-  ${STUDIO_GROOM_HDRS}
-  ${STUDIO_INTERFACE_HDRS}
-  ${STUDIO_OPTIMIZE_HDRS}
-  ${STUDIO_UTILS_HDRS}
-  ${STUDIO_VISUALIZATION_HDRS}
+  ${STUDIO_ANALYSIS_MOC_HDRS}
+  ${STUDIO_DATA_MOC_HDRS}
+  ${STUDIO_GROOM_MOC_HDRS}
+  ${STUDIO_INTERFACE_MOC_HDRS}
+  ${STUDIO_OPTIMIZE_MOC_HDRS}
+  ${STUDIO_VISUALIZATION_MOC_HDRS}
 )
 
 qt5_wrap_cpp( STUDIO_MOC_SRCS ${STUDIO_MOC_HDRS} )
 
 
-#FILE(GLOB STUDIO_SRCS main.cpp */*.cc */*.cpp */*.hxx)
-#FILE(GLOB STUDIO_HDRS */*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 FILE(GLOB WINDOW_ICNS Resources/Images/shapes-icon.png)
 
@@ -206,7 +211,6 @@ ENDIF()
 ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
   main.cpp
   ${STUDIO_SRCS}
-  ${STUDIO_MOC_HDRS}
   ${STUDIO_MOC_SRCS}
   ${STUDIO_UI}
   ${STUDIO_ICNS}
