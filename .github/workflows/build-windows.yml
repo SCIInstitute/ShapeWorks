@@ -5,13 +5,14 @@ on:
     branches:
       - master
       - release_v*
+      - try_release
     tags:
     - '*'
   pull_request:
     
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: RelWithDebInfo
+  BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
   
 jobs:
@@ -97,7 +98,7 @@ jobs:
 
     - name: Copy Libraries
       working-directory: ${{runner.workspace}}/build
-      run: xcopy /f C:\deps\bin\*.dll ${{runner.workspace}}\build\bin\RelWithDebInfo
+      run: xcopy /f C:\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
 
     - name: Build Binary Package
       shell: bash -l {0}
@@ -110,7 +111,7 @@ jobs:
       shell: bash -l {0}
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/RelWithDebInfo && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
+      run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
       
     - uses: actions/upload-artifact@v1
       with:
