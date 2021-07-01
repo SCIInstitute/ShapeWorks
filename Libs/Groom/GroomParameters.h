@@ -6,6 +6,17 @@ namespace shapeworks {
 
 class GroomParameters {
 
+  enum class MeshSmoothingOption {
+    laplacian,
+    sinc
+  };
+
+  enum class AlignmentOption {
+    none,
+    center,
+    icp
+  };
+
 public:
 
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
@@ -14,11 +25,11 @@ public:
   std::string get_groom_output_prefix();
   void set_groom_output_prefix(std::string prefix);
 
+  bool get_alignment_enabled();
+  void set_alignment_enabled(bool value);
+
   std::string get_alignment_method();
   void set_alignment_method(std::string method);
-
-  bool get_center_tool();
-  void set_center_tool(bool value);
 
   bool get_isolate_tool();
   void set_isolate_tool(bool value);
@@ -47,9 +58,6 @@ public:
   bool get_fast_marching();
   void set_fast_marching(bool value);
 
-  bool get_icp();
-  void set_icp(bool value);
-
   bool get_mesh_smooth();
   void set_mesh_smooth(bool value);
 
@@ -68,13 +76,15 @@ public:
   double get_mesh_vtk_windowed_sinc_passband();
   void set_mesh_vtk_windowed_sinc_passband(double passband);
 
+  bool get_use_icp();
+  bool get_use_center();
+
   void restore_defaults();
 
   // constants
   const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;
   const static std::string GROOM_SMOOTH_VTK_WINDOWED_SINC_C;
 
-  const static std::string GROOM_ALIGNMENT_NONE_C;
   const static std::string GROOM_ALIGNMENT_CENTER_C;
   const static std::string GROOM_ALIGNMENT_ICP_C;
 

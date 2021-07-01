@@ -23,7 +23,6 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->setupUi(this);
   qRegisterMetaType<std::string>();
 
-
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_mesh_checkbox, &QCheckBox::stateChanged,
@@ -130,9 +129,13 @@ void GroomTool::on_restore_defaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::set_ui_from_params(GroomParameters params)
 {
-  //ui_->
-  //ui_->center_checkbox->setChecked(params.get_center_tool());
-  //ui_->mesh_center->setChecked(params.get_center_tool());
+  ui_->alignment_mesh_checkbox->setChecked(params.get_alignment_enabled());
+  ui_->alignment_image_checkbox->setChecked(params.get_alignment_enabled());
+
+  auto alignment = params.get_alignment_method();
+  ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
+  ui_->alignment_mesh_box->setCurrentText(QString::fromStdString(alignment));
+
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
   ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
@@ -147,7 +150,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->mesh_smooth_method->setCurrentText(
     QString::fromStdString(params.get_mesh_smoothing_method()));
   ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
-  //ui_->mesh_icp->setChecked(params.get_icp());
 
   ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
   ui_->laplacian_relaxation->setText(QString::number(params.get_mesh_vtk_laplacian_relaxation()));
@@ -205,10 +207,11 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_params()
 {
-
   auto params = GroomParameters(session_->get_project(), current_domain_);
 
-  //params.set_center_tool(ui_->center_checkbox->isChecked());
+  params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
+  params.set_alignment_method(ui_->alignment_box->currentText().toStdString());
+
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());
   params.set_padding_amount(ui_->padding_amount->value());
@@ -226,7 +229,6 @@ void GroomTool::store_params()
   params.set_mesh_vtk_laplacian_relaxation(ui_->laplacian_relaxation->text().toDouble());
   params.set_mesh_vtk_windowed_sinc_iterations(ui_->sinc_iterations->text().toInt());
   params.set_mesh_vtk_windowed_sinc_passband(ui_->sinc_passband->text().toDouble());
-  //params.set_icp(ui_->mesh_icp->isChecked());
   params.save_to_project();
 }
 
@@ -361,6 +363,8 @@ void GroomTool::alignment_checkbox_changed(int state)
 {
   ui_->alignment_image_checkbox->setChecked(state);
   ui_->alignment_mesh_checkbox->setChecked(state);
+  ui_->alignment_box->setEnabled(state);
+  ui_->alignment_mesh_box->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
