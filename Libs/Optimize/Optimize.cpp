@@ -35,6 +35,8 @@
 // pybind
 #include <pybind11/embed.h>
 
+#include <tbb/global_control.h>
+
 namespace py = pybind11;
 
 namespace shapeworks {
@@ -66,6 +68,15 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
+  // control number of threads
+  int num_threads = tbb::task_scheduler_init::default_num_threads();
+  const char* num_threads_env = getenv("TBB_NUM_THREADS");
+  if (num_threads_env) {
+     num_threads = std::max(1, atoi(num_threads_env));
+  }
+  std::cerr << "ShapeWorks: TBB using " << num_threads << " threads\n";
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
+
   if (this->m_python_filename != "") {
     
 #ifdef _WIN32
