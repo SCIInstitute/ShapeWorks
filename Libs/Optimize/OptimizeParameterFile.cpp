@@ -436,7 +436,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
-      optimize->AddImage(image);
+      optimize->AddImage(image, imageFiles[index]);
     }
     else {
       optimize->AddImage(nullptr);

@@ -223,6 +223,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
   optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
+  optimize->SetNarrowBand(this->get_narrow_band());
   optimize->SetOutputDir(this->get_output_prefix());
 
   std::vector<bool> use_normals;
@@ -444,5 +445,17 @@ void OptimizeParameters::set_geodesic_cache_multiplier(int value)
 {
   this->params_.set("geodesic_cache_multiplier", value);
 
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_narrow_band()
+{
+  return this->params_.get("narrow_band", 4.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_narrow_band(double value)
+{
+  this->params_.set("narrow_band", value);
 }
 

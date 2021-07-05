@@ -53,6 +53,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
   this->ui_->multiscale_particles->setToolTip(
     "Start multiscale optimization after this many particles");
+  this->ui_->narrow_band->setToolTip("Narrow band around distance transforms.  "
+                                     "This value should only be changed if an error occurs "
+                                     "during optimization suggesting that it should be increased.  "
+                                     "It has no effect on the optimization");
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -70,6 +74,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
   ui_->normals_strength->setValidator(double_validator);
   ui_->procrustes_interval->setValidator(zero_and_up);
   ui_->multiscale_particles->setValidator(above_zero);
+  ui_->narrow_band->setValidator(above_zero);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -81,6 +86,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
   line_edits_.push_back(ui_->normals_strength);
   line_edits_.push_back(ui_->procrustes_interval);
   line_edits_.push_back(ui_->multiscale_particles);
+  line_edits_.push_back(ui_->narrow_band);
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged,
@@ -248,6 +254,8 @@ void OptimizeTool::load_params()
   this->ui_->multiscale->setChecked(params.get_use_multiscale());
   this->ui_->multiscale_particles->setText(QString::number(params.get_multiscale_particles()));
 
+  this->ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
+
   this->update_ui_elements();
 
 }
@@ -292,6 +300,8 @@ void OptimizeTool::store_params()
   // always use preference value
   params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
   params.set_optimize_output_prefix(this->preferences_.get_optimize_file_template().toStdString());
+
+  params.set_narrow_band(this->ui_->narrow_band->text().toDouble());
 
   params.save_to_project();
 }
@@ -436,8 +446,8 @@ void OptimizeTool::setup_domain_boxes()
   QWidget::setTabOrder(this->ui_->procrustes_scaling, this->ui_->procrustes_interval);
   QWidget::setTabOrder(this->ui_->procrustes_interval, this->ui_->multiscale);
   QWidget::setTabOrder(this->ui_->multiscale, this->ui_->multiscale_particles);
-  QWidget::setTabOrder(this->ui_->multiscale_particles, this->ui_->run_optimize_button);
+  QWidget::setTabOrder(this->ui_->multiscale_particles, this->ui_->narrow_band);
+  QWidget::setTabOrder(this->ui_->narrow_band, this->ui_->run_optimize_button);
   QWidget::setTabOrder(this->ui_->run_optimize_button, this->ui_->restoreDefaults);
-
 }
 
