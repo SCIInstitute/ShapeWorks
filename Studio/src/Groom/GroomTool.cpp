@@ -53,7 +53,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->laplacian_iterations->setToolTip("Number of iterations");
   ui_->laplacian_relaxation->setToolTip("Laplacian relaxation factor");
   ui_->sinc_passband->setToolTip("Windowed sinc pass band");
-  ui_->sinc_iterations->setToolTip("Windowed sinc iterations");
+  ui_->sinc_iterations->setToolTip("Windowed sinc iterations.  Minimum number of iterations is 2");
 
   connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &GroomTool::domain_changed);
