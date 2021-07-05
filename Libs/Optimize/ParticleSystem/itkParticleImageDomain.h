@@ -159,7 +159,7 @@ public:
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
+      itkExceptionMacro("Domain " << this->m_DomainID << ": " << this->m_DomainName << " : Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
     }
   }
 

@@ -125,7 +125,7 @@ public:
   void SetMeshFiles(const std::vector<std::string>& s)
   { m_MeshFiles = s; }
 
-  void AddImage(ImageType::Pointer image, double narrow_band);
+  void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
   void ApplyConstraintsToZeroCrossing(){
       std::cout << "ApplyConstraintsToZeroCrossing " << m_DomainList.size() << std::endl;
