@@ -1234,7 +1234,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
   this->handle_message("Loading Project: " + filename);
-  this->handle_progress(-1);
+  this->handle_progress(-1); // busy
+  QApplication::processEvents();
+
   this->is_loading_ = true;
 
   try {
@@ -1267,7 +1269,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
 
-  this->preferences_.add_recent_file(filename);
+  this->preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath());
   this->update_recent_files();
 
   this->update_tool_mode();
@@ -1321,8 +1323,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->update_view_mode();
   }
 
-  this->handle_message("Project loaded");
   this->handle_progress(100);
+  this->handle_message("Project loaded: " + filename);
 
 }
 
