@@ -211,6 +211,7 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
+  optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
@@ -266,7 +267,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   }
   optimize->SetProcrustesInterval(procrustes_interval);
   optimize->SetProcrustesScaling(this->get_use_procrustes_scaling());
-  optimize->SetVerbosity(0);
 
   int multiscale_particles = 0;
   if (this->get_use_multiscale()) {
@@ -457,5 +457,17 @@ double OptimizeParameters::get_narrow_band()
 void OptimizeParameters::set_narrow_band(double value)
 {
   this->params_.set("narrow_band", value);
+}
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_verbosity()
+{
+  return this->params_.get("verbosity", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_verbosity(int value)
+{
+  this->params_.set("verbosity", value);
 }
 

@@ -69,6 +69,9 @@ public:
   double get_narrow_band();
   void set_narrow_band(double value);
 
+  int get_verbosity();
+  void set_verbosity(int value);
+
   void set_abort_load(bool value);
 
   void set_load_callback(const std::function<void(int)>& f);
