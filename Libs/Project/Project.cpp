@@ -361,7 +361,8 @@ void Project::store_subjects()
       this->set_list(local_columns, i, local_files);
       this->set_list(world_columns, i, world_files);
     }
-    else {
+    else
+    {
       this->particles_present_ = false;
     }
   }
@@ -431,7 +432,7 @@ std::vector<std::string> Project::get_string_column(const std::string& name) con
 
   auto rows = ws.rows(false);
 
-  for (int i = 1; i < rows.length(); i++) {
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string value = rows[i][index - 1].to_string();
     list.push_back(value);
   }
@@ -476,14 +477,14 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   int value_column = 1; // single domain
   if (domain_name != "") {
-    for (int i = 1; i < ws.highest_column(); i++) {
+    for (int i = ws.lowest_row(); i < ws.highest_column(); i++) {
       if (rows[0][i].to_string() == "value_" + domain_name) {
         value_column = i;
       }
     }
   }
 
-  for (int i = 1; i < rows.length(); i++) {
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string key = rows[i][0].to_string();
     std::string value = rows[i][value_column].to_string();
     map[key] = value;
@@ -771,13 +772,6 @@ int Project::get_or_create_worksheet(std::string name)
 std::string Project::get_new_file_column(std::string name, int idx)
 {
   return name + std::to_string(idx + 1);
-
-  if (idx == 0) {
-    return name + "file";
-  }
-  else {
-    return name + "file_" + std::to_string(idx);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -790,7 +784,6 @@ std::string Project::get_column_identifier(std::string name)
   }
   return name;
 }
-
 
 
 
