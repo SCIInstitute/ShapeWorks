@@ -44,7 +44,7 @@ background: rgb(255, 255, 127)
    <item>
     <widget class="QStackedWidget" name="stacked_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="image_page">
       <layout class="QGridLayout" name="gridLayout">
@@ -557,7 +557,7 @@ background: rgb(255, 255, 127)
              <item row="1" column="0" colspan="2">
               <widget class="QStackedWidget" name="mesh_smooth_stack">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="page">
                 <layout class="QGridLayout" name="gridLayout_4">
@@ -809,6 +809,21 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>domain_box</tabstop>
+  <tabstop>alignment_image_checkbox</tabstop>
+  <tabstop>alignment_box</tabstop>
+  <tabstop>isolate_checkbox</tabstop>
+  <tabstop>fill_holes_checkbox</tabstop>
+  <tabstop>autopad_checkbox</tabstop>
+  <tabstop>padding_amount</tabstop>
+  <tabstop>antialias_checkbox</tabstop>
+  <tabstop>antialias_iterations</tabstop>
+  <tabstop>blur_checkbox</tabstop>
+  <tabstop>blur_sigma</tabstop>
+  <tabstop>fastmarching_checkbox</tabstop>
+  <tabstop>alignment_mesh_checkbox</tabstop>
+  <tabstop>alignment_mesh_box</tabstop>
+  <tabstop>mesh_fill_holes</tabstop>
+  <tabstop>mesh_smooth</tabstop>
   <tabstop>mesh_smooth_method</tabstop>
   <tabstop>laplacian_iterations</tabstop>
   <tabstop>laplacian_relaxation</tabstop>
