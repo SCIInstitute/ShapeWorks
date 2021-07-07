@@ -88,7 +88,8 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  double projectPoint(Point3 point);
+  /// returns closest point on mesh given a point
+  Point3 closestPoint(const Point3 point);
 
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
@@ -113,14 +114,17 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// returns matrix with vertex data
+  /// matrix with number of points with (x,y,z) coordinates of each point
   Eigen::MatrixXd vertexInfo();
 
-  /// returns matrix with face data
+  /// matrix with number of faces with (x,y,z) coordinates of each face
   Eigen::MatrixXi faceInfo();
 
-  /// return (x,y,z) coordinates of vertex at given index
-  Point3 getPoint(int p) const;
+  /// (x,y,z) coordinates of vertex at given index
+  Point3 getPoint(vtkIdType id) const;
+
+  /// (x,y,z) coordinates of face at given index
+  Point3 getFace(vtkIdType id) const;
 
   // fields of mesh points //
 
@@ -185,11 +189,6 @@ public:
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
-
-// private:
-  // todo: these two function should be private, but unable to test them b/c can't find gtest.h
-  // https://github.com/SCIInstitute/ShapeWorks/issues/1042
-  static double projectPoint(const Mesh &target, Point point);
 
 private:
   friend struct SharedCommandData;

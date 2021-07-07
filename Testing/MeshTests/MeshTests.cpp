@@ -398,6 +398,34 @@ TEST(MeshTests, distanceTest2)
   ASSERT_TRUE(femur2 == rev);
 }
 
+TEST(MeshTests, closestpointTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ellipsoid.generateNormals();
+  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto n = normals->GetTuple3(42);
+  auto v = makeVector({n[0], n[1], n[2]});
+  auto p = ellipsoid.getPoint(42);
+  auto pNew = p + v;
+  auto closeToP = ellipsoid.closestPoint(pNew);
+
+  ASSERT_TRUE(epsEqualN(p, closeToP));
+}
+
+TEST(MeshTests, closestpointTest2)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/sphere_highres.ply");
+  ellipsoid.generateNormals();
+  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto n = normals->GetTuple3(42);
+  auto v = makeVector({n[0], n[1], n[2]});
+  auto p = ellipsoid.getPoint(42);
+  auto pNew = p - v * 1.1;
+  auto closeToP = ellipsoid.closestPoint(pNew);
+
+  ASSERT_TRUE(epsEqualN(p, closeToP));
+}
+
 TEST(MeshTests, fieldTest1)
 {
   Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");

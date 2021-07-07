@@ -872,7 +872,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
-
   .def("invertNormals",
        &Mesh::invertNormals,
        "handle flipping normals")
@@ -970,10 +969,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
-  .def("projectPoint",
+  .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
-         return mesh.projectPoint(Point({p[0], p[1], p[2]}));
+         return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
        },
+       "returns closest point to given point on mesh",
        "point"_a)
 
   .def("geodesicDistance",
@@ -1013,12 +1013,27 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::numFaces,
        "number of faces")
 
+  .def("vertexInfo",
+       &Mesh::vertexInfo,
+       "matrix with number of points with (x,y,z) coordinates of each point")
+
+  .def("faceInfo",
+       &Mesh::faceInfo,
+       "matrix with number of faces with (x,y,z) coordinates of each face")
+
   .def("getPoint",
-       [](Mesh &mesh, int i) -> decltype(auto) {
-         return py::array(3, mesh.getPoint(i).GetDataPointer());
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getPoint(id).GetDataPointer());
        },
-       "return (x,y,z) coordinates of vertex at given index",
-       "p"_a)
+       "(x,y,z) coordinates of vertex at given index",
+       "id"_a)
+
+  .def("getFace",
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getFace(id).GetDataPointer());
+       },
+       "(x,y,z) coordinates of face at given index",
+       "id"_a)
 
   .def("getFieldNames",
        &Mesh::getFieldNames,

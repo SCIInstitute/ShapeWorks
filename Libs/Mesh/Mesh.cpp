@@ -349,12 +349,12 @@ PhysicalRegion Mesh::boundingBox() const
 
 Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
 {
-	FEVTKimport import;
+  FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);
 
-	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+  if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
 
-	FEFixMesh fix;
+  FEFixMesh fix;
   FEMesh* meshFix;
 
   meshFix = fix.FixElementWinding(meshFE);
@@ -383,7 +383,7 @@ Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iteratio
     }
   }
 
-	FEVTKExport vtkOut;
+  FEVTKExport vtkOut;
   this->mesh = vtkOut.ExportToVTK(*meshFix);
 
   return *this;
@@ -394,14 +394,6 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   if (target.numPoints() == 0 || numPoints() == 0)
     throw std::invalid_argument("meshes must have points");
 
-  vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-
-  if (method == POINT_TO_POINT)
-  {
-    targetPointLocator->SetDataSet(target.mesh);
-    targetPointLocator->BuildLocator();
-  }
-
   // allocate Array to store distances from each point to target
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
@@ -409,28 +401,48 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   distance->SetName("distance");
 
   // Find the nearest neighbors to each point and compute distance between them
-  double dist, currentPoint[3], closestPoint[3];
-  if (method == POINT_TO_POINT)
+  Point currentPoint, closestPoint;
+
+  switch(method)
   {
-    for (int i = 0; i < numPoints(); i++)
+    case POINT_TO_POINT:
     {
-      mesh->GetPoint(i, currentPoint);
-      vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint);
-      target.mesh->GetPoint(closestPointId, closestPoint);
-      dist = std::sqrt(std::pow(currentPoint[0] - closestPoint[0], 2) +
-                       std::pow(currentPoint[1] - closestPoint[1], 2) +
-                       std::pow(currentPoint[2] - closestPoint[2], 2));
-      distance->SetValue(i, dist);
+      vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+      targetPointLocator->SetDataSet(target.mesh);
+      targetPointLocator->BuildLocator();
+
+      for (int i = 0; i < numPoints(); i++)
+      {
+        mesh->GetPoint(i, currentPoint.GetDataPointer());
+        vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint.GetDataPointer());
+        target.mesh->GetPoint(closestPointId, closestPoint.GetDataPointer());
+        distance->SetValue(i, length(currentPoint - closestPoint));
+      }
     }
-  }
-  else
-  {
-    for (int i = 0; i < numPoints(); i++)
+    break;
+
+    case POINT_TO_CELL:
     {
-      mesh->GetPoint(i, currentPoint);
-      dist = projectPoint(target, currentPoint);
-      distance->SetValue(i, std::sqrt(dist));
+      vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      targetCellLocator->SetDataSet(target.mesh);
+      targetCellLocator->BuildLocator();
+
+      double dist2;
+      vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+      vtkIdType cellId;
+      int subId;
+
+      for (int i = 0; i < numPoints(); i++)
+      {
+        mesh->GetPoint(i, currentPoint.GetDataPointer());
+        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
+        distance->SetValue(i, std::sqrt(dist2));
+      }
     }
+    break;
+
+    default:
+      throw std::invalid_argument("invalid distance method");
   }
 
   // add distance field to this mesh
@@ -460,6 +472,7 @@ Mesh& Mesh::generateNormals()
 
   normal->SetInputData(this->mesh);
   normal->ComputeCellNormalsOn();
+  normal->ComputePointNormalsOn();
   normal->AutoOrientNormalsOn();
   normal->SplittingOff();
   normal->Update();
@@ -468,24 +481,20 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-double Mesh::projectPoint(const Mesh &target, Point point)
+Point3 Mesh::closestPoint(const Point3 point)
 {
   vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
-  targetCellLocator->SetDataSet(target.mesh);
+  targetCellLocator->SetDataSet(this->mesh);
   targetCellLocator->BuildLocator();
 
-  double dist, closestPoint[3];
+  double dist;
+  Point3 closestPoint;
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
   vtkIdType cellId;
   int subId;
 
-  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint, cell, cellId, subId, dist);
-  return dist;
-}
-
-double Mesh::projectPoint(Point point)
-{
-  return projectPoint(*this, point);
+  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist);
+  return closestPoint;
 }
 
 double Mesh::geodesicDistance(int source, int target)
@@ -571,11 +580,29 @@ Point3 Mesh::centerOfMass() const
   return center;
 }
 
-Point3 Mesh::getPoint(int p) const
+Point3 Mesh::getPoint(vtkIdType id) const
 {
-  double val[3];
-  mesh->GetPoint(p, val);
-  return Point3({val[0], val[1], val[2]});
+  if (mesh->GetNumberOfPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
+
+  double point[3];
+  mesh->GetPoint(id, point);
+  return Point3({point[0], point[1], point[2]});
+}
+
+Point3 Mesh::getFace(vtkIdType id) const
+{
+  if (mesh->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
+
+  Point3 face;
+  auto cells = vtkSmartPointer<vtkIdList>::New();
+  mesh->GetCellPoints(id, cells);
+
+  for(int i = 0; i <3; i++)
+  {
+    face[i] = cells->GetId(i);
+  }
+
+  return face;
 }
 
 Eigen::MatrixXd Mesh::vertexInfo()
@@ -592,6 +619,7 @@ Eigen::MatrixXd Mesh::vertexInfo()
     vertices(i, 1) = data_array->GetComponent(i, 1);
     vertices(i, 2) = data_array->GetComponent(i, 2);
   }
+
   return vertices;
 }
 
@@ -608,6 +636,7 @@ Eigen::MatrixXi Mesh::faceInfo()
     faces(j, 1) = cells->GetId(1);
     faces(j, 2) = cells->GetId(2);
   }
+
   return faces;
 }
 

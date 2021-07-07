@@ -765,12 +765,12 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ProjectPoint
+// ClosestPoint
 ///////////////////////////////////////////////////////////////////////////////
-void ProjectPoint::buildParser()
+void ClosestPoint::buildParser()
 {
-  const std::string prog = "project-point";
-  const std::string desc = "";
+  const std::string prog = "closest-point";
+  const std::string desc = "returns closest point to given point on mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for point.");
@@ -780,7 +780,7 @@ void ProjectPoint::buildParser()
   Command::buildParser();
 }
 
-bool ProjectPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -792,7 +792,7 @@ bool ProjectPoint::execute(const optparse::Values &options, SharedCommandData &s
                static_cast<double>(options.get("y")),
                static_cast<double>(options.get("z"))});
 
-  sharedData.mesh->projectPoint(point);
+  std::cout << "Closest point to given point on mesh: " << sharedData.mesh->closestPoint(point) << "\n";
   return sharedData.validMesh();
 }
 
