@@ -7,6 +7,11 @@
 #include <vtkPolyData.h>
 #include <string>
 #include <vtkPointData.h>
+#include <vtkCellData.h>
+#include <vtkDataSetAttributes.h>
+#include <vtkSelectPolyData.h>
+#include <vtkClipPolyData.h>
+#include <vtkKdTreePointLocator.h>
 
 namespace shapeworks {
 
@@ -114,6 +119,9 @@ public:
   /// sets the given field for points with array (*does not copy array's values)
   Mesh& setField(std::string name, Array array);
 
+  /// sets the given field for faces with array (*does not copy array's values)
+  Mesh& setFieldForFaces(std::string name, Array array);
+
   /// gets the field (*does not copy array's values)
   template<typename T>
   vtkSmartPointer<T> getField(const std::string& name) const
@@ -169,6 +177,8 @@ public:
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
+
+  bool SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
 private:
   friend struct SharedCommandData;

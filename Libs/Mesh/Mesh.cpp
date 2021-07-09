@@ -569,6 +569,28 @@ Mesh& Mesh::setField(std::string name, Array array)
   return *this;
 }
 
+Mesh& Mesh::setFieldForFaces(std::string name, Array array)
+{
+  if (!array)
+    throw std::invalid_argument("Invalid array.");
+
+  if (name.empty())
+    throw std::invalid_argument("Provide name for the new field");
+
+  int numVertices = mesh->GetPoints()->GetNumberOfPoints();
+  if (array->GetNumberOfTuples() != numVertices) {
+    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+  }
+  if (array->GetNumberOfComponents() != 1) {
+    std::cerr << "WARNING: Added a multi-component mesh field\n";
+  }
+
+  array->SetName(name.c_str());
+  mesh->GetCellData()->SetAttribute(array, 0);
+
+  return *this;
+}
+
 double Mesh::getFieldValue(const std::string& name, int idx) const
 {
   if (name.empty())
@@ -876,4 +898,51 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
+bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num){
+    vtkPoints *selectionPoints = vtkPoints::New();
+    vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    locator->SetDataSet(this->mesh);
+    std::cout << "Boundaries size " << boundaries.size() << std::endl;
+    for(size_t bound = 0; bound < boundaries.size(); bound++){
+        std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
+        vtkIdType lastId = -1;
+        for(size_t i = 0; i < boundaries[bound].size(); i++){
+            Eigen::Vector3d pt = boundaries[bound][i];
+            double ptdob[3] = {pt[0],pt[1],pt[2]};
+            int subId; double dist;
+            vtkIdType ptid = locator->FindClosestPoint(ptdob);
+            mesh->GetPoint(ptid, ptdob);
+            if(lastId != ptid){
+                std::cout << pt[0] << " " << pt[1] << " " << pt[2] << " -> " << ptdob[0] << " " << ptdob[1] << " " << ptdob[2] << std::endl;
+                selectionPoints->InsertNextPoint(ptdob[0],ptdob[1],ptdob[2]);
+            }
+            lastId = ptid;
+        }
+    }
+
+    std::string fnog = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_og.vtk";
+    this->write(fnog);
+
+    vtkSelectPolyData *select = vtkSelectPolyData::New();
+    select->SetLoop(selectionPoints);
+    //select->SetInputData(this->mesh);
+    //select->SetInputConnection(mydataFilter->GetOutputPort());
+    select->GenerateSelectionScalarsOn();
+    select->SetSelectionModeToLargestRegion();
+
+    vtkClipPolyData *selectclip = vtkClipPolyData::New();
+    //selectclip->SetInputData(this->mesh);
+    selectclip->SetInputConnection(select->GetOutputPort());
+    selectclip->SetValue(0.0);
+
+    this->mesh = selectclip->GetOutput();
+
+    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
+    this->write(fnin);
+
+    return true;
+}
+
 } // shapeworks
+
+

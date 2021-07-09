@@ -114,8 +114,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       // Adding free-form constraints to constraint object
       if(m_FFCs.size() > 1){
           for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
-            initialize_ffcs(i,j);
-            std::cout << "Adding free-form constraint to domain " << i << " shape " << j << " with query point " << m_FFCs[i][j].query.transpose() << std::endl;
+            initialize_ffcs(i);
           }
       }
 
@@ -441,10 +440,15 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
   m_DomainList.push_back(domain);
 }
 
-bool Sampler::initialize_ffcs(size_t dom, size_t ffcnum){
-    FFCMesh mesh = FFCMesh(m_meshes[dom], dom, ffcnum);
+bool Sampler::initialize_ffcs(size_t dom){
+    Mesh mesh = Mesh(m_meshes[dom]);
 
-    mesh.AddFFC(m_FFCs[dom][ffcnum].boundaries, m_FFCs[dom][ffcnum].query);
+    for(size_t i = 0; i < m_FFCs[dom].size(); i++){
+        mesh.SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+        std::cout << "Spplitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+    }
+
+    std::cout << "Adding free-form constraint to domain " << dom << std::endl;
 
     return true;
 }

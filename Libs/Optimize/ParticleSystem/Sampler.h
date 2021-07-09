@@ -26,11 +26,12 @@
 #include "vnl/vnl_matrix_fixed.h"
 
 #include "TriMesh.h"
-#include "Libs/Mesh/FFCMesh.h"
 
 #include <vtkContourFilter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkDecimatePro.h>
+
+#include "Mesh.h"
 
 namespace shapeworks {
 
@@ -516,7 +517,7 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
-  bool initialize_ffcs(size_t dom, size_t ffcnum);
+  bool initialize_ffcs(size_t dom);
 
 private:
   Sampler(const Sampler&); //purposely not implemented
