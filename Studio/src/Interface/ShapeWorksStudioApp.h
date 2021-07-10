@@ -10,8 +10,12 @@
 #include <QCheckBox>
 #include <QProgressBar>
 #include <QElapsedTimer>
+#include <QPointer>
+#include <QErrorMessage>
 
+#include <Interface/LogWindow.h>
 #include <Data/PreferencesWindow.h>
+#include <Visualization/StudioVtkOutputWindow.h>
 
 #include <vnl_vector.h>
 
@@ -30,6 +34,7 @@ class Session;
 class Visualizer;
 class SplashScreen;
 class WheelEventForwarder;
+class StatusBarWidget;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -115,6 +120,8 @@ public Q_SLOTS:
   void about();
   void keyboard_shortcuts();
 
+  void toggle_log_window();
+
 protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
@@ -182,6 +189,8 @@ private:
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
+  void set_message(MessageType message_type, QString message);
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
@@ -193,28 +202,29 @@ private:
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
   //all the preferences
   Preferences preferences_;
 
   QSharedPointer<Session> session_;
-
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
-  // programatic UI elements
+  // programmatic UI elements
   QSlider* glyph_size_slider_;
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
+  LogWindow log_window_;
+  QPointer<StatusBarWidget> status_bar_;
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
+  QErrorMessage error_message_dialog_;
 
-  QProgressBar* progress_bar_;
   QString current_message_;
 
   std::string current_display_mode_;
-
-  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
 
   bool block_update_{false};
   bool is_loading_{false};

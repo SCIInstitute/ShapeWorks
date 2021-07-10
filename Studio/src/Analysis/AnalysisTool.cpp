@@ -8,8 +8,8 @@
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
-#include <Visualization/ShapeWorksStudioApp.h>
-#include <Visualization/ShapeWorksWorker.h>
+#include <Interface/ShapeWorksStudioApp.h>
+#include <Data/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
@@ -844,7 +844,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
 
       if (ready) {
         double ratio = this->get_group_value();
-        auto blend = left_mean * ratio + right_mean * (1 - ratio);
+        auto blend = left_mean * (1 - ratio) + right_mean * ratio;
         shape->set_point_features(this->feature_map_, blend);
       }
     }

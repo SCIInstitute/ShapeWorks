@@ -7,8 +7,8 @@
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <Data/ShapeWorksWorker.h>
 #include <Groom/GroomTool.h>
-#include <Visualization/ShapeWorksWorker.h>
 
 #include <Libs/Groom/GroomParameters.h>
 
@@ -23,17 +23,18 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->setupUi(this);
   qRegisterMetaType<std::string>();
 
-  connect(ui_->mesh_center, &QCheckBox::stateChanged,
-          this, &GroomTool::centering_changed);
-  connect(ui_->center_checkbox, &QCheckBox::stateChanged,
-          this, &GroomTool::centering_changed);
+  connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged,
+          this, &GroomTool::alignment_checkbox_changed);
+  connect(ui_->alignment_mesh_checkbox, &QCheckBox::stateChanged,
+          this, &GroomTool::alignment_checkbox_changed);
 
   connect(ui_->fill_holes_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::fill_holes_changed);
   connect(ui_->mesh_fill_holes, &QCheckBox::stateChanged,
           this, &GroomTool::fill_holes_changed);
 
-  ui_->center_checkbox->setToolTip("Center image segmentations");
+  ui_->alignment_image_checkbox->setToolTip("Pre-alignment options");
+  ui_->alignment_mesh_checkbox->setToolTip("Pre-alignment options");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
   ui_->fill_holes_checkbox->setToolTip("Fill small holes in the image segmentation");
   ui_->autopad_checkbox->setToolTip("Add padding around the edges of the image");
@@ -44,9 +45,9 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->blur_sigma->setToolTip("Gaussian blur sigma");
   ui_->fastmarching_checkbox->setToolTip("Create distance transform");
 
-  ui_->mesh_center->setToolTip("Center meshes based on center of mass");
-  ui_->mesh_qc->setToolTip("Perform mesh quality control steps");
-  ui_->mesh_qc->hide();
+  //ui_->mesh_center->setToolTip("Center meshes based on center of mass");
+  //ui_->mesh_qc->setToolTip("Perform mesh quality control steps");
+  //ui_->mesh_qc->hide();
   ui_->mesh_smooth->setToolTip("Perform mesh smoothing");
   ui_->mesh_smooth_method->setToolTip("Mesh smoothing type");
   ui_->laplacian_iterations->setToolTip("Number of iterations");
@@ -73,6 +74,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->sinc_passband->setValidator(double_validator);
 
   update_ui();
+
+  //ui_->center_checkbox->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -82,19 +85,22 @@ GroomTool::~GroomTool()
 //---------------------------------------------------------------------------
 void GroomTool::on_antialias_checkbox_stateChanged(int state)
 {
-  ui_->antialias_groupbox->setEnabled(state);
+  ui_->antialias_iterations_label->setEnabled(state);
+  ui_->antialias_iterations->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_blur_checkbox_stateChanged(int state)
 {
-  ui_->blur_groupbox->setEnabled(state);
+  ui_->blur_sigma_label->setEnabled(state);
+  ui_->blur_sigma->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_autopad_checkbox_stateChanged(int state)
 {
-  ui_->pad_groupbox->setEnabled(state);
+  ui_->padding_amount->setEnabled(state);
+  ui_->pad_amount_label->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
@@ -123,8 +129,13 @@ void GroomTool::on_restore_defaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::set_ui_from_params(GroomParameters params)
 {
-  ui_->center_checkbox->setChecked(params.get_center_tool());
-  ui_->mesh_center->setChecked(params.get_center_tool());
+  ui_->alignment_mesh_checkbox->setChecked(params.get_alignment_enabled());
+  ui_->alignment_image_checkbox->setChecked(params.get_alignment_enabled());
+
+  auto alignment = params.get_alignment_method();
+  ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
+  ui_->alignment_mesh_box->setCurrentText(QString::fromStdString(alignment));
+
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
   ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
@@ -139,7 +150,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->mesh_smooth_method->setCurrentText(
     QString::fromStdString(params.get_mesh_smoothing_method()));
   ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
-  ui_->mesh_icp->setChecked(params.get_icp());
 
   ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
   ui_->laplacian_relaxation->setText(QString::number(params.get_mesh_vtk_laplacian_relaxation()));
@@ -197,10 +207,11 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_params()
 {
-
   auto params = GroomParameters(session_->get_project(), current_domain_);
 
-  params.set_center_tool(ui_->center_checkbox->isChecked());
+  params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
+  params.set_alignment_method(ui_->alignment_box->currentText().toStdString());
+
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());
   params.set_padding_amount(ui_->padding_amount->value());
@@ -218,7 +229,6 @@ void GroomTool::store_params()
   params.set_mesh_vtk_laplacian_relaxation(ui_->laplacian_relaxation->text().toDouble());
   params.set_mesh_vtk_windowed_sinc_iterations(ui_->sinc_iterations->text().toInt());
   params.set_mesh_vtk_windowed_sinc_passband(ui_->sinc_passband->text().toDouble());
-  params.set_icp(ui_->mesh_icp->isChecked());
   params.save_to_project();
 }
 
@@ -349,10 +359,12 @@ void GroomTool::activate()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::centering_changed(int state)
+void GroomTool::alignment_checkbox_changed(int state)
 {
-  ui_->mesh_center->setChecked(state);
-  ui_->center_checkbox->setChecked(state);
+  ui_->alignment_image_checkbox->setChecked(state);
+  ui_->alignment_mesh_checkbox->setChecked(state);
+  ui_->alignment_box->setEnabled(state);
+  ui_->alignment_mesh_box->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
@@ -395,6 +407,7 @@ void GroomTool::domain_changed()
 void GroomTool::update_ui()
 {
   ui_->mesh_smooth_stack->setCurrentIndex(ui_->mesh_smooth_method->currentIndex());
+  ui_->mesh_smooth_box->setVisible(ui_->mesh_smooth->isChecked());
   ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
 }
 

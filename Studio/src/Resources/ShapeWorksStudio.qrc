@@ -45,5 +45,8 @@
         <file>Images/Visible.png</file>
         <file>Images/VisibleOff.png</file>
         <file>Images/spinner.png</file>
+        <file>Images/log_normal.png</file>
+        <file>Images/log_warning.png</file>
+        <file>Images/log_error.png</file>
     </qresource>
 </RCC>

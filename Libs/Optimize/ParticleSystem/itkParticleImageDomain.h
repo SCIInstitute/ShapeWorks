@@ -159,7 +159,7 @@ public:
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
+      itkExceptionMacro("Domain " << this->m_DomainID << ": " << this->m_DomainName << " : Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
     }
   }
 
@@ -189,7 +189,7 @@ public:
     for (size_t i = 0; i < m_possible_zero_crossings.size(); i++) {
         this->m_ZeroCrossingPoint = m_possible_zero_crossings[i];
         if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){
-            std::cout << "Chosen initial point " << this->m_ZeroCrossingPoint << std::endl;
+            //std::cout << "Chosen initial point " << this->m_ZeroCrossingPoint << std::endl;
             break;
         }
     }

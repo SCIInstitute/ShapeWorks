@@ -2015,9 +2015,9 @@ void Optimize::SetLogEnergy(bool log_energy)
 { this->m_log_energy = log_energy; }
 
 //---------------------------------------------------------------------------
-void Optimize::AddImage(ImageType::Pointer image)
+void Optimize::AddImage(ImageType::Pointer image, std::string name)
 {
-  this->m_sampler->AddImage(image, this->GetNarrowBand());
+  this->m_sampler->AddImage(image, this->GetNarrowBand(), name);
   this->m_num_shapes++;
   if (image) {
     this->m_spacing = image->GetSpacing()[0] * 5;

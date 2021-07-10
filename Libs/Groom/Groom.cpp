@@ -83,14 +83,19 @@ bool Groom::run()
 
     auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-    if (params.get_icp()) {
+    if (params.get_use_icp()) {
       std::vector<Mesh> meshes;
       for (int i = 0; i < subjects.size(); i++) {
         auto path = subjects[i]->get_segmentation_filenames()[domain];
-        // groomed mesh name
-        std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
-        Mesh mesh = MeshUtils::threadSafeReadMesh(path);
-        meshes.push_back(mesh);
+
+        if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+          Image image(path);
+          meshes.push_back(image.toMesh(0.5));
+        }
+        else if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+          Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+          meshes.push_back(mesh);
+        }
       }
 
       int reference_mesh = MeshUtils::findReferenceMesh(meshes);
@@ -128,9 +133,7 @@ bool Groom::run()
 
           }
         });
-
     }
-
   }
 
 
@@ -194,7 +197,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   }
 
   // centering
-  if (params.get_center_tool()) {
+  if (params.get_use_center()) {
     auto centering = this->center(image);
 
     itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
@@ -314,6 +317,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 
     if (params.get_fill_holes_tool()) {
       mesh.fillHoles();
+      this->increment_progress();
     }
 
     if (params.get_mesh_smooth()) {
@@ -326,10 +330,11 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
         mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
                         params.get_mesh_vtk_windowed_sinc_passband());
       }
+      this->increment_progress();
     }
 
     // centering
-    if (params.get_center_tool()) {
+    if (params.get_use_center()) {
       auto diff = mesh.centerOfMass();
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
       tform[0] = -diff[0];
@@ -338,7 +343,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       transform->SetTranslation(tform);
       this->increment_progress();
     }
-
   }
 
   // store transform
@@ -457,7 +461,7 @@ int Groom::get_total_ops()
 
     auto params = GroomParameters(this->project_, domains[i]);
 
-    num_tools += params.get_center_tool() ? 1 : 0;
+    num_tools += params.get_use_center() ? 1 : 0;
     num_tools += params.get_isolate_tool() ? 1 : 0;
     num_tools += params.get_fill_holes_tool() ? 1 : 0;
     num_tools += params.get_auto_pad_tool() ? 1 : 0;

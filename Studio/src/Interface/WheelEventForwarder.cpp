@@ -1,4 +1,4 @@
-#include <Visualization/WheelEventForwarder.h>
+#include <Interface/WheelEventForwarder.h>
 #include <QScrollBar>
 #include <QEvent>
 #include <QApplication>

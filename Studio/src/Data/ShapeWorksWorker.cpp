@@ -5,10 +5,11 @@
 #include <QProcess>
 #include <QMessageBox>
 
+#include <Groom/QGroom.h>
 #include <Data/Shape.h>
-#include <Visualization/ShapeWorksWorker.h>
+#include <Data/ShapeWorksWorker.h>
+
 #include <Libs/Optimize/Optimize.h>
-#include <Application/Groom/QGroom.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 
 namespace shapeworks {
