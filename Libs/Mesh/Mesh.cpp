@@ -487,14 +487,24 @@ Point3 Mesh::closestPoint(const Point3 point)
   targetCellLocator->SetDataSet(this->mesh);
   targetCellLocator->BuildLocator();
 
-  double dist;
+  double dist2;
   Point3 closestPoint;
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
   vtkIdType cellId;
   int subId;
 
-  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist);
+  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
   return closestPoint;
+}
+
+int Mesh::closestPointId(const Point3 point)
+{
+  vtkSmartPointer<vtkKdTreePointLocator> pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  pointLocator->SetDataSet(this->mesh);
+  pointLocator->BuildLocator();
+
+  vtkIdType closestPointId = pointLocator->FindClosestPoint(point.GetDataPointer());
+  return closestPointId;
 }
 
 double Mesh::geodesicDistance(int source, int target)
@@ -589,11 +599,11 @@ Point3 Mesh::getPoint(vtkIdType id) const
   return Point3({point[0], point[1], point[2]});
 }
 
-Point3 Mesh::getFace(vtkIdType id) const
+IPoint3 Mesh::getFace(vtkIdType id) const
 {
   if (mesh->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
-  Point3 face;
+  IPoint3 face;
   auto cells = vtkSmartPointer<vtkIdList>::New();
   mesh->GetCellPoints(id, cells);
 
@@ -605,7 +615,7 @@ Point3 Mesh::getFace(vtkIdType id) const
   return face;
 }
 
-Eigen::MatrixXd Mesh::vertexInfo()
+Eigen::MatrixXd Mesh::vertexInfo() const
 {
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
   vtkSmartPointer<vtkDataArray> data_array = points->GetData();
@@ -623,7 +633,7 @@ Eigen::MatrixXd Mesh::vertexInfo()
   return vertices;
 }
 
-Eigen::MatrixXi Mesh::faceInfo()
+Eigen::MatrixXi Mesh::faceInfo() const
 {
   int num_faces = mesh->GetNumberOfCells();
   Eigen::MatrixXi faces(num_faces, 3);

@@ -1019,7 +1019,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("faceInfo",
        &Mesh::faceInfo,
-       "matrix with number of faces with (x,y,z) coordinates of each face")
+       "matrix with number of faces with indices of the three points from which each face is composed")
 
   .def("getPoint",
        [](Mesh &mesh, int id) -> decltype(auto) {
@@ -1032,7 +1032,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        [](Mesh &mesh, int id) -> decltype(auto) {
          return py::array(3, mesh.getFace(id).GetDataPointer());
        },
-       "(x,y,z) coordinates of face at given index",
+       "return indices of the three points with which the face at the given index is composed",
        "id"_a)
 
   .def("getFieldNames",

@@ -8,7 +8,6 @@
 #include <vtkPolyData.h>
 #include <string>
 #include <vtkPointData.h>
-// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions (github issue #1042)
 
 namespace shapeworks {
 
@@ -88,8 +87,11 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  /// returns closest point on mesh given a point
+  /// returns closest point on a face in the mesh to the given point in space
   Point3 closestPoint(const Point3 point);
+
+  /// returns closest point id in this mesh to the given point in space
+  int closestPointId(const Point3 point);
 
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
@@ -115,16 +117,16 @@ public:
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
   /// matrix with number of points with (x,y,z) coordinates of each point
-  Eigen::MatrixXd vertexInfo();
+  Eigen::MatrixXd vertexInfo() const;
 
-  /// matrix with number of faces with (x,y,z) coordinates of each face
-  Eigen::MatrixXi faceInfo();
+  /// matrix with number of faces with indices of the three points from which each face is composed
+  Eigen::MatrixXi faceInfo() const;
 
   /// (x,y,z) coordinates of vertex at given index
   Point3 getPoint(vtkIdType id) const;
 
-  /// (x,y,z) coordinates of face at given index
-  Point3 getFace(vtkIdType id) const;
+  /// return indices of the three points with which the face at the given index is composed
+  IPoint3 getFace(vtkIdType id) const;
 
   // fields of mesh points //
 
