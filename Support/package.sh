@@ -48,7 +48,8 @@ cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
-cp conda_installs.sh package/${VERSION}
+cp -a Installation "package/${VERSION}"
+cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -96,7 +97,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     conda_libs="libpython libboost_filesystem"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* .
+        cp ${CONDA_PREFIX}/lib/${clib}* ../bin/ShapeWorksStudio.app/Contents/Frameworks
     done
+    # remove static libs
+    rm *.a ../bin/ShapeWorksStudio.app/Contents/Frameworks/*.a
+    
     # Fix transitive loaded libs
     for i in *.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
@@ -106,11 +111,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libzstd"
+    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
 
+    # remove static libs
+    rm lib/*.a
+    
     cd bin
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
@@ -144,7 +152,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cp ${ROOT}/docs/users/Mac_README.txt ${VERSION}/README.txt
     pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
     plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
-    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
+    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg --scripts ${ROOT}/Support/osxscripts
 fi
 
 cd $ROOT

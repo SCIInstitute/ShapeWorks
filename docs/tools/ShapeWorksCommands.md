@@ -6,10 +6,8 @@
 
 
 `shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.
-!!! danger "Activate shapeworks environment"
+!!! note "Activate shapeworks environment"
 	 Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal. 
-!!! danger "Add shapeworks to your path"
-	 Please make sure that `shapeworks` is in your path. See [Adding to PATH Environment Variable](../dev/paths.md). 
 
 ## shapeworks
 
@@ -31,6 +29,51 @@
 **--version:** show program's version number and exit
 
 **-q, --quiet:** don't print status messages  
+
+Here are some examples on the command line usage of shapeworks:
+
+Let's read an image, pad it and save it:
+```
+shapeworks readimage --name $DATA/1x2x2.nrrd pad --padding 10.0 writeimage --name $DATA/padded.nrrd
+```
+
+Let's try another image tool, crop! We need to set a region to crop the image with so let's read an image, set a region, crop and save it:
+```
+shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop writeimage --name $DATA/cropped.nrrd
+```
+
+We could find the bounding box of the image and use it to set the region and then crop too:
+```
+shapeworks readimage --name $DATA/1x2x2.nrrd imageinfo
+```
+```
+image dimensions:      [100, 50, 50]
+physical spacing:      [1, 2, 2]
+size (spacing * dims): [100, 100, 100]
+physical origin:       [0, 0.5, 0.5]
+center:                [50, 50.5, 50.5]
+center of mass (0,1]:  [49.9917, 49.8699, 49.8699]
+physical bounding box: {
+	min: [0, 0.5, 0.5],
+	max: [99, 98.5, 98.5]
+}
+logical bounding box:  {
+	min: [0, 0, 0],
+	max: [99, 49, 49]
+}
+direction (coordsys):
+1 0 0
+0 1 0
+0 0 1
+```
+```
+shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 0 --xmax 99 --ymin 0.5 --ymax 98.5 --zmin 0.5 --zmax 98.5 crop writeimage --name $DATA/boundingBoxCrop.nrrd
+```
+
+What if we want to use more than one grooming tool? We can just chain it like this:
+```
+shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop pad --padding 10.0 writeimage --name $DATA/croppedAndPadded.nrrd
+```
   
 <a href="#top">Back to Top</a>
 

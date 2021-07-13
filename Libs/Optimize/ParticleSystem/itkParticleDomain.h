@@ -119,10 +119,21 @@ public:
     return new_pt;
   }
 
+  void SetDomainID(int id) {
+    this->m_DomainID = id;
+  }
+
+  void SetDomainName(std::string name) {
+    this->m_DomainName = name;
+  }
+
 protected:
 
   // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
+
+  int m_DomainID{-1};
+  std::string m_DomainName;
 
   ParticleDomain() {
       this->constraints = std::make_shared<Constraints>();

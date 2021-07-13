@@ -4,9 +4,7 @@
 
 This use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use the example dataset in `ellipsoid_fd.zip`, which contains a previously generated shape model on ellipsoids and prepped segmentations of two new ellipsoids.
 
-
 ![Fixed Domains](../img/use-cases/fixed-domains.png)
-
 
 The use case is located at: `Examples/Python/ellipsoid_fd.py`
 
@@ -19,7 +17,7 @@ Run the following command to run this use case. This optimization is done only w
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case ellipsoid_fd
+$ python RunUseCase.py ellipsoid_fd
 ```
 
 This calls `ellipsoid_fd.py` (in `Examples/Python/`) to perform the following.
@@ -27,13 +25,7 @@ This calls `ellipsoid_fd.py` (in `Examples/Python/`) to perform the following.
 * Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Loads the existing (pre-trained) shape model and converts the new segmentations into signed distance transforms.
 * Optimizes particle distribution (i.e., the shape/correspondence model) on the new shape samples by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
-
-If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
-
-```
-$ python RunUseCase.py --use_case ellipsoid_fd --start_with_prepped_data
-```
+* Launches ShapeWorks Studio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 ## Grooming Data
 
@@ -70,10 +62,9 @@ Below are the default optimization parameters for this use case. For a descripti
 In `ellipsoid_fd.py` (in `Examples/Python/`), the following is defined.
 
 - `fileListDT` is the list of distance transforms for the existing shape model
--  `shapemodelDir` is the directory path to the new shape model
--  `meanShapePath` is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape
-
+- `shapemodelDir` is the directory path to the new shape model
+- `meanShapePath` is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape
 
 ## Analyzing Shape Model
 
-ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   
+ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   

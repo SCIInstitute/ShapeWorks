@@ -43,7 +43,6 @@ def addEllipsoid(center, radii, rotation, rotation_axis='Y',resolution=24):
 
 def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius):
 	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
-	plyFileName = meshDir+"ellipsoid_"+filename+".ply"
 	if randomize_center:
 		center_loc = list(np.random.randint(low = 0,high=50,size=3))
 	else:
@@ -67,17 +66,12 @@ def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation,
 		rotation = 0
 	ellipsoid = addEllipsoid(center_loc,radii,rotation)
 
-	ply_writer = vtk.vtkPLYWriter()
-	ply_writer.SetInputData(ellipsoid.GetOutput())
-	ply_writer.SetFileName(plyFileName)
-	ply_writer.Update()
-
 	vtk_writer = vtk.vtkPolyDataWriter()
 	vtk_writer.SetInputData(ellipsoid.GetOutput())
 	vtk_writer.SetFileName(vtkFileName)
 	vtk_writer.Update()
 	
-
+	
 def generate(num_samples,out_dir,randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius):
 	meshDir = out_dir + "meshes/"
 	make_dir(meshDir)
