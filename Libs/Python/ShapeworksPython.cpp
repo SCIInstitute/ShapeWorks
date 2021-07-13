@@ -976,6 +976,13 @@ PYBIND11_MODULE(shapeworks_py, m)
        "returns closest point to given point on mesh",
        "point"_a)
 
+  .def("closestPointId",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return mesh.closestPointId(Point({p[0], p[1], p[2]}));
+       },
+       "returns closest point id in this mesh to the given point in space",
+       "point"_a)
+
   .def("geodesicDistance",
        &Mesh::geodesicDistance,
        "computes geodesic distance between two vertices (specified by their indices) on mesh",

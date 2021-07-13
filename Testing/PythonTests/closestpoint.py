@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
 def closestpointTest1():
@@ -12,12 +13,14 @@ def closestpointTest1():
       pNew.append(p[i] + normals[42][i])
   closeToP = mesh.closestPoint(pNew)
 
-  return abs(p - closeToP) < 1e-4
+  return np.linalg.norm(p-closeToP) == 0.0
 
-val = closestpointTest1()
-
-if val is False:
-  print("closestpointTest1 failed")
+try:
+  if not closestpointTest1():
+    print("closestpointTest1 failed")
+    sys.exit(1)
+except RuntimeError:
+  print("closestpointTest1 failed (exception)")
   sys.exit(1)
 
 def closestpointTest2():
@@ -27,13 +30,16 @@ def closestpointTest2():
   p = mesh.getPoint(42)
   pNew = []
   for i in range(3):
-      pNew.append(p[i] + normals[42][i] * 1.1)
+      pNew.append(p[i] - normals[42][i] * 1.1)
   closeToP = mesh.closestPoint(pNew)
+  print(np.linalg.norm(p-closeToP))
 
-  return abs(p - closeToP) < 1e-4
+  return np.linalg.norm(p-closeToP) < 1e-4
 
-val = closestpointTest2()
-
-if val is False:
-  print("closestpointTest2 failed")
+try:
+  if not closestpointTest2():
+    print("closestpointTest2 failed")
+    sys.exit(1)
+except RuntimeError:
+  print("closestpointTest2 failed (exception)")
   sys.exit(1)

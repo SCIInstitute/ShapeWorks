@@ -802,11 +802,15 @@ bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &s
 void GeodesicDistance::buildParser()
 {
   const std::string prog = "geodesic-distance";
-  const std::string desc = "computes geodesic distance between two vertices (specified by their indices) on mesh";
+  const std::string desc = "computes geodesic distance between two vertices on mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--source").action("store").type("unsigned").set_default(0.0).help("Source index of point on mesh.");
-  parser.add_option("--target").action("store").type("unsigned").set_default(0.0).help("Target index of point on mesh.");
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x for source point.");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y for source point.");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z for source point.");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x for target point.");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y for target point.");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z for target point.");
 
   Command::buildParser();
 }
@@ -819,10 +823,16 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
     return false;
   }
 
-  unsigned source = static_cast<unsigned>(options.get("source"));
-  unsigned target = static_cast<unsigned>(options.get("target"));
+  Point source({static_cast<double>(options.get("x1")),
+                static_cast<double>(options.get("y1")),
+                static_cast<double>(options.get("z1"))});
 
-  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(source, target) << "\n";
+  Point target({static_cast<double>(options.get("x2")),
+                static_cast<double>(options.get("y2")),
+                static_cast<double>(options.get("z2"))});
+
+  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(sharedData.mesh->closestPointId(source),
+                                                           sharedData.mesh->closestPointId(target)) << "\n";
   return sharedData.validMesh();
 }
 

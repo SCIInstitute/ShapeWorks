@@ -426,6 +426,15 @@ TEST(MeshTests, closestpointTest2)
   ASSERT_TRUE(epsEqualN(p, closeToP));
 }
 
+TEST(MeshTests, closestpointIdTest)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  auto p = ellipsoid.getPoint(50);
+  auto id = ellipsoid.closestPointId(p);
+
+  ASSERT_TRUE(id == 50);
+}
+
 TEST(MeshTests, fieldTest1)
 {
   Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
