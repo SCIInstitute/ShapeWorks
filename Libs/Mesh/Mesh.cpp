@@ -509,8 +509,8 @@ int Mesh::closestPointId(const Point3 point)
 
 double Mesh::geodesicDistance(int source, int target)
 {
-  Eigen::MatrixXd V = vertexInfo();
-	Eigen::MatrixXi F = faceInfo();
+  Eigen::MatrixXd V = points();
+  Eigen::MatrixXi F = faces();
   Eigen::VectorXd VS(1), VT(1);
   VS[0] = source;
   VT[0] = target;
@@ -592,7 +592,7 @@ Point3 Mesh::centerOfMass() const
 
 Point3 Mesh::getPoint(vtkIdType id) const
 {
-  if (mesh->GetNumberOfPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
+  if (this->numPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
   double point[3];
   mesh->GetPoint(id, point);
@@ -615,27 +615,25 @@ IPoint3 Mesh::getFace(vtkIdType id) const
   return face;
 }
 
-Eigen::MatrixXd Mesh::vertexInfo() const
+Eigen::MatrixXd Mesh::points() const
 {
-  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
-  vtkSmartPointer<vtkDataArray> data_array = points->GetData();
+  int num_points = numPoints();
+  Eigen::MatrixXd points_(num_points, 3);
 
-  int num_vertices = points->GetNumberOfPoints();
+  vtkSmartPointer<vtkDataArray> data_array = mesh->GetPoints()->GetData();
 
-  Eigen::MatrixXd vertices(num_vertices, 3);
-
-  for (int i = 0; i < num_vertices; i++) {
-    vertices(i, 0) = data_array->GetComponent(i, 0);
-    vertices(i, 1) = data_array->GetComponent(i, 1);
-    vertices(i, 2) = data_array->GetComponent(i, 2);
+  for (int i = 0; i < num_points; i++) {
+    points_(i, 0) = data_array->GetComponent(i, 0);
+    points_(i, 1) = data_array->GetComponent(i, 1);
+    points_(i, 2) = data_array->GetComponent(i, 2);
   }
 
-  return vertices;
+  return points_;
 }
 
-Eigen::MatrixXi Mesh::faceInfo() const
+Eigen::MatrixXi Mesh::faces() const
 {
-  int num_faces = mesh->GetNumberOfCells();
+  int num_faces = numFaces();
   Eigen::MatrixXi faces(num_faces, 3);
 
   vtkSmartPointer<vtkIdList> cells = vtkSmartPointer<vtkIdList>::New();
@@ -671,7 +669,7 @@ Mesh& Mesh::setField(std::string name, Array array)
   if (name.empty())
     throw std::invalid_argument("Provide name for the new field");
 
-  int numVertices = mesh->GetPoints()->GetNumberOfPoints();
+  int numVertices = numPoints();
   if (array->GetNumberOfTuples() != numVertices) {
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
@@ -784,13 +782,13 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   if (!this->mesh || !other_mesh.mesh)
     throw std::invalid_argument("invalid meshes");
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
+  if (this->numPoints() != other_mesh.numPoints())
   {
     std::cerr << "meshes differ in number of points";
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++)
+  for (int i = 0; i < this->numPoints(); i++)
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));

@@ -32,7 +32,6 @@ def closestpointTest2():
   for i in range(3):
       pNew.append(p[i] - normals[42][i] * 1.1)
   closeToP = mesh.closestPoint(pNew)
-  print(np.linalg.norm(p-closeToP))
 
   return np.linalg.norm(p-closeToP) < 1e-4
 

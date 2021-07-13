@@ -964,11 +964,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        "region"_a=PhysicalRegion(),
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
-  .def("distance",
-       &Mesh::distance,
-       "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
-
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
          return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
@@ -989,7 +984,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        "source"_a, "target"_a)
 
   .def("distance",
-       &Mesh::distance, "computes surface to surface distance",
+       &Mesh::distance,
+       "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
@@ -1020,12 +1016,12 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::numFaces,
        "number of faces")
 
-  .def("vertexInfo",
-       &Mesh::vertexInfo,
+  .def("points",
+       &Mesh::points,
        "matrix with number of points with (x,y,z) coordinates of each point")
 
-  .def("faceInfo",
-       &Mesh::faceInfo,
+  .def("faces",
+       &Mesh::faces,
        "matrix with number of faces with indices of the three points from which each face is composed")
 
   .def("getPoint",

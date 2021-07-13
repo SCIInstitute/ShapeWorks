@@ -117,10 +117,10 @@ public:
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
   /// matrix with number of points with (x,y,z) coordinates of each point
-  Eigen::MatrixXd vertexInfo() const;
+  Eigen::MatrixXd points() const;
 
   /// matrix with number of faces with indices of the three points from which each face is composed
-  Eigen::MatrixXi faceInfo() const;
+  Eigen::MatrixXi faces() const;
 
   /// (x,y,z) coordinates of vertex at given index
   Point3 getPoint(vtkIdType id) const;

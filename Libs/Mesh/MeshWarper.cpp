@@ -345,8 +345,8 @@ bool MeshWarper::generate_warp()
   this->vertices_ = this->remove_bad_particles(this->vertices_);
 
   const Mesh referenceMesh(reference_mesh_);
-  Eigen::MatrixXd vertices = referenceMesh.vertexInfo();
-  this->faces_ = referenceMesh.faceInfo();
+  Eigen::MatrixXd vertices = referenceMesh.points();
+  this->faces_ = referenceMesh.faces();
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,

@@ -249,6 +249,26 @@ TEST(pythonTests, closestpointidTest)
   run_use_case("closestpointid.py");
 }
 
+TEST(pythonTests, getpointTest)
+{
+  run_use_case("getpoint.py");
+}
+
+TEST(pythonTests, getfaceTest)
+{
+  run_use_case("getface.py");
+}
+
+TEST(pythonTests, facesTest)
+{
+  run_use_case("faces.py");
+}
+
+TEST(pythonTests, pointsTest)
+{
+  run_use_case("points.py");
+}
+
 TEST(pythonTests, geodesicTest)
 {
   run_use_case("geodesic.py");
