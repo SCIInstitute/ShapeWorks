@@ -6,6 +6,9 @@ namespace shapeworks {
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
 const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
 
+const std::string GroomParameters::GROOM_ALIGNMENT_CENTER_C("Center");
+const std::string GroomParameters::GROOM_ALIGNMENT_ICP_C("Iterative Closest Point");
+
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
   project_(project), domain_name_(domain_name)
@@ -17,18 +20,6 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
 void GroomParameters::restore_defaults()
 {
   this->params_.reset_parameters();
-}
-
-//---------------------------------------------------------------------------
-bool GroomParameters::get_center_tool()
-{
-  return this->params_.get("center", true);
-}
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_center_tool(bool value)
-{
-  this->params_.set("center", value);
 }
 
 //---------------------------------------------------------------------------
@@ -230,14 +221,49 @@ void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
 }
 
 //---------------------------------------------------------------------------
-bool GroomParameters::get_icp()
+std::string GroomParameters::get_alignment_method()
 {
-  return this->params_.get("icp", false);
+  if (!this->params_.key_exists("alignment")) {
+    // if alignment doesn't exist, perhaps the old keys "center" or "icp" do, if so use them
+    if (this->params_.key_exists("icp") && this->params_.get("icp", false)) {
+      return GROOM_ALIGNMENT_ICP_C;
+    }
+    if (this->params_.key_exists("center")) {
+      if (this->params_.get("center", false)) {
+        return GROOM_ALIGNMENT_CENTER_C;
+      }
+    }
+  }
+  return this->params_.get("alignment_method", GROOM_ALIGNMENT_CENTER_C);
 }
 
 //---------------------------------------------------------------------------
-void GroomParameters::set_icp(bool value)
+void GroomParameters::set_alignment_method(std::string method)
 {
-  this->params_.set("icp", value);
+  this->params_.set("alignment_method", method);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_alignment_enabled()
+{
+  return this->params_.get("alignment_enabled", true);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_alignment_enabled(bool value)
+{
+  this->params_.set("alignment_enabled", value);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_use_icp()
+{
+  return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_ICP_C;
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_use_center()
+{
+  return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_CENTER_C;
 }
 };

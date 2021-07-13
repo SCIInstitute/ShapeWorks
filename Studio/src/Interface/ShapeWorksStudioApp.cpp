@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QMimeData>
 #include <QProcess>
+#include <QPushButton>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -26,14 +27,14 @@
 #include <Analysis/AnalysisTool.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <Data/StudioMesh.h>
 #include <Data/StudioLog.h>
-#include <Visualization/ShapeWorksStudioApp.h>
+#include <Interface/ShapeWorksStudioApp.h>
+#include <Interface/WheelEventForwarder.h>
+#include <Interface/SplashScreen.h>
+#include <Interface/StatusBarWidget.h>
+#include <Interface/KeyboardShortcuts.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
-#include <Visualization/WheelEventForwarder.h>
-#include <Interface/SplashScreen.h>
-#include <Interface/KeyboardShortcuts.h>
 #include <Utils/StudioUtils.h>
 
 // ui
@@ -53,9 +54,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
   this->setAcceptDrops(true);
-  this->progress_bar_ = new QProgressBar(this);
-  this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
-  this->progress_bar_->setVisible(false);
+
+  this->status_bar_ = new StatusBarWidget(this);
+  connect(this->status_bar_, &StatusBarWidget::toggle_log_window,
+          this, &ShapeWorksStudioApp::toggle_log_window);
+
+  this->studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
+  vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
+
+  connect(this->studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error,
+          this, &ShapeWorksStudioApp::handle_error);
 
   // default hide
   this->ui_->feature_widget->hide();
@@ -174,7 +184,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
 
-  this->ui_->statusbar->showMessage("ShapeWorks Studio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
@@ -268,6 +277,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
+
+  this->handle_message("ShapeWorks Studio Initialized");
 }
 
 //---------------------------------------------------------------------------
@@ -728,15 +739,18 @@ void ShapeWorksStudioApp::handle_message(QString str)
 {
   if (str != this->current_message_) {
     STUDIO_LOG_MESSAGE(str);
+    this->set_message(MessageType::normal, str);
   }
-  this->ui_->statusbar->showMessage(str);
+  else {
+    this->status_bar_->set_message(MessageType::normal, str);
+  }
   this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_status(QString str)
 {
-  this->ui_->statusbar->showMessage(str);
+  this->status_bar_->set_message(MessageType::normal, str);
   this->current_message_ = str;
 }
 
@@ -744,39 +758,32 @@ void ShapeWorksStudioApp::handle_status(QString str)
 void ShapeWorksStudioApp::handle_error(QString str)
 {
   STUDIO_LOG_ERROR(str);
-  QMessageBox::critical(this, "Critical Error", str);
-  this->handle_message(str);
-  //this->handle_progress(100);
+  this->set_message(MessageType::error, str);
+  this->current_message_ = str;
+  this->error_message_dialog_.showMessage("Error:\n" + str, "error");
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(QString str)
 {
   STUDIO_LOG_MESSAGE(str);
-  QMessageBox::warning(this, "Warning!", str);
+  this->set_message(MessageType::warning, str);
+  this->current_message_ = str;
+  this->error_message_dialog_.showMessage("Warning:\n" + str, "warning");
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(int value)
 {
-  if (value < 0) {
-    this->progress_bar_->setVisible(true);
-    this->progress_bar_->setMinimum(0);
-    this->progress_bar_->setMaximum(0);
-    return;
-  }
-  this->progress_bar_->setMinimum(0);
-  this->progress_bar_->setMaximum(100);
-
-  if (value < 100) {
-    this->progress_bar_->setVisible(true);
-    this->progress_bar_->setValue(value);
-  }
-  else {
-    this->progress_bar_->setValue(100);
-    this->progress_bar_->setVisible(false);
-  }
+  this->status_bar_->set_progress(value);
   this->handle_message(this->current_message_);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_message(MessageType message_type, QString message)
+{
+  this->status_bar_->set_message(message_type, message);
+  this->log_window_.add_message(message_type, message);
 }
 
 //---------------------------------------------------------------------------
@@ -1227,7 +1234,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
   this->handle_message("Loading Project: " + filename);
-  this->handle_progress(-1);
+  this->handle_progress(-1); // busy
+  QApplication::processEvents();
+
   this->is_loading_ = true;
 
   try {
@@ -1260,7 +1269,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
 
-  this->preferences_.add_recent_file(filename);
+  this->preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath());
   this->update_recent_files();
 
   this->update_tool_mode();
@@ -1314,8 +1323,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->update_view_mode();
   }
 
-  this->handle_message("Project loaded");
   this->handle_progress(100);
+  this->handle_message("Project loaded: " + filename);
 
 }
 
@@ -2032,6 +2041,12 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   else {
     event->ignore();
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::toggle_log_window()
+{
+  this->log_window_.setVisible(!this->log_window_.isVisible());
 }
 
 

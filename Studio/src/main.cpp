@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QDir>
 
-#include <Visualization/ShapeWorksStudioApp.h>
+#include <Interface/ShapeWorksStudioApp.h>
 #include <iostream>
 
 #include <vtkObject.h>
@@ -38,8 +38,6 @@ int main(int argc, char** argv)
     init_crash_handler();
     ::SetErrorMode( 0 );
 #endif
-
-    vtkObject::GlobalWarningDisplayOff();
 
     QApplication app(argc, argv);
 

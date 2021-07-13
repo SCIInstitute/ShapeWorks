@@ -206,7 +206,7 @@ public:
   void SetLogEnergy(bool log_energy);
 
   //! Set the shape input images
-  void AddImage(ImageType::Pointer image);
+  void AddImage(ImageType::Pointer image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
