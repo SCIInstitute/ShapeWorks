@@ -7,60 +7,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-#violin plot for loadings
-def violinplot(loadings,cumulative_variance,shape_models_dir):
-
-    
-    
-    min_dims = np.where(cumulative_variance <=99)[0]
-    #if the first mode is the most dominant, min_dims will be empty
-    if(min_dims.size==0):
-        min_dims = 1
-    else:
-        min_dims = min_dims[-1]+1
-    print("\nNumber of modes covering 99% varaince - ", min_dims)
-    
-    loadings = loadings[:,:min_dims]
-    dims = []
-    for i in range(len(loadings)):
-        for j in range(np.shape(loadings)[1]):
-            dims.append(j+1)
-            
-
-    loadings = loadings.flatten()
-    data = {'PCA Mode':dims, "PCA Score":loadings}
-    df = pd.DataFrame(data) 
-    plt.figure(figsize=(6,4),dpi=300)  
-    ax = sns.violinplot(x='PCA Mode', y='PCA Score',\
-                        data=df, palette="cool_r", split=True, scale="area")
-    fig = plt.gcf()
-    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png")
-    plt.show(block=False)
-    plt.close(fig)
-
-    print("\nLoadings plot saved in directory - " + shape_models_dir)
-    print()
-
-# plot the PCA metrics similar to Studio visualization in Analyze pane
-def plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir):
-    N = len(cumulative_variance) 
-    X = np.array(list(range(N))) + 1
-    plt.bar(X, explained_variance)
-    plt.plot(X,cumulative_variance,linewidth=4.0,c='black')
-    fig = plt.gcf()
-    fig.set_size_inches(10, 10)
-    plt.title('Variance Plot')
-    plt.xlabel('Mode')
-    plt.ylabel('Explained Variance')
-    plt.xticks(X)
-    plt.grid()
-    plt.savefig(shape_models_dir+"variance_plot.png")
-    plt.show(block=False)
-    plt.close(fig)
-
-    print("\nPCA metrics plot saved in directory - " + shape_models_dir)
-    print()
-
 def Run_Pipeline(args):
 
     ellipsoids_dir = 'Output/ellipsoid'
@@ -113,8 +59,8 @@ def Run_Pipeline(args):
     np.savetxt(pca_dir+"pca_eigen_vectors.txt",eigen_vectors)
     
     if len(local_point_files)>3 and not args.tiny_test:
-        violinplot(pca_loadings,cumulative_variance,pca_dir)
-        plot_pca_metrics(cumulative_variance,explained_variance,pca_dir)
+        sw.plot.pca_loadings_violinplot(pca_loadings,cumulative_variance,pca_dir)
+        sw.plot.plot_pca_metrics(cumulative_variance,explained_variance,pca_dir)
 
 
     

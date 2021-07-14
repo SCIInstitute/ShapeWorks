@@ -91,6 +91,7 @@ Vector3 invertValue(const Vector3 &v);
 /// Vector dot and cross products
 Vector3 dotProduct(const Vector3 &a, const Vector3 &b);
 Vector3 crossProduct(const Vector3 &a, const Vector3 &b);
+double length(const Vector3 &v);
 
 /// handy way to specify an axis
 enum Axis { invalid = -1, X, Y, Z };

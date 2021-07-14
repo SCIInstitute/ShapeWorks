@@ -142,7 +142,7 @@ def Run_Pipeline(args):
             translationVector = image_center - shape_center
             # perform antialias-translate-binarize
             shape_seg.antialias(antialias_iterations).translate(
-                translationVector).binarize()
+                translationVector).binarize().recenter()
 
         """
         Grooming Step 3: Select a reference

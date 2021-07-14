@@ -17,7 +17,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
 ## Latest & Greatest
     
  <!--![](img/about/release5.5.png)-->
-![](img/about/release6.0.png)
+ <!--![](img/about/release6.0.png)-->
+![](img/about/release6.1.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -40,28 +41,52 @@ Its optimized approach offers increased power for testing biological hypotheses 
 !!! note "Where to start? What are the latest features? How to customize existing workflows?"
     A monthly virtual get-together meeting for ShapeWorks users is organized to demonstrate new features, discuss the customization of the shape modeling workflow to users' own use cases, and get suggestions to improve the software and documentation. **If you would like to be added to the invitation list, please send an email to `shireen-at-sci-dot-utah-dot-edu`.**
 
+## ShapeWorks Workshops & Webinars
+
+### ShapeWorks @SB3C 2021
+
+*Part 1: Statistical Shape Modeling & ShapeWorks*  
+Speakers: Shireen Elhabian and Alan Morris
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartA.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*Part 2: ShapeWorks Success Stories in Orthopedics*   
+Speakers: Heath Henninger, Andrew Anderson, and Amy Lenz
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartB.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*Part 3: Next Generation of ShapeWorks*   
+Speakers: Shireen Elhabian, Andrew Anderson, Penny Atkins, and Riddhish Bhalodia
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartC.mp4" autoplay muted loop controls style="width:100%"></p>
+
 
 ## ShapeWorks in Action!
 
-
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that consider variability in the entire cohort of images. 
-
-*ShapeWorks 6.0 tour - mesh support and more in ShapeWorksStudio*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
-
-
-*ShapeWorks 5.5 tour - feature support in ShapeWorksStudio*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" autoplay muted loop controls style="width:100%"></p>
-    
-*Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorksStudio*   
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
 
 ShapeWorks uses a set of interacting particle systems, one for each shape, to produce optimal sets of surface correspondences in an ensemble. Particles interact with one another via mutually repelling forces to cover and, therefore, describe surface geometry optimally. Particles are positioned on surfaces automatically by optimizing the model's information content via an entropy optimization scheme. 
 
 In particular, ShapeWorks explicitly models the inherent trade-off between the model's statistical simplicity (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
 
-
 ShapeWorks has been effective in various applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md) and [ShapeWorks Success Stories](getting-started/sw-stories.md). 
+
+Now enjoy some tour videos for different recent software releases.
+
+
+*ShapeWorks 6.1 tour - multi-domain support, mesh grooming, improved models for complex anatomies, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*ShapeWorks 6.0 tour - mesh support and more in ShapeWorks Studio*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
+
+
+*ShapeWorks 5.5 tour - feature support in ShapeWorks Studio*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" autoplay muted loop controls style="width:100%"></p>
+    
+*Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorks Studio*   
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
+
 
 
 

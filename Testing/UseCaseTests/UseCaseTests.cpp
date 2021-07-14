@@ -8,10 +8,6 @@
   #include <unistd.h>
 #endif
 
-// locations
-std::string python_examples_location = std::string(TEST_DATA_DIR) + std::string(
-  "/../../Examples/Python");
-
 //---------------------------------------------------------------------------
 static bool file_exists(const std::string& filename)
 {
@@ -23,30 +19,20 @@ static bool file_exists(const std::string& filename)
 void run_use_case(const std::string& name, const std::string& check_file)
 {
   // check that one of the resulting files exists
-  std::string file = python_examples_location + "/" + check_file;
+  std::string file = std::string(PYTHON_EXAMPLES_DIR) + "/" + check_file;
 
   // change to the python examples directory
-  chdir(python_examples_location.c_str());
+  chdir(std::string(PYTHON_EXAMPLES_DIR).c_str());
 
   // delete the file to make sure it's remade
   std::remove(file.c_str());
 
   // run python
-  std::string command = "python RunUseCase.py --use_case " + name + " --tiny_test";
+  std::string command = "python RunUseCase.py " + name + " --tiny_test";
   std::cerr << "Running command: " << command << "\n";
   ASSERT_FALSE(system(command.c_str()));
 
   ASSERT_TRUE(file_exists(file));
-}
-
-
-//---------------------------------------------------------------------------
-// only need to run pythonEnvSetup once or it continuously appends to paths
-// FIXME: This is a problem if you only need to execute a single test (same problem in ShapeworksTests)
-TEST(UseCaseTests, setup)
-{
-  pythonEnvSetup();
-  ASSERT_TRUE(true);
 }
 
 //---------------------------------------------------------------------------
@@ -84,7 +70,6 @@ TEST(UseCaseTests, ellipsoid_evaluate)
                "Output/ellipsoid/evaluation/compactness/scree.txt");
 }
 
-
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, lumps)
 {
@@ -99,11 +84,17 @@ TEST(UseCaseTests, left_atrium)
                "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins_local.particles");
 }
 
-
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, femur)
 {
   run_use_case("femur",
+               "Output/femur/shape_models/32/m03_L_femur_local.particles");
+}
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_groom_images)
+{
+  run_use_case("femur --groom_images",
                "Output/femur/shape_models/32/m03_L_femur_local.particles");
 }
 

@@ -94,7 +94,7 @@ def Run_Pipeline(args):
         reference_side = "left"  # somewhat arbitrary, could be R for right
         # Set cutting plane
         cutting_plane_points = np.array(
-            [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
+            [[-1.0, -1.0, -675], [1.0, -1.0, -675], [-1.0, 1.0, -675]])
         cp_prefix = 'm03_L'
 
         # BEGIN GROOMING WITH IMAGES
@@ -142,15 +142,15 @@ def Run_Pipeline(args):
                     center = [center[0], center[1], center[2]]
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            os.pathsep)[-1].split('_')[0] + '_R_femur.nrrd'
-                    img1.reflect(X).write(img_out, compressed=0)
+                            os.sep)[-1].split('_')[0] + '_R_femur.nrrd'
+                    img1.reflect(sw.X).write(img_out, compressed=0)
                     image_list.append(img1)
                     # Reflect mesh
-                    mesh.reflect(X, center)
+                    mesh.reflect(sw.X, center)
                 else:
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            os.pathsep)[-1].split('_')[0] + '_L_femur.nrrd'
+                            os.sep)[-1].split('_')[0] + '_L_femur.nrrd'
                     img = sw.Image(corresponding_image_file)
                     img.write(img_out, compressed=0)
                     image_list.append(img)

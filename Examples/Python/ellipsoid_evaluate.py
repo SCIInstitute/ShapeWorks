@@ -6,57 +6,9 @@ from pathlib import Path
 import glob
 import shapeworks as sw
 import numpy as np
-import matplotlib.pyplot as plt
-import subprocess
-
-"""
-Function to generate the scree plot based on the explained variance calculated by the ComputeCompactness command
-"""
 
 
-def plot_scree(save_dir):
-    # Load scree plot data
-    Y = np.loadtxt(save_dir+'/scree.txt')
-    N = len(Y)
-    X = np.arange(1, N+1)
 
-    # Plot data
-    plt.plot(X, Y, linewidth=4.0)
-    fig = plt.gcf()
-    fig.set_size_inches(10, 10)
-    plt.title('Scree Plot')
-    plt.xlabel('Mode')
-    plt.ylabel('Scree')
-    plt.xticks(X)
-    plt.ylim(bottom=0, top=1.2)
-    plt.xlim(left=1, right=N)
-    plt.grid()
-    plt.savefig(save_dir+"scree_plot.png")
-    plt.show(block=False)
-    plt.pause(3)
-    plt.close(fig)
-
-    print("Figure saved in directory -" + save_dir)
-    print()
-
-
-"""
-Call to ShapeWorksStudio to visualize the best and the worst reconstruction
-"""
-
-
-def visualize_reconstruction(save_dir):
-    print("*************************")
-    print("* Best reconstruction")
-    print("*************************")
-    subprocess.check_call(['ShapeWorksStudio', save_dir+'/0perc.xml'])
-
-    print("*************************")
-    print("* Worst reconstruction")
-    print("*************************")
-    subprocess.check_call(['ShapeWorksStudio', save_dir+'/100perc.xml'])
-
-    print()
 
 
 def Run_Pipeline(args):
@@ -93,7 +45,7 @@ def Run_Pipeline(args):
     sw.ShapeEvaluation.ComputeCompactness(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir+"scree.txt")
     if not args.tiny_test:
-        plot_scree(save_dir)
+        sw.plot.plot_scree(save_dir)
 
     """
     ########################################################################################################
@@ -114,7 +66,7 @@ def Run_Pipeline(args):
     sw.ShapeEvaluation.ComputeGeneralization(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir)
     if not args.tiny_test:
-        visualize_reconstruction(save_dir)
+        sw.plot.visualize_reconstruction(save_dir)
 
     """
     ########################################################################################################
@@ -136,4 +88,4 @@ def Run_Pipeline(args):
     sw.ShapeEvaluation.ComputeSpecificity(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir)
     if not args.tiny_test:
-        visualize_reconstruction(save_dir)
+        sw.plot.visualize_reconstruction(save_dir)

@@ -765,6 +765,78 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// ClosestPoint
+///////////////////////////////////////////////////////////////////////////////
+void ClosestPoint::buildParser()
+{
+  const std::string prog = "closest-point";
+  const std::string desc = "returns closest point to given point on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for point.");
+
+  Command::buildParser();
+}
+
+bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point point({static_cast<double>(options.get("x")),
+               static_cast<double>(options.get("y")),
+               static_cast<double>(options.get("z"))});
+
+  std::cout << "Closest point to given point on mesh: " << sharedData.mesh->closestPoint(point) << "\n";
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistance
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistance::buildParser()
+{
+  const std::string prog = "geodesic-distance";
+  const std::string desc = "computes geodesic distance between two vertices on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x for source point.");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y for source point.");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z for source point.");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x for target point.");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y for target point.");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z for target point.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point source({static_cast<double>(options.get("x1")),
+                static_cast<double>(options.get("y1")),
+                static_cast<double>(options.get("z1"))});
+
+  Point target({static_cast<double>(options.get("x2")),
+                static_cast<double>(options.get("y2")),
+                static_cast<double>(options.get("z2"))});
+
+  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(sharedData.mesh->closestPointId(source),
+                                                           sharedData.mesh->closestPointId(target)) << "\n";
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()

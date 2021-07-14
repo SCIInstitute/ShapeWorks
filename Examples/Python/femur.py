@@ -46,7 +46,7 @@ def Run_Pipeline(args):
 
         # Select data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
+            sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -142,15 +142,15 @@ def Run_Pipeline(args):
                     center = [center[0], center[1], center[2]]
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            os.pathsep)[-1].split('_')[0] + '_R_femur.nrrd'
-                    img1.reflect(X).write(img_out, compressed=0)
+                            os.sep)[-1].split('_')[0] + '_R_femur.nrrd'
+                    img1.reflect(sw.X).write(img_out, compressed=0)
                     image_list.append(img1)
                     # Reflect mesh
-                    mesh.reflect(X, center)
+                    mesh.reflect(sw.X, center)
                 else:
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            os.pathsep)[-1].split('_')[0] + '_L_femur.nrrd'
+                            os.sep)[-1].split('_')[0] + '_L_femur.nrrd'
                     img = sw.Image(corresponding_image_file)
                     img.write(img_out, compressed=0)
                     image_list.append(img)
