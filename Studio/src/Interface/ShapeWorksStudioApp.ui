@@ -684,6 +684,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_groom_mode"/>
    <addaction name="action_optimize_mode"/>
    <addaction name="action_analysis_mode"/>
+   <addaction name="action_deepssm_mode"/>
   </widget>
   <action name="action_quit">
    <property name="text">
@@ -928,6 +929,15 @@ p, li { white-space: pre-wrap; }
   <action name="action_export_current_particles">
    <property name="text">
     <string>Export Current Particles...</string>
+   </property>
+  </action>
+  <action name="action_deepssm_mode">
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Studio/Images/deep_ssm.png</normaloff>:/Studio/Images/deep_ssm.png</iconset>
+   </property>
+   <property name="text">
+    <string>Deep SSM</string>
    </property>
   </action>
  </widget>

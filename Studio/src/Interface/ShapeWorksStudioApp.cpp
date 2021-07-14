@@ -183,6 +183,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_groom_mode);
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
+  this->action_group_->addAction(this->ui_->action_deepssm_mode);
 
   this->lightbox_ = LightboxHandle(new Lightbox());
 
@@ -955,6 +956,14 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::ANALYSIS_C);
+  this->update_tool_mode();
+  this->visualizer_->reset_camera();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_deepssm_mode_triggered()
+{
+  this->session_->parameters().set("tool_state", Session::DEEPSSM_C);
   this->update_tool_mode();
   this->visualizer_->reset_camera();
 }
@@ -2048,6 +2057,7 @@ void ShapeWorksStudioApp::toggle_log_window()
 {
   this->log_window_.setVisible(!this->log_window_.isVisible());
 }
+
 
 
 
