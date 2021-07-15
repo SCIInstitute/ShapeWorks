@@ -16,18 +16,20 @@ number_of_particles - number of correspondence particles
 def compute_pvalues_for_group_difference(data,number_of_particles):
 	
 	group_id = data["group_ids"].unique()
-	group_0_file_names = data[data["group_ids"]==group_id[0]]["filename"]
-	group_1_file_names = data[data["group_ids"]==group_id[1]]["filename"]
+	group_0_file_names = list(data[data["group_ids"]==group_id[0]]["filename"])
+	group_1_file_names = list(data[data["group_ids"]==group_id[1]]["filename"])
 
-	group_0_data = ParticleSystem(group_0_file_names)
-	group_1_data = ParticleSystem(group_1_file_names)
-
+	group_0_data = ParticleSystem(group_0_file_names).Particles()
+	group_0_data = np.reshape(group_0_data,(number_of_particles,3,-1))
+	group_1_data = ParticleSystem(group_1_file_names).Particles()
+	group_1_data = np.reshape(group_1_data,(number_of_particles,3,-1))
 	
+
 	group_0_size = group_0_data.shape[-1]
 	group_1_size = group_1_data.shape[-1]
 	subset_size = min(group_0_size,group_1_size)
 
-	permutations = 20000
+	permutations = 1
 	pvalues_matrix = np.zeros((number_of_particles,permutations))
 	for p in range(permutations):
 		group_0_index = np.random.choice(group_0_size,subset_size,replace = False)
@@ -39,9 +41,10 @@ def compute_pvalues_for_group_difference(data,number_of_particles):
 
 		for particle_id in range(number_of_particles):
 
-
+			print("Particle loop")
 			x = group_0_subset[particle_id,:,:].T
 			y = group_1_subset[particle_id,:,:].T
+			print(x.shape,y.shape)
 			stats,f,pv,s = hotelling_t2(x,y)
 			pvalues_matrix[particle_id,p] = pv
 
