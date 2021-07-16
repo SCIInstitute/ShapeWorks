@@ -32,9 +32,14 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::run_augmentation_clicked);
 
   connect(this->ui_->data_open_button, &QPushButton::clicked,
-          this,&DeepSSMTool::update_panels);
+          this, &DeepSSMTool::update_panels);
   connect(this->ui_->controls_open_button, &QPushButton::clicked,
-          this,&DeepSSMTool::update_panels);
+          this, &DeepSSMTool::update_panels);
+
+  connect(this->ui_->generated_data_checkbox, &QCheckBox::stateChanged,
+          this, &DeepSSMTool::update_data);
+  connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
+          this, &DeepSSMTool::update_data);
 }
 
 //---------------------------------------------------------------------------
@@ -46,6 +51,8 @@ void DeepSSMTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
   this->load_params();
+  this->update_data();
+
 }
 
 //---------------------------------------------------------------------------
@@ -129,7 +136,7 @@ void DeepSSMTool::handle_thread_complete()
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
 
-
+  this->update_data();
 
 }
 
@@ -150,6 +157,53 @@ void DeepSSMTool::update_panels()
 {
   this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
   this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::update_data()
+{
+  this->ui_->table->clear();
+
+  QString filename = "/Users/amorris/tmp/deepssm/TotalData.csv";
+  if (QFile(filename).exists()) {
+
+    QFile file(filename);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+      emit error("Unable to open file: " + filename);
+      return;
+    }
+
+    this->ui_->table->setRowCount(0);
+    this->ui_->table->setColumnCount(5);
+
+    //this->ui_->table->verticalHeader()->setVisible(true);
+    //this->ui_->table->horizontalHeader()->setVisible(true);
+
+    QStringList wordList;
+    int row = 0;
+    while (!file.atEnd()) {
+      QByteArray line = file.readLine();
+      int col = 0;
+      bool show_generated = this->ui_->generated_data_checkbox->isChecked();
+      bool show_original = this->ui_->original_data_checkbox->isChecked();
+      // this needs to be replaced with it's own column (in all the python code as well)
+      bool is_generated = line.contains("Generated");
+      if ((is_generated && show_generated) || (!is_generated && show_original)) {
+        this->ui_->table->insertRow(this->ui_->table->rowCount());
+        for (auto item : line.split(',')) {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
+          this->ui_->table->setItem(row, col++, new_item);
+        }
+        row++;
+      }
+    }
+
+  }
+  else {
+    std::cerr << "Doesn't exist\n";
+  }
+
 }
 
 }

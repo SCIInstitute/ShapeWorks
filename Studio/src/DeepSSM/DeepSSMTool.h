@@ -70,6 +70,7 @@ signals:
 
 private:
 
+  void update_data();
 
   Preferences& preferences_;
 
