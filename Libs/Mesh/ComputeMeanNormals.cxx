@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     }
 
     int numFiles = nrmFilename.size();
-    thetas.resize(numPoints);
+    thetas.resize(numPoints);  // theta[which_point][which_file] = 3*pi/2 (i.e. 270 degrees)
     phis.resize(numPoints);
     for (int i = 0; i < numPoints; i++)
     {

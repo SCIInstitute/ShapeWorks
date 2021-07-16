@@ -33,6 +33,9 @@ public:
 
   /// determine the reference mesh
   static int findReferenceMesh(std::vector<Mesh> &meshes);
+
+  /// return array of average normals for each point in these meshes
+  static std::vector<Point3> computeMeanNormals(std::vector<Mesh> &meshes);
 };
 
 } // shapeworks
