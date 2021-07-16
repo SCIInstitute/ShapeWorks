@@ -21,6 +21,7 @@ public:
   static constexpr const char* OPTIMIZE_PARAMS = "optimize";
   static constexpr const char* STUDIO_PARAMS = "studio";
   static constexpr const char* PROJECT_PARAMS = "project";
+  static constexpr const char* DEEPSSM_PARAMS = "deepssm";
 
   //! get a parameter based on a key, return default if it doesn't exist
   Variant get(std::string key, Variant default_value);
