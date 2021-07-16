@@ -1688,6 +1688,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->groom_tool_->store_params();
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
+  this->deepssm_tool_->store_params();
 
   if (this->session_->save_project(filename)) {
     this->handle_message("Project Saved");

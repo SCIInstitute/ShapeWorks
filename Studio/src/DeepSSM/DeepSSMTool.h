@@ -43,8 +43,8 @@ public:
   //! Return if this tool is active
   bool get_active();
 
-  void load_settings();
-  void store_settings();
+  void load_params();
+  void store_params();
 
   void shutdown();
 
