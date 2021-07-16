@@ -180,6 +180,8 @@ void DeepSSMTool::update_data()
     //this->ui_->table->verticalHeader()->setVisible(true);
     //this->ui_->table->horizontalHeader()->setVisible(true);
 
+    this->shapes_.clear();
+
     QStringList wordList;
     int row = 0;
     while (!file.atEnd()) {
@@ -195,15 +197,42 @@ void DeepSSMTool::update_data()
           QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
           this->ui_->table->setItem(row, col++, new_item);
         }
+
+        auto groom_file = line.split(',')[0].toStdString();
+        auto particle_file = line.split(',')[1].toStdString();
+
+        auto subject = std::make_shared<Subject>();
+        // nevermind, these are CT/MRI images
+        //subject->set_groomed_filenames({groom_file});
+        ShapeHandle shape = ShapeHandle(new Shape());
+        shape->set_subject(subject);
+        shape->set_mesh_manager(this->session_->get_mesh_manager());
+        shape->import_local_point_files({particle_file});
+        shape->import_global_point_files({particle_file});
+
+        shape->get_reconstructed_meshes();
+
+        QStringList list;
+        list << QFileInfo(QString::fromStdString(particle_file)).baseName();
+        list << "";
+        list << "";
+        list << "";
+        shape->set_annotations(list);
+
+
+        this->shapes_.push_back(shape);
         row++;
       }
     }
 
   }
-  else {
-    std::cerr << "Doesn't exist\n";
-  }
+  emit update_view();
+}
 
+//---------------------------------------------------------------------------
+QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes()
+{
+  return this->shapes_;
 }
 
 }

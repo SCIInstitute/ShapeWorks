@@ -49,6 +49,7 @@ public:
 
   void shutdown();
 
+  QVector<QSharedPointer<Shape>> get_shapes();
 
 public Q_SLOTS:
 
@@ -81,6 +82,7 @@ private:
   QSharedPointer<QDeepSSM> deep_ssm_;
   QElapsedTimer timer_;
 
+  QVector<QSharedPointer<Shape>> shapes_;
 
 };
 

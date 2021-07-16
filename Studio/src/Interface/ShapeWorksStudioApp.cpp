@@ -178,6 +178,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_error);
   connect(this->deepssm_tool_.data(), &DeepSSMTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::update_view, this,
+          &ShapeWorksStudioApp::handle_display_setting_changed);
 
 
   // resize from preferences
@@ -1192,56 +1194,69 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  this->current_display_mode_ = mode;
+  std::string tool_state =
+    this->session_->parameters().get("tool_state", Session::DATA_C);
 
-  if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
+  if (tool_state == Session::DEEPSSM_C) {
+    this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
+    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
+    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
-    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
-    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                      this->session_->particles_present());
-
-    this->session_->calculate_reconstructed_samples();
-    this->visualizer_->display_samples();
   }
   else {
-    if (mode == AnalysisTool::MODE_MEAN_C) {
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
-      this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->visualizer_->set_mean(
-        this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+    this->current_display_mode_ = mode;
 
-      this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
-    }
-    else if (mode == AnalysisTool::MODE_PCA_C) {
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-      this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->compute_mode_shape();
-      this->visualizer_->reset_camera();
-    }
-    else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+    if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
 
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
       this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->particles_present() &&
-                                        reconstruct_ready);
-      this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
-      this->visualizer_->reset_camera();
-    }
-    else { //?
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->particles_present() &&
-                                        reconstruct_ready);
-    } //TODO regression?
+                                        this->session_->particles_present());
 
+      this->session_->calculate_reconstructed_samples();
+      this->visualizer_->display_samples();
+    }
+    else {
+      if (mode == AnalysisTool::MODE_MEAN_C) {
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->visualizer_->set_mean(
+          this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+
+        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+      }
+      else if (mode == AnalysisTool::MODE_PCA_C) {
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->compute_mode_shape();
+        this->visualizer_->reset_camera();
+      }
+      else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                          this->session_->particles_present() &&
+                                          reconstruct_ready);
+        this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
+        this->visualizer_->reset_camera();
+      }
+      else { //?
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                          this->session_->particles_present() &&
+                                          reconstruct_ready);
+      } //TODO regression?
+
+    }
   }
 
   if (change && !this->is_loading_) { // do not override if loading

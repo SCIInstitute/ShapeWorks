@@ -73,9 +73,7 @@ void Visualizer::display_samples()
 {
   this->update_viewer_properties();
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
-  this->lightbox_->set_shapes(shapes);
-  this->lightbox_->redraw();
-  this->update_viewer_properties();
+  this->display_shapes(shapes);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +84,14 @@ void Visualizer::update_samples()
       viewer->update_points();
     }
   this->lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes)
+{
+  this->lightbox_->set_shapes(shapes);
+  this->lightbox_->redraw();
+  this->update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -447,5 +453,6 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
 
   return transform;
 }
+
 
 }
