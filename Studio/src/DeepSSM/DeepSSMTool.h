@@ -58,6 +58,7 @@ public Q_SLOTS:
   void handle_progress(int val);
   void handle_error(QString msg);
 
+  void update_panels();
 
 signals:
 

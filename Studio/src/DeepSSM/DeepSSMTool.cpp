@@ -30,6 +30,11 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->run_augmentation_button, &QPushButton::clicked,
           this, &DeepSSMTool::run_augmentation_clicked);
+
+  connect(this->ui_->data_open_button, &QPushButton::clicked,
+          this,&DeepSSMTool::update_panels);
+  connect(this->ui_->controls_open_button, &QPushButton::clicked,
+          this,&DeepSSMTool::update_panels);
 }
 
 //---------------------------------------------------------------------------
@@ -94,7 +99,7 @@ bool DeepSSMTool::get_active()
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_augmentation_clicked()
 {
-  emit message("Please wait: running augmentation step...");
+  emit message("Please Wait: Running Data Augmentation...");
   emit progress(-1);
   this->timer_.start();
 
@@ -120,9 +125,12 @@ void DeepSSMTool::run_augmentation_clicked()
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete()
 {
-  emit progress(95);
+  emit progress(100);
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
+
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -135,6 +143,13 @@ void DeepSSMTool::handle_progress(int val)
 void DeepSSMTool::handle_error(QString msg)
 {
 
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::update_panels()
+{
+  this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
+  this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
 }
 
 }

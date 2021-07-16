@@ -180,7 +180,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
 
 
-
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
     this->restoreGeometry(this->preferences_.get_window_geometry());
