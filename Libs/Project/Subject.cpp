@@ -157,3 +157,15 @@ std::vector<std::string> Subject::get_world_particle_filenames()
 {
   return this->world_particle_filenames_;
 }
+
+//---------------------------------------------------------------------------
+void Subject::set_image_filenames(std::vector<std::string> filenames)
+{
+  this->image_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_image_filenames()
+{
+  return this->image_filenames_;
+}
