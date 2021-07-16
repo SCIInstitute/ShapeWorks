@@ -30,6 +30,7 @@ class Lightbox;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
+class DeepSSMTool;
 class Session;
 class Visualizer;
 class SplashScreen;
@@ -201,6 +202,7 @@ private:
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
+  QSharedPointer<DeepSSMTool> deepssm_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;

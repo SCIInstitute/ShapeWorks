@@ -28,6 +28,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
@@ -164,6 +165,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_warning);
   connect(this->analysis_tool_.data(), &AnalysisTool::error,
           this, &ShapeWorksStudioApp::handle_error);
+
+  // DeepSSM tool init
+  this->deepssm_tool_ = QSharedPointer<DeepSSMTool>::create(preferences_);
+  this->deepssm_tool_->set_app(this);
+  this->ui_->stacked_widget->addWidget(this->deepssm_tool_.data());
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::warning,
+          this, &ShapeWorksStudioApp::handle_warning);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::error,
+          this, &ShapeWorksStudioApp::handle_error);
+
 
 
   // resize from preferences
@@ -882,6 +895,13 @@ void ShapeWorksStudioApp::update_tool_mode()
     }
     this->update_display();
     this->ui_->action_optimize_mode->setChecked(true);
+  }
+  else if (tool_state == Session::DEEPSSM_C) {
+    this->ui_->stacked_widget->setCurrentWidget(this->deepssm_tool_.data());
+    //this->deepssm_tool_->activate();
+    this->ui_->controlsDock->setWindowTitle("DeepSSM");
+    this->update_display();
+    this->ui_->action_deepssm_mode->setChecked(true);
   }
   else { // DATA
     this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
