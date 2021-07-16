@@ -176,6 +176,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_warning);
   connect(this->deepssm_tool_.data(), &DeepSSMTool::error,
           this, &ShapeWorksStudioApp::handle_error);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
 
 
 
@@ -861,6 +863,7 @@ void ShapeWorksStudioApp::new_session()
   this->visualizer_->set_session(this->session_);
   this->groom_tool_->set_session(this->session_);
   this->optimize_tool_->set_session(this->session_);
+  this->deepssm_tool_->set_session(this->session_);
 }
 
 //---------------------------------------------------------------------------

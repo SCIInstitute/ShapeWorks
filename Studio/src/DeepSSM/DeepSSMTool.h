@@ -22,6 +22,7 @@ namespace shapeworks {
 
 class Session;
 class Lightbox;
+class QDeepSSM;
 class ShapeWorksStudioApp;
 
 class DeepSSMTool : public QWidget {
@@ -51,6 +52,12 @@ public:
 
 public Q_SLOTS:
 
+  void run_augmentation_clicked();
+
+  void handle_thread_complete();
+  void handle_progress(int val);
+  void handle_error(QString msg);
+
 
 signals:
 
@@ -68,6 +75,10 @@ private:
   Ui_DeepSSMTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
+
+  QSharedPointer<QDeepSSM> deep_ssm_;
+  QElapsedTimer timer_;
+
 
 };
 
