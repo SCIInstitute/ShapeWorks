@@ -11,11 +11,8 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
 #include <DeepSSM/DeepSSMParameters.h>
-#include <Visualization/Lightbox.h>
 #include <DeepSSM/QDeepSSM.h>
 
 #include <ui_DeepSSMTool.h>
@@ -40,6 +37,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::update_data);
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::update_data);
+
+  this->ui_->violin_plot->setText("");
 }
 
 //---------------------------------------------------------------------------
@@ -111,6 +110,7 @@ void DeepSSMTool::run_augmentation_clicked()
   emit progress(-1);
   this->timer_.start();
 
+  this->store_params();
   this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
 
   ShapeworksWorker* worker = new ShapeworksWorker(
@@ -220,13 +220,13 @@ void DeepSSMTool::update_data()
         list << "";
         shape->set_annotations(list);
 
-
         this->shapes_.push_back(shape);
         row++;
       }
     }
 
   }
+  this->load_violin_plot();
   emit update_view();
 }
 
@@ -234,6 +234,19 @@ void DeepSSMTool::update_data()
 QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes()
 {
   return this->shapes_;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::load_violin_plot()
+{
+  QString filename = "deepssm/violin.png";
+  if (QFile(filename).exists()) {
+    QPixmap pixmap(filename);
+    this->ui_->violin_plot->setPixmap(pixmap);
+  }
+  else {
+    this->ui_->violin_plot->setPixmap(QPixmap());
+  }
 }
 
 }

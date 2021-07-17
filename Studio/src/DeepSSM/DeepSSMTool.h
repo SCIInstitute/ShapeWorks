@@ -72,6 +72,7 @@ signals:
 private:
 
   void update_data();
+  void load_violin_plot();
 
   Preferences& preferences_;
 

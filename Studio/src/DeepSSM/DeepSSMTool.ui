@@ -822,6 +822,13 @@ Preserved</string>
          <item row="1" column="0">
           <widget class="QTableWidget" name="table"/>
          </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="violin_plot">
+           <property name="text">
+            <string>Violin Plot</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
