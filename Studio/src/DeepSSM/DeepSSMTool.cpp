@@ -72,6 +72,7 @@ void DeepSSMTool::load_params()
 
   this->ui_->sampler_type->setCurrentText(QString::fromStdString(params.get_sampler_type()));
 
+  this->update_data();
 }
 
 //---------------------------------------------------------------------------
@@ -164,7 +165,7 @@ void DeepSSMTool::update_data()
 {
   this->ui_->table->clear();
 
-  QString filename = "/Users/amorris/tmp/deepssm/TotalData.csv";
+  QString filename = "deepssm/TotalData.csv";
   if (QFile(filename).exists()) {
 
     QFile file(filename);

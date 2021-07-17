@@ -624,6 +624,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
+  this->deepssm_tool_->load_params();
 }
 
 //---------------------------------------------------------------------------
