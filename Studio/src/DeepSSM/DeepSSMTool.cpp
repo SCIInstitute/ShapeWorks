@@ -241,12 +241,33 @@ void DeepSSMTool::load_violin_plot()
 {
   QString filename = "deepssm/violin.png";
   if (QFile(filename).exists()) {
-    QPixmap pixmap(filename);
-    this->ui_->violin_plot->setPixmap(pixmap);
+    this->violin_plot_ = QPixmap(filename);
   }
   else {
-    this->ui_->violin_plot->setPixmap(QPixmap());
+    this->violin_plot_ = QPixmap{};
   }
+  this->resize_plot();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::resize_plot()
+{
+  if (!this->violin_plot_.isNull()) {
+    QPixmap resized = this->violin_plot_.scaledToWidth(this->ui_->violin_plot->width(),
+                                                       Qt::SmoothTransformation);
+    this->ui_->violin_plot->setPixmap(resized);
+  }
+  else
+  {
+    this->ui_->violin_plot->setPixmap(QPixmap{});
+  }
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::resizeEvent(QResizeEvent* event)
+{
+  QWidget::resizeEvent(event);
+  this->resize_plot();
 }
 
 }

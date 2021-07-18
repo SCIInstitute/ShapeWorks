@@ -51,6 +51,8 @@ public:
 
   QVector<QSharedPointer<Shape>> get_shapes();
 
+  void resizeEvent(QResizeEvent* event) override;
+
 public Q_SLOTS:
 
   void run_augmentation_clicked();
@@ -73,6 +75,7 @@ private:
 
   void update_data();
   void load_violin_plot();
+  void resize_plot();
 
   Preferences& preferences_;
 
@@ -84,6 +87,7 @@ private:
   QElapsedTimer timer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
+  QPixmap violin_plot_;
 
 };
 
