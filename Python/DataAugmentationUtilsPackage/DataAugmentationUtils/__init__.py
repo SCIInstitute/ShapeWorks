@@ -2,13 +2,13 @@ from DataAugmentationUtils import DataAugmentation
 from DataAugmentationUtils import Visualize
 
 '''
-Runs data augmentation and takes the following arguements:
+Runs data augmentation and takes the following arguments:
 - out_dir = directory to save augmented data and related info
 - img_list = list of paths to images of real examples augmentation is based off of
 - local_point_list = list of paths to local.particle files associated with examples in img_list
 - num_samples = how many samples to generate
 - num_dim = number of dimensions to reduce data too when embedding
-- aug_type = type of augmentaion to run, 1 is for aug based only on particles, 2 bases aug on images and particles
+- aug_type = type of augmentation to run, 1 is for aug based only on particles, 2 bases aug on images and particles
 - sampler_type = type of distribution to represent embedded data with for sampling
 - processes = number of processes to break image generation between for parallelization
 - world_point_list = list of paths to local.particle files (required if different from local)
@@ -19,10 +19,10 @@ def runDataAugmentation(out_dir, img_list, local_point_list, num_samples=3, num_
     print("Done.")
     return num_dim
 
-def visualizeAugmentation(data_csv, viz_type='splom'):
+def visualizeAugmentation(data_csv, viz_type='splom', show=True):
     if viz_type == 'splom':
         Visualize.splom(data_csv)
     elif viz_type == 'violin':
-        Visualize.violin(data_csv)
+        Visualize.violin(data_csv, show)
     else:
         print("Error visualization type unrecognized.")

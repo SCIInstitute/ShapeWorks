@@ -9,7 +9,7 @@ from DataAugmentationUtils import Sampler
 
 ################################# Augmentaiton Pipelines ###############################################
 
-def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_dim=0, percent_variability=0.95, sampler_type="KDE", mixture_num=0, processes=1, orig_world_point_list=None):
+def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_dim=0, percent_variability=0.95, sampler_type="kde", mixture_num=0, processes=1, orig_world_point_list=None):
 	# Get Embedder
 	point_matrix = Utils.create_data_matrix(orig_point_list)
 	if orig_world_point_list is not None:
@@ -47,6 +47,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	else:
 		print("Error sampler_type unrecognized.")
 		print("Gaussian, mixture, and KDE currently supported.")
+		return
 	
 	# Initialize output folders and lists
 	gen_point_dir = out_dir + "Generated-Particles/"
