@@ -1,10 +1,14 @@
 // std
 #include <iostream>
 
+#include <pybind11/embed.h>
+namespace py = pybind11;
+
 // qt
 #include <QThread>
 #include <QFileDialog>
 #include <QMessageBox>
+
 
 // shapeworks
 #include <DeepSSM/DeepSSMTool.h>
@@ -51,7 +55,6 @@ void DeepSSMTool::set_session(QSharedPointer<Session> session)
   this->session_ = session;
   this->load_params();
   this->update_data();
-
 }
 
 //---------------------------------------------------------------------------
@@ -109,6 +112,8 @@ void DeepSSMTool::run_augmentation_clicked()
   emit message("Please Wait: Running Data Augmentation...");
   emit progress(-1);
   this->timer_.start();
+
+  //this->initialize_python();
 
   this->store_params();
   this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
@@ -257,8 +262,7 @@ void DeepSSMTool::resize_plot()
                                                        Qt::SmoothTransformation);
     this->ui_->violin_plot->setPixmap(resized);
   }
-  else
-  {
+  else {
     this->ui_->violin_plot->setPixmap(QPixmap{});
   }
 }
@@ -269,5 +273,27 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
   QWidget::resizeEvent(event);
   this->resize_plot();
 }
+/*
+//---------------------------------------------------------------------------
+void DeepSSMTool::initialize_python()
+{
+  if (!this->python_initialized_) {
+    py::initialize_interpreter();
+    // this is necessary or the plots will crash the process
+    py::module py_matplot_lib = py::module::import("matplotlib");
+    py_matplot_lib.attr("use")("agg");
+    py::gil_scoped_release release;
+  }
+  this->python_initialized_ = true;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::finalize_python()
+{
+  if (this->python_initialized_) {
+    py::finalize_interpreter();
+  }
+}
+*/
 
 }

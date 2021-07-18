@@ -73,6 +73,10 @@ signals:
 
 private:
 
+  //void initialize_python();
+  //void finalize_python();
+  //bool python_initialized_ = false;
+
   void update_data();
   void load_violin_plot();
   void resize_plot();
@@ -88,6 +92,8 @@ private:
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
+
+
 
 };
 
