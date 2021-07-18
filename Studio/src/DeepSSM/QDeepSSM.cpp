@@ -81,14 +81,15 @@ void QDeepSSM::run()
 //---------------------------------------------------------------------------
 void QDeepSSM::initialize_python()
 {
-  if (!this->python_initialized_) {
+  static bool python_initialized = false;
+  if (!python_initialized) {
     py::initialize_interpreter();
     // this is necessary or the plots will crash the process
     py::module py_matplot_lib = py::module::import("matplotlib");
     py_matplot_lib.attr("use")("agg");
     py::gil_scoped_release release;
   }
-  this->python_initialized_ = true;
+  python_initialized = true;
 }
 
 //---------------------------------------------------------------------------
