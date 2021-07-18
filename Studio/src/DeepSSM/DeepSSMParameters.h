@@ -33,7 +33,7 @@ public:
 
   // constants
   const static std::string DEEPSSM_SAMPLER_GAUSSIAN_C;
-  const static std::string DEEPSSM_SAMPLER_GAUSSIAN_MIXTURE_C;
+  const static std::string DEEPSSM_SAMPLER_MIXTURE_C;
   const static std::string DEEPSSM_SAMPLER_KDE_C;
 
 private:

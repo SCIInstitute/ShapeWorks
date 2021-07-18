@@ -566,7 +566,7 @@ QWidget#data_panel {
                   </item>
                   <item>
                    <property name="text">
-                    <string>Mixture of Gaussian</string>
+                    <string>Mixture</string>
                    </property>
                   </item>
                   <item>

@@ -4,7 +4,7 @@
 namespace shapeworks {
 
 const std::string DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_C("Gaussian");
-const std::string DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_MIXTURE_C("Gaussian Mixture");
+const std::string DeepSSMParameters::DEEPSSM_SAMPLER_MIXTURE_C("Mixture");
 const std::string DeepSSMParameters::DEEPSSM_SAMPLER_KDE_C("KDE");
 
 //---------------------------------------------------------------------------
