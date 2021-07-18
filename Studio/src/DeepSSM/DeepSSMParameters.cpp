@@ -26,50 +26,50 @@ void DeepSSMParameters::save_to_project()
 }
 
 //---------------------------------------------------------------------------
-int DeepSSMParameters::get_num_samples()
+int DeepSSMParameters::get_aug_num_samples()
 {
-  return this->params_.get("num_samples", 3);
+  return this->params_.get("aug_num_samples", 3);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_num_samples(int num_samples)
+void DeepSSMParameters::set_aug_num_samples(int num_samples)
 {
-  this->params_.set("num_samples", num_samples);
+  this->params_.set("aug_num_samples", num_samples);
 }
 
 //---------------------------------------------------------------------------
-int DeepSSMParameters::get_num_dims()
+int DeepSSMParameters::get_aug_num_dims()
 {
-  return this->params_.get("num_dims", 3);
+  return this->params_.get("aug_num_dims", 3);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_num_dims(int num_dims)
+void DeepSSMParameters::set_aug_num_dims(int num_dims)
 {
-  this->params_.set("num_dims", num_dims);
+  this->params_.set("aug_num_dims", num_dims);
 }
 
 //---------------------------------------------------------------------------
-double DeepSSMParameters::get_percent_variability()
+double DeepSSMParameters::get_aug_percent_variability()
 {
-  return this->params_.get("percent_variability", 0.5);
+  return this->params_.get("aug_percent_variability", 0.95);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_percent_variability(double percent_variability)
+void DeepSSMParameters::set_aug_percent_variability(double percent_variability)
 {
-  this->params_.set("percent_variability", percent_variability);
+  this->params_.set("aug_percent_variability", percent_variability);
 }
 
 //---------------------------------------------------------------------------
-std::string DeepSSMParameters::get_sampler_type()
+std::string DeepSSMParameters::get_aug_sampler_type()
 {
-  return this->params_.get("augmentation_sampler_type", DEEPSSM_SAMPLER_GAUSSIAN_C);
+  return this->params_.get("aug_augmentation_sampler_type", DEEPSSM_SAMPLER_GAUSSIAN_C);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_sampler_type(std::string sampler_type)
+void DeepSSMParameters::set_aug_sampler_type(std::string sampler_type)
 {
-  this->params_.set("augmentation_sampler_type", sampler_type);
+  this->params_.set("aug_augmentation_sampler_type", sampler_type);
 }
 };
