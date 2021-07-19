@@ -81,8 +81,6 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 
   auto region = image->GetLargestPossibleRegion();
 
-  float radius = 5.0; // mm - need to expose as parameter
-
   auto points = this->poly_data_->GetPoints();
 
   vtkFloatArray* scalars = vtkFloatArray::New();
@@ -90,8 +88,6 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
   scalars->SetName(name.c_str());
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
-    //double* pt = transform->TransformPoint(points->GetPoint(i));
-
     double* pt = points->GetPoint(i);
 
     ImageType::PointType pitk;
@@ -102,7 +98,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
 
-    auto pixel = 0;
+    float pixel = 0.0f;
     if (region.IsInside(index)) {
       pixel = interpolator->EvaluateAtContinuousIndex(index);
     }
@@ -110,15 +106,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
   }
 
   this->poly_data_->GetPointData()->AddArray(scalars);
-
   this->poly_data_->GetPointData()->SetScalars(scalars);
-
-  /*
-  auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInputData(this->poly_data_);
-  writer->SetFileName("/tmp/foo.vtk");
-  writer->Update();
-*/
 }
 
 //---------------------------------------------------------------------------
