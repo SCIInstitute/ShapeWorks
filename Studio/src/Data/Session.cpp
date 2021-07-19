@@ -112,7 +112,7 @@ bool Session::save_project(std::string fname)
   if (filename == "") {
     filename = this->filename_;
   }
-  this->filename_ = filename;
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   QFileInfo fi(filename);
   if (fi.exists()) {
@@ -192,9 +192,9 @@ bool Session::load_project(QString filename)
                           QMessageBox::Ok);
     return false;
   }
-  // clear the project out first
 
-  this->filename_ = filename;
+  // clear the project out first
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   if (filename.toLower().endsWith(".xlsx")) {
     return this->load_xl_project(filename);
@@ -393,7 +393,7 @@ bool Session::load_light_project(QString filename)
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename)
 {
-  this->filename_ = filename;
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   this->set_project_path(QFileInfo(filename).absolutePath());
 
