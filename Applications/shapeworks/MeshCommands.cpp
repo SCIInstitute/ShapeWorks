@@ -837,6 +837,35 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// MeanNormals
+///////////////////////////////////////////////////////////////////////////////
+void MeanNormals::buildParser()
+{
+  const std::string prog = "mean-normals";
+  const std::string desc = ""; // TODO: add description
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
+
+  Command::buildParser();
+}
+
+bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::vector<std::string> filenames = options.get("names");
+
+  std::vector<Mesh> meshes;
+  for (int i = 0; i < filenames.size(); i++)
+  {
+    Mesh mesh_(filenames[i]);
+    meshes.push_back(mesh_);
+  }
+
+  std::vector<Point3> mean_normals = MeshUtils::computeMeanNormals(meshes);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()

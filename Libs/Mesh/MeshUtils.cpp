@@ -1,5 +1,6 @@
 #include "MeshUtils.h"
 #include "ParticleSystem.h"
+#include "Utils.h"
 
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -168,7 +169,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
-std::vector<Point3> computeMeanNormals(std::vector<Mesh> &meshes)
+std::vector<Point3> MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute average normals");
@@ -176,13 +177,14 @@ std::vector<Point3> computeMeanNormals(std::vector<Mesh> &meshes)
 
   // convert all normals from all meshes to spherical coords
   std::vector<std::vector<Point3>> sphericals(num_normals, std::vector<Point3>(meshes.size()));
+
   for (int j = 0; j < meshes.size(); j++)
   {
     if (meshes[j].numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = mesh.getField<vtkDataArray>("Normals");
-    if (num_normals != normals.GetSize())
+    auto normals = meshes[j].getField<vtkDataArray>("Normals");
+    if (num_normals * 3 != normals->GetSize())
       throw std::invalid_argument("Expected a normal for every point in mesh");
     
     for (int i = 0; i < num_normals; i++)
@@ -196,19 +198,22 @@ std::vector<Point3> computeMeanNormals(std::vector<Mesh> &meshes)
 
   // compute average value for the normals of each point
   // - prep data in 1d theta/phi arrays first for averageThetaArc function
-  std::vector<double> phis(num_normals);
-  std::vector<double> thetas(num_normals);
+  // std::vector<std::vector<double>> phis(num_normals);
+  // std::vector<std::vector<double>> thetas(num_normals);
+  std::vector<Point3> phis(num_normals);
+  std::vector<Point3> thetas(num_normals);
   for (int i = 0; i < num_normals; i++)
   {
     phis[i] = sphericals[i][1];
     thetas[i] = sphericals[i][2];
   }
+
   std::vector<Point3> mean_normals(num_normals);
   for (int i = 0; i < num_normals; i++)
   {
     Point3 avg_spherical_normal(1.0,
-                                Utils::averageThetaArc(phis[i]),
-                                Utils::averageThetaArc(thetas[i]));
+                                Utils::averageThetaArc(phis[i].GetDataPointer()),
+                                Utils::averageThetaArc(thetas[i].GetDataPointer()));
 
     // note: Utils::spherical2cartesian expects atypical (r, phi, theta)
     Utils::spherical2cartesian(avg_spherical_normal.GetDataPointer(),
