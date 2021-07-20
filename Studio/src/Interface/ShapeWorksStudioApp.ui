@@ -932,6 +932,9 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_deepssm_mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../Resources/ShapeWorksStudio.qrc">
      <normaloff>:/Studio/Images/deep_ssm.png</normaloff>:/Studio/Images/deep_ssm.png</iconset>
