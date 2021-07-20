@@ -881,7 +881,7 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->ui_->controlsDock->setWindowTitle("Analysis");
     this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
     this->on_actionShow_Tool_Window_triggered();
-    this->update_display();
+    this->update_display(true);
     this->ui_->action_analysis_mode->setChecked(true);
   }
   else if (tool_state == Session::GROOM_C) {
@@ -1260,7 +1260,7 @@ void ShapeWorksStudioApp::update_display(bool force)
     }
   }
 
-  if (change && !this->is_loading_) { // do not override if loading
+  if ((force || change) && !this->is_loading_) { // do not override if loading
     this->reset_num_viewers();
   }
 
