@@ -792,7 +792,7 @@ PYBIND11_MODULE(shapeworks_py, m)
               "filenames"_a, "isoValue"_a=1.0)
 
   .def_static("boundingBox",
-              py::overload_cast<const std::vector<const Image>&, Image::PixelType>(&ImageUtils::boundingBox),
+              py::overload_cast<const std::vector<std::reference_wrapper<const Image>>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of images",
               "images"_a, "isoValue"_a=1.0)
 
@@ -1105,7 +1105,7 @@ PYBIND11_MODULE(shapeworks_py, m)
               "filenames"_a, "center"_a=false)
 
   .def_static("boundingBox",
-              py::overload_cast<const std::vector<const Mesh>&, bool>(&MeshUtils::boundingBox),
+              py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for shapeworks meshes",
               "meshes"_a, "center"_a=false)
 

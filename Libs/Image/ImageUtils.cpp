@@ -5,7 +5,8 @@
 
 namespace shapeworks {
 
-PhysicalRegion ImageUtils::boundingBox(const std::vector<std::string>& filenames, Image::PixelType isoValue)
+PhysicalRegion ImageUtils::boundingBox(const std::vector<std::string>& filenames,
+                                       Image::PixelType isoValue)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
@@ -28,26 +29,29 @@ PhysicalRegion ImageUtils::boundingBox(const std::vector<std::string>& filenames
   return bbox;
 }
 
-PhysicalRegion ImageUtils::boundingBox(const std::vector<const Image>& images, Image::PixelType isoValue)
+PhysicalRegion ImageUtils::boundingBox(const std::vector<std::reference_wrapper<const Image>>& images,
+                                       Image::PixelType isoValue)
 {
   if (images.empty())
     throw std::invalid_argument("No images provided to compute a bounding box");
 
   PhysicalRegion bbox;
-  Dims dims(images[0].dims()); // images must all be the same size
+  Dims dims(images[0].get().dims()); // images must all be the same size
 
   for (auto img : images)
   {
-    if (img.dims() != dims)
+    if (img.get().dims() != dims)
       throw std::invalid_argument("Image sizes do not match");
 
-    bbox.expand(img.physicalBoundingBox(isoValue));
+    bbox.expand(img.get().physicalBoundingBox(isoValue));
   }
 
   return bbox;
 }
 
-TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)
+TransformPtr ImageUtils::createWarpTransform(const std::string& source_landmarks,
+                                             const std::string& target_landmarks,
+                                             const int stride)
 { 
   typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
   typedef TPSTransform::PointSetType PointSet;

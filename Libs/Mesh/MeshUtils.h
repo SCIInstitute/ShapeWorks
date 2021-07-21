@@ -29,7 +29,7 @@ public:
   static PhysicalRegion boundingBox(const std::vector<std::string>& filenames, bool center = false);
 
   /// calculate bounding box incrementally for shapework meshes
-  static PhysicalRegion boundingBox(const std::vector<const Mesh>& meshes, bool center = false);
+  static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
   /// determine the reference mesh
   static int findReferenceMesh(std::vector<Mesh> &meshes);
