@@ -940,7 +940,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/Studio/Images/deep_ssm.png</normaloff>:/Studio/Images/deep_ssm.png</iconset>
    </property>
    <property name="text">
-    <string>Deep SSM</string>
+    <string>DeepSSM</string>
    </property>
   </action>
  </widget>
