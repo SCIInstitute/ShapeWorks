@@ -50,7 +50,9 @@ if __name__ == '__main__':
     # parse arguments
     parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
     parser.add_argument("use_case", help="Must specify which of these use cases to run.",
-                        choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca", "ellipsoid_multiple_domain","ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
+                        choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca", \
+                                 "ellipsoid_multiple_domain","ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", "femur", "femur_mesh",\
+                                 "femur_cut","femur_pvalues","deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
     parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data", action="store_true")
     parser.add_argument("--num_subsample", help="Size of subset to run on (default: %(default)s)", type=int, default=3)
     parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
