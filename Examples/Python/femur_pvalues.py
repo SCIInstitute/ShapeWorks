@@ -13,7 +13,7 @@ def Run_Pipeline(args):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    dataset_name = 'femur_stats'
+    dataset_name = 'femur_pvalues-v0'
     sw.data.download_and_unzip_dataset(dataset_name, output_directory)
 
     shape_models = f'{output_directory}{dataset_name}/shape_model/'
