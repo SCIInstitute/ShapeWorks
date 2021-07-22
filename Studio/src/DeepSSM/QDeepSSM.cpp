@@ -1,4 +1,5 @@
 
+
 // pybind
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
@@ -6,6 +7,8 @@
 
 namespace py = pybind11;
 using namespace pybind11::literals; // to bring in the `_a` literal
+
+#include <QThread>
 
 #include <DeepSSM/QDeepSSM.h>
 
@@ -96,7 +99,10 @@ void QDeepSSM::run()
   run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
           params.get_aug_num_dims(), params.get_aug_percent_variability(),
           sampler_type.toStdString(),
-          0, 1, nullptr);
+          0, /* mixture_num */
+          //QThread::idealThreadCount(), /* processes */
+          1, /* processes */
+          nullptr /* world point list? */);
 
   py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
   vis_aug("deepssm/TotalData.csv", "violin", false);
