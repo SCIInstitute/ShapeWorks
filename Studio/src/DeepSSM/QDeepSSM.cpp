@@ -47,13 +47,11 @@ void QDeepSSM::update_progress()
 QDeepSSM::QDeepSSM(ProjectHandle project)
 {
   this->project_ = project;
-//  py::initialize_interpreter();
 }
 
 //---------------------------------------------------------------------------
 QDeepSSM::~QDeepSSM()
 {
-//  py::finalize_interpreter();
 }
 
 //---------------------------------------------------------------------------
@@ -79,11 +77,8 @@ void QDeepSSM::run()
     }
   }
 
-  //py::gil_scoped_acquire acquire;
-  //py::gil_scoped_release release;
-
-  Logger myLogObject = Logger();
-  myLogObject.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
+  Logger logger = Logger();
+  logger.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
   py::module logger = py::module::import("logger");
 
   py::list train_img_list_py = py::cast(train_img_list);
@@ -95,7 +90,7 @@ void QDeepSSM::run()
   py::module py_data_aug = py::module::import("DataAugmentationUtils");
 
   py::object set_logger = py_data_aug.attr("setLogger");
-  set_logger(myLogObject);
+  set_logger(logger);
 
   py::object run_aug = py_data_aug.attr("runDataAugmentation");
   run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
@@ -105,9 +100,6 @@ void QDeepSSM::run()
 
   py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
   vis_aug("deepssm/TotalData.csv", "violin", false);
-
-  //py::gil_scoped_acquire acquire;
-  //py::gil_scoped_release release;
 
 }
 
@@ -131,7 +123,6 @@ void QDeepSSM::finalize_python()
   if (this->python_initialized_) {
     py::finalize_interpreter();
   }
-
 }
 
 //---------------------------------------------------------------------------
