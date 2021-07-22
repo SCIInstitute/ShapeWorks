@@ -112,7 +112,8 @@ void DeepSSMTool::run_augmentation_clicked()
   emit progress(-1);
   this->timer_.start();
 
-  //this->initialize_python();
+  this->tool_is_running_ = true;
+  this->update_panels();
 
   this->store_params();
   this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
@@ -143,7 +144,8 @@ void DeepSSMTool::handle_thread_complete()
   emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
 
   this->update_data();
-
+  this->tool_is_running_ = false;
+  this->update_panels();
 }
 
 //---------------------------------------------------------------------------
@@ -163,6 +165,7 @@ void DeepSSMTool::update_panels()
 {
   this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
   this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
+  this->ui_->controls_content->setEnabled(!this->tool_is_running_);
 }
 
 //---------------------------------------------------------------------------

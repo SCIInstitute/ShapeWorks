@@ -73,10 +73,6 @@ signals:
 
 private:
 
-  //void initialize_python();
-  //void finalize_python();
-  //bool python_initialized_ = false;
-
   void update_data();
   void load_violin_plot();
   void resize_plot();
@@ -87,13 +83,12 @@ private:
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
 
+  bool tool_is_running_ = false;
   QSharedPointer<QDeepSSM> deep_ssm_;
   QElapsedTimer timer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
-
-
 
 };
 
