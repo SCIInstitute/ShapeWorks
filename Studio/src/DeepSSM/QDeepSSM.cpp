@@ -13,6 +13,30 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 
 namespace shapeworks {
 
+class Logger {
+public:
+
+  void set_callback(const std::function<void(std::string)>& callback)
+  {
+    this->callback_ = callback;
+  }
+
+  void cpp_log(std::string msg)
+  {
+    this->callback_(msg);
+  }
+
+private:
+  std::function<void(std::string)> callback_;
+};
+
+PYBIND11_EMBEDDED_MODULE(logger, m)
+{
+  py::class_<Logger, std::shared_ptr<Logger>>(m, "Logger")
+    .def(py::init<>())
+    .def("cpp_log", &Logger::cpp_log);
+};
+
 //---------------------------------------------------------------------------
 void QDeepSSM::update_progress()
 {
@@ -58,6 +82,10 @@ void QDeepSSM::run()
   //py::gil_scoped_acquire acquire;
   //py::gil_scoped_release release;
 
+  Logger myLogObject = Logger();
+  myLogObject.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
+  py::module logger = py::module::import("logger");
+
   py::list train_img_list_py = py::cast(train_img_list);
   py::list train_pts_py = py::cast(train_pts);
 
@@ -65,9 +93,14 @@ void QDeepSSM::run()
 
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
   py::module py_data_aug = py::module::import("DataAugmentationUtils");
+
+  py::object set_logger = py_data_aug.attr("setLogger");
+  set_logger(myLogObject);
+
   py::object run_aug = py_data_aug.attr("runDataAugmentation");
   run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
-          params.get_aug_num_dims(), params.get_aug_percent_variability(), sampler_type.toStdString(),
+          params.get_aug_num_dims(), params.get_aug_percent_variability(),
+          sampler_type.toStdString(),
           0, 1, nullptr);
 
   py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
@@ -99,6 +132,12 @@ void QDeepSSM::finalize_python()
     py::finalize_interpreter();
   }
 
+}
+
+//---------------------------------------------------------------------------
+void QDeepSSM::python_message(std::string str)
+{
+  emit message(QString::fromStdString(str));
 }
 
 }

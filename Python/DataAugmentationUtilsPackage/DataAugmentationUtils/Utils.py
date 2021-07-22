@@ -2,6 +2,24 @@ import shapeworks as sw
 import numpy as np
 import os
 
+logger = None
+'''
+Set the logger object
+'''
+def setLogger(logObject):
+	global logger
+	logger = logObject
+
+'''
+If logger is set, use it, otherwise print to console
+'''
+def message(str):
+	if logger is not None:
+		logger.cpp_log(str)
+	else:
+		print(str)
+
+
 '''
 Reads data from files in given list and turns into one np matrix
 '''

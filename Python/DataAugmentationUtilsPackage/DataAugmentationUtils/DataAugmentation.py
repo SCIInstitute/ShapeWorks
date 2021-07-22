@@ -45,8 +45,8 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		PointSampler = Sampler.KDE_Sampler()
 		PointSampler.fit(embedded_matrix) 
 	else:
-		print("Error sampler_type unrecognized.")
-		print("Gaussian, mixture, and KDE currently supported.")
+		Utils.message("Error sampler_type unrecognized.")
+		Utils.message("Gaussian, mixture, and KDE currently supported.")
 		return
 	
 	# Initialize output folders and lists
@@ -63,7 +63,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		generate_image_params_list = []
 	# Sample to generate new examples
 	for index in range(1, num_samples+1):
-		print("Generating " +str(index)+'/'+str(num_samples))
+		Utils.message("Generating " +str(index)+'/'+str(num_samples))
 		name = 'Generated_sample_' + Utils.pad_index(index)
 		# Generate embedding
 		sampled_embedding, base_index = PointSampler.sample()

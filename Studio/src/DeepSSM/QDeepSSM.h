@@ -20,12 +20,15 @@ public:
   ~QDeepSSM();
   void run();
 
+  void python_message(std::string str);
+
 protected:
   // override update_progress to emit q_signal
   void update_progress();
 
 Q_SIGNALS:
   void progress(int);
+  void message(QString);
 
 private:
   ProjectHandle project_;
