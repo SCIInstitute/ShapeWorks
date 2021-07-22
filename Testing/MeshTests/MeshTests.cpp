@@ -329,12 +329,14 @@ TEST(MeshTests, boundingBoxTest1)
 
 TEST(MeshTests, boundingBoxTest2)
 {
-  std::vector<Mesh> meshes;
-  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_L_femur.ply")); meshes.push_back(mesh1);
-  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_L_femur.ply")); meshes.push_back(mesh2);
-  Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"      )); meshes.push_back(mesh3);
-  Mesh mesh4(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply")); meshes.push_back(mesh4);
-  Mesh mesh5(std::string(TEST_DATA_DIR) + std::string("/femur.vtk"      )); meshes.push_back(mesh5);
+  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_L_femur.ply"));
+  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_L_femur.ply"));
+  Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"      ));
+  Mesh mesh4(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  Mesh mesh5(std::string(TEST_DATA_DIR) + std::string("/femur.vtk"      ));
+
+  std::vector<std::reference_wrapper<const Mesh>> meshes
+  {mesh1, mesh2, mesh3, mesh4, mesh5};
 
   auto region = MeshUtils::boundingBox(meshes);
   Point min({-112.139, -192.471, -1217.76});

@@ -787,16 +787,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ImageUtils>(m, "ImageUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(filenames, val);
-              },
+              py::overload_cast<const std::vector<std::string>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of filenames",
               "filenames"_a, "isoValue"_a=1.0)
 
   .def_static("boundingBox",
-              [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(images, val);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Image>>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of images",
               "images"_a, "isoValue"_a=1.0)
 
@@ -804,9 +800,9 @@ PYBIND11_MODULE(shapeworks_py, m)
               [](const std::string &source_landmarks,
                  const std::string &target_landmarks,
                  const int stride) -> decltype(auto) {
-                auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks,
-                                                                             target_landmarks,
-                                                                             stride);
+                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
+                                                                 target_landmarks,
+                                                                 stride);
                 return xform_ptr;
               },
               "computes a warp transform from the source to the target landmarks",
@@ -1104,23 +1100,17 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<MeshUtils>(m, "MeshUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, bool center) {
-                return shapeworks::MeshUtils::boundingBox(filenames, center);
-              },
+              py::overload_cast<const std::vector<std::string>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for meshes",
               "filenames"_a, "center"_a=false)
 
   .def_static("boundingBox",
-              [](std::vector<Mesh> meshes, bool center) {
-                return shapeworks::MeshUtils::boundingBox(meshes, center);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for shapeworks meshes",
               "meshes"_a, "center"_a=false)
 
   .def_static("findReferenceMesh",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::findReferenceMesh(meshes);
-              },
+              &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
   ;
