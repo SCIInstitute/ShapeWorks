@@ -16,8 +16,8 @@ Runs data augmentation and takes the following arguments:
 '''
 
 
-def setLogger(logObject):
-    Utils.setLogger(logObject)
+def set_logger(log_object):
+    Utils.set_logger(log_object)
 
 
 def runDataAugmentation(out_dir, img_list, local_point_list, num_samples=3, num_dim=0, percent_variability=0.95, sampler_type="KDE", mixture_num=0, processes=1, world_point_list=None):

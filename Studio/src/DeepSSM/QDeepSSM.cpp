@@ -34,7 +34,7 @@ PYBIND11_EMBEDDED_MODULE(logger, m)
 {
   py::class_<Logger, std::shared_ptr<Logger>>(m, "Logger")
     .def(py::init<>())
-    .def("cpp_log", &Logger::cpp_log);
+    .def("log", &Logger::cpp_log);
 };
 
 //---------------------------------------------------------------------------
@@ -77,8 +77,8 @@ void QDeepSSM::run()
     }
   }
 
-  Logger logger = Logger();
-  logger.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
+  Logger logger_object = Logger();
+  logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
   py::module logger = py::module::import("logger");
 
   py::list train_img_list_py = py::cast(train_img_list);
@@ -89,8 +89,8 @@ void QDeepSSM::run()
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
   py::module py_data_aug = py::module::import("DataAugmentationUtils");
 
-  py::object set_logger = py_data_aug.attr("setLogger");
-  set_logger(logger);
+  py::object set_logger = py_data_aug.attr("set_logger");
+  set_logger(logger_object);
 
   py::object run_aug = py_data_aug.attr("runDataAugmentation");
   run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),

@@ -6,16 +6,16 @@ logger = None
 '''
 Set the logger object
 '''
-def setLogger(logObject):
+def set_logger(log_object):
 	global logger
-	logger = logObject
+	logger = log_object
 
 '''
 If logger is set, use it, otherwise print to console
 '''
 def message(str):
 	if logger is not None:
-		logger.cpp_log(str)
+		logger.log(str)
 	else:
 		print(str)
 

@@ -9,7 +9,6 @@ namespace py = pybind11;
 #include <QFileDialog>
 #include <QMessageBox>
 
-
 // shapeworks
 #include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
