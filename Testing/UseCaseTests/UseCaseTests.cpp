@@ -150,3 +150,10 @@ TEST(UseCaseTests, ellipsoid_pca)
   run_use_case("ellipsoid_pca",
                "Output/ellipsoid/pca/pca_eigen_vectors.txt");
 }
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_pvalues)
+{
+  run_use_case("femur_pvalues",
+               "Output/femur_pvalues/femur_stats/femur_pvalues.txt");
+}
