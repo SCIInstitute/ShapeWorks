@@ -26,5 +26,6 @@ def Run_Pipeline(args):
     data["filename"] = output_directory + data["filename"]
     pvalues = sw.stats.compute_pvalues_for_group_difference(data, num_particles, permutations)
 
-    print("Saving the pvalues for the group difference at -" + f"{output_directory}{dataset_name}/")
-    np.savetxt(f'{output_directory}{dataset_name}/femur_pvalues.txt', pvalues)
+    filename = f"{output_directory}femur_pvalues.txt"
+    print(f"Saving the pvalues for the group difference: {filename}")
+    np.savetxt(filename, pvalues)

@@ -155,5 +155,5 @@ TEST(UseCaseTests, ellipsoid_pca)
 TEST(UseCaseTests, femur_pvalues)
 {
   run_use_case("femur_pvalues",
-               "Output/femur_pvalues/femur_stats/femur_pvalues.txt");
+               "Output/femur_pvalues/femur_pvalues.txt");
 }
