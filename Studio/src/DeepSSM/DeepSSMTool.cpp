@@ -119,6 +119,8 @@ void DeepSSMTool::run_augmentation_clicked()
   this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
 
   connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
+  connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
+
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::DeepSSM_AugmentationType, nullptr, nullptr,
     nullptr, session_);

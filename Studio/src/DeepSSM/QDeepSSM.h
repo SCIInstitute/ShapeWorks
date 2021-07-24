@@ -29,6 +29,7 @@ protected:
 Q_SIGNALS:
   void progress(int);
   void message(QString);
+  void error(QString);
 
 private:
   ProjectHandle project_;

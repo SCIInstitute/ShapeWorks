@@ -61,52 +61,55 @@ QDeepSSM::~QDeepSSM()
 void QDeepSSM::run()
 {
 
-  this->initialize_python();
+  try {
+    this->initialize_python();
 
-  auto subjects = this->project_->get_subjects();
+    auto subjects = this->project_->get_subjects();
 
-  std::vector<std::string> train_img_list;
-  std::vector<std::string> train_pts;
+    std::vector<std::string> train_img_list;
+    std::vector<std::string> train_pts;
 
-  for (auto subject : subjects) {
-    auto image_filenames = subject->get_image_filenames();
-    if (!image_filenames.empty()) {
-      train_img_list.push_back(image_filenames[0]);
+    for (auto subject : subjects) {
+      auto image_filenames = subject->get_image_filenames();
+      if (!image_filenames.empty()) {
+        train_img_list.push_back(image_filenames[0]);
 
+      }
+      auto particle_filenames = subject->get_local_particle_filenames();
+      if (!particle_filenames.empty()) {
+        train_pts.push_back(particle_filenames[0]);
+      }
     }
-    auto particle_filenames = subject->get_local_particle_filenames();
-    if (!particle_filenames.empty()) {
-      train_pts.push_back(particle_filenames[0]);
-    }
+
+    Logger logger_object = Logger();
+    logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
+    py::module logger = py::module::import("logger");
+
+    py::list train_img_list_py = py::cast(train_img_list);
+    py::list train_pts_py = py::cast(train_pts);
+
+    DeepSSMParameters params(this->project_);
+
+    QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
+    py::module py_data_aug = py::module::import("DataAugmentationUtils");
+
+    py::object set_logger = py_data_aug.attr("set_logger");
+    set_logger(logger_object);
+
+    py::object run_aug = py_data_aug.attr("runDataAugmentation");
+    run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
+            params.get_aug_num_dims(), params.get_aug_percent_variability(),
+            sampler_type.toStdString(),
+            0, /* mixture_num */
+      //QThread::idealThreadCount(), /* processes */
+            1, /* processes */
+            nullptr /* world point list? */);
+
+    py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
+    vis_aug("deepssm/TotalData.csv", "violin", false);
+  } catch (py::error_already_set &e) {
+    emit error(e.what());
   }
-
-  Logger logger_object = Logger();
-  logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
-  py::module logger = py::module::import("logger");
-
-  py::list train_img_list_py = py::cast(train_img_list);
-  py::list train_pts_py = py::cast(train_pts);
-
-  DeepSSMParameters params(this->project_);
-
-  QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
-  py::module py_data_aug = py::module::import("DataAugmentationUtils");
-
-  py::object set_logger = py_data_aug.attr("set_logger");
-  set_logger(logger_object);
-
-  py::object run_aug = py_data_aug.attr("runDataAugmentation");
-  run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
-          params.get_aug_num_dims(), params.get_aug_percent_variability(),
-          sampler_type.toStdString(),
-          0, /* mixture_num */
-          //QThread::idealThreadCount(), /* processes */
-          1, /* processes */
-          nullptr /* world point list? */);
-
-  py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
-  vis_aug("deepssm/TotalData.csv", "violin", false);
-
 }
 
 //---------------------------------------------------------------------------
