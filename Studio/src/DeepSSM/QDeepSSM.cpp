@@ -65,21 +65,8 @@ void QDeepSSM::run_augmentation()
   try {
     this->initialize_python();
 
-    auto subjects = this->project_->get_subjects();
-
-    std::vector<std::string> train_img_list;
-    std::vector<std::string> train_pts;
-
-    for (auto subject : subjects) {
-      auto image_filenames = subject->get_image_filenames();
-      if (!image_filenames.empty()) {
-        train_img_list.push_back(image_filenames[0]);
-      }
-      auto particle_filenames = subject->get_local_particle_filenames();
-      if (!particle_filenames.empty()) {
-        train_pts.push_back(particle_filenames[0]);
-      }
-    }
+    auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
+    auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
 
     Logger logger_object = Logger();
     logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
@@ -121,19 +108,9 @@ void QDeepSSM::run_training()
 
     auto subjects = this->project_->get_subjects();
 
-    std::vector<std::string> train_img_list;
-    std::vector<std::string> train_pts;
-
-    for (auto subject : subjects) {
-      auto image_filenames = subject->get_image_filenames();
-      if (!image_filenames.empty()) {
-        train_img_list.push_back(image_filenames[0]);
-      }
-      auto particle_filenames = subject->get_local_particle_filenames();
-      if (!particle_filenames.empty()) {
-        train_pts.push_back(particle_filenames[0]);
-      }
-    }
+    auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
+    auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
+    auto test_img_list = this->get_list(FileType::IMAGE, SplitType::TEST);
 
     Logger logger_object = Logger();
     logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
@@ -162,8 +139,7 @@ void QDeepSSM::run_training()
     get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir);
 
     py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
-    //get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
-    get_test_loader(loader_dir, train_img_list, down_factor, down_dir);
+    get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   } catch (py::error_already_set& e) {
     emit error(e.what());
@@ -226,6 +202,40 @@ void QDeepSSM::finalize_python()
 void QDeepSSM::python_message(std::string str)
 {
   emit message(QString::fromStdString(str));
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> QDeepSSM::get_list(FileType file_type, SplitType split_type)
+{
+  auto subjects = this->project_->get_subjects();
+
+  std::vector<std::string> list;
+
+  int partition_number = subjects.size() * partition;
+
+  int start = 0;
+  int end = partition_number;
+  if (split_type == SplitType::TEST) {
+    start = partition_number;
+    end = subjects.size();
+  }
+
+  for (int i = start; i < end; i++) {
+    if (file_type == FileType::IMAGE) {
+      auto image_filenames = subjects[i]->get_image_filenames();
+      if (!image_filenames.empty()) {
+        list.push_back(image_filenames[0]);
+      }
+    }
+    else {
+      auto particle_filenames = subjects[i]->get_local_particle_filenames();
+      if (!particle_filenames.empty()) {
+        list.push_back(particle_filenames[0]);
+      }
+
+    }
+  }
+  return list;
 }
 
 }

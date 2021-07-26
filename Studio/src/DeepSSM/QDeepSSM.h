@@ -36,6 +36,21 @@ Q_SIGNALS:
 private:
   ProjectHandle project_;
 
+
+  enum class FileType {
+    IMAGE,
+    PARTICLES
+  };
+
+  enum class SplitType {
+    TRAIN,
+    TEST
+  };
+
+  std::vector<std::string> get_list(FileType file_type, SplitType split_type);
+
+  const double partition = 0.5;
+
   void initialize_python();
   void finalize_python();
   bool python_initialized_ = false;
