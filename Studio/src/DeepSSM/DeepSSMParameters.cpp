@@ -104,13 +104,13 @@ void DeepSSMParameters::set_aug_sampler_type(std::string sampler_type)
 //---------------------------------------------------------------------------
 int DeepSSMParameters::get_training_epochs()
 {
-  return this->params_.get(Keys::TRAIN_LEARNING_RATE, Defaults::TRAIN_LEARNING_RATE);
+  return this->params_.get(Keys::TRAIN_EPOCHS, Defaults::TRAIN_EPOCHS);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::set_training_epochs(int epochs)
 {
-  this->params_.set(Keys::TRAIN_LEARNING_RATE, epochs);
+  this->params_.set(Keys::TRAIN_EPOCHS, epochs);
 }
 
 //---------------------------------------------------------------------------

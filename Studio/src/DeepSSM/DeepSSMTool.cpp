@@ -176,7 +176,7 @@ void DeepSSMTool::update_data()
 {
   this->ui_->table->clear();
 
-  QString filename = "deepssm/TotalData.csv";
+  QString filename = "deepssm/Augmentation/TotalData.csv";
   if (QFile(filename).exists()) {
 
     QFile file(filename);
@@ -250,7 +250,7 @@ QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes()
 //---------------------------------------------------------------------------
 void DeepSSMTool::load_violin_plot()
 {
-  QString filename = "deepssm/violin.png";
+  QString filename = "deepssm/Augmentation/violin.png";
   if (QFile(filename).exists()) {
     this->violin_plot_ = QPixmap(filename);
   }
@@ -302,6 +302,7 @@ void DeepSSMTool::restore_training_defaults()
 void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
 {
   this->current_tool_ = type;
+  emit progress(-1);
   if (type == ShapeworksWorker::DeepSSM_AugmentationType) {
     emit message("Please Wait: Running Data Augmentation...");
   }
@@ -311,7 +312,6 @@ void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
   else {
     emit message("Please Wait: Running Inference...");
   }
-  emit progress(-1);
   this->timer_.start();
 
   this->tool_is_running_ = true;

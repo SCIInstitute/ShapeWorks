@@ -84,7 +84,8 @@ void QDeepSSM::run_augmentation()
     set_logger(logger_object);
 
     py::object run_aug = py_data_aug.attr("runDataAugmentation");
-    run_aug("deepssm/", train_img_list_py, train_pts_py, params.get_aug_num_samples(),
+    std::string aug_dir = "deepssm/Augmentation/";
+    run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(),
             params.get_aug_num_dims(), params.get_aug_percent_variability(),
             sampler_type.toStdString(),
             0, /* mixture_num */
@@ -93,7 +94,7 @@ void QDeepSSM::run_augmentation()
             nullptr /* world point list? */);
 
     py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
-    vis_aug("deepssm/TotalData.csv", "violin", false);
+    vis_aug(aug_dir + "TotalData.csv", "violin", false);
   } catch (py::error_already_set& e) {
     emit error(e.what());
   }
@@ -128,18 +129,41 @@ void QDeepSSM::run_training()
 
 
     std::string out_dir = "deepssm/";
-    std::string aug_data_csv = "deepssm/TotalData.csv";
+    std::string aug_dir = out_dir + "Augmentation/";
+    std::string aug_data_csv = aug_dir + "TotalData.csv";
 
     double down_factor = 0.75;
     std::string down_dir = out_dir + "DownsampledImages/";
     int batch_size = 8;
     std::string loader_dir = out_dir + "TorchDataLoaders/";
 
+    int epochs = params.get_training_epochs();
+    double learning_rate = params.get_training_learning_rate();
+    bool decay_lr = params.get_training_decay_learning_rate();
+    bool fine_tune = params.get_training_fine_tuning();
+
+    emit message("DeepSSM: Loading Train/Validation Loaders");
     py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
     get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir);
 
+    emit message("DeepSSM: Loading Test Loader");
     py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
     get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
+
+    py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
+
+    emit message("DeepSSM: Preparing Config File");
+    // prepareConfigFile(config_file, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
+    //    decay_lr, fine_tune):
+    std::string config_file = "deepssm/configuration.json";
+    prepare_config_file(config_file, "deepssm",
+                        3 /* TODO: Replace this with output from augmentation*/,
+                        out_dir, loader_dir, aug_dir, epochs, learning_rate, decay_lr, fine_tune);
+
+
+    emit message("DeepSSM: Training");
+    py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
+    train_deep_ssm(config_file);
 
   } catch (py::error_already_set& e) {
     emit error(e.what());
@@ -168,6 +192,10 @@ void QDeepSSM::initialize_python()
     std::string home = getenv("HOME");
 #ifdef _WIN32
     name = getenv("USERPROFILE")
+#endif
+
+#ifdef __APPLE__
+    setenv("OMP_NUM_THREADS", "1", 1);
 #endif
 
     std::fstream file;

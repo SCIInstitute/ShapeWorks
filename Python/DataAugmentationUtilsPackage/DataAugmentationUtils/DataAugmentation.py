@@ -7,7 +7,7 @@ from DataAugmentationUtils import Utils
 from DataAugmentationUtils import Embedder
 from DataAugmentationUtils import Sampler
 
-################################# Augmentaiton Pipelines ###############################################
+################################# Augmentation Pipelines ###############################################
 
 def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_dim=0, percent_variability=0.95, sampler_type="kde", mixture_num=0, processes=1, orig_world_point_list=None):
 	# Get Embedder

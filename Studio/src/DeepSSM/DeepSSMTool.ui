@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>696</height>
+    <height>733</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -722,7 +722,7 @@ Preserved</string>
                 <item row="6" column="0" colspan="2">
                  <widget class="QPushButton" name="restore_training_defaults">
                   <property name="text">
-                   <string>Restore Defauls</string>
+                   <string>Restore Defaults</string>
                   </property>
                  </widget>
                 </item>
@@ -805,7 +805,7 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="4" column="0" colspan="2">
                  <widget class="Line" name="line_3">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
