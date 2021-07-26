@@ -176,7 +176,7 @@ def get_particles(model_path):
 	f = open(model_path, "r")
 	data = []
 	for line in f.readlines():
-		points = line.replace(' \n','').split(" ")
+		points = line.split()
 		points = [float(i) for i in points]
 		data.append(points)
 	return(data)
