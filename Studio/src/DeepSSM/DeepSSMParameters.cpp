@@ -21,12 +21,18 @@ const std::string TRAIN_FINE_TUNING = "train_fine_tuning";
 }
 
 namespace Defaults {
+
+// augmentation defaults
 const int AUG_NUM_SAMPLES = 3;
 const int AUG_NUM_DIMS = 3;
 double AUG_PERCENT_VARIABILITY = 0.95;
 std::string AUG_SAMPLER_TYPE = DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_C;
 
-int TRAIN_EPOCHS = 50;
+// training defaults
+int TRAIN_EPOCHS = 100;
+double TRAIN_LEARNING_RATE = 0.001;
+bool TRAIN_DECAY_LEARNING_RATE = true;
+bool TRAIN_FINE_TUNING = true;
 }
 
 //---------------------------------------------------------------------------
@@ -96,6 +102,55 @@ void DeepSSMParameters::set_aug_sampler_type(std::string sampler_type)
 }
 
 //---------------------------------------------------------------------------
+int DeepSSMParameters::get_training_epochs()
+{
+  return this->params_.get(Keys::TRAIN_LEARNING_RATE, Defaults::TRAIN_LEARNING_RATE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_epochs(int epochs)
+{
+  this->params_.set(Keys::TRAIN_LEARNING_RATE, epochs);
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_training_learning_rate()
+{
+  return this->params_.get(Keys::TRAIN_LEARNING_RATE, Defaults::TRAIN_LEARNING_RATE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_learning_rate(double rate)
+{
+  this->params_.set(Keys::TRAIN_LEARNING_RATE, rate);
+}
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_training_decay_learning_rate()
+{
+  return this->params_.get(Keys::TRAIN_DECAY_LEARNING_RATE, Defaults::TRAIN_DECAY_LEARNING_RATE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_decay_learning_rate(bool decay)
+{
+  this->params_.set(Keys::TRAIN_DECAY_LEARNING_RATE, decay);
+}
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_training_fine_tuning()
+{
+  return this->params_.get(Keys::TRAIN_FINE_TUNING, Defaults::TRAIN_FINE_TUNING);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_fine_tuning(bool fine_tuning)
+{
+  this->params_.set(Keys::TRAIN_FINE_TUNING, fine_tuning);
+}
+
+
+//---------------------------------------------------------------------------
 void DeepSSMParameters::restore_augmentation_defaults()
 {
   this->params_.remove_entry(Keys::AUG_NUM_SAMPLES);
@@ -103,4 +158,14 @@ void DeepSSMParameters::restore_augmentation_defaults()
   this->params_.remove_entry(Keys::AUG_PERCENT_VARIABILITY);
   this->params_.remove_entry(Keys::AUG_SAMPLER_TYPE);
 }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::restore_training_defaults()
+{
+  this->params_.remove_entry(Keys::TRAIN_EPOCHS);
+  this->params_.remove_entry(Keys::TRAIN_LEARNING_RATE);
+  this->params_.remove_entry(Keys::TRAIN_DECAY_LEARNING_RATE);
+  this->params_.remove_entry(Keys::TRAIN_FINE_TUNING);
+}
+
 };
