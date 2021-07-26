@@ -908,6 +908,7 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->ui_->controlsDock->setWindowTitle("DeepSSM");
     this->update_display();
     this->ui_->action_deepssm_mode->setChecked(true);
+    this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
   }
   else { // DATA
     this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
@@ -1202,9 +1203,8 @@ void ShapeWorksStudioApp::update_display(bool force)
   if (tool_state == Session::DEEPSSM_C) {
     this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
+    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-
   }
   else {
 
