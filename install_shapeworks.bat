@@ -71,4 +71,7 @@ call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main
 
+md %USERPROFILE%\.shapeworks
+python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks/python_path.txt
+
 call conda info

@@ -126,6 +126,9 @@ void QDeepSSM::initialize_python()
 
     std::vector<std::string> python_path;
     std::string home = getenv("HOME");
+#ifdef _WIN32
+    name = getenv("USERPROFILE")
+#endif
 
     std::fstream file;
     file.open(home + "/.shapeworks/python_path.txt", std::ios::in);
