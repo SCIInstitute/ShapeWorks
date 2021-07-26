@@ -14,7 +14,11 @@ class ShapeworksWorker : public QObject {
 Q_OBJECT
 
 public:
-  enum ThreadType { GroomType, OptimizeType, ReconstructType, DeepSSM_AugmentationType };
+  enum ThreadType {
+    GroomType, OptimizeType, ReconstructType, DeepSSM_AugmentationType,
+    DeepSSM_TrainingType, DeepSSM_InferenceType
+  };
+
   ShapeworksWorker(ThreadType type,
                    QSharedPointer<QGroom> groom,
                    QSharedPointer<Optimize> optimize,
@@ -47,6 +51,8 @@ Q_SIGNALS:
 private:
 
   void run_deep_ssm_augmentation();
+  void run_deep_ssm_training();
+  void run_deep_ssm_inference();
 
   QSharedPointer<QGroom> groom_;
   QSharedPointer<Optimize> optimize_;

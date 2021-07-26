@@ -59,7 +59,7 @@ QDeepSSM::~QDeepSSM()
 }
 
 //---------------------------------------------------------------------------
-void QDeepSSM::run()
+void QDeepSSM::run_augmentation()
 {
 
   try {
@@ -110,6 +110,70 @@ void QDeepSSM::run()
   } catch (py::error_already_set& e) {
     emit error(e.what());
   }
+}
+
+//---------------------------------------------------------------------------
+void QDeepSSM::run_training()
+{
+
+  try {
+    this->initialize_python();
+
+    auto subjects = this->project_->get_subjects();
+
+    std::vector<std::string> train_img_list;
+    std::vector<std::string> train_pts;
+
+    for (auto subject : subjects) {
+      auto image_filenames = subject->get_image_filenames();
+      if (!image_filenames.empty()) {
+        train_img_list.push_back(image_filenames[0]);
+      }
+      auto particle_filenames = subject->get_local_particle_filenames();
+      if (!particle_filenames.empty()) {
+        train_pts.push_back(particle_filenames[0]);
+      }
+    }
+
+    Logger logger_object = Logger();
+    logger_object.set_callback(std::bind(&QDeepSSM::python_message, this, std::placeholders::_1));
+    py::module logger = py::module::import("logger");
+
+    py::list train_img_list_py = py::cast(train_img_list);
+    py::list train_pts_py = py::cast(train_pts);
+
+    DeepSSMParameters params(this->project_);
+
+    py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+
+    //py::object set_logger = py_data_aug.attr("set_logger");
+    //set_logger(logger_object);
+
+
+    std::string out_dir = "deepssm/";
+    std::string aug_data_csv = "deepssm/TotalData.csv";
+
+    double down_factor = 0.75;
+    std::string down_dir = out_dir + "DownsampledImages/";
+    int batch_size = 8;
+    std::string loader_dir = out_dir + "TorchDataLoaders/";
+
+    py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
+    get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir);
+
+    py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
+    //get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
+    get_test_loader(loader_dir, train_img_list, down_factor, down_dir);
+
+  } catch (py::error_already_set& e) {
+    emit error(e.what());
+  }
+}
+
+//---------------------------------------------------------------------------
+void QDeepSSM::run_inference()
+{
+
 }
 
 //---------------------------------------------------------------------------

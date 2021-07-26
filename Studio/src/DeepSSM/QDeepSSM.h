@@ -18,7 +18,9 @@ public:
 
   QDeepSSM(ProjectHandle project);
   ~QDeepSSM();
-  void run();
+  void run_augmentation();
+  void run_training();
+  void run_inference();
 
   void python_message(std::string str);
 

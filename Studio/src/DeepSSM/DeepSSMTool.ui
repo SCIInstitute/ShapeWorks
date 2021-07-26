@@ -510,7 +510,7 @@ QWidget#data_panel {
             <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="augmentation_tab">
                <attribute name="title">
@@ -635,10 +635,26 @@ Preserved</string>
                 <string>Training</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_4">
+                <property name="leftMargin">
+                 <number>6</number>
+                </property>
+                <property name="topMargin">
+                 <number>6</number>
+                </property>
+                <property name="rightMargin">
+                 <number>6</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>6</number>
+                </property>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="training_epochs"/>
+                 <widget class="QLineEdit" name="training_epochs">
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
                 </item>
-                <item row="4" column="0" colspan="2">
+                <item row="5" column="0" colspan="2">
                  <widget class="QPushButton" name="run_training_button">
                   <property name="text">
                    <string>Run Training</string>
@@ -692,8 +708,21 @@ Preserved</string>
                 </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_8">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string>Decay learning rate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0" colspan="2">
+                 <widget class="QPushButton" name="restore_training_defaults">
+                  <property name="text">
+                   <string>Restore Defauls</string>
                   </property>
                  </widget>
                 </item>
@@ -706,13 +735,23 @@ Preserved</string>
                 </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_9">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string>Fine tuning</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="training_learning_rate"/>
+                 <widget class="QLineEdit" name="training_learning_rate">
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_7">
@@ -766,10 +805,10 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="2">
-                 <widget class="QPushButton" name="restore_training_defaults">
-                  <property name="text">
-                   <string>Restore Defauls</string>
+                <item row="4" column="0">
+                 <widget class="Line" name="line_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
                  </widget>
                 </item>

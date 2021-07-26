@@ -9,6 +9,7 @@
 
 // ShapeWorks
 #include <ParticleShapeStatistics.h>
+#include <Data/ShapeWorksWorker.h>
 
 // Studio
 #include <Data/Shape.h>
@@ -57,8 +58,11 @@ public Q_SLOTS:
 
   void run_augmentation_clicked();
   void restore_augmentation_defaults();
+  void run_training_clicked();
+  void restore_training_defaults();
 
   void handle_thread_complete();
+
   void handle_progress(int val);
   void handle_error(QString msg);
 
@@ -74,6 +78,7 @@ signals:
 
 private:
 
+  void run_tool(ShapeworksWorker::ThreadType type);
   void update_data();
   void load_violin_plot();
   void resize_plot();
@@ -85,6 +90,7 @@ private:
   ShapeWorksStudioApp* app_;
 
   bool tool_is_running_ = false;
+  ShapeworksWorker::ThreadType current_tool_ = ShapeworksWorker::DeepSSM_AugmentationType;
   QSharedPointer<QDeepSSM> deep_ssm_;
   QElapsedTimer timer_;
 

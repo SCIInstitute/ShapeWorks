@@ -1,9 +1,6 @@
 // std
 #include <iostream>
 
-#include <pybind11/embed.h>
-namespace py = pybind11;
-
 // qt
 #include <QThread>
 #include <QFileDialog>
@@ -32,6 +29,11 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::run_augmentation_clicked);
   connect(this->ui_->restore_augmentation_defaults, &QPushButton::clicked,
           this, &DeepSSMTool::restore_augmentation_defaults);
+
+  connect(this->ui_->run_training_button, &QPushButton::clicked,
+          this, &DeepSSMTool::run_training_clicked);
+  connect(this->ui_->restore_training_defaults, &QPushButton::clicked,
+          this, &DeepSSMTool::restore_training_defaults);
 
   connect(this->ui_->data_open_button, &QPushButton::clicked,
           this, &DeepSSMTool::update_panels);
@@ -72,8 +74,12 @@ void DeepSSMTool::load_params()
   this->ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
   this->ui_->num_pca_dims->setText(QString::number(params.get_aug_num_dims()));
   this->ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
-
   this->ui_->sampler_type->setCurrentText(QString::fromStdString(params.get_aug_sampler_type()));
+
+  this->ui_->training_epochs->setText(QString::number(params.get_training_epochs()));
+  this->ui_->training_learning_rate->setText(QString::number(params.get_training_learning_rate()));
+  this->ui_->training_decay_learning->setChecked(params.get_training_decay_learning_rate());
+  this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
 
   this->update_data();
 }
@@ -87,6 +93,11 @@ void DeepSSMTool::store_params()
   params.set_aug_num_dims(this->ui_->num_pca_dims->text().toInt());
   params.set_aug_percent_variability(this->ui_->percent_variability->text().toDouble());
   params.set_aug_sampler_type(this->ui_->sampler_type->currentText().toStdString());
+
+  params.set_training_epochs(this->ui_->training_epochs->text().toInt());
+  params.set_training_learning_rate(this->ui_->training_learning_rate->text().toDouble());
+  params.set_training_decay_learning_rate(this->ui_->training_decay_learning->isChecked());
+  params.set_training_fine_tuning(this->ui_->training_fine_tuning->isChecked());
 
   params.save_to_project();
 }
@@ -110,34 +121,13 @@ bool DeepSSMTool::get_active()
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_augmentation_clicked()
 {
-  emit message("Please Wait: Running Data Augmentation...");
-  emit progress(-1);
-  this->timer_.start();
+  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_AugmentationType);
+}
 
-  this->tool_is_running_ = true;
-  this->update_panels();
-
-  this->store_params();
-  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
-
-  connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
-  connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
-
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::DeepSSM_AugmentationType, nullptr, nullptr,
-    nullptr, session_);
-  worker->set_deep_ssm(this->deep_ssm_);
-
-  QThread* thread = new QThread;
-  worker->moveToThread(thread);
-  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, &ShapeworksWorker::finished, this, &DeepSSMTool::handle_thread_complete);
-  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
-  connect(worker, &ShapeworksWorker::error_message, this, &DeepSSMTool::handle_error);
-  connect(worker, &ShapeworksWorker::message, this, &DeepSSMTool::message);
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
-
+//---------------------------------------------------------------------------
+void DeepSSMTool::run_training_clicked()
+{
+  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_TrainingType);
 }
 
 //---------------------------------------------------------------------------
@@ -145,7 +135,16 @@ void DeepSSMTool::handle_thread_complete()
 {
   emit progress(100);
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
-  emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
+
+  if (this->current_tool_ == ShapeworksWorker::DeepSSM_AugmentationType) {
+    emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
+  }
+  else if (this->current_tool_ == ShapeworksWorker::DeepSSM_TrainingType) {
+    emit message("Training Complete.  Duration: " + duration + " seconds");
+  }
+  else {
+    emit message("Inference Complete.  Duration: " + duration + " seconds");
+  }
 
   this->update_data();
   this->tool_is_running_ = false;
@@ -289,29 +288,60 @@ void DeepSSMTool::restore_augmentation_defaults()
   params.save_to_project();
   this->load_params();
 }
-//---------------------------------------------------------------------------
 
-/*
 //---------------------------------------------------------------------------
-void DeepSSMTool::initialize_python()
+void DeepSSMTool::restore_training_defaults()
 {
-  if (!this->python_initialized_) {
-    py::initialize_interpreter();
-    // this is necessary or the plots will crash the process
-    py::module py_matplot_lib = py::module::import("matplotlib");
-    py_matplot_lib.attr("use")("agg");
-    py::gil_scoped_release release;
-  }
-  this->python_initialized_ = true;
+  auto params = DeepSSMParameters(this->session_->get_project());
+  params.restore_training_defaults();
+  params.save_to_project();
+  this->load_params();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::finalize_python()
+void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
 {
-  if (this->python_initialized_) {
-    py::finalize_interpreter();
+  this->current_tool_ = type;
+  if (type == ShapeworksWorker::DeepSSM_AugmentationType) {
+    emit message("Please Wait: Running Data Augmentation...");
   }
+  else if (type == ShapeworksWorker::DeepSSM_TrainingType) {
+    emit message("Please Wait: Running Training...");
+  }
+  else {
+    emit message("Please Wait: Running Inference...");
+  }
+  emit progress(-1);
+  this->timer_.start();
+
+  this->tool_is_running_ = true;
+  this->update_panels();
+
+  this->store_params();
+  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
+
+  connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
+  connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
+
+  ShapeworksWorker* worker = new ShapeworksWorker(
+    this->current_tool_, nullptr, nullptr,
+    nullptr, session_);
+  worker->set_deep_ssm(this->deep_ssm_);
+
+  QThread* thread = new QThread;
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, &ShapeworksWorker::finished, this, &DeepSSMTool::handle_thread_complete);
+  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
+  connect(worker, &ShapeworksWorker::error_message, this, &DeepSSMTool::handle_error);
+  connect(worker, &ShapeworksWorker::message, this, &DeepSSMTool::message);
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  thread->start();
+
 }
-*/
+
+
+//---------------------------------------------------------------------------
+
 
 }
