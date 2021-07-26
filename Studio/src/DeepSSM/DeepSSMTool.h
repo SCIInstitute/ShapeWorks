@@ -56,6 +56,7 @@ public:
 public Q_SLOTS:
 
   void run_augmentation_clicked();
+  void restore_augmentation_defaults();
 
   void handle_thread_complete();
   void handle_progress(int val);

@@ -30,6 +30,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->run_augmentation_button, &QPushButton::clicked,
           this, &DeepSSMTool::run_augmentation_clicked);
+  connect(this->ui_->restore_augmentation_defaults, &QPushButton::clicked,
+          this, &DeepSSMTool::restore_augmentation_defaults);
 
   connect(this->ui_->data_open_button, &QPushButton::clicked,
           this, &DeepSSMTool::update_panels);
@@ -278,6 +280,17 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
   QWidget::resizeEvent(event);
   this->resize_plot();
 }
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::restore_augmentation_defaults()
+{
+  auto params = DeepSSMParameters(this->session_->get_project());
+  params.restore_augmentation_defaults();
+  params.save_to_project();
+  this->load_params();
+}
+//---------------------------------------------------------------------------
+
 /*
 //---------------------------------------------------------------------------
 void DeepSSMTool::initialize_python()

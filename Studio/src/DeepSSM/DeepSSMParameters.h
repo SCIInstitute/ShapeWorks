@@ -29,6 +29,9 @@ public:
   std::string get_aug_sampler_type();
   void set_aug_sampler_type(std::string sampler_type);
 
+
+  void restore_augmentation_defaults();
+
   void restore_defaults();
 
   // constants
