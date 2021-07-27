@@ -10,9 +10,9 @@ def padTest1():
 
   return img.compare(compareImg)
 
-val = padTest1()
-
-if val is False:
+try:
+  padTest1()
+except ValueError:
   print("padTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def padTest2():
 
   return img.compare(compareImg)
 
-val = padTest2()
-
-if val is False:
+try:
+  padTest2()
+except ValueError:
   print("padTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def padTest3():
 
   return img.compare(compareImg)
 
-val = padTest3()
-
-if val is False:
+try:
+  padTest3()
+except ValueError:
   print("padTest3 failed")
   sys.exit(1)
 
@@ -52,13 +52,13 @@ def padTest4():
 
   return img.compare(compareImg)
 
-val = padTest4()
-
-if val is False:
+try:
+  padTest4()
+except ValueError:
   print("padTest4 failed")
   sys.exit(1)
 
-def padTest6():
+def padTest5():
   img = Image(os.environ["DATA"] + "/femurImage.nrrd")
   img.pad(img.logicalBoundingBox(), 10)
 
@@ -66,10 +66,10 @@ def padTest6():
 
   return img.compare(compareImg)
 
-val = padTest6()
-
-if val is False:
-  print("padTest6 failed")
+try:
+  padTest5()
+except ValueError:
+  print("padTest5 failed")
   sys.exit(1)
 
 def padfailTest():
@@ -77,7 +77,7 @@ def padfailTest():
   img.pad()   # should fail because no version without parameters exists
 
 try:
-	val = padfailTest()
+	padfailTest()
 	print("padfailTest failed. There should be no default version of this function.")
 	sys.exit(1)
 except TypeError:

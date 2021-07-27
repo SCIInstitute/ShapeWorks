@@ -10,9 +10,9 @@ def binarizeTest1():
 
   return img.compare(compareImg)
 
-val = binarizeTest1()
-
-if val is False:
+try:
+  binarizeTest1()
+except ValueError:
   print("binarizeTest1 failed")
   sys.exit(1)
 
@@ -24,8 +24,8 @@ def binarizeTest2():
 
   return img.compare(compareImg)
 
-val = binarizeTest2()
-
-if val is False:
+try:
+  binarizeTest2()
+except ValueError:
   print("binarizeTest2 failed")
   sys.exit(1)

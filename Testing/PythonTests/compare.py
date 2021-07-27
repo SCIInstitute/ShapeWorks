@@ -8,9 +8,9 @@ def compareTest1():
 
   return img.compare(compareImg)
 
-val = compareTest1()
-
-if val is False:
+try:
+  compareTest1()
+except ValueError:
   print("compareTest1 failed")
   sys.exit(1)
 
@@ -20,10 +20,10 @@ def compareTest2():
 
   return img.compare(compareImg, tolerance=1.0)
 
-val = compareTest2()
-
-if val is False:
-  print("compareTest2 failed")
+try:
+  compareTest1()
+except ValueError:
+  print("compareTest1 failed")
   sys.exit(1)
 
 def comparefailTest():
@@ -34,7 +34,7 @@ def comparefailTest():
   return img.compare(compareImg)
 
 try:
-  val = comparefailTest()
-  sys.exit(0)
-except TypeError:
+  compareTest1()
+except ValueError:
+  print("compareTest1 failed")
   sys.exit(1)

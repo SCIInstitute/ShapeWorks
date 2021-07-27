@@ -11,9 +11,9 @@ def scaleTest1():
 
   return img.compare(compareImg)
 
-val = scaleTest1()
-
-if val is False:
+try:
+  scaleTest1()
+except ValueError:
   print("scaleTest1 failed")
   sys.exit(1)
 
@@ -25,9 +25,9 @@ def scaleTest2():
 
   return img.compare(compareImg)
 
-val = scaleTest2()
-
-if val is False:
+try:
+  scaleTest2()
+except ValueError:
   print("scaleTest2 failed")
   sys.exit(1)
 
@@ -39,9 +39,9 @@ def scaleTest3():
 
   return mesh == compareMesh
 
-val = scaleTest3()
-
-if val is False:
+try:
+  scaleTest3()
+except ValueError:
   print("scaleTest3 failed")
   sys.exit(1)
 
@@ -53,9 +53,9 @@ def scaleTest4():
 
   return mesh == compareMesh
 
-val = scaleTest4()
-
-if val is False:
+try:
+  scaleTest4()
+except ValueError:
   print("scaleTest4 failed")
   sys.exit(1)
 
@@ -68,7 +68,8 @@ def scalefailTest():
   return img.compare(compareImg)
 
 try:
-  val = scalefailTest()
+  scalefailTest()
+  print("scalefailTest failed. There should be no default version of this function.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

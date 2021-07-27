@@ -10,9 +10,9 @@ def addTest1():
 
   return img.compare(compareImg)
 
-val = addTest1()
-
-if val is False:
+try:
+  addTest1()
+except ValueError:
   print("addTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def addTest2():
 
   return img.compare(compareImg)
 
-val = addTest2()
-
-if val is False:
+try:
+  addTest2()
+except ValueError:
   print("addTest2 failed")
   sys.exit(1)
 
@@ -39,9 +39,9 @@ def addTest3():
 
   return img.compare(compareImg)
 
-val = addTest3()
-
-if val is False:
+try:
+  addTest3()
+except ValueError:
   print("addTest3 failed")
   sys.exit(1)
 
@@ -55,7 +55,8 @@ def addfailTest():
   return img.compare(compareImg)
 
 try:
-  val = addfailTest()
+  addfailTest()
+  print("addfailTest failed.")
   sys.exit(1)
 except ValueError:
   sys.exit(0)

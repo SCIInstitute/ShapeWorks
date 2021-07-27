@@ -12,9 +12,9 @@ def tplevelsetTest1():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest1()
-
-if val is False:
+try:
+  tplevelsetTest1()
+except ValueError:
   print("tplevelsetTest1 failed")
   sys.exit(1)
 
@@ -28,9 +28,9 @@ def tplevelsetTest2():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest2()
-
-if val is False:
+try:
+  tplevelsetTest2()
+except ValueError:
   print("tplevelsetTest2 failed")
   sys.exit(1)
 
@@ -43,7 +43,8 @@ def tplevelsetfailTest():
   return img.compare(compareImg)
 
 try:
-  val = tplevelsetfailTest()
+  tplevelsetfailTest()
+  print("tplevelsetfailTest failed. The function requires feautre image.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

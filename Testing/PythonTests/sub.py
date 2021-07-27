@@ -11,9 +11,9 @@ def subTest1():
 
   return img.compare(compareImg)
 
-val = subTest1()
-
-if val is False:
+try:
+  subTest1()
+except ValueError:
   print("subTest1 failed")
   sys.exit(1)
 
@@ -25,9 +25,9 @@ def subTest2():
 
   return img.compare(compareImg)
 
-val = subTest2()
-
-if val is False:
+try:
+  subTest2()
+except ValueError:
   print("subTest2 failed")
   sys.exit(1)
 
@@ -40,9 +40,9 @@ def subTest3():
 
   return img.compare(compareImg)
 
-val = subTest3()
-
-if val is False:
+try:
+  subTest3()
+except ValueError:
   print("subTest3 failed")
   sys.exit(1)
 
@@ -56,7 +56,8 @@ def subfailTest():
   return img.compare(compareImg)
 
 try:
-  val = subfailTest()
+  subfailTest()
+  print("subfailTest failed.")
   sys.exit(1)
 except ValueError:
   sys.exit(0)

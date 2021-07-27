@@ -11,9 +11,9 @@ def copyTest1():
 
   return img1 == compareImg1 and img2 == compareImg2
 
-val = copyTest1()
-
-if val is False:
+try:
+  copyTest1()
+except ValueError:
   print("copyTest1 failed")
   sys.exit(1)
 
@@ -26,8 +26,8 @@ def copyTest2():
 
   return mesh1 == compareMesh1 and mesh2 == compareMesh2
 
-val = copyTest2()
-
-if val is False:
+try:
+  copyTest2()
+except ValueError:
   print("copyTest2 failed")
   sys.exit(1)

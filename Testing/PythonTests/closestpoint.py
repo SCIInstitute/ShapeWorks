@@ -16,11 +16,9 @@ def closestpointTest1():
   return np.linalg.norm(p-closeToP) == 0.0
 
 try:
-  if not closestpointTest1():
-    print("closestpointTest1 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("closestpointTest1 failed (exception)")
+  closestpointTest1()
+except ValueError:
+  print("closestpointTest1 failed")
   sys.exit(1)
 
 def closestpointTest2():
@@ -36,9 +34,7 @@ def closestpointTest2():
   return np.linalg.norm(p-closeToP) < 1e-4
 
 try:
-  if not closestpointTest2():
-    print("closestpointTest2 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("closestpointTest2 failed (exception)")
+  closestpointTest2()
+except ValueError:
+  print("closestpointTest2 failed")
   sys.exit(1)

@@ -10,9 +10,9 @@ def antialiasTest1():
 
   return img.compare(compareImg)
 
-val = antialiasTest1()
-
-if val is False:
+try:
+  antialiasTest1()
+except ValueError:
   print("antialiasTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def antialiasTest2():
 
   return img.compare(compareImg)
 
-val = antialiasTest2()
-
-if val is False:
+try:
+  antialiasTest2()
+except ValueError:
   print("antialiasTest2 failed")
   sys.exit(1)
 
@@ -38,8 +38,8 @@ def antialiasTest3():
 
   return img.compare(compareImg)
 
-val = antialiasTest3()
-
-if val is False:
+try:
+  antialiasTest3()
+except ValueError:
   print("antialiasTest3 failed")
   sys.exit(1)

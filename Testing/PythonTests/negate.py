@@ -10,7 +10,8 @@ def negateTest():
 
   return img.compare(compareImg)
 
-val = negateTest()
-
-if val is False:
+try:
+  negateTest()
+except ValueError:
+  print("negateTest failed")
   sys.exit(1)

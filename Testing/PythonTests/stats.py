@@ -17,7 +17,8 @@ def statsTest():
 
   return abs(imgMin - arrMin) < 1e-4 and abs(imgMax - arrMax) < 1e-4 and abs(imgMean - arrMean) < 1e-4 and abs(imgStd - arrStd) < 1e-4
 
-val = statsTest()
-
-if val is False:
+try:
+  statsTest()
+except ValueError:
+  print("statsTest failed")
   sys.exit(1)

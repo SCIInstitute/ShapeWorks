@@ -17,9 +17,7 @@ def computemeannormalsTest():
   return mesh.compareField(ground_truth, "MeanNormals")
 
 try:
-  if not computemeannormalsTest():
-    print("computemeannormalsTest failed")
-    sys.exit(1)
+  computemeannormalsTest()
 except ValueError:
-  print("computemeannormalsTest failed (exception)")
+  print("computemeannormalsTest failed")
   sys.exit(1)

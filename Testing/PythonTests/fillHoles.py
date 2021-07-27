@@ -10,7 +10,8 @@ def fillholesTest():
 
   return mesh == compareMesh
 
-val = fillholesTest()
-
-if val is False:
+try:
+  fillholesTest()
+except ValueError:
+  print("fillholesTest failed")
   sys.exit(1)

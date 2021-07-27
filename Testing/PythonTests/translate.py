@@ -10,9 +10,9 @@ def translateTest1():
 
   return img.compare(compareImg)
 
-val = translateTest1()
-
-if val is False:
+try:
+  translateTest1()
+except ValueError:
   print("translateTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def translateTest2():
 
   return img.compare(compareImg)
 
-val = translateTest2()
-
-if val is False:
+try:
+  translateTest2()
+except ValueError:
   print("translateTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def translateTest3():
 
   return mesh == compareMesh
 
-val = translateTest3()
-
-if val is False:
+try:
+  translateTest3()
+except ValueError:
   print("translateTest3 failed")
   sys.exit(1)
 
@@ -52,9 +52,9 @@ def translateTest4():
 
   return mesh == compareMesh
 
-val = translateTest4()
-
-if val is False:
+try:
+  translateTest4()
+except ValueError:
   print("translateTest4 failed")
   sys.exit(1)
 
@@ -66,9 +66,9 @@ def translateTest5():
 
   return mesh == compareMesh
 
-val = translateTest5()
-
-if val is False:
+try:
+  translateTest5()
+except ValueError:
   print("translateTest5 failed")
   sys.exit(1)
 
@@ -81,7 +81,8 @@ def translatefailTest():
   return img.compare(compareImg)
 
 try:
-  val = translatefailTest()
+  translatefailTest()
+  print("translatefailTest failed. There should be no default version of this function.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

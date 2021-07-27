@@ -2,7 +2,7 @@ import os
 import sys
 from shapeworks import *
 
-def recenterTest1():
+def recenterTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.recenter()
 
@@ -10,7 +10,8 @@ def recenterTest1():
 
   return img.compare(compareImg)
 
-val = recenterTest1()
-
-if val is False:
+try:
+  recenterTest()
+except ValueError:
+  print("recenterTest failed")
   sys.exit(1)

@@ -10,9 +10,9 @@ def clipTest1():
 
   return img.compare(compareImg)
 
-val = clipTest1()
-
-if val is False:
+try:
+  clipTest1()
+except ValueError:
   print("clipTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def clipTest2():
 
   return img.compare(compareImg)
 
-val = clipTest2()
-
-if val is False:
+try:
+  clipTest2()
+except ValueError:
   print("clipTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def clipTest3():
 
   return img.compare(compareImg)
 
-val = clipTest3()
-
-if val is False:
+try:
+  clipTest3()
+except ValueError:
   print("clipTest3 failed")
   sys.exit(1)
 
@@ -52,9 +52,9 @@ def clipTest4():
 
   return mesh == compareMesh
 
-val = clipTest4()
-
-if val is False:
+try:
+  clipTest4()
+except ValueError:
   print("clipTest4 failed")
   sys.exit(1)
 
@@ -66,9 +66,9 @@ def clipTest5():
 
   return mesh == compareMesh
 
-val = clipTest5()
-
-if val is False:
+try:
+  clipTest5()
+except ValueError:
   print("clipTest5 failed")
   sys.exit(1)
 
@@ -80,9 +80,9 @@ def clipTest6():
 
   return mesh == compareMesh
 
-val = clipTest6()
-
-if val is False:
+try:
+  clipTest6()
+except ValueError:
   print("clipTest6 failed")
   sys.exit(1)
 
@@ -94,9 +94,9 @@ def clipTest7():
 
   return mesh == compareMesh
 
-val = clipTest7()
-
-if val is False:
+try:
+  clipTest7()
+except ValueError:
   print("clipTest7 failed")
   sys.exit(1)
 
@@ -109,7 +109,7 @@ def clipfailTest1():
   return img.compare(compareImg)
 
 try:
-  val = clipfailTest1()
+  clipfailTest1()
   sys.exit(1)
 except ValueError:
   sys.exit(0)
@@ -123,7 +123,7 @@ def clipfailTest2():
   return img.compare(compareImg)
 
 try:
-  val = clipfailTest2()
+  clipfailTest2()
   sys.exit(1)
 except ValueError:
   sys.exit(0)

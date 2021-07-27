@@ -11,9 +11,9 @@ def resampleTest1():
 
   return img.compare(compareImg)
 
-val = resampleTest1()
-
-if val is False:
+try:
+  resampleTest1()
+except ValueError:
   print("resampleTest1 failed")
   sys.exit(1)
 
@@ -25,9 +25,9 @@ def resampleTest2():
 
   return img.compare(compareImg)
 
-val = resampleTest2()
-
-if val is False:
+try:
+  resampleTest2()
+except ValueError:
   print("resampleTest2 failed")
   sys.exit(1)
 
@@ -39,9 +39,9 @@ def resampleTest3():
 
   return img.compare(compareImg)
 
-val = resampleTest3()
-
-if val is False:
+try:
+  resampleTest3()
+except ValueError:
   print("resampleTest3 failed")
   sys.exit(1)
 
@@ -53,9 +53,9 @@ def resampleTest4():
 
   return img.compare(compareImg)
 
-val = resampleTest4()
-
-if val is False:
+try:
+  resampleTest4()
+except ValueError:
   print("resampleTest4 failed")
   sys.exit(1)
 
@@ -68,8 +68,8 @@ def resampleTest5():
 
   return img.compare(compareImg)
 
-val = resampleTest5()
-
-if val is False:
+try:
+  resampleTest5()
+except ValueError:
   print("resampleTest5 failed")
   sys.exit(1)

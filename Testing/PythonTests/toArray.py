@@ -19,11 +19,9 @@ def toArrayTest2():
   return arr.dtype == np.float32
 
 try:
-  if not toArrayTest2():
-    print("toArrayTest2 failed")
-    sys.exit(1)
+  toArrayTest2()
 except ValueError:
-  print("toArrayTest2 failed (exception)")
+  print("toArrayTest2 failed")
   sys.exit(1)
 
 # verify constructed data
@@ -39,7 +37,7 @@ def toArrayTest3():
 try:
   toArrayTest3()
 except ValueError:
-  print("toArrayTest3")
+  print("toArrayTest3 failed")
   sys.exit(1)
 
 # verify loaded data

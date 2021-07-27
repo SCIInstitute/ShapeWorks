@@ -11,9 +11,9 @@ def centerofmassTest1():
 
   return img.compare(compareImg)
 
-val = centerofmassTest1()
-
-if val is False:
+try:
+  centerofmassTest1()
+except ValueError:
   print("centerofmassTest1 failed")
   sys.exit(1)
 
@@ -26,8 +26,8 @@ def centerofmassTest2():
 
   return img.compare(compareImg)
 
-val = centerofmassTest2()
-
-if val is False:
+try:
+  centerofmassTest2()
+except ValueError:
   print("centerofmassTest2 failed")
   sys.exit(1)

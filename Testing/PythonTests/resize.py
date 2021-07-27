@@ -10,10 +10,10 @@ def resizeTest1():
 
   return img.compare(compareImg)
 
-val = resizeTest1()
-
-if val is False:
-  print("resizeTest1 failed")
+try:
+  resizeTest1()
+except ValueError:
+  print("resizeeTest1 failed")
   sys.exit(1)
 
 def resizeTest2():
@@ -24,10 +24,10 @@ def resizeTest2():
 
   return img.compare(compareImg)
 
-val = resizeTest2()
-
-if val is False:
-  print("resizeTest2 failed")
+try:
+  resizeTest2()
+except ValueError:
+  print("resizeeTest2 failed")
   sys.exit(1)
 
 def resizeTest3():
@@ -38,9 +38,9 @@ def resizeTest3():
 
   return img.compare(compareImg)
 
-val = resizeTest3()
-
-if val is False:
+try:
+  resizeTest3()
+except ValueError:
   print("resizeTest3 failed")
   sys.exit(1)
 
@@ -52,10 +52,10 @@ def resizeTest4():
 
   return img.compare(compareImg)
 
-val = resizeTest4()
-
-if val is False:
-  print("resizeTest4 failed")
+try:
+  resizeTest4()
+except ValueError:
+  print("resizeeTest4 failed")
   sys.exit(1)
 
 def resizefailTest():
@@ -67,7 +67,7 @@ def resizefailTest():
   return img.compare(compareImg)
 
 try:
-  val = resizefailTest()
+  resizefailTest()
   print("resizefailTest failed. There should be no default version of this function.")
   sys.exit(1)
 except TypeError:

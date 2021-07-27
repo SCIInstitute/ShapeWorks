@@ -10,9 +10,9 @@ def decimateTest1():
 
   return mesh == compareMesh
 
-val = decimateTest1()
-
-if val is False:
+try:
+  decimateTest1()
+except ValueError:
   print("decimateTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def decimateTest2():
 
   return mesh == compareMesh
 
-val = decimateTest2()
-
-if val is False:
+try:
+  decimateTest2()
+except ValueError:
   print("decimateTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,10 @@ def decimateTest3():
 
   return mesh == compareMesh
 
-val = decimateTest3()
-
-if val is False:
+try:
+  decimateTest3()
+except ValueError:
+  print("decimateTest3 failed")
   sys.exit(1)
 
 def decimateTest4():
@@ -51,9 +52,10 @@ def decimateTest4():
 
   return mesh == compareMesh
 
-val = decimateTest4()
-
-if val is False:
+try:
+  decimateTest4()
+except ValueError:
+  print("decimateTest4 failed")
   sys.exit(1)
 
 def decimateTest5():
@@ -64,7 +66,8 @@ def decimateTest5():
 
   return mesh == compareMesh
 
-val = decimateTest5()
-
-if val is False:
+try:
+  decimateTest5()
+except ValueError:
+  print("decimateTest5 failed")
   sys.exit(1)

@@ -10,9 +10,9 @@ def smoothTest1():
 
   return mesh == compareMesh
 
-val = smoothTest1()
-
-if val is False:
+try:
+  smoothTest1()
+except ValueError:
   print("smoothTest1 failed")
   sys.exit(1)
 
@@ -24,8 +24,8 @@ def smoothTest2():
 
   return mesh == compareMesh
 
-val = smoothTest2()
-
-if val is False:
+try:
+  smoothTest2()
+except ValueError:
   print("smoothTest2 failed")
   sys.exit(1)

@@ -11,9 +11,10 @@ def warpTest():
 
   return img.compare(compareImg)
 
-val = warpTest()
-
-if val is False:
+try:
+  warpTest()
+except ValueError:
+  print("warpTest failed")
   sys.exit(1)
 
 def warpfailTest():
@@ -25,7 +26,8 @@ def warpfailTest():
   return img.compare(compareImg)
 
 try:
-  val = warpfailTest()
+  warpfailTest()
+  print("warpfailTest failed. The function requires target particles.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

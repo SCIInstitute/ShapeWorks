@@ -10,9 +10,9 @@ def curvatureTest1():
 
   return img.compare(compareImg)
 
-val = curvatureTest1()
-
-if val is False:
+try:
+  curvatureTest1()
+except ValueError:
   print("curvatureTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def curvatureTest2():
 
   return img.compare(compareImg)
 
-val = curvatureTest2()
-
-if val is False:
+try:
+  curvatureTest2()
+except ValueError:
   print("curvatureTest2 failed")
   sys.exit(1)
 
@@ -39,7 +39,8 @@ def curvaturefailTest():
   return img.compare(compareImg)
 
 try:
-  val = curvaturefailTest()
+  curvaturefailTest()
+  print("curvaturefailTest failed. The function cannot compute negative iterations.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

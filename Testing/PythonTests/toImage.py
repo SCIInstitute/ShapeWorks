@@ -10,9 +10,9 @@ def toImageTest1():
 
   return img == compareImg
 
-val = toImageTest1()
-
-if val is False:
+try:
+  toImageTest1()
+except ValueError:
   print("toImageTest1 failed")
   sys.exit(1)
 
@@ -25,9 +25,9 @@ def toImageTest2():
 
   return img == compareImg
 
-val = toImageTest2()
-
-if val is False:
+try:
+  toImageTest2()
+except ValueError:
   print("toImageTest2 failed")
   sys.exit(1)
 
@@ -39,8 +39,8 @@ def toImageTest3():
 
   return img == compareImg
 
-val = toImageTest3()
-
-if val is False:
+try:
+  toImageTest3()
+except ValueError:
   print("toImageTest3 failed")
   sys.exit(1)

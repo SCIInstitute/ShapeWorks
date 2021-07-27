@@ -11,9 +11,9 @@ def infoTest1():
 
   return center[0] == compareCenter[0] and center[1] == compareCenter[1] and center[2] == compareCenter[2]
 
-val = infoTest1()
-
-if val is False:
+try:
+  infoTest1()
+except ValueError:
   print("infoTest1 failed")
   sys.exit(1)
 
@@ -26,8 +26,8 @@ def infoTest2():
 
   return com[0] == compareCom[0] and com[1] == compareCom[1] and com[2] == compareCom[2]
 
-val = infoTest2()
-
-if val is False:
-  print("infoTest2 failed")
+try:
+  infoTest1()
+except ValueError:
+  print("infoTest1 failed")
   sys.exit(1)

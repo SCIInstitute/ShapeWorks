@@ -13,9 +13,9 @@ def distanceTest1():
 
   return femur == f2p and pelvis == p2f
 
-val = distanceTest1()
-
-if val is False:
+try:
+  distanceTest1()
+except ValueError:
   print("distanceTest1 failed")
   sys.exit(1)
 
@@ -30,8 +30,8 @@ def distanceTest2():
 
   return femur1 == fwd and femur2 == rev
 
-val = distanceTest2()
-
-if val is False:
+try:
+  distanceTest2()
+except ValueError:
   print("distanceTest2 failed")
   sys.exit(1)

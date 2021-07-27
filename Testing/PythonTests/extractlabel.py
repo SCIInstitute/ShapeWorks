@@ -10,9 +10,9 @@ def extractlabelTest1():
 
   return img.compare(compareImg)
 
-val = extractlabelTest1()
-
-if val is False:
+try:
+  extractlabelTest1()
+except ValueError:
   print("extractlabelTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def extractlabelTest2():
 
   return img.compare(compareImg)
 
-val = extractlabelTest2()
-
-if val is False:
+try:
+  extractlabelTest2()
+except ValueError:
   print("extractlabelTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def extractlabelTest3():
 
   return img.compare(compareImg)
 
-val = extractlabelTest3()
-
-if val is False:
+try:
+  extractlabelTest3()
+except ValueError:
   print("extractlabelTest3 failed")
   sys.exit(1)
 
@@ -52,8 +52,8 @@ def extractlabelTest4():
 
   return img.compare(compareImg)
 
-val = extractlabelTest4()
-
-if val is False:
+try:
+  extractlabelTest4()
+except ValueError:
   print("extractlabelTest4 failed")
   sys.exit(1)

@@ -10,9 +10,9 @@ def computedtTest1():
 
   return img.compare(compareImg)
 
-val = computedtTest1()
-
-if val is False:
+try:
+  computedtTest1()
+except ValueError:
   print("computedtTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def computedtTest2():
 
   return img.compare(compareImg)
 
-val = computedtTest2()
-
-if val is False:
+try:
+  computedtTest2()
+except ValueError:
   print("computedtTest2 failed")
   sys.exit(1)
 
@@ -38,8 +38,8 @@ def computedtTest3():
 
   return img.compare(compareImg)
 
-val = computedtTest3()
-
-if val is False:
+try:
+  computedtTest3()
+except ValueError:
   print("computedtTest3 failed")
   sys.exit(1)

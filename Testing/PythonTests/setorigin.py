@@ -10,9 +10,9 @@ def setoriginTest1():
 
   return img.compare(compareImg)
 
-val = setoriginTest1()
-
-if val is False:
+try:
+  setoriginTest1()
+except ValueError:
   print("setoriginTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def setoriginTest2():
 
   return img.compare(compareImg)
 
-val = setoriginTest2()
-
-if val is False:
+try:
+  setoriginTest2()
+except ValueError:
   print("setoriginTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def setoriginTest3():
 
   return img.compare(compareImg)
 
-val = setoriginTest3()
-
-if val is False:
+try:
+  setoriginTest3()
+except ValueError:
   print("setoriginTest3 failed")
   sys.exit(1)
 
@@ -52,8 +52,8 @@ def setoriginTest4():
 
   return img.compare(compareImg)
 
-val = setoriginTest4()
-
-if val is False:
+try:
+  setoriginTest4()
+except ValueError:
   print("setoriginTest4 failed")
   sys.exit(1)

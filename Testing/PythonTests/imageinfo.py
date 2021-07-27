@@ -11,9 +11,9 @@ def infoTest1():
 
   return size1[0] == size2[0] and size1[1] == size2[1] and size1[2] == size2[2]
 
-val = infoTest1()
-
-if val is False:
+try:
+  infoTest1()
+except ValueError:
   print("infoTest1 failed")
   sys.exit(1)
 
@@ -26,9 +26,8 @@ def infoTest2():
 
   return dims1[0] == dims2[0] and dims1[1] == dims2[1] and dims1[2] == dims2[2]
 
-val = infoTest2()
-
-if val is False:
+try:
+  infoTest2()
+except ValueError:
   print("infoTest2 failed")
   sys.exit(1)
-

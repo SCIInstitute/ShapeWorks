@@ -10,7 +10,8 @@ def intensityTest():
 
   return img.compare(compareImg)
 
-val = intensityTest()
-
-if val is False:
+try:
+  intensityTest()
+except ValueError:
+  print("intensityTest failed")
   sys.exit(1)

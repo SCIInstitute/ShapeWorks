@@ -10,9 +10,9 @@ def reflectTest1():
 
   return img.compare(compareImg)
 
-val = reflectTest1()
-
-if val is False:
+try:
+  reflectTest1()
+except ValueError:
   print("reflectTest1 failed")
   sys.exit(1)
 
@@ -24,9 +24,9 @@ def reflectTest2():
 
   return img.compare(compareImg)
 
-val = reflectTest2()
-
-if val is False:
+try:
+  reflectTest2()
+except ValueError:
   print("reflectTest2 failed")
   sys.exit(1)
 
@@ -38,9 +38,9 @@ def reflectTest3():
 
   return mesh == compareMesh
 
-val = reflectTest3()
-
-if val is False:
+try:
+  reflectTest3()
+except ValueError:
   print("reflectTest3 failed")
   sys.exit(1)
 
@@ -52,9 +52,9 @@ def reflectTest4():
 
   return mesh == compareMesh
 
-val = reflectTest4()
-
-if val is False:
+try:
+  reflectTest4()
+except ValueError:
   print("reflectTest4 failed")
   sys.exit(1)
 
@@ -67,7 +67,8 @@ def reflectfailTest():
   return img.compare(compareImg)
 
 try:
-  val = reflectfailTest()
+  reflectfailTest()
+  print("reflectfailTest failed. There should be no default version of this function.")
   sys.exit(1)
 except TypeError:
   sys.exit(0)

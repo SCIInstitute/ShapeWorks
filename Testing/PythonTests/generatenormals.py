@@ -2,7 +2,7 @@ import os
 import sys
 from shapeworks import *
 
-def generateNormalsTest():
+def generatenormalsTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.generateNormals()
 
@@ -10,7 +10,8 @@ def generateNormalsTest():
 
   return mesh == compareMesh
 
-val = generateNormalsTest()
-
-if val is False:
+try:
+  generatenormalsTest()
+except ValueError:
+  print("generatenormalsTest failed")
   sys.exit(1)

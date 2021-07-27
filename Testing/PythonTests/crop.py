@@ -17,11 +17,9 @@ def cropTest1():
   return img.compare(compareImg)
 
 try:
-  if not cropTest1():
-    print("cropTest1 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("cropTest1 failed (exception)")
+  cropTest1()
+except ValueError:
+  print("cropTest1 failed")
   sys.exit(1)
 
 def cropTest2():
@@ -37,9 +35,7 @@ def cropTest2():
   return img1.compare(compareImg)
 
 try:
-  if not cropTest2():
-    print("cropTest2 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("cropTest2 failed (exception)")
+  cropTest2()
+except ValueError:
+  print("cropTest2 failed")
   sys.exit(1)
