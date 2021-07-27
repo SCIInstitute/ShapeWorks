@@ -9,6 +9,22 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, computemeannormalsTest)
+{
+  std::vector<Mesh> meshes;
+  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  mesh1.generateNormals();
+  meshes.push_back(mesh1);
+  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04.vtk"));
+  mesh2.generateNormals();
+  meshes.push_back(mesh2);
+
+  Mesh mesh = MeshUtils::computeMeanNormals(meshes);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/meannormals.vtk");
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
+}
+
 TEST(MeshTests, geodesicTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");

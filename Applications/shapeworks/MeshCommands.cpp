@@ -861,7 +861,8 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
     meshes.push_back(mesh_);
   }
 
-  std::vector<Point3> mean_normals = MeshUtils::computeMeanNormals(meshes);
+  sharedData.mesh = std::make_unique<Mesh>(MeshUtils::computeMeanNormals(meshes));
+
   return true;
 }
 

@@ -7,7 +7,7 @@
 
 namespace shapeworks {
 
-/// Helper functions for meshes 
+/// Helper functions for meshes
 class MeshUtils
 {
 public:
@@ -35,7 +35,7 @@ public:
   static int findReferenceMesh(std::vector<Mesh> &meshes);
 
   /// return array of average normals for each point in these meshes
-  static std::vector<Point3> computeMeanNormals(std::vector<Mesh> &meshes);
+  static Mesh computeMeanNormals(std::vector<Mesh> &meshes);
 };
 
 } // shapeworks

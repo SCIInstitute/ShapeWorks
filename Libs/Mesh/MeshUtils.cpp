@@ -5,6 +5,7 @@
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
+#include <vtkDoubleArray.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>
@@ -169,10 +170,11 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
-std::vector<Point3> MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
+Mesh MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute average normals");
+
   auto num_normals = meshes[0].numPoints();
   auto num_meshes = meshes.size();
 
@@ -184,6 +186,7 @@ std::vector<Point3> MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
     auto normals = meshes[j].getField<vtkDataArray>("Normals");
+
     if (num_normals != normals->GetNumberOfTuples())
       throw std::invalid_argument("Expected a normal for every point in mesh");
     
@@ -208,20 +211,29 @@ std::vector<Point3> MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
     }
   }
 
+  vtkSmartPointer<vtkDoubleArray> normals = vtkSmartPointer<vtkDoubleArray>::New();
+  normals->SetNumberOfComponents(3);
+  normals->SetNumberOfTuples(num_normals);
+  normals->SetName("MeanNormals");
+
   // compute average value for collection of normals for all meshes
-  std::vector<Point3> mean_normals(num_normals);
+  std::vector<Vector3> mean_normals(num_normals);
   for (int i = 0; i < num_normals; i++)
   {
-    Point3 avg_spherical_normal({1.0,
-                                 Utils::averageThetaArc(phis[i]),
-                                 Utils::averageThetaArc(thetas[i])});
+    Vector3 avg_spherical_normal = makeVector({1.0,
+                                               Utils::averageThetaArc(phis[i]),
+                                               Utils::averageThetaArc(thetas[i])});
 
     // note: Utils::spherical2cartesian expects atypical (r, phi, theta)
     Utils::spherical2cartesian(avg_spherical_normal.GetDataPointer(),
                                mean_normals[i].GetDataPointer());
+
+    normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
   }
-  
-  return mean_normals;
+
+  meshes[0].setField("MeanNormals", normals);
+
+  return meshes[0];
 }
 
 } // shapeworks

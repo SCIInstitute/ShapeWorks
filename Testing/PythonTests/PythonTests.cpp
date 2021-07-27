@@ -249,6 +249,11 @@ TEST(pythonTests, closestpointidTest)
   run_use_case("closestpointid.py");
 }
 
+TEST(pythonTests, meannormalsTest)
+{
+  run_use_case("meannormals.py");
+}
+
 TEST(pythonTests, getpointTest)
 {
   run_use_case("getpoint.py");

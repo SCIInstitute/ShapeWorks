@@ -1098,6 +1098,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldStd,
        "returns the standard deviation of the given field",
        "name"_a)
+
+  .def("compareField",
+       &Mesh::compareField,
+       "compares two meshes based on fields",
+       "other_mesh"_a, "name1"_a, "name2"_a="")
   ;
 
   // MeshUtils
@@ -1123,6 +1128,13 @@ PYBIND11_MODULE(shapeworks_py, m)
               },
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
+
+  .def_static("computeMeanNormals",
+              [](std::vector<Mesh> meshes) {
+                return shapeworks::MeshUtils::computeMeanNormals(meshes);
+              },
+               "",
+               "meshes"_a)
   ;
 
   // ParticleSystem

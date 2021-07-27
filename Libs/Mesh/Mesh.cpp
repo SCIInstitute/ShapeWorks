@@ -103,6 +103,7 @@ Mesh& Mesh::write(const std::string &pathname)
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
+      writer->SetFileTypeToBinary();
       writer->Update();
       return *this;
     }
