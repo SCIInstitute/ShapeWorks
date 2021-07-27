@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ClosestPoint::getCommand());
   shapeworks.addCommand(GeodesicDistance::getCommand());
   shapeworks.addCommand(MeanNormals::getCommand());
+  shapeworks.addCommand(Curvature::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());

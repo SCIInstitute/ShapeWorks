@@ -867,6 +867,30 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Curvature
+///////////////////////////////////////////////////////////////////////////////
+void Curvature::buildParser()
+{
+  const std::string prog = "curvature";
+  const std::string desc = ""; // TODO: add description
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->curvature();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()

@@ -16,6 +16,7 @@ class Mesh
 public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
+  enum CurvatureType { Principal, Gaussian, Mean };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -95,6 +96,8 @@ public:
 
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
+
+  Eigen::VectorXd curvature(const CurvatureType curv = Gaussian);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;

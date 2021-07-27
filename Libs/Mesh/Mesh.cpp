@@ -40,6 +40,7 @@
 #include <vtkPlaneCollection.h>
 #include <vtkClipClosedSurface.h>
 #include <igl/exact_geodesic.h>
+#include <igl/gaussian_curvature.h>
 
 namespace shapeworks {
 
@@ -520,6 +521,17 @@ double Mesh::geodesicDistance(int source, int target)
 
   igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
   return d[0];
+}
+
+Eigen::VectorXd Mesh::curvature(const CurvatureType curv)
+{
+  Eigen::MatrixXd V = points();
+	Eigen::MatrixXi F = faces();
+  Eigen::VectorXd d;
+
+  igl::gaussian_curvature(V, F, d);
+  // std::cout << d;
+  return d;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
