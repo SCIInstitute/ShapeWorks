@@ -190,7 +190,7 @@ void QDeepSSM::initialize_python()
     std::vector<std::string> python_path;
     std::string home = getenv("HOME");
 #ifdef _WIN32
-    name = getenv("USERPROFILE")
+    home = getenv("USERPROFILE");
 #endif
 
 #ifdef __APPLE__
