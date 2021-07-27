@@ -4,15 +4,17 @@
 namespace py = pybind11;
 using namespace pybind11::literals; // to bring in the `_a` literal
 
+// std
 #include <functional>
 #include <iostream>
 #include <fstream>
 
+// qt
 #include <QThread>
 
+// shapeworks
 #include <DeepSSM/QDeepSSM.h>
 #include <DeepSSM/DeepSSMParameters.h>
-
 
 namespace shapeworks {
 
@@ -152,13 +154,10 @@ void QDeepSSM::run_training()
     py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
 
     emit message("DeepSSM: Preparing Config File");
-    // prepareConfigFile(config_file, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
-    //    decay_lr, fine_tune):
     std::string config_file = "deepssm/configuration.json";
-    prepare_config_file(config_file, "deepssm",
+    prepare_config_file(config_file, "model",
                         3 /* TODO: Replace this with output from augmentation*/,
                         out_dir, loader_dir, aug_dir, epochs, learning_rate, decay_lr, fine_tune);
-
 
     emit message("DeepSSM: Training");
     py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");

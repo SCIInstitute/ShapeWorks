@@ -36,7 +36,6 @@ Q_SIGNALS:
 private:
   ProjectHandle project_;
 
-
   enum class FileType {
     IMAGE,
     PARTICLES
