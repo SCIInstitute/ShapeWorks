@@ -1,19 +1,18 @@
-
-
 // pybind
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
-#include <DeepSSM/DeepSSMParameters.h>
-
 namespace py = pybind11;
 using namespace pybind11::literals; // to bring in the `_a` literal
+
+#include <functional>
+#include <iostream>
+#include <fstream>
 
 #include <QThread>
 
 #include <DeepSSM/QDeepSSM.h>
+#include <DeepSSM/DeepSSMParameters.h>
 
-#include <iostream>
-#include <fstream>
 
 namespace shapeworks {
 
