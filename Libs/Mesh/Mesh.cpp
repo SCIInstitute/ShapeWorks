@@ -678,6 +678,8 @@ Mesh& Mesh::setField(std::string name, Array array)
     std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
 
+  std::cerr << "WARNING: Only vtk and vtp files save associated fields\n";
+
   array->SetName(name.c_str());
   mesh->GetPointData()->AddArray(array);
 
