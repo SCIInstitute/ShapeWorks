@@ -35,6 +35,8 @@ call conda activate %CONDAENV%
 call pip install --upgrade pip
 call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
+call pip install hotelling==0.5.0
+call pip install statsmodel
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
