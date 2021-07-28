@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
 from DeepSSMUtils import model
 from DeepSSMUtils import losses
+from DeepSSMUtils import train_viz
 
 '''
 Train helper
@@ -59,6 +60,7 @@ def supervised_train(config_file):
 		os.makedirs(model_dir)
 	loader_dir = parameters['paths']['loader_dir']
 	aug_dir = parameters['paths']['aug_dir']
+	template_prefix = parameters['paths']['template_prefix']
 	num_epochs = parameters['trainer']['epochs']
 	learning_rate = parameters['trainer']['learning_rate']
 	eval_freq = parameters['trainer']['val_freq']
@@ -131,6 +133,8 @@ def supervised_train(config_file):
 			train_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 			train_rel_losses.append(train_rel_loss.item())
 		# test validation
+		pred_particles = []
+		true_particles = []
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
 			val_losses = []
@@ -144,6 +148,9 @@ def supervised_train(config_file):
 				val_losses.append(v_loss.item())
 				val_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 				val_rel_losses.append(val_rel_loss.item())
+				pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
+				true_particles.append(mdl.squeeze().detach().cpu().numpy())
+			train_viz.generate_validation_meshes( np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/", template_prefix)
 			# log
 			train_mr_MSE = np.mean(np.sqrt(train_losses))
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
@@ -206,6 +213,8 @@ def supervised_train(config_file):
 				train_rel_loss = F.mse_loss(pred_mdl, mdl) / F.mse_loss(pred_mdl*0, mdl)
 				train_rel_losses.append(train_rel_loss.item())
 			# test validation
+			pred_particles = []
+			true_particles = []
 			if ((e % eval_freq) == 0 or e == 1):
 				net.eval()
 				val_losses = []
@@ -223,6 +232,9 @@ def supervised_train(config_file):
 						best_ft_val_rel_error = val_rel_loss
 						best_ft_epoch = e
 						torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
+					pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
+					true_particles.append(mdl.squeeze().detach().cpu().numpy())
+				train_viz.generate_validation_meshes( np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/", template_prefix)
 				# log
 				train_mr_MSE = np.mean(np.sqrt(train_losses))
 				val_mr_MSE = np.mean(np.sqrt(val_losses))
