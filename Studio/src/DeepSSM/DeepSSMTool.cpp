@@ -45,12 +45,23 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::update_data);
 
+  this->py_worker = QSharedPointer<PythonWorker>::create();
+
+  connect(this->py_worker.data(), &PythonWorker::job_finished, this,
+          &DeepSSMTool::handle_thread_complete);
+  connect(this->py_worker.data(), &PythonWorker::message,
+          this, &DeepSSMTool::message);
+  connect(this->py_worker.data(), &PythonWorker::error_message,
+          this, &DeepSSMTool::error);
+
   this->ui_->violin_plot->setText("");
 }
 
 //---------------------------------------------------------------------------
 DeepSSMTool::~DeepSSMTool()
-{}
+{
+  //this->py_worker->end_python();
+}
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::set_session(QSharedPointer<Session> session)
@@ -121,13 +132,13 @@ bool DeepSSMTool::get_active()
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_augmentation_clicked()
 {
-  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_AugmentationType);
+  this->run_tool(PythonWorker::JobType::DeepSSM_AugmentationType);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_training_clicked()
 {
-  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_TrainingType);
+  this->run_tool(PythonWorker::JobType::DeepSSM_TrainingType);
 }
 
 //---------------------------------------------------------------------------
@@ -136,10 +147,10 @@ void DeepSSMTool::handle_thread_complete()
   emit progress(100);
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
 
-  if (this->current_tool_ == ShapeworksWorker::DeepSSM_AugmentationType) {
+  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_AugmentationType) {
     emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
   }
-  else if (this->current_tool_ == ShapeworksWorker::DeepSSM_TrainingType) {
+  else if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Training Complete.  Duration: " + duration + " seconds");
   }
   else {
@@ -299,14 +310,14 @@ void DeepSSMTool::restore_training_defaults()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
+void DeepSSMTool::run_tool(PythonWorker::JobType type)
 {
   this->current_tool_ = type;
   emit progress(-1);
-  if (type == ShapeworksWorker::DeepSSM_AugmentationType) {
+  if (type == PythonWorker::JobType::DeepSSM_AugmentationType) {
     emit message("Please Wait: Running Data Augmentation...");
   }
-  else if (type == ShapeworksWorker::DeepSSM_TrainingType) {
+  else if (type == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Please Wait: Running Training...");
   }
   else {
@@ -323,20 +334,9 @@ void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
   connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
   connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
 
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    this->current_tool_, nullptr, nullptr,
-    nullptr, session_);
-  worker->set_deep_ssm(this->deep_ssm_);
+  this->py_worker->set_deep_ssm(this->deep_ssm_);
 
-  QThread* thread = new QThread;
-  worker->moveToThread(thread);
-  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, &ShapeworksWorker::finished, this, &DeepSSMTool::handle_thread_complete);
-  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
-  connect(worker, &ShapeworksWorker::error_message, this, &DeepSSMTool::handle_error);
-  connect(worker, &ShapeworksWorker::message, this, &DeepSSMTool::message);
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
+  this->py_worker->run_job(type);
 
 }
 

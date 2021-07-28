@@ -16,6 +16,7 @@
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
+#include <Python/PythonWorker.h>
 
 class Ui_DeepSSMTool;
 
@@ -78,7 +79,7 @@ signals:
 
 private:
 
-  void run_tool(ShapeworksWorker::ThreadType type);
+  void run_tool(PythonWorker::JobType type);
   void update_data();
   void load_violin_plot();
   void resize_plot();
@@ -90,12 +91,14 @@ private:
   ShapeWorksStudioApp* app_;
 
   bool tool_is_running_ = false;
-  ShapeworksWorker::ThreadType current_tool_ = ShapeworksWorker::DeepSSM_AugmentationType;
+  PythonWorker::JobType current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
   QSharedPointer<QDeepSSM> deep_ssm_;
   QElapsedTimer timer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
+
+  QSharedPointer<PythonWorker> py_worker;
 
 };
 

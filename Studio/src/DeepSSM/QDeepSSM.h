@@ -50,9 +50,6 @@ private:
 
   const double partition = 0.5;
 
-  void initialize_python();
-  void finalize_python();
-  bool python_initialized_ = false;
 
 };
 }
