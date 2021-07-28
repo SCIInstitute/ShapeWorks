@@ -47,6 +47,12 @@ QPushButton#run_button{
 	color: white;
 }
 
+QPushButton#run_button:disabled{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(128, 128, 128, 255), stop:0.155779 rgba(96, 96, 96, 255), stop:1 rgba(96, 96, 96, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+
 QPushButton#run_button:hover{
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(80, 0, 0, 255), stop:0.299435 rgba(110, 0, 0, 255), stop:0.491525 rgba(110, 0, 0, 255), stop:1 rgba(80, 0, 0, 255));
 	border-radius: 4px;
@@ -409,6 +415,13 @@ void DeepSSMTool::restore_defaults()
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_tool(PythonWorker::JobType type)
 {
+
+  // ensure someone doesn't accidental abort right after clicking RUN
+  this->ui_->run_button->setEnabled(false);
+  QTimer::singleShot(1000, [=]() {
+    this->ui_->run_button->setEnabled(true);
+  });
+
   this->current_tool_ = type;
   emit progress(-1);
   if (type == PythonWorker::JobType::DeepSSM_AugmentationType) {

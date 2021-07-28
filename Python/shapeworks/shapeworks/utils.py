@@ -156,6 +156,13 @@ def sw_message(str):
     else:
         print(str)
 
+def sw_check_abort():
+    """If sw_logger is set, use it to check if abort has been called"""
+    global sw_logger
+    if sw_logger is not None:
+        return sw_logger.check_abort()
+    else:
+        return False
 
 def sw_progress(progress):
     """If sw_logger is set, use it, otherwise do nothing"""
