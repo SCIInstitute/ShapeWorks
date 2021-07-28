@@ -15,6 +15,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">
+
 /********************** Tab Widget ***********************/
 
 /*
@@ -329,7 +330,17 @@ QWidget#data_panel {
     border-radius: 4px;
     border: 1px solid rgb(60, 60, 60);
     color: rgb(90, 90, 90);
-}</string>
+}
+
+QPushButton#run_button2 {
+		background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(98, 0, 0, 255), stop:0.299435 rgba(164, 0, 0, 255), stop:0.491525 rgba(128, 0, 0, 255), stop:1 rgba(98, 0, 0, 255));
+	
+margin: 4px;
+border: 1px solid rgb(90, 90, 90);
+	color: white;
+}
+
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
@@ -507,10 +518,26 @@ QWidget#data_panel {
             <property name="bottomMargin">
              <number>6</number>
             </property>
+            <property name="verticalSpacing">
+             <number>6</number>
+            </property>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="run_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Run Augmentation</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
-             <widget class="QTabWidget" name="tabWidget">
+             <widget class="QTabWidget" name="tab_widget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="augmentation_tab">
                <attribute name="title">
@@ -529,20 +556,6 @@ QWidget#data_panel {
                 <property name="bottomMargin">
                  <number>6</number>
                 </property>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>Number of PCA Dimensions</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0" colspan="2">
-                 <widget class="Line" name="line">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_4">
                   <property name="text">
@@ -550,10 +563,13 @@ QWidget#data_panel {
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label">
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="num_pca_dims">
                   <property name="text">
-                   <string>Number of Samples</string>
+                   <string>3</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -576,6 +592,14 @@ QWidget#data_panel {
                   </item>
                  </widget>
                 </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_3">
+                  <property name="text">
+                   <string>Percent Variability
+Preserved</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="num_samples">
                   <property name="text">
@@ -583,31 +607,6 @@ QWidget#data_panel {
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="num_pca_dims">
-                  <property name="text">
-                   <string>3</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0" colspan="2">
-                 <widget class="QPushButton" name="run_augmentation_button">
-                  <property name="text">
-                   <string>Run Augmentation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>Percent Variability
-Preserved</string>
                   </property>
                  </widget>
                 </item>
@@ -621,10 +620,17 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="0" colspan="2">
-                 <widget class="QPushButton" name="restore_augmentation_defaults">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_2">
                   <property name="text">
-                   <string>Restore Defaults</string>
+                   <string>Number of PCA Dimensions</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Number of Samples</string>
                   </property>
                  </widget>
                 </item>
@@ -654,10 +660,30 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="2">
-                 <widget class="QPushButton" name="run_training_button">
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_9">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
-                   <string>Run Training</string>
+                   <string>Fine tuning</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>Epochs</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0" colspan="2">
+                 <widget class="Line" name="line_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
                  </widget>
                 </item>
@@ -719,44 +745,10 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="0" colspan="2">
-                 <widget class="QPushButton" name="restore_training_defaults">
-                  <property name="text">
-                   <string>Restore Defaults</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_6">
-                  <property name="text">
-                   <string>Epochs</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_9">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Fine tuning</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="1">
                  <widget class="QLineEdit" name="training_learning_rate">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_7">
-                  <property name="text">
-                   <string>Learning rate</string>
                   </property>
                  </widget>
                 </item>
@@ -805,10 +797,10 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="4" column="0" colspan="2">
-                 <widget class="Line" name="line_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Learning rate</string>
                   </property>
                  </widget>
                 </item>
@@ -822,15 +814,21 @@ Preserved</string>
                 <item row="0" column="0">
                  <widget class="QTableWidget" name="inference_table"/>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="pushButton">
-                  <property name="text">
-                   <string>Run Inference</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </widget>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="restore_defaults">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Restore Defaults</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -1011,13 +1009,6 @@ Preserved</string>
          <item row="1" column="0">
           <widget class="QTableWidget" name="table"/>
          </item>
-         <item row="2" column="0">
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
@@ -1025,6 +1016,13 @@ Preserved</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>

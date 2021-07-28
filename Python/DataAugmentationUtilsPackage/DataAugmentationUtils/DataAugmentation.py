@@ -6,6 +6,8 @@ import json
 from DataAugmentationUtils import Utils
 from DataAugmentationUtils import Embedder
 from DataAugmentationUtils import Sampler
+from shapeworks.utils import sw_message
+from shapeworks.utils import sw_progress
 
 ################################# Augmentation Pipelines ###############################################
 
@@ -45,8 +47,8 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		PointSampler = Sampler.KDE_Sampler()
 		PointSampler.fit(embedded_matrix) 
 	else:
-		Utils.message("Error sampler_type unrecognized.")
-		Utils.message("Gaussian, mixture, and KDE currently supported.")
+		shapeworks.utils.sw_message("Error sampler_type unrecognized.")
+		shapeworks.utils.sw_message("Gaussian, mixture, and KDE currently supported.")
 		return
 	
 	# Initialize output folders and lists
@@ -63,7 +65,8 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		generate_image_params_list = []
 	# Sample to generate new examples
 	for index in range(1, num_samples+1):
-		Utils.message("Generating " +str(index)+'/'+str(num_samples))
+		sw_message("Generating " +str(index)+'/'+str(num_samples))
+		sw_progress(index / (num_samples+1))
 		name = 'Generated_sample_' + Utils.pad_index(index)
 		# Generate embedding
 		sampled_embedding, base_index = PointSampler.sample()

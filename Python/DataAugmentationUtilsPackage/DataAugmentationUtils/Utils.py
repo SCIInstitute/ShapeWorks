@@ -2,47 +2,27 @@ import shapeworks as sw
 import numpy as np
 import os
 
-logger = None
-'''
-Set the logger object
-'''
-def set_logger(log_object):
-	global logger
-	logger = log_object
 
-'''
-If logger is set, use it, otherwise print to console
-'''
-def message(str):
-	if logger is not None:
-		logger.log(str)
-	else:
-		print(str)
-
-
-'''
-Reads data from files in given list and turns into one np matrix
-'''
 def create_data_matrix(file_list):
+	"""Reads data from files in given list and turns into one np matrix"""
 	data_matrix = []
 	for file in file_list:
 		data_matrix.append(np.loadtxt(file))
 	return np.array(data_matrix)
 
-'''
-Pad index 
-'''
+
 def pad_index(index):
+	"""Pad index"""
 	name = str(index)
 	while len(name) < 4:
 		name = "0" + name
 	return name
 
-'''
-Makes csv of real and augmented data with format:
-	image path, particles path, PCA scores
-'''
+
 def make_CSV(filename, orig_imgs, orig_points, orig_embeddings, gen_imgs, gen_points, gen_embeddings):
+	"""Makes csv of real and augmented data with format:
+	image path, particles path, PCA scores"""
+
 	csv_out = open(filename, "w+")
 	# write originals
 	for orig_index in range(len(orig_imgs)):
@@ -58,40 +38,41 @@ def make_CSV(filename, orig_imgs, orig_points, orig_embeddings, gen_imgs, gen_po
 		csv_out.write(string + "\n")
 	csv_out.close()
 
-'''
-Use warp between particles to warp original image into a new image
-'''
+
 def generate_image(out_dir, gen_particles, base_image, base_particles):
-  image_name = os.path.basename(gen_particles).replace(".particles",".nrrd")
-  gen_image = out_dir + "Generated-Images/" + image_name
-  img = sw.Image(base_image)
-  transform = sw.ImageUtils.createWarpTransform(base_particles, gen_particles, 2)
-  img.applyTransform(transform).write(gen_image)
-  return gen_image
+	"""Use warp between particles to warp original image into a new image"""
+	image_name = os.path.basename(gen_particles).replace(".particles",".nrrd")
+	gen_image = out_dir + "Generated-Images/" + image_name
+	img = sw.Image(base_image)
+	transform = sw.ImageUtils.createWarpTransform(base_particles, gen_particles, 2)
+	img.applyTransform(transform).write(gen_image)
+	return gen_image
+
 
 def get_homogeneous_coordinates(x):
-	'''
+	"""
 	get the homogeneous coordinates
-    by Wenzheng Tao
+	by Wenzheng Tao
 	---
 	x:
 		(n_coordinates, n_samples), input points
 	---
 	x_h:
 		(n_coordinates + 1, n_samples), input sample homogeneous coordinates 
-	'''
+	"""
 	x_h = np.concatenate([x, np.ones((1, x.shape[1]))], axis=0,)
 	return x_h
 
+
 def estimate_similar_transform(x, y):
-	'''
+	"""
 	calculate the optimal parameters of similarity transformation from points x to points y
 	x and y should have the same number of points
 	minimizing sum_i(||y_i - (c * R @ x_i + t)||^2)
 	
 	using method in the following paper:
 	http://web.stanford.edu/class/cs273/refs/umeyama.pdf
-    by Wenzheng Tao
+	by Wenzheng Tao
 	---
 	x:
 		(n_coordinates, n_samples), first input points
@@ -105,7 +86,7 @@ def estimate_similar_transform(x, y):
 		(n_coordinates, 1), optimal tranlation
 	c:
 		scalar, optimal scale
-	'''
+	"""
 	m, n = x.shape
 	assert (y.shape[1] == n), 'numbers of points in x and y should be the same, but now they are:' + ','.join([n, y.shape[1]])
 
@@ -143,10 +124,11 @@ def estimate_similar_transform(x, y):
 
 	return R, t, c
 
+
 def get_homogeneous_similar_transform(R, t, c):
-	'''
-	build the homogeneous similarity transformation matrix 
-    by Wenzheng Tao
+	"""
+	build the homogeneous similarity transformation matrix
+	by Wenzheng Tao
 	---
 	R:
 		(n_coordinates, n_coordinates), optimum rotation matrix
@@ -158,7 +140,7 @@ def get_homogeneous_similar_transform(R, t, c):
 	---
 	T:
 		(n_coordinates+1, n_coordinates+1) homogeneous similarity transformation matrix
-	'''	
+	"""
 	m, m = R.shape
 	T = np.zeros((m+1, m+1))
 	T[0:m, 0:m] = c * R
@@ -166,8 +148,9 @@ def get_homogeneous_similar_transform(R, t, c):
 	T[m,m] = 1
 	return T
 
+
 def estimate_homogeneous_similar_transform(x, y):
-	'''
+	"""
 	estimate the optimal homogeneous similarity transformation from points x to points y
     by Wenzheng Tao
 	---
@@ -178,7 +161,7 @@ def estimate_homogeneous_similar_transform(x, y):
 	---
 	T:
 		(n_coordinates+1, n_coordinates+1) optimal homogeneous similarity transformation from points x to points y
-	'''
+	"""
 	R, t, c = estimate_similar_transform(x=x, y=y)
 	T = get_homogeneous_similar_transform(R=R, t=t, c=c)
 	return T

@@ -27,8 +27,11 @@ public:
   void run_job(JobType job);
 
   void incoming_python_message(std::string message_string);
+  void incoming_python_progress(double value);
 
   void end_python();
+
+  void abort_job();
 
 public Q_SLOTS:
 
@@ -47,10 +50,13 @@ Q_SIGNALS:
   void result_ready();
   void error_message(QString);
   void warning_message(QString);
+  void progress(double);
   void message(QString);
   void finished();
 
 private:
+
+  void finish_job();
 
   QSharedPointer<QDeepSSM> deep_ssm_;
   QSharedPointer<PythonLogger> python_logger_;
