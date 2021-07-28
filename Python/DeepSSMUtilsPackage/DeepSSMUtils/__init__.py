@@ -3,6 +3,7 @@ from DeepSSMUtils import loaders
 from DeepSSMUtils import eval
 from DeepSSMUtils import eval_utils
 from DeepSSMUtils import config_file
+from DeepSSMUtils import train_viz
 import torch
 
 def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None):
