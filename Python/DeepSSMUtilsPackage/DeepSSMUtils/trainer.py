@@ -3,6 +3,7 @@ import time
 import json
 import numpy as np
 from numpy import matlib
+import matplotlib.pyplot as plt 
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -110,8 +111,24 @@ def supervised_train(config_file):
 	print("Done.")
 	# train
 	print("Beginning training on device = " + device + '\n')
+	# Initialze logger
 	logger = open(model_dir + "train_log.csv", "w+")
 	log_print(logger, ["Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
+	# Initialize training plot
+	train_plot = plt.figure()
+	axe = train_plot.add_subplot(111)
+	axe.set_title('DeepSSM Training')
+	sp_train, = axe.plot([],[],label='Training',ms=10,color='b',marker='o',ls='')
+	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
+	axe.set_xlabel('Epochs')
+	axe.set_xlim(0,num_epochs+1)
+	axe.set_ylabel('PCA MSE')
+	axe.legend()
+	train_plot.savefig(model_dir + "training_plot.png")
+	# intialize
+	epochs = []
+	plot_train_losses = []
+	plot_val_losses = []
 	t0 = time.time()
 	best_val_rel_error = np.Inf
 	for e in range(1, num_epochs + 1):
@@ -156,6 +173,15 @@ def supervised_train(config_file):
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
 			log_print(logger, [e, scheduler.get_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
+			# plot
+			epochs.append(e)
+			plot_train_losses.append(train_mr_MSE)
+			plot_val_losses.append(val_mr_MSE)
+			sp_train.set_data(epochs, plot_train_losses)
+			sp_val.set_data(epochs, plot_val_losses)
+			axe.set_ylim(0,max(max(plot_train_losses), max(plot_val_losses))+3)
+			train_plot.canvas.draw()
+			train_plot.savefig(model_dir + "training_plot.png")
 			# save
 			if val_rel_err < best_val_rel_error:
 				best_val_rel_error = val_rel_err
