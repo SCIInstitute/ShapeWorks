@@ -60,7 +60,6 @@ def supervised_train(config_file):
 		os.makedirs(model_dir)
 	loader_dir = parameters['paths']['loader_dir']
 	aug_dir = parameters['paths']['aug_dir']
-	template_prefix = parameters['paths']['template_prefix']
 	num_epochs = parameters['trainer']['epochs']
 	learning_rate = parameters['trainer']['learning_rate']
 	eval_freq = parameters['trainer']['val_freq']
@@ -150,7 +149,7 @@ def supervised_train(config_file):
 				val_rel_losses.append(val_rel_loss.item())
 				pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
 				true_particles.append(mdl.squeeze().detach().cpu().numpy())
-			train_viz.generate_validation_meshes( np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/", template_prefix)
+			train_viz.write_validation_examples(np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/")
 			# log
 			train_mr_MSE = np.mean(np.sqrt(train_losses))
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
@@ -234,7 +233,7 @@ def supervised_train(config_file):
 						torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
 					pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
 					true_particles.append(mdl.squeeze().detach().cpu().numpy())
-				train_viz.generate_validation_meshes( np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/", template_prefix)
+				train_viz.write_validation_examples(np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/")
 				# log
 				train_mr_MSE = np.mean(np.sqrt(train_losses))
 				val_mr_MSE = np.mean(np.sqrt(val_losses))

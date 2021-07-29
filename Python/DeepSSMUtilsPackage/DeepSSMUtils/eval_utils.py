@@ -61,7 +61,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, mean_prefix):
 			"--reference_points", template_points,
 			"--target_points" ]
 	for fl in particle_list:
-		# print('	' + get_prefix(fl))
+		print('	' + get_prefix(fl))
 		execCommand.append(fl)
 	execCommand.append('--')
 	subprocess.check_call(execCommand)
