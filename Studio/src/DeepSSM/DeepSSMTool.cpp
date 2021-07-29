@@ -375,7 +375,7 @@ void DeepSSMTool::load_violin_plot()
 void DeepSSMTool::resize_plot()
 {
   if (!this->violin_plot_.isNull()) {
-    QPixmap resized = this->violin_plot_.scaledToWidth(this->ui_->violin_plot->width(),
+    QPixmap resized = this->violin_plot_.scaledToWidth(this->width() * 0.95,
                                                        Qt::SmoothTransformation);
     this->ui_->violin_plot->setPixmap(resized);
   }
