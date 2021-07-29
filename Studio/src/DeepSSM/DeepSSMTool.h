@@ -16,6 +16,7 @@
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
+#include <Python/PythonWorker.h>
 
 class Ui_DeepSSMTool;
 
@@ -56,15 +57,15 @@ public:
 
 public Q_SLOTS:
 
-  void run_augmentation_clicked();
-  void restore_augmentation_defaults();
-  void run_training_clicked();
-  void restore_training_defaults();
+  void run_clicked();
+  void restore_defaults();
 
   void handle_thread_complete();
 
   void handle_progress(int val);
   void handle_error(QString msg);
+
+  void tab_changed(int tab);
 
   void update_panels();
 
@@ -78,7 +79,7 @@ signals:
 
 private:
 
-  void run_tool(ShapeworksWorker::ThreadType type);
+  void run_tool(PythonWorker::JobType type);
   void update_data();
   void load_violin_plot();
   void resize_plot();
@@ -90,12 +91,14 @@ private:
   ShapeWorksStudioApp* app_;
 
   bool tool_is_running_ = false;
-  ShapeworksWorker::ThreadType current_tool_ = ShapeworksWorker::DeepSSM_AugmentationType;
+  PythonWorker::JobType current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
   QSharedPointer<QDeepSSM> deep_ssm_;
   QElapsedTimer timer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
+
+  QSharedPointer<PythonWorker> py_worker;
 
 };
 

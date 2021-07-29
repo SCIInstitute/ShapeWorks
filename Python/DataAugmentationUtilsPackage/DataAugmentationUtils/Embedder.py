@@ -5,7 +5,7 @@
 import os
 import numpy as np
 from abc import ABC, abstractmethod
-from DataAugmentationUtils import Utils
+from shapeworks.utils import sw_message
 
 # abstract base class for embedders 
 class Embedder(ABC):
@@ -46,8 +46,8 @@ class PCA_Embbeder(Embedder):
 			num_dim = np.where(cumDst > float(percent_variability))[0][0] + 1
 		W = eigen_vectors[:, :num_dim]
 		PCA_scores = np.matmul(centered_data_matrix_2d.T, W)
-		Utils.message(f"The PCA modes of particles being retained : {num_dim}")
-		Utils.message(f"Variablity preserved: {str(float(cumDst[num_dim-1]))}")
+		sw_message(f"The PCA modes of particles being retained : {num_dim}")
+		sw_message(f"Variablity preserved: {str(float(cumDst[num_dim-1]))}")
 		self.num_dim = num_dim
 		self.PCA_scores = PCA_scores
 		self.eigen_vectors = eigen_vectors

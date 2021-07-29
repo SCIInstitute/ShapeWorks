@@ -73,14 +73,14 @@ def supervised_train(config_file):
 	train_loader = torch.load(train_loader_path)
 	val_loader = torch.load(validation_loader_path)
 	print("Done.")
-	# initalizations
+	# initializations
 	num_pca = train_loader.dataset.pca_target[0].shape[0]
 	num_corr = train_loader.dataset.mdl_target[0].shape[0]
 	print("Defining net...")
 	net = model.DeepSSMNet(config_file)
 	device = net.device
 	net.to(device)
-	# intialize model weights
+	# initialize model weights
 	net.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
 	net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 

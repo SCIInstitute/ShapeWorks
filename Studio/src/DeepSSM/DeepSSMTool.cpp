@@ -19,21 +19,64 @@
 
 namespace shapeworks {
 
+const QString normal_button_ss = R"(
+QPushButton{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(238, 238, 238, 255), stop:1 rgba(192, 194, 194, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+
+QPushButton:hover{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(195, 195, 195, 255), stop:0.253769 rgba(206, 206, 206, 255), stop:1 rgba(185, 185, 185, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+
+QPushButton:pressed{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(150, 150, 150, 255), stop:0.753769 rgba(206, 206, 206, 255), stop:1 rgba(185, 185, 185, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+)";
+
+const QString abort_button_ss = R"(
+QPushButton#run_button{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(98, 0, 0, 255), stop:0.299435 rgba(128, 0, 0, 255), stop:0.491525 rgba(128, 0, 0, 255), stop:1 rgba(98, 0, 0, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+	color: white;
+}
+
+QPushButton#run_button:disabled{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(128, 128, 128, 255), stop:0.155779 rgba(96, 96, 96, 255), stop:1 rgba(96, 96, 96, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+
+QPushButton#run_button:hover{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(80, 0, 0, 255), stop:0.299435 rgba(110, 0, 0, 255), stop:0.491525 rgba(110, 0, 0, 255), stop:1 rgba(80, 0, 0, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+	color: white;
+}
+
+QPushButton#run_button:pressed{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(50, 0, 0, 255), stop:0.299435 rgba(80, 0, 0, 255), stop:0.491525 rgba(80, 0, 0, 255), stop:1 rgba(50, 0, 0, 255));
+	border-radius: 4px;
+	border: 1px solid rgb(90, 90, 90);
+}
+)";
+
 //---------------------------------------------------------------------------
 DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 {
   this->ui_ = new Ui_DeepSSMTool;
   this->ui_->setupUi(this);
 
-  connect(this->ui_->run_augmentation_button, &QPushButton::clicked,
-          this, &DeepSSMTool::run_augmentation_clicked);
-  connect(this->ui_->restore_augmentation_defaults, &QPushButton::clicked,
-          this, &DeepSSMTool::restore_augmentation_defaults);
-
-  connect(this->ui_->run_training_button, &QPushButton::clicked,
-          this, &DeepSSMTool::run_training_clicked);
-  connect(this->ui_->restore_training_defaults, &QPushButton::clicked,
-          this, &DeepSSMTool::restore_training_defaults);
+  connect(this->ui_->run_button, &QPushButton::clicked,
+          this, &DeepSSMTool::run_clicked);
+  connect(this->ui_->restore_defaults, &QPushButton::clicked,
+          this, &DeepSSMTool::restore_defaults);
 
   connect(this->ui_->data_open_button, &QPushButton::clicked,
           this, &DeepSSMTool::update_panels);
@@ -45,7 +88,39 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::update_data);
 
+  this->py_worker = QSharedPointer<PythonWorker>::create();
+
+  connect(this->py_worker.data(), &PythonWorker::job_finished, this,
+          &DeepSSMTool::handle_thread_complete);
+  connect(this->py_worker.data(), &PythonWorker::message,
+          this, &DeepSSMTool::message);
+  connect(this->py_worker.data(), &PythonWorker::error_message,
+          this, &DeepSSMTool::error);
+  connect(this->py_worker.data(), &PythonWorker::progress,
+          this, &DeepSSMTool::progress);
+
+  connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
+
+  this->ui_->restore_defaults->setStyleSheet(normal_button_ss);
   this->ui_->violin_plot->setText("");
+  this->update_panels();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::tab_changed(int tab)
+{
+  switch (tab) {
+    case 0 :
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
+      break;
+    case 1 :
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_TrainingType;
+      break;
+    case 2 :
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_InferenceType;
+      break;
+  }
+  this->update_panels();
 }
 
 //---------------------------------------------------------------------------
@@ -119,15 +194,14 @@ bool DeepSSMTool::get_active()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_augmentation_clicked()
+void DeepSSMTool::run_clicked()
 {
-  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_AugmentationType);
-}
-
-//---------------------------------------------------------------------------
-void DeepSSMTool::run_training_clicked()
-{
-  this->run_tool(ShapeworksWorker::ThreadType::DeepSSM_TrainingType);
+  if (this->tool_is_running_) {
+    this->py_worker->abort_job();
+  }
+  else {
+    this->run_tool(this->current_tool_);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -136,10 +210,10 @@ void DeepSSMTool::handle_thread_complete()
   emit progress(100);
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
 
-  if (this->current_tool_ == ShapeworksWorker::DeepSSM_AugmentationType) {
+  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_AugmentationType) {
     emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
   }
-  else if (this->current_tool_ == ShapeworksWorker::DeepSSM_TrainingType) {
+  else if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Training Complete.  Duration: " + duration + " seconds");
   }
   else {
@@ -168,7 +242,44 @@ void DeepSSMTool::update_panels()
 {
   this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
   this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
-  this->ui_->controls_content->setEnabled(!this->tool_is_running_);
+  this->ui_->tab_widget->setEnabled(!this->tool_is_running_);
+  this->ui_->restore_defaults->setEnabled(!this->tool_is_running_);
+
+  QString string = "";
+  switch (this->current_tool_) {
+    case PythonWorker::JobType::DeepSSM_AugmentationType:
+      string = "Data Augmentation";
+      break;
+    case PythonWorker::JobType::DeepSSM_TrainingType:
+      string = "Training";
+      break;
+    case PythonWorker::JobType::DeepSSM_InferenceType:
+      string = "Inference";
+      break;
+  }
+
+  if (this->tool_is_running_) {
+    //this->ui_->run_button->setStyleSheet(
+    //"QPushButton#run_button {background-color: rgb(255,128,128);}");
+    this->ui_->run_button->setStyleSheet(abort_button_ss);
+
+    //this->ui_->run_button->update();
+
+    //QPalette pal = button->palette();
+    //pal.setColor(QPalette::Button, QColor(Qt::blue));
+    //button->setAutoFillBackground(true);
+    //button->setPalette(pal);
+    //button->update();
+
+    this->ui_->run_button->setText("Abort");
+    emit message("Please Wait: Running " + string + "...");
+  }
+  else {
+    this->ui_->run_button->setStyleSheet(normal_button_ss);
+
+    this->ui_->run_button->setText("Run " + string);
+  }
+
 }
 
 //---------------------------------------------------------------------------
@@ -264,7 +375,7 @@ void DeepSSMTool::load_violin_plot()
 void DeepSSMTool::resize_plot()
 {
   if (!this->violin_plot_.isNull()) {
-    QPixmap resized = this->violin_plot_.scaledToWidth(this->ui_->violin_plot->width(),
+    QPixmap resized = this->violin_plot_.scaledToWidth(this->width() * 0.95,
                                                        Qt::SmoothTransformation);
     this->ui_->violin_plot->setPixmap(resized);
   }
@@ -281,32 +392,42 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::restore_augmentation_defaults()
+void DeepSSMTool::restore_defaults()
 {
   auto params = DeepSSMParameters(this->session_->get_project());
-  params.restore_augmentation_defaults();
+
+  switch (this->current_tool_) {
+    case PythonWorker::JobType::DeepSSM_AugmentationType:
+      params.restore_augmentation_defaults();
+      break;
+    case PythonWorker::JobType::DeepSSM_TrainingType:
+      params.restore_training_defaults();
+      break;
+    case PythonWorker::JobType::DeepSSM_InferenceType:
+      //params.restore_inference_defaults();
+      break;
+  }
+
   params.save_to_project();
   this->load_params();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::restore_training_defaults()
+void DeepSSMTool::run_tool(PythonWorker::JobType type)
 {
-  auto params = DeepSSMParameters(this->session_->get_project());
-  params.restore_training_defaults();
-  params.save_to_project();
-  this->load_params();
-}
 
-//---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
-{
+  // ensure someone doesn't accidental abort right after clicking RUN
+  this->ui_->run_button->setEnabled(false);
+  QTimer::singleShot(1000, [=]() {
+    this->ui_->run_button->setEnabled(true);
+  });
+
   this->current_tool_ = type;
   emit progress(-1);
-  if (type == ShapeworksWorker::DeepSSM_AugmentationType) {
+  if (type == PythonWorker::JobType::DeepSSM_AugmentationType) {
     emit message("Please Wait: Running Data Augmentation...");
   }
-  else if (type == ShapeworksWorker::DeepSSM_TrainingType) {
+  else if (type == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Please Wait: Running Training...");
   }
   else {
@@ -323,20 +444,9 @@ void DeepSSMTool::run_tool(ShapeworksWorker::ThreadType type)
   connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
   connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
 
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    this->current_tool_, nullptr, nullptr,
-    nullptr, session_);
-  worker->set_deep_ssm(this->deep_ssm_);
+  this->py_worker->set_deep_ssm(this->deep_ssm_);
 
-  QThread* thread = new QThread;
-  worker->moveToThread(thread);
-  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, &ShapeworksWorker::finished, this, &DeepSSMTool::handle_thread_complete);
-  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
-  connect(worker, &ShapeworksWorker::error_message, this, &DeepSSMTool::handle_error);
-  connect(worker, &ShapeworksWorker::message, this, &DeepSSMTool::message);
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
+  this->py_worker->run_job(type);
 
 }
 
