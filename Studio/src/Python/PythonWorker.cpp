@@ -147,7 +147,7 @@ void PythonWorker::init()
   }
   else {
 #ifdef _WIN32
-    emit error_message(QString::fromStdString("Unable to initialize Python\nPlease run install_shapeworks.bat");
+    emit error_message(QString::fromStdString("Unable to initialize Python\nPlease run install_shapeworks.bat"));
 #else
     emit error_message(
       QString::fromStdString("Unable to initialize Python\nPlease run install_shapeworks.sh"));
