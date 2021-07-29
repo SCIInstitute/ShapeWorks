@@ -109,15 +109,13 @@ def Run_Pipeline(args):
     print("\n\n\nStep 4. Train model.\n")
     # Define model parameters
     model_name = "femur_deepssm"
-    template_prefix = input_dir + "shape_models/femur/mean/femur"
     model_parameters = {
         "model_name": model_name,
         "num_latent_dim": int(embedded_dim),
         "paths": {
             "out_dir": out_dir,
             "loader_dir": loader_dir,
-            "aug_dir": aug_dir,
-            "template_prefix": template_prefix
+            "aug_dir": aug_dir
         },
         "encoder": {
             "deterministic": True
@@ -174,5 +172,6 @@ def Run_Pipeline(args):
     '''
     DT_dir = input_dir + "groomed/distance_transforms/"
     out_dir = out_dir + "Results/"
-    avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', template_prefix)
+    mean_prefix = input_dir + "shape_models/femur/mean/femur"
+    avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', mean_prefix)
     print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
