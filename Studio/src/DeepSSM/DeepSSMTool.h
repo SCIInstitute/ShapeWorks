@@ -19,6 +19,7 @@
 #include <Python/PythonWorker.h>
 
 class Ui_DeepSSMTool;
+class QLabel;
 
 namespace shapeworks {
 
@@ -81,8 +82,10 @@ private:
 
   void run_tool(PythonWorker::JobType type);
   void update_data();
-  void load_violin_plot();
-  void resize_plot();
+  void load_plots();
+  void resize_plots();
+  QPixmap load_plot(QString filename);
+  void set_plot(QLabel *qlabel, QPixmap pixmap);
 
   Preferences& preferences_;
 
@@ -97,6 +100,7 @@ private:
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
+  QPixmap training_plot_;
 
   QSharedPointer<PythonWorker> py_worker;
 

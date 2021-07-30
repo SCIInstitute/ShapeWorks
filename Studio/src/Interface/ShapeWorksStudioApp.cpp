@@ -1628,6 +1628,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_window_state(this->saveState());
 
   this->optimize_tool_->shutdown_threads();
+  this->deepssm_tool_->shutdown();
   STUDIO_CLOSE_LOG();
 }
 

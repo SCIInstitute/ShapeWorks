@@ -82,6 +82,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::update_panels);
   connect(this->ui_->controls_open_button, &QPushButton::clicked,
           this, &DeepSSMTool::update_panels);
+  connect(this->ui_->training_open_button, &QPushButton::clicked,
+          this, &DeepSSMTool::update_panels);
 
   connect(this->ui_->generated_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::update_data);
@@ -97,12 +99,13 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   connect(this->py_worker.data(), &PythonWorker::error_message,
           this, &DeepSSMTool::error);
   connect(this->py_worker.data(), &PythonWorker::progress,
-          this, &DeepSSMTool::progress);
+          this, &DeepSSMTool::handle_progress);
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
   this->ui_->restore_defaults->setStyleSheet(normal_button_ss);
   this->ui_->violin_plot->setText("");
+  this->ui_->training_plot->setText("");
   this->update_panels();
 }
 
@@ -180,6 +183,7 @@ void DeepSSMTool::store_params()
 //---------------------------------------------------------------------------
 void DeepSSMTool::shutdown()
 {
+  this->py_worker->abort_job();
 }
 
 //---------------------------------------------------------------------------
@@ -228,7 +232,8 @@ void DeepSSMTool::handle_thread_complete()
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_progress(int val)
 {
-
+  this->load_plots();
+  emit progress(val);
 }
 
 //---------------------------------------------------------------------------
@@ -242,6 +247,7 @@ void DeepSSMTool::update_panels()
 {
   this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
   this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
+  this->ui_->training_content->setVisible(this->ui_->training_open_button->isChecked());
   this->ui_->tab_widget->setEnabled(!this->tool_is_running_);
   this->ui_->restore_defaults->setEnabled(!this->tool_is_running_);
 
@@ -259,18 +265,7 @@ void DeepSSMTool::update_panels()
   }
 
   if (this->tool_is_running_) {
-    //this->ui_->run_button->setStyleSheet(
-    //"QPushButton#run_button {background-color: rgb(255,128,128);}");
     this->ui_->run_button->setStyleSheet(abort_button_ss);
-
-    //this->ui_->run_button->update();
-
-    //QPalette pal = button->palette();
-    //pal.setColor(QPalette::Button, QColor(Qt::blue));
-    //button->setAutoFillBackground(true);
-    //button->setPalette(pal);
-    //button->update();
-
     this->ui_->run_button->setText("Abort");
     emit message("Please Wait: Running " + string + "...");
   }
@@ -348,7 +343,7 @@ void DeepSSMTool::update_data()
     }
 
   }
-  this->load_violin_plot();
+  this->load_plots();
   emit update_view();
 }
 
@@ -359,28 +354,39 @@ QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::load_violin_plot()
+void DeepSSMTool::load_plots()
 {
-  QString filename = "deepssm/Augmentation/violin.png";
-  if (QFile(filename).exists()) {
-    this->violin_plot_ = QPixmap(filename);
-  }
-  else {
-    this->violin_plot_ = QPixmap{};
-  }
-  this->resize_plot();
+  this->violin_plot_ = this->load_plot("deepssm/Augmentation/violin.png");
+  this->training_plot_ = this->load_plot("deepssm/model/training_plot.png");
+  this->resize_plots();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::resize_plot()
+QPixmap DeepSSMTool::load_plot(QString filename)
 {
-  if (!this->violin_plot_.isNull()) {
-    QPixmap resized = this->violin_plot_.scaledToWidth(this->width() * 0.95,
+  if (QFile(filename).exists()) {
+    return QPixmap(filename);
+  }
+  return QPixmap();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::resize_plots()
+{
+  this->set_plot(this->ui_->violin_plot, this->violin_plot_);
+  this->set_plot(this->ui_->training_plot, this->training_plot_);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap)
+{
+  if (!pixmap.isNull()) {
+    QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95,
                                                        Qt::SmoothTransformation);
-    this->ui_->violin_plot->setPixmap(resized);
+    qlabel->setPixmap(resized);
   }
   else {
-    this->ui_->violin_plot->setPixmap(QPixmap{});
+    qlabel->setPixmap(QPixmap{});
   }
 }
 
@@ -388,7 +394,7 @@ void DeepSSMTool::resize_plot()
 void DeepSSMTool::resizeEvent(QResizeEvent* event)
 {
   QWidget::resizeEvent(event);
-  this->resize_plot();
+  this->resize_plots();
 }
 
 //---------------------------------------------------------------------------
@@ -429,10 +435,16 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   }
   else if (type == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Please Wait: Running Training...");
+    // clean
+    QDir dir("deepssm/model");
+    dir.removeRecursively();
   }
   else {
     emit message("Please Wait: Running Inference...");
   }
+
+  this->load_plots();
+
   this->timer_.start();
 
   this->tool_is_running_ = true;
@@ -443,12 +455,15 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
 
   connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
   connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
+  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
 
   this->py_worker->set_deep_ssm(this->deep_ssm_);
 
   this->py_worker->run_job(type);
 
 }
+
+
 
 
 //---------------------------------------------------------------------------

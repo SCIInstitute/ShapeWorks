@@ -12,10 +12,14 @@ from torch.optim.lr_scheduler import StepLR
 from DeepSSMUtils import model
 from DeepSSMUtils import losses
 from DeepSSMUtils import train_viz
+from shapeworks.utils import sw_message
+from shapeworks.utils import sw_progress
+from shapeworks.utils import sw_check_abort
+
 
 '''
 Train helper
-	Initilaizes all weights using initialization function specified by initf
+	Initializes all weights using initialization function specified by initf
 '''
 def weight_init(module, initf):
 	def foo(m):
@@ -111,7 +115,7 @@ def supervised_train(config_file):
 	print("Done.")
 	# train
 	print("Beginning training on device = " + device + '\n')
-	# Initialze logger
+	# Initialize logger
 	logger = open(model_dir + "train_log.csv", "w+")
 	log_print(logger, ["Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	# Initialize training plot
@@ -125,13 +129,19 @@ def supervised_train(config_file):
 	axe.set_ylabel('PCA MSE')
 	axe.legend()
 	train_plot.savefig(model_dir + "training_plot.png")
-	# intialize
+	# initialize
 	epochs = []
 	plot_train_losses = []
 	plot_val_losses = []
 	t0 = time.time()
 	best_val_rel_error = np.Inf
 	for e in range(1, num_epochs + 1):
+		if sw_check_abort():
+			sw_message("Aborted")
+			return
+		sw_message(f"Epoch {e}/{num_epochs}")
+		sw_progress(e / (num_epochs+1))
+
 		torch.cuda.empty_cache()
 		# train
 		net.train()
@@ -221,6 +231,12 @@ def supervised_train(config_file):
 		# train on the corr loss
 		best_ft_val_rel_error = np.Inf
 		for e in range(1, ft_epochs + 1):
+			if sw_check_abort():
+				sw_message("Aborted")
+				return
+			sw_message(f"Fine Tuning, Epoch {e}/{ft_epochs}")
+			sw_progress(e / (num_epochs+1))
+
 			torch.cuda.empty_cache()
 			# train
 			net.train()
