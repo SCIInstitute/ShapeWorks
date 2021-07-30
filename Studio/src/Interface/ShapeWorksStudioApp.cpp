@@ -1201,11 +1201,11 @@ void ShapeWorksStudioApp::update_display(bool force)
     this->session_->parameters().get("tool_state", Session::DATA_C);
 
   if (tool_state == Session::DEEPSSM_C) {
+    this->visualizer_->set_feature_map("deepssm error");
     this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-    this->visualizer_->set_feature_map("deepssm error");
   }
   else {
 

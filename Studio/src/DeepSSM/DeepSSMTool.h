@@ -20,6 +20,7 @@
 
 class Ui_DeepSSMTool;
 class QLabel;
+class QTableWidget;
 
 namespace shapeworks {
 
@@ -80,14 +81,17 @@ signals:
 
 private:
 
+  void update_meshes();
   void run_tool(PythonWorker::JobType type);
-  void update_data();
-  void update_training_table();
-  void update_validation_examples();
+  void show_augmentation_meshes();
+  void update_tables();
+  void show_training_meshes();
   void load_plots();
   void resize_plots();
   QPixmap load_plot(QString filename);
   void set_plot(QLabel *qlabel, QPixmap pixmap);
+
+  void populate_table_from_csv(QTableWidget *table, QString filename, bool header);
 
   Preferences& preferences_;
 

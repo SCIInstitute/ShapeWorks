@@ -86,9 +86,9 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::update_panels);
 
   connect(this->ui_->generated_data_checkbox, &QCheckBox::stateChanged,
-          this, &DeepSSMTool::update_data);
+          this, &DeepSSMTool::show_augmentation_meshes);
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
-          this, &DeepSSMTool::update_data);
+          this, &DeepSSMTool::show_augmentation_meshes);
 
   this->py_worker = QSharedPointer<PythonWorker>::create();
 
@@ -124,6 +124,7 @@ void DeepSSMTool::tab_changed(int tab)
       break;
   }
   this->update_panels();
+  this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +136,7 @@ void DeepSSMTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
   this->load_params();
-  this->update_data();
+  this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
@@ -159,7 +160,7 @@ void DeepSSMTool::load_params()
   this->ui_->training_decay_learning->setChecked(params.get_training_decay_learning_rate());
   this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
 
-  this->update_data();
+  this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
@@ -224,7 +225,7 @@ void DeepSSMTool::handle_thread_complete()
     emit message("Inference Complete.  Duration: " + duration + " seconds");
   }
 
-  this->update_data();
+  this->update_meshes();
   this->tool_is_running_ = false;
   this->update_panels();
 }
@@ -233,8 +234,8 @@ void DeepSSMTool::handle_thread_complete()
 void DeepSSMTool::handle_progress(int val)
 {
   this->load_plots();
-  this->update_training_table();
-  this->update_validation_examples();
+  this->update_tables();
+  this->update_meshes();
   emit progress(val);
 }
 
@@ -257,9 +258,13 @@ void DeepSSMTool::update_panels()
   switch (this->current_tool_) {
     case PythonWorker::JobType::DeepSSM_AugmentationType:
       string = "Data Augmentation";
+      this->ui_->training_panel->hide();
+      this->ui_->data_panel->show();
       break;
     case PythonWorker::JobType::DeepSSM_TrainingType:
       string = "Training";
+      this->ui_->training_panel->show();
+      this->ui_->data_panel->hide();
       break;
     case PythonWorker::JobType::DeepSSM_InferenceType:
       string = "Inference";
@@ -279,10 +284,16 @@ void DeepSSMTool::update_panels()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_training_table()
+void DeepSSMTool::update_tables()
 {
-  this->ui_->training_table->clear();
-  QString filename = "deepssm/model/train_log.csv";
+  this->populate_table_from_csv(this->ui_->training_table, "deepssm/model/train_log.csv", true);
+  this->populate_table_from_csv(this->ui_->table, "deepssm/Augmentation/TotalData.csv", false);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename, bool header)
+{
+  table->clear();
   if (!QFile(filename).exists()) {
     return;
   }
@@ -299,14 +310,18 @@ void DeepSSMTool::update_training_table()
   if (lines.empty()) {
     return;
   }
-
   auto headers = lines[0].split(',');
-  lines.pop_front();
-  this->ui_->training_table->setRowCount(lines.size());
-  this->ui_->training_table->setColumnCount(headers.size());
-  this->ui_->training_table->setHorizontalHeaderLabels(headers);
-  this->ui_->training_table->verticalHeader()->setVisible(false);
-  this->ui_->training_table->horizontalHeader()->setVisible(true);
+  table->setColumnCount(headers.size());
+  table->horizontalHeader()->setVisible(true);
+  if (header) {
+    table->setHorizontalHeaderLabels(headers);
+    lines.pop_front();
+    table->verticalHeader()->setVisible(false);
+  }
+  else {
+    table->verticalHeader()->setVisible(true);
+  }
+  table->setRowCount(lines.size());
 
   int row = 0;
   for (auto line : lines) {
@@ -315,7 +330,7 @@ void DeepSSMTool::update_training_table()
       item = item.trimmed();
       if (item != "") {
         QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
-        this->ui_->training_table->setItem(row, col++, new_item);
+        table->setItem(row, col++, new_item);
       }
     }
     row++;
@@ -323,7 +338,7 @@ void DeepSSMTool::update_training_table()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_validation_examples()
+void DeepSSMTool::show_training_meshes()
 {
   this->shapes_.clear();
 
@@ -365,11 +380,26 @@ void DeepSSMTool::update_validation_examples()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_data()
+void DeepSSMTool::update_meshes()
 {
-  this->update_training_table();
+  switch (this->current_tool_) {
+    case PythonWorker::JobType::DeepSSM_AugmentationType:
+      this->show_augmentation_meshes();
+      break;
+    case PythonWorker::JobType::DeepSSM_TrainingType:
+      this->show_training_meshes();
+      break;
+    case PythonWorker::JobType::DeepSSM_InferenceType:
+      // ??
+      break;
+  }
 
-  this->ui_->table->clear();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::show_augmentation_meshes()
+{
+  this->update_tables();
 
   QString filename = "deepssm/Augmentation/TotalData.csv";
   if (QFile(filename).exists()) {
@@ -381,35 +411,20 @@ void DeepSSMTool::update_data()
       return;
     }
 
-    this->ui_->table->setRowCount(0);
-    this->ui_->table->setColumnCount(5);
-
-    //this->ui_->table->verticalHeader()->setVisible(true);
-    //this->ui_->table->horizontalHeader()->setVisible(true);
-
     this->shapes_.clear();
 
     int row = 0;
     while (!file.atEnd()) {
       QByteArray line = file.readLine();
-      int col = 0;
       bool show_generated = this->ui_->generated_data_checkbox->isChecked();
       bool show_original = this->ui_->original_data_checkbox->isChecked();
       // this needs to be replaced with it's own column (in all the python code as well)
       bool is_generated = line.contains("Generated");
       if ((is_generated && show_generated) || (!is_generated && show_original)) {
-        this->ui_->table->insertRow(this->ui_->table->rowCount());
-        for (auto item : line.split(',')) {
-          QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
-          this->ui_->table->setItem(row, col++, new_item);
-        }
-
-        auto groom_file = line.split(',')[0].toStdString();
+        auto image_file = line.split(',')[0].toStdString();
         auto particle_file = line.split(',')[1].toStdString();
 
         auto subject = std::make_shared<Subject>();
-        // nevermind, these are CT/MRI images
-        //subject->set_groomed_filenames({groom_file});
         ShapeHandle shape = ShapeHandle(new Shape());
         shape->set_subject(subject);
         shape->set_mesh_manager(this->session_->get_mesh_manager());
@@ -527,14 +542,14 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
     QDir dir("deepssm/model");
     dir.removeRecursively();
 
-    this->update_validation_examples();
+    this->show_training_meshes();
   }
   else {
     emit message("Please Wait: Running Inference...");
   }
 
   this->load_plots();
-  this->update_training_table();
+  this->update_tables();
 
   this->timer_.start();
 
@@ -553,6 +568,8 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   this->py_worker->run_job(type);
 
 }
+
+
 
 
 
