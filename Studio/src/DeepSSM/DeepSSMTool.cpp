@@ -234,6 +234,7 @@ void DeepSSMTool::handle_progress(int val)
 {
   this->load_plots();
   this->update_training_table();
+  this->update_validation_examples();
   emit progress(val);
 }
 
@@ -319,6 +320,42 @@ void DeepSSMTool::update_training_table()
     }
     row++;
   }
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::update_validation_examples()
+{
+  this->shapes_.clear();
+
+  QStringList filenames;
+  filenames << "deepssm/model/val_examples/best_validation.particles";
+  filenames << "deepssm/model/val_examples/mean_validation.particles";
+  filenames << "deepssm/model/val_examples/worst_validation.particles";
+
+  QStringList names;
+  names << "best" << "mean" << "worst";
+
+  for (int i = 0; i < names.size(); i++) {
+    if (QFileInfo(filenames[i]).exists()) {
+      ShapeHandle shape = ShapeHandle(new Shape());
+      auto subject = std::make_shared<Subject>();
+      shape->set_subject(subject);
+      shape->set_mesh_manager(this->session_->get_mesh_manager());
+      shape->import_local_point_files({filenames[i].toStdString()});
+      shape->import_global_point_files({filenames[i].toStdString()});
+      shape->get_reconstructed_meshes();
+
+      QStringList list;
+      list << names[i];
+      list << "";
+      list << "";
+      list << "";
+      shape->set_annotations(list);
+
+      this->shapes_.push_back(shape);
+    }
+  }
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -483,6 +520,8 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
     // clean
     QDir dir("deepssm/model");
     dir.removeRecursively();
+
+    this->update_validation_examples();
   }
   else {
     emit message("Please Wait: Running Inference...");
@@ -490,7 +529,6 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
 
   this->load_plots();
   this->update_training_table();
-
 
   this->timer_.start();
 

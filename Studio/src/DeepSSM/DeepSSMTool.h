@@ -83,6 +83,7 @@ private:
   void run_tool(PythonWorker::JobType type);
   void update_data();
   void update_training_table();
+  void update_validation_examples();
   void load_plots();
   void resize_plots();
   QPixmap load_plot(QString filename);
