@@ -128,7 +128,7 @@ def supervised_train(config_file):
 	axe.set_xlim(0,num_epochs+1)
 	axe.set_ylabel('PCA MSE')
 	axe.legend()
-	train_plot.savefig(model_dir + "training_plot.png")
+	train_plot.savefig(model_dir + "training_plot.png", dpi=300)
 	# initialize
 	epochs = []
 	plot_train_losses = []

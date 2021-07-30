@@ -282,36 +282,42 @@ void DeepSSMTool::update_training_table()
 {
   this->ui_->training_table->clear();
   QString filename = "deepssm/model/train_log.csv";
-  if (QFile(filename).exists()) {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-      emit error("Unable to open file: " + filename);
-      return;
-    }
+  if (!QFile(filename).exists()) {
+    return;
+  }
+  QFile file(filename);
+  if (!file.open(QIODevice::ReadOnly)) {
+    emit error("Unable to open file: " + filename);
+    return;
+  }
 
-    this->ui_->training_table->verticalHeader()->setVisible(false);
-    this->ui_->training_table->horizontalHeader()->setVisible(true);
-    this->ui_->training_table->setRowCount(0);
-    this->ui_->training_table->setColumnCount(7);
-    QStringList headers;
+  auto data = QString(file.readAll()).trimmed();
+  auto lines = data.split('\n');
+  file.close();
 
-    int row = 0;
-    while (!file.atEnd()) {
-      QByteArray line = file.readLine();
-      int col = 0;
-      this->ui_->training_table->insertRow(this->ui_->training_table->rowCount());
-      for (auto item : line.split(',')) {
-        item = item.trimmed();
-        if (row == 0) {
-          headers << item;
-        } else {
-          QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
-          this->ui_->training_table->setItem(row-1, col++, new_item);
-        }
+  if (lines.empty()) {
+    return;
+  }
+
+  auto headers = lines[0].split(',');
+  lines.pop_front();
+  this->ui_->training_table->setRowCount(lines.size());
+  this->ui_->training_table->setColumnCount(headers.size());
+  this->ui_->training_table->setHorizontalHeaderLabels(headers);
+  this->ui_->training_table->verticalHeader()->setVisible(false);
+  this->ui_->training_table->horizontalHeader()->setVisible(true);
+
+  int row = 0;
+  for (auto line : lines) {
+    int col = 0;
+    for (auto item : line.split(',')) {
+      item = item.trimmed();
+      if (item != "") {
+        QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
+        this->ui_->training_table->setItem(row, col++, new_item);
       }
-      row++;
     }
-    this->ui_->training_table->setHorizontalHeaderLabels(headers);
+    row++;
   }
 }
 
@@ -483,6 +489,8 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   }
 
   this->load_plots();
+  this->update_training_table();
+
 
   this->timer_.start();
 
