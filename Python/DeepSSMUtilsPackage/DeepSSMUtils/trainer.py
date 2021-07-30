@@ -116,7 +116,7 @@ def supervised_train(config_file):
 	# train
 	print("Beginning training on device = " + device + '\n')
 	# Initialize logger
-	logger = open(model_dir + "train_log.csv", "w+")
+	logger = open(model_dir + "train_log.csv", "w+", buffering=1)
 	log_print(logger, ["Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	# Initialize training plot
 	train_plot = plt.figure()
