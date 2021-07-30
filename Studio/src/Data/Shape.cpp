@@ -439,15 +439,16 @@ void Shape::load_feature(std::string display_mode, std::string feature)
         return;
       }
 
+      // first check if we have particle scalars for this feature
       auto point_features = this->get_point_features(feature);
       if (point_features.size() > 0) { // already loaded as particle scalars
         this->set_point_features(feature, point_features);
       }
       else {
-
+        // next check if there is a feature filename
         auto filenames = this->subject_->get_feature_filenames();
-
         if (filenames.find(feature) == filenames.end()) {
+          // no feature filename, so load it from the original mesh
           auto original_meshes = this->get_original_meshes(true).meshes();
 
           if (original_meshes.size() > d) {
