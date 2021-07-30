@@ -13,6 +13,7 @@ def binarizeTest1():
 val = binarizeTest1()
 
 if val is False:
+  print("binarizeTest1 failed")
   sys.exit(1)
 
 def binarizeTest2():
@@ -26,4 +27,5 @@ def binarizeTest2():
 val = binarizeTest2()
 
 if val is False:
+  print("binarizeTest2 failed")
   sys.exit(1)

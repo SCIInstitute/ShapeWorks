@@ -137,8 +137,15 @@ namespace itk
             // must clone this as we are in a thread and the gradient function is not thread-safe
             localGradientFunction = m_GradientFunction->Clone();
 
+<<<<<<< HEAD
             // Tell function which domain we are working on.
             localGradientFunction->SetDomainNumber(dom);
+=======
+              // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
+              if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
+                AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed);
+              }
+>>>>>>> master
 
             // Iterate over each particle position
             for (auto k = 0; k < m_ParticleSystem->GetPositions(dom)->GetSize(); k++) {
@@ -249,6 +256,39 @@ namespace itk
 
     } // end while stop optimization
   }
+
+template<class TGradientNumericType, unsigned int VDimension>
+void
+ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
+  VectorType& gradient, const PointType& pt, const size_t& dom, const double& maximumUpdateAllowed)
+{
+  // Step B 2: Augmented lagrangian constraint method
+  double gradmag = gradient.magnitude();
+
+  if (gradmag > maximumUpdateAllowed) {
+    gradient = gradient * maximumUpdateAllowed / gradmag;
+    gradmag = gradient.magnitude();
+  }
+
+  PointType upd_pt;
+  for (size_t n = 0; n < VDimension; n++) {
+    upd_pt[n] = pt[n] - gradient[n];
+  }
+
+  double c = 1e0;
+  double multiplier = 2;
+  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
+  VectorType constraint_energy = m_ParticleSystem->GetDomain(
+    dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, pt, c);
+  if (constraint_energy.magnitude() > multiplier * gradmag) {
+    constraint_energy *= multiplier * gradmag / constraint_energy.magnitude();
+  }
+  //m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(pt);
+  for (size_t n = 0; n < VDimension; n++) {
+    gradient[n] += constraint_energy[n];
+  }
+  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
+}
 
 } // end namespace
 

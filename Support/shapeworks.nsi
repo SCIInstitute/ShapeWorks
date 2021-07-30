@@ -14,19 +14,11 @@ ManifestDPIAware true
 ;--------------------------------
 
 ;--------------------------------
-; Initialization function to properly set the installation directory
-Function .onInit
-  ${If} ${RunningX64}
-    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
-    SetRegView 64
-  ${EndIf}
-FunctionEnd
-
-;--------------------------------
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-$%SW_VERSION%"
+!define PRODUCT "ShapeWorks"
+Name "$%SW_VERSION%"
 
 ; The file to write
 OutFile "$%SW_VERSION%.exe"
@@ -72,12 +64,13 @@ Section "ShapeWorks (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "conda_installs.bat"
+  File "install_shapeworks.bat"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
   File /r "Python"
   File /r "Documentation"
+  File /r "Installation"
 
   
   ; Write the installation path into the registry
@@ -102,7 +95,6 @@ Section "Start Menu Shortcuts"
 SectionEnd
 
 ;--------------------------------
-
 ; Uninstaller
 
 Section "Uninstall"
@@ -122,3 +114,12 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
 SectionEnd
+
+;--------------------------------
+;After Initialization Function
+Function .onInit
+  ${If} ${RunningX64}
+    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
+    SetRegView 64
+  ${EndIf}
+FunctionEnd

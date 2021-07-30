@@ -1,10 +1,12 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
+# note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
 def coordTest():
-  c1 = Coord(1, 1, 1)
-  c2 = Coord(2, 2, 1)
+  c1 = np.array([1.0, 1.0, 1.0])
+  c2 = np.array([2.0, 2.0, 1.0])
   
   c2[2] = 2
 

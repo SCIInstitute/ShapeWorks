@@ -2,5 +2,4 @@
 
 #include "TestConfiguration.h"
 
-void shapeworksEnvSetup();
-void pythonEnvSetup();
+void setupenv(const std::string& testDirectory);

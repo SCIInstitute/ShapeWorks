@@ -4,7 +4,7 @@ from shapeworks import *
 
 def toImageTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage([1.0, 1.0, 1.0])
+  img = mesh.toImage()
 
   compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
@@ -13,11 +13,13 @@ def toImageTest1():
 val = toImageTest1()
 
 if val is False:
+  print("toImageTest1 failed")
   sys.exit(1)
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(spacing=[2.0, 2.0, 1.0])
+  bbox = mesh.boundingBox().pad(2.0) # changing spacing means we need to pad more to compensate
+  img = mesh.toImage(bbox, spacing=[2.0, 2.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage2.nrrd")
 
@@ -26,11 +28,12 @@ def toImageTest2():
 val = toImageTest2()
 
 if val is False:
+  print("toImageTest2 failed")
   sys.exit(1)
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(size=[40, 145, 131])
+  img = mesh.toImage(region=mesh.boundingBox(), spacing=[2.29, 0.462, 1])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage3.nrrd")
 
@@ -39,4 +42,5 @@ def toImageTest3():
 val = toImageTest3()
 
 if val is False:
+  print("toImageTest3 failed")
   sys.exit(1)

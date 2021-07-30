@@ -17,14 +17,13 @@ To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tag
 
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case deep_ssm
+$ python RunUseCase.py deep_ssm
 ```
 
 See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags. Note the following tags are not applicable to this use case:
 
 * `--skip_grooming`
 * `--use_single_scale`
-* `--interactive`
 * `--groom_images`
 
 This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
@@ -34,7 +33,7 @@ This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
 * Creates a DeepSSM model as described in [SSMs Directly from Images](../deep-learning/deep-ssm.md) and uses it to make predictions on unseen images.
 
 !!! danger "On CUDA"
-    This use case uses Pytorch and requires a GPU to run in a timely manner. When you run `conda_installs.sh`, it detects if you have a GPU and and installs the version of Pytorch compatible with your version of CUDA. 
+    This use case uses Pytorch and requires a GPU to run in a timely manner. When you source `install_shapeworks.sh`, it detects if you have a GPU and and installs the version of Pytorch compatible with your version of CUDA. 
     
     Note we only support the three most recent versions of CUDA. If your GPU requires an older CUDA version, you will need to update the Pytorch install in your shapeworks conda environment to the correct CUDA version. For more information on doing so, see [pytorch.org](https://pytorch.org/). 
     

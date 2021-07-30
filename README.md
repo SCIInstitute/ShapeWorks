@@ -18,7 +18,8 @@ Latest Release
 =====================
 
 <!--![](docs/img/about/release5.5.png)-->
-![](docs/img/about/release6.0.png)
+<!--![](docs/img/about/release6.0.png)-->
+![](docs/img/about/release6.1.png)
 
 Quick Links
 =====================

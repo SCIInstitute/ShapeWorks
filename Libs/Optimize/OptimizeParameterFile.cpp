@@ -442,7 +442,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
-      optimize->AddImage(image);
+      optimize->AddImage(image, imageFiles[index]);
     }
     else {
       optimize->AddImage(nullptr);
@@ -1036,7 +1036,6 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           c[2] = pc[2];
         }
 
-        std::cout << "Adding plane" << std::endl;
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
       }
     }
@@ -1125,7 +1124,6 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
               rad = radList[r_ctr++];
 
-              std::cout << "Adding sphere" << std::endl;
               optimize->GetSampler()->AddSphere(shapeCount, center, rad);
             }
           }

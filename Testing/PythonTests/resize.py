@@ -13,6 +13,7 @@ def resizeTest1():
 val = resizeTest1()
 
 if val is False:
+  print("resizeTest1 failed")
   sys.exit(1)
 
 def resizeTest2():
@@ -26,6 +27,7 @@ def resizeTest2():
 val = resizeTest2()
 
 if val is False:
+  print("resizeTest2 failed")
   sys.exit(1)
 
 def resizeTest3():
@@ -36,9 +38,10 @@ def resizeTest3():
 
   return img.compare(compareImg)
 
-val = resizeTest2()
+val = resizeTest3()
 
 if val is False:
+  print("resizeTest3 failed")
   sys.exit(1)
 
 def resizeTest4():
@@ -52,4 +55,20 @@ def resizeTest4():
 val = resizeTest4()
 
 if val is False:
+  print("resizeTest4 failed")
   sys.exit(1)
+
+def resizefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.resize()
+
+  compareImg = Image(os.environ["DATA"] + "/resizefail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = resizefailTest()
+  print("resizefailTest failed. There should be no default version of this function.")
+  sys.exit(1)
+except TypeError:
+  sys.exit(0)
