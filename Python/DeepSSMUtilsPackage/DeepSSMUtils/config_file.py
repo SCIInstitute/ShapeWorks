@@ -1,12 +1,9 @@
 import json
 
-'''
-Prepares a JSON config file
-'''
-
 
 def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
                         decay_lr, fine_tune):
+    """Prepares a JSON config file"""
     # Define model parameters
     model_parameters = {
         "model_name": model_name,
