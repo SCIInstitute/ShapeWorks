@@ -439,30 +439,37 @@ void Shape::load_feature(std::string display_mode, std::string feature)
         return;
       }
 
-      auto filenames = this->subject_->get_feature_filenames();
-
-      if (filenames.find(feature) == filenames.end()) {
-        auto original_meshes = this->get_original_meshes(true).meshes();
-
-        if (original_meshes.size() > d) {
-          // assign scalars at points
-          this->load_feature_from_mesh(feature, original_meshes[d]);
-        }
+      auto point_features = this->get_point_features(feature);
+      if (point_features.size() > 0) { // already loaded as particle scalars
+        this->set_point_features(feature, point_features);
       }
       else {
-        // read the feature
-        QString filename = QString::fromStdString(filenames[feature]);
-        try {
-          ReaderType::Pointer reader = ReaderType::New();
-          reader->SetFileName(filename.toStdString());
-          reader->Update();
-          ImageType::Pointer image = reader->GetOutput();
-          group.meshes()[d]->apply_feature_map(feature, image);
-          this->apply_feature_to_points(feature, image);
 
-        } catch (itk::ExceptionObject& excep) {
-          QMessageBox::warning(0, "Unable to open file",
-                               "Error opening file: \"" + filename + "\"");
+        auto filenames = this->subject_->get_feature_filenames();
+
+        if (filenames.find(feature) == filenames.end()) {
+          auto original_meshes = this->get_original_meshes(true).meshes();
+
+          if (original_meshes.size() > d) {
+            // assign scalars at points
+            this->load_feature_from_mesh(feature, original_meshes[d]);
+          }
+        }
+        else {
+          // read the feature
+          QString filename = QString::fromStdString(filenames[feature]);
+          try {
+            ReaderType::Pointer reader = ReaderType::New();
+            reader->SetFileName(filename.toStdString());
+            reader->Update();
+            ImageType::Pointer image = reader->GetOutput();
+            group.meshes()[d]->apply_feature_map(feature, image);
+            this->apply_feature_to_points(feature, image);
+
+          } catch (itk::ExceptionObject& excep) {
+            QMessageBox::warning(0, "Unable to open file",
+                                 "Error opening file: \"" + filename + "\"");
+          }
         }
       }
     }
@@ -708,7 +715,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
   file.close();
 
   Eigen::VectorXf values(lines.size());
-  for (int i=0;i<lines.size();i++) {
+  for (int i = 0; i < lines.size(); i++) {
     float value = QString(lines[i]).toFloat();
     values[i] = value;
   }

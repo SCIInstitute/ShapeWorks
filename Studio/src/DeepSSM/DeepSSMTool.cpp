@@ -363,9 +363,9 @@ void DeepSSMTool::show_training_meshes()
       shape->set_mesh_manager(this->session_->get_mesh_manager());
       shape->import_local_point_files({filenames[i].toStdString()});
       shape->import_global_point_files({filenames[i].toStdString()});
-      shape->get_reconstructed_meshes();
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
                                            "deepssm error");
+      shape->get_reconstructed_meshes();
       QStringList list;
       list << names[i];
       list << "";
