@@ -233,6 +233,7 @@ void DeepSSMTool::handle_thread_complete()
 void DeepSSMTool::handle_progress(int val)
 {
   this->load_plots();
+  this->update_training_table();
   emit progress(val);
 }
 
@@ -267,7 +268,6 @@ void DeepSSMTool::update_panels()
   if (this->tool_is_running_) {
     this->ui_->run_button->setStyleSheet(abort_button_ss);
     this->ui_->run_button->setText("Abort");
-    emit message("Please Wait: Running " + string + "...");
   }
   else {
     this->ui_->run_button->setStyleSheet(normal_button_ss);
@@ -278,8 +278,48 @@ void DeepSSMTool::update_panels()
 }
 
 //---------------------------------------------------------------------------
+void DeepSSMTool::update_training_table()
+{
+  this->ui_->training_table->clear();
+  QString filename = "deepssm/model/train_log.csv";
+  if (QFile(filename).exists()) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+      emit error("Unable to open file: " + filename);
+      return;
+    }
+
+    this->ui_->training_table->verticalHeader()->setVisible(false);
+    this->ui_->training_table->horizontalHeader()->setVisible(true);
+    this->ui_->training_table->setRowCount(0);
+    this->ui_->training_table->setColumnCount(7);
+    QStringList headers;
+
+    int row = 0;
+    while (!file.atEnd()) {
+      QByteArray line = file.readLine();
+      int col = 0;
+      this->ui_->training_table->insertRow(this->ui_->training_table->rowCount());
+      for (auto item : line.split(',')) {
+        item = item.trimmed();
+        if (row == 0) {
+          headers << item;
+        } else {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
+          this->ui_->training_table->setItem(row-1, col++, new_item);
+        }
+      }
+      row++;
+    }
+    this->ui_->training_table->setHorizontalHeaderLabels(headers);
+  }
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::update_data()
 {
+  this->update_training_table();
+
   this->ui_->table->clear();
 
   QString filename = "deepssm/Augmentation/TotalData.csv";
@@ -300,7 +340,6 @@ void DeepSSMTool::update_data()
 
     this->shapes_.clear();
 
-    QStringList wordList;
     int row = 0;
     while (!file.atEnd()) {
       QByteArray line = file.readLine();
@@ -382,7 +421,7 @@ void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap)
 {
   if (!pixmap.isNull()) {
     QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95,
-                                                       Qt::SmoothTransformation);
+                                           Qt::SmoothTransformation);
     qlabel->setPixmap(resized);
   }
   else {
@@ -462,6 +501,7 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   this->py_worker->run_job(type);
 
 }
+
 
 
 
