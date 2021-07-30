@@ -444,8 +444,10 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       if (filenames.find(feature) == filenames.end()) {
         auto original_meshes = this->get_original_meshes(true).meshes();
 
-        // assign scalars at points
-        this->load_feature_from_mesh(feature, original_meshes[d]);
+        if (original_meshes.size() > d) {
+          // assign scalars at points
+          this->load_feature_from_mesh(feature, original_meshes[d]);
+        }
       }
       else {
         // read the feature
@@ -684,6 +686,35 @@ bool Shape::has_alignment()
   }
 
   return false;
+}
+
+//---------------------------------------------------------------------------
+void Shape::load_feature_from_scalar_file(std::string filename, std::string feature_name)
+{
+  QString qfilename = QString::fromStdString(filename);
+
+  if (!QFile(qfilename).exists()) {
+    return;
+  }
+
+  QFile file(qfilename);
+  if (!file.open(QIODevice::ReadOnly)) {
+    STUDIO_LOG_ERROR("Unable to open scalar file: " + qfilename);
+    return;
+  }
+
+  auto data = QString(file.readAll()).trimmed();
+  auto lines = data.split('\n');
+  file.close();
+
+  Eigen::VectorXf values(lines.size());
+  for (int i=0;i<lines.size();i++) {
+    float value = QString(lines[i]).toFloat();
+    values[i] = value;
+  }
+
+  this->set_point_features(feature_name, values);
+
 }
 
 }

@@ -335,6 +335,11 @@ void DeepSSMTool::update_validation_examples()
   QStringList names;
   names << "best" << "mean" << "worst";
 
+  QStringList scalar_filenames;
+  scalar_filenames << "deepssm/model/val_examples/best_validation.scalars";
+  scalar_filenames << "deepssm/model/val_examples/mean_validation.scalars";
+  scalar_filenames << "deepssm/model/val_examples/worst_validation.scalars";
+
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo(filenames[i]).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -344,7 +349,8 @@ void DeepSSMTool::update_validation_examples()
       shape->import_local_point_files({filenames[i].toStdString()});
       shape->import_global_point_files({filenames[i].toStdString()});
       shape->get_reconstructed_meshes();
-
+      shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
+                                           "deepssm error");
       QStringList list;
       list << names[i];
       list << "";

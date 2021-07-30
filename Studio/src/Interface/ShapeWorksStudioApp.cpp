@@ -1205,6 +1205,7 @@ void ShapeWorksStudioApp::update_display(bool force)
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+    this->visualizer_->set_feature_map("deepssm error");
   }
   else {
 
