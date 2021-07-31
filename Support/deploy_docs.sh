@@ -16,6 +16,10 @@ INSTALL_DIR=$1
 # Update auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
 
+# Check pip status
+echo "pip list:"
+pip list
+
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then

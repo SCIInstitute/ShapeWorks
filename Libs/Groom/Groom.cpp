@@ -45,26 +45,27 @@ bool Groom::run()
   }
   tbb::atomic<bool> success = true;
 
+  int num_domains = this->project_->get_number_of_domains_per_subject();
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        for (int j = 0; j < subjects[i]->get_number_of_domains(); j++) {
+        for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
 
           if (this->abort_) {
             success = false;
             continue;
           }
 
-          if (subjects[i]->get_domain_types()[j] == DomainType::Image) {
-            if (!this->image_pipeline(subjects[i], j)) {
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+            if (!this->image_pipeline(subjects[i], domain)) {
               success = false;
             }
           }
 
-          if (subjects[i]->get_domain_types()[j] == DomainType::Mesh) {
-            if (!this->mesh_pipeline(subjects[i], j)) {
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+            if (!this->mesh_pipeline(subjects[i], domain)) {
               success = false;
             }
           }
@@ -72,6 +73,70 @@ bool Groom::run()
         }
       }
     });
+
+  // alignment
+  for (int domain = 0; domain < num_domains; domain++) {
+    if (this->abort_) {
+      success = false;
+      continue;
+    }
+
+    auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+    if (params.get_use_icp()) {
+      std::vector<Mesh> meshes;
+      for (int i = 0; i < subjects.size(); i++) {
+        auto path = subjects[i]->get_segmentation_filenames()[domain];
+
+        if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+          Image image(path);
+          meshes.push_back(image.toMesh(0.5));
+        }
+        else if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+          Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+          meshes.push_back(mesh);
+        }
+      }
+
+      int reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+      std::cerr << "The reference mesh is " << reference_mesh << "\n";
+
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, subjects.size()},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            matrix->Identity();
+
+            if (i != reference_mesh) {
+              Mesh source = meshes[i];
+              Mesh target = meshes[reference_mesh];
+              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
+            }
+
+            auto subject = subjects[i];
+            // store transform
+            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+            std::vector<double> groomed_transform;
+
+            for (int i = 0; i < 16; i++) {
+              groomed_transform.push_back(matrix->GetData()[i]);
+            }
+            if (domain >= groomed_transforms.size()) {
+              groomed_transforms.resize(domain + 1);
+            }
+            groomed_transforms[domain] = groomed_transform;
+            subject->set_groomed_transforms(groomed_transforms);
+
+          }
+        });
+    }
+  }
+
+
 
   // store back to project
   this->project_->store_subjects();
@@ -84,7 +149,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  // single domain support right now
   auto path = subject->get_segmentation_filenames()[domain];
 
   // load the image
@@ -133,7 +197,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   }
 
   // centering
-  if (params.get_center_tool()) {
+  if (params.get_use_center()) {
     auto centering = this->center(image);
 
     itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
@@ -251,11 +315,27 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 
   if (!this->skip_grooming_) {
 
+    if (params.get_fill_holes_tool()) {
+      mesh.fillHoles();
+      this->increment_progress();
+    }
+
+    if (params.get_mesh_smooth()) {
+      if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
+        mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
+                    params.get_mesh_vtk_laplacian_relaxation());
+      }
+      else if (params.get_mesh_smoothing_method() ==
+               GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
+        mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
+                        params.get_mesh_vtk_windowed_sinc_passband());
+      }
+      this->increment_progress();
+    }
+
     // centering
-    if (params.get_center_tool()) {
-
+    if (params.get_use_center()) {
       auto diff = mesh.centerOfMass();
-
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
       tform[0] = -diff[0];
       tform[1] = -diff[1];
@@ -264,7 +344,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       this->increment_progress();
     }
   }
-
 
   // store transform
   std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
@@ -382,7 +461,7 @@ int Groom::get_total_ops()
 
     auto params = GroomParameters(this->project_, domains[i]);
 
-    num_tools += params.get_center_tool() ? 1 : 0;
+    num_tools += params.get_use_center() ? 1 : 0;
     num_tools += params.get_isolate_tool() ? 1 : 0;
     num_tools += params.get_fill_holes_tool() ? 1 : 0;
     num_tools += params.get_auto_pad_tool() ? 1 : 0;
@@ -442,7 +521,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   std::string suffix = "_DT.nrrd";
   if (domain_type == DomainType::Mesh) {
-    suffix = "_groomed.ply";
+    suffix = "_groomed.vtk";
   }
 
   auto path = base + "/" + prefix;

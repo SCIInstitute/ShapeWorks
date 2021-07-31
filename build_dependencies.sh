@@ -18,7 +18,7 @@ ITK_VER="v5.0.1-fix"
 ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
-XLNT_VER="v1.4.0"
+XLNT_VER="v1.5.0"
 OpenVDB_VER="v7.0.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
@@ -228,6 +228,9 @@ build_xlnt()
   cd xlnt
   git checkout -f tags/${XLNT_VER}
 
+  # move conflicting file out of the way so it builds on osx
+  mv third-party/libstudxml/version third-party/libstudxml/version.bak
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -239,6 +242,9 @@ build_xlnt()
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
+
+  # move conflicting file back to where it was
+  mv third-party/libstudxml/version.bak third-party/libstudxml/version
 
   XLNT_DIR=${INSTALL_DIR}
 }
@@ -309,7 +315,13 @@ show_shapeworks_build()
     FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
   fi
 
-  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
+  _VXL_DIR=""
+  if [[ $OSTYPE == "msys" ]]; then
+      # since VXL built in INSTALL_DIR on Windows, need to tell CMake where to find it
+      _VXL_DIR="-DVXL_DIR=${VXL_DIR}"
+  fi
+
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${_VXL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
 }
 
 # determine if we can build using the specified or discovered version of Qt

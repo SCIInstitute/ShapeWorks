@@ -5,6 +5,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -38,6 +39,24 @@ namespace py = pybind11;
 
 namespace shapeworks {
 
+#ifdef _WIN32
+static std::string find_in_path(std::string file) {
+  std::stringstream path(getenv("PATH"));
+  while (! path.eof()) {
+    std::string test;
+    struct stat info;
+    getline(path, test, ';');
+    std::string base = test;
+    test.append("/");
+    test.append(file);
+    if (stat(test.c_str(), &info) == 0) {
+      return base;
+    }
+  }
+  return "";
+}
+#endif
+
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
@@ -48,6 +67,16 @@ Optimize::Optimize()
 bool Optimize::Run()
 {
   if (this->m_python_filename != "") {
+    
+#ifdef _WIN32
+    // need to set PYTHONHOME to the same directory as python.exe on Windows
+    std::string found_path = find_in_path("python.exe");
+    if (found_path != "") {
+      std::cerr << "python.exe found in: " << found_path << "\n";
+      _putenv_s("PYTHONHOME", found_path.c_str());
+    }
+#endif
+  
     py::initialize_interpreter();
 
     auto dir = this->m_python_filename;
@@ -67,13 +96,17 @@ bool Optimize::Run()
 
   }
 
-
-
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
               "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
     return false;
+  }
+
+  // ensure use_shape_statistics_after doesn't increase the particle count over what was specified
+  for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+    this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
+                                                  this->m_number_of_particles[i]);
   }
 
   this->SetParameters();
@@ -1982,9 +2015,9 @@ void Optimize::SetLogEnergy(bool log_energy)
 { this->m_log_energy = log_energy; }
 
 //---------------------------------------------------------------------------
-void Optimize::AddImage(ImageType::Pointer image)
+void Optimize::AddImage(ImageType::Pointer image, std::string name)
 {
-  this->m_sampler->AddImage(image, this->GetNarrowBand());
+  this->m_sampler->AddImage(image, this->GetNarrowBand(), name);
   this->m_num_shapes++;
   if (image) {
     this->m_spacing = image->GetSpacing()[0] * 5;

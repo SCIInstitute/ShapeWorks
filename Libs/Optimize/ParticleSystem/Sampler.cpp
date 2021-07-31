@@ -92,14 +92,17 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
     if (m_CuttingPlanes.size() > i) {
-      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
+      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
-                                           m_CuttingPlanes[i][j].c);
+                                m_CuttingPlanes[i][j].c);
+        std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
+      }
     }
 
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
+        std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
       }
     }
 
@@ -366,7 +369,7 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
-void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
+void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
@@ -379,6 +382,8 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
     domain->SetImage(image, narrow_band_world);
   }
 
+  domain->SetDomainID(m_DomainList.size());
+  domain->SetDomainName(name);
   m_DomainList.push_back(domain);
 }
 

@@ -221,7 +221,6 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 decreases the size of the image 
 '''
 def apply_down_sample(image_path, output_path, factor=0.75):
-	img = sw.Image()
 	image = sw.Image(image_path)
 	size = image.size()
 	sizex = int(size[0]*factor)

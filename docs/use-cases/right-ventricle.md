@@ -1,6 +1,5 @@
 #  Right Ventricle: Highly Variable Shapes
 
-
 ## What and Where is the Use Case? 
 
 This use case demonstrates using ShapeWorks tools to perform the following.
@@ -15,13 +14,10 @@ In this study, we have two sets of data, the control group with 6 subjects, and 
 !!! important
     This use case is not yet released!
 
-
 ## Running the Use Case
 
 !!! important
     This use case is not yet added to the use case list!
-
-
 
 ## Grooming Data
 
@@ -37,8 +33,6 @@ For a description of the grooming tools and parameters, see: [How to Groom Your 
 
 ![RV_groom](../img/use-cases/RV_groom.png)
 
-
-
 ## Optimizing Shape Model
 
 ![Under construction, coming soon!](../img/misc/under-construction.png)
@@ -46,4 +40,3 @@ For a description of the grooming tools and parameters, see: [How to Groom Your 
 ## Analyzing Shape Model
 
 ![Under construction, coming soon!](../img/misc/under-construction.png)
-

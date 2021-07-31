@@ -13,6 +13,7 @@ def smoothTest1():
 val = smoothTest1()
 
 if val is False:
+  print("smoothTest1 failed")
   sys.exit(1)
 
 def smoothTest2():
@@ -26,4 +27,5 @@ def smoothTest2():
 val = smoothTest2()
 
 if val is False:
+  print("smoothTest2 failed")
   sys.exit(1)

@@ -1,7 +1,13 @@
 
 #include "GroomParameters.h"
 
-using namespace shapeworks;
+namespace shapeworks {
+
+const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
+const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
+
+const std::string GroomParameters::GROOM_ALIGNMENT_CENTER_C("Center");
+const std::string GroomParameters::GROOM_ALIGNMENT_ICP_C("Iterative Closest Point");
 
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
@@ -14,18 +20,6 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
 void GroomParameters::restore_defaults()
 {
   this->params_.reset_parameters();
-}
-
-//---------------------------------------------------------------------------
-bool GroomParameters::get_center_tool()
-{
-  return this->params_.get("center", true);
-}
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_center_tool(bool value)
-{
-  this->params_.set("center", value);
 }
 
 //---------------------------------------------------------------------------
@@ -153,3 +147,123 @@ void GroomParameters::set_groom_output_prefix(std::string prefix)
 {
   this->params_.set("groom_output_prefix", prefix);
 }
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_mesh_smooth()
+{
+  return this->params_.get("mesh_smooth", false);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_smooth(bool value)
+{
+  this->params_.set("mesh_smooth", value);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_mesh_smoothing_method()
+{
+  return this->params_.get("mesh_smoothing_method", GROOM_SMOOTH_VTK_LAPLACIAN_C);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_smoothing_method(std::string method)
+{
+  this->params_.set("mesh_smoothing_method", method);
+}
+
+//---------------------------------------------------------------------------
+int GroomParameters::get_mesh_vtk_laplacian_iterations()
+{
+  return this->params_.get("mesh_smoothing_vtk_laplacian_iterations", 10);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_laplacian_iterations(int iterations)
+{
+  this->params_.set("mesh_smoothing_vtk_laplacian_iterations", iterations);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_mesh_vtk_laplacian_relaxation()
+{
+  return this->params_.get("mesh_smoothing_vtk_laplacian_relaxation", 1);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_laplacian_relaxation(double relaxation)
+{
+  this->params_.set("mesh_smoothing_vtk_laplacian_relaxation", relaxation);
+}
+
+//---------------------------------------------------------------------------
+int GroomParameters::get_mesh_vtk_windowed_sinc_iterations()
+{
+  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_iterations", 10);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_windowed_sinc_iterations(int iterations)
+{
+  this->params_.set("mesh_smoothing_vtk_windowed_sinc_iterations", iterations);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_mesh_vtk_windowed_sinc_passband()
+{
+  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_passband", 0.05);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
+{
+  this->params_.set("mesh_smoothing_vtk_windowed_sinc_passband", passband);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_alignment_method()
+{
+  if (!this->params_.key_exists("alignment")) {
+    // if alignment doesn't exist, perhaps the old keys "center" or "icp" do, if so use them
+    if (this->params_.key_exists("icp") && this->params_.get("icp", false)) {
+      return GROOM_ALIGNMENT_ICP_C;
+    }
+    if (this->params_.key_exists("center")) {
+      if (this->params_.get("center", false)) {
+        return GROOM_ALIGNMENT_CENTER_C;
+      }
+    }
+  }
+  return this->params_.get("alignment_method", GROOM_ALIGNMENT_CENTER_C);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_alignment_method(std::string method)
+{
+  this->params_.set("alignment_method", method);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_alignment_enabled()
+{
+  return this->params_.get("alignment_enabled", true);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_alignment_enabled(bool value)
+{
+  this->params_.set("alignment_enabled", value);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_use_icp()
+{
+  return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_ICP_C;
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_use_center()
+{
+  return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_CENTER_C;
+}
+};
