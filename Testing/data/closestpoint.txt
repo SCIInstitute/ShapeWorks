@@ -1,0 +1,1 @@
+Closest point to given point on mesh: [2.5, 0.5, -8.89904]
