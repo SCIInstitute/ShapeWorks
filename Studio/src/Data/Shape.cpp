@@ -539,6 +539,9 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
   Eigen::VectorXf values(num_points);
 
   vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
+  if (!from_array) {
+    return;
+  }
 
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
