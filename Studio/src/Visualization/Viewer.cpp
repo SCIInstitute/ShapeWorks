@@ -816,31 +816,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 //-----------------------------------------------------------------------------
 void Viewer::update_difference_lut(float r0, float r1)
 {
-
-  double black[3] = {0.0, 0.0, 0.0};
-  double white[3] = {1.0, 1.0, 1.0};
-  double red[3] = {1.0, 0.3, 0.3};
-  double red_pure[3] = {1.0, 0.0, 0.0};
-  double green[3] = {0.3, 1.0, 0.3};
-  double green_pure[3] = {0.0, 1.0, 0.0};
-  double blue[3] = {0.3, 0.3, 1.0};
-  double blue_pure[3] = {0.0, 0.0, 1.0};
-  double yellow[3] = {1.0, 1.0, 0.3};
-  double yellow_pure[3] = {1.0, 1.0, 0.0};
-  double magenta[3] = {1.0, 0.3, 1.0};
-  double cyan[3] = {0.3, 1.0, 1.0};
-  double orange[3] = {1.0, 0.5, 0.0};
-  double violet[3] = {2.0 / 3.0, 0.0, 1.0};
-
-//  this->surface_lut_->RemoveAllPoints();
-
-  //const float yellow = 0.86666;
-  //const float blue = 0.66666;
-  //const float yellow = 0.33;
-  //const float blue = 0.66;
-  const unsigned int resolution = 100;
-  const float resinv = 1.0 / static_cast<float>(resolution);
-  float maxrange;
+  float maxrange = 0;
   if (fabs(r0) > fabs(r1)) { maxrange = fabs(r0); }
   else { maxrange = fabs(r1); }
 
@@ -852,13 +828,12 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
-  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+  for (size_t i = 0; i < this->surface_mappers_.size(); i++) {
     this->surface_mappers_[i]->SetLookupTable(this->surface_lut_);
+    this->surface_mappers_[i]->SetScalarRange(range[0], range[1]);
   }
 
-  //this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
-  //this->glyph_mapper_->SetScalarRange(range);
   this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
   if (rd > 100) {
     this->scalar_bar_actor_->SetLabelFormat("%.0f");
