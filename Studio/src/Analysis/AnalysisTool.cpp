@@ -58,9 +58,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
-
-
-
   // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
           &AnalysisTool::handle_group_animate_state_changed);
@@ -247,6 +244,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   this->session_ = session;
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
+  this->ui_->difference_button->setChecked(false);
 }
 
 //---------------------------------------------------------------------------
