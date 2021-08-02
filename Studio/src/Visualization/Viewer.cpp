@@ -315,20 +315,16 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
-  double minmag = 1.0e20;
-  double maxmag = 0.0;
-
-  vtkSmartPointer<vtkPolyData> point_set = this->glyph_point_set_;
-
   auto mesh_group = this->shape_->get_meshes(this->visualizer_->get_display_mode());
   if (!mesh_group.valid()) {
     return;
   }
 
+  vtkSmartPointer<vtkPolyData> point_set = this->glyph_point_set_;
   std::vector<vtkSmartPointer<vtkPolyData>> polys;
   std::vector<vtkSmartPointer<vtkKdTreePointLocator>> locators;
 
-  for (int i = 0; i < mesh_group.meshes().size(); i++) {
+  for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
     vtkSmartPointer<vtkPolyData> poly_data = mesh_group.meshes()[i]->get_poly_data();
 
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -343,6 +339,9 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     locator->BuildLocator();
     locators.push_back(locator);
   }
+
+  double minmag = std::numeric_limits<double>::max();
+  double maxmag = std::numeric_limits<double>::min();
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
@@ -359,7 +358,9 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     float zd = points[i].z;
 
     float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
-
+    if (std::isnan(mag)) {
+      mag = 0;
+    }
     if (mag < minmag) { minmag = mag; }
     if (mag > maxmag) { maxmag = mag; }
 
