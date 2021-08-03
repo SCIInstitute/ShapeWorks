@@ -16,7 +16,7 @@ Q_OBJECT
 
 public:
   enum class JobType {
-    DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_InferenceType
+    DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType
   };
 
   PythonWorker();

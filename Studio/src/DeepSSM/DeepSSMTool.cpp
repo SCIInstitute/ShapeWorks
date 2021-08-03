@@ -45,8 +45,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   this->py_worker = QSharedPointer<PythonWorker>::create();
 
-  connect(this->py_worker.data(), &PythonWorker::job_finished, this,
-          &DeepSSMTool::handle_thread_complete);
+  connect(this->py_worker.data(), &PythonWorker::job_finished,
+          this, &DeepSSMTool::handle_thread_complete);
   connect(this->py_worker.data(), &PythonWorker::message,
           this, &DeepSSMTool::message);
   connect(this->py_worker.data(), &PythonWorker::error_message,
@@ -75,7 +75,7 @@ void DeepSSMTool::tab_changed(int tab)
       this->current_tool_ = PythonWorker::JobType::DeepSSM_TrainingType;
       break;
     case 2 :
-      this->current_tool_ = PythonWorker::JobType::DeepSSM_InferenceType;
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_TestingType;
       break;
   }
   this->update_panels();
@@ -179,7 +179,7 @@ void DeepSSMTool::handle_thread_complete()
     emit message("Training Complete.  Duration: " + duration + " seconds");
   }
   else {
-    emit message("Inference Complete.  Duration: " + duration + " seconds");
+    emit message("Testing Complete.  Duration: " + duration + " seconds");
   }
 
   this->update_meshes();
@@ -223,8 +223,8 @@ void DeepSSMTool::update_panels()
       this->ui_->training_panel->show();
       this->ui_->data_panel->hide();
       break;
-    case PythonWorker::JobType::DeepSSM_InferenceType:
-      string = "Inference";
+    case PythonWorker::JobType::DeepSSM_TestingType:
+      string = "Testing";
       break;
   }
 
@@ -346,7 +346,7 @@ void DeepSSMTool::update_meshes()
     case PythonWorker::JobType::DeepSSM_TrainingType:
       this->show_training_meshes();
       break;
-    case PythonWorker::JobType::DeepSSM_InferenceType:
+    case PythonWorker::JobType::DeepSSM_TestingType:
       // ??
       break;
   }
@@ -469,7 +469,7 @@ void DeepSSMTool::restore_defaults()
     case PythonWorker::JobType::DeepSSM_TrainingType:
       params.restore_training_defaults();
       break;
-    case PythonWorker::JobType::DeepSSM_InferenceType:
+    case PythonWorker::JobType::DeepSSM_TestingType:
       //params.restore_inference_defaults();
       break;
   }

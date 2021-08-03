@@ -33,6 +33,9 @@ int TRAIN_EPOCHS = 100;
 double TRAIN_LEARNING_RATE = 0.001;
 bool TRAIN_DECAY_LEARNING_RATE = true;
 bool TRAIN_FINE_TUNING = true;
+
+// inference defaults
+std::string INFERENCE_IMAGES = "";
 }
 
 //---------------------------------------------------------------------------
@@ -149,7 +152,6 @@ void DeepSSMParameters::set_training_fine_tuning(bool fine_tuning)
   this->params_.set(Keys::TRAIN_FINE_TUNING, fine_tuning);
 }
 
-
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_augmentation_defaults()
 {
@@ -167,5 +169,6 @@ void DeepSSMParameters::restore_training_defaults()
   this->params_.remove_entry(Keys::TRAIN_DECAY_LEARNING_RATE);
   this->params_.remove_entry(Keys::TRAIN_FINE_TUNING);
 }
+
 
 };

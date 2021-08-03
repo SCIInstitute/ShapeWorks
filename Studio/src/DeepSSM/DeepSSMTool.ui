@@ -592,9 +592,9 @@ Preserved</string>
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="inference_tab">
+              <widget class="QWidget" name="testing_tab">
                <attribute name="title">
-                <string>Inference</string>
+                <string>Testing</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_2">
                 <property name="bottomMargin">
@@ -605,82 +605,6 @@ Preserved</string>
                 </property>
                 <item row="0" column="0">
                  <widget class="QTableWidget" name="inference_table"/>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QWidget" name="widget" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QPushButton" name="inference_delete">
-                     <property name="minimumSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>Remove selected</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                       <normaloff>:/Studio/Images/remove.png</normaloff>:/Studio/Images/remove.png</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="inference_import">
-                     <property name="minimumSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>Import images</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                       <normaloff>:/Studio/Images/add.png</normaloff>:/Studio/Images/add.png</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
                 </item>
                </layout>
               </widget>

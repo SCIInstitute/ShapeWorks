@@ -1092,9 +1092,12 @@ bool AnalysisTool::get_active()
 //---------------------------------------------------------------------------
 StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
 {
+  StudioParticles particles;
+  if (this->session_->get_shapes().empty()) {
+    return particles;
+  }
   auto base = this->session_->get_shapes()[0]->get_particles();
 
-  StudioParticles particles;
   auto worlds = base.get_world_particles();
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
