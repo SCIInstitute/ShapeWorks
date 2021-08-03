@@ -152,6 +152,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
   Interface/WheelEventForwarder.cpp
+  Interface/Style.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/LogWindow.h

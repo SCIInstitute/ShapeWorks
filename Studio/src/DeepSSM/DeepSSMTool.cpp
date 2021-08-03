@@ -14,58 +14,11 @@
 #include <Data/Shape.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/QDeepSSM.h>
+#include <Interface/Style.h>
 
 #include <ui_DeepSSMTool.h>
 
 namespace shapeworks {
-
-const QString normal_button_ss = R"(
-QPushButton{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(238, 238, 238, 255), stop:1 rgba(192, 194, 194, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QPushButton:hover{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(195, 195, 195, 255), stop:0.253769 rgba(206, 206, 206, 255), stop:1 rgba(185, 185, 185, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QPushButton:pressed{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(150, 150, 150, 255), stop:0.753769 rgba(206, 206, 206, 255), stop:1 rgba(185, 185, 185, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-}
-)";
-
-const QString abort_button_ss = R"(
-QPushButton#run_button{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(98, 0, 0, 255), stop:0.299435 rgba(128, 0, 0, 255), stop:0.491525 rgba(128, 0, 0, 255), stop:1 rgba(98, 0, 0, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-	color: white;
-}
-
-QPushButton#run_button:disabled{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(128, 128, 128, 255), stop:0.155779 rgba(96, 96, 96, 255), stop:1 rgba(96, 96, 96, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QPushButton#run_button:hover{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(80, 0, 0, 255), stop:0.299435 rgba(110, 0, 0, 255), stop:0.491525 rgba(110, 0, 0, 255), stop:1 rgba(80, 0, 0, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-	color: white;
-}
-
-QPushButton#run_button:pressed{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(50, 0, 0, 255), stop:0.299435 rgba(80, 0, 0, 255), stop:0.491525 rgba(80, 0, 0, 255), stop:1 rgba(50, 0, 0, 255));
-	border-radius: 4px;
-	border: 1px solid rgb(90, 90, 90);
-}
-)";
 
 //---------------------------------------------------------------------------
 DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
@@ -103,7 +56,7 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
-  this->ui_->restore_defaults->setStyleSheet(normal_button_ss);
+  Style::apply_normal_button_style(this->ui_->restore_defaults);
   this->ui_->violin_plot->setText("");
   this->ui_->training_plot->setText("");
   this->update_panels();
@@ -272,12 +225,11 @@ void DeepSSMTool::update_panels()
   }
 
   if (this->tool_is_running_) {
-    this->ui_->run_button->setStyleSheet(abort_button_ss);
+    Style::apply_abort_button_style(this->ui_->run_button);
     this->ui_->run_button->setText("Abort");
   }
   else {
-    this->ui_->run_button->setStyleSheet(normal_button_ss);
-
+    Style::apply_normal_button_style(this->ui_->run_button);
     this->ui_->run_button->setText("Run " + string);
   }
 
