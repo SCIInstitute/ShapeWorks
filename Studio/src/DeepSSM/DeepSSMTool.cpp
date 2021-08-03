@@ -157,6 +157,8 @@ bool DeepSSMTool::get_active()
 void DeepSSMTool::run_clicked()
 {
   if (this->tool_is_running_) {
+    this->ui_->run_button->setText("Aborting...");
+    this->ui_->run_button->setEnabled(false);
     this->py_worker->abort_job();
   }
   else {
@@ -234,6 +236,7 @@ void DeepSSMTool::update_panels()
     Style::apply_normal_button_style(this->ui_->run_button);
     this->ui_->run_button->setText("Run " + string);
   }
+  this->ui_->run_button->setEnabled(true);
 
 }
 
@@ -479,11 +482,6 @@ void DeepSSMTool::restore_defaults()
 void DeepSSMTool::run_tool(PythonWorker::JobType type)
 {
 
-  // ensure someone doesn't accidental abort right after clicking RUN
-  this->ui_->run_button->setEnabled(false);
-  QTimer::singleShot(1000, [=]() {
-    this->ui_->run_button->setEnabled(true);
-  });
 
   this->current_tool_ = type;
   emit progress(-1);
@@ -520,6 +518,12 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   this->py_worker->set_deep_ssm(this->deep_ssm_);
 
   this->py_worker->run_job(type);
+
+  // ensure someone doesn't accidental abort right after clicking RUN
+  this->ui_->run_button->setEnabled(false);
+  QTimer::singleShot(1000, [=]() {
+    this->ui_->run_button->setEnabled(true);
+  });
 
 }
 
