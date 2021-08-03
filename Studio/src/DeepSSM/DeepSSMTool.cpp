@@ -56,6 +56,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
+  this->ui_->tab_widget->setCurrentIndex(0);
+
   Style::apply_normal_button_style(this->ui_->restore_defaults);
   this->ui_->violin_plot->setText("");
   this->ui_->training_plot->setText("");
