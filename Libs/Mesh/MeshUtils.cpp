@@ -170,25 +170,25 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
-Mesh MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
+Array MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute average normals");
 
-  auto num_normals = meshes[0].numPoints();
+  auto num_normals = meshes[0].get().numPoints();
   auto num_meshes = meshes.size();
 
   // convert all normals from all meshes to spherical coords
   std::vector<std::vector<Point3>> sphericals(num_normals, std::vector<Point3>(num_meshes));
   for (int j = 0; j < num_meshes; j++)
   {
-    if (meshes[j].numPoints() != num_normals)
+    if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = meshes[j].getField<vtkDataArray>("Normals");
+    auto normals = meshes[j].get().getField<vtkDataArray>("Normals");
 
     if (num_normals != normals->GetNumberOfTuples())
-      throw std::invalid_argument("Expected a normal for every point in mesh");
+      throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");
     
     for (int i = 0; i < num_normals; i++)
     {
@@ -231,9 +231,7 @@ Mesh MeshUtils::computeMeanNormals(std::vector<Mesh> &meshes)
     normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
   }
 
-  meshes[0].setField("MeanNormals", normals);
-
-  return meshes[0];
+  return normals;
 }
 
 } // shapeworks

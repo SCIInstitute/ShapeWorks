@@ -842,10 +842,10 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
 void MeanNormals::buildParser()
 {
   const std::string prog = "mean-normals";
-  const std::string desc = ""; // TODO: add description
+  const std::string desc = "returns array of average normals for each point in given set of meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
 
   Command::buildParser();
 }
@@ -854,14 +854,16 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 {
   std::vector<std::string> filenames = options.get("names");
 
-  std::vector<Mesh> meshes;
+  std::vector<std::reference_wrapper<const Mesh>> meshes;
   for (int i = 0; i < filenames.size(); i++)
   {
     Mesh mesh_(filenames[i]);
     meshes.push_back(mesh_);
   }
 
-  sharedData.mesh = std::make_unique<Mesh>(MeshUtils::computeMeanNormals(meshes));
+  Array array = MeshUtils::computeMeanNormals(meshes);
+  sharedData.mesh = std::make_unique<Mesh>(filenames[0]);
+  sharedData.mesh->setField("MeanNormals", array);
 
   return true;
 }

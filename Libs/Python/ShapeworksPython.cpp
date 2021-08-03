@@ -1120,10 +1120,8 @@ PYBIND11_MODULE(shapeworks_py, m)
               "meshes"_a)
 
   .def_static("computeMeanNormals",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::computeMeanNormals(meshes);
-              },
-               "",
+               &MeshUtils::computeMeanNormals,
+               "returns array of average normals for each point in given set of meshes",
                "meshes"_a)
   ;
 
