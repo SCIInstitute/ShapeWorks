@@ -57,6 +57,8 @@ public:
 
   void resizeEvent(QResizeEvent* event) override;
 
+  std::string get_display_feature();
+
 public Q_SLOTS:
 
   void run_clicked();

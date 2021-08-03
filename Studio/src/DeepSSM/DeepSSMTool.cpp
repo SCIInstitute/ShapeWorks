@@ -458,6 +458,15 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
 }
 
 //---------------------------------------------------------------------------
+string DeepSSMTool::get_display_feature()
+{
+  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
+    return "deepssm error";
+  }
+  return "";
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::restore_defaults()
 {
   auto params = DeepSSMParameters(this->session_->get_project());
