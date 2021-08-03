@@ -33,6 +33,9 @@ public:
 
   /// determine the reference mesh
   static int findReferenceMesh(std::vector<Mesh> &meshes);
+
+  /// boundary loop extractor for a given mesh
+  static int boundaryLoopExtractor(std::string filename,Mesh mesh);
 };
 
 } // shapeworks

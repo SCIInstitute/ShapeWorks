@@ -1113,6 +1113,11 @@ PYBIND11_MODULE(shapeworks_py, m)
               &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
+
+  .def_static("boundaryLoopExtractor",
+               &MeshUtils::boundaryLoopExtractor,
+               "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file",
+               "filename"_a,"mesh"_a)
   ;
 
   // ParticleSystem
