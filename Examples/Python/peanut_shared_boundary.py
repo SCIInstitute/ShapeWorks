@@ -10,10 +10,9 @@ pieces are then jointly optimized
 """
 import os
 import shutil
-from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
-import CommonUtils
+import shapeworks as sw
 
 def Run_Pipeline(args):
     datasetName = "peanut-v0"
@@ -24,7 +23,7 @@ def Run_Pipeline(args):
     if not os.path.exists(groomDir):
         os.makedirs(groomDir)
 
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+    sw.data.download_and_unzip_dataset(datasetName, outputDirectory)
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.stl"))
 
     # 01. Remesh
@@ -58,7 +57,7 @@ def Run_Pipeline(args):
         fname_out_r = f'{extractedDir}/{i:02d}_r.ply'
         fname_out_m = f'{extractedDir}/{i:02d}_m.ply'
         cmd = [
-            args.shapeworks_path+'/shared_boundary_extractor',
+            'shared_boundary_extractor',
             fname_l, fname_r,
             fname_out_l, fname_out_r, fname_out_m,
             tol
@@ -105,7 +104,7 @@ def Run_Pipeline(args):
 
         # Extract boundary loop from M
         cmd = [
-            args.shapeworks_path+'/boundary_loop_extractor',
+            'boundary_loop_extractor',
             fname_m,
             fname_out_c,
         ]
