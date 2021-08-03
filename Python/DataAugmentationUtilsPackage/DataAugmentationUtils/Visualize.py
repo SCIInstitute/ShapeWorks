@@ -111,6 +111,7 @@ def violin(data_csv, show):
     data = {'Data Type':types, 'PCA Mode':dims, "PCA Score":scores}
     df = pd.DataFrame(data) 
     # Plot
+    plt.clf()
     sns.set_style("whitegrid")
     ax = sns.violinplot(x=df['PCA Mode'], y=df['PCA Score'], hue=df['Data Type'],
                         data=df, palette="Set2", split=True, scale="area")
