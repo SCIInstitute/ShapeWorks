@@ -1205,7 +1205,6 @@ void ShapeWorksStudioApp::update_display(bool force)
     if (deep_ssm_feature == "") {
       this->set_feature_map("");
     } else {
-      std::cerr << "SET_FEATURE_MAP!\n";
       this->set_feature_map("");
       this->set_feature_map(deep_ssm_feature);
     }
