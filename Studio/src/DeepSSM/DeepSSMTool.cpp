@@ -348,7 +348,7 @@ void DeepSSMTool::show_training_meshes()
       shape->import_local_point_files({filenames[i].toStdString()});
       shape->import_global_point_files({filenames[i].toStdString()});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
-                                           "deepssm error");
+                                           "deepssm_error");
       shape->get_reconstructed_meshes();
       QStringList list;
       list << names[i];
@@ -360,6 +360,55 @@ void DeepSSMTool::show_training_meshes()
       this->shapes_.push_back(shape);
     }
   }
+  emit update_view();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::show_testing_meshes()
+{
+  this->shapes_.clear();
+  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
+  auto id_list = this->deep_ssm_->get_list(QDeepSSM::FileType::ID, QDeepSSM::SplitType::TEST);
+
+  auto subjects = this->session_->get_project()->get_subjects();
+  auto shapes = this->session_->get_shapes();
+
+  for (auto& id : id_list) {
+    int i = QString::fromStdString(id).toInt();
+
+    auto mesh_group = shapes[i]->get_groomed_meshes(true);
+    Mesh base(mesh_group.meshes()[0]->get_poly_data());
+    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
+                           ".particles";
+
+    if (QFileInfo(QString::fromStdString(filename)).exists()) {
+      ShapeHandle shape = ShapeHandle(new Shape());
+      auto subject = std::make_shared<Subject>();
+      shape->set_subject(subject);
+      shape->set_mesh_manager(this->session_->get_mesh_manager());
+      shape->import_local_point_files({filename});
+      shape->import_global_point_files({filename});
+      MeshGroup group = shape->get_reconstructed_meshes();
+      if (group.valid()) {
+        Mesh m(group.meshes()[0]->get_poly_data());
+        m.distance(base);
+        auto field = m.getField<vtkDataArray>("distance");
+        //m.setField("deepssm_error", field);
+        field->SetName("deepssm_error");
+        //m.write("/tmp/mesh.vtk");
+        group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+      }
+      QStringList list;
+      list << shapes[i]->get_annotations()[0];
+      list << "";
+      list << "";
+      list << "";
+      shape->set_annotations(list);
+
+      this->shapes_.push_back(shape);
+    }
+  }
+
   emit update_view();
 }
 
@@ -378,7 +427,7 @@ void DeepSSMTool::update_meshes()
     this->show_training_meshes();
     break;
   case PythonWorker::JobType::DeepSSM_TestingType:
-    // ??
+    this->show_testing_meshes();
     break;
   }
 }
@@ -488,8 +537,10 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
 //---------------------------------------------------------------------------
 string DeepSSMTool::get_display_feature()
 {
-  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
-    return "deepssm error";
+  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType ||
+      this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
+    //return "deepssm error";
+    return "deepssm_error";
   }
   return "";
 }

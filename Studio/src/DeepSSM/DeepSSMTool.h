@@ -90,6 +90,7 @@ private:
   void show_augmentation_meshes();
   void update_tables();
   void show_training_meshes();
+  void show_testing_meshes();
   void load_plots();
   void resize_plots();
   QPixmap load_plot(QString filename);

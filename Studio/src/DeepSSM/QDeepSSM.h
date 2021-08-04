@@ -16,6 +16,17 @@ Q_OBJECT;
 
 public:
 
+  enum class FileType {
+    ID,
+    IMAGE,
+    PARTICLES
+  };
+
+  enum class SplitType {
+    TRAIN,
+    TEST
+  };
+
   QDeepSSM(ProjectHandle project);
   ~QDeepSSM();
   void run_augmentation();
@@ -23,6 +34,8 @@ public:
   void run_testing();
 
   void python_message(std::string str);
+
+  std::vector<std::string> get_list(FileType file_type, SplitType split_type);
 
 protected:
   // override update_progress to emit q_signal
@@ -36,18 +49,6 @@ Q_SIGNALS:
 private:
   ProjectHandle project_;
 
-  enum class FileType {
-    ID,
-    IMAGE,
-    PARTICLES
-  };
-
-  enum class SplitType {
-    TRAIN,
-    TEST
-  };
-
-  std::vector<std::string> get_list(FileType file_type, SplitType split_type);
 
 };
 }

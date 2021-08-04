@@ -1205,6 +1205,8 @@ void ShapeWorksStudioApp::update_display(bool force)
     if (deep_ssm_feature == "") {
       this->set_feature_map("");
     } else {
+      std::cerr << "SET_FEATURE_MAP!\n";
+      this->set_feature_map("");
       this->set_feature_map(deep_ssm_feature);
     }
     this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
@@ -1213,7 +1215,7 @@ void ShapeWorksStudioApp::update_display(bool force)
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   }
   else {
-    if (this->get_feature_map() == "deepssm error") {
+    if (this->get_feature_map() == "deepssm_error") {
       this->set_feature_map("");
     }
     this->current_display_mode_ = mode;
