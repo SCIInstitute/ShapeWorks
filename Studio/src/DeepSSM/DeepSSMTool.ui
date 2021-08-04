@@ -330,45 +330,6 @@ QWidget#training_panel {
                 <string>Split</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_6">
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="validation_split">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_13">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Testing</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="training_split">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_12">
                   <property name="sizePolicy">
@@ -378,7 +339,14 @@ QWidget#training_panel {
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Validation</string>
+                   <string>Validation split</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QLabel" name="label_14">
+                  <property name="text">
+                   <string>%</string>
                   </property>
                  </widget>
                 </item>
@@ -391,11 +359,18 @@ QWidget#training_panel {
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Training</string>
+                   <string>Test Split</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>%</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
                  <widget class="QLineEdit" name="testing_split">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -408,24 +383,16 @@ QWidget#training_panel {
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QLabel" name="label_14">
-                  <property name="text">
-                   <string>%</string>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="validation_split">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QLabel" name="label_15">
-                  <property name="text">
-                   <string>%</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>%</string>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -1093,9 +1060,8 @@ Preserved</string>
  <tabstops>
   <tabstop>controls_header</tabstop>
   <tabstop>tab_widget</tabstop>
-  <tabstop>training_split</tabstop>
-  <tabstop>validation_split</tabstop>
   <tabstop>testing_split</tabstop>
+  <tabstop>validation_split</tabstop>
   <tabstop>run_button</tabstop>
   <tabstop>restore_defaults</tabstop>
   <tabstop>data_open_button</tabstop>

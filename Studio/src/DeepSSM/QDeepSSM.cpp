@@ -82,7 +82,7 @@ void QDeepSSM::run_training()
 
     auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
     auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
-    auto test_img_list = this->get_list(FileType::IMAGE, SplitType::VALIDATION);
+    auto test_img_list = this->get_list(FileType::IMAGE, SplitType::TEST);
 
     py::list train_img_list_py = py::cast(train_img_list);
     py::list train_pts_py = py::cast(train_pts);
@@ -105,9 +105,11 @@ void QDeepSSM::run_training()
     bool decay_lr = params.get_training_decay_learning_rate();
     bool fine_tune = params.get_training_fine_tuning();
 
+    double train_split = (100.0-params.get_validation_split()) / 100.0;
+
     emit message("DeepSSM: Loading Train/Validation Loaders");
     py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
-    get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir);
+    get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split);
 
     emit message("DeepSSM: Loading Test Loader");
     py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
@@ -162,12 +164,9 @@ std::vector<std::string> QDeepSSM::get_list(FileType file_type, SplitType split_
   DeepSSMParameters params(this->project_);
 
   int start = 0;
-  int end = subjects.size() * params.get_training_split();
-  if (split_type == SplitType::VALIDATION) {
+  int end = subjects.size() * (100.0 - params.get_testing_split()) / 100.0;
+  if (split_type == SplitType::TEST) {
     start = end;
-    end = subjects.size() * (params.get_training_split() + params.get_validation_split());
-  } else if (split_type == SplitType::TEST) {
-    start = subjects.size() * (params.get_training_split() + params.get_validation_split());
     end = subjects.size();
   }
 

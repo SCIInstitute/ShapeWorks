@@ -43,7 +43,6 @@ private:
 
   enum class SplitType {
     TRAIN,
-    VALIDATION,
     TEST
   };
 
