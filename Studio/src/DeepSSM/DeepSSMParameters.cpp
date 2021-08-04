@@ -8,6 +8,10 @@ const std::string DeepSSMParameters::DEEPSSM_SAMPLER_MIXTURE_C("Mixture");
 const std::string DeepSSMParameters::DEEPSSM_SAMPLER_KDE_C("KDE");
 
 namespace Keys {
+const std::string TRAINING_SPLIT = "training_split";
+const std::string VALIDATION_SPLIT = "validation_split";
+const std::string TESTING_SPLIT = "testing_split";
+
 const std::string AUG_NUM_SAMPLES = "aug_num_samples";
 const std::string AUG_NUM_DIMS = "aug_num_dims";
 const std::string AUG_PERCENT_VARIABILITY = "aug_percent_variability";
@@ -21,6 +25,11 @@ const std::string TRAIN_FINE_TUNING = "train_fine_tuning";
 }
 
 namespace Defaults {
+
+// split defaults
+const double TRAINING_SPLIT = 60;
+const double VALIDATION_SPLIT = 20;
+const double TESTING_SPLIT = 20;
 
 // augmentation defaults
 const int AUG_NUM_SAMPLES = 3;
@@ -150,6 +159,50 @@ bool DeepSSMParameters::get_training_fine_tuning()
 void DeepSSMParameters::set_training_fine_tuning(bool fine_tuning)
 {
   this->params_.set(Keys::TRAIN_FINE_TUNING, fine_tuning);
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_training_split()
+{
+  return this->params_.get(Keys::TRAINING_SPLIT, Defaults::TRAINING_SPLIT);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_split(double value)
+{
+  this->params_.set(Keys::TRAINING_SPLIT, value);
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_validation_split()
+{
+  return this->params_.get(Keys::VALIDATION_SPLIT, Defaults::VALIDATION_SPLIT);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_validation_split(double value)
+{
+  this->params_.set(Keys::VALIDATION_SPLIT, value);
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_testing_split()
+{
+  return this->params_.get(Keys::TESTING_SPLIT, Defaults::TESTING_SPLIT);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_testing_split(double value)
+{
+  this->params_.set(Keys::TESTING_SPLIT, value);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::restore_split_defaults()
+{
+  this->params_.remove_entry(Keys::TRAINING_SPLIT);
+  this->params_.remove_entry(Keys::VALIDATION_SPLIT);
+  this->params_.remove_entry(Keys::TESTING_SPLIT);
 }
 
 //---------------------------------------------------------------------------

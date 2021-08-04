@@ -21,6 +21,7 @@
 class Ui_DeepSSMTool;
 class QLabel;
 class QTableWidget;
+class QLineEdit;
 
 namespace shapeworks {
 
@@ -72,6 +73,7 @@ public Q_SLOTS:
   void tab_changed(int tab);
 
   void update_panels();
+  void update_split(QLineEdit *source);
 
 signals:
 

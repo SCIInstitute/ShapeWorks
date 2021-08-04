@@ -41,6 +41,16 @@ public:
   bool get_training_fine_tuning();
   void set_training_fine_tuning(bool fine_tuning);
 
+  double get_training_split();
+  void set_training_split(double value);
+
+  double get_validation_split();
+  void set_validation_split(double value);
+
+  double get_testing_split();
+  void set_testing_split(double value);
+
+  void restore_split_defaults();
   void restore_augmentation_defaults();
   void restore_training_defaults();
 

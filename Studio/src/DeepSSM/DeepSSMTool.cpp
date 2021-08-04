@@ -56,6 +56,18 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
+  QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
+  this->ui_->training_split->setValidator(zero_to_hundred);
+  this->ui_->validation_split->setValidator(zero_to_hundred);
+  this->ui_->testing_split->setValidator(zero_to_hundred);
+
+  connect(this->ui_->training_split, &QLineEdit::textChanged,
+          this, [=](){ this->update_split(this->ui_->training_split); });
+  connect(this->ui_->validation_split, &QLineEdit::textChanged,
+          this, [=](){ this->update_split(this->ui_->validation_split); });
+  connect(this->ui_->testing_split, &QLineEdit::textChanged,
+          this, [=](){ this->update_split(this->ui_->testing_split); });
+
   this->ui_->tab_widget->setCurrentIndex(0);
 
   Style::apply_normal_button_style(this->ui_->restore_defaults);
@@ -69,12 +81,15 @@ void DeepSSMTool::tab_changed(int tab)
 {
   switch (tab) {
     case 0 :
-      this->current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_SplitType;
       break;
     case 1 :
-      this->current_tool_ = PythonWorker::JobType::DeepSSM_TrainingType;
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
       break;
     case 2 :
+      this->current_tool_ = PythonWorker::JobType::DeepSSM_TrainingType;
+      break;
+    case 3 :
       this->current_tool_ = PythonWorker::JobType::DeepSSM_TestingType;
       break;
   }
@@ -105,6 +120,10 @@ void DeepSSMTool::load_params()
 {
   auto params = DeepSSMParameters(this->session_->get_project());
 
+  this->ui_->training_split->setText(QString::number(params.get_training_split()));
+  this->ui_->validation_split->setText(QString::number(params.get_validation_split()));
+  this->ui_->testing_split->setText(QString::number(params.get_testing_split()));
+
   this->ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
   this->ui_->num_pca_dims->setText(QString::number(params.get_aug_num_dims()));
   this->ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
@@ -122,6 +141,10 @@ void DeepSSMTool::load_params()
 void DeepSSMTool::store_params()
 {
   auto params = DeepSSMParameters(this->session_->get_project());
+
+  params.set_training_split(this->ui_->training_split->text().toDouble());
+  params.set_validation_split(this->ui_->validation_split->text().toDouble());
+  params.set_testing_split(this->ui_->testing_split->text().toDouble());
 
   params.set_aug_num_samples(this->ui_->num_samples->text().toInt());
   params.set_aug_num_dims(this->ui_->num_pca_dims->text().toInt());
@@ -212,7 +235,13 @@ void DeepSSMTool::update_panels()
   this->ui_->restore_defaults->setEnabled(!this->tool_is_running_);
 
   QString string = "";
+  this->ui_->run_button->show();
   switch (this->current_tool_) {
+    case PythonWorker::JobType::DeepSSM_SplitType:
+      this->ui_->training_panel->hide();
+      this->ui_->data_panel->hide();
+      this->ui_->run_button->hide();
+      break;
     case PythonWorker::JobType::DeepSSM_AugmentationType:
       string = "Data Augmentation";
       this->ui_->training_panel->hide();
@@ -238,6 +267,23 @@ void DeepSSMTool::update_panels()
   }
   this->ui_->run_button->setEnabled(true);
 
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::update_split(QLineEdit *source)
+{
+  double sum = 0;
+  sum += this->ui_->training_split->text().toDouble();
+  sum += this->ui_->validation_split->text().toDouble();
+  sum += this->ui_->testing_split->text().toDouble();
+  QString ss = "";
+  if (sum != 100) {
+    ss = "QLineEdit {background-color: rgb(255,204,203);}";
+  }
+
+  this->ui_->training_split->setStyleSheet(ss);
+  this->ui_->validation_split->setStyleSheet(ss);
+  this->ui_->testing_split->setStyleSheet(ss);
 }
 
 //---------------------------------------------------------------------------
@@ -340,6 +386,9 @@ void DeepSSMTool::show_training_meshes()
 void DeepSSMTool::update_meshes()
 {
   switch (this->current_tool_) {
+    case PythonWorker::JobType::DeepSSM_SplitType:
+      this->shapes_.clear();
+      break;
     case PythonWorker::JobType::DeepSSM_AugmentationType:
       this->show_augmentation_meshes();
       break;

@@ -43,13 +43,11 @@ private:
 
   enum class SplitType {
     TRAIN,
+    VALIDATION,
     TEST
   };
 
   std::vector<std::string> get_list(FileType file_type, SplitType split_type);
-
-  const double partition = 0.5;
-
 
 };
 }

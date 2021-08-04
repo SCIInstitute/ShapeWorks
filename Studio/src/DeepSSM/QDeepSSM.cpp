@@ -8,6 +8,7 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 #include <functional>
 #include <iostream>
 #include <fstream>
+#include <random>
 
 // qt
 #include <QThread>
@@ -81,7 +82,7 @@ void QDeepSSM::run_training()
 
     auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
     auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
-    auto test_img_list = this->get_list(FileType::IMAGE, SplitType::TEST);
+    auto test_img_list = this->get_list(FileType::IMAGE, SplitType::VALIDATION);
 
     py::list train_img_list_py = py::cast(train_img_list);
     py::list train_pts_py = py::cast(train_pts);
@@ -146,30 +147,43 @@ std::vector<std::string> QDeepSSM::get_list(FileType file_type, SplitType split_
 {
   auto subjects = this->project_->get_subjects();
 
+  std::mt19937 rng{42};
+
+
+  std::vector<int> ids;
+  for (size_t i = 0; i < subjects.size(); i++) {
+    ids.push_back(i);
+  }
+
+  std::shuffle(ids.begin(), ids.end(), rng);
+
   std::vector<std::string> list;
 
-  int partition_number = subjects.size() * partition;
+  DeepSSMParameters params(this->project_);
 
   int start = 0;
-  int end = partition_number;
-  if (split_type == SplitType::TEST) {
-    start = partition_number;
+  int end = subjects.size() * params.get_training_split();
+  if (split_type == SplitType::VALIDATION) {
+    start = end;
+    end = subjects.size() * (params.get_training_split() + params.get_validation_split());
+  } else if (split_type == SplitType::TEST) {
+    start = subjects.size() * (params.get_training_split() + params.get_validation_split());
     end = subjects.size();
   }
 
   for (int i = start; i < end; i++) {
+    auto id = ids[i];
     if (file_type == FileType::IMAGE) {
-      auto image_filenames = subjects[i]->get_image_filenames();
+      auto image_filenames = subjects[id]->get_image_filenames();
       if (!image_filenames.empty()) {
         list.push_back(image_filenames[0]);
       }
     }
     else {
-      auto particle_filenames = subjects[i]->get_local_particle_filenames();
+      auto particle_filenames = subjects[id]->get_local_particle_filenames();
       if (!particle_filenames.empty()) {
         list.push_back(particle_filenames[0]);
       }
-
     }
   }
   return list;
