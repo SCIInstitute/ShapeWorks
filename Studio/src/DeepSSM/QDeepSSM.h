@@ -37,6 +37,7 @@ private:
   ProjectHandle project_;
 
   enum class FileType {
+    ID,
     IMAGE,
     PARTICLES
   };

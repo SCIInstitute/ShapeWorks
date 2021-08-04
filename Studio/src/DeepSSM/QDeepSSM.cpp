@@ -12,6 +12,8 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 
 // qt
 #include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 // shapeworks
 #include <DeepSSM/QDeepSSM.h>
@@ -140,6 +142,21 @@ void QDeepSSM::run_testing()
 
     DeepSSMParameters params(this->project_);
 
+    auto id_list = this->get_list(FileType::ID, SplitType::TEST);
+    QFile file("deepssm/TorchDataLoaders/test_names.txt");
+    if ( file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text) ) {
+      QStringList list;
+      for (auto &id : id_list) {
+        QString item = "'" + QString::fromStdString(id) + "'";
+        list << item;
+      }
+
+      QTextStream stream( &file );
+      stream << "[";
+      stream << list.join(", ");
+      stream << "]";
+    }
+
     py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
     std::string config_file = "deepssm/configuration.json";
@@ -165,7 +182,6 @@ std::vector<std::string> QDeepSSM::get_list(FileType file_type, SplitType split_
 
   std::mt19937 rng{42};
 
-
   std::vector<int> ids;
   for (size_t i = 0; i < subjects.size(); i++) {
     ids.push_back(i);
@@ -186,7 +202,10 @@ std::vector<std::string> QDeepSSM::get_list(FileType file_type, SplitType split_
 
   for (int i = start; i < end; i++) {
     auto id = ids[i];
-    if (file_type == FileType::IMAGE) {
+    if (file_type == FileType::ID) {
+      list.push_back(std::to_string(id));
+    }
+    else if (file_type == FileType::IMAGE) {
       auto image_filenames = subjects[id]->get_image_filenames();
       if (!image_filenames.empty()) {
         list.push_back(image_filenames[0]);
