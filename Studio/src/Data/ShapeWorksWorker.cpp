@@ -135,44 +135,11 @@ void ShapeworksWorker::process()
         return;
       }
       break;
-    case ShapeworksWorker::DeepSSM_AugmentationType :
-      this->run_deep_ssm_augmentation();
-      break;
-    case ShapeworksWorker::DeepSSM_TrainingType :
-      this->run_deep_ssm_training();
-      break;
-    case ShapeworksWorker::DeepSSM_InferenceType :
-      this->run_deep_ssm_inference();
-      break;
   }
 
 
   emit result_ready();
   emit finished();
-}
-
-//---------------------------------------------------------------------------
-void ShapeworksWorker::set_deep_ssm(QSharedPointer<QDeepSSM> deep_ssm)
-{
-  this->deep_ssm_ = deep_ssm;
-}
-
-//---------------------------------------------------------------------------
-void ShapeworksWorker::run_deep_ssm_augmentation()
-{
-  this->deep_ssm_->run_augmentation();
-}
-
-//---------------------------------------------------------------------------
-void ShapeworksWorker::run_deep_ssm_training()
-{
-  this->deep_ssm_->run_training();
-}
-
-//---------------------------------------------------------------------------
-void ShapeworksWorker::run_deep_ssm_inference()
-{
-  this->deep_ssm_->run_inference();
 }
 
 }

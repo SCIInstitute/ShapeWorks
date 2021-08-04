@@ -7,7 +7,6 @@
 namespace shapeworks {
 class Optimize;
 class QGroom;
-class QDeepSSM;
 class OptimizeParameters;
 
 class ShapeworksWorker : public QObject {
@@ -15,8 +14,7 @@ Q_OBJECT
 
 public:
   enum ThreadType {
-    GroomType, OptimizeType, ReconstructType, DeepSSM_AugmentationType,
-    DeepSSM_TrainingType, DeepSSM_InferenceType
+    GroomType, OptimizeType, ReconstructType
   };
 
   ShapeworksWorker(ThreadType type,
@@ -35,8 +33,6 @@ public:
                    int numClusters = 5);
   ~ShapeworksWorker();
 
-  void set_deep_ssm(QSharedPointer<QDeepSSM> deep_ssm);
-
 public Q_SLOTS:
   void process();
 
@@ -50,15 +46,10 @@ Q_SIGNALS:
 
 private:
 
-  void run_deep_ssm_augmentation();
-  void run_deep_ssm_training();
-  void run_deep_ssm_inference();
-
   QSharedPointer<QGroom> groom_;
   QSharedPointer<Optimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
-  QSharedPointer<QDeepSSM> deep_ssm_;
   ThreadType type_;
   std::vector<std::vector<itk::Point<double>>> local_pts_;
   std::vector<std::vector<itk::Point<double>>> global_pts_;

@@ -39,6 +39,7 @@ public Q_SLOTS:
 
   void start_deepssm_augmentation();
   void start_deepssm_training();
+  void start_deepssm_testing();
   void finalize_python();
 
 Q_SIGNALS:

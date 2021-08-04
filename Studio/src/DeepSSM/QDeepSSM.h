@@ -20,7 +20,7 @@ public:
   ~QDeepSSM();
   void run_augmentation();
   void run_training();
-  void run_inference();
+  void run_testing();
 
   void python_message(std::string str);
 

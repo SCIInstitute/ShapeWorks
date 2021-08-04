@@ -233,21 +233,19 @@ void DeepSSMTool::update_panels()
 
   QString string = "";
   this->ui_->run_button->show();
+  this->ui_->data_panel->hide();
+  this->ui_->training_panel->hide();
   switch (this->current_tool_) {
   case PythonWorker::JobType::DeepSSM_SplitType:
-    this->ui_->training_panel->hide();
-    this->ui_->data_panel->hide();
     this->ui_->run_button->hide();
     break;
   case PythonWorker::JobType::DeepSSM_AugmentationType:
     string = "Data Augmentation";
-    this->ui_->training_panel->hide();
     this->ui_->data_panel->show();
     break;
   case PythonWorker::JobType::DeepSSM_TrainingType:
     string = "Training";
     this->ui_->training_panel->show();
-    this->ui_->data_panel->hide();
     break;
   case PythonWorker::JobType::DeepSSM_TestingType:
     string = "Testing";
@@ -539,7 +537,7 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
     this->show_training_meshes();
   }
   else {
-    emit message("Please Wait: Running Inference...");
+    emit message("Please Wait: Running Testing...");
   }
 
   this->load_plots();
@@ -561,7 +559,7 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
 
   this->py_worker->run_job(type);
 
-  // ensure someone doesn't accidental abort right after clicking RUN
+  // ensure someone doesn't accidentally abort right after clicking RUN
   this->ui_->run_button->setEnabled(false);
   QTimer::singleShot(1000, [ = ]() {
       this->ui_->run_button->setEnabled(true);

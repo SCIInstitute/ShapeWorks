@@ -133,9 +133,23 @@ void QDeepSSM::run_training()
 }
 
 //---------------------------------------------------------------------------
-void QDeepSSM::run_inference()
+void QDeepSSM::run_testing()
 {
 
+  try {
+
+    DeepSSMParameters params(this->project_);
+
+    py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+
+    std::string config_file = "deepssm/configuration.json";
+    emit message("DeepSSM: Testing");
+    py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
+    test_deep_ssm(config_file);
+
+  } catch (py::error_already_set& e) {
+    emit error(e.what());
+  }
 }
 
 //---------------------------------------------------------------------------
