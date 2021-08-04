@@ -12,8 +12,8 @@ Network Test Function
 	predicts the PCA scores using the trained networks
 	returns the error measures and saves the predicted and poriginal particles for comparison
 '''
-def test(conflict_file):
-	with open(conflict_file) as json_file: 
+def test(config_file):
+	with open(config_file) as json_file: 
 		parameters = json.load(json_file)
 	model_dir = parameters["paths"]["out_dir"] + parameters["model_name"]+ '/'
 	pred_dir = model_dir + 'predictions/'
@@ -35,12 +35,12 @@ def test(conflict_file):
 	print("Done.\n")
 	# initalizations
 	print("Loading trained model...")
-	model_pca = model.DeepSSMNet(conflict_file)
+	model_pca = model.DeepSSMNet(config_file)
 	model_pca.load_state_dict(torch.load(model_path))
 	device = model_pca.device
 	model_pca.to(device)
 	model_pca.eval()
-	model_ft = model.DeepSSMNet(conflict_file)
+	model_ft = model.DeepSSMNet(config_file)
 	model_ft.load_state_dict(torch.load(model_path_ft))
 	model_ft.to(device)
 	model_ft.eval()
