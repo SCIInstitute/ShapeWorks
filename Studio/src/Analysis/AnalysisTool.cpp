@@ -1,5 +1,6 @@
 // std
 #include <iostream>
+#include <fstream>
 
 // qt
 #include <QThread>
@@ -459,6 +460,27 @@ bool AnalysisTool::compute_stats()
   this->ui_->compactness_graph->repaint();
 */
 
+  ////  Uncomment this to write out long format sample data
+  /*
+  if (groups_enabled) {
+    std::ofstream file;
+    file.open ("/tmp/stats.csv");
+    file << "subject,group,particle,x,y,z\n";
+
+    int shape_id = 0;
+    for (ShapeHandle shape : this->session_->get_shapes()) {
+      auto group = shape->get_subject()->get_group_value(group_set);
+      auto particles = shape->get_particles();
+      auto points = particles.get_world_points(0);
+      int point_id = 0;
+      for (auto point : points) {
+        file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2] << "\n";
+      }
+      shape_id++;
+    }
+    file.close();
+  }
+  */
 
   return true;
 }
