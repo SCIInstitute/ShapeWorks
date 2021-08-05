@@ -75,6 +75,8 @@ public Q_SLOTS:
   void update_panels();
   void update_split(QLineEdit *source);
 
+  void handle_new_mesh();
+
 signals:
 
   void update_view();
@@ -91,6 +93,7 @@ private:
   void update_tables();
   void show_training_meshes();
   void show_testing_meshes();
+  void update_testing_meshes();
   void load_plots();
   void resize_plots();
   QPixmap load_plot(QString filename);

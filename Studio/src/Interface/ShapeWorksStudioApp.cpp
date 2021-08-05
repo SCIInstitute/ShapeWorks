@@ -820,6 +820,8 @@ void ShapeWorksStudioApp::handle_new_mesh()
     this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
   }
 
+  this->deepssm_tool_->handle_new_mesh();
+
 }
 
 //---------------------------------------------------------------------------

@@ -268,6 +268,14 @@ void DeepSSMTool::update_split(QLineEdit* source)
 {}
 
 //---------------------------------------------------------------------------
+void DeepSSMTool::handle_new_mesh()
+{
+  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
+    this->update_testing_meshes();
+  }
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::update_tables()
 {
   this->populate_table_from_csv(this->ui_->training_table, "deepssm/model/train_log.csv", true);
@@ -393,9 +401,7 @@ void DeepSSMTool::show_testing_meshes()
         Mesh m(group.meshes()[0]->get_poly_data());
         m.distance(base);
         auto field = m.getField<vtkDataArray>("distance");
-        //m.setField("deepssm_error", field);
         field->SetName("deepssm_error");
-        //m.write("/tmp/mesh.vtk");
         group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
       }
       QStringList list;
@@ -406,6 +412,41 @@ void DeepSSMTool::show_testing_meshes()
       shape->set_annotations(list);
 
       this->shapes_.push_back(shape);
+    }
+  }
+
+  emit update_view();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::update_testing_meshes()
+{
+  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
+  auto id_list = this->deep_ssm_->get_list(QDeepSSM::FileType::ID, QDeepSSM::SplitType::TEST);
+
+  auto subjects = this->session_->get_project()->get_subjects();
+  auto shapes = this->session_->get_shapes();
+
+  int idx = 0;
+  for (auto& id : id_list) {
+    int i = QString::fromStdString(id).toInt();
+
+    auto mesh_group = shapes[i]->get_groomed_meshes(true);
+    Mesh base(mesh_group.meshes()[0]->get_poly_data());
+    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
+                           ".particles";
+    if (QFileInfo(QString::fromStdString(filename)).exists()) {
+      if (idx < this->shapes_.size()) {
+        auto shape = this->shapes_[idx++];
+        MeshGroup group = shape->get_reconstructed_meshes();
+        if (group.valid()) {
+          Mesh m(group.meshes()[0]->get_poly_data());
+          m.distance(base);
+          auto field = m.getField<vtkDataArray>("distance");
+          field->SetName("deepssm_error");
+          group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+        }
+      }
     }
   }
 
