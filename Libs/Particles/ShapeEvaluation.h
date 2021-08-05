@@ -15,6 +15,8 @@ public:
 
   static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
+  static Eigen::VectorXd ComputeFullCompactness(const ParticleSystem &particleSystem);
+
   static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");

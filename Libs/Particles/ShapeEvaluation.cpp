@@ -12,6 +12,19 @@ namespace shapeworks {
 double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
+  Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particleSystem);
+
+  if (!saveTo.empty()) {
+    std::ofstream of(saveTo);
+    of << cumsum;
+    of.close();
+  }
+
+  return cumsum(nModes - 1);
+}
+
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem)
+{
   const int N = particleSystem.N();
   const int D = particleSystem.D();
 
@@ -30,13 +43,7 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
   }
   cumsum /= S.sum();
 
-  if (!saveTo.empty()) {
-    std::ofstream of(saveTo);
-    of << cumsum;
-    of.close();
-  }
-
-  return cumsum(nModes - 1);
+  return cumsum;
 }
 
 double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
