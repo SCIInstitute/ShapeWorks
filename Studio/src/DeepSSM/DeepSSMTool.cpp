@@ -396,14 +396,7 @@ void DeepSSMTool::show_testing_meshes()
       shape->set_mesh_manager(this->session_->get_mesh_manager());
       shape->import_local_point_files({filename});
       shape->import_global_point_files({filename});
-      MeshGroup group = shape->get_reconstructed_meshes();
-      if (group.valid()) {
-        Mesh m(group.meshes()[0]->get_poly_data());
-        m.distance(base);
-        auto field = m.getField<vtkDataArray>("distance");
-        field->SetName("deepssm_error");
-        group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-      }
+      shape->get_reconstructed_meshes();
       QStringList list;
       list << shapes[i]->get_annotations()[0];
       list << "";
@@ -414,6 +407,8 @@ void DeepSSMTool::show_testing_meshes()
       this->shapes_.push_back(shape);
     }
   }
+
+  this->update_testing_meshes();
 
   emit update_view();
 }
@@ -427,9 +422,24 @@ void DeepSSMTool::update_testing_meshes()
   auto subjects = this->session_->get_project()->get_subjects();
   auto shapes = this->session_->get_shapes();
 
+  QTableWidget* table = this->ui_->testing_table;
+
+  table->clear();
+  QStringList headers;
+  headers << "name" << "average distance";
+  table->setColumnCount(headers.size());
+  table->horizontalHeader()->setVisible(true);
+  table->setHorizontalHeaderLabels(headers);
+  table->verticalHeader()->setVisible(false);
+  table->setRowCount(this->shapes_.size());
+
   int idx = 0;
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
+    auto name = shapes[i]->get_annotations()[0];
+
+    QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
+    table->setItem(idx, 0, new_item);
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
     Mesh base(mesh_group.meshes()[0]->get_poly_data());
@@ -442,9 +452,18 @@ void DeepSSMTool::update_testing_meshes()
         if (group.valid()) {
           Mesh m(group.meshes()[0]->get_poly_data());
           m.distance(base);
+          double average_distance = m.getFieldMean("distance");
+
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
+          table->setItem(idx - 1, 1, new_item);
+
           auto field = m.getField<vtkDataArray>("distance");
           field->SetName("deepssm_error");
           group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+        }
+        else {
+          QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
+          table->setItem(idx - 1, 1, new_item);
         }
       }
     }

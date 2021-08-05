@@ -323,7 +323,7 @@ QWidget#training_panel {
             <item row="0" column="0">
              <widget class="QTabWidget" name="tab_widget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="split_tab">
                <attribute name="title">
@@ -677,7 +677,7 @@ Preserved</string>
                  <number>3</number>
                 </property>
                 <item row="0" column="0">
-                 <widget class="QTableWidget" name="inference_table"/>
+                 <widget class="QTableWidget" name="testing_table"/>
                 </item>
                </layout>
               </widget>
@@ -1078,7 +1078,7 @@ Preserved</string>
   <tabstop>training_decay_learning</tabstop>
   <tabstop>training_learning_rate</tabstop>
   <tabstop>training_fine_tuning</tabstop>
-  <tabstop>inference_table</tabstop>
+  <tabstop>testing_table</tabstop>
   <tabstop>controls_open_button</tabstop>
   <tabstop>num_pca_dims</tabstop>
   <tabstop>training_open_button</tabstop>
