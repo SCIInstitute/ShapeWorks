@@ -465,6 +465,12 @@ bool Project::get_particles_present() const
 }
 
 //---------------------------------------------------------------------------
+bool Project::get_images_present()
+{
+  return this->get_matching_columns(IMAGE_PREFIX).size() > 0;
+}
+
+//---------------------------------------------------------------------------
 Parameters Project::get_parameters(const std::string& name, const std::string& domain_name)
 {
   Parameters params;

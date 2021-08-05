@@ -70,6 +70,9 @@ public:
   //! Return if particle files are present
   bool get_particles_present() const;
 
+  //! Return if images are present (e.g. CT/MRI)
+  bool get_images_present();
+
   //! Get feature names
   std::vector<std::string> get_feature_names();
 
