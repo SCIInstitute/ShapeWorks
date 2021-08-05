@@ -91,6 +91,49 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   return generalization;
 }
 
+Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem &particleSystem)
+{
+  const int N = particleSystem.N();
+  const int D = particleSystem.D();
+  const Eigen::MatrixXd &P = particleSystem.Particles();
+
+  Eigen::VectorXd generalizations(N);
+  for (int mode = 1; mode <= N; mode++) {
+
+    // Keep track of the reconstructions so we can visualize them later
+    std::vector<Reconstruction> reconstructions;
+
+    double totalDist = 0.0;
+    for (int leave = 0; leave < N; leave++) {
+
+      Eigen::MatrixXd Y(D, N - 1);
+      Y.leftCols(leave) = P.leftCols(leave);
+      Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
+
+      const Eigen::VectorXd mu = Y.rowwise().mean();
+      Y.colwise() -= mu;
+      const Eigen::VectorXd Ytest = P.col(leave);
+
+      Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+      const auto epsi = svd.matrixU().block(0, 0, D, mode);
+      const auto betas = epsi.transpose() * (Ytest - mu);
+      const Eigen::VectorXd rec = epsi * betas + mu;
+
+      const int numParticles = D / VDimension;
+      const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
+      const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
+      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
+      totalDist += dist;
+
+      reconstructions.push_back({dist, leave, rec_reshaped});
+    }
+    const double generalization = totalDist / N;
+    generalizations(mode-1) = generalization;
+  }
+
+  return generalizations;
+}
+
 double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
