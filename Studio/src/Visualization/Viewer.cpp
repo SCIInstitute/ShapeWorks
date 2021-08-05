@@ -374,7 +374,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors)
 {
-  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+  for (size_t i = 0; i < this->surface_mappers_.size(); i++) {
 
     vtkPolyData* poly_data = this->surface_mappers_[i]->GetInput();
     if (!poly_data) {
@@ -403,11 +403,14 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       // find the 8 closest correspondence points the to current point
       vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
       point_locator->FindClosestNPoints(8, poly_data->GetPoint(i), closest_points);
-
       // assign scalar value based on a weighted scheme
       float weighted_scalar = 0.0f;
       float distance_sum = 0.0f;
       float distance[8];
+
+      bool exactly_on_point = false;
+      float exact_scalar = 0.0f;
+
       for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
         // get a particle position
         vtkIdType id = closest_points->GetId(p);
@@ -416,7 +419,15 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
         double x = poly_data->GetPoint(i)[0] - point_data->GetPoint(id)[0];
         double y = poly_data->GetPoint(i)[1] - point_data->GetPoint(id)[1];
         double z = poly_data->GetPoint(i)[2] - point_data->GetPoint(id)[2];
-        distance[p] = 1.0f / (x * x + y * y + z * z);
+
+        if (x == 0 && y == 0 && z == 0) {
+          distance[p] = 0;
+          exactly_on_point = true;
+          exact_scalar = magnitudes->GetValue(id);
+        }
+        else {
+          distance[p] = 1.0f / (x * x + y * y + z * z);
+        }
 
         // multiply scalar value by weight and add to running sum
         distance_sum += distance[p];
@@ -434,9 +445,12 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
         vecZ += distance[p] / distance_sum * vectors->GetComponent(currID, 2);
       }
 
+      if (exactly_on_point) {
+        weighted_scalar = exact_scalar;
+      }
+
       surface_magnitudes->SetValue(i, weighted_scalar);
 
-      //std::cerr << "scalar = " << weighted_scalar << "\n";
       surface_vectors->SetComponent(i, 0, vecX);
       surface_vectors->SetComponent(i, 1, vecY);
       surface_vectors->SetComponent(i, 2, vecZ);
