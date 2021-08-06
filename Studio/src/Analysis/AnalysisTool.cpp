@@ -73,6 +73,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
+
   this->ui_->surface_open_button->setChecked(false);
   //this->on_surface_open_button_toggled();
   this->ui_->metrics_open_button->setChecked(false);
@@ -429,7 +430,7 @@ bool AnalysisTool::compute_stats()
   }
 
   // consistency check
-  int point_size = points[0].size();
+  size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
       emit error(
@@ -986,7 +987,18 @@ void AnalysisTool::on_metrics_open_button_toggled()
 
   if (show) {
     this->compute_stats();
+
+    auto worker = ShapeEvaluationWorker::create_worker();
+
+    std::function<void(void)> func = [](void) { std::cerr << "job is done.\n"; };
+    connect(worker, &Worker::finished, func);
+
+    std::cerr << "do some stuff\n";
+    worker->async_evaluate_shape();
+
   }
+
+
   /// Disabled for now
   /*
   if (show) {

@@ -85,6 +85,7 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/SurfaceReconstructor.cpp
   Data/vtkPolyDataToImageData.cpp
   Data/ShapeWorksWorker.cpp
+  Data/Worker.cpp
   )
 
 FILE(GLOB STUDIO_DATA_MOC_HDRS
@@ -95,6 +96,7 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/PreferencesWindow.h
   Data/Session.h
   Data/ShapeWorksWorker.h
+  Data/Worker.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -124,9 +126,11 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
+  Analysis/ShapeEvaluationWorker.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
+  Analysis/ShapeEvaluationWorker.h
   )
 
 SET(STUDIO_DEEPSSM_SRCS

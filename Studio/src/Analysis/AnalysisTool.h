@@ -16,6 +16,8 @@
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
+#include <Analysis/ShapeEvaluationWorker.h>
+
 class Ui_AnalysisTool;
 
 namespace shapeworks {
@@ -199,6 +201,7 @@ private:
   std::vector<std::string> current_group_values_;
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
+
 
 };
 
