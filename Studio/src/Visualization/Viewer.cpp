@@ -848,7 +848,9 @@ void Viewer::update_difference_lut(float r0, float r1)
     this->surface_mappers_[i]->SetScalarRange(range[0], range[1]);
   }
 
+  this->arrow_glyph_mapper_->SetLookupTable(this->surface_lut_);
   this->arrow_glyph_mapper_->SetScalarRange(range);
+  this->glyph_mapper_->SetScalarRange(range);
   this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
   if (rd > 100) {
     this->scalar_bar_actor_->SetLabelFormat("%.0f");
