@@ -84,6 +84,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   this->ui_->graph_->set_y_label("Explained Variance");
   this->ui_->compactness_graph->set_y_label("Compactness");
+  this->ui_->generalization_graph->set_y_label("Generalization");
+  this->ui_->specificity_graph->set_y_label("Specificity");
 //  this->ui_->evaluation_widget->hide();
 
   for (auto button : {this->ui_->distance_transfom_radio_button,
@@ -450,7 +452,7 @@ bool AnalysisTool::compute_stats()
   this->ui_->graph_->set_data(vals);
   this->ui_->graph_->repaint();
 
-  this->ui_->chart_scroll_area_compactness->hide();
+  //this->ui_->chart_scroll_area_compactness->hide();
 /*
   vals.clear();
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
