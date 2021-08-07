@@ -125,12 +125,11 @@ public:
                              const std::vector<double> &x,
                              double &a, double &b) const;
 
-  double get_compactness(const int num_modes);
-  double get_specificity(const int num_modes);
-  double get_generalization(const int num_modes);
+  Eigen::VectorXd get_compactness();
+  Eigen::VectorXd get_specificity();
+  Eigen::VectorXd get_generalization();
 
 private:
-  void compute_evaluation(int num_modes);
 
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
@@ -163,11 +162,6 @@ private:
   std::vector<std::string> m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
-  double compactness_ = 0;
-  double specificity_ = 0;
-  double generalization_ = 0;
-  bool evaluation_ready_ = false;
-  int evaluation_modes_ = 0;
 };
 
 } // shapeworks

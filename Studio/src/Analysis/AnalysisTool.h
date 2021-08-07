@@ -87,6 +87,8 @@ public:
 
   bool export_variance_graph(QString filename);
 
+  void compute_shape_evaluations();
+
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
@@ -142,6 +144,7 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
+  void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
 
 signals:
 
@@ -179,7 +182,12 @@ private:
 
   /// itk particle shape statistics
   ParticleShapeStatistics stats_;
-  bool stats_ready_;
+  bool stats_ready_ = false;
+  bool evals_ready_ = false;
+
+  Eigen::VectorXd eval_specificity_;
+  Eigen::VectorXd eval_compactness_;
+  Eigen::VectorXd eval_generalization_;
 
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;

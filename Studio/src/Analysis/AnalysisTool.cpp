@@ -386,6 +386,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  std::cerr << "stats are not ready, computing\n";
+
   this->compute_reconstructed_domain_transforms();
 
   this->ui_->pcaModeSpinBox->setMaximum(
@@ -443,6 +445,8 @@ bool AnalysisTool::compute_stats()
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
+
+  this->compute_shape_evaluations();
 
   this->stats_ready_ = true;
   std::vector<double> vals;
@@ -609,6 +613,48 @@ bool AnalysisTool::export_variance_graph(QString filename)
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::compute_shape_evaluations()
+{
+  if (this->evals_ready_) {
+    return;
+  }
+  std::cerr << "recomputing shape evaluations\n";
+
+  // reset
+  this->eval_compactness_ = Eigen::VectorXd();
+  this->eval_specificity_ = Eigen::VectorXd();
+  this->eval_generalization_ = Eigen::VectorXd();
+
+  this->ui_->compactness_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+  this->ui_->generalization_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+  this->ui_->specificity_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+
+  this->ui_->compactness_progress_widget->show();
+  this->ui_->generalization_progress_widget->show();
+  this->ui_->specificity_progress_widget->show();
+  this->ui_->compactness_graph->hide();
+  this->ui_->generalization_graph->hide();
+  this->ui_->specificity_graph->hide();
+  this->ui_->compactness_progress->setValue(0);
+  this->ui_->generalization_progress->setValue(0);
+  this->ui_->specificity_progress->setValue(0);
+
+  auto worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::CompactnessType);
+  connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  worker->async_evaluate_shape();
+
+  worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::GeneralizationType);
+  connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  worker->async_evaluate_shape();
+
+  worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::SpecificityType);
+  connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  worker->async_evaluate_shape();
+
+  this->evals_ready_ = true;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged()
 {
   this->update_analysis_mode();
@@ -747,7 +793,9 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaAnimateCheckBox->setEnabled(false);
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
+  std::cerr << "resetting stats!\n";
   this->stats_ready_ = false;
+  this->evals_ready_ = false;
   this->stats_ = ParticleShapeStatistics();
 }
 
@@ -955,6 +1003,7 @@ void AnalysisTool::update_group_values()
 //---------------------------------------------------------------------------
 void AnalysisTool::group_changed()
 {
+  std::cerr << "group changed, resetting stats\n";
   this->stats_ready_ = false;
   this->compute_stats();
 }
@@ -989,14 +1038,6 @@ void AnalysisTool::on_metrics_open_button_toggled()
 
   if (show) {
     this->compute_stats();
-
-    auto worker = ShapeEvaluationWorker::create_worker();
-
-    std::function<void(void)> func = [](void) { std::cerr << "job is done.\n"; };
-    connect(worker, &Worker::finished, func);
-
-    std::cerr << "do some stuff\n";
-    worker->async_evaluate_shape();
 
   }
 
@@ -1083,6 +1124,37 @@ void AnalysisTool::initialize_mesh_warper()
       this->session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(
         meshes[i]->get_poly_data(), points);
     }
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data)
+{
+  switch (job_type) {
+    case ShapeEvaluationWorker::JobType::CompactnessType :
+      this->eval_compactness_ = data;
+      std::cerr << "compactness done:\n";
+      for (int i=0;i<data.size();i++) {
+        std::cerr << data[i] << "\n";
+      }
+      this->ui_->compactness_graph->set_data(data);
+      this->ui_->compactness_graph->show();
+      this->ui_->compactness_progress_widget->hide();
+    break;
+    case ShapeEvaluationWorker::JobType::SpecificityType :
+      std::cerr << "specificity done:\n";
+      this->eval_specificity_ = data;
+      this->ui_->specificity_graph->set_data(data);
+      this->ui_->specificity_graph->show();
+      this->ui_->specificity_progress_widget->hide();
+    break;
+    case ShapeEvaluationWorker::JobType::GeneralizationType :
+      std::cerr << "generalization done:\n";
+      this->eval_generalization_ = data;
+      this->ui_->generalization_graph->set_data(data);
+      this->ui_->generalization_graph->show();
+      this->ui_->generalization_progress_widget->hide();
+    break;
   }
 }
 

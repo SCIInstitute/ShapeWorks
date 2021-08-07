@@ -691,34 +691,23 @@ int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
   return 0;
 }
 
-double ParticleShapeStatistics::get_compactness(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_compactness()
 {
-  this->compute_evaluation(num_modes);
-  return this->compactness_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps);
 }
 
-double ParticleShapeStatistics::get_specificity(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_specificity()
 {
-  this->compute_evaluation(num_modes);
-  return this->specificity_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps);
 }
 
-double ParticleShapeStatistics::get_generalization(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_generalization()
 {
-  this->compute_evaluation(num_modes);
-  return this->generalization_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps);
 }
 
-void ParticleShapeStatistics::compute_evaluation(int num_modes)
-{
-  if (!this->evaluation_ready_ || num_modes != this->evaluation_modes_) {
-    auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-    this->compactness_ = shapeworks::ShapeEvaluation::ComputeCompactness(ps, num_modes);
-    this->specificity_ = shapeworks::ShapeEvaluation::ComputeSpecificity(ps, num_modes);
-    this->generalization_ = shapeworks::ShapeEvaluation::ComputeGeneralization(ps, num_modes);
-    this->evaluation_ready_ = true;
-    this->evaluation_modes_ = num_modes;
-  }
-}
 
 } // shapeworks
