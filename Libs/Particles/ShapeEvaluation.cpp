@@ -9,6 +9,7 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> R
 
 namespace shapeworks {
 
+  //---------------------------------------------------------------------------
 double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
@@ -23,6 +24,7 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
   return cumsum(nModes - 1);
 }
 
+//---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem)
 {
   const int N = particleSystem.N();
@@ -46,6 +48,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   return cumsum;
 }
 
+//---------------------------------------------------------------------------
 double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
                                                           const std::string &saveTo)
 {
@@ -132,6 +135,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   return generalizations;
 }
 
+//---------------------------------------------------------------------------
 double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
@@ -206,7 +210,71 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 
   const int numParticles = D / VDimension;
   const double specificity = meanSpecificity(nModes - 1) / numParticles;
+
+  std::cerr << "one = " << specificity << "\n";
+  std::cerr << "two = " << ShapeEvaluation::ComputeFullSpecificity(particleSystem)(nModes-1) << "\n";
   return specificity;
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &particleSystem)
+{
+  const int N = particleSystem.N();
+  const int D = particleSystem.D();
+  const int numParticles = D / VDimension;
+
+  Eigen::VectorXd specificities(N);
+
+  // PCA calculations
+  const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
+  const int nTrain = ptsModels.cols();
+
+  const Eigen::VectorXd mu = ptsModels.rowwise().mean();
+  Eigen::MatrixXd Y = ptsModels;
+  Y.colwise() -= mu;
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+  const auto allEigenValues = svd.singularValues();
+
+  for (int nModes=1;nModes<=N;nModes++) {
+
+    const int nSamples = 1000;
+
+    Eigen::VectorXd stdSpecificity(nModes);
+    Eigen::MatrixXd spec_store(nModes, 4);
+    const auto eigenValues = allEigenValues.head(nModes);
+    const auto epsi = svd.matrixU().block(0, 0, D, nModes);
+
+
+    Eigen::MatrixXd samplingBetas(nModes, nSamples);
+    MultiVariateNormalRandom sampling{eigenValues.asDiagonal()};
+    for (int i = 0; i < nSamples; i++) {
+      samplingBetas.col(i) = sampling();
+    }
+
+    Eigen::MatrixXd samplingPoints = (epsi * samplingBetas).colwise() + mu;
+    Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
+
+    for (int i = 0; i < nSamples; i++) {
+
+      Eigen::VectorXd pts_m = samplingPoints.col(i);
+      Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
+      Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
+
+      for (int j = 0; j < nTrain; j++) {
+        Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped(ptsDistance_vec.col(j).data(), numParticles,
+                                                                  VDimension);
+        ptsDistance(j) = (ptsDistance_vec_reshaped).rowwise().norm().sum();
+      }
+
+      int closestIdx, _r;
+      distanceToClosestTrainingSample(i) = ptsDistance.minCoeff(&_r, &closestIdx);
+    }
+
+    double meanSpecificity = distanceToClosestTrainingSample.mean();
+    const double specificity = meanSpecificity / numParticles;
+    specificities(nModes-1) = specificity;
+  }
+  return specificities;
 }
 
 } // shapeworks

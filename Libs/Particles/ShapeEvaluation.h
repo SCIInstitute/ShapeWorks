@@ -22,5 +22,7 @@ public:
   static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystem &particleSystem);
 
   static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
+
+  static Eigen::VectorXd ComputeFullSpecificity(const ParticleSystem &particleSystem);
 };
 }
