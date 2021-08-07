@@ -70,6 +70,16 @@ void BarGraph::set_data(const std::vector<double>& values)
 }
 
 //---------------------------------------------------------------------------
+void BarGraph::set_data(const Eigen::VectorXd values)
+{
+  std::vector<double> v(values.size());
+  for (int i=0;i<values.size();i++) {
+    v[i] = values(i);
+  }
+  this->set_data(v);
+}
+
+//---------------------------------------------------------------------------
 void BarGraph::paint_bar_graph(QPainter& painter)
 {
 

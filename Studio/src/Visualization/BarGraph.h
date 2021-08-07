@@ -4,6 +4,7 @@
 #include <utility>
 #include <QTimer>
 #include <vector>
+#include <Eigen/Eigen>
 
 class BarGraph : public QWidget {
 Q_OBJECT
@@ -13,6 +14,7 @@ public:
   ~BarGraph();
 
   void set_data(const std::vector<double>& values);
+  void set_data(const Eigen::VectorXd values);
   void set_log_scale(bool b);
 
   void set_y_label(QString label);
