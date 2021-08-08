@@ -640,15 +640,19 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->specificity_progress->setValue(0);
 
   auto worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::CompactnessType);
+  //worker->set_progress_callback()
   connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
   worker->async_evaluate_shape();
 
   worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::GeneralizationType);
   connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
   worker->async_evaluate_shape();
 
   worker = ShapeEvaluationWorker::create_worker(this->stats_, ShapeEvaluationWorker::JobType::SpecificityType);
   connect(worker, &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
   worker->async_evaluate_shape();
 
   this->evals_ready_ = true;
@@ -1154,6 +1158,22 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
       this->ui_->generalization_graph->set_data(data);
       this->ui_->generalization_graph->show();
       this->ui_->generalization_progress_widget->hide();
+    break;
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress)
+{
+  switch (job_type) {
+    case ShapeEvaluationWorker::JobType::CompactnessType :
+      this->ui_->compactness_progress->setValue(progress*100);
+    break;
+    case ShapeEvaluationWorker::JobType::SpecificityType :
+      this->ui_->specificity_progress->setValue(progress*100);
+    break;
+    case ShapeEvaluationWorker::JobType::GeneralizationType :
+      this->ui_->generalization_progress->setValue(progress*100);
     break;
   }
 }

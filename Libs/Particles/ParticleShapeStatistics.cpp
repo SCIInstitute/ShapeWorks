@@ -691,22 +691,22 @@ int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
   return 0;
 }
 
-Eigen::VectorXd ParticleShapeStatistics::get_compactness()
+Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
 }
 
-Eigen::VectorXd ParticleShapeStatistics::get_specificity()
+Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps);
+  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
-Eigen::VectorXd ParticleShapeStatistics::get_generalization()
+Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps);
+  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
 

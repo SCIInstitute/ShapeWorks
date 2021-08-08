@@ -25,7 +25,7 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem)
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
 {
   const int N = particleSystem.N();
   const int D = particleSystem.D();
@@ -41,6 +41,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   Eigen::VectorXd cumsum(N);
   cumsum(0) = S(0);
   for (int i = 1; i < N; i++) {
+    if (progress_callback) {
+      progress_callback(static_cast<float>(i) / static_cast<float>(N));
+    }
     cumsum(i) = cumsum(i - 1) + S(i);
   }
   cumsum /= S.sum();
@@ -94,7 +97,7 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   return generalization;
 }
 
-Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem &particleSystem)
+Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
 {
   const int N = particleSystem.N();
   const int D = particleSystem.D();
@@ -105,7 +108,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N);
 
   for (int leave = 0; leave < N; leave++) {
-
+    if (progress_callback) {
+      progress_callback(static_cast<float>(leave) / static_cast<float>(N));
+    }
     Eigen::MatrixXd Y(D, N - 1);
     Y.leftCols(leave) = P.leftCols(leave);
     Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
@@ -217,7 +222,7 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &particleSystem)
+Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
 {
   const int N = particleSystem.N();
   const int D = particleSystem.D();
@@ -236,6 +241,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
   const auto allEigenValues = svd.singularValues();
 
   for (int nModes=1;nModes<=N;nModes++) {
+    if (progress_callback) {
+      progress_callback(static_cast<float>(nModes) / static_cast<float>(N));
+    }
 
     const int nSamples = 1000;
 

@@ -23,20 +23,22 @@ public:
 
   static ShapeEvaluationWorker* create_worker(ParticleShapeStatistics stats, JobType job_type);
 
-  void async_run_generalization();
-
   void async_evaluate_shape();
 
   void process() override;
 
 signals:
 
+  void report_progress(shapeworks::ShapeEvaluationWorker::JobType job_type, float progress);
   void result_ready(shapeworks::ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
 
 private:
 
+  void receive_progress(float progress);
+
   ParticleShapeStatistics stats_;
   JobType job_type_;
+
 };
 }
 

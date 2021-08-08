@@ -15,14 +15,14 @@ public:
 
   static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
-  static Eigen::VectorXd ComputeFullCompactness(const ParticleSystem &particleSystem);
+  static Eigen::VectorXd ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
   static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
-  static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystem &particleSystem);
+  static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
   static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
-  static Eigen::VectorXd ComputeFullSpecificity(const ParticleSystem &particleSystem);
+  static Eigen::VectorXd ComputeFullSpecificity(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 };
 }

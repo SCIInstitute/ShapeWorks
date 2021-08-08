@@ -125,9 +125,9 @@ public:
                              const std::vector<double> &x,
                              double &a, double &b) const;
 
-  Eigen::VectorXd get_compactness();
-  Eigen::VectorXd get_specificity();
-  Eigen::VectorXd get_generalization();
+  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback);
+  Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback);
+  Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback);
 
 private:
 
