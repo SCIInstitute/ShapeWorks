@@ -19,6 +19,8 @@
 
 #include <ui_AnalysisTool.h>
 
+#include "jkqtplotter/jkqtplotter.h"
+
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -30,6 +32,8 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
+
+  JKQTPlotter plot;
 
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi(this);

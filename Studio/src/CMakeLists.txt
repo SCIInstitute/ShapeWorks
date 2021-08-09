@@ -13,6 +13,8 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5PrintSupport REQUIRED)
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -21,17 +23,23 @@ include_directories(${Qt5Widgets_INCLUDE_DIRS})
 include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 include_directories(${Qt5Core_INCLUDE_DIRS})
 include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Xml_INCLUDE_DIRS})
+include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
 
 #defines
 add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(${Qt5OpenGL_DEFINITIONS})
 add_definitions(${Qt5Core_DEFINITIONS})
 add_definitions(${Qt5Gui_DEFINITIONS})
+add_definitions(${Qt5Xml_DEFINITIONS})
+add_definitions(${Qt5PrintSupport_DEFINITIONS})
 
 get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
 get_target_property(QtGui_location Qt5::Gui LOCATION)
 get_target_property(QtCore_location Qt5::Core LOCATION)
 get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
+get_target_property(QtPrintSupport_location Qt5::PrintSupport LOCATION)
+get_target_property(QtXml_location Qt5::Gui LOCATION)
 
 if (NOT WIN32)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
@@ -299,6 +307,8 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::OpenGL
   Qt5::Core
   Qt5::Gui
+  Qt5::Xml
+  Qt5::PrintSupport
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
@@ -311,6 +321,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Project
   xlnt::xlnt
   Eigen3::Eigen
+  JKQTPlotterSharedLib
   )
 
 INSTALL(TARGETS ShapeWorksStudio

@@ -82,12 +82,17 @@ endif(MSVC)
 # GUI
 if (SHAPEWORKS_GUI)
     
-  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
   set(SHAPEWORKS_QT_FOUND 1)
   else()
   set(SHAPEWORKS_QT_FOUND 0)
   endif()
+
+  find_package(JKQTCommonSharedLib REQUIRED)
+  find_package(JKQTMathTextSharedLib REQUIRED)
+  find_package(JKQTPlotterSharedLib REQUIRED)
+  #find_package(JKQTCommonSharedLib REQUIRED)
 
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
