@@ -56,14 +56,16 @@ def Run_Pipeline(args):
         fname_out_l = f'{extractedDir}/{i:02d}_l.ply'
         fname_out_r = f'{extractedDir}/{i:02d}_r.ply'
         fname_out_m = f'{extractedDir}/{i:02d}_m.ply'
-        cmd = [
-            'shared_boundary_extractor',
-            fname_l, fname_r,
-            fname_out_l, fname_out_r, fname_out_m,
-            tol
-        ]
-        print(f'Extraction Command: {" ".join(cmd)}')
-        subprocess.check_call(cmd)
+
+        sw.MeshUtils.sharedBoundaryExtractor(sw.Mesh(fname_l),sw.Mesh(fname_r),fname_out_l,fname_out_r,fname_out_m)
+        # cmd = [
+        #     'shared_boundary_extractor',
+        #     fname_l, fname_r,
+        #     fname_out_l, fname_out_r, fname_out_m,
+        #     tol
+        # ]
+        # print(f'Extraction Command: {" ".join(cmd)}')
+        # subprocess.check_call(cmd)
 
     # 03. Smooth
     # TODO Use shapeworks.Mesh() https://github.com/SCIInstitute/ShapeWorks/issues/1234
@@ -102,14 +104,15 @@ def Run_Pipeline(args):
         shutil.copy(fname_r, fname_out_r)
         shutil.copy(fname_m, fname_out_m)
 
-        # Extract boundary loop from M
-        cmd = [
-            'boundary_loop_extractor',
-            fname_m,
-            fname_out_c,
-        ]
-        print(f'Boundary Extraction Command: {" ".join(cmd)}')
-        subprocess.check_call(cmd)
+        # # Extract boundary loop from M
+        # cmd = [
+        #     'boundary_loop_extractor',
+        #     fname_m,
+        #     fname_out_c,
+        # ]
+        # print(f'Boundary Extraction Command: {" ".join(cmd)}')
+        # subprocess.check_call(cmd)
+        sw.MeshUtils.boundaryLoopExtractor(fname_out_c,sw.Mesh(fname_m))
 
     # Copy everything to shape model directory
     shapeModelDir = outputDirectory + "shape_model/"

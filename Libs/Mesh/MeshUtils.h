@@ -36,6 +36,9 @@ public:
 
   /// boundary loop extractor for a given mesh
   static int boundaryLoopExtractor(std::string filename,Mesh mesh);
+
+  /// shared boundary extractor for the left and right mesh
+  static void sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r,std::string filename_l, std::string filename_r, std::string filename_shared,double tol);
 };
 
 } // shapeworks
