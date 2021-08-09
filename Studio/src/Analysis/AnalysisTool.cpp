@@ -1151,6 +1151,9 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
     break;
     case ShapeEvaluationWorker::JobType::SpecificityType :
       std::cerr << "specificity done:\n";
+      for (int i=0;i<data.size();i++) {
+        std::cerr << data[i] << "\n";
+      }
       this->eval_specificity_ = data;
       this->ui_->specificity_graph->set_data(data);
       this->ui_->specificity_graph->show();
@@ -1158,6 +1161,9 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
     break;
     case ShapeEvaluationWorker::JobType::GeneralizationType :
       std::cerr << "generalization done:\n";
+      for (int i=0;i<data.size();i++) {
+        std::cerr << data[i] << "\n";
+      }
       this->eval_generalization_ = data;
       this->ui_->generalization_graph->set_data(data);
       this->ui_->generalization_graph->show();

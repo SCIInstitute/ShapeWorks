@@ -86,6 +86,9 @@ void BarGraph::set_data(const Eigen::VectorXd values)
   this->min_val_ = *min_element(this->values_.begin(), this->values_.end());
   this->max_val_ = *max_element(this->values_.begin(), this->values_.end());
 
+  //this->min_val_ = 0;
+  //this->max_val_ = 1;
+
   this->recalculate_bars();
   this->setMinimumSize((int) (this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
@@ -147,9 +150,14 @@ void BarGraph::paint_bar_graph(QPainter& painter)
   int graph_height = this->get_graph_height();
 
 
+  QString x_axis_label = "Mode";
+  if (this->chart_type_ != ChartType::ExplainedVariance) {
+    x_axis_label = "Number of Modes";
+  }
+
   // X label
   painter.drawText(this->font_height_ + this->font_width_ + this->margin_ * 20,
-                   height(), "Mode");
+                   height(), x_axis_label);
 
   // Y label
   painter.save();
