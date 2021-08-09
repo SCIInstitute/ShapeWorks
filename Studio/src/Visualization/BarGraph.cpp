@@ -25,6 +25,12 @@ BarGraph::~BarGraph()
 {}
 
 //---------------------------------------------------------------------------
+void BarGraph::set_chart_type(ChartType chart_type)
+{
+  this->chart_type_ = chart_type;
+}
+
+//---------------------------------------------------------------------------
 void BarGraph::set_log_scale(bool b)
 {
   this->use_log_ = b;
@@ -72,11 +78,17 @@ void BarGraph::set_data(const std::vector<double>& values)
 //---------------------------------------------------------------------------
 void BarGraph::set_data(const Eigen::VectorXd values)
 {
-  std::vector<double> v(values.size());
-  for (int i=0;i<values.size();i++) {
-    v[i] = values(i);
+  this->values_.clear();
+  for (int i = 0; i < values.size(); i++) {
+    this->values_.push_back(values(i));
   }
-  this->set_data(v);
+
+  this->min_val_ = *min_element(this->values_.begin(), this->values_.end());
+  this->max_val_ = *max_element(this->values_.begin(), this->values_.end());
+
+  this->recalculate_bars();
+  this->setMinimumSize((int) (this->margin_ * this->values_.size() * 2) + 45,
+                       200 + this->margin_ * 5);
 }
 
 //---------------------------------------------------------------------------
@@ -151,7 +163,10 @@ void BarGraph::paint_bar_graph(QPainter& painter)
   // X Values
   QPoint last_acc_pos;
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
-    painter.drawRect(this->bars_[i]);
+
+    if (this->chart_type_ == ChartType::ExplainedVariance) {
+      painter.drawRect(this->bars_[i]);
+    }
     // numbered eigen value on x axis
 
 
@@ -168,6 +183,10 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 
     int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
       this->accumulation_[i]));
+    if (this->chart_type_ != ChartType::ExplainedVariance) {
+      ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
+                                                   this->values_[i]));
+    }
 
     QPoint start_pos(this->bars_[i].x(), ypos);
     QPoint end_pos(this->bars_[i].x() + this->bars_[i].width() + this->margin_, ypos);

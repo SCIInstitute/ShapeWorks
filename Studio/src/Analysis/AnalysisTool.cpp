@@ -74,6 +74,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           this, &AnalysisTool::group_changed);
 
 
+  this->ui_->specificity_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+  this->ui_->compactness_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+  this->ui_->generalization_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+
   this->ui_->surface_open_button->setChecked(false);
   //this->on_surface_open_button_toggled();
   this->ui_->metrics_open_button->setChecked(false);
