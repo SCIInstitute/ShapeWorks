@@ -85,13 +85,15 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 
   if (this->font_height_ < 0) {
 
-    QFont font = this->get_font_for_size(painter.font(), this->y_label_,
+//    QFont font = this->get_font_for_size(painter.font(), this->y_label_,
+    QFont font = this->get_font_for_size(painter.font(), "Explained Variance",
                                          this->height() * 0.75,
                                          this->width());
     axis_font_ = font;
     painter.setFont(font);
 
-    tick_font_ = this->get_font_for_size(painter.font(), this->y_label_,
+    //tick_font_ = this->get_font_for_size(painter.font(), this->y_label_,
+    tick_font_ = this->get_font_for_size(painter.font(), "Explained Variance",
                                          this->height() * 0.5,
                                          this->width());
 
