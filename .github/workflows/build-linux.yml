@@ -69,7 +69,7 @@ jobs:
       run: conda activate shapeworks && cd build && make install
       
     - name: Remove Qt SQL Stuff
-      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlmysql.solibqsqlpsql.so /tmp
+      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
       shell: bash -l {0}
