@@ -91,7 +91,9 @@ def Run_Pipeline(args):
 
         # set name specific variables
         img_suffix = "1x_hip"
-        reference_side = "left"  # somewhat arbitrary, could be R for right
+        ref_side = "R" 
+        if args.tiny_test:
+            ref_side = "L" # so reflection happens
         # Set cutting plane
         cutting_plane_points = np.array(
             [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
@@ -132,7 +134,7 @@ def Run_Pipeline(args):
                     if prefix in image_files[index]:
                         corresponding_image_file = image_files[index]
                         break
-                if "R" in name:
+                if ref_side in name:
                     print("Reflecting " + name)
                     # Reflect corresponding image and find mesh reflection point
                     img1 = sw.Image(corresponding_image_file)
@@ -354,7 +356,7 @@ def Run_Pipeline(args):
                 Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
                 meshes so that all of the femurs can be aligned.
                 """
-                if "R" in name:
+                if ref_side in name:
                     print("Reflecting " + name)
                     arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
                     mesh.reflect(sw.X)
@@ -537,8 +539,8 @@ def Run_Pipeline(args):
         "domain_type" : 'image',
         "relative_weighting" : 10,
         "initial_relative_weighting" : 1,
-        "procrustes_interval" : 1,
-        "procrustes_scaling" : 1,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
         "save_init_splits" : 1,
         "verbosity" : 2,
         "use_statistics_in_init" : 0
