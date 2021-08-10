@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - release_v*
-      - gha-docker2
     tags:
     - '*'
   pull_request:
