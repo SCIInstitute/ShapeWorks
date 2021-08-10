@@ -5,11 +5,14 @@
 #include "vnl/vnl_math.h"
 #include <vector>
 
+#include "Mesh.h"
+
 namespace itk
 {
 
 class FreeFormConstraint: public Constraint{
 public:
+    FreeFormConstraint(shapeworks::Mesh mesh) : mesh(mesh){}
 
   bool isViolated(const vnl_vector<double> &pt) const {return false;}
 
@@ -30,8 +33,7 @@ public:
     }
 
 private:
-    std::vector< Eigen::Vector3d > boundary;
-    Eigen::Vector3d query;
+    shapeworks::Mesh & mesh;
 };
 
 

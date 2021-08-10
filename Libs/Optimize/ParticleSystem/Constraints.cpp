@@ -323,6 +323,11 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     return stream;
 }
 
+void Constraints::addFreeFormConstraint(shapeworks::Mesh & mesh){
+    FreeFormConstraint ffc(mesh);
+    active = true;
+}
+
 // Cutting plane constraints using truncated gradients. Replaced with dominant constraint above.
 /*
 bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){

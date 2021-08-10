@@ -10,6 +10,8 @@
 #include "Eigen/Dense"
 #include "itkPoint.h"
 
+#include "Mesh.h"
+
 namespace itk
 {
 
@@ -31,7 +33,7 @@ public:
   // Set constraints
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
   void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
-  void addFreeFormConstraint(const std::vector< Eigen::Vector3d > boundary, const Eigen::Vector3d query);
+  void addFreeFormConstraint(shapeworks::Mesh & mesh);
 
   // Transforms
   bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans);

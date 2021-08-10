@@ -414,16 +414,23 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 
     size_t numPt = mesh->GetNumberOfPoints();
 
-    if(numPt > 1500){
+    std::cout << "Built mesh with "  << numPt << " vertices." << std::endl;
+
+    /*
+    size_t maxNum = 10000;
+
+    if(numPt > maxNum){
         vtkDecimatePro *decimator = vtkDecimatePro::New();
         decimator->SetInputData(mesh);
-        decimator->SetTargetReduction(1.-1500./numPt);
+        decimator->SetTargetReduction(1.-maxNum/numPt);
         decimator->Update();
 
         mesh = decimator->GetOutput();
-    }
 
-    std::cout << "Reduction " << 1.-1500./numPt << " num points " << numPt << "->" << mesh->GetNumberOfPoints() << std::endl;
+        std::cout << "Reduction " << 1.-maxNum/numPt << " num vertices " << numPt << "->" << mesh->GetNumberOfPoints() << std::endl;
+    }
+    */
+
 
     for(vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++)
     {

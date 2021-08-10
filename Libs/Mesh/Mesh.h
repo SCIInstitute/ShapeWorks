@@ -3,6 +3,7 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 
+#include <math.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <string>
@@ -12,6 +13,22 @@
 #include <vtkSelectPolyData.h>
 #include <vtkClipPolyData.h>
 #include <vtkKdTreePointLocator.h>
+
+#include <igl/grad.h>
+#include <igl/per_vertex_normals.h>
+#include <geometrycentral/surface/surface_mesh_factories.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include "geometrycentral/surface/heat_method_distance.h"
+#include "geometrycentral/surface/meshio.h"
+
+#include <vtkLookupTable.h>
+#include <vtkArrowSource.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkDijkstraGraphGeodesicPath.h>
 
 namespace shapeworks {
 
@@ -180,6 +197,9 @@ public:
 
   bool SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
+  //Debug
+  vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
@@ -191,6 +211,9 @@ private:
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
+  vtkSmartPointer<vtkSelectPolyData> select;
+
+  void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_);
 };
 
 /// stream insertion operators for Mesh

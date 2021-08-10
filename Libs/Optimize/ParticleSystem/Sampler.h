@@ -14,7 +14,6 @@
 #include "MeshDomain.h"
 
 #include "CorrespondenceMode.h"
-#include "Sampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
@@ -30,6 +29,7 @@
 #include <vtkContourFilter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkDecimatePro.h>
+#include <vtkDoubleArray.h>
 
 #include "Mesh.h"
 
