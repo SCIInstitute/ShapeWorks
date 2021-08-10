@@ -69,7 +69,7 @@ jobs:
       run: conda activate shapeworks && cd build && make install
       
     - name: Remove Qt SQL Stuff
-      run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
+      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlmysql.solibqsqlpsql.so /tmp
 
     - name: Build Binary Package
       shell: bash -l {0}
@@ -82,7 +82,7 @@ jobs:
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
   
     - name: Replace Qt SQL Stuff
-      run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
+      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
     - name: ccache statistics
       shell: bash -l {0}
