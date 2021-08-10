@@ -15,7 +15,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
-  LD_LIBRARY_PATH: /usr/share/miniconda3/envs/shapeworks/lib
+  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
     
 jobs:
   build:
