@@ -257,6 +257,8 @@ build_jkqtplotter()
   cd ${BUILD_DIR}
   git clone --depth 1 --branch ${JKQTPLOTTER_VER} http://github.com/jkriege2/JKQtPlotter jkqtplotter
   cd jkqtplotter
+  # fix compile on windows
+  sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
