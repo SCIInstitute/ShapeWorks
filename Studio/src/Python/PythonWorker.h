@@ -35,7 +35,7 @@ public:
 
 public Q_SLOTS:
 
-  void init();
+  bool init();
 
   void start_deepssm_augmentation();
   void start_deepssm_training();
@@ -57,6 +57,8 @@ Q_SIGNALS:
 
 private:
 
+  bool initialized_ = false;
+  bool initialized_success_ = false;
   void finish_job();
 
   QSharedPointer<QDeepSSM> deep_ssm_;
