@@ -19,7 +19,10 @@
 
 #include <ui_AnalysisTool.h>
 
-#include "jkqtplotter/jkqtplotter.h"
+#include <jkqtplotter/jkqtplotter.h>
+#include "jkqtplotter/graphs/jkqtpscatter.h"
+
+//#include <jkqtplotter/graphs/
 
 namespace shapeworks {
 
@@ -79,7 +82,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
 
   this->ui_->specificity_graph->set_chart_type(BarGraph::ChartType::Evaluation);
-  this->ui_->compactness_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+  //this->ui_->compactness_graph->set_chart_type(BarGraph::ChartType::Evaluation);
   this->ui_->generalization_graph->set_chart_type(BarGraph::ChartType::Evaluation);
 
   this->ui_->surface_open_button->setChecked(false);
@@ -91,7 +94,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->tabWidget->removeTab(3);
 
   this->ui_->graph_->set_y_label("Explained Variance");
-  this->ui_->compactness_graph->set_y_label("Compactness");
+  //this->ui_->compactness_graph->set_y_label("Compactness");
   this->ui_->generalization_graph->set_y_label("Generalization");
   this->ui_->specificity_graph->set_y_label("Specificity");
 //  this->ui_->evaluation_widget->hide();
@@ -1149,7 +1152,43 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
       for (int i=0;i<data.size();i++) {
         std::cerr << data[i] << "\n";
       }
-      this->ui_->compactness_graph->set_data(data);
+      //this->ui_->compactness_graph->set_data(data);
+
+      {
+        JKQTPlotter *plot = this->ui_->compactness_graph;
+        JKQTPXYLineGraph* graph=new JKQTPXYLineGraph(this->ui_->compactness_graph);
+        JKQTPDatastore* ds=plot->getDatastore();
+
+        // 2. now we create data for a simple plot (a sine curve)
+        QVector<double> X, Y;
+        const int Ndata=100;
+        for (int i=0; i<Ndata; i++) {
+          const double x=double(i)/double(Ndata)*8.0*M_PI;
+          X<<x;
+          Y<<sin(x);
+        }
+        size_t columnX=ds->addCopiedColumn(X, "x");
+        size_t columnY=ds->addCopiedColumn(Y, "y");
+
+        graph->setXColumn(columnX);
+        graph->setYColumn(columnY);
+        graph->setTitle(QObject::tr("sine graph"));
+
+        // 5. add the graph to the plot, so it is actually displayed
+        plot->addGraph(graph);
+
+        // 6. autoscale the plot so the graph is contained
+        plot->zoomToFit();
+
+      }
+//      JKQTPXYLineGraph* graph1=new JKQTPXYLineGraph(&plot);
+/*
+      auto graph=new JKQTPXParsedFunctionLineGraph(this->ui_->);
+      graph->setFunction(ui->edtEquation->text());
+      graph->setTitle(ui->edtEquation->text());
+      ui->plot->addGraph(graph);
+      ui->plot->setXY(-10,10,-10,10);
+      */
       this->ui_->compactness_graph->show();
       this->ui_->compactness_progress_widget->hide();
     break;

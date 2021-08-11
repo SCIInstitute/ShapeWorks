@@ -1266,7 +1266,7 @@ QWidget#specificity_panel {
           <widget class="QWidget" name="compactness_panel" native="true">
            <layout class="QGridLayout" name="gridLayout_14">
             <item row="0" column="0">
-             <widget class="BarGraph" name="compactness_graph" native="true">
+             <widget class="JKQTPlotter" name="compactness_graph" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -1882,6 +1882,12 @@ QWidget#specificity_panel {
    <class>BarGraph</class>
    <extends>QWidget</extends>
    <header location="global">Visualization/BarGraph.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>JKQTPlotter</class>
+   <extends>QWidget</extends>
+   <header>jkqtplotter/jkqtplotter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
