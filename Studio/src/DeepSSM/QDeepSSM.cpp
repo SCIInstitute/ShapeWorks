@@ -57,13 +57,16 @@ void QDeepSSM::run_augmentation()
 
     py::object run_aug = py_data_aug.attr("runDataAugmentation");
     std::string aug_dir = "deepssm/Augmentation/";
-    run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(),
+    int aug_dims = run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(),
             params.get_aug_num_dims(), params.get_aug_percent_variability(),
             sampler_type.toStdString(),
             0, /* mixture_num */
-      //QThread::idealThreadCount(), /* processes */
+            //QThread::idealThreadCount(), /* processes */
             1, /* processes */
-            nullptr /* world point list? */);
+            nullptr /* world point list? */).cast<int>();
+
+    params.set_training_num_dims(aug_dims);
+    params.save_to_project();
 
     py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
     vis_aug(aug_dir + "TotalData.csv", "violin", false);
@@ -106,6 +109,7 @@ void QDeepSSM::run_training()
     double learning_rate = params.get_training_learning_rate();
     bool decay_lr = params.get_training_decay_learning_rate();
     bool fine_tune = params.get_training_fine_tuning();
+    int num_dims = params.get_training_num_dims();
 
     double train_split = (100.0-params.get_validation_split()) / 100.0;
 
@@ -122,8 +126,8 @@ void QDeepSSM::run_training()
     emit message("DeepSSM: Preparing Config File");
     std::string config_file = "deepssm/configuration.json";
     prepare_config_file(config_file, "model",
-                        3 /* TODO: Replace this with output from augmentation*/,
-                        out_dir, loader_dir, aug_dir, epochs, learning_rate, decay_lr, fine_tune);
+                        num_dims, out_dir, loader_dir, aug_dir, epochs,
+                        learning_rate, decay_lr, fine_tune);
 
     emit message("DeepSSM: Training");
     py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");

@@ -23,6 +23,9 @@ public:
   int get_aug_num_dims();
   void set_aug_num_dims(int num_dims);
 
+  int get_training_num_dims();
+  void set_training_num_dims(int num_dims);
+
   double get_aug_percent_variability();
   void set_aug_percent_variability(double percent_variability);
 

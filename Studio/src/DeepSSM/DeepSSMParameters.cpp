@@ -21,6 +21,7 @@ const std::string TRAIN_EPOCHS = "train_epochs";
 const std::string TRAIN_LEARNING_RATE = "train_learning_rate";
 const std::string TRAIN_DECAY_LEARNING_RATE = "train_decay_learning_rate";
 const std::string TRAIN_FINE_TUNING = "train_fine_tuning";
+const std::string TRAIN_NUM_DIMS = "train_num_dims";
 
 }
 
@@ -35,16 +36,14 @@ const double TESTING_SPLIT = 20;
 const int AUG_NUM_SAMPLES = 3;
 const int AUG_NUM_DIMS = 3;
 double AUG_PERCENT_VARIABILITY = 0.95;
-std::string AUG_SAMPLER_TYPE = DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_C;
+const std::string AUG_SAMPLER_TYPE = DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_C;
 
 // training defaults
-int TRAIN_EPOCHS = 100;
-double TRAIN_LEARNING_RATE = 0.001;
-bool TRAIN_DECAY_LEARNING_RATE = true;
-bool TRAIN_FINE_TUNING = true;
-
-// inference defaults
-std::string INFERENCE_IMAGES = "";
+const int TRAIN_EPOCHS = 100;
+const double TRAIN_LEARNING_RATE = 0.001;
+const bool TRAIN_DECAY_LEARNING_RATE = true;
+const bool TRAIN_FINE_TUNING = true;
+const int TRAIN_NUM_DIMS = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -87,6 +86,18 @@ int DeepSSMParameters::get_aug_num_dims()
 void DeepSSMParameters::set_aug_num_dims(int num_dims)
 {
   this->params_.set(Keys::AUG_NUM_DIMS, num_dims);
+}
+
+//---------------------------------------------------------------------------
+int DeepSSMParameters::get_training_num_dims()
+{
+  return this->params_.get(Keys::TRAIN_NUM_DIMS, Defaults::TRAIN_NUM_DIMS);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_num_dims(int num_dims)
+{
+  this->params_.set(Keys::TRAIN_NUM_DIMS, num_dims);
 }
 
 //---------------------------------------------------------------------------
