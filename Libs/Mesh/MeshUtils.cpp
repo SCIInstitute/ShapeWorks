@@ -431,7 +431,7 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
   // std::make_tuple(out_V,out_F);
 }
 
-void sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
+int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
 {
   
 
@@ -453,7 +453,7 @@ void sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,st
   if (is_empty(shared_V_l, shared_F_l) || is_empty(shared_V_r, shared_F_r)
       || is_empty(rem_V_l, rem_F_l) || is_empty(rem_V_r, rem_F_r)) {
     //todo this should return a status code to the caller so that it can be displayed or handled based on the
-    // downstream task
+    //downstream task
     throw std::runtime_error("No shared surface detected. Please check the input meshes and/or increase the tolerance");
   }
 
