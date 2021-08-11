@@ -14,40 +14,15 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
-  LD_LIBRARY_PATH: /usr/share/miniconda3/envs/shapeworks/lib
+  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
     
 jobs:
   build:
 
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
+    container: akenmorris/ubuntu-build-box
     
     steps:
-
-    - name: Choose gcc 9
-      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
-
-    - name: Acquire LinuxDeployQt
-      run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
-    
-    - name: Prepare ccache timestamp
-      id: ccache_cache_timestamp
-      shell: cmake -P {0}
-      run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        message("::set-output name=timestamp::${current_date}")
-
-    - name: ccache cache files
-      uses: actions/cache@v1.1.0
-      with:
-        path: ~/.ccache
-        key: ${{ runner.os }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
-        restore-keys: |
-          ${{ runner.os }}-ccache-
-    
-    - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
-      with:
-          miniconda-version: 'latest'
 
     - name: Conda info
       run: conda info
@@ -68,26 +43,12 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: ../Qt
-        key: QtCache-linux
-
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2.13.0
-      with:
-        version: "5.9.9"
-        mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
-
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-ub16-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-docker-ub16-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash -l {0}
@@ -107,7 +68,7 @@ jobs:
       run: conda activate shapeworks && cd build && make install
       
     - name: Remove Qt SQL Stuff
-      run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
+      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
       shell: bash -l {0}
@@ -120,7 +81,7 @@ jobs:
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
   
     - name: Replace Qt SQL Stuff
-      run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
+      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
     - name: ccache statistics
       shell: bash -l {0}
