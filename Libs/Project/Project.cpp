@@ -246,7 +246,7 @@ void Project::load_subjects()
     }
 
     if (name_column >= 0) {
-      auto name = this->get_value(name_column, i);
+      auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
       subject->set_display_name(name);
     } else if (subject->get_segmentation_filenames().size() != 0) {
       subject->set_display_name(subject->get_segmentation_filenames()[0]);

@@ -82,6 +82,10 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
+
+  if (subject->get_display_name() != "") {
+    this->corner_annotations_[0] = QString::fromStdString(subject->get_display_name());
+  }
 }
 
 //---------------------------------------------------------------------------
