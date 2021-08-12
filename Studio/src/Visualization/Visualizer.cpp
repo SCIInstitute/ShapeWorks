@@ -420,6 +420,7 @@ void Visualizer::update_feature_range(double* range)
   this->feature_range_[0] = std::min(this->feature_range_[0], range[0]);
   this->feature_range_[1] = std::max(this->feature_range_[1], range[1]);
   this->feature_range_valid_ = true;
+  this->lightbox_->update_feature_range();
 }
 
 //-----------------------------------------------------------------------------

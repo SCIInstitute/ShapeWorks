@@ -385,7 +385,6 @@ void DeepSSMTool::show_testing_meshes()
     int i = QString::fromStdString(id).toInt();
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    Mesh base(mesh_group.meshes()[0]->get_poly_data());
     std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
                            ".particles";
 
@@ -436,12 +435,16 @@ void DeepSSMTool::update_testing_meshes()
   int idx = 0;
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
-    auto name = shapes[i]->get_annotations()[0];
+    auto name = QString::fromStdString(subjects[i]->get_display_name());
 
     QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
     table->setItem(idx, 0, new_item);
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
+    if (!mesh_group.valid()) {
+      emit warning("Warning: Couldn't load groomed mesh for " + name);
+      continue;
+    }
     Mesh base(mesh_group.meshes()[0]->get_poly_data());
     std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
                            ".particles";
@@ -599,7 +602,6 @@ string DeepSSMTool::get_display_feature()
 {
   if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType ||
       this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
-    //return "deepssm error";
     return "deepssm_error";
   }
   return "";

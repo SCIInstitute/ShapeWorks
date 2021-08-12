@@ -207,6 +207,7 @@ void Project::load_subjects()
   auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
   auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
+  auto name_column = this->get_index_for_column(NAME);
 
   auto extra_columns = this->get_extra_columns();
 
@@ -242,6 +243,17 @@ void Project::load_subjects()
 
     if (locals.size() > 0) {
       this->particles_present_ = true;
+    }
+
+    if (name_column >= 0) {
+      auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
+      subject->set_display_name(name);
+    } else if (subject->get_segmentation_filenames().size() != 0) {
+      subject->set_display_name(subject->get_segmentation_filenames()[0]);
+    } else if (subject->get_groomed_filenames().size() != 0) {
+      subject->set_display_name(subject->get_groomed_filenames()[0]);
+    } else if (locals.size() > 0) {
+      subject->set_display_name(locals[0]);
     }
 
     std::map<std::string, std::string> extra_values;
