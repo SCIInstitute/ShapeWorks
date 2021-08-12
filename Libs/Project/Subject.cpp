@@ -135,6 +135,18 @@ void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 }
 
 //---------------------------------------------------------------------------
+std::string Subject::get_display_name()
+{
+  return this->display_name_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_display_name(std::string display_name)
+{
+  this->display_name_ = display_name;
+}
+
+//---------------------------------------------------------------------------
 void Subject::set_local_particle_filenames(std::vector<std::string> filenames)
 {
   this->local_particle_filenames_ = filenames;
