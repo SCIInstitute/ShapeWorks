@@ -435,7 +435,7 @@ void DeepSSMTool::update_testing_meshes()
   int idx = 0;
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
-    auto name = shapes[i]->get_annotations()[0];
+    auto name = QString::fromStdString(subjects[i]->get_display_name());
 
     QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
     table->setItem(idx, 0, new_item);
