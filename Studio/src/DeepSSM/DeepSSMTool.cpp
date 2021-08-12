@@ -385,7 +385,6 @@ void DeepSSMTool::show_testing_meshes()
     int i = QString::fromStdString(id).toInt();
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    Mesh base(mesh_group.meshes()[0]->get_poly_data());
     std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
                            ".particles";
 
@@ -442,28 +441,30 @@ void DeepSSMTool::update_testing_meshes()
     table->setItem(idx, 0, new_item);
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    Mesh base(mesh_group.meshes()[0]->get_poly_data());
-    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
-                           ".particles";
-    if (QFileInfo(QString::fromStdString(filename)).exists()) {
-      if (idx < this->shapes_.size()) {
-        auto shape = this->shapes_[idx++];
-        MeshGroup group = shape->get_reconstructed_meshes();
-        if (group.valid()) {
-          Mesh m(group.meshes()[0]->get_poly_data());
-          m.distance(base);
-          double average_distance = m.getFieldMean("distance");
+    if (mesh_group.valid()) {
+      Mesh base(mesh_group.meshes()[0]->get_poly_data());
+      std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
+                             ".particles";
+      if (QFileInfo(QString::fromStdString(filename)).exists()) {
+        if (idx < this->shapes_.size()) {
+          auto shape = this->shapes_[idx++];
+          MeshGroup group = shape->get_reconstructed_meshes();
+          if (group.valid()) {
+            Mesh m(group.meshes()[0]->get_poly_data());
+            m.distance(base);
+            double average_distance = m.getFieldMean("distance");
 
-          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
-          table->setItem(idx - 1, 1, new_item);
+            QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
+            table->setItem(idx - 1, 1, new_item);
 
-          auto field = m.getField<vtkDataArray>("distance");
-          field->SetName("deepssm_error");
-          group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-        }
-        else {
-          QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-          table->setItem(idx - 1, 1, new_item);
+            auto field = m.getField<vtkDataArray>("distance");
+            field->SetName("deepssm_error");
+            group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+          }
+          else {
+            QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
+            table->setItem(idx - 1, 1, new_item);
+          }
         }
       }
     }
@@ -599,7 +600,6 @@ string DeepSSMTool::get_display_feature()
 {
   if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType ||
       this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
-    //return "deepssm error";
     return "deepssm_error";
   }
   return "";

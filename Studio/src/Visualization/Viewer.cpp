@@ -537,9 +537,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
         if (scalars) {
           double range[2];
           scalars->GetRange(range);
-          this->visualizer_->update_feature_range(range);
           this->update_difference_lut(range[0], range[1]);
           mapper->SetScalarRange(range[0], range[1]);
+          this->visualizer_->update_feature_range(range);
         }
       }
       else {
@@ -860,7 +860,6 @@ bool Viewer::showing_feature_map()
 //-----------------------------------------------------------------------------
 void Viewer::update_feature_range(double* range)
 {
-  this->visualizer_->update_feature_range(range);
   this->update_difference_lut(range[0], range[1]);
 }
 
