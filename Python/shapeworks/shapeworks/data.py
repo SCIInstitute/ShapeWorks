@@ -172,7 +172,15 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
             samples_idx.append(labels.index(i))
       
     else:
-        samples_idx = random_sub_sampling(inDataList,num_sample,domains_per_shape)
+        meshFilesList=[]
+        for i in range(len(inDataList)):
+            filename = os.path.dirname(inDataList[i]) + "/"+os.path.splitext(os.path.basename(inDataList[i]))[0] + ".vtk"
+            sw.Image(inDataList[i]).toMesh(0.5).write(filename)
+            meshFilesList.append(filename)
+        samples_idx = sample_meshes(meshFilesList,num_sample,domains_per_shape=domains_per_shape)
+        
+        [os.remove(file) for file in meshFilesList]
+
     
     print("\n###########################################\n")
     return samples_idx
