@@ -1152,43 +1152,44 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
       for (int i=0;i<data.size();i++) {
         std::cerr << data[i] << "\n";
       }
-      //this->ui_->compactness_graph->set_data(data);
 
       {
         JKQTPlotter *plot = this->ui_->compactness_graph;
-        JKQTPXYLineGraph* graph=new JKQTPXYLineGraph(this->ui_->compactness_graph);
-        JKQTPDatastore* ds=plot->getDatastore();
+        JKQTPDatastore* ds = plot->getDatastore();
 
-        // 2. now we create data for a simple plot (a sine curve)
-        QVector<double> X, Y;
-        const int Ndata=100;
-        for (int i=0; i<Ndata; i++) {
-          const double x=double(i)/double(Ndata)*8.0*M_PI;
-          X<<x;
-          Y<<sin(x);
+        QVector<double> x, y;
+        for (int i=0; i<data.size(); i++) {
+          x << i + 1;
+          y << data[i];
         }
-        size_t columnX=ds->addCopiedColumn(X, "x");
-        size_t columnY=ds->addCopiedColumn(Y, "y");
+        size_t column_x = ds->addCopiedColumn(x, "Number of Modes");
+        size_t column_y = ds->addCopiedColumn(y, "Compactness");
 
-        graph->setXColumn(columnX);
-        graph->setYColumn(columnY);
-        graph->setTitle(QObject::tr("sine graph"));
+        JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(this->ui_->compactness_graph);
+        graph->setColor(Qt::blue);
+        graph->setSymbolType(JKQTPNoSymbol);
+        graph->setXColumn(column_x);
+        graph->setYColumn(column_y);
+        graph->setTitle(QObject::tr("Compactness"));
 
-        // 5. add the graph to the plot, so it is actually displayed
+        plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+        plot->getPlotter()->setUseAntiAliasingForSystem(true);
+        plot->getPlotter()->setUseAntiAliasingForText(true);
+        plot->getPlotter()->setPlotLabel(tr("\\textbf{Compactness}"));
+        plot->getPlotter()->setDefaultTextSize(18);
+        plot->getPlotter()->setShowKey(false);
+
+        plot->getYAxis()->setAxisLabel("Compactness");
+        plot->getYAxis()->setLabelFontSize(18);
+        plot->getXAxis()->setAxisLabel("Number of Modes");
+        plot->getXAxis()->setLabelFontSize(18);
+
+        plot->clearAllMouseWheelActions();
+        plot->setMousePositionShown(false);
+        plot->setMinimumSize(250, 250);
         plot->addGraph(graph);
-
-        // 6. autoscale the plot so the graph is contained
         plot->zoomToFit();
-
       }
-//      JKQTPXYLineGraph* graph1=new JKQTPXYLineGraph(&plot);
-/*
-      auto graph=new JKQTPXParsedFunctionLineGraph(this->ui_->);
-      graph->setFunction(ui->edtEquation->text());
-      graph->setTitle(ui->edtEquation->text());
-      ui->plot->addGraph(graph);
-      ui->plot->setXY(-10,10,-10,10);
-      */
       this->ui_->compactness_graph->show();
       this->ui_->compactness_progress_widget->hide();
     break;
