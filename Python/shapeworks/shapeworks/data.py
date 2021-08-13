@@ -179,29 +179,48 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
 
 def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
-    if(domains_per_shape==1):
+    if(domains_per_shape>1):
+        num_shapes = int(len(inMeshList)/domains_per_shape)
+        newMeshList=[]
+        for i in range(num_shapes):
+            shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
+            for d in range(1,domains_per_shape):
+                shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
+            filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
+            shape_d0.write(filename)
+            newMeshList.append(filename)
 
-        D = np.zeros((len(inMeshList), len(inMeshList)))
-        for i in range(len(inMeshList)):
-            for j in range(i, len(inMeshList)):
-                mesh1 = sw.Mesh(inMeshList[i])
-                mesh2 = sw.Mesh(inMeshList[j])
-                dist = mesh1.distance(mesh2).getFieldMean("distance")
-                D[i, j] = dist
-        D += D.T
-        A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
-        
-        print("Run Spectral Clustering for {} clusters ...".format(num_sample))
-        model = SpectralClustering(n_clusters=num_sample,
-                                        assign_labels="discretize",
-                                        random_state=0, affinity='precomputed').fit(A)
-        labels = list(model.labels_)
-        samples_idx = []
-        print("sample one data per cluster to have diverse samples!")
-        for i in range(num_sample):
-            samples_idx.append(labels.index(i))
-    else:
-        samples_idx = random_sub_sampling(inMeshList,num_sample,domains_per_shape)
+    if(domains_per_shape==1):
+        newMeshList = inMeshList
+
+    D = np.zeros((len(newMeshList), len(newMeshList)))
+    for i in range(len(newMeshList)):
+        for j in range(i, len(newMeshList)):
+            mesh1 = sw.Mesh(newMeshList[i])
+            mesh2 = sw.Mesh(newMeshList[j])
+            dist = mesh1.distance(mesh2).getFieldMean("distance")
+            D[i, j] = dist
+    D += D.T
+    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+    
+    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+    model = SpectralClustering(n_clusters=num_sample,
+                                    assign_labels="discretize",
+                                    random_state=0, affinity='precomputed').fit(A)
+    labels = list(model.labels_)
+    samples_idx = []
+    print("sample one data per cluster to have diverse samples!")
+    for i in range(num_sample):
+        samples_idx.append(labels.index(i))
+   
     
     print("\n###########################################\n")
-    return samples_idx   
+    if(domains_per_shape>1):
+        [os.remove(file) for file in newMeshList]
+
+    new_sample_idx =[]
+    for i in range(len(samples_idx)):
+        for d in range(domains_per_shape):
+            new_sample_idx.append((samples_idx[i]*domains_per_shape)+d)
+
+    return new_sample_idx   
