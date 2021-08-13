@@ -900,20 +900,26 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 
 bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num){
 
-    // Creating cutting loop
-    vtkPoints *selectionPoints = vtkPoints::New();
-    vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-    locator->SetDataSet(this->mesh);
-    std::vector<size_t> boundaryVerts;
+    // Extract mesh vertices and faces
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
 
-    // Create path creator
-    vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra =
-        vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
-    dijkstra->SetInputData(this->mesh);
-
+    vtkSmartPointer<vtkPoints> points = GetIGLMesh(V, F);
 
     for(size_t bound = 0; bound < boundaries.size(); bound++){
         //std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
+
+        // Creating cutting loop
+        vtkPoints *selectionPoints = vtkPoints::New();
+        vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+        locator->SetDataSet(this->mesh);
+        std::vector<size_t> boundaryVerts;
+
+        // Create path creator
+        vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra =
+            vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+        dijkstra->SetInputData(this->mesh);
+
         vtkIdType lastId = 0;
         for(size_t i = 0; i < boundaries[bound].size(); i++){
             Eigen::Vector3d pt = boundaries[bound][i];
@@ -947,26 +953,134 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
             }
             lastId = ptid;
         }
-    }
-    std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
-    this->select = vtkSelectPolyData::New();
-    this->select->SetLoop(selectionPoints);
-    this->select->SetInputData(this->mesh);
-    this->select->GenerateSelectionScalarsOn();
-    this->select->SetSelectionModeToLargestRegion();
+        std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
-    // Clipping mesh
-    vtkSmartPointer<vtkClipPolyData> selectclip = vtkClipPolyData::New();
-    selectclip->SetInputConnection(this->select->GetOutputPort());
-    selectclip->SetValue(0.0);
+        vtkSmartPointer<vtkSelectPolyData> select = vtkSelectPolyData::New();
+        select->SetLoop(selectionPoints);
+        select->SetInputData(this->mesh);
+        select->GenerateSelectionScalarsOn();
+        select->SetSelectionModeToLargestRegion();
 
-    selectclip->Update();
+        // Clipping mesh
+        vtkSmartPointer<vtkClipPolyData> selectclip = vtkClipPolyData::New();
+        selectclip->SetInputConnection(select->GetOutputPort());
+        selectclip->SetValue(0.0);
 
-    MeshType halfmesh = selectclip->GetOutput();
+        selectclip->Update();
+
+        MeshType halfmesh = selectclip->GetOutput();
+
+        vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
+
+
+
+        vtkSmartPointer<vtkDoubleArray> values = vtkSmartPointer<vtkDoubleArray>::New();
+        vtkSmartPointer<vtkDoubleArray> absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F, dom);
+
+        this->mesh->GetPointData()->SetActiveScalars("value");
+
+        std::vector<Eigen::Matrix3d> face_grad_ = this->setGradientFieldForFFCs(absvalues, V, F);
+
+        //this->visualizeVectorFieldForFFCs(values, face_grad_, V, F);
+
+    } // Per boundary for loop end
+
+
+    // Write mesh for debug purposes
+    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
+    this->write(fnin);
+
+     return true;
+}
+
+// Copied directly from Meshwrapper
+Eigen::Vector3d Mesh::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
+{
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  Eigen::Vector3d bary;
+  this->mesh->GetCell(face)->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
+  return bary;
+}
+
+double Mesh::GetFFCValue(Eigen::Vector3d query){
+    vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
+    locator->SetDataSet(this->mesh);
+    locator->BuildLocator();
+
+    double closestPoint[3];
+    vtkIdType cellId;
+    int subId;
+    double dist;
+    locator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+    auto cell = this->mesh->GetCell(cellId);
+
+    size_t v1 = cell->GetPointId(0); size_t v2 = cell->GetPointId(1); size_t v3 = cell->GetPointId(2);
+
+    // Compute baricentric distances
+    Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
+    Eigen::Vector3d bary = ComputeBarycentricCoordinates(cp, cellId);
+
+    bary = bary/bary.sum();
+
+    Eigen::Vector3d values(this->getFieldValue("value", v1), this->getFieldValue("value", v2), this->getFieldValue("value", v3));
+
+    return (bary*values.transpose()).mean();
+}
+
+Eigen::Vector3d Mesh::GetFFCGradient(Eigen::Vector3d query){
+    vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
+    locator->SetDataSet(this->mesh);
+    locator->BuildLocator();
+
+    double closestPoint[3];
+    vtkIdType cellId;
+    int subId;
+    double dist;
+    locator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+    double * gradAr = mesh->GetCellData()->GetArray("vff")->GetTuple3(cellId);
+    Eigen::Vector3d grad(gradAr[0], gradAr[1], gradAr[2]);
+
+    return grad;
+}
+
+vtkSmartPointer<vtkPoints> Mesh::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
+{
+  const int n_verts = this->mesh->GetNumberOfPoints();
+  const int n_faces = this->mesh->GetNumberOfCells();
+
+  V.resize(n_verts, 3);
+  F.resize(n_faces, 3);
+
+  auto points = this->mesh->GetPoints();
+  for (int i = 0; i < n_verts; i++) {
+    double p[3];
+    points->GetPoint(i, p);
+    V(i, 0) = p[0];
+    V(i, 1) = p[1];
+    V(i, 2) = p[2];
+  }
+  for (int i = 0; i < n_faces; i++) {
+    auto cell = this->mesh->GetCell(i);
+    assert (cell->GetNumberOfPoints() == 3);
+    F(i, 0) = cell->GetPointId(0);
+    F(i, 1) = cell->GetPointId(1);
+    F(i, 2) = cell->GetPointId(2);
+  }
+
+  return points;
+}
+
+vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh){
 
     // Finding which half is in and which is out.
     bool halfmeshisin = true;
+    auto arr = mesh->GetPointData()->GetArray("inout"); // Check if an inout already exists
 
     // Create half-mesh tree
     vtkSmartPointer<vtkKdTreePointLocator> kdhalf =
@@ -1017,44 +1131,27 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
            ptinhalfmesh = false;
        }
        // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point is in or out. Thus we set values for the scalar field.
-       if(halfmeshisin^ptinhalfmesh){
-           inout->SetValue(i, 1);
+       if(!halfmeshisin^ptinhalfmesh){
+           if (arr)
+            inout->SetValue(i, std::min(1., this->getFieldValue("inout", i)));
+           else
+            inout->SetValue(i, 1.);
        }
        else{
-           inout->SetValue(i, 0);
+           inout->SetValue(i, 0.);
        }
     }
 
     // Setting scalar field
     this->setField("inout", inout);
 
-    // *Distance computation using geometry central*
-    // Extract mesh vertices and faces
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
-    const int n_verts = this->mesh->GetNumberOfPoints();
-    const int n_faces = this->mesh->GetNumberOfCells();
+    return inout;
+}
 
-    V.resize(n_verts, 3);
-    F.resize(n_faces, 3);
+vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom){
 
-    auto points = this->mesh->GetPoints();
-    for (int i = 0; i < n_verts; i++) {
-      double p[3];
-      points->GetPoint(i, p);
-      V(i, 0) = p[0];
-      V(i, 1) = p[1];
-      V(i, 2) = p[2];
-    }
-    for (int i = 0; i < n_faces; i++) {
-      auto cell = this->mesh->GetCell(i);
-      assert (cell->GetNumberOfPoints() == 3);
-      F(i, 0) = cell->GetPointId(0);
-      F(i, 1) = cell->GetPointId(1);
-      F(i, 2) = cell->GetPointId(2);
-    }
+    auto arr = mesh->GetPointData()->GetArray("value"); // Check if a value field already exists
 
-    vtkSmartPointer<vtkDoubleArray> values = vtkSmartPointer<vtkDoubleArray>::New();
     values->SetNumberOfComponents(1);
     values->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
     values->SetName("values");
@@ -1092,7 +1189,10 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
               if(distToSource[i] < std::abs(values->GetValue(i))){
                   absvalues->SetValue(i, distToSource[i]);
                   if(inout->GetValue(i)==0.){
-                    values->SetValue(i, -distToSource[i]);
+                    if (arr)
+                        values->SetValue(i, std::max(this->getFieldValue("value", i), -distToSource[i]));
+                    else
+                        values->SetValue(i, -distToSource[i]);
                     C(i,0) = -distToSource[i]; C(i,1) = -distToSource[i]; C(i,2) = -distToSource[i];
                   }
                   else{
@@ -1109,6 +1209,10 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
     // Setting scalar field for value
     this->setField("value", values);
 
+    return absvalues;
+}
+
+std::vector<Eigen::Matrix3d> Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F){
     // Definition of gradient field
     vtkSmartPointer<vtkDoubleArray> vf = vtkSmartPointer<vtkDoubleArray>::New();
     vf->SetNumberOfComponents(3);
@@ -1149,6 +1253,12 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
 
     //std::cout << "Computing grads" << std::endl;
 
+    // Definition of gradient field for faces
+    vtkSmartPointer<vtkDoubleArray> vff = vtkSmartPointer<vtkDoubleArray>::New();
+    vff->SetNumberOfComponents(3);
+    vff->SetNumberOfTuples(this->mesh->GetNumberOfCells());
+    vff->SetName("vff");
+
     // Computes grad vec for each face
     for(size_t i = 0; i < F.rows(); i++){
         const Eigen::Vector3d vert_dists(absvalues->GetValue(F(i,0)), absvalues->GetValue(F(i,1)), absvalues->GetValue(F(i,2)));
@@ -1159,6 +1269,7 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
         grads.row(F(i,0)) += out_grad_eigen;
         grads.row(F(i,1)) += out_grad_eigen;
         grads.row(F(i,2)) += out_grad_eigen;
+        vff->SetTuple3(i, out_grad_eigen(0), out_grad_eigen(1), out_grad_eigen(2));
         //out_grad_eigen *= geo_dist / out_grad_eigen.norm();
     }
 
@@ -1169,18 +1280,12 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
 
     this->setField("Gradient", vf);
 
-    this->mesh->GetPointData()->SetActiveScalars("value");
+    this->mesh->GetCellData()->AddArray(vff);
 
-    this->visualizeVectorFieldForFFCs(values, face_grad_);
-
-    // Write mesh for debug purposes
-    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
-    this->write(fnin);
-
-    return true;
+    return face_grad_;
 }
 
-void Mesh::visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_){
+void Mesh::visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F){
     //std::cout << "VTK rendering" << std::endl;
 
     // Render VTK for debug
@@ -1191,31 +1296,6 @@ void Mesh::visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, s
 //    lut->Build();
 
     //std::cout << "Setting Mesh Mapper" << std::endl;
-
-    // Extract mesh vertices and faces
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
-    const int n_verts = this->mesh->GetNumberOfPoints();
-    const int n_faces = this->mesh->GetNumberOfCells();
-
-    V.resize(n_verts, 3);
-    F.resize(n_faces, 3);
-
-    auto points = this->mesh->GetPoints();
-    for (int i = 0; i < n_verts; i++) {
-      double p[3];
-      points->GetPoint(i, p);
-      V(i, 0) = p[0];
-      V(i, 1) = p[1];
-      V(i, 2) = p[2];
-    }
-    for (int i = 0; i < n_faces; i++) {
-      auto cell = this->mesh->GetCell(i);
-      assert (cell->GetNumberOfPoints() == 3);
-      F(i, 0) = cell->GetPointId(0);
-      F(i, 1) = cell->GetPointId(1);
-      F(i, 2) = cell->GetPointId(2);
-    }
 
     vtkNew<vtkPolyDataMapper> meshmapper;
     meshmapper->SetInputData(this->mesh);
@@ -1256,6 +1336,17 @@ void Mesh::visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, s
       renderer->AddActor(getArrow(face_center, face_center+out_grad_eigen));
       //out_grad_eigen *= geo_dist / out_grad_eigen.norm();
   }
+
+  // Debug scalar and gradient queries
+  //vvvvvvvvvvvvvvvvvvvvvvvvvvvv
+//  Eigen::Vector3d addedpt(1,1,1);
+//  Eigen::Vector3d querypt = V.row(0)+ addedpt.transpose();
+//  double val = GetFFCValue(querypt);
+//  Eigen::Vector3d grad = GetFFCGradient(querypt);
+//  std::cout << "Querypt " << querypt.transpose() << std::endl << "val " << val << ", grad " << grad.transpose() << std::endl;
+//  renderer->AddActor(getArrow(querypt, querypt+grad*10));
+  //^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
   renderer->AddActor(meshactor);
   renderer->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
 

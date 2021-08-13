@@ -451,8 +451,8 @@ bool Sampler::initialize_ffcs(size_t dom){
     Mesh mesh = Mesh(m_meshes[dom]);
 
     for(size_t i = 0; i < m_FFCs[dom].size(); i++){
-        mesh.SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
         std::cout << "Spplitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+        mesh.SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
     }
 
     std::cout << "Adding free-form constraint to domain " << dom << std::endl;

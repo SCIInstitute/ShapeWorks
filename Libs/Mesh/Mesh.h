@@ -4,6 +4,7 @@
 #include "ImageUtils.h"
 
 #include <math.h>
+#include <algorithm>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <string>
@@ -13,6 +14,7 @@
 #include <vtkSelectPolyData.h>
 #include <vtkClipPolyData.h>
 #include <vtkKdTreePointLocator.h>
+#include <vtkCellLocator.h>
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
@@ -197,6 +199,9 @@ public:
 
   bool SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
+  double GetFFCValue(Eigen::Vector3d query);
+  Eigen::Vector3d GetFFCGradient(Eigen::Vector3d query);
+
   //Debug
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
 
@@ -211,9 +216,19 @@ private:
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
-  vtkSmartPointer<vtkSelectPolyData> select;
 
-  void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_);
+  void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F);
+
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
+
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
+
+  vtkSmartPointer<vtkPoints> GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
+
+  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
+
 };
 
 /// stream insertion operators for Mesh

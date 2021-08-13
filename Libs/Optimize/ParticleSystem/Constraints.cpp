@@ -325,6 +325,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
 
 void Constraints::addFreeFormConstraint(shapeworks::Mesh & mesh){
     FreeFormConstraint ffc(mesh);
+    this->freeFormConsts->push_back(ffc);
     active = true;
 }
 
