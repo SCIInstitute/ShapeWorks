@@ -82,6 +82,10 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
+
+  if (subject->get_display_name() != "") {
+    this->corner_annotations_[0] = QString::fromStdString(subject->get_display_name());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -439,28 +443,38 @@ void Shape::load_feature(std::string display_mode, std::string feature)
         return;
       }
 
-      auto filenames = this->subject_->get_feature_filenames();
-
-      if (filenames.find(feature) == filenames.end()) {
-        auto original_meshes = this->get_original_meshes(true).meshes();
-
-        // assign scalars at points
-        this->load_feature_from_mesh(feature, original_meshes[d]);
+      // first check if we have particle scalars for this feature
+      auto point_features = this->get_point_features(feature);
+      if (point_features.size() > 0) { // already loaded as particle scalars
+        this->set_point_features(feature, point_features);
       }
       else {
-        // read the feature
-        QString filename = QString::fromStdString(filenames[feature]);
-        try {
-          ReaderType::Pointer reader = ReaderType::New();
-          reader->SetFileName(filename.toStdString());
-          reader->Update();
-          ImageType::Pointer image = reader->GetOutput();
-          group.meshes()[d]->apply_feature_map(feature, image);
-          this->apply_feature_to_points(feature, image);
+        // next check if there is a feature filename
+        auto filenames = this->subject_->get_feature_filenames();
+        if (filenames.find(feature) == filenames.end()) {
+          // no feature filename, so load it from the original mesh
+          auto original_meshes = this->get_original_meshes(true).meshes();
 
-        } catch (itk::ExceptionObject& excep) {
-          QMessageBox::warning(0, "Unable to open file",
-                               "Error opening file: \"" + filename + "\"");
+          if (original_meshes.size() > d) {
+            // assign scalars at points
+            this->load_feature_from_mesh(feature, original_meshes[d]);
+          }
+        }
+        else {
+          // read the feature
+          QString filename = QString::fromStdString(filenames[feature]);
+          try {
+            ReaderType::Pointer reader = ReaderType::New();
+            reader->SetFileName(filename.toStdString());
+            reader->Update();
+            ImageType::Pointer image = reader->GetOutput();
+            group.meshes()[d]->apply_feature_map(feature, image);
+            this->apply_feature_to_points(feature, image);
+
+          } catch (itk::ExceptionObject& excep) {
+            QMessageBox::warning(0, "Unable to open file",
+                                 "Error opening file: \"" + filename + "\"");
+          }
         }
       }
     }
@@ -529,6 +543,9 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
   Eigen::VectorXf values(num_points);
 
   vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
+  if (!from_array) {
+    return;
+  }
 
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
@@ -684,6 +701,35 @@ bool Shape::has_alignment()
   }
 
   return false;
+}
+
+//---------------------------------------------------------------------------
+void Shape::load_feature_from_scalar_file(std::string filename, std::string feature_name)
+{
+  QString qfilename = QString::fromStdString(filename);
+
+  if (!QFile(qfilename).exists()) {
+    return;
+  }
+
+  QFile file(qfilename);
+  if (!file.open(QIODevice::ReadOnly)) {
+    STUDIO_LOG_ERROR("Unable to open scalar file: " + qfilename);
+    return;
+  }
+
+  auto data = QString(file.readAll()).trimmed();
+  auto lines = data.split('\n');
+  file.close();
+
+  Eigen::VectorXf values(lines.size());
+  for (int i = 0; i < lines.size(); i++) {
+    float value = QString(lines[i]).toFloat();
+    values[i] = value;
+  }
+
+  this->set_point_features(feature_name, values);
+
 }
 
 }

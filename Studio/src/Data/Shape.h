@@ -133,6 +133,8 @@ public:
 
   void set_point_features(std::string feature, Eigen::VectorXf values);
 
+  void load_feature_from_scalar_file(std::string filename, std::string feature_name);
+
 private:
 
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,

@@ -36,7 +36,7 @@ call pip install --upgrade pip
 call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
 call pip install hotelling==0.5.0
-call pip install statsmodel
+call pip install statsmodels
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
@@ -72,5 +72,8 @@ call conda install --yes jupyter_contrib_nbextensions
 call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main
+
+md %USERPROFILE%\.shapeworks
+python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks/python_path.txt
 
 call conda info

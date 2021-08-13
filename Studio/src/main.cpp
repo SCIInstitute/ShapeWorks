@@ -4,6 +4,7 @@
 #include <QDir>
 
 #include <Interface/ShapeWorksStudioApp.h>
+#include <Applications/Configuration.h>
 #include <iostream>
 
 #include <vtkObject.h>
@@ -26,15 +27,14 @@ int main(int argc, char** argv)
   //tbb::task_scheduler_init init(1);
 
   try {
-    STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
-
+    STUDIO_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
 #ifdef _WIN32
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
+    STUDIO_LOG_MESSAGE("ShapeWorks Studio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode( 0 );
 #endif
@@ -49,8 +49,8 @@ int main(int argc, char** argv)
     studio_app->show();
 
     if (!shapeworks::StudioLog::Instance().check_log_open()) {
-      QMessageBox::warning(NULL, "ShapeWorksStudio", "Unable to open log file: " +
-                                                     shapeworks::StudioLog::Instance().get_log_filename());
+      QMessageBox::warning(NULL, "ShapeWorks Studio", "Unable to open log file: " +
+                                                      shapeworks::StudioLog::Instance().get_log_filename());
     }
 
     if (argc > 1) {

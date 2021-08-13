@@ -36,6 +36,7 @@ const std::string Session::DATA_C("data");
 const std::string Session::GROOM_C("groom");
 const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
+const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),

@@ -1,5 +1,4 @@
 #include <sstream>
-#include <fstream>
 #include <iostream>
 
 #include <QProcess>
@@ -8,12 +7,14 @@
 #include <Groom/QGroom.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
+#include <DeepSSM/QDeepSSM.h>
 
 #include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    QSharedPointer<QGroom> groom,
                                    QSharedPointer<Optimize> optimize,
@@ -36,9 +37,11 @@ ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                                       num_clusters_(numClusters)
 {}
 
+//---------------------------------------------------------------------------
 ShapeworksWorker::~ShapeworksWorker()
 {}
 
+//---------------------------------------------------------------------------
 void ShapeworksWorker::process()
 {
   switch (this->type_) {
@@ -133,7 +136,10 @@ void ShapeworksWorker::process()
       }
       break;
   }
+
+
   emit result_ready();
   emit finished();
 }
+
 }

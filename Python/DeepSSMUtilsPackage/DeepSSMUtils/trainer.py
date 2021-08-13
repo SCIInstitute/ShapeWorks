@@ -3,6 +3,7 @@ import time
 import json
 import numpy as np
 from numpy import matlib
+import matplotlib.pyplot as plt 
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -10,10 +11,15 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
 from DeepSSMUtils import model
 from DeepSSMUtils import losses
+from DeepSSMUtils import train_viz
+from shapeworks.utils import sw_message
+from shapeworks.utils import sw_progress
+from shapeworks.utils import sw_check_abort
+
 
 '''
 Train helper
-	Initilaizes all weights using initialization function specified by initf
+	Initializes all weights using initialization function specified by initf
 '''
 def weight_init(module, initf):
 	def foo(m):
@@ -72,14 +78,14 @@ def supervised_train(config_file):
 	train_loader = torch.load(train_loader_path)
 	val_loader = torch.load(validation_loader_path)
 	print("Done.")
-	# initalizations
+	# initializations
 	num_pca = train_loader.dataset.pca_target[0].shape[0]
 	num_corr = train_loader.dataset.mdl_target[0].shape[0]
 	print("Defining net...")
 	net = model.DeepSSMNet(config_file)
 	device = net.device
 	net.to(device)
-	# intialize model weights
+	# initialize model weights
 	net.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
 	net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
@@ -109,11 +115,33 @@ def supervised_train(config_file):
 	print("Done.")
 	# train
 	print("Beginning training on device = " + device + '\n')
-	logger = open(model_dir + "train_log.csv", "w+")
+	# Initialize logger
+	logger = open(model_dir + "train_log.csv", "w+", buffering=1)
 	log_print(logger, ["Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
+	# Initialize training plot
+	train_plot = plt.figure()
+	axe = train_plot.add_subplot(111)
+	axe.set_title('DeepSSM Training')
+	sp_train, = axe.plot([],[],label='Training',ms=10,color='b',marker='o',ls='')
+	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
+	axe.set_xlabel('Epochs')
+	axe.set_xlim(0,num_epochs+1)
+	axe.set_ylabel('PCA MSE')
+	axe.legend()
+	train_plot.savefig(model_dir + "training_plot.png", dpi=300)
+	# initialize
+	epochs = []
+	plot_train_losses = []
+	plot_val_losses = []
 	t0 = time.time()
 	best_val_rel_error = np.Inf
 	for e in range(1, num_epochs + 1):
+		if sw_check_abort():
+			sw_message("Aborted")
+			return
+		sw_message(f"Epoch {e}/{num_epochs}")
+		sw_progress(e / (num_epochs+1))
+
 		torch.cuda.empty_cache()
 		# train
 		net.train()
@@ -131,6 +159,8 @@ def supervised_train(config_file):
 			train_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 			train_rel_losses.append(train_rel_loss.item())
 		# test validation
+		pred_particles = []
+		true_particles = []
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
 			val_losses = []
@@ -144,12 +174,24 @@ def supervised_train(config_file):
 				val_losses.append(v_loss.item())
 				val_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 				val_rel_losses.append(val_rel_loss.item())
+				pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
+				true_particles.append(mdl.squeeze().detach().cpu().numpy())
+			train_viz.write_validation_examples(np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/")
 			# log
 			train_mr_MSE = np.mean(np.sqrt(train_losses))
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
 			log_print(logger, [e, scheduler.get_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
+			# plot
+			epochs.append(e)
+			plot_train_losses.append(train_mr_MSE)
+			plot_val_losses.append(val_mr_MSE)
+			sp_train.set_data(epochs, plot_train_losses)
+			sp_val.set_data(epochs, plot_val_losses)
+			axe.set_ylim(0,max(max(plot_train_losses), max(plot_val_losses))+3)
+			train_plot.canvas.draw()
+			train_plot.savefig(model_dir + "training_plot.png")
 			# save
 			if val_rel_err < best_val_rel_error:
 				best_val_rel_error = val_rel_err
@@ -189,6 +231,12 @@ def supervised_train(config_file):
 		# train on the corr loss
 		best_ft_val_rel_error = np.Inf
 		for e in range(1, ft_epochs + 1):
+			if sw_check_abort():
+				sw_message("Aborted")
+				return
+			sw_message(f"Fine Tuning, Epoch {e}/{ft_epochs}")
+			sw_progress(e / (num_epochs+1))
+
 			torch.cuda.empty_cache()
 			# train
 			net.train()
@@ -206,6 +254,8 @@ def supervised_train(config_file):
 				train_rel_loss = F.mse_loss(pred_mdl, mdl) / F.mse_loss(pred_mdl*0, mdl)
 				train_rel_losses.append(train_rel_loss.item())
 			# test validation
+			pred_particles = []
+			true_particles = []
 			if ((e % eval_freq) == 0 or e == 1):
 				net.eval()
 				val_losses = []
@@ -223,6 +273,9 @@ def supervised_train(config_file):
 						best_ft_val_rel_error = val_rel_loss
 						best_ft_epoch = e
 						torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
+					pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
+					true_particles.append(mdl.squeeze().detach().cpu().numpy())
+				train_viz.write_validation_examples(np.array(pred_particles), np.array(true_particles), model_dir + "val_examples/")
 				# log
 				train_mr_MSE = np.mean(np.sqrt(train_losses))
 				val_mr_MSE = np.mean(np.sqrt(val_losses))
