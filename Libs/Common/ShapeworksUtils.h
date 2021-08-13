@@ -6,11 +6,21 @@
 #include <vtkMatrix4x4.h>
 #include <vtkPolyData.h>
 
+#include <chrono>
+
 namespace shapeworks {
 
 class ShapeworksUtils
 {
+  using time_point = std::chrono::time_point<std::chrono::steady_clock>;
+
 public:
+
+  /// get the current time
+  static time_point now() { return std::chrono::steady_clock::now(); }
+
+  /// return elapsed time in seconds, optionally printing to console
+  static double elapsed(time_point start, time_point end, bool print_elapsed = true);
 
   /// returns true if pathname is a directory
   // TODO: in C++17 this is a standard function

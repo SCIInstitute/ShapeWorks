@@ -58,4 +58,18 @@ Vector3 ShapeworksUtils::getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat)
   return makeVector({mat->GetElement(0,3), mat->GetElement(1,3), mat->GetElement(2,3)});
 }
 
+double ShapeworksUtils::elapsed(ShapeworksUtils::time_point start,
+                                ShapeworksUtils::time_point end,
+                                bool print_elapsed)
+{
+  // Calculating total time taken by the program.
+  double time_taken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+  time_taken *= 1e-9;
+
+  if (print_elapsed)
+    cout << "Elapsed: " << std::fixed << time_taken << std::setprecision(9) << " sec" << endl;
+
+  return time_taken;
+}
+
 } // shapeworks

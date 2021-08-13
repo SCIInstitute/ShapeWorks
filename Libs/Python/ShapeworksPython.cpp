@@ -787,16 +787,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ImageUtils>(m, "ImageUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(filenames, val);
-              },
+              py::overload_cast<const std::vector<std::string>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of filenames",
               "filenames"_a, "isoValue"_a=1.0)
 
   .def_static("boundingBox",
-              [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(images, val);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Image>>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of images",
               "images"_a, "isoValue"_a=1.0)
 
@@ -804,9 +800,9 @@ PYBIND11_MODULE(shapeworks_py, m)
               [](const std::string &source_landmarks,
                  const std::string &target_landmarks,
                  const int stride) -> decltype(auto) {
-                auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks,
-                                                                             target_landmarks,
-                                                                             stride);
+                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
+                                                                 target_landmarks,
+                                                                 stride);
                 return xform_ptr;
               },
               "computes a warp transform from the source to the target landmarks",
@@ -871,7 +867,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::decimate,
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
-
 
   .def("invertNormals",
        &Mesh::invertNormals,
@@ -965,8 +960,28 @@ PYBIND11_MODULE(shapeworks_py, m)
        "region"_a=PhysicalRegion(),
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
+  .def("closestPoint",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
+       },
+       "returns closest point to given point on mesh",
+       "point"_a)
+
+  .def("closestPointId",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return mesh.closestPointId(Point({p[0], p[1], p[2]}));
+       },
+       "returns closest point id in this mesh to the given point in space",
+       "point"_a)
+
+  .def("geodesicDistance",
+       &Mesh::geodesicDistance,
+       "computes geodesic distance between two vertices (specified by their indices) on mesh",
+       "source"_a, "target"_a)
+
   .def("distance",
-       &Mesh::distance, "computes surface to surface distance",
+       &Mesh::distance,
+       "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
@@ -997,12 +1012,27 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::numFaces,
        "number of faces")
 
+  .def("points",
+       &Mesh::points,
+       "matrix with number of points with (x,y,z) coordinates of each point")
+
+  .def("faces",
+       &Mesh::faces,
+       "matrix with number of faces with indices of the three points from which each face is composed")
+
   .def("getPoint",
-       [](Mesh &mesh, int i) -> decltype(auto) {
-         return py::array(3, mesh.getPoint(i).GetDataPointer());
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getPoint(id).GetDataPointer());
        },
-       "return (x,y,z) coordinates of vertex at given index",
-       "p"_a)
+       "(x,y,z) coordinates of vertex at given index",
+       "id"_a)
+
+  .def("getFace",
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getFace(id).GetDataPointer());
+       },
+       "return indices of the three points with which the face at the given index is composed",
+       "id"_a)
 
   .def("getFieldNames",
        &Mesh::getFieldNames,
@@ -1070,23 +1100,17 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<MeshUtils>(m, "MeshUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, bool center) {
-                return shapeworks::MeshUtils::boundingBox(filenames, center);
-              },
+              py::overload_cast<const std::vector<std::string>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for meshes",
               "filenames"_a, "center"_a=false)
 
   .def_static("boundingBox",
-              [](std::vector<Mesh> meshes, bool center) {
-                return shapeworks::MeshUtils::boundingBox(meshes, center);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for shapeworks meshes",
               "meshes"_a, "center"_a=false)
 
   .def_static("findReferenceMesh",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::findReferenceMesh(meshes);
-              },
+              &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
   ;

@@ -87,6 +87,15 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
+  /// returns closest point on a face in the mesh to the given point in space
+  Point3 closestPoint(const Point3 point);
+
+  /// returns closest point id in this mesh to the given point in space
+  int closestPointId(const Point3 point);
+
+  /// computes geodesic distance between two vertices (specified by their indices) on mesh
+  double geodesicDistance(int source, int target);
+
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
@@ -107,8 +116,17 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// return (x,y,z) coordinates of vertex at given index
-  Point3 getPoint(int p) const;
+  /// matrix with number of points with (x,y,z) coordinates of each point
+  Eigen::MatrixXd points() const;
+
+  /// matrix with number of faces with indices of the three points from which each face is composed
+  Eigen::MatrixXi faces() const;
+
+  /// (x,y,z) coordinates of vertex at given index
+  Point3 getPoint(vtkIdType id) const;
+
+  /// return indices of the three points with which the face at the given index is composed
+  IPoint3 getFace(vtkIdType id) const;
 
   // fields of mesh points //
 
