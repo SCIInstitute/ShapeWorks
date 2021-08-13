@@ -126,23 +126,12 @@ def create_cpp_xml(filename, outputfilename):
     file = open(outputfilename,"w")
     file.write(xml_text)
     file.close()
-def random_sub_sampling(inDataList,num_sample,domains_per_shape):
-
-    print("\nPerforming random sub-sampling")
-    print("\nClustering based subsample generation unsupported for multiple domains")
-    dataset_length = int(len(inDataList)/domains_per_shape)
-    all_indices = list(range(dataset_length))
-    idx = list(np.random.choice(all_indices,num_sample,replace=False))
-    samples_idx = []
-    for i in idx:
-        samples_idx.append(int(i*domains_per_shape))
-        samples_idx.append(int((i*domains_per_shape)+1))
-    return samples_idx
-    
+   
 
 def sample_images(inDataList, num_sample,domains_per_shape=1):
-    print("\n########## Sample subset of data #########\n")
+    
     if(domains_per_shape==1):
+        print("\n########## Sample subset of data #########\n")
         D = np.zeros((len(inDataList), len(inDataList)))
         for i in range(len(inDataList)):
             image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
@@ -178,7 +167,7 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
             sw.Image(inDataList[i]).toMesh(0.5).write(filename)
             meshFilesList.append(filename)
         samples_idx = sample_meshes(meshFilesList,num_sample,domains_per_shape=domains_per_shape)
-        
+
         [os.remove(file) for file in meshFilesList]
 
     
