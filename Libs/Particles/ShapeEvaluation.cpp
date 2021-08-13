@@ -38,16 +38,15 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   const auto S = svd.singularValues().array().pow(2) / (N * D);
 
   // Compute cumulative sum
-  Eigen::VectorXd cumsum(N);
+  Eigen::VectorXd cumsum(N-1); // the number of modes is on less than the number of samples
   cumsum(0) = S(0);
   for (int i = 1; i < N; i++) {
     if (progress_callback) {
       progress_callback(static_cast<float>(i) / static_cast<float>(N));
     }
-    cumsum(i) = cumsum(i - 1) + S(i);
+    cumsum(i) = cumsum(i-1) + S(i);
   }
   cumsum /= S.sum();
-
   return cumsum;
 }
 

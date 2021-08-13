@@ -1148,6 +1148,9 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
   switch (job_type) {
     case ShapeEvaluationWorker::JobType::CompactnessType :
       this->eval_compactness_ = data;
+      for (int i=0; i<data.size(); i++) {
+        std::cerr << "compactness[" << i << "] = " << data[i] << "\n";
+      }
       this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes", "Compactness");
       this->ui_->compactness_graph->show();
       this->ui_->compactness_progress_widget->hide();
