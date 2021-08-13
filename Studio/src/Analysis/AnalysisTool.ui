@@ -1447,7 +1447,7 @@ QWidget#specificity_panel {
           <widget class="QWidget" name="specificity_panel" native="true">
            <layout class="QGridLayout" name="gridLayout_16">
             <item row="0" column="0">
-             <widget class="BarGraph" name="specificity_graph" native="true">
+             <widget class="JKQTPlotter" name="specificity_graph" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -1495,7 +1495,7 @@ QWidget#specificity_panel {
           <widget class="QWidget" name="generalization_panel" native="true">
            <layout class="QGridLayout" name="gridLayout_17">
             <item row="0" column="0">
-             <widget class="BarGraph" name="generalization_graph" native="true">
+             <widget class="JKQTPlotter" name="generalization_graph" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>

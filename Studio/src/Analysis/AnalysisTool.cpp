@@ -81,9 +81,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           this, &AnalysisTool::group_changed);
 
 
-  this->ui_->specificity_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+  //this->ui_->specificity_graph->set_chart_type(BarGraph::ChartType::Evaluation);
   //this->ui_->compactness_graph->set_chart_type(BarGraph::ChartType::Evaluation);
-  this->ui_->generalization_graph->set_chart_type(BarGraph::ChartType::Evaluation);
+  //this->ui_->generalization_graph->set_chart_type(BarGraph::ChartType::Evaluation);
 
   this->ui_->surface_open_button->setChecked(false);
   //this->on_surface_open_button_toggled();
@@ -95,8 +95,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   this->ui_->graph_->set_y_label("Explained Variance");
   //this->ui_->compactness_graph->set_y_label("Compactness");
-  this->ui_->generalization_graph->set_y_label("Generalization");
-  this->ui_->specificity_graph->set_y_label("Specificity");
+  //this->ui_->generalization_graph->set_y_label("Generalization");
+  //this->ui_->specificity_graph->set_y_label("Specificity");
 //  this->ui_->evaluation_widget->hide();
 
   for (auto button : {this->ui_->distance_transfom_radio_button,
@@ -1148,68 +1148,19 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
   switch (job_type) {
     case ShapeEvaluationWorker::JobType::CompactnessType :
       this->eval_compactness_ = data;
-      std::cerr << "compactness done:\n";
-      for (int i=0;i<data.size();i++) {
-        std::cerr << data[i] << "\n";
-      }
-
-      {
-        JKQTPlotter *plot = this->ui_->compactness_graph;
-        JKQTPDatastore* ds = plot->getDatastore();
-
-        QVector<double> x, y;
-        for (int i=0; i<data.size(); i++) {
-          x << i + 1;
-          y << data[i];
-        }
-        size_t column_x = ds->addCopiedColumn(x, "Number of Modes");
-        size_t column_y = ds->addCopiedColumn(y, "Compactness");
-
-        JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(this->ui_->compactness_graph);
-        graph->setColor(Qt::blue);
-        graph->setSymbolType(JKQTPNoSymbol);
-        graph->setXColumn(column_x);
-        graph->setYColumn(column_y);
-        graph->setTitle(QObject::tr("Compactness"));
-
-        plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-        plot->getPlotter()->setUseAntiAliasingForSystem(true);
-        plot->getPlotter()->setUseAntiAliasingForText(true);
-        plot->getPlotter()->setPlotLabel(tr("\\textbf{Compactness}"));
-        plot->getPlotter()->setDefaultTextSize(18);
-        plot->getPlotter()->setShowKey(false);
-
-        plot->getYAxis()->setAxisLabel("Compactness");
-        plot->getYAxis()->setLabelFontSize(18);
-        plot->getXAxis()->setAxisLabel("Number of Modes");
-        plot->getXAxis()->setLabelFontSize(18);
-
-        plot->clearAllMouseWheelActions();
-        plot->setMousePositionShown(false);
-        plot->setMinimumSize(250, 250);
-        plot->addGraph(graph);
-        plot->zoomToFit();
-      }
+      this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes", "Compactness");
       this->ui_->compactness_graph->show();
       this->ui_->compactness_progress_widget->hide();
     break;
     case ShapeEvaluationWorker::JobType::SpecificityType :
-      std::cerr << "specificity done:\n";
-      for (int i=0;i<data.size();i++) {
-        std::cerr << data[i] << "\n";
-      }
+      this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       this->eval_specificity_ = data;
-      this->ui_->specificity_graph->set_data(data);
       this->ui_->specificity_graph->show();
       this->ui_->specificity_progress_widget->hide();
     break;
     case ShapeEvaluationWorker::JobType::GeneralizationType :
-      std::cerr << "generalization done:\n";
-      for (int i=0;i<data.size();i++) {
-        std::cerr << data[i] << "\n";
-      }
+      this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes", "Generalization");
       this->eval_generalization_ = data;
-      this->ui_->generalization_graph->set_data(data);
       this->ui_->generalization_graph->show();
       this->ui_->generalization_progress_widget->hide();
     break;
@@ -1320,4 +1271,41 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
 
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label) {
+  JKQTPDatastore* ds = plot->getDatastore();
+
+  QVector<double> x, y;
+  for (int i=0; i<data.size(); i++) {
+    x << i + 1;
+    y << data[i];
+  }
+  size_t column_x = ds->addCopiedColumn(x, "Number of Modes");
+  size_t column_y = ds->addCopiedColumn(y, "Compactness");
+
+  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(this->ui_->compactness_graph);
+  graph->setColor(Qt::blue);
+  graph->setSymbolType(JKQTPNoSymbol);
+  graph->setXColumn(column_x);
+  graph->setYColumn(column_y);
+  graph->setTitle(title);
+
+  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+  plot->getPlotter()->setUseAntiAliasingForSystem(true);
+  plot->getPlotter()->setUseAntiAliasingForText(true);
+  plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
+  plot->getPlotter()->setDefaultTextSize(18);
+  plot->getPlotter()->setShowKey(false);
+
+  plot->getXAxis()->setAxisLabel(x_label);
+  plot->getXAxis()->setLabelFontSize(18);
+  plot->getYAxis()->setAxisLabel(y_label);
+  plot->getYAxis()->setLabelFontSize(18);
+
+  plot->clearAllMouseWheelActions();
+  plot->setMousePositionShown(false);
+  plot->setMinimumSize(250, 250);
+  plot->addGraph(graph);
+  plot->zoomToFit();
+}
 }

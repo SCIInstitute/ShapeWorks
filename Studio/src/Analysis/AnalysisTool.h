@@ -19,6 +19,7 @@
 #include <Analysis/ShapeEvaluationWorker.h>
 
 class Ui_AnalysisTool;
+class JKQTPlotter;
 
 namespace shapeworks {
 
@@ -158,6 +159,8 @@ signals:
   void reconstruction_complete();
 
 private:
+
+  void create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
 
   void compute_reconstructed_domain_transforms();
 
