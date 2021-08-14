@@ -986,6 +986,9 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
 
     } // Per boundary for loop end
 
+    locator = vtkSmartPointer<vtkCellLocator>::New();
+    locator->SetDataSet(this->mesh);
+    locator->BuildLocator();
 
     // Write mesh for debug purposes
     std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
@@ -1007,8 +1010,6 @@ Eigen::Vector3d Mesh::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, i
 }
 
 double Mesh::GetFFCValue(Eigen::Vector3d query){
-    vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
-    locator->SetDataSet(this->mesh);
     locator->BuildLocator();
 
     double closestPoint[3];
@@ -1033,8 +1034,7 @@ double Mesh::GetFFCValue(Eigen::Vector3d query){
 }
 
 Eigen::Vector3d Mesh::GetFFCGradient(Eigen::Vector3d query){
-    vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
-    locator->SetDataSet(this->mesh);
+
     locator->BuildLocator();
 
     double closestPoint[3];

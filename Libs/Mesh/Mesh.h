@@ -217,6 +217,8 @@ private:
 
   MeshType mesh;
 
+  vtkSmartPointer<vtkCellLocator> locator;
+
   void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);

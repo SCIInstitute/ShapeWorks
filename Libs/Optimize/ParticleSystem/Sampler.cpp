@@ -448,12 +448,14 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 }
 
 bool Sampler::initialize_ffcs(size_t dom){
-    Mesh mesh = Mesh(m_meshes[dom]);
+    std::shared_ptr<Mesh> mesh(new Mesh(m_meshes[dom]));
 
     for(size_t i = 0; i < m_FFCs[dom].size(); i++){
         std::cout << "Spplitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
-        mesh.SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+        mesh->SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
     }
+
+    this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
 
     std::cout << "Adding free-form constraint to domain " << dom << std::endl;
 
