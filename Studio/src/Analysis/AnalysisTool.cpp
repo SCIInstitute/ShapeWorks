@@ -35,7 +35,6 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
-
   JKQTPlotter plot;
 
   this->ui_ = new Ui_AnalysisTool;
@@ -80,14 +79,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
-  //this->ui_->specificity_graph->set_chart_type(BarGraph::ChartType::Evaluation);
-  //this->ui_->compactness_graph->set_chart_type(BarGraph::ChartType::Evaluation);
-  //this->ui_->generalization_graph->set_chart_type(BarGraph::ChartType::Evaluation);
 
   this->ui_->surface_open_button->setChecked(false);
-  //this->on_surface_open_button_toggled();
   this->ui_->metrics_open_button->setChecked(false);
-  //this->on_metrics_open_button_toggled();
 
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
@@ -100,6 +94,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
             this, &AnalysisTool::reconstruction_method_changed);
   }
 
+  this->ui_->explained_variance_panel->hide();
   this->ui_->reconstruction_options->hide();
 }
 
