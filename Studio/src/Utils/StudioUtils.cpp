@@ -4,6 +4,7 @@
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
 bool StudioUtils::ask_multiple_domains_as_single(QWidget* parent, std::shared_ptr<Project> project)
 {
   bool single = true;
@@ -21,4 +22,13 @@ bool StudioUtils::ask_multiple_domains_as_single(QWidget* parent, std::shared_pt
   return single;
 }
 
+//---------------------------------------------------------------------------
+QStringList StudioUtils::to_string_list(std::vector<std::string> vector)
+{
+  QStringList list;
+  for (auto v : vector) {
+    list << QString::fromStdString(v);
+  }
+  return list;
+}
 }

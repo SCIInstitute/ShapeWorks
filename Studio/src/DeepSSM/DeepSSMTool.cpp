@@ -353,8 +353,8 @@ void DeepSSMTool::show_training_meshes()
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filenames[i].toStdString()});
-      shape->import_global_point_files({filenames[i].toStdString()});
+      shape->import_local_point_files({filenames[i]});
+      shape->import_global_point_files({filenames[i]});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
                                            "deepssm_error");
       shape->get_reconstructed_meshes();
@@ -385,16 +385,16 @@ void DeepSSMTool::show_testing_meshes()
     int i = QString::fromStdString(id).toInt();
 
     auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
+    QString filename = QString("deepssm/model/predictions/FT_Predictions/predicted_ft_") + QString::fromStdString(id) +
                            ".particles";
 
-    if (QFileInfo(QString::fromStdString(filename)).exists()) {
+    if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filename});
-      shape->import_global_point_files({filename});
+      shape->import_local_point_files(QStringList(filename));
+      shape->import_global_point_files(QStringList(filename));
       shape->get_reconstructed_meshes();
       QStringList list;
       list << shapes[i]->get_annotations()[0];
@@ -520,19 +520,19 @@ void DeepSSMTool::show_augmentation_meshes()
       bool is_generated = line.contains("Generated");
       if ((is_generated && show_generated) || (!is_generated && show_original)) {
         auto image_file = line.split(',')[0].toStdString();
-        auto particle_file = line.split(',')[1].toStdString();
+        QString particle_file = line.split(',')[1];
 
         auto subject = std::make_shared<Subject>();
         ShapeHandle shape = ShapeHandle(new Shape());
         shape->set_subject(subject);
         shape->set_mesh_manager(this->session_->get_mesh_manager());
-        shape->import_local_point_files({particle_file});
-        shape->import_global_point_files({particle_file});
+        shape->import_local_point_files(QStringList(particle_file));
+        shape->import_global_point_files(QStringList(particle_file));
 
         shape->get_reconstructed_meshes();
 
         QStringList list;
-        list << QFileInfo(QString::fromStdString(particle_file)).baseName();
+        list << QFileInfo(particle_file).baseName();
         list << "";
         list << "";
         list << "";

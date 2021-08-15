@@ -62,10 +62,10 @@ public:
   void reset_groomed_mesh();
 
   /// Import global correspondence point file
-  bool import_global_point_files(std::vector<std::string> filenames);
+  bool import_global_point_files(QStringList filenames);
 
   /// Import local correspondence point file
-  bool import_local_point_files(std::vector<std::string> filenames);
+  bool import_local_point_files(QStringList filenames);
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();

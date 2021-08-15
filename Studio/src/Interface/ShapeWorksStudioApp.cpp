@@ -844,7 +844,6 @@ void ShapeWorksStudioApp::new_session()
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
-
   connect(this->session_->get_mesh_manager().data(), &MeshManager::progress,
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->session_->get_mesh_manager().data(), &MeshManager::status,
@@ -859,6 +858,7 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+  connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
   this->ui_->notes->setText("");
 
