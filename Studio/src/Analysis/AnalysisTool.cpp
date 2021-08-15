@@ -94,10 +94,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->tabWidget->removeTab(3);
 
   this->ui_->graph_->set_y_label("Explained Variance");
-  //this->ui_->compactness_graph->set_y_label("Compactness");
-  //this->ui_->generalization_graph->set_y_label("Generalization");
-  //this->ui_->specificity_graph->set_y_label("Specificity");
-//  this->ui_->evaluation_widget->hide();
 
   for (auto button : {this->ui_->distance_transfom_radio_button,
                       this->ui_->mesh_warping_radio_button, this->ui_->legacy_radio_button}) {
@@ -1053,17 +1049,7 @@ void AnalysisTool::on_metrics_open_button_toggled()
 
   if (show) {
     this->compute_stats();
-
   }
-
-
-  /// Disabled for now
-  /*
-  if (show) {
-    this->ui_->specificity_label->setText(QString::number(this->stats_.get_specificity(1)));
-    this->ui_->compactness_label->setText(QString::number(this->stats_.get_compactness(1)));
-    this->ui_->generalization_label->setText(QString::number(this->stats_.get_generalization(1)));
-  }*/
 }
 
 //---------------------------------------------------------------------------
@@ -1148,10 +1134,7 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
   switch (job_type) {
     case ShapeEvaluationWorker::JobType::CompactnessType :
       this->eval_compactness_ = data;
-      for (int i=0; i<data.size(); i++) {
-        std::cerr << "compactness[" << i << "] = " << data[i] << "\n";
-      }
-      this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes", "Compactness");
+      this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       this->ui_->compactness_graph->show();
       this->ui_->compactness_progress_widget->hide();
     break;
@@ -1283,8 +1266,8 @@ void AnalysisTool::create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString 
     x << i + 1;
     y << data[i];
   }
-  size_t column_x = ds->addCopiedColumn(x, "Number of Modes");
-  size_t column_y = ds->addCopiedColumn(y, "Compactness");
+  size_t column_x = ds->addCopiedColumn(x, x_label);
+  size_t column_y = ds->addCopiedColumn(y, y_label);
 
   JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(this->ui_->compactness_graph);
   graph->setColor(Qt::blue);
@@ -1296,14 +1279,16 @@ void AnalysisTool::create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
   plot->getPlotter()->setUseAntiAliasingForText(true);
+  //plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
+  plot->getPlotter()->setPlotLabelFontSize(18);
   plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
-  plot->getPlotter()->setDefaultTextSize(18);
+  plot->getPlotter()->setDefaultTextSize(14);
   plot->getPlotter()->setShowKey(false);
 
   plot->getXAxis()->setAxisLabel(x_label);
-  plot->getXAxis()->setLabelFontSize(18);
+  plot->getXAxis()->setLabelFontSize(14);
   plot->getYAxis()->setAxisLabel(y_label);
-  plot->getYAxis()->setLabelFontSize(18);
+  plot->getYAxis()->setLabelFontSize(14);
 
   plot->clearAllMouseWheelActions();
   plot->setMousePositionShown(false);
