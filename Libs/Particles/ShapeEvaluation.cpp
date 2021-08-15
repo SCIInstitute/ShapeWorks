@@ -29,6 +29,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
 {
   const int N = particleSystem.N();
   const int D = particleSystem.D();
+  const int num_modes = N-1; // the number of modes is one less than the number of samples
 
   Eigen::MatrixXd Y = particleSystem.Particles();
   const Eigen::VectorXd mu = Y.rowwise().mean();
@@ -38,9 +39,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   const auto S = svd.singularValues().array().pow(2) / (N * D);
 
   // Compute cumulative sum
-  Eigen::VectorXd cumsum(N-1); // the number of modes is on less than the number of samples
+  Eigen::VectorXd cumsum(num_modes);
   cumsum(0) = S(0);
-  for (int i = 1; i < N; i++) {
+  for (int i = 1; i < num_modes; i++) {
     if (progress_callback) {
       progress_callback(static_cast<float>(i) / static_cast<float>(N));
     }
@@ -102,9 +103,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
 
-  Eigen::VectorXd generalizations(N);
+  Eigen::VectorXd generalizations(N-1);
 
-  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N);
+  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N-1);
 
   for (int leave = 0; leave < N; leave++) {
     if (progress_callback) {
@@ -120,7 +121,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
 
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
 
-    for (int mode = 1; mode <= N; mode++) {
+    for (int mode = 1; mode < N; mode++) {
 
       const auto epsi = svd.matrixU().block(0, 0, D, mode);
       const auto betas = epsi.transpose() * (Ytest - mu);
@@ -215,8 +216,6 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
   const int numParticles = D / VDimension;
   const double specificity = meanSpecificity(nModes - 1) / numParticles;
 
-  std::cerr << "one = " << specificity << "\n";
-  std::cerr << "two = " << ShapeEvaluation::ComputeFullSpecificity(particleSystem)(nModes-1) << "\n";
   return specificity;
 }
 
@@ -227,7 +226,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
   const int D = particleSystem.D();
   const int numParticles = D / VDimension;
 
-  Eigen::VectorXd specificities(N);
+  Eigen::VectorXd specificities(N-1);
 
   // PCA calculations
   const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
@@ -239,7 +238,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
   const auto allEigenValues = svd.singularValues();
 
-  for (int nModes=1;nModes<=N;nModes++) {
+  for (int nModes=1;nModes<N;nModes++) {
     if (progress_callback) {
       progress_callback(static_cast<float>(nModes) / static_cast<float>(N));
     }
