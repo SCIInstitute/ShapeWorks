@@ -130,8 +130,18 @@ void PythonWorker::start_deepssm_testing()
 }
 
 //---------------------------------------------------------------------------
+void PythonWorker::start_stats_pvalues()
+{
+  if (this->init()) {
+    this->deep_ssm_->run_testing();
+  }
+  this->finish_job();
+}
+
+//---------------------------------------------------------------------------
 void PythonWorker::run_job(PythonWorker::JobType job)
 {
+  this->current_job_ = job;
   if (job == PythonWorker::JobType::DeepSSM_AugmentationType) {
     QMetaObject::invokeMethod(this, "start_deepssm_augmentation");
   }
@@ -140,6 +150,9 @@ void PythonWorker::run_job(PythonWorker::JobType job)
   }
   else if (job == PythonWorker::JobType::DeepSSM_TestingType) {
     QMetaObject::invokeMethod(this, "start_deepssm_testing");
+  }
+  else if (job == PythonWorker::JobType::Stats_Pvalues) {
+    QMetaObject::invokeMethod(this, "start_stats_pvalues");
   }
 }
 
@@ -280,6 +293,6 @@ void PythonWorker::abort_job()
 void PythonWorker::finish_job()
 {
   this->python_logger_->clear_abort();
-  emit job_finished();
+  emit job_finished(this->current_job_);
 }
 }

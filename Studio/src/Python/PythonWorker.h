@@ -16,7 +16,7 @@ Q_OBJECT
 
 public:
   enum class JobType {
-    DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType
+    DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType, Stats_Pvalues
   };
 
   PythonWorker();
@@ -40,13 +40,15 @@ public Q_SLOTS:
   void start_deepssm_augmentation();
   void start_deepssm_training();
   void start_deepssm_testing();
+  void start_stats_pvalues();
+
   void finalize_python();
 
 Q_SIGNALS:
 
   void deepssm_augmentation_complete();
   void deepssm_training_complete();
-  void job_finished();
+  void job_finished(JobType);
 
   void result_ready();
   void error_message(QString);
@@ -59,6 +61,8 @@ private:
 
   bool initialized_ = false;
   bool initialized_success_ = false;
+  JobType current_job_;
+
   void finish_job();
 
   QSharedPointer<QDeepSSM> deep_ssm_;
