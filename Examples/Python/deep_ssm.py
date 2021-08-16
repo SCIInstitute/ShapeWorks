@@ -151,7 +151,7 @@ def Run_Pipeline(args):
     config_file = out_dir + model_name + ".json"
     with open(config_file, "w") as outfile:
         json.dump(model_parameters, outfile, indent=2)
-        # Train
+    # Train
     DeepSSMUtils.trainDeepSSM(config_file)
 
     print("\n\n\nStep 5. Predict with DeepSSM\n")

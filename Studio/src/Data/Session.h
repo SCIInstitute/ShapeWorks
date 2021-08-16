@@ -139,6 +139,7 @@ public:
   const static std::string GROOM_C;
   const static std::string OPTIMIZE_C;
   const static std::string ANALYSIS_C;
+  const static std::string DEEPSSM_C;
 
 private:
 

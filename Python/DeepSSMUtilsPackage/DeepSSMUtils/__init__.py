@@ -2,15 +2,23 @@ from DeepSSMUtils import trainer
 from DeepSSMUtils import loaders
 from DeepSSMUtils import eval
 from DeepSSMUtils import eval_utils
+from DeepSSMUtils import config_file
+from DeepSSMUtils import train_viz
 import torch
 
-def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None):
+def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	testPytorch()
-	loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
+	loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
 
 def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	testPytorch()
 	loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir)
+
+def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
+					  decay_lr, fine_tune):
+	testPytorch()
+	config_file.prepare_config_file(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs,
+									learning_rate, decay_lr, fine_tune)
 
 def trainDeepSSM(config_file):
 	testPytorch()

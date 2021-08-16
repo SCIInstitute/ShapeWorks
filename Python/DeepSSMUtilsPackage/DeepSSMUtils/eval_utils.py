@@ -24,7 +24,7 @@ def get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix):
 	particle_files = []
 	for file in os.listdir(prediction_dir):
 		particle_files.append(prediction_dir + file)
-	pred_mesh_list = sorted(get_mesh_from_particles(particle_files, out_dir + "PredcitedMeshes/", mean_prefix))
+	pred_mesh_list = sorted(get_mesh_from_particles(particle_files, out_dir + "PredictedMeshes/", mean_prefix))
 	# Step 4: Get distance between original and predicted mesh
 	print("\n\nGetting distance between original and predicted meshes...")
 	orig_dist_mesh_list, pred_dist_mesh_list, avg_distance = surface_to_surface_distance(orig_mesh_list, pred_mesh_list, out_dir)

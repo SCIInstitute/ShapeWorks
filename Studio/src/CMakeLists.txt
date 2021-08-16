@@ -106,6 +106,13 @@ SET(STUDIO_GROOM_MOC_HDRS
   Groom/QGroom.h
   )
 
+SET(STUDIO_PYTHON_SRCS
+  Python/PythonWorker.cpp
+  )
+SET(STUDIO_PYTHON_MOC_HDRS
+  Python/PythonWorker.h
+  )
+
 SET(STUDIO_OPTIMIZE_SRCS
   Optimize/OptimizeTool.cpp
   Optimize/QOptimize.cpp
@@ -122,6 +129,16 @@ SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
   )
 
+SET(STUDIO_DEEPSSM_SRCS
+  DeepSSM/DeepSSMTool.cpp
+  DeepSSM/DeepSSMParameters.cpp
+  DeepSSM/QDeepSSM.cpp
+  )
+SET(STUDIO_DEEPSSM_MOC_HDRS
+  DeepSSM/DeepSSMTool.h
+  DeepSSM/QDeepSSM.h
+  )
+
 SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
   Utils/WindowsCrashHandler.cpp
@@ -135,6 +152,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
   Interface/WheelEventForwarder.cpp
+  Interface/Style.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/LogWindow.h
@@ -163,7 +181,9 @@ SET(STUDIO_VISUALIZATION_MOC_HDRS
 SET(STUDIO_SRCS
   ${STUDIO_ANALYSIS_SRCS}
   ${STUDIO_DATA_SRCS}
+  ${STUDIO_DEEPSSM_SRCS}
   ${STUDIO_GROOM_SRCS}
+  ${STUDIO_PYTHON_SRCS}
   ${STUDIO_INTERFACE_SRCS}
   ${STUDIO_OPTIMIZE_SRCS}
   ${STUDIO_UTILS_SRCS}
@@ -173,7 +193,9 @@ SET(STUDIO_SRCS
 SET(STUDIO_MOC_HDRS
   ${STUDIO_ANALYSIS_MOC_HDRS}
   ${STUDIO_DATA_MOC_HDRS}
+  ${STUDIO_DEEPSSM_MOC_HDRS}
   ${STUDIO_GROOM_MOC_HDRS}
+  ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
   ${STUDIO_VISUALIZATION_MOC_HDRS}

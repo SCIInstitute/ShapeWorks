@@ -30,6 +30,7 @@ class Lightbox;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
+class DeepSSMTool;
 class Session;
 class Visualizer;
 class SplashScreen;
@@ -72,6 +73,7 @@ public Q_SLOTS:
   void on_action_groom_mode_triggered();
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
+  void on_action_deepssm_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
@@ -200,6 +202,7 @@ private:
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
+  QSharedPointer<DeepSSMTool> deepssm_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
