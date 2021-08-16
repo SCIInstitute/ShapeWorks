@@ -36,7 +36,7 @@ ShapeWorks has further helped develop cost-effective patient-specific meshes (wh
     - P. Atkins, Y. Shin, P. Agrawal, S. Elhabian, R. Whitaker, J. Weiss, S. Aoki, C. Peters, and A. Anderson. Which Two-dimensional Radiographic Measurements of Cam Femoroacetabular Impingement Best Describe the Three-dimensional Shape of the Proximal Femur? Clinical Orthopaedics and Related ResearchR, 477(1):242–253, 2019.
     - P. Atkins, P. Mukherjee, S. Elhabian, S. Singla, R. Whitaker, J. Weiss, and A. Anderson. Warping of template meshes for efficient subject-specific FE mesh generation. In International Symposium of Computer Methods in Biomechanics and Biomedical Engineering, 2015.
     
-## Hip Joint Morphology of Developmental Dysplasia of the Hip 
+## Pose and Shape of the Dysplastic Hip Joint
 
 Developmental dysplasia of the hip (DDH) describes an undercoverage of the femoral head by the acetabulum and is most often described using angular measurements from radiographs used to estimate joint coverage. Since 3D analyses of the hip joint would be advantageous to defining the true morphology of DDH, an articulated, multiple-domain SSM was developed in ShapeWorks to isolate the morphological variation of the disease. The first four modes of variation largely represented variation in scale and pose, while all six modes included some subtle variations in bone morphology. 
 
