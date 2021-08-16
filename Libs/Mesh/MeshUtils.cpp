@@ -170,6 +170,72 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
+Array MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("No filenames provided to compute average normals");
+
+  Mesh mesh(filenames[0]);
+  auto num_normals = mesh.numPoints();
+  auto num_meshes = filenames.size();
+
+  // convert all normals from all meshes to spherical coords
+  std::vector<std::vector<Point3>> sphericals(num_normals, std::vector<Point3>(num_meshes));
+  for (int j = 0; j < num_meshes; j++)
+  {
+    Mesh mesh(filenames[j]);
+    if (mesh.numPoints() != num_normals)
+      throw std::invalid_argument("Input meshes do not all have the same number of points");
+
+    auto normals = mesh.getField<vtkDataArray>("Normals");
+
+    if (num_normals != normals->GetNumberOfTuples())
+      throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");
+
+    for (int i = 0; i < num_normals; i++)
+    {
+      auto n = normals->GetTuple3(i);
+
+      // note: Utils::cartesian2spherical returns atypical (r, phi, theta)
+      Utils::cartesian2spherical(n, sphericals[i][j].GetDataPointer());
+    }
+  }
+
+  // prep data in 1d theta/phi arrays for averageThetaArc function
+  std::vector<std::vector<double>> phis(num_normals, std::vector<double>(num_meshes));
+  std::vector<std::vector<double>> thetas(num_normals, std::vector<double>(num_meshes));
+  for (int i = 0; i < num_normals; i++)
+  {
+    for (int j = 0; j < num_meshes; j++)
+    {
+      phis[i][j] = sphericals[i][j][1];
+      thetas[i][j] = sphericals[i][j][2];
+    }
+  }
+
+  vtkSmartPointer<vtkDoubleArray> normals = vtkSmartPointer<vtkDoubleArray>::New();
+  normals->SetNumberOfComponents(3);
+  normals->SetNumberOfTuples(num_normals);
+  normals->SetName("MeanNormals");
+
+  // compute average value for collection of normals for all meshes
+  std::vector<Vector3> mean_normals(num_normals);
+  for (int i = 0; i < num_normals; i++)
+  {
+    Vector3 avg_spherical_normal = makeVector({1.0,
+                                               Utils::averageThetaArc(phis[i]),
+                                               Utils::averageThetaArc(thetas[i])});
+
+    // note: Utils::spherical2cartesian expects atypical (r, phi, theta)
+    Utils::spherical2cartesian(avg_spherical_normal.GetDataPointer(),
+                               mean_normals[i].GetDataPointer());
+
+    normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
+  }
+
+  return normals;
+}
+
 Array MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes)
 {
   if (meshes.empty())

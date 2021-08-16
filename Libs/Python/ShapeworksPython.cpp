@@ -1050,6 +1050,19 @@ PYBIND11_MODULE(shapeworks_py, m)
        "sets the given field for points with array",
        "array"_a, "name"_a)
 
+  .def("setField",
+       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
+         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+         arr->SetNumberOfComponents(3);
+         arr->SetNumberOfTuples(v.size());
+         for (int i=0; i<v.size(); i++) {
+           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
+          }
+         return mesh.setField(name, arr);
+       },
+       "sets the given field for points with array",
+       "array"_a, "name"_a)
+
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {
          auto array = mesh.getField<vtkDataArray>(name);
@@ -1120,7 +1133,22 @@ PYBIND11_MODULE(shapeworks_py, m)
               "meshes"_a)
 
   .def_static("computeMeanNormals",
-               &MeshUtils::computeMeanNormals,
+               [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(meshes);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
                "returns array of average normals for each point in given set of meshes",
                "meshes"_a)
   ;

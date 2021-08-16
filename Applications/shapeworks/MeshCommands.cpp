@@ -854,18 +854,70 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 {
   std::vector<std::string> filenames = options.get("names");
 
-  std::vector<std::reference_wrapper<const Mesh>> meshes;
-  for (int i = 0; i < filenames.size(); i++)
+  sharedData.array = MeshUtils::computeMeanNormals(filenames);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetField
+///////////////////////////////////////////////////////////////////////////////
+void SetField::buildParser()
+{
+  const std::string prog = "set-field";
+  const std::string desc = "sets field of mesh with given name";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+
+  Command::buildParser();
+}
+
+bool SetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
   {
-    Mesh mesh_(filenames[i]);
-    meshes.push_back(mesh_);
+    std::cerr << "No mesh to operate on\n";
+    return false;
   }
 
-  Array array = MeshUtils::computeMeanNormals(meshes);
-  sharedData.mesh = std::make_unique<Mesh>(filenames[0]);
-  sharedData.mesh->setField("MeanNormals", array);
+  if (!sharedData.array)
+  {
+    std::cerr << "No field initialized to set\n";
+    return false;
+  }
 
-  return true;
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  sharedData.mesh->setField(name, sharedData.array);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GetField
+///////////////////////////////////////////////////////////////////////////////
+void GetField::buildParser()
+{
+  const std::string prog = "Get-field";
+  const std::string desc = "gets field of mesh with given name";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+
+  Command::buildParser();
+}
+
+bool GetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  sharedData.array = sharedData.mesh->getField<vtkDataArray>(name);
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

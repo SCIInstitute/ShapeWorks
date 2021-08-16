@@ -71,6 +71,8 @@ COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(MeshBounds, MeshCommand);
 COMMAND_DECLARE(Distance, MeshCommand);
 COMMAND_DECLARE(GenerateNormals, MeshCommand);
+COMMAND_DECLARE(SetField, MeshCommand);
+COMMAND_DECLARE(GetField, MeshCommand);
 COMMAND_DECLARE(SetFieldValue, MeshCommand);
 COMMAND_DECLARE(GetFieldValue, MeshCommand);
 COMMAND_DECLARE(FieldRange, MeshCommand);

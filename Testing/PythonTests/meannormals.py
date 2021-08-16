@@ -10,11 +10,12 @@ def computemeannormalsTest():
   meshList.append(mesh1.generateNormals())
   meshList.append(mesh2.generateNormals())
 
-  mesh = MeshUtils.computeMeanNormals(meshList)
+  arr = MeshUtils.computeMeanNormals(meshList)
+  mesh1.setField(arr, "MeanNormals")
 
   ground_truth = Mesh(os.environ["DATA"] + "/meannormals.vtk")
 
-  return mesh.compareField(ground_truth, "MeanNormals")
+  return mesh1.compareField(ground_truth, "MeanNormals")
 
 try:
   computemeannormalsTest()
