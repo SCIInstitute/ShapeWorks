@@ -295,6 +295,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
 
+  this->py_worker_ = QSharedPointer<PythonWorker>::create();
+
   this->handle_message("ShapeWorks Studio Initialized");
 }
 
@@ -2108,6 +2110,12 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
 void ShapeWorksStudioApp::toggle_log_window()
 {
   this->log_window_.setVisible(!this->log_window_.isVisible());
+}
+
+//---------------------------------------------------------------------------
+QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker()
+{
+  return this->py_worker_;
 }
 
 

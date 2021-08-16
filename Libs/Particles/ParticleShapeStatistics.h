@@ -129,6 +129,8 @@ public:
   Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback);
   Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback);
 
+  Eigen::MatrixXd get_group1_matrix();
+  Eigen::MatrixXd get_group2_matrix();
 private:
 
   unsigned int m_numSamples1;
@@ -162,6 +164,9 @@ private:
   std::vector<std::string> m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
+
+  Eigen::MatrixXd m_group_1_matrix;
+  Eigen::MatrixXd m_group_2_matrix;
 };
 
 } // shapeworks

@@ -43,7 +43,6 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::show_augmentation_meshes);
 
-  this->py_worker = QSharedPointer<PythonWorker>::create();
 
   connect(this->py_worker.data(), &PythonWorker::job_finished,
           this, &DeepSSMTool::handle_thread_complete);
@@ -162,7 +161,7 @@ void DeepSSMTool::store_params()
 //---------------------------------------------------------------------------
 void DeepSSMTool::shutdown()
 {
-  this->py_worker->abort_job();
+  this->app_->get_py_worker()->abort_job();
 }
 
 //---------------------------------------------------------------------------

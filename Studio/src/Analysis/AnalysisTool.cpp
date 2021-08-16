@@ -80,6 +80,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           this, &AnalysisTool::group_changed);
 
 
+  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+
   this->ui_->surface_open_button->setChecked(false);
   this->ui_->metrics_open_button->setChecked(false);
 
@@ -1110,6 +1112,14 @@ void AnalysisTool::initialize_mesh_warper()
         meshes[i]->get_poly_data(), points);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_p_values_clicked()
+{
+
+
+
 }
 
 //---------------------------------------------------------------------------

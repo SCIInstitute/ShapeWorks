@@ -145,6 +145,8 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
+  void group_p_values_clicked();
+
   void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress);
 

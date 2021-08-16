@@ -530,7 +530,7 @@ QWidget#specificity_panel {
             <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>2</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -597,20 +597,13 @@ QWidget#specificity_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="group_box">
-                     <property name="toolTip">
-                      <string>Select group set</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="2">
-                    <widget class="QPushButton" name="group2_button">
+                   <item row="4" column="0">
+                    <widget class="QPushButton" name="group1_button">
                      <property name="enabled">
                       <bool>true</bool>
                      </property>
                      <property name="toolTip">
-                      <string>Mean of right group</string>
+                      <string>Mean of left group</string>
                      </property>
                      <property name="text">
                       <string>Mean</string>
@@ -620,32 +613,6 @@ QWidget#specificity_panel {
                      </property>
                      <property name="checked">
                       <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QComboBox" name="group_left">
-                     <property name="toolTip">
-                      <string>Group 1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="difference_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Diff of left to right</string>
-                     </property>
-                     <property name="text">
-                      <string>Diff --&gt;</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
                      </property>
                      <property name="autoExclusive">
                       <bool>false</bool>
@@ -674,6 +641,46 @@ QWidget#specificity_panel {
                      </property>
                      <property name="tickInterval">
                       <number>10</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="1">
+                    <widget class="QPushButton" name="difference_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Diff of left to right</string>
+                     </property>
+                     <property name="text">
+                      <string>Diff --&gt;</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="3">
+                    <widget class="Line" name="line">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QComboBox" name="group_right">
+                     <property name="toolTip">
+                      <string>Group 2</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QComboBox" name="group_left">
+                     <property name="toolTip">
+                      <string>Group 1</string>
                      </property>
                     </widget>
                    </item>
@@ -731,13 +738,13 @@ QWidget#specificity_panel {
                      </layout>
                     </widget>
                    </item>
-                   <item row="4" column="0">
-                    <widget class="QPushButton" name="group1_button">
+                   <item row="4" column="2">
+                    <widget class="QPushButton" name="group2_button">
                      <property name="enabled">
                       <bool>true</bool>
                      </property>
                      <property name="toolTip">
-                      <string>Mean of left group</string>
+                      <string>Mean of right group</string>
                      </property>
                      <property name="text">
                       <string>Mean</string>
@@ -753,17 +760,29 @@ QWidget#specificity_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="2">
-                    <widget class="QComboBox" name="group_right">
+                   <item row="0" column="1" colspan="2">
+                    <widget class="QComboBox" name="group_box">
                      <property name="toolTip">
-                      <string>Group 2</string>
+                      <string>Select group set</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="3">
-                    <widget class="Line" name="line">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                   <item row="5" column="1">
+                    <widget class="QPushButton" name="group_p_values_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Diff of left to right</string>
+                     </property>
+                     <property name="text">
+                      <string>p-values</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>

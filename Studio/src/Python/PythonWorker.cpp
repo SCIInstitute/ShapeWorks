@@ -103,6 +103,12 @@ void PythonWorker::set_deep_ssm(QSharedPointer<QDeepSSM> deep_ssm)
 }
 
 //---------------------------------------------------------------------------
+void PythonWorker::set_stats(ParticleShapeStatistics stats)
+{
+  this->stats_ = std::move(stats);
+}
+
+//---------------------------------------------------------------------------
 void PythonWorker::start_deepssm_augmentation()
 {
   if (this->init()) {
@@ -133,7 +139,11 @@ void PythonWorker::start_deepssm_testing()
 void PythonWorker::start_stats_pvalues()
 {
   if (this->init()) {
-    this->deep_ssm_->run_testing();
+    auto group_1_data = this->stats_.get_group1_matrix();
+    auto group_2_data = this->stats_.get_group2_matrix();
+    py::module sw = py::module::import("shapeworks");
+    py::object compute = sw.attr("stats").attr("compute_pvalues_for_group_difference_data");
+    this->group_pvalues_ = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
   }
   this->finish_job();
 }
@@ -142,6 +152,9 @@ void PythonWorker::start_stats_pvalues()
 void PythonWorker::run_job(PythonWorker::JobType job)
 {
   this->current_job_ = job;
+
+  // we use QMetaObject::invokeMethod to shift the call to the python thread
+
   if (job == PythonWorker::JobType::DeepSSM_AugmentationType) {
     QMetaObject::invokeMethod(this, "start_deepssm_augmentation");
   }
@@ -161,8 +174,13 @@ bool PythonWorker::init()
 {
   if (this->initialized_) {
     if (!this->initialized_success_) {
+#ifdef _WIN32
+      emit error_message(QString::fromStdString(
+                           "Unable to initialize Python.  Please run install_shapeworks.bat"));
+#else
       emit error_message(
         QString::fromStdString("Unable to initialize Python. Please run install_shapeworks.sh"));
+#endif
     }
     return this->initialized_success_;
   }

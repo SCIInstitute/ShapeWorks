@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include <Data/Session.h>
+#include <ParticleShapeStatistics.h>
 
 namespace shapeworks {
 class Optimize;
@@ -23,6 +24,8 @@ public:
   ~PythonWorker();
 
   void set_deep_ssm(QSharedPointer<QDeepSSM> deep_ssm);
+
+  void set_stats(ParticleShapeStatistics stats);
 
   void run_job(JobType job);
 
@@ -62,12 +65,14 @@ private:
   bool initialized_ = false;
   bool initialized_success_ = false;
   JobType current_job_;
+  ParticleShapeStatistics stats_;
 
   void finish_job();
 
   QSharedPointer<QDeepSSM> deep_ssm_;
   QSharedPointer<PythonLogger> python_logger_;
 
+  Eigen::MatrixXd group_pvalues_;
   QThread* thread_;
 };
 }
