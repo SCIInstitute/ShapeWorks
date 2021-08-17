@@ -58,9 +58,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
-
-
-
   // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
           &AnalysisTool::handle_group_animate_state_changed);
@@ -247,6 +244,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   this->session_ = session;
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
+  this->ui_->difference_button->setChecked(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1092,9 +1090,12 @@ bool AnalysisTool::get_active()
 //---------------------------------------------------------------------------
 StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
 {
+  StudioParticles particles;
+  if (this->session_->get_shapes().empty()) {
+    return particles;
+  }
   auto base = this->session_->get_shapes()[0]->get_particles();
 
-  StudioParticles particles;
   auto worlds = base.get_world_particles();
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {

@@ -206,6 +206,8 @@ void Project::load_subjects()
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
   auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
   auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
+  auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
+  auto name_column = this->get_index_for_column(NAME);
 
   auto extra_columns = this->get_extra_columns();
 
@@ -216,6 +218,7 @@ void Project::load_subjects()
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
+    subject->set_image_filenames(this->get_list(image_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
     std::map<std::string, std::string> map;
@@ -242,6 +245,17 @@ void Project::load_subjects()
       this->particles_present_ = true;
     }
 
+    if (name_column >= 0) {
+      auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
+      subject->set_display_name(name);
+    } else if (subject->get_segmentation_filenames().size() != 0) {
+      subject->set_display_name(subject->get_segmentation_filenames()[0]);
+    } else if (subject->get_groomed_filenames().size() != 0) {
+      subject->set_display_name(subject->get_groomed_filenames()[0]);
+    } else if (locals.size() > 0) {
+      subject->set_display_name(locals[0]);
+    }
+
     std::map<std::string, std::string> extra_values;
     for (auto elem : this->get_extra_columns()) {
       auto value = this->get_value(this->get_index_for_column(elem),
@@ -266,6 +280,7 @@ void Project::store_subjects()
 
   // segmentation columns
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
+  auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
 
   // groomed columns
   std::vector<std::string> groomed_columns;
@@ -315,6 +330,10 @@ void Project::store_subjects()
     auto groups = subject->get_group_values();
     this->set_map(i, GROUP_PREFIX, groups);
 
+    // images
+    auto image_files = subject->get_image_filenames();
+    this->set_list(image_columns, i, image_files);
+
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
@@ -361,8 +380,7 @@ void Project::store_subjects()
       this->set_list(local_columns, i, local_files);
       this->set_list(world_columns, i, world_files);
     }
-    else
-    {
+    else {
       this->particles_present_ = false;
     }
   }
@@ -456,6 +474,12 @@ bool Project::get_groomed_present() const
 bool Project::get_particles_present() const
 {
   return this->particles_present_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_images_present()
+{
+  return this->get_matching_columns(IMAGE_PREFIX).size() > 0;
 }
 
 //---------------------------------------------------------------------------

@@ -79,6 +79,8 @@ public:
 
   void set_orientation_marker_viewport();
 
+  void update_feature_range();
+
 public Q_SLOTS:
   void handle_timer_callback();
 
