@@ -875,6 +875,9 @@ void Curvature::buildParser()
   const std::string desc = ""; // TODO: add description
   parser.prog(prog).description(desc);
 
+  std::list<std::string> curvs{"principal", "gaussian", "mean"};
+  parser.add_option("--type").action("store").type("choice").choices(curvs.begin(), curvs.end()).set_default("principal").help("Curvature type to use [default: %default].");
+
   Command::buildParser();
 }
 
@@ -886,8 +889,22 @@ bool Curvature::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  sharedData.mesh->curvature();
-  return sharedData.validMesh();
+  std::string curvopt(options.get("type"));
+
+  Mesh::CurvatureType curv;
+  if (curvopt == "principal")
+    curv = Mesh::Principal;
+  else if (curvopt == "gaussian")
+    curv = Mesh::Gaussian;
+  else if (curvopt == "mean")
+    curv = Mesh::Mean;
+  else {
+    std::cerr << "no such curvature type: " << curvopt << std::endl;
+    return false;
+  }
+
+  sharedData.mesh->curvature(curv);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

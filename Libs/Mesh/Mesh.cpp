@@ -538,11 +538,12 @@ Eigen::VectorXd Mesh::curvature(const CurvatureType type)
   Eigen::VectorXd C;
 
   switch (type) {
-    case Gaussian:
-      igl::gaussian_curvature(V, F, C);
-      break;
     case Principal:
       igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
+      // igl::principal_curvature(V, F, PD1, PD2, C, PV2);
+      break;
+    case Gaussian:
+      igl::gaussian_curvature(V, F, C);
       break;
     case Mean:
     {
