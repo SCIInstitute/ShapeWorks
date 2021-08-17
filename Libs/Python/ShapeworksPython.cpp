@@ -1038,6 +1038,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
+  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1050,6 +1051,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        "sets the given field for points with array",
        "array"_a, "name"_a)
 
+  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1149,7 +1151,7 @@ PYBIND11_MODULE(shapeworks_py, m)
                                    shape,
                                    vtkarr->GetVoidPointer(0));          // copy2
                },
-               "returns array of average normals for each point in given set of meshes",
+               "generates array of average normals for each point in given set of meshes",
                "meshes"_a)
   ;
 

@@ -842,7 +842,7 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
 void MeanNormals::buildParser()
 {
   const std::string prog = "mean-normals";
-  const std::string desc = "returns array of average normals for each point in given set of meshes";
+  const std::string desc = "generates array of average normals for each point in given set of meshes";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
@@ -854,7 +854,7 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 {
   std::vector<std::string> filenames = options.get("names");
 
-  sharedData.array = MeshUtils::computeMeanNormals(filenames);
+  sharedData.field = MeshUtils::computeMeanNormals(filenames);
   return true;
 }
 
@@ -864,7 +864,7 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 void SetField::buildParser()
 {
   const std::string prog = "set-field";
-  const std::string desc = "sets field of mesh with given name";
+  const std::string desc = "adds the current field to the current mesh with the given name.";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
@@ -880,7 +880,7 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  if (!sharedData.array)
+  if (!sharedData.field)
   {
     std::cerr << "No field initialized to set\n";
     return false;
@@ -888,7 +888,7 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  sharedData.mesh->setField(name, sharedData.array);
+  sharedData.mesh->setField(name, sharedData.field);
   return sharedData.validMesh();
 }
 
@@ -897,7 +897,7 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void GetField::buildParser()
 {
-  const std::string prog = "Get-field";
+  const std::string prog = "get-field";
   const std::string desc = "gets field of mesh with given name";
   parser.prog(prog).description(desc);
 
@@ -916,8 +916,8 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  sharedData.array = sharedData.mesh->getField<vtkDataArray>(name);
-  return sharedData.validMesh();
+  sharedData.field = sharedData.mesh->getField<vtkDataArray>(name);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

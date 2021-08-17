@@ -14,7 +14,7 @@ struct SharedCommandData
   std::unique_ptr<Mesh> mesh;
   PhysicalRegion region;
   ParticleSystem particleSystem;
-  Array array;
+  Field field;
 
   bool validImage() const { return image.image != nullptr; }
   bool validMesh() const { return mesh != nullptr; }
