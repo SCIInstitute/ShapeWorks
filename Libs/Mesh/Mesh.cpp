@@ -41,6 +41,10 @@
 #include <vtkClipClosedSurface.h>
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
+#include <igl/principal_curvature.h>
+#include <igl/cotmatrix.h>
+#include <igl/massmatrix.h>
+#include <igl/invert_diag.h>
 
 namespace shapeworks {
 
@@ -523,15 +527,49 @@ double Mesh::geodesicDistance(int source, int target)
   return d[0];
 }
 
-Eigen::VectorXd Mesh::curvature(const CurvatureType curv)
+Eigen::VectorXd Mesh::curvature(const CurvatureType type)
 {
   Eigen::MatrixXd V = points();
 	Eigen::MatrixXi F = faces();
-  Eigen::VectorXd d;
 
-  igl::gaussian_curvature(V, F, d);
-  // std::cout << d;
-  return d;
+  Eigen::MatrixXd PD1,PD2;
+  Eigen::VectorXd PV1,PV2;
+
+  Eigen::VectorXd C;
+
+  switch (type) {
+    case Gaussian:
+      igl::gaussian_curvature(V, F, C);
+      break;
+    case Principal:
+      igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
+      break;
+    case Mean:
+    {
+      Eigen::MatrixXd HN;
+      Eigen::SparseMatrix<double> L,M,Minv;
+      igl::cotmatrix(V,F,L);
+      igl::massmatrix(V,F,igl::MASSMATRIX_TYPE_VORONOI,M);
+      igl::invert_diag(M,Minv);
+
+      // Laplace-Beltrami of position
+      HN = -Minv*(L*V);
+
+      // Extract magnitude as mean curvature
+      C = HN.rowwise().norm();
+
+      // Compute curvature directions via quadric fitting
+      igl::principal_curvature(V,F,PD1,PD2,PV1,PV2);
+
+      // mean curvature
+      C = 0.5*(PV1+PV2);
+      break;
+    }
+    default:
+      throw std::invalid_argument("Unknown Mesh::CurvatureType.");
+  }
+
+  return C;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
