@@ -547,7 +547,7 @@ Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iteratio
   return *this;
 }
 
-Mesh& Mesh::setField(std::string name, Array array)
+Mesh& Mesh::setField(std::string name, Array array, bool multi)
 {
   if (!array)
     throw std::invalid_argument("Invalid array.");
@@ -559,7 +559,7 @@ Mesh& Mesh::setField(std::string name, Array array)
   if (array->GetNumberOfTuples() != numVertices) {
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
-  if (array->GetNumberOfComponents() != 1) {
+  if (!multi && array->GetNumberOfComponents() != 1) {
     std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
 
@@ -1278,7 +1278,7 @@ std::vector<Eigen::Matrix3d> Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDo
         vf->SetTuple3(i, grads(i,0), grads(i,1), grads(i,2));
     }
 
-    this->setField("Gradient", vf);
+    this->setField("Gradient", vf, true);
 
     this->mesh->GetCellData()->AddArray(vff);
 

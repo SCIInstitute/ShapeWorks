@@ -41,7 +41,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
-/*TEST(OptimizeTests, sample)
+TEST(OptimizeTests, sample)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
   chdir(test_location.c_str());
@@ -513,7 +513,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
     }
   }
   ASSERT_TRUE(good);
-}*/
+}
 
 TEST(OptimizeTests, ffc_test)
 {
@@ -597,7 +597,7 @@ TEST(OptimizeTests, ffc_test)
   }
   ASSERT_TRUE(good);
 }
-/*
+
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test)
 {
@@ -734,4 +734,4 @@ TEST(OptimizeTests, contour_domain_test)
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 2000.0);
   ASSERT_LT(values[values.size() - 2], 1.0);
-}*/
+}

@@ -136,7 +136,7 @@ public:
   std::vector<std::string> getFieldNames() const;
 
   /// sets the given field for points with array (*does not copy array's values)
-  Mesh& setField(std::string name, Array array);
+  Mesh& setField(std::string name, Array array, bool multi = false);
 
   /// sets the given field for faces with array (*does not copy array's values)
   Mesh& setFieldForFaces(std::string name, Array array);

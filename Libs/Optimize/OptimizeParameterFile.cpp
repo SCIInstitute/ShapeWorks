@@ -1168,7 +1168,7 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
   elem = docHandle->FirstChild("ffcs").Element();
   if (!elem) {
     if(numffcs > 0) std::cerr << "Warning: No free-form constraint(ffc) filenames provided. Running without free form constraints\n";
-    return false;
+    return true;
   }
 
   inputsBuffer.str(elem->GetText());
