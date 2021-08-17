@@ -10,8 +10,4 @@ def generatenormalsTest():
 
   return mesh == compareMesh
 
-try:
-  generatenormalsTest()
-except ValueError:
-  print("generatenormalsTest failed")
-  sys.exit(1)
+utils.test(generatenormalsTest)

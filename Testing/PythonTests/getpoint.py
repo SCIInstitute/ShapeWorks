@@ -9,8 +9,4 @@ def getpointTest():
 
   return np.linalg.norm(p-closeToP) < 1e-4
 
-try:
-  getpointTest()
-except ValueError:
-  print("getpointTest failed")
-  sys.exit(1)
+utils.test(getpointTest)

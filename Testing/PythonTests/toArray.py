@@ -7,22 +7,17 @@ from shapeworks import *
 def toArrayTest1():
   arr = Image(os.environ["DATA"] + "/femurImage.nrrd").toArray()
 
-try:
-  toArrayTest1()
-except ValueError:
-  print("toArrayTest1 failed")
-  sys.exit(1)
+  return isinstance(arr, np.ndarray)
+
+utils.test(toArrayTest1)
 
 # verify data type
 def toArrayTest2():
   arr = Image(os.environ["DATA"] + "/femurImage.nrrd").toArray()
+
   return arr.dtype == np.float32
 
-try:
-  toArrayTest2()
-except ValueError:
-  print("toArrayTest2 failed")
-  sys.exit(1)
+utils.test(toArrayTest2)
 
 # verify constructed data
 def toArrayTest3():
@@ -32,13 +27,14 @@ def toArrayTest3():
   arr = np.concatenate((arr0, arr1, arr2))
   img = Image(arr)
   img_arr = img.toArray()
-  np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
 
-try:
-  toArrayTest3()
-except ValueError:
-  print("toArrayTest3 failed")
-  sys.exit(1)
+  try:
+    np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
+    return True
+  except:
+    return False
+
+utils.test(toArrayTest3)
 
 # verify loaded data
 def toArrayTest4():
@@ -50,10 +46,11 @@ def toArrayTest4():
 
   compareImg = Image(os.environ["DATA"] + "/imgFromArray.nrrd")
   img_arr = compareImg.toArray()
-  np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
 
-try:
-  toArrayTest4()
-except ValueError:
-  print("toArrayTest4 failed")
-  sys.exit(1)
+  try:
+    np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
+    return True
+  except:
+    return False
+
+utils.test(toArrayTest4)

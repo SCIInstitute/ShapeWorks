@@ -15,11 +15,7 @@ def closestpointTest1():
 
   return np.linalg.norm(p-closeToP) == 0.0
 
-try:
-  closestpointTest1()
-except ValueError:
-  print("closestpointTest1 failed")
-  sys.exit(1)
+utils.test(closestpointTest1)
 
 def closestpointTest2():
   mesh = Mesh(os.environ["DATA"] + "/sphere_highres.ply")
@@ -33,8 +29,4 @@ def closestpointTest2():
 
   return np.linalg.norm(p-closeToP) < 1e-4
 
-try:
-  closestpointTest2()
-except ValueError:
-  print("closestpointTest2 failed")
-  sys.exit(1)
+utils.test(closestpointTest2)

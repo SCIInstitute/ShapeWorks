@@ -11,11 +11,7 @@ def resampleTest1():
 
   return img.compare(compareImg)
 
-try:
-  resampleTest1()
-except ValueError:
-  print("resampleTest1 failed")
-  sys.exit(1)
+utils.test(resampleTest1)
 
 def resampleTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -25,11 +21,7 @@ def resampleTest2():
 
   return img.compare(compareImg)
 
-try:
-  resampleTest2()
-except ValueError:
-  print("resampleTest2 failed")
-  sys.exit(1)
+utils.test(resampleTest2)
 
 def resampleTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -39,11 +31,7 @@ def resampleTest3():
 
   return img.compare(compareImg)
 
-try:
-  resampleTest3()
-except ValueError:
-  print("resampleTest3 failed")
-  sys.exit(1)
+utils.test(resampleTest3)
 
 def resampleTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -53,11 +41,7 @@ def resampleTest4():
 
   return img.compare(compareImg)
 
-try:
-  resampleTest4()
-except ValueError:
-  print("resampleTest4 failed")
-  sys.exit(1)
+utils.test(resampleTest4)
 
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -68,8 +52,4 @@ def resampleTest5():
 
   return img.compare(compareImg)
 
-try:
-  resampleTest5()
-except ValueError:
-  print("resampleTest5 failed")
-  sys.exit(1)
+utils.test(resampleTest5)

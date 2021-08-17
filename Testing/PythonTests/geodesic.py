@@ -8,8 +8,4 @@ def geodesicTest():
 
   return abs(dist - 1.0083) < 1e-4
 
-try:
-  geodesicTest()
-except ValueError:
-  print("geodesicTest failed")
-  sys.exit(1)
+utils.test(geodesicTest)

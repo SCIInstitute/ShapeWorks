@@ -1,5 +1,4 @@
 import os
-import sys
 from shapeworks import *
 
 def cropTest1():
@@ -16,11 +15,7 @@ def cropTest1():
 
   return img.compare(compareImg)
 
-try:
-  cropTest1()
-except ValueError:
-  print("cropTest1 failed")
-  sys.exit(1)
+utils.test(cropTest1)
 
 def cropTest2():
   img1 = Image(os.environ["DATA"] + "/many/seg.ellipsoid_1.nrrd")
@@ -34,8 +29,4 @@ def cropTest2():
 
   return img1.compare(compareImg)
 
-try:
-  cropTest2()
-except ValueError:
-  print("cropTest2 failed")
-  sys.exit(1)
+utils.test(cropTest2)

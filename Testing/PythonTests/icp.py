@@ -12,8 +12,4 @@ def icpTest():
 
   return imgSource == compareImg
 
-try:
-  icpTest()
-except ValueError:
-  print("icpTest failed")
-  sys.exit(1)
+utils.test(icpTest)

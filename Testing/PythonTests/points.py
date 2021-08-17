@@ -12,8 +12,4 @@ def pointsTest():
 
   return points.shape[0] == 14 and points.shape[1] == 3 and np.linalg.norm(v0-g0) < 1e-4 and np.linalg.norm(vn-gn) < 1e-4
 
-try:
-  pointsTest()
-except ValueError:
-  print("pointsTest failed")
-  sys.exit(1)
+utils.test(pointsTest)

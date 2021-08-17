@@ -22,8 +22,4 @@ def coordTest():
 
   return c6[0] == 40 and c6[1] == 40 and c6[2] == 40
 
-try:
-  coordTest()
-except ValueError:
-  print("coordTest failed")
-  sys.exit(1)
+utils.test(coordTest)

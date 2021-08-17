@@ -10,8 +10,4 @@ def divTest():
 
   return img.compare(compareImg)
 
-try:
-  divTest()
-except ValueError:
-  print("divTest failed")
-  sys.exit(1)
+utils.test(divTest)

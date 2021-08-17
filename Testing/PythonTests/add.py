@@ -1,5 +1,4 @@
 import os
-import sys
 from shapeworks import *
 
 def addTest1():
@@ -10,11 +9,7 @@ def addTest1():
 
   return img.compare(compareImg)
 
-try:
-  addTest1()
-except ValueError:
-  print("addTest1 failed")
-  sys.exit(1)
+utils.test(addTest1)
 
 def addTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -24,11 +19,7 @@ def addTest2():
 
   return img.compare(compareImg)
 
-try:
-  addTest2()
-except ValueError:
-  print("addTest2 failed")
-  sys.exit(1)
+utils.test(addTest2)
 
 def addTest3():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -39,11 +30,7 @@ def addTest3():
 
   return img.compare(compareImg)
 
-try:
-  addTest3()
-except ValueError:
-  print("addTest3 failed")
-  sys.exit(1)
+utils.test(addTest3)
 
 def addfailTest():
   img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -54,9 +41,4 @@ def addfailTest():
 
   return img.compare(compareImg)
 
-try:
-  addfailTest()
-  print("addfailTest failed.")
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(addfailTest, ValueError)

@@ -10,8 +10,4 @@ def closeholesTest():
 
   return img.compare(compareImg)
 
-try:
-  closeholesTest()
-except ValueError:
-  print("closeholesTest failed")
-  sys.exit(1)
+utils.test(closeholesTest)

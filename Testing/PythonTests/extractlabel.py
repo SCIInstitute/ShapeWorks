@@ -10,11 +10,7 @@ def extractlabelTest1():
 
   return img.compare(compareImg)
 
-try:
-  extractlabelTest1()
-except ValueError:
-  print("extractlabelTest1 failed")
-  sys.exit(1)
+utils.test(extractlabelTest1)
 
 def extractlabelTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def extractlabelTest2():
 
   return img.compare(compareImg)
 
-try:
-  extractlabelTest2()
-except ValueError:
-  print("extractlabelTest2 failed")
-  sys.exit(1)
+utils.test(extractlabelTest2)
 
 def extractlabelTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,11 +30,7 @@ def extractlabelTest3():
 
   return img.compare(compareImg)
 
-try:
-  extractlabelTest3()
-except ValueError:
-  print("extractlabelTest3 failed")
-  sys.exit(1)
+utils.test(extractlabelTest3)
 
 def extractlabelTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -52,8 +40,4 @@ def extractlabelTest4():
 
   return img.compare(compareImg)
 
-try:
-  extractlabelTest4()
-except ValueError:
-  print("extractlabelTest4 failed")
-  sys.exit(1)
+utils.test(extractlabelTest4)

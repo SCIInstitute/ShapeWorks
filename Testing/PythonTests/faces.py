@@ -12,8 +12,4 @@ def facesTest():
 
   return faces.shape[0] == 24 and faces.shape[1] == 3 and (f0 == g0).all() and (fn == gn).all()
 
-try:
-  facesTest()
-except ValueError:
-  print("facesTest failed")
-  sys.exit(1)
+utils.test(facesTest)

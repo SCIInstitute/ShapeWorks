@@ -10,11 +10,7 @@ def topoTest1():
 
   return topoImg.compare(compareImg)
 
-try:
-  topoTest1()
-except ValueError:
-  print("topoTest1 failed")
-  sys.exit(1)
+utils.test(topoTest1)
 
 def topoTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,8 +20,4 @@ def topoTest2():
 
   return topoImg.compare(compareImg)
 
-try:
-  topoTest2()
-except ValueError:
-  print("topoTest2 failed")
-  sys.exit(1)
+utils.test(topoTest2)

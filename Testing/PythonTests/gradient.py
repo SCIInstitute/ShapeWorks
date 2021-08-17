@@ -10,8 +10,4 @@ def gradientTest():
 
   return img.compare(compareImg)
 
-try:
-  gradientTest()
-except ValueError:
-  print("gradientTest failed")
-  sys.exit(1)
+utils.test(gradientTest)
