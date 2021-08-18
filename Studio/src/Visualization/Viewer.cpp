@@ -231,7 +231,6 @@ void Viewer::display_vector_field()
 {
   std::vector<Shape::Point> vecs = this->shape_->get_vectors();
   if (vecs.empty()) {
-    std::cerr << "no vecs\n";
     // restore things to normal
     this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     this->glyphs_->ScalingOn();
@@ -241,9 +240,7 @@ void Viewer::display_vector_field()
 
     this->glyph_points_->SetDataTypeToDouble();
     this->glyph_point_set_->SetPoints(this->glyph_points_);
-    this->glyph_point_set_->GetPointData()->SetScalars(
-      vtkSmartPointer<vtkFloatArray>::New());
-    std::cerr << "fresh scalars\n";
+    this->glyph_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkFloatArray>::New());
 
     this->glyphs_->SetInputData(this->glyph_point_set_);
     this->glyphs_->ScalingOn();
@@ -256,7 +253,6 @@ void Viewer::display_vector_field()
     this->arrows_visible_ = false;
     return;
   }
-  std::cerr << "yes vecs\n";
 
   /////////////////////////////////////////////////////////////////////////////////
   // Step 1. Assign values at each correspondence point based on the image gradient
@@ -292,7 +288,7 @@ void Viewer::display_vector_field()
   this->arrow_glyph_mapper_->SetLookupTable(this->surface_lut_);
 
   // update surface rendering
-  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+  for (size_t i = 0; i < this->surface_mappers_.size(); i++) {
     this->surface_mappers_[i]->SetLookupTable(this->surface_lut_);
     this->surface_mappers_[i]->InterpolateScalarsBeforeMappingOn();
     this->surface_mappers_[i]->SetColorModeToMapScalars();
@@ -693,8 +689,6 @@ void Viewer::update_points()
     for (int i = 0; i < num_points; i++) {
       if (scalar_values.size() > i) {
         scalars->InsertValue(i, scalar_values[i]);
-        //scalars->InsertValue(i, i);
-        std::cerr << "insert " << scalar_values[i] << "\n";
       }
       else {
         scalars->InsertValue(i, i);
@@ -707,23 +701,16 @@ void Viewer::update_points()
     }
   }
   else {
-    std::cerr << "scalars reset\n";
     this->glyph_points_->Reset();
     scalars->Reset();
   }
 
   if (this->showing_feature_map()) {
-    std::cerr << "set range: " << this->surface_lut_->GetRange()[0] << " - " << this->surface_lut_->GetRange()[1] <<
-      "\n";
     this->glyph_mapper_->SetScalarRange(this->surface_lut_->GetRange());
-
     this->glyph_point_set_->GetPointData()->SetScalars(scalars);
-
     this->glyphs_->SetColorModeToColorByScalar();
     this->glyphs_->SetScaleModeToDataScalingOff();
-
     this->glyph_mapper_->SetColorModeToMapScalars();
-
     this->glyph_mapper_->ScalarVisibilityOn();
     this->glyph_mapper_->SetLookupTable(this->surface_lut_);
   }
