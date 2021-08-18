@@ -116,8 +116,6 @@ private:
   QPixmap violin_plot_;
   QPixmap training_plot_;
 
-  QSharedPointer<PythonWorker> py_worker;
-
 };
 
 }

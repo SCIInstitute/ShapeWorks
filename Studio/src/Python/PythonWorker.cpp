@@ -1,6 +1,7 @@
 // pybind
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
+#include <pybind11/eigen.h>
 namespace py = pybind11;
 using namespace pybind11::literals; // to bring in the `_a` literal
 
@@ -79,11 +80,13 @@ PYBIND11_EMBEDDED_MODULE(logger, m) {
 //---------------------------------------------------------------------------
 PythonWorker::PythonWorker()
 {
+  qRegisterMetaType<shapeworks::PythonWorker::JobType>(
+    "shapeworks::PythonWorker::JobType");
+
   this->python_logger_ = QSharedPointer<PythonLogger>::create();
 
   this->thread_ = new QThread(this);
   this->moveToThread(this->thread_);
-  //connect(thread_, &QThread::started, this, &PythonWorker::init, Qt::QueuedConnection);
   this->thread_->start();
 }
 
@@ -138,14 +141,34 @@ void PythonWorker::start_deepssm_testing()
 //---------------------------------------------------------------------------
 void PythonWorker::start_stats_pvalues()
 {
-  if (this->init()) {
-    auto group_1_data = this->stats_.get_group1_matrix();
-    auto group_2_data = this->stats_.get_group2_matrix();
-    py::module sw = py::module::import("shapeworks");
-    py::object compute = sw.attr("stats").attr("compute_pvalues_for_group_difference_data");
-    this->group_pvalues_ = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
+  try {
+    if (this->init()) {
+      auto group_1_data = this->stats_.get_group1_matrix();
+      auto group_2_data = this->stats_.get_group2_matrix();
+      py::module sw = py::module::import("shapeworks");
+      py::object compute = sw.attr("stats").attr("compute_pvalues_for_group_difference_studio");
+      this->group_pvalues_ = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
+    }
+  } catch (py::error_already_set& e) {
+    emit error_message(e.what());
   }
   this->finish_job();
+}
+
+//---------------------------------------------------------------------------
+void PythonWorker::start_job(QSharedPointer<Job> job)
+{
+  if (this->init()) {
+    try {
+      this->current_jobber_ = job;
+      this->current_jobber_->run();
+    } catch (py::error_already_set& e) {
+      emit this->current_jobber_->error_message(e.what());
+    }
+  }
+
+  emit this->current_jobber_->message(this->current_jobber_->get_completion_message());
+  emit this->current_jobber_->finished();
 }
 
 //---------------------------------------------------------------------------
@@ -167,6 +190,21 @@ void PythonWorker::run_job(PythonWorker::JobType job)
   else if (job == PythonWorker::JobType::Stats_Pvalues) {
     QMetaObject::invokeMethod(this, "start_stats_pvalues");
   }
+}
+
+//---------------------------------------------------------------------------
+void PythonWorker::run_job(QSharedPointer<Job> job)
+{
+  emit job->progress(0);
+  emit job->message("Computing: " + job->name());
+
+  job->start_timer();
+  this->current_jobber_ = job;
+  job->moveToThread(this->thread_);
+
+  // run on python thread
+  QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection,
+                            Q_ARG(QSharedPointer<Job>, job));
 }
 
 //---------------------------------------------------------------------------
@@ -277,7 +315,8 @@ bool PythonWorker::init()
 //---------------------------------------------------------------------------
 void PythonWorker::incoming_python_message(std::string message_string)
 {
-  emit message(QString::fromStdString(message_string));
+  emit this->current_jobber_->message(QString::fromStdString(message_string));
+  //emit message(QString::fromStdString(message_string));
 }
 
 //---------------------------------------------------------------------------
@@ -298,7 +337,7 @@ void PythonWorker::finalize_python()
 //---------------------------------------------------------------------------
 void PythonWorker::incoming_python_progress(double value)
 {
-  emit progress(value);
+  emit this->current_jobber_->progress(value);
 }
 
 //---------------------------------------------------------------------------

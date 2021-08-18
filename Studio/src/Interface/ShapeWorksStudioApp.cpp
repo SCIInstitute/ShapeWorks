@@ -85,6 +85,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   }
   this->update_recent_files();
 
+  this->py_worker_ = QSharedPointer<PythonWorker>::create();
+
 #if defined( Q_OS_LINUX )
   this->ui_->action_show_project_folder->setVisible(false);
 #endif
@@ -295,7 +297,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
 
-  this->py_worker_ = QSharedPointer<PythonWorker>::create();
 
   this->handle_message("ShapeWorks Studio Initialized");
 }

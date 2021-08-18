@@ -135,6 +135,9 @@ public:
 
   void load_feature_from_scalar_file(std::string filename, std::string feature_name);
 
+  void set_override_feature(std::string feature);
+  std::string get_override_feature();
+
 private:
 
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
@@ -152,6 +155,8 @@ private:
   MeshGroup reconstructed_meshes_;
 
   int group_id_ = 1;
+
+  std::string override_feature_;
 
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;

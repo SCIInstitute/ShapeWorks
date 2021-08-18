@@ -44,14 +44,6 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
           this, &DeepSSMTool::show_augmentation_meshes);
 
 
-  connect(this->py_worker.data(), &PythonWorker::job_finished,
-          this, &DeepSSMTool::handle_thread_complete);
-  connect(this->py_worker.data(), &PythonWorker::message,
-          this, &DeepSSMTool::message);
-  connect(this->py_worker.data(), &PythonWorker::error_message,
-          this, &DeepSSMTool::error);
-  connect(this->py_worker.data(), &PythonWorker::progress,
-          this, &DeepSSMTool::handle_progress);
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
@@ -114,6 +106,15 @@ void DeepSSMTool::set_session(QSharedPointer<Session> session)
 void DeepSSMTool::set_app(ShapeWorksStudioApp* app)
 {
   this->app_ = app;
+
+  connect(this->app_->get_py_worker().data(), &PythonWorker::job_finished,
+          this, &DeepSSMTool::handle_thread_complete);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::message,
+          this, &DeepSSMTool::message);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::error_message,
+          this, &DeepSSMTool::error);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::progress,
+          this, &DeepSSMTool::handle_progress);
 }
 
 //---------------------------------------------------------------------------
@@ -180,7 +181,7 @@ void DeepSSMTool::run_clicked()
   if (this->tool_is_running_) {
     this->ui_->run_button->setText("Aborting...");
     this->ui_->run_button->setEnabled(false);
-    this->py_worker->abort_job();
+    this->app_->get_py_worker()->abort_job();
   }
   else {
     this->run_tool(this->current_tool_);
@@ -190,6 +191,7 @@ void DeepSSMTool::run_clicked()
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete()
 {
+  bool not_us = false;
   emit progress(100);
   QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
 
@@ -199,18 +201,24 @@ void DeepSSMTool::handle_thread_complete()
   else if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
     emit message("Training Complete.  Duration: " + duration + " seconds");
   }
-  else {
+  else if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
     emit message("Testing Complete.  Duration: " + duration + " seconds");
   }
+  else {
+    not_us = true;
+  }
 
-  this->update_meshes();
-  this->tool_is_running_ = false;
-  this->update_panels();
+  if (!not_us) {
+    this->update_meshes();
+    this->tool_is_running_ = false;
+    this->update_panels();
+  }
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_progress(int val)
 {
+  std::cerr << "deepssm handle progress\n";
   this->load_plots();
   this->update_tables();
   this->update_meshes();
@@ -667,9 +675,8 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
   connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
 
-  this->py_worker->set_deep_ssm(this->deep_ssm_);
-
-  this->py_worker->run_job(type);
+  this->app_->get_py_worker()->set_deep_ssm(this->deep_ssm_);
+  this->app_->get_py_worker()->run_job(type);
 
   // ensure someone doesn't accidentally abort right after clicking RUN
   this->ui_->run_button->setEnabled(false);

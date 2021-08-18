@@ -26,6 +26,7 @@ namespace shapeworks {
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
+class GroupPvalueJob;
 
 class AnalysisTool : public QWidget {
 Q_OBJECT;
@@ -150,6 +151,8 @@ public Q_SLOTS:
   void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress);
 
+  void handle_group_pvalues_complete();
+
 signals:
 
   void update_view();
@@ -171,6 +174,8 @@ private:
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
+  bool group_pvalues_valid();
 
   //! Break apart combined points into per-domain
   StudioParticles convert_from_combined(const vnl_vector<double>& points);
@@ -216,6 +221,7 @@ private:
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
+  QSharedPointer<GroupPvalueJob> group_pvalue_job_;
 
 };
 

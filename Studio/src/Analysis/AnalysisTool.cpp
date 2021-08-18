@@ -16,6 +16,8 @@
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Visualization/Lightbox.h>
+#include <Python/PythonWorker.h>
+#include <Job/GroupPvalueJob.h>
 
 #include <ui_AnalysisTool.h>
 
@@ -79,8 +81,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
-
-  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this,
+          &AnalysisTool::group_p_values_clicked);
 
   this->ui_->surface_open_button->setChecked(false);
   this->ui_->metrics_open_button->setChecked(false);
@@ -257,12 +259,27 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
 void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 {
   this->app_ = app;
+
+  connect(this->app_->get_py_worker().data(), &PythonWorker::job_finished,
+          this, &AnalysisTool::handle_group_pvalues_complete);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::message,
+          this, &AnalysisTool::message);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::error_message,
+          this, &AnalysisTool::error);
+  connect(this->app_->get_py_worker().data(), &PythonWorker::progress,
+          this, &AnalysisTool::progress);
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
   this->handle_analysis_options();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::group_pvalues_valid()
+{
+  return this->group_pvalue_job_ && this->group_pvalue_job_->get_group_pvalues().rows() > 0;
 }
 
 //---------------------------------------------------------------------------
@@ -372,9 +389,34 @@ void AnalysisTool::on_difference_button_clicked()
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->difference_button->setChecked(true);
   emit update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_p_values_clicked()
+{
+  this->ui_->group_slider->setValue(10);
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(true);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+
+  if (this->group_pvalues_valid()) {
+    this->handle_group_pvalues_complete();
+  }
+  else {
+    this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::finished,
+            this, &AnalysisTool::handle_group_pvalues_complete);
+    this->app_->get_py_worker()->run_job(this->group_pvalue_job_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -853,6 +895,12 @@ ShapeHandle AnalysisTool::get_mean_shape()
   if (this->get_group_difference_mode()) {
     shape->set_vectors(this->get_group_difference_vectors());
   }
+  if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
+      this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
+    shape->set_point_features("p_values", this->group_pvalue_job_->get_group_pvalues());
+    shape->set_override_feature("p_values");
+    shape->set_vectors({});
+  }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
   std::vector<Eigen::VectorXf> values;
@@ -978,7 +1026,7 @@ void AnalysisTool::update_group_values()
     this->current_group_values_ = values;
 
     // try to set the right one to a different value than left
-    int i = 0;
+    size_t i = 0;
     while (this->ui_->group_left->currentIndex() == this->ui_->group_right->currentIndex() &&
            i < this->current_group_values_.size()) {
       this->ui_->group_right->setCurrentIndex(i++);
@@ -990,6 +1038,7 @@ void AnalysisTool::update_group_values()
   this->ui_->group1_button->setEnabled(groups_on);
   this->ui_->group2_button->setEnabled(groups_on);
   this->ui_->difference_button->setEnabled(groups_on);
+  this->ui_->group_p_values_button->setEnabled(groups_on);
   this->ui_->group_slider->setEnabled(groups_on);
   this->ui_->group_left->setEnabled(groups_on);
   this->ui_->group_right->setEnabled(groups_on);
@@ -1002,6 +1051,7 @@ void AnalysisTool::update_group_values()
 void AnalysisTool::group_changed()
 {
   this->stats_ready_ = false;
+  this->group_pvalue_job_ = nullptr;
   this->compute_stats();
 }
 
@@ -1115,14 +1165,6 @@ void AnalysisTool::initialize_mesh_warper()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::group_p_values_clicked()
-{
-
-
-
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type,
                                                Eigen::VectorXd data)
 {
@@ -1166,6 +1208,13 @@ void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType jo
     this->ui_->generalization_progress->setValue(progress * 100);
     break;
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_pvalues_complete()
+{
+  emit progress(100);
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1269,7 +1318,8 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   size_t column_x = ds->addCopiedColumn(x, x_label);
   size_t column_y = ds->addCopiedColumn(y, y_label);
 
-  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(this->ui_->compactness_graph);
+  plot->clearGraphs();
+  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
   graph->setColor(Qt::blue);
   graph->setSymbolType(JKQTPNoSymbol);
   graph->setXColumn(column_x);

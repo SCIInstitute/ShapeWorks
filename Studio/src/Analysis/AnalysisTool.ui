@@ -776,7 +776,7 @@ QWidget#specificity_panel {
                       <string>Diff of left to right</string>
                      </property>
                      <property name="text">
-                      <string>p-values</string>
+                      <string>P-values</string>
                      </property>
                      <property name="checkable">
                       <bool>true</bool>

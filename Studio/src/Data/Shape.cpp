@@ -732,4 +732,16 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 
 }
 
+//---------------------------------------------------------------------------
+void Shape::set_override_feature(string feature)
+{
+  this->override_feature_ = feature;
+}
+
+//---------------------------------------------------------------------------
+string Shape::get_override_feature()
+{
+  return this->override_feature_;
+}
+
 }
