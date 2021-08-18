@@ -154,11 +154,11 @@ SET(STUDIO_ANALYSIS_MOC_HDRS
 SET(STUDIO_DEEPSSM_SRCS
   DeepSSM/DeepSSMTool.cpp
   DeepSSM/DeepSSMParameters.cpp
-  DeepSSM/QDeepSSM.cpp
+  DeepSSM/DeepSSMJob.cpp
   )
 SET(STUDIO_DEEPSSM_MOC_HDRS
   DeepSSM/DeepSSMTool.h
-  DeepSSM/QDeepSSM.h
+  DeepSSM/DeepSSMJob.h
   )
 
 SET(STUDIO_UTILS_SRCS

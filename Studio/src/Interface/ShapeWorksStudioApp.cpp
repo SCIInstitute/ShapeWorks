@@ -86,6 +86,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->update_recent_files();
 
   this->py_worker_ = QSharedPointer<PythonWorker>::create();
+  connect(this->py_worker_.data(), &PythonWorker::error_message,
+          this, &ShapeWorksStudioApp::handle_error);
 
 #if defined( Q_OS_LINUX )
   this->ui_->action_show_project_folder->setVisible(false);

@@ -259,15 +259,6 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
 void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 {
   this->app_ = app;
-
-  connect(this->app_->get_py_worker().data(), &PythonWorker::job_finished,
-          this, &AnalysisTool::handle_group_pvalues_complete);
-  connect(this->app_->get_py_worker().data(), &PythonWorker::message,
-          this, &AnalysisTool::message);
-  connect(this->app_->get_py_worker().data(), &PythonWorker::error_message,
-          this, &AnalysisTool::error);
-  connect(this->app_->get_py_worker().data(), &PythonWorker::progress,
-          this, &AnalysisTool::progress);
 }
 
 //---------------------------------------------------------------------------

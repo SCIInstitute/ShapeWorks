@@ -13,13 +13,8 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 #include <QFileInfo>
 
 #include <Data/StudioLog.h>
-#include <Groom/QGroom.h>
 #include <Data/Shape.h>
 #include <Python/PythonWorker.h>
-#include <DeepSSM/QDeepSSM.h>
-#include <Data/StudioLog.h>
-#include <Libs/Optimize/Optimize.h>
-#include <Libs/Optimize/OptimizeParameters.h>
 
 namespace shapeworks {
 
@@ -80,11 +75,9 @@ PYBIND11_EMBEDDED_MODULE(logger, m) {
 //---------------------------------------------------------------------------
 PythonWorker::PythonWorker()
 {
-  qRegisterMetaType<shapeworks::PythonWorker::JobType>(
-    "shapeworks::PythonWorker::JobType");
-
   this->python_logger_ = QSharedPointer<PythonLogger>::create();
 
+  // create singular Python thread and move this object to the new thread
   this->thread_ = new QThread(this);
   this->moveToThread(this->thread_);
   this->thread_->start();
@@ -99,107 +92,30 @@ PythonWorker::~PythonWorker()
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::set_deep_ssm(QSharedPointer<QDeepSSM> deep_ssm)
-{
-  this->deep_ssm_ = deep_ssm;
-  this->deep_ssm_->moveToThread(this->thread_);
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::set_stats(ParticleShapeStatistics stats)
-{
-  this->stats_ = std::move(stats);
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::start_deepssm_augmentation()
-{
-  if (this->init()) {
-    this->deep_ssm_->run_augmentation();
-  }
-  this->finish_job();
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::start_deepssm_training()
-{
-  if (this->init()) {
-    this->deep_ssm_->run_training();
-  }
-  this->finish_job();
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::start_deepssm_testing()
-{
-  if (this->init()) {
-    this->deep_ssm_->run_testing();
-  }
-  this->finish_job();
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::start_stats_pvalues()
-{
-  try {
-    if (this->init()) {
-      auto group_1_data = this->stats_.get_group1_matrix();
-      auto group_2_data = this->stats_.get_group2_matrix();
-      py::module sw = py::module::import("shapeworks");
-      py::object compute = sw.attr("stats").attr("compute_pvalues_for_group_difference_studio");
-      this->group_pvalues_ = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
-    }
-  } catch (py::error_already_set& e) {
-    emit error_message(e.what());
-  }
-  this->finish_job();
-}
-
-//---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job)
 {
   if (this->init()) {
     try {
-      this->current_jobber_ = job;
-      this->current_jobber_->run();
+      this->current_job_ = job;
+      this->current_job_->run();
+      emit this->current_job_->message(this->current_job_->get_completion_message());
     } catch (py::error_already_set& e) {
-      emit this->current_jobber_->error_message(e.what());
+      emit this->current_job_->error_message(e.what());
     }
   }
 
-  emit this->current_jobber_->message(this->current_jobber_->get_completion_message());
-  emit this->current_jobber_->finished();
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::run_job(PythonWorker::JobType job)
-{
-  this->current_job_ = job;
-
-  // we use QMetaObject::invokeMethod to shift the call to the python thread
-
-  if (job == PythonWorker::JobType::DeepSSM_AugmentationType) {
-    QMetaObject::invokeMethod(this, "start_deepssm_augmentation");
-  }
-  else if (job == PythonWorker::JobType::DeepSSM_TrainingType) {
-    QMetaObject::invokeMethod(this, "start_deepssm_training");
-  }
-  else if (job == PythonWorker::JobType::DeepSSM_TestingType) {
-    QMetaObject::invokeMethod(this, "start_deepssm_testing");
-  }
-  else if (job == PythonWorker::JobType::Stats_Pvalues) {
-    QMetaObject::invokeMethod(this, "start_stats_pvalues");
-  }
+  this->python_logger_->clear_abort();
+  emit this->current_job_->finished();
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job)
 {
   emit job->progress(0);
-  emit job->message("Computing: " + job->name());
+  emit job->message("Running Task: " + job->name());
 
   job->start_timer();
-  this->current_jobber_ = job;
+  this->current_job_ = job;
   job->moveToThread(this->thread_);
 
   // run on python thread
@@ -267,8 +183,8 @@ bool PythonWorker::init()
   }
   else {
     qputenv("PYTHONHOME", python_home.toUtf8());
-    qputenv("PATH",
-            "C:\\Users\\amorris\\miniconda3\\envs\\shapeworks;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\mingw-w64\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\usr\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Scripts;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\bin;C:\\Users\\amorris\\miniconda3\\condabin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\dotnet;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Common Files\\Materialise\\UCRT\\10.0.102240;C:\\Users\\amorris\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\amorris\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\Git\\bin;C:\\Qt\\Qt5.9.9\\5.9.9\\msvc2017_64\\bin;C:\\sci\\sw\\build\\bin\\Release;.");
+    //qputenv("PATH",
+    //        "C:\\Users\\amorris\\miniconda3\\envs\\shapeworks;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\mingw-w64\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\usr\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Scripts;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\bin;C:\\Users\\amorris\\miniconda3\\condabin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\dotnet;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Common Files\\Materialise\\UCRT\\10.0.102240;C:\\Users\\amorris\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\amorris\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\Git\\bin;C:\\Qt\\Qt5.9.9\\5.9.9\\msvc2017_64\\bin;C:\\sci\\sw\\build\\bin\\Release;.");
   }
 #endif // ifdef _WIN32
 
@@ -315,13 +231,13 @@ bool PythonWorker::init()
 //---------------------------------------------------------------------------
 void PythonWorker::incoming_python_message(std::string message_string)
 {
-  emit this->current_jobber_->message(QString::fromStdString(message_string));
-  //emit message(QString::fromStdString(message_string));
+  emit this->current_job_->message(QString::fromStdString(message_string));
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::end_python()
 {
+  // send to python thread
   QMetaObject::invokeMethod(this, "finalize_python");
 }
 
@@ -337,19 +253,12 @@ void PythonWorker::finalize_python()
 //---------------------------------------------------------------------------
 void PythonWorker::incoming_python_progress(double value)
 {
-  emit this->current_jobber_->progress(value);
+  emit this->current_job_->progress(value);
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::abort_job()
 {
   this->python_logger_->set_abort();
-}
-
-//---------------------------------------------------------------------------
-void PythonWorker::finish_job()
-{
-  this->python_logger_->clear_abort();
-  emit job_finished(this->current_job_);
 }
 }
