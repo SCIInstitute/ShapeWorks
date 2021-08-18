@@ -187,8 +187,8 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
 
   // copy to Eigen matrix
   this->m_Matrix.resize(num_points * 3, m_numSamples);
-  this->m_group_1_matrix(num_points * 3, m_numSamples1);
-  this->m_group_2_matrix(num_points * 3, m_numSamples2);
+  this->m_group_1_matrix.resize(num_points * 3, m_numSamples1);
+  this->m_group_2_matrix.resize(num_points * 3, m_numSamples2);
   int group1_idx = 0;
   int group2_idx = 0;
   for (unsigned int i = 0; i < m_numSamples; i++) {
