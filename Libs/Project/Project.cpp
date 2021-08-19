@@ -206,6 +206,8 @@ void Project::load_subjects()
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
   auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
   auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
+  auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
+  auto name_column = this->get_index_for_column(NAME);
 
   auto extra_columns = this->get_extra_columns();
 
@@ -216,6 +218,7 @@ void Project::load_subjects()
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
+    subject->set_image_filenames(this->get_list(image_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
     std::map<std::string, std::string> map;
@@ -242,6 +245,17 @@ void Project::load_subjects()
       this->particles_present_ = true;
     }
 
+    if (name_column >= 0) {
+      auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
+      subject->set_display_name(name);
+    } else if (subject->get_segmentation_filenames().size() != 0) {
+      subject->set_display_name(subject->get_segmentation_filenames()[0]);
+    } else if (subject->get_groomed_filenames().size() != 0) {
+      subject->set_display_name(subject->get_groomed_filenames()[0]);
+    } else if (locals.size() > 0) {
+      subject->set_display_name(locals[0]);
+    }
+
     std::map<std::string, std::string> extra_values;
     for (auto elem : this->get_extra_columns()) {
       auto value = this->get_value(this->get_index_for_column(elem),
@@ -266,6 +280,7 @@ void Project::store_subjects()
 
   // segmentation columns
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
+  auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
 
   // groomed columns
   std::vector<std::string> groomed_columns;
@@ -315,13 +330,17 @@ void Project::store_subjects()
     auto groups = subject->get_group_values();
     this->set_map(i, GROUP_PREFIX, groups);
 
+    // images
+    auto image_files = subject->get_image_filenames();
+    this->set_list(image_columns, i, image_files);
+
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
       groomed_present = true;
       int count = 0;
       while (groomed_files.size() > groomed_columns.size()) {
-        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count));
+        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count++));
       }
       this->set_list(groomed_columns, i, groomed_files);
 
@@ -355,10 +374,14 @@ void Project::store_subjects()
           this->get_new_file_column(std::string(LOCAL_PARTICLES) + "_", count));
         world_columns.push_back(
           this->get_new_file_column(std::string(WORLD_PARTICLES) + "_", count));
+        count++;
       }
 
       this->set_list(local_columns, i, local_files);
       this->set_list(world_columns, i, world_files);
+    }
+    else {
+      this->particles_present_ = false;
     }
   }
 
@@ -427,7 +450,7 @@ std::vector<std::string> Project::get_string_column(const std::string& name) con
 
   auto rows = ws.rows(false);
 
-  for (int i = 1; i < rows.length(); i++) {
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string value = rows[i][index - 1].to_string();
     list.push_back(value);
   }
@@ -454,6 +477,12 @@ bool Project::get_particles_present() const
 }
 
 //---------------------------------------------------------------------------
+bool Project::get_images_present()
+{
+  return this->get_matching_columns(IMAGE_PREFIX).size() > 0;
+}
+
+//---------------------------------------------------------------------------
 Parameters Project::get_parameters(const std::string& name, const std::string& domain_name)
 {
   Parameters params;
@@ -472,14 +501,14 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   int value_column = 1; // single domain
   if (domain_name != "") {
-    for (int i = 1; i < ws.highest_column(); i++) {
+    for (int i = ws.lowest_row(); i < ws.highest_column(); i++) {
       if (rows[0][i].to_string() == "value_" + domain_name) {
         value_column = i;
       }
     }
   }
 
-  for (int i = 1; i < rows.length(); i++) {
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string key = rows[i][0].to_string();
     std::string value = rows[i][value_column].to_string();
     map[key] = value;
@@ -593,13 +622,18 @@ std::vector<std::string> Project::get_feature_names()
     for (int d = 0; d < subject->get_domain_types().size(); d++) {
       if (subject->get_domain_types()[d] == DomainType::Mesh) {
         if (subject->get_segmentation_filenames().size() > d) {
-          auto poly_data = MeshUtils::threadSafeReadMesh(
-            subject->get_segmentation_filenames()[d]).getVTKMesh();
-          if (poly_data) {
-            vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-            for (vtkIdType i = 0; i < num_arrays; i++) {
-              this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+          auto filename = subject->get_segmentation_filenames()[d];
+          try {
+            auto poly_data = MeshUtils::threadSafeReadMesh(
+              filename).getVTKMesh();
+            if (poly_data) {
+              vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+              for (vtkIdType i = 0; i < num_arrays; i++) {
+                this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+              }
             }
+          } catch (std::exception& e) {
+            std::cerr << std::string("Error reading: ") + filename;
           }
         }
       }
@@ -761,12 +795,7 @@ int Project::get_or_create_worksheet(std::string name)
 //---------------------------------------------------------------------------
 std::string Project::get_new_file_column(std::string name, int idx)
 {
-  if (idx == 0) {
-    return name + "_file";
-  }
-  else {
-    return name + "_file_" + std::to_string(idx);
-  }
+  return name + std::to_string(idx + 1);
 }
 
 //---------------------------------------------------------------------------
@@ -779,7 +808,6 @@ std::string Project::get_column_identifier(std::string name)
   }
   return name;
 }
-
 
 
 

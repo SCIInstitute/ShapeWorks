@@ -43,8 +43,7 @@ static void prep_distance_transform(std::string input, std::string output)
 
 TEST(OptimizeTests, sample)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -84,10 +83,7 @@ TEST(OptimizeTests, sample)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test)
 {
-
-  std::cerr << "open_mesh_test\n";
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/hemisphere");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/hemisphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("output/hemisphere_world.particles");
@@ -121,8 +117,7 @@ TEST(OptimizeTests, open_mesh_test)
 
 TEST(OptimizeTests, fixedDomain)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_domain");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/fixed_domain");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -162,9 +157,7 @@ TEST(OptimizeTests, fixedDomain)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_mesh_domain_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_mesh_domain");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/fixed_mesh_domain");
 
   // make sure we clean out the output file of interest
   std::remove("shape_models/id0000_ss3_world.particles");
@@ -196,9 +189,7 @@ TEST(OptimizeTests, fixed_mesh_domain_test)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, use_normals_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/use_normals");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/use_normals");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -237,9 +228,7 @@ TEST(OptimizeTests, use_normals_test)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, mesh_use_normals_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/mesh_use_normals");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/mesh_use_normals");
 
   // make sure we clean out at least one output file
   std::remove("output/sphere_00_world.particles");
@@ -272,9 +261,7 @@ TEST(OptimizeTests, mesh_use_normals_test)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane_multi");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/cutting_plane_multi");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -355,8 +342,7 @@ TEST(OptimizeTests, cutting_plane_test)
 
 TEST(OptimizeTests, sphereConstraint)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere_constraint");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -435,9 +421,7 @@ TEST(OptimizeTests, sphereConstraint)
 
 TEST(OptimizeTests, sphereCuttingPlaneConstraint)
 {
-  std::string test_location =
-    std::string(TEST_DATA_DIR) + std::string("/sphere_cutting_plane_constraint");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere_cutting_plane_constraint");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -601,10 +585,7 @@ TEST(OptimizeTests, ffc_test)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test)
 {
-  pythonEnvSetup();
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/simple");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/simple");
 
   // run with parameter file
   std::string paramfile = std::string("python_embedded.xml");
@@ -619,9 +600,7 @@ TEST(OptimizeTests, embedded_python_test)
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, project_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere");
 
   // prep/groom
   prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
@@ -704,9 +683,7 @@ TEST(OptimizeTests, mesh_geodesics_test)
 
 TEST(OptimizeTests, contour_domain_test)
 {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/supershapes_2d");
-  chdir(test_location.c_str());
+  setupenv(std::string(TEST_DATA_DIR) + "/supershapes_2d");
 
   // make sure we clean out at least one output file
   std::remove("output/ss_0_world.particles");

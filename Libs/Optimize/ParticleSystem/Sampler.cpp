@@ -112,6 +112,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
 
       // Adding free-form constraints to constraint object
+      //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
       if(m_FFCs.size() > 1){
           for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
             initialize_ffcs(i);
@@ -386,7 +387,7 @@ void Sampler::AddFreeFormConstraint(unsigned int i,
     m_FFCs[i][m_FFCs[i].size() - 1].query = query;
 }
 
-void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
+void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
@@ -399,11 +400,11 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
     domain->SetImage(image, narrow_band_world);
   }
 
-  // Adding meshes
-  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
-  connectorType::Pointer connector = connectorType::New();
-  connector->SetInput(image);
-  connector->Update();
+    // Adding meshes for FFCs
+    using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+    connectorType::Pointer connector = connectorType::New();
+    connector->SetInput(image);
+    connector->Update();
 
     vtkContourFilter *targetContour = vtkContourFilter::New();
     targetContour->SetInputData(connector->GetOutput());
@@ -416,34 +417,10 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 
     std::cout << "Built mesh with "  << numPt << " vertices." << std::endl;
 
-    /*
-    size_t maxNum = 10000;
-
-    if(numPt > maxNum){
-        vtkDecimatePro *decimator = vtkDecimatePro::New();
-        decimator->SetInputData(mesh);
-        decimator->SetTargetReduction(1.-maxNum/numPt);
-        decimator->Update();
-
-        mesh = decimator->GetOutput();
-
-        std::cout << "Reduction " << 1.-maxNum/numPt << " num vertices " << numPt << "->" << mesh->GetNumberOfPoints() << std::endl;
-    }
-    */
-
-
-    for(vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++)
-    {
-       double p[3];
-       mesh->GetPoint(i, p);
-       //std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl; // get the i-th point of the mesh and store it in p[3]
-
-       // do what you want with the point p[3] here
-       // p[0] -> x-component, p[1] -> y-component, p[2] -> z-component
-    }
-
     this->m_meshes.push_back(mesh);
 
+  domain->SetDomainID(m_DomainList.size());
+  domain->SetDomainName(name);
   m_DomainList.push_back(domain);
 }
 

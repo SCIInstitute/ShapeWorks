@@ -118,6 +118,9 @@ namespace optparse
             long double t;
             return (valid && (std::istringstream(str) >> t)) ? t : 0;
         }
+
+        bool isValid() { return valid; }
+
     private:
 
         const std::string str;

@@ -13,6 +13,7 @@ def antialiasTest1():
 val = antialiasTest1()
 
 if val is False:
+  print("antialiasTest1 failed")
   sys.exit(1)
 
 def antialiasTest2():
@@ -26,6 +27,7 @@ def antialiasTest2():
 val = antialiasTest2()
 
 if val is False:
+  print("antialiasTest2 failed")
   sys.exit(1)
 
 def antialiasTest3():
@@ -39,4 +41,5 @@ def antialiasTest3():
 val = antialiasTest3()
 
 if val is False:
+  print("antialiasTest3 failed")
   sys.exit(1)

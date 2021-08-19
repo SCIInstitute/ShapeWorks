@@ -5,6 +5,9 @@ find_package(GTest REQUIRED)
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
 
+# Set the Python modules location
+set(PYTHON_EXAMPLES_DIR "${CMAKE_SOURCE_DIR}/Examples/Python")
+
 # Configure the TestConfiguration.h file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/TestConfiguration.h
@@ -45,5 +48,7 @@ add_subdirectory(GroomTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(ParticlesTests)
+add_subdirectory(UseCaseTests)
 add_subdirectory(shapeworksTests)
 add_subdirectory(PointCloudTests)
+add_subdirectory(UtilsTests)

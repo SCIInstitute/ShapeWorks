@@ -13,6 +13,7 @@ env:
   CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
+  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
   
 jobs:
   build:
@@ -60,7 +61,7 @@ jobs:
       
     - name: conda installs
       shell: bash -l {0}
-      run: source ./conda_installs.sh
+      run: source ./install_shapeworks.sh
 
     - name: install ccache
       shell: bash -l {0}
@@ -111,7 +112,7 @@ jobs:
 
     - name: make test
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
     - uses: actions/upload-artifact@v1
       with:
@@ -129,3 +130,4 @@ jobs:
         title: "Development Build for Mac"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg

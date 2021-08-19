@@ -211,6 +211,7 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
+  optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
@@ -223,6 +224,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
   optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
+  optimize->SetNarrowBand(this->get_narrow_band());
   optimize->SetOutputDir(this->get_output_prefix());
 
   std::vector<bool> use_normals;
@@ -265,7 +267,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   }
   optimize->SetProcrustesInterval(procrustes_interval);
   optimize->SetProcrustesScaling(this->get_use_procrustes_scaling());
-  optimize->SetVerbosity(0);
 
   int multiscale_particles = 0;
   if (this->get_use_multiscale()) {
@@ -340,20 +341,19 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       TransformType prefix_transform;
       prefix_transform.set_identity();
 
-      /*
-      if (transforms.size() > 0) {
-        int idx = 0;
-        for (int r = 0; r < 4; r++) {
-          for (int c = 0; c < 3; c++) {
-            prefix_transform[r][c] = transforms[0][idx++];
-          }
-        }
-      }*/
-
       if (i < transforms.size() && transforms[i].size() >= 12) {
         prefix_transform[0][3] = transforms[i][9];
         prefix_transform[1][3] = transforms[i][10];
         prefix_transform[2][3] = transforms[i][11];
+      }
+
+      if (i < transforms.size() && transforms[i].size() == 16) { // 4x4
+        int index = 0;
+        for (int c = 0; c < 4; c++) {
+          for (int r = 0; r < 4; r++) {
+            prefix_transform[c][r] = transforms[i][index++];
+          }
+        }
       }
 
       optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++,
@@ -445,5 +445,29 @@ void OptimizeParameters::set_geodesic_cache_multiplier(int value)
 {
   this->params_.set("geodesic_cache_multiplier", value);
 
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_narrow_band()
+{
+  return this->params_.get("narrow_band", 4.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_narrow_band(double value)
+{
+  this->params_.set("narrow_band", value);
+}
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_verbosity()
+{
+  return this->params_.get("verbosity", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_verbosity(int value)
+{
+  this->params_.set("verbosity", value);
 }
 

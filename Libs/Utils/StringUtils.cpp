@@ -95,13 +95,15 @@ std::string StringUtils::getFileNameWithoutExtension(std::string path)
   // separate filename from the extension
   char* pch2 = strrchr(fname, '.');
   if (pch2 == nullptr) {
+    delete[] str;
     return path;
   }
   int num = pch2 - fname + 1;
   int num2 = strlen(fname);
   strncpy(pch2, "", num2 - num);
-
-  return std::string(fname);
+  std::string ret_string(fname);
+  delete[] str;
+  return ret_string;
 }
 
 //---------------------------------------------------------------------------

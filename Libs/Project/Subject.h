@@ -49,6 +49,11 @@ public:
   //! Get the number of domains
   int get_number_of_domains();
 
+  //! Set image filenames
+  void set_image_filenames(std::vector<std::string> filenames);
+  //! Get image filenames
+  std::vector<std::string> get_image_filenames();
+
   //! Get the feature map filenames
   std::map<std::string, std::string> get_feature_filenames() const;
   //! Set the feature map filenames
@@ -71,10 +76,17 @@ public:
   std::map<std::string, std::string> get_extra_values() const;
   void set_extra_values(std::map<std::string, std::string> extra_values);
 
+  //! Get the display name
+  std::string get_display_name();
+  //! Set the display name
+  void set_display_name(std::string display_name);
+
 private:
 
   int number_of_domains_ = 0;
 
+  std::string display_name_;
+  std::vector<std::string> image_filenames_;
   std::vector<std::string> segmentation_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;

@@ -87,11 +87,14 @@ public:
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
-  /// pads an image in all directions with constant value
+  /// pads an image by same number of voxels in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);
 
   /// pads an image by desired number of voxels in each direction with constant value
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
+
+  /// pads an image to include the given region with constant value
+  Image& pad(IndexRegion &region, PixelType value = 0.0);
 
   /// helper to simply translate image
   Image& translate(const Vector3 &v);
@@ -132,7 +135,7 @@ public:
   /// denoises an image using curvature driven flow using curvature flow image filter
   Image& applyCurvatureFilter(unsigned iterations = 10);
 
-  /// computes gradient magnitude of an image region at each pixel using gradient magnitude filter
+  /// computes gradient magnitude at each pixel using gradient magnitude filter
   Image& applyGradientFilter();
 
   /// computes sigmoid function pixel-wise using sigmoid image filter
@@ -150,14 +153,11 @@ public:
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
 
-  /// crops the image down to the given region
-  Image& crop(const Region &region);
+  /// crops the image down to the given region, with optional padding added
+  Image& crop(PhysicalRegion region, const int padding = 0);
 
-  /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
-  Image& clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
-
-  /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
-  Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
+  /// clips an image using a cutting plane
+  Image& clip(const Plane plane, const PixelType val = 0.0);
 
   /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
@@ -203,8 +203,20 @@ public:
   /// standard deviation of image
   PixelType std();
 
-  /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Region boundingBox(PixelType isovalue = 1.0) const;
+  /// bounding box of complete image in logical (index) space
+  IndexRegion logicalBoundingBox() const;
+
+  /// bounding box of complete image in physical space
+  PhysicalRegion physicalBoundingBox() const;
+
+  /// bounding box of largest region of data >= the given isoValue in physical space
+  PhysicalRegion physicalBoundingBox(PixelType isovalue) const;
+
+  /// converts a bounding box in logical (index) space to this image's index coordinates
+  PhysicalRegion logicalToPhysical(IndexRegion region) const;
+
+  /// converts a bounding box in physical space to this image's logical (index) coordinates
+  IndexRegion physicalToLogical(PhysicalRegion region) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;
@@ -223,7 +235,7 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// converts image to mesh (note: definition in Conversion.cpp)
+  /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
 private:
@@ -245,6 +257,9 @@ private:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  /// pad image by the given dims (always positive) in each direction
+  Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
   StatsPtr statsFilter();
 
