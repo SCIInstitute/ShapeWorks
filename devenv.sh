@@ -37,4 +37,4 @@ for M in ${SOURCE}/Python/*/; do
 done
 
 # Set the python path for studio
-mkdir $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
