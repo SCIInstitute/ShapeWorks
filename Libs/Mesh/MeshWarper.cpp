@@ -193,6 +193,7 @@ void MeshWarper::add_particle_vertices()
       }
     }
   }
+  this->reference_mesh_->RemoveDeletedCells();
 }
 
 //---------------------------------------------------------------------------
