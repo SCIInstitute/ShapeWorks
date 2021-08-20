@@ -36,3 +36,6 @@ set PYTHONPATH=%BUILD%;%PYTHONPATH%
 
 rem add each module in ${SOURCE}/Python to the PYTHONPATH
 for /d %%D in ("%SOURCE%\Python\*") DO for /d %%M in ("%%D\*") DO call set PYTHONPATH=%%M;%%PYTHONPATH%%
+
+md %USERPROFILE%\.shapeworks
+python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks/python_path.txt

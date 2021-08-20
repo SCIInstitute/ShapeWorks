@@ -179,7 +179,7 @@ bool PythonWorker::init()
   if (python_home.isEmpty()) {
     emit error_message(QString::fromStdString(
                          "Unable to initialize Python\nPlease run install_shapeworks.bat"));
-    return;
+    return false;
   }
   else {
     qputenv("PYTHONHOME", python_home.toUtf8());
