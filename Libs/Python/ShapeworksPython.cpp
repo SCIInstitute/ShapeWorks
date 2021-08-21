@@ -112,90 +112,104 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init<const std::string &>())
   .def(py::init<const Image&>())
 
-  // Image constructor from numpy array (copies array, ensuring )
+  // Image constructor from numpy array. Wraps float arrays by default.
+  // Tell user to use `Image(np.copy(array))` if copy is intended.
   .def(py::init
+       // The reasons we don't simply specify py::array_t<float>
+       // as a parameter are:
+       // - to take ownership if array type is same as Image::PixelType, and
+       // - to ensure the array isn't silently cast by copying, the default pybind11 behavior
        ([](py::array& np_array) {
-          // get input array info
-          auto info = np_array.request();
+         // get input array info
+         auto info = np_array.request();
 
 #if 0
-          /*
-          struct buffer_info {
-            void *ptr;
-            py::ssize_t itemsize;
-            std::string format;
-            py::ssize_t ndim;
-            std::vector<py::ssize_t> shape;
-            std::vector<py::ssize_t> strides;
-          };
-          */
+         /*
+           struct buffer_info {
+           void *ptr;
+           py::ssize_t itemsize;
+           std::string format;
+           py::ssize_t ndim;
+           std::vector<py::ssize_t> shape;
+           std::vector<py::ssize_t> strides;
+           };
+         */
 
-          std::cout << "buffer info: \n"
-                    << "\tinfo.itemsize: " << info.itemsize << std::endl
-                    << "\tinfo.format: " << info.format << std::endl
-                    << "\tinfo.ndim: " << info.ndim << std::endl;
-          std::cout << "\tinfo.shape: [ ";
-          for (int i = 0; i < info.ndim; i++) {
-            std::cout << info.shape[i] << " ";
-          }
-          std::cout << "]\n\tinfo.strides: [ ";
-          for (int i = 0; i < info.ndim; i++) {
-            std::cout << info.strides[i] << " ";
-          }
-          std::cout << "]\n";
-          std::cout << "writeable: " << np_array.writeable() << std::endl
-                    << "owns data: " << np_array.owndata() << std::endl;
+         std::cout << "buffer info: \n"
+                   << "\tinfo.ptr: " << info.ptr << std::endl
+                   << "\tinfo.itemsize: " << info.itemsize << std::endl
+                   << "\tinfo.format: " << info.format << std::endl
+                   << "\tinfo.ndim: " << info.ndim << std::endl;
+         std::cout << "\tinfo.shape: [ ";
+         for (int i = 0; i < info.ndim; i++) {
+           std::cout << info.shape[i] << " ";
+         }
+         std::cout << "]\n\tinfo.strides: [ ";
+         for (int i = 0; i < info.ndim; i++) {
+           std::cout << info.strides[i] << " ";
+         }
+         std::cout << "]\n";
+         std::cout << "writeable: " << np_array.writeable() << std::endl
+                   << "owns data: " << np_array.owndata() << std::endl;
 #endif
 
-          // Verify info type is same as Image::PixelType (currently hard-coded as float). The
-          // reasons we don't simply specify py::array_t<float> as a parameter are:
-          // - to show an error if another type is sent, and
-          // - to ensure the array isn't silently cast, the default of pybind11.
-          if (info.format != py::format_descriptor<Image::PixelType>::format()) {
-            throw std::invalid_argument("array must be of dtype.float32");
-          }
+         // verify it's 3d
+         if (info.ndim != 3) {
+           throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
+         }
 
-          // verify it's 2d or 3d
-          if (info.ndim < 2 || info.ndim > 3) {
-            throw std::invalid_argument(std::string("array must be 2d or 3d, but ndim = ") + std::to_string(info.ndim));
-          }
+         // verify data is densely packed by checking strides is same as shape
+         std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
+                                          info.shape[2]*info.itemsize,
+                                          info.itemsize};
+         for (int i = 0; i < info.ndim; i++) {
+           if (info.strides[i] != strides[i]) {
+             std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
+             throw std::invalid_argument("array must be densely packed");
+           }
+         }
 
-          // verify data is densely packed by checking strides is same as shape
-          const py::ssize_t scalar_size = sizeof(Image::PixelType);
-          std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
-                                           info.shape[2]*scalar_size,
-                                           scalar_size};
-          for (int i = 0; i < info.ndim; i++) {
-            if (info.strides[i] != strides[i]) {
-              std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-              throw std::invalid_argument("array must be densely packed");
-            }
-          }
+         // transfer data into image using itk importer
+         using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
+         auto importer = ImportType::New();
 
-          // if (dtype.float32) just steal array from python (#966):
-          // - np_array owners data = false
-          // - itk importer pass ownership = true
+         ImportType::SizeType size;            // i.e., Dims
+         size[0] = np_array.shape()[0];
+         size[1] = np_array.shape()[1];
+         size[2] = np_array.shape()[2];
 
-          // create itk importer to copy data into image
-          using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
-          auto importer = ImportType::New();
-          importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr), np_array.size(), false /*pass ownership*/);
+         // array is a dtype.float32; just share the data
+         if (info.format == py::format_descriptor<Image::PixelType>::format()) {
 
-          ImportType::SizeType size;            // i.e., Dims
-          size[0] = np_array.shape()[2];
-          size[1] = np_array.shape()[1];
-          size[2] = np_array.shape()[0];
+           // We increment the Python reference count since if the numpy array
+           // went out of scope, the image memory might be deallocated too soon.
+           np_array.inc_ref();
 
-          ImportType::IndexType start({0,0,0}); // i.e., Coord
-          ImportType::RegionType region;
-          region.SetIndex(start);
-          region.SetSize(size);
+           // We next pass ownership of the array to Image. The inc_ref prevents
+           // Python from deallocating, and Image dealloates when it's time.
+           // This invalidates existing Python objects, but there is no memory
+           // leak. When to deallocate is decided by Image operations that
+           // replace memory (most that use itk) or its destructor.
+           assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
+           importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
+                                      size[0]*size[1]*size[2]*sizeof(Image::PixelType),
+                                      true /*importer take_ownership*/);
+         }
+         else {
+           // inform the user how to create correct type array rather than copy
+           throw std::invalid_argument("array must be same dtype as Image; convert using `arr = np.array(arr, dtype=np.float32)`");
+         }
 
-          importer->SetRegion(region);
-          importer->Update();
-          return Image(importer->GetOutput());
-        }),
-       "initialize an image from a numpy array of dtype.float32")
+         ImportType::IndexType start({0,0,0}); // i.e., Coord
+         ImportType::RegionType region;
+         region.SetIndex(start);
+         region.SetSize(size);
+         importer->SetRegion(region);
+
+         importer->Update();
+         return Image(importer->GetOutput());
+       }),
+       "initialize an image from a numpy array of dtype.float32\nImage wraps the array without copying.\nIf a copy is desired, construct using Image(np.copy(array)).")
 
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
@@ -536,13 +550,49 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
 
   .def("toArray",
-       [](const Image &image) -> decltype(auto) {
+       [](const Image &image, bool copy) -> decltype(auto) {
          const auto dims = image.dims();
+
+         // ** shape 210 and strides 210 sends initially bad array that works for pyvista
+         // ** on reshaping (in python) to shape 210 it's good aray that fails for pyvista
+         // desired: the opposite, but still no realloc
          const auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
-         return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(),
-                          shape, image.getITKImage()->GetBufferPointer());
+         const auto strides = std::vector<size_t>{
+           shape[2] * shape[1] * sizeof(Image::PixelType),
+           shape[1] * sizeof(Image::PixelType),
+           sizeof(Image::PixelType)};
+
+         const auto py_dtype = py::dtype::of<Image::PixelType>();
+         std::cout << "Image info: " << std::endl
+                   << "\tshape: " << shape[0] << " x " << shape[1] << " x " << shape[2] << std::endl
+                   << "\tstrides: " << strides[0] << ", " << strides[1] << ", " << strides[2]
+                   << "\tdtype: " << typeid(Image::PixelType).name()
+                                  << " (" << sizeof(Image::PixelType) << " bytes)" << std::endl
+                   << "\tpy_dtype: " << py_dtype << std::endl;
+
+         // When a valid object is passed as 'base', it tells pybind not to take
+         // ownership of the data because 'base' will (allegedly) own it. Note
+         // that ANY valid object is good for this purpose. This means that
+         // image will continue to own its own array, which will be deleted
+         // along with image (or when most itk operations are performed since
+         // they tend to allocate fresh data).
+         py::str dummyDataOwner;
+         py::array img{
+           py_dtype,
+           shape,
+           strides,
+           image.getITKImage()->GetBufferPointer(),
+           dummyDataOwner
+         };
+         assert(!img.owndata());
+
+         // prevent copying when numpy.ravel is called (transpose will still work fine)
+         pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
+         pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+
+         return img;
        },
-       "returns raw array of image data (note: spacing, origin, coordsys are not preserved)")
+       "returns raw array of image data, directly sharing data so image pixels can be directly modified;\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; for viewing updates after performing Image operations, be sure to retrieve the array again ('sw2vtkImage' already does this).")
 
   .def("createTransform",
        py::overload_cast<XFormType>(&Image::createTransform),
