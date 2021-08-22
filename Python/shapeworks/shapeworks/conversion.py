@@ -2,24 +2,11 @@ import pyvista as pv
 import numpy as np
 import os
 
-# Image.toArray returns a purportedly fortran-ordered array in order to avoid
-# being unnecessarily copied when ravel'd or reshaped. These two functions make
-# requesting an image's data more specific. Both return numpy arrays wrapped
-# around the image's raw data so nothing is copied.
-def toArrayC(img):
-    arr = img.toArray()
-    return arr.reshape((arr.shape[2], arr.shape[1], arr.shape[0]))
-
-# TODO: let's try to make toArray return the C version by default (may not be possible)
-#       ** see notes in Image.toArray Python binding function
-def toArrayF(img):
-    return img.toArray()
-
 # converts shapeworks Image object to vtk image
 def sw2vtkImage(swImg, verbose = False):
 
     # get the numpy array of the shapeworks image as if it were in fortran order
-    array  = toArrayF(swImg)
+    array  = swImg.toArray(for_viewing=True)
 
     # converting a numpy array to a vtk image using pyvista's wrap function
     vtkImg = pv.wrap(array)

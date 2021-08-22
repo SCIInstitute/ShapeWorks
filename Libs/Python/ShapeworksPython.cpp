@@ -140,11 +140,11 @@ PYBIND11_MODULE(shapeworks_py, m)
                    << "\tinfo.itemsize: " << info.itemsize << std::endl
                    << "\tinfo.format: " << info.format << std::endl
                    << "\tinfo.ndim: " << info.ndim << std::endl;
-         std::cout << "\tinfo.shape: [ ";
+         std::cout << "\tinfo.shape (zyx): [ ";
          for (int i = 0; i < info.ndim; i++) {
            std::cout << info.shape[i] << " ";
          }
-         std::cout << "]\n\tinfo.strides: [ ";
+         std::cout << "]\n\tinfo.strides (zyx): [ ";
          for (int i = 0; i < info.ndim; i++) {
            std::cout << info.strides[i] << " ";
          }
@@ -156,6 +156,12 @@ PYBIND11_MODULE(shapeworks_py, m)
          // verify it's 3d
          if (info.ndim != 3) {
            throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
+         }
+
+         // verify it's C order, not Fortran order
+         auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+         if (!c_order) {
+           throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
          }
 
          // verify data is densely packed by checking strides is same as shape
@@ -173,10 +179,10 @@ PYBIND11_MODULE(shapeworks_py, m)
          using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
          auto importer = ImportType::New();
 
-         ImportType::SizeType size;            // i.e., Dims
-         size[0] = np_array.shape()[0];
+         ImportType::SizeType size;            // i.e., Dims (remember numpy orders opposite direction)
+         size[0] = np_array.shape()[2];
          size[1] = np_array.shape()[1];
-         size[2] = np_array.shape()[2];
+         size[2] = np_array.shape()[0];
 
          // array is a dtype.float32; just share the data
          if (info.format == py::format_descriptor<Image::PixelType>::format()) {
@@ -550,25 +556,32 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
 
   .def("toArray",
-       [](const Image &image, bool copy) -> decltype(auto) {
+       [](const Image &image, bool for_viewing) -> decltype(auto) {
          const auto dims = image.dims();
 
-         // ** shape 210 and strides 210 sends initially bad array that works for pyvista
-         // ** on reshaping (in python) to shape 210 it's good aray that fails for pyvista
-         // desired: the opposite, but still no realloc
-         const auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
-         const auto strides = std::vector<size_t>{
-           shape[2] * shape[1] * sizeof(Image::PixelType),
-           shape[1] * sizeof(Image::PixelType),
+         auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
+         if (for_viewing)
+           shape = std::vector<size_t>{dims[0], dims[1], dims[2]};
+
+         auto strides = std::vector<size_t>{
+           dims[0] * dims[1] * sizeof(Image::PixelType),
+           dims[0] * sizeof(Image::PixelType),
            sizeof(Image::PixelType)};
+         if (for_viewing)
+           strides = std::vector<size_t>{
+             sizeof(Image::PixelType),
+             dims[0] * sizeof(Image::PixelType),
+             dims[0] * dims[1] * sizeof(Image::PixelType)};
 
          const auto py_dtype = py::dtype::of<Image::PixelType>();
+#if 0
          std::cout << "Image info: " << std::endl
                    << "\tshape: " << shape[0] << " x " << shape[1] << " x " << shape[2] << std::endl
                    << "\tstrides: " << strides[0] << ", " << strides[1] << ", " << strides[2]
                    << "\tdtype: " << typeid(Image::PixelType).name()
                                   << " (" << sizeof(Image::PixelType) << " bytes)" << std::endl
                    << "\tpy_dtype: " << py_dtype << std::endl;
+#endif
 
          // When a valid object is passed as 'base', it tells pybind not to take
          // ownership of the data because 'base' will (allegedly) own it. Note
@@ -587,12 +600,15 @@ PYBIND11_MODULE(shapeworks_py, m)
          assert(!img.owndata());
 
          // prevent copying when numpy.ravel is called (transpose will still work fine)
-         pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
-         pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+         if (for_viewing)
+           pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
+         else
+           pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
 
          return img;
        },
-       "returns raw array of image data, directly sharing data so image pixels can be directly modified;\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; for viewing updates after performing Image operations, be sure to retrieve the array again ('sw2vtkImage' already does this).")
+       "returns raw array of image data, directly sharing data so image pixels can be directly modified;\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; for viewing updates after performing Image operations, be sure to retrieve the array again ('sw2vtkImage' already does this).",
+       "for_viewing"_a=false)
 
   .def("createTransform",
        py::overload_cast<XFormType>(&Image::createTransform),
