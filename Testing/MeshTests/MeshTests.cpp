@@ -582,3 +582,14 @@ TEST(MeshTests, findReferenceMeshTest)
   int ref = MeshUtils::findReferenceMesh(meshes);
   ASSERT_EQ(ref, 2);
 }
+
+TEST(MeshTests,addMesh)
+{
+  Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
+  Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
+  mesh1 += mesh2;
+  Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
+
+  ASSERT_TRUE(mesh1 == baseline);
+  
+}
