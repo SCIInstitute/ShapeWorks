@@ -421,7 +421,9 @@ build_all()
   fi
 
   if [[ -z $JKQTPLOTTER_DIR ]]; then
-    build_jkqtplotter
+    if [[ $BUILD_GUI = 1 ]]; then
+      build_jkqtplotter
+    fi
   fi
 
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks

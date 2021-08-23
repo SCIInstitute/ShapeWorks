@@ -92,7 +92,6 @@ if (SHAPEWORKS_GUI)
   find_package(JKQTCommonSharedLib REQUIRED)
   find_package(JKQTMathTextSharedLib REQUIRED)
   find_package(JKQTPlotterSharedLib REQUIRED)
-  #find_package(JKQTCommonSharedLib REQUIRED)
 
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
