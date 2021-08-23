@@ -183,8 +183,20 @@ bool PythonWorker::init()
   }
   else {
     qputenv("PYTHONHOME", python_home.toUtf8());
-    //qputenv("PATH",
-    //        "C:\\Users\\amorris\\miniconda3\\envs\\shapeworks;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\mingw-w64\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\usr\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Library\\bin;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\Scripts;C:\\Users\\amorris\\miniconda3\\envs\\shapeworks\\bin;C:\\Users\\amorris\\miniconda3\\condabin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\dotnet;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Common Files\\Materialise\\UCRT\\10.0.102240;C:\\Users\\amorris\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\amorris\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\Git\\bin;C:\\Qt\\Qt5.9.9\\5.9.9\\msvc2017_64\\bin;C:\\sci\\sw\\build\\bin\\Release;.");
+
+    std::fstream file;
+    QString path;
+    file.open(home.toStdString() + "/.shapeworks/path.txt", std::ios::in);
+    if (file.is_open()) {
+        std::string line;
+        while (getline(file, line)) {
+            path = QString::fromStdString(line);
+        }
+        file.close();
+    }
+
+    qputenv("PATH", path.toUtf8());
+    STUDIO_LOG_MESSAGE("Setting PATH for Python to: " + path.toUtf8());
   }
 #endif // ifdef _WIN32
 
