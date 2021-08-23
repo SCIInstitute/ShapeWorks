@@ -27,12 +27,17 @@ namespace shapeworks {
 
 class Session;
 class Lightbox;
-class QDeepSSM;
+class DeepSSMJob;
 class ShapeWorksStudioApp;
 
 class DeepSSMTool : public QWidget {
 Q_OBJECT;
 public:
+
+
+  enum class ToolMode {
+    DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType
+  };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();
@@ -88,7 +93,7 @@ signals:
 private:
 
   void update_meshes();
-  void run_tool(PythonWorker::JobType type);
+  void run_tool(DeepSSMTool::ToolMode type);
   void show_augmentation_meshes();
   void update_tables();
   void show_training_meshes();
@@ -108,15 +113,13 @@ private:
   ShapeWorksStudioApp* app_;
 
   bool tool_is_running_ = false;
-  PythonWorker::JobType current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
-  QSharedPointer<QDeepSSM> deep_ssm_;
+  DeepSSMTool::ToolMode current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+  QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
-
-  QSharedPointer<PythonWorker> py_worker;
 
 };
 

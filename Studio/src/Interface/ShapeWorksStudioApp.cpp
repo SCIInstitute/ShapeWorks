@@ -85,6 +85,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   }
   this->update_recent_files();
 
+  this->py_worker_ = QSharedPointer<PythonWorker>::create();
+  connect(this->py_worker_.data(), &PythonWorker::error_message,
+          this, &ShapeWorksStudioApp::handle_error);
+
 #if defined( Q_OS_LINUX )
   this->ui_->action_show_project_folder->setVisible(false);
 #endif
@@ -294,6 +298,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
+
 
   this->handle_message("ShapeWorks Studio Initialized");
 }
@@ -844,7 +849,6 @@ void ShapeWorksStudioApp::new_session()
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
-
   connect(this->session_->get_mesh_manager().data(), &MeshManager::progress,
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->session_->get_mesh_manager().data(), &MeshManager::status,
@@ -859,6 +863,7 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+  connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
   this->ui_->notes->setText("");
 
@@ -2108,6 +2113,12 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
 void ShapeWorksStudioApp::toggle_log_window()
 {
   this->log_window_.setVisible(!this->log_window_.isVisible());
+}
+
+//---------------------------------------------------------------------------
+QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker()
+{
+  return this->py_worker_;
 }
 
 

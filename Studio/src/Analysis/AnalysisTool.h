@@ -16,13 +16,17 @@
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
+#include <Analysis/ShapeEvaluationWorker.h>
+
 class Ui_AnalysisTool;
+class JKQTPlotter;
 
 namespace shapeworks {
 
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
+class GroupPvalueJob;
 
 class AnalysisTool : public QWidget {
 Q_OBJECT;
@@ -85,6 +89,8 @@ public:
 
   bool export_variance_graph(QString filename);
 
+  void compute_shape_evaluations();
+
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
@@ -140,6 +146,12 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
+  void group_p_values_clicked();
+
+  void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
+  void handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress);
+
+  void handle_group_pvalues_complete();
 
 signals:
 
@@ -153,6 +165,8 @@ signals:
 
 private:
 
+  void create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
+
   void compute_reconstructed_domain_transforms();
 
   bool active_ = false;
@@ -160,6 +174,8 @@ private:
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
+  bool group_pvalues_valid();
 
   //! Break apart combined points into per-domain
   StudioParticles convert_from_combined(const vnl_vector<double>& points);
@@ -177,7 +193,12 @@ private:
 
   /// itk particle shape statistics
   ParticleShapeStatistics stats_;
-  bool stats_ready_;
+  bool stats_ready_ = false;
+  bool evals_ready_ = false;
+
+  Eigen::VectorXd eval_specificity_;
+  Eigen::VectorXd eval_compactness_;
+  Eigen::VectorXd eval_generalization_;
 
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
@@ -199,6 +220,8 @@ private:
   std::vector<std::string> current_group_values_;
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
+
+  QSharedPointer<GroupPvalueJob> group_pvalue_job_;
 
 };
 
