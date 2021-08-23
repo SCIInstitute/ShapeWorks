@@ -126,23 +126,12 @@ def create_cpp_xml(filename, outputfilename):
     file = open(outputfilename,"w")
     file.write(xml_text)
     file.close()
-def random_sub_sampling(inDataList,num_sample,domains_per_shape):
-
-    print("\nPerforming random sub-sampling")
-    print("\nClustering based subsample generation unsupported for multiple domains")
-    dataset_length = int(len(inDataList)/domains_per_shape)
-    all_indices = list(range(dataset_length))
-    idx = list(np.random.choice(all_indices,num_sample,replace=False))
-    samples_idx = []
-    for i in idx:
-        samples_idx.append(int(i*domains_per_shape))
-        samples_idx.append(int((i*domains_per_shape)+1))
-    return samples_idx
-    
+   
 
 def sample_images(inDataList, num_sample,domains_per_shape=1):
-    print("\n########## Sample subset of data #########\n")
+    
     if(domains_per_shape==1):
+        print("\n########## Sample subset of data #########\n")
         D = np.zeros((len(inDataList), len(inDataList)))
         for i in range(len(inDataList)):
             image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
@@ -172,36 +161,63 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
             samples_idx.append(labels.index(i))
       
     else:
-        samples_idx = random_sub_sampling(inDataList,num_sample,domains_per_shape)
+        meshFilesList=[]
+        for i in range(len(inDataList)):
+            filename = os.path.dirname(inDataList[i]) + "/"+os.path.splitext(os.path.basename(inDataList[i]))[0] + ".vtk"
+            sw.Image(inDataList[i]).toMesh(0.5).write(filename)
+            meshFilesList.append(filename)
+        samples_idx = sample_meshes(meshFilesList,num_sample,domains_per_shape=domains_per_shape)
+
+        [os.remove(file) for file in meshFilesList]
+
     
     print("\n###########################################\n")
     return samples_idx
 
 def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
-    if(domains_per_shape==1):
+    if(domains_per_shape>1):
+        num_shapes = int(len(inMeshList)/domains_per_shape)
+        newMeshList=[]
+        for i in range(num_shapes):
+            shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
+            for d in range(1,domains_per_shape):
+                shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
+            filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
+            shape_d0.write(filename)
+            newMeshList.append(filename)
 
-        D = np.zeros((len(inMeshList), len(inMeshList)))
-        for i in range(len(inMeshList)):
-            for j in range(i, len(inMeshList)):
-                mesh1 = sw.Mesh(inMeshList[i])
-                mesh2 = sw.Mesh(inMeshList[j])
-                dist = mesh1.distance(mesh2).getFieldMean("distance")
-                D[i, j] = dist
-        D += D.T
-        A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
-        
-        print("Run Spectral Clustering for {} clusters ...".format(num_sample))
-        model = SpectralClustering(n_clusters=num_sample,
-                                        assign_labels="discretize",
-                                        random_state=0, affinity='precomputed').fit(A)
-        labels = list(model.labels_)
-        samples_idx = []
-        print("sample one data per cluster to have diverse samples!")
-        for i in range(num_sample):
-            samples_idx.append(labels.index(i))
-    else:
-        samples_idx = random_sub_sampling(inMeshList,num_sample,domains_per_shape)
+    if(domains_per_shape==1):
+        newMeshList = inMeshList
+
+    D = np.zeros((len(newMeshList), len(newMeshList)))
+    for i in range(len(newMeshList)):
+        for j in range(i, len(newMeshList)):
+            mesh1 = sw.Mesh(newMeshList[i])
+            mesh2 = sw.Mesh(newMeshList[j])
+            dist = mesh1.distance(mesh2).getFieldMean("distance")
+            D[i, j] = dist
+    D += D.T
+    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+    
+    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+    model = SpectralClustering(n_clusters=num_sample,
+                                    assign_labels="discretize",
+                                    random_state=0, affinity='precomputed').fit(A)
+    labels = list(model.labels_)
+    samples_idx = []
+    print("sample one data per cluster to have diverse samples!")
+    for i in range(num_sample):
+        samples_idx.append(labels.index(i))
+   
     
     print("\n###########################################\n")
-    return samples_idx   
+    if(domains_per_shape>1):
+        [os.remove(file) for file in newMeshList]
+
+    new_sample_idx =[]
+    for i in range(len(samples_idx)):
+        for d in range(domains_per_shape):
+            new_sample_idx.append((samples_idx[i]*domains_per_shape)+d)
+
+    return new_sample_idx   
