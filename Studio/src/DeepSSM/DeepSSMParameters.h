@@ -47,6 +47,9 @@ public:
   int get_training_fine_tuning_epochs();
   void set_training_fine_tuning_epochs(int epochs);
 
+  double get_training_fine_tuning_learning_rate();
+  void set_training_fine_tuning_learning_rate(double rate);
+
   int get_training_batch_size();
   void set_training_batch_size(int batch_size);
 

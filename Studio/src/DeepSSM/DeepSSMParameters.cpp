@@ -1,4 +1,3 @@
-
 #include "DeepSSMParameters.h"
 
 namespace shapeworks {
@@ -24,7 +23,7 @@ const std::string TRAIN_FINE_TUNING = "train_fine_tuning";
 const std::string TRAIN_NUM_DIMS = "train_num_dims";
 const std::string TRAIN_BATCH_SIZE = "train_batch_size";
 const std::string TRAIN_FINE_TUNING_EPOCHS = "train_fine_tuning_epochs";
-
+const std::string TRAIN_FINE_TUNING_LEARNING_RATE = "train_fine_tuning_learning_rate";
 }
 
 namespace Defaults {
@@ -48,6 +47,7 @@ const bool TRAIN_FINE_TUNING = true;
 const int TRAIN_NUM_DIMS = 0;
 const int TRAIN_BATCH_SIZE = 8;
 const int TRAIN_FINE_TUNING_EPOCHS = 2;
+const double TRAIN_FINE_TUNING_LEARNING_RATE = 0.001;
 }
 
 //---------------------------------------------------------------------------
@@ -189,6 +189,18 @@ void DeepSSMParameters::set_training_fine_tuning_epochs(int epochs)
 }
 
 //---------------------------------------------------------------------------
+double DeepSSMParameters::get_training_fine_tuning_learning_rate()
+{
+  return this->params_.get(Keys::TRAIN_FINE_TUNING_LEARNING_RATE, Defaults::TRAIN_FINE_TUNING_LEARNING_RATE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_fine_tuning_learning_rate(double rate)
+{
+  this->params_.set(Keys::TRAIN_FINE_TUNING_LEARNING_RATE, rate);
+}
+
+//---------------------------------------------------------------------------
 int DeepSSMParameters::get_training_batch_size()
 {
   return this->params_.get(Keys::TRAIN_BATCH_SIZE, Defaults::TRAIN_BATCH_SIZE);
@@ -262,7 +274,6 @@ void DeepSSMParameters::restore_training_defaults()
   this->params_.remove_entry(Keys::TRAIN_FINE_TUNING);
   this->params_.remove_entry(Keys::TRAIN_FINE_TUNING_EPOCHS);
   this->params_.remove_entry(Keys::TRAIN_BATCH_SIZE);
+  this->params_.remove_entry(Keys::TRAIN_FINE_TUNING_LEARNING_RATE);
 }
-
-
-};
+}
