@@ -147,26 +147,15 @@ void DeepSSMJob::run_training()
   get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
-
-  std::cerr << "huh?\n";
   emit message("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
-  std::cerr << "huh1\n";
-
   prepare_config_file(config_file, "model",
                       num_dims, out_dir, loader_dir, aug_dir, epochs,
                       learning_rate, decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate);
-  std::cerr << "huh2\n";
 
   emit message("DeepSSM: Training");
-  std::cerr << "huh3\n";
-
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
-  std::cerr << "huh4\n";
-
   train_deep_ssm(config_file);
-  std::cerr << "huh5\n";
-
 }
 
 //---------------------------------------------------------------------------
