@@ -46,7 +46,7 @@ call pip install mkdocs
 call pip install python-markdown-math
 call pip install fontawesome-markdown
 call pip install pymdown-extensions
-
+call pip install --ignore-requires-python swcc 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
 call pip install Python/DocumentationUtilsPackage
