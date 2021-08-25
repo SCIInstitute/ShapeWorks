@@ -14,7 +14,6 @@
 #include "MeshDomain.h"
 
 #include "CorrespondenceMode.h"
-#include "Sampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
@@ -26,6 +25,13 @@
 #include "vnl/vnl_matrix_fixed.h"
 
 #include "TriMesh.h"
+
+#include <vtkContourFilter.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkDecimatePro.h>
+#include <vtkDoubleArray.h>
+
+#include "Mesh.h"
 
 namespace shapeworks {
 
@@ -58,6 +64,12 @@ public:
   struct SphereType {
     vnl_vector_fixed<double, Dimension> center;
     double radius;
+  };
+
+  /** Convenient typedef for storing free form constraint information */
+  struct FFCType {
+     std::vector< std::vector< Eigen::Vector3d > > boundaries;
+     Eigen::Vector3d query;
   };
 
   /** Returns the particle system used in the surface sampling. */
@@ -163,6 +175,9 @@ public:
                        const vnl_vector_fixed<double, Dimension>& va,
                        const vnl_vector_fixed<double, Dimension>& vb,
                        const vnl_vector_fixed<double, Dimension>& vc);
+  void AddFreeFormConstraint(unsigned int i,
+                             const std::vector< std::vector< Eigen::Vector3d > > boundaries,
+                             const Eigen::Vector3d query);
 
   /** Transform a cutting plane based on procrustes transformation */
   void TransformCuttingPlanes(unsigned int i);
@@ -501,6 +516,8 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
+  bool initialize_ffcs(size_t dom);
+
 private:
   Sampler(const Sampler&); //purposely not implemented
   void operator=(const Sampler&); //purposely not implemented
@@ -518,9 +535,10 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
   std::vector<std::vector<SphereType> > m_Spheres;
+  std::vector< std::vector<FFCType> >  m_FFCs;
+  std::vector< vtkSmartPointer<vtkPolyData> > m_meshes;
 
   unsigned int m_verbosity;
-
 };
 
 } // end namespace

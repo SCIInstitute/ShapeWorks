@@ -91,6 +91,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
@@ -99,6 +100,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       }
     }
 
+    // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
@@ -108,6 +110,14 @@ void Sampler::AllocateDomainsAndNeighborhoods()
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
+
+      // Adding free-form constraints to constraint object
+      //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+      if(m_FFCs.size() > 1){
+          for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
+            initialize_ffcs(i);
+          }
+      }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -365,6 +375,18 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
+void Sampler::AddFreeFormConstraint(unsigned int i,
+                           const std::vector< std::vector< Eigen::Vector3d > > boundaries,
+                      const Eigen::Vector3d query){
+    if (m_FFCs.size() < i + 1) {
+      m_FFCs.resize(i + 1);
+    }
+
+    m_FFCs[i].push_back(FFCType());
+    m_FFCs[i][m_FFCs[i].size() - 1].boundaries = boundaries;
+    m_FFCs[i][m_FFCs[i].size() - 1].query = query;
+}
+
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
@@ -378,9 +400,43 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     domain->SetImage(image, narrow_band_world);
   }
 
+    // Adding meshes for FFCs
+    using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+    connectorType::Pointer connector = connectorType::New();
+    connector->SetInput(image);
+    connector->Update();
+
+    vtkContourFilter *targetContour = vtkContourFilter::New();
+    targetContour->SetInputData(connector->GetOutput());
+    targetContour->SetValue(0, 0.0);
+    targetContour->Update();
+
+    vtkSmartPointer<vtkPolyData> mesh = targetContour->GetOutput();
+
+    size_t numPt = mesh->GetNumberOfPoints();
+
+    std::cout << "Built mesh with "  << numPt << " vertices." << std::endl;
+
+    this->m_meshes.push_back(mesh);
+
   domain->SetDomainID(m_DomainList.size());
   domain->SetDomainName(name);
   m_DomainList.push_back(domain);
+}
+
+bool Sampler::initialize_ffcs(size_t dom){
+    std::shared_ptr<Mesh> mesh(new Mesh(m_meshes[dom]));
+
+    for(size_t i = 0; i < m_FFCs[dom].size(); i++){
+        std::cout << "Spplitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+        mesh->SplitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+    }
+
+    this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
+
+    std::cout << "Adding free-form constraint to domain " << dom << std::endl;
+
+    return true;
 }
 
 } // end namespace

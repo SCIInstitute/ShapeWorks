@@ -3,11 +3,35 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 
+#include <math.h>
+#include <algorithm>
 #include <vector>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <string>
 #include <vtkPointData.h>
+#include <vtkCellData.h>
+#include <vtkDataSetAttributes.h>
+#include <vtkSelectPolyData.h>
+#include <vtkClipPolyData.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkCellLocator.h>
+
+#include <igl/grad.h>
+#include <igl/per_vertex_normals.h>
+#include <geometrycentral/surface/surface_mesh_factories.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include "geometrycentral/surface/heat_method_distance.h"
+#include "geometrycentral/surface/meshio.h"
+
+#include <vtkLookupTable.h>
+#include <vtkArrowSource.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkDijkstraGraphGeodesicPath.h>
 
 namespace shapeworks {
 
@@ -135,7 +159,10 @@ public:
   std::vector<std::string> getFieldNames() const;
 
   /// sets the given field for points with array (*does not copy array's values)
-  Mesh& setField(std::string name, Array array);
+  Mesh& setField(std::string name, Array array, bool multi = false);
+
+  /// sets the given field for faces with array (*does not copy array's values)
+  Mesh& setFieldForFaces(std::string name, Array array);
 
   /// gets the field (*does not copy array's values)
   template<typename T>
@@ -193,6 +220,14 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
+  bool SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
+
+  double GetFFCValue(Eigen::Vector3d query);
+  Eigen::Vector3d GetFFCGradient(Eigen::Vector3d query);
+
+  //Debug
+  vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
@@ -204,6 +239,21 @@ private:
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
+
+  vtkSmartPointer<vtkCellLocator> locator;
+
+  void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F);
+
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
+
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
+
+  vtkSmartPointer<vtkPoints> GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
+
+  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
+
 };
 
 /// stream insertion operators for Mesh

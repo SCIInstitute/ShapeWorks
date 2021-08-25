@@ -10,6 +10,8 @@
 #include "Eigen/Dense"
 #include "itkPoint.h"
 
+#include "Mesh.h"
+
 namespace itk
 {
 
@@ -31,7 +33,7 @@ public:
   // Set constraints
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
   void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
-  void addFreeFormConstraint(std::string filename);
+  void addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh);
 
   // Transforms
   bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans);
@@ -145,7 +147,7 @@ public:
            grad -= (*sphereConsts)[i].ConstraintGradient(pt);
        }
        for(size_t i = 0; i < freeFormConsts->size(); i++){
-           grad -= (*sphereConsts)[i].ConstraintGradient(pt);
+           grad -= (*freeFormConsts)[i].ConstraintGradient(pt);
        }
        vnl_vector_fixed<double, 3> gradE;
        for(size_t i = 0; i < 3; i++){
@@ -207,7 +209,7 @@ public:
            (*sphereConsts)[i].UpdateZ(pt,C);
        }
        for(size_t i = 0; i < freeFormConsts->size(); i++){
-           (*sphereConsts)[i].UpdateZ(pt,C);
+           (*freeFormConsts)[i].UpdateZ(pt,C);
        }
    }
 
@@ -220,7 +222,7 @@ public:
            (*sphereConsts)[i].UpdateMu(pt,C);
        }
        for(size_t i = 0; i < freeFormConsts->size(); i++){
-           (*sphereConsts)[i].UpdateMu(pt,C);
+           (*freeFormConsts)[i].UpdateMu(pt,C);
        }
    }
 
