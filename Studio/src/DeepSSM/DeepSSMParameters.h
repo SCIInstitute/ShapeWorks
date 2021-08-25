@@ -44,6 +44,12 @@ public:
   bool get_training_fine_tuning();
   void set_training_fine_tuning(bool fine_tuning);
 
+  int get_training_fine_tuning_epochs();
+  void set_training_fine_tuning_epochs(int epochs);
+
+  int get_training_batch_size();
+  void set_training_batch_size(int batch_size);
+
   double get_training_split();
   void set_training_split(double value);
 
