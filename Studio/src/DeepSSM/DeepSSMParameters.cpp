@@ -260,6 +260,8 @@ void DeepSSMParameters::restore_training_defaults()
   this->params_.remove_entry(Keys::TRAIN_LEARNING_RATE);
   this->params_.remove_entry(Keys::TRAIN_DECAY_LEARNING_RATE);
   this->params_.remove_entry(Keys::TRAIN_FINE_TUNING);
+  this->params_.remove_entry(Keys::TRAIN_FINE_TUNING_EPOCHS);
+  this->params_.remove_entry(Keys::TRAIN_BATCH_SIZE);
 }
 
 
