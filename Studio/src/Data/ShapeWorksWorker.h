@@ -41,7 +41,6 @@ Q_SIGNALS:
   void error_message(QString);
   void warning_message(QString);
   void message(QString);
-  void step_made(int val);
   void finished();
 
 private:

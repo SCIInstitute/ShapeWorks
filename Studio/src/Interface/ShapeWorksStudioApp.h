@@ -36,6 +36,7 @@ class Visualizer;
 class SplashScreen;
 class WheelEventForwarder;
 class StatusBarWidget;
+class PythonWorker;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -123,6 +124,8 @@ public Q_SLOTS:
   void keyboard_shortcuts();
 
   void toggle_log_window();
+
+  QSharedPointer<PythonWorker> get_py_worker();
 
 protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
@@ -235,5 +238,6 @@ private:
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
 
+  QSharedPointer<PythonWorker> py_worker_;
 };
 }

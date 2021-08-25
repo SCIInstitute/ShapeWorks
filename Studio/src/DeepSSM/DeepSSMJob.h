@@ -2,17 +2,19 @@
 
 #include <QObject>
 #include <Libs/Project/Project.h>
+#include <Job/Job.h>
+#include <DeepSSM/DeepSSMTool.h>
 
 namespace shapeworks {
 
 //! Qt Wrapper for DeepSSM
 /*!
- * The QDeepSSM class wraps the functionality for DeepSSM as a QObject
+ * The DeepSSMJob class wraps the functionality for DeepSSM as a Studio Job object
  *
  */
-class QDeepSSM : public QObject {
+class DeepSSMJob : public Job {
 
-Q_OBJECT;
+  Q_OBJECT;
 
 public:
 
@@ -27,8 +29,13 @@ public:
     TEST
   };
 
-  QDeepSSM(ProjectHandle project);
-  ~QDeepSSM();
+  DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode);
+  ~DeepSSMJob();
+
+  void run() override;
+
+  QString name() override;
+
   void run_augmentation();
   void run_training();
   void run_testing();
@@ -37,18 +44,9 @@ public:
 
   std::vector<std::string> get_list(FileType file_type, SplitType split_type);
 
-protected:
-  // override update_progress to emit q_signal
-  void update_progress();
-
-Q_SIGNALS:
-  void progress(int);
-  void message(QString);
-  void error(QString);
-
 private:
   ProjectHandle project_;
 
-
+  DeepSSMTool::ToolMode tool_mode_;
 };
 }

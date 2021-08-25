@@ -4,15 +4,25 @@
 #include <utility>
 #include <QTimer>
 #include <vector>
+#include <Eigen/Eigen>
 
 class BarGraph : public QWidget {
 Q_OBJECT
 
 public:
+
+  enum class ChartType {
+    ExplainedVariance,
+    Evaluation
+  };
+
   BarGraph(QWidget* parent = 0);
   ~BarGraph();
 
+  void set_chart_type(ChartType chart_type);
+
   void set_data(const std::vector<double>& values);
+  void set_data(const Eigen::VectorXd values);
   void set_log_scale(bool b);
 
   void set_y_label(QString label);
@@ -55,4 +65,6 @@ private:
   QTimer hover_timer_;
   QFont axis_font_;
   QFont tick_font_;
+
+  ChartType chart_type_{ChartType::ExplainedVariance};
 };
