@@ -315,9 +315,9 @@ TEST(shapeworksTests, meshtransformTest)
   run_use_case("meshtransform.sh");
 }
 
-TEST(shapeworksTests, generatenormalsTest)
+TEST(shapeworksTests, computenormalsTest)
 {
-  run_use_case("generatenormals.sh");
+  run_use_case("computenormals.sh");
 }
 
 TEST(shapeworksTests, shapeevaluationTest)

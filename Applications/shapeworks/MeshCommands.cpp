@@ -138,7 +138,7 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allowbackintersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--allowbackintersections").action("store").type("bool").set_default(true).help("Allow back-intersections in coverage calculation [default: true].");
   parser.add_option("--anglethreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
   parser.add_option("--backsearchradius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
@@ -240,7 +240,7 @@ void Decimate::buildParser()
 
   parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
   parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: false].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: true].");
 
   Command::buildParser();
 }
@@ -619,7 +619,7 @@ void Distance::buildParser()
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
-  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print largest distance of any point in mesh to target [default: %default].");
+  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
 }
@@ -664,18 +664,18 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// GenerateNormals
+// ComputeNormals
 ///////////////////////////////////////////////////////////////////////////////
-void GenerateNormals::buildParser()
+void ComputeNormals::buildParser()
 {
-  const std::string prog = "generate-normals";
-  const std::string desc = "computes cell normals and orients them such that they point in the same direction";
+  const std::string prog = "compute-normals";
+  const std::string desc = "computes and adds oriented point and cell normals";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
 
-bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -683,7 +683,7 @@ bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  sharedData.mesh->generateNormals();
+  sharedData.mesh->computeNormals();
   return sharedData.validMesh();
 }
 
@@ -842,10 +842,11 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
 void MeanNormals::buildParser()
 {
   const std::string prog = "mean-normals";
-  const std::string desc = "generates array of average normals for each point in given set of meshes";
+  const std::string desc = "computes average normals for each point in given set of meshes";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
+  parser.add_option("--generatenormals").action("store").type("bool").set_default(true).help("Auto generate normals if the mesh does not have normals [default: true].");
 
   Command::buildParser();
 }
@@ -853,8 +854,9 @@ void MeanNormals::buildParser()
 bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
+  bool generateNormals = static_cast<bool>(options.get("generatenormals"));
 
-  sharedData.field = MeshUtils::computeMeanNormals(filenames);
+  sharedData.field = MeshUtils::computeMeanNormals(filenames, generateNormals);
   return true;
 }
 

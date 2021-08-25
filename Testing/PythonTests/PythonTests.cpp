@@ -279,9 +279,9 @@ TEST(pythonTests, geodesicTest)
   run_use_case("geodesic.py");
 }
 
-TEST(pythonTests, generatenormalsTest)
+TEST(pythonTests, computenormalsTest)
 {
-  run_use_case("generatenormals.py");
+  run_use_case("computenormals.py");
 }
 
 TEST(pythonTests, toimageTest)

@@ -5,7 +5,7 @@ from shapeworks import *
 
 def closestpointTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
-  mesh.generateNormals()
+  mesh.computeNormals()
   normals = mesh.getField("Normals")
   p = mesh.getPoint(42)
   pNew = []
@@ -19,7 +19,7 @@ utils.test(closestpointTest1)
 
 def closestpointTest2():
   mesh = Mesh(os.environ["DATA"] + "/sphere_highres.ply")
-  mesh.generateNormals()
+  mesh.computeNormals()
   normals = mesh.getField("Normals")
   p = mesh.getPoint(42)
   pNew = []

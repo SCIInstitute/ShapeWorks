@@ -28,11 +28,7 @@ def toArrayTest3():
   img = Image(arr)
   img_arr = img.toArray()
 
-  try:
-    np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
-    return True
-  except:
-    return False
+  return (arr==img_arr).all()
 
 utils.test(toArrayTest3)
 
@@ -47,10 +43,6 @@ def toArrayTest4():
   compareImg = Image(os.environ["DATA"] + "/imgFromArray.nrrd")
   img_arr = compareImg.toArray()
 
-  try:
-    np.testing.assert_equal(arr, img_arr)  # throws exception if not equal
-    return True
-  except:
-    return False
+  return (arr==img_arr).all()
 
 utils.test(toArrayTest4)
