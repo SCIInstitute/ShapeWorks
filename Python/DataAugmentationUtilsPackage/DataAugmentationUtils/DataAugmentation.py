@@ -50,7 +50,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	else:
 		sw_message("Error sampler_type unrecognized.")
 		sw_message("Gaussian, mixture, and KDE currently supported.")
-		return
+		return 0
 	
 	# Initialize output folders and lists
 	gen_point_dir = out_dir + "Generated-Particles/"
@@ -68,7 +68,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	for index in range(1, num_samples+1):
 		if sw_check_abort():
 			sw_message("Aborted")
-			return
+			return 0
 		sw_message("Generating " +str(index)+'/'+str(num_samples))
 		sw_progress(index / (num_samples+1))
 		name = 'Generated_sample_' + Utils.pad_index(index)

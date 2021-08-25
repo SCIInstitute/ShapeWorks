@@ -898,6 +898,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
+  .def(py::self += py::self)
 
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
@@ -1179,6 +1180,7 @@ PYBIND11_MODULE(shapeworks_py, m)
               &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
+
   ;
 
   // ParticleSystem

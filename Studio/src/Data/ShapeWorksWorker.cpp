@@ -7,7 +7,6 @@
 #include <Groom/QGroom.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <DeepSSM/QDeepSSM.h>
 
 #include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameters.h>
