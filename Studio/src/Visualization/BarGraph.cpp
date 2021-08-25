@@ -25,6 +25,12 @@ BarGraph::~BarGraph()
 {}
 
 //---------------------------------------------------------------------------
+void BarGraph::set_chart_type(ChartType chart_type)
+{
+  this->chart_type_ = chart_type;
+}
+
+//---------------------------------------------------------------------------
 void BarGraph::set_log_scale(bool b)
 {
   this->use_log_ = b;
@@ -70,18 +76,39 @@ void BarGraph::set_data(const std::vector<double>& values)
 }
 
 //---------------------------------------------------------------------------
+void BarGraph::set_data(const Eigen::VectorXd values)
+{
+  this->values_.clear();
+  for (int i = 0; i < values.size(); i++) {
+    this->values_.push_back(values(i));
+  }
+
+  this->min_val_ = *min_element(this->values_.begin(), this->values_.end());
+  this->max_val_ = *max_element(this->values_.begin(), this->values_.end());
+
+  //this->min_val_ = 0;
+  //this->max_val_ = 1;
+
+  this->recalculate_bars();
+  this->setMinimumSize((int) (this->margin_ * this->values_.size() * 2) + 45,
+                       200 + this->margin_ * 5);
+}
+
+//---------------------------------------------------------------------------
 void BarGraph::paint_bar_graph(QPainter& painter)
 {
 
   if (this->font_height_ < 0) {
 
-    QFont font = this->get_font_for_size(painter.font(), this->y_label_,
+//    QFont font = this->get_font_for_size(painter.font(), this->y_label_,
+    QFont font = this->get_font_for_size(painter.font(), "Explained Variance",
                                          this->height() * 0.75,
                                          this->width());
     axis_font_ = font;
     painter.setFont(font);
 
-    tick_font_ = this->get_font_for_size(painter.font(), this->y_label_,
+    //tick_font_ = this->get_font_for_size(painter.font(), this->y_label_,
+    tick_font_ = this->get_font_for_size(painter.font(), "Explained Variance",
                                          this->height() * 0.5,
                                          this->width());
 
@@ -123,9 +150,14 @@ void BarGraph::paint_bar_graph(QPainter& painter)
   int graph_height = this->get_graph_height();
 
 
+  QString x_axis_label = "Mode";
+  if (this->chart_type_ != ChartType::ExplainedVariance) {
+    x_axis_label = "Number of Modes";
+  }
+
   // X label
   painter.drawText(this->font_height_ + this->font_width_ + this->margin_ * 20,
-                   height(), "Mode");
+                   height(), x_axis_label);
 
   // Y label
   painter.save();
@@ -139,7 +171,10 @@ void BarGraph::paint_bar_graph(QPainter& painter)
   // X Values
   QPoint last_acc_pos;
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
-    painter.drawRect(this->bars_[i]);
+
+    if (this->chart_type_ == ChartType::ExplainedVariance) {
+      painter.drawRect(this->bars_[i]);
+    }
     // numbered eigen value on x axis
 
 
@@ -156,6 +191,10 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 
     int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
       this->accumulation_[i]));
+    if (this->chart_type_ != ChartType::ExplainedVariance) {
+      ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
+                                                   this->values_[i]));
+    }
 
     QPoint start_pos(this->bars_[i].x(), ypos);
     QPoint end_pos(this->bars_[i].x() + this->bars_[i].width() + this->margin_, ypos);

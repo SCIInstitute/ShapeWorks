@@ -202,7 +202,7 @@ function install_conda() {
   conda list
 
   # Set the python path for studio
-  mkdir $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+  mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   
   return 0
 }

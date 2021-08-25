@@ -67,7 +67,7 @@ TEST(UseCaseTests, ellipsoid_cut)
 TEST(UseCaseTests, ellipsoid_evaluate)
 {
   run_use_case("ellipsoid_evaluate",
-               "Output/ellipsoid/evaluation/compactness/scree.txt");
+               "Output/ellipsoid/evaluation/specificity/specificity.txt");
 }
 
 //---------------------------------------------------------------------------

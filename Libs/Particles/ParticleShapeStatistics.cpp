@@ -186,12 +186,28 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   m_groupdiff = m_mean2 - m_mean1;
 
   // copy to Eigen matrix
-  //this->m_Matrix.resize(m_numSamples, num_points * 3);
   this->m_Matrix.resize(num_points * 3, m_numSamples);
+  this->m_group_1_matrix.resize(num_points * 3, m_numSamples1);
+  this->m_group_2_matrix.resize(num_points * 3, m_numSamples2);
+  int group1_idx = 0;
+  int group2_idx = 0;
   for (unsigned int i = 0; i < m_numSamples; i++) {
     unsigned int q = points[i].size();
     for (unsigned int j = 0; j < q; j++) {
       this->m_Matrix(j, i) = points[i][j];
+
+      if (m_groupIDs[i] == 1) {
+        this->m_group_1_matrix(j,group1_idx) = points[i][j];
+      }
+      else
+      {
+        this->m_group_2_matrix(j,group2_idx) = points[i][j];
+      }
+    }
+    if (m_groupIDs[i] == 1) {
+      group1_idx++;
+    } else {
+      group2_idx++;
     }
   }
 
@@ -691,34 +707,33 @@ int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
   return 0;
 }
 
-double ParticleShapeStatistics::get_compactness(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->compactness_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
 }
 
-double ParticleShapeStatistics::get_specificity(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->specificity_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
-double ParticleShapeStatistics::get_generalization(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->generalization_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
-void ParticleShapeStatistics::compute_evaluation(int num_modes)
+Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()
 {
-  if (!this->evaluation_ready_ || num_modes != this->evaluation_modes_) {
-    auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-    this->compactness_ = shapeworks::ShapeEvaluation::ComputeCompactness(ps, num_modes);
-    this->specificity_ = shapeworks::ShapeEvaluation::ComputeSpecificity(ps, num_modes);
-    this->generalization_ = shapeworks::ShapeEvaluation::ComputeGeneralization(ps, num_modes);
-    this->evaluation_ready_ = true;
-    this->evaluation_modes_ = num_modes;
-  }
+  return this->m_group_1_matrix;
 }
+
+Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
+{
+  return this->m_group_2_matrix;
+}
+
 
 } // shapeworks

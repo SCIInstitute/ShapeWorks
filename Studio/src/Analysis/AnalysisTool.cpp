@@ -1,5 +1,6 @@
 // std
 #include <iostream>
+#include <fstream>
 
 // qt
 #include <QThread>
@@ -15,8 +16,15 @@
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Visualization/Lightbox.h>
+#include <Python/PythonWorker.h>
+#include <Job/GroupPvalueJob.h>
 
 #include <ui_AnalysisTool.h>
+
+#include <jkqtplotter/jkqtplotter.h>
+#include "jkqtplotter/graphs/jkqtpscatter.h"
+
+//#include <jkqtplotter/graphs/
 
 namespace shapeworks {
 
@@ -29,6 +37,7 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
+  JKQTPlotter plot;
 
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi(this);
@@ -72,17 +81,16 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
+  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this,
+          &AnalysisTool::group_p_values_clicked);
+
   this->ui_->surface_open_button->setChecked(false);
-  //this->on_surface_open_button_toggled();
   this->ui_->metrics_open_button->setChecked(false);
-  //this->on_metrics_open_button_toggled();
 
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
 
   this->ui_->graph_->set_y_label("Explained Variance");
-  this->ui_->compactness_graph->set_y_label("Compactness");
-//  this->ui_->evaluation_widget->hide();
 
   for (auto button : {this->ui_->distance_transfom_radio_button,
                       this->ui_->mesh_warping_radio_button, this->ui_->legacy_radio_button}) {
@@ -90,8 +98,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
             this, &AnalysisTool::reconstruction_method_changed);
   }
 
+  this->ui_->explained_variance_panel->hide();
   this->ui_->reconstruction_options->hide();
-
 }
 
 //---------------------------------------------------------------------------
@@ -260,6 +268,12 @@ void AnalysisTool::update_analysis_mode()
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::group_pvalues_valid()
+{
+  return this->group_pvalue_job_ && this->group_pvalue_job_->get_group_pvalues().rows() > 0;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::compute_mode_shape()
 {}
 
@@ -366,9 +380,34 @@ void AnalysisTool::on_difference_button_clicked()
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->difference_button->setChecked(true);
   emit update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_p_values_clicked()
+{
+  this->ui_->group_slider->setValue(10);
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(true);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+
+  if (this->group_pvalues_valid()) {
+    this->handle_group_pvalues_complete();
+  }
+  else {
+    this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::finished,
+            this, &AnalysisTool::handle_group_pvalues_complete);
+    this->app_->get_py_worker()->run_job(this->group_pvalue_job_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -428,7 +467,7 @@ bool AnalysisTool::compute_stats()
   }
 
   // consistency check
-  int point_size = points[0].size();
+  size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
       emit error(
@@ -440,6 +479,8 @@ bool AnalysisTool::compute_stats()
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
 
+  this->compute_shape_evaluations();
+
   this->stats_ready_ = true;
   std::vector<double> vals;
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
@@ -448,17 +489,27 @@ bool AnalysisTool::compute_stats()
   this->ui_->graph_->set_data(vals);
   this->ui_->graph_->repaint();
 
-  this->ui_->chart_scroll_area_compactness->hide();
-/*
-  vals.clear();
-  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(this->stats_.get_compactness(0));
-    //vals.push_back(this->stats_.get_compactness(i));
-  }
-  this->ui_->compactness_graph->set_data(vals);
-  this->ui_->compactness_graph->repaint();
-*/
+  ////  Uncomment this to write out long format sample data
+  /*
+     if (groups_enabled) {
+     std::ofstream file;
+     file.open ("/tmp/stats.csv");
+     file << "subject,group,particle,x,y,z\n";
 
+     int shape_id = 0;
+     for (ShapeHandle shape : this->session_->get_shapes()) {
+      auto group = shape->get_subject()->get_group_value(group_set);
+      auto particles = shape->get_particles();
+      auto points = particles.get_world_points(0);
+      int point_id = 0;
+      for (auto point : points) {
+        file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2] << "\n";
+      }
+      shape_id++;
+     }
+     file.close();
+     }
+   */
 
   return true;
 }
@@ -558,7 +609,6 @@ void AnalysisTool::load_settings()
 
   this->ui_->group_box->setCurrentText(
     QString::fromStdString(params.get("current_group", "-None-")));
-
 }
 
 //---------------------------------------------------------------------------
@@ -581,6 +631,60 @@ void AnalysisTool::shutdown()
 bool AnalysisTool::export_variance_graph(QString filename)
 {
   return this->ui_->graph_->grab().save(filename);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::compute_shape_evaluations()
+{
+  if (this->evals_ready_) {
+    return;
+  }
+
+  // reset
+  this->eval_compactness_ = Eigen::VectorXd();
+  this->eval_specificity_ = Eigen::VectorXd();
+  this->eval_generalization_ = Eigen::VectorXd();
+
+  this->ui_->compactness_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+  this->ui_->generalization_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+  this->ui_->specificity_graph->setMinimumSize(this->ui_->graph_->minimumSize());
+
+  this->ui_->compactness_progress_widget->show();
+  this->ui_->generalization_progress_widget->show();
+  this->ui_->specificity_progress_widget->show();
+  this->ui_->compactness_graph->hide();
+  this->ui_->generalization_graph->hide();
+  this->ui_->specificity_graph->hide();
+  this->ui_->compactness_progress->setValue(0);
+  this->ui_->generalization_progress->setValue(0);
+  this->ui_->specificity_progress->setValue(0);
+
+  auto worker = ShapeEvaluationWorker::create_worker(this->stats_,
+                                                     ShapeEvaluationWorker::JobType::CompactnessType);
+  //worker->set_progress_callback()
+  connect(worker, &ShapeEvaluationWorker::result_ready, this,
+          &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this,
+          &AnalysisTool::handle_eval_thread_progress);
+  worker->async_evaluate_shape();
+
+  worker = ShapeEvaluationWorker::create_worker(this->stats_,
+                                                ShapeEvaluationWorker::JobType::GeneralizationType);
+  connect(worker, &ShapeEvaluationWorker::result_ready, this,
+          &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this,
+          &AnalysisTool::handle_eval_thread_progress);
+  worker->async_evaluate_shape();
+
+  worker = ShapeEvaluationWorker::create_worker(this->stats_,
+                                                ShapeEvaluationWorker::JobType::SpecificityType);
+  connect(worker, &ShapeEvaluationWorker::result_ready, this,
+          &AnalysisTool::handle_eval_thread_complete);
+  connect(worker, &ShapeEvaluationWorker::report_progress, this,
+          &AnalysisTool::handle_eval_thread_progress);
+  worker->async_evaluate_shape();
+
+  this->evals_ready_ = true;
 }
 
 //---------------------------------------------------------------------------
@@ -723,6 +827,7 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
   this->stats_ready_ = false;
+  this->evals_ready_ = false;
   this->stats_ = ParticleShapeStatistics();
 }
 
@@ -780,6 +885,12 @@ ShapeHandle AnalysisTool::get_mean_shape()
   ShapeHandle shape = this->create_shape_from_points(shape_points);
   if (this->get_group_difference_mode()) {
     shape->set_vectors(this->get_group_difference_vectors());
+  }
+  if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
+      this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
+    shape->set_point_features("p_values", this->group_pvalue_job_->get_group_pvalues());
+    shape->set_override_feature("p_values");
+    shape->set_vectors({});
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -862,7 +973,6 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   return shape;
 }
 
-
 //---------------------------------------------------------------------------
 void AnalysisTool::set_feature_map(const std::string& feature_map)
 {
@@ -892,8 +1002,8 @@ void AnalysisTool::update_group_boxes()
 void AnalysisTool::update_group_values()
 {
   auto values = this->session_->get_project()->
-    get_group_values(std::string("group_")
-                     + this->ui_->group_box->currentText().toStdString());
+                get_group_values(std::string("group_")
+                                 + this->ui_->group_box->currentText().toStdString());
 
   if (values != this->current_group_values_) {
     // populate group values
@@ -907,7 +1017,7 @@ void AnalysisTool::update_group_values()
     this->current_group_values_ = values;
 
     // try to set the right one to a different value than left
-    int i = 0;
+    size_t i = 0;
     while (this->ui_->group_left->currentIndex() == this->ui_->group_right->currentIndex() &&
            i < this->current_group_values_.size()) {
       this->ui_->group_right->setCurrentIndex(i++);
@@ -919,6 +1029,7 @@ void AnalysisTool::update_group_values()
   this->ui_->group1_button->setEnabled(groups_on);
   this->ui_->group2_button->setEnabled(groups_on);
   this->ui_->difference_button->setEnabled(groups_on);
+  this->ui_->group_p_values_button->setEnabled(groups_on);
   this->ui_->group_slider->setEnabled(groups_on);
   this->ui_->group_left->setEnabled(groups_on);
   this->ui_->group_right->setEnabled(groups_on);
@@ -931,6 +1042,7 @@ void AnalysisTool::update_group_values()
 void AnalysisTool::group_changed()
 {
   this->stats_ready_ = false;
+  this->group_pvalue_job_ = nullptr;
   this->compute_stats();
 }
 
@@ -965,13 +1077,6 @@ void AnalysisTool::on_metrics_open_button_toggled()
   if (show) {
     this->compute_stats();
   }
-  /// Disabled for now
-  /*
-  if (show) {
-    this->ui_->specificity_label->setText(QString::number(this->stats_.get_specificity(1)));
-    this->ui_->compactness_label->setText(QString::number(this->stats_.get_compactness(1)));
-    this->ui_->generalization_label->setText(QString::number(this->stats_.get_generalization(1)));
-  }*/
 }
 
 //---------------------------------------------------------------------------
@@ -1051,6 +1156,59 @@ void AnalysisTool::initialize_mesh_warper()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type,
+                                               Eigen::VectorXd data)
+{
+  switch (job_type) {
+  case ShapeEvaluationWorker::JobType::CompactnessType:
+    this->eval_compactness_ = data;
+    this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes",
+                      "Explained Variance");
+    this->ui_->compactness_graph->show();
+    this->ui_->compactness_progress_widget->hide();
+    break;
+  case ShapeEvaluationWorker::JobType::SpecificityType:
+    this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes",
+                      "Specificity");
+    this->eval_specificity_ = data;
+    this->ui_->specificity_graph->show();
+    this->ui_->specificity_progress_widget->hide();
+    break;
+  case ShapeEvaluationWorker::JobType::GeneralizationType:
+    this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes",
+                      "Generalization");
+    this->eval_generalization_ = data;
+    this->ui_->generalization_graph->show();
+    this->ui_->generalization_progress_widget->hide();
+    break;
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type,
+                                               float progress)
+{
+  switch (job_type) {
+  case ShapeEvaluationWorker::JobType::CompactnessType:
+    this->ui_->compactness_progress->setValue(progress * 100);
+    break;
+  case ShapeEvaluationWorker::JobType::SpecificityType:
+    this->ui_->specificity_progress->setValue(progress * 100);
+    break;
+  case ShapeEvaluationWorker::JobType::GeneralizationType:
+    this->ui_->generalization_progress->setValue(progress * 100);
+    break;
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_pvalues_complete()
+{
+  emit progress(100);
+  emit update_view();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed()
 {
   this->ui_->reconstruction_options->setVisible(
@@ -1063,7 +1221,8 @@ void AnalysisTool::reconstruction_method_changed()
     method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
   }
 
-  auto previous_method = this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
+  auto previous_method =
+    this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
   if (previous_method != method) {
     this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     this->session_->handle_clear_cache();
@@ -1104,7 +1263,6 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
       new_world[i] = points[idx++];
     }
     particles.set_world_particles(d, new_world);
-
   }
 
   return particles;
@@ -1135,7 +1293,48 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
   for (int s = 0; s < shapes.size(); s++) {
     shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
   }
-
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title,
+                               QString x_label, QString y_label)
+{
+  JKQTPDatastore* ds = plot->getDatastore();
+
+  QVector<double> x, y;
+  for (int i = 0; i < data.size(); i++) {
+    x << i + 1;
+    y << data[i];
+  }
+  size_t column_x = ds->addCopiedColumn(x, x_label);
+  size_t column_y = ds->addCopiedColumn(y, y_label);
+
+  plot->clearGraphs();
+  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
+  graph->setColor(Qt::blue);
+  graph->setSymbolType(JKQTPNoSymbol);
+  graph->setXColumn(column_x);
+  graph->setYColumn(column_y);
+  graph->setTitle(title);
+
+  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+  plot->getPlotter()->setUseAntiAliasingForSystem(true);
+  plot->getPlotter()->setUseAntiAliasingForText(true);
+  //plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
+  plot->getPlotter()->setPlotLabelFontSize(18);
+  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
+  plot->getPlotter()->setDefaultTextSize(14);
+  plot->getPlotter()->setShowKey(false);
+
+  plot->getXAxis()->setAxisLabel(x_label);
+  plot->getXAxis()->setLabelFontSize(14);
+  plot->getYAxis()->setAxisLabel(y_label);
+  plot->getYAxis()->setLabelFontSize(14);
+
+  plot->clearAllMouseWheelActions();
+  plot->setMousePositionShown(false);
+  plot->setMinimumSize(250, 250);
+  plot->addGraph(graph);
+  plot->zoomToFit();
+}
 }

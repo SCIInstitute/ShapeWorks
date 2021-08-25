@@ -1149,6 +1149,18 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeFullCompactness",
+              &ShapeEvaluation::ComputeFullCompactness,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullGeneralization",
+              &ShapeEvaluation::ComputeFullGeneralization,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificity",
+              &ShapeEvaluation::ComputeFullSpecificity,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")

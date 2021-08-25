@@ -160,14 +160,15 @@ void Shape::clear_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_global_point_files(std::vector<std::string> filenames)
+bool Shape::import_global_point_files(QStringList filenames)
 {
   for (int i = 0; i < filenames.size(); i++) {
     vnl_vector<double> points;
-    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+    if (!Shape::import_point_file(filenames[i], points)) {
+      std::cerr << "had an error aborting\n";
       return false;
     }
-    this->global_point_filenames_.push_back(filenames[i]);
+    this->global_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_world_particles(i, points);
   }
   this->subject_->set_world_particle_filenames(this->global_point_filenames_);
@@ -175,14 +176,15 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_local_point_files(std::vector<std::string> filenames)
+bool Shape::import_local_point_files(QStringList filenames)
 {
   for (int i = 0; i < filenames.size(); i++) {
     vnl_vector<double> points;
-    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+    if (!Shape::import_point_file(filenames[i], points)) {
+      std::cerr << "had an error aborting\n";
       return false;
     }
-    this->local_point_filenames_.push_back(filenames[i]);
+    this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);
   }
   this->subject_->set_local_particle_filenames(this->local_point_filenames_);
@@ -392,8 +394,6 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
-    QMessageBox::warning(0, "Unable to open particle file",
-                         "Error opening particle file: \"" + filename + "\"");
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
@@ -730,6 +730,18 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 
   this->set_point_features(feature_name, values);
 
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_override_feature(string feature)
+{
+  this->override_feature_ = feature;
+}
+
+//---------------------------------------------------------------------------
+string Shape::get_override_feature()
+{
+  return this->override_feature_;
 }
 
 }
