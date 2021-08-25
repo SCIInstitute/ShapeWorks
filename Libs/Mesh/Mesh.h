@@ -26,7 +26,8 @@ public:
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
   Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
-
+  ///append two meshes
+  Mesh& operator+=(const Mesh& otherMesh);
   /// return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
 
@@ -210,5 +211,7 @@ private:
 
 /// stream insertion operators for Mesh
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
+
+
 
 } // shapeworks

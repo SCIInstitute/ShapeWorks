@@ -46,6 +46,12 @@
 #include <igl/massmatrix.h>
 #include <igl/invert_diag.h>
 
+//append
+#include <vtkAppendPolyData.h>
+#include <vtkCleanPolyData.h>
+#include <vtkNew.h>
+#include <vtkPolyData.h>
+
 namespace shapeworks {
 
 Mesh::MeshType Mesh::read(const std::string &pathname)
@@ -1008,4 +1014,24 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
+
+Mesh& Mesh::operator+=(const Mesh& otherMesh)
+{
+
+  
+  // Append the two meshes
+  vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
+  appendFilter->AddInputData(this->mesh);
+  appendFilter->AddInputData(otherMesh.mesh);
+  
+  // Remove any duplicate points.
+  vtkSmartPointer<vtkCleanPolyData> cleanFilter= vtkSmartPointer<vtkCleanPolyData>::New();
+  cleanFilter->SetInputConnection(appendFilter->GetOutputPort());
+  cleanFilter->Update();
+
+  
+  this->mesh = cleanFilter->GetOutput();
+  return *this;
+  
+}
 } // shapeworks

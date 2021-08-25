@@ -425,10 +425,10 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
 
 
 
-#Function to generate the scree plot based on the explained variance calculated by the ComputeCompactness command
-def plot_scree(save_dir):
+#Function to generate the line plot for shape evaluation statistics
+def plot_mode_line(save_dir,filename,title,ylabel):
     # Load scree plot data
-    Y = np.loadtxt(save_dir+'/scree.txt')
+    Y = np.loadtxt(save_dir+ filename)
     N = len(Y)
     X = np.arange(1, N+1)
 
@@ -436,14 +436,14 @@ def plot_scree(save_dir):
     plt.plot(X, Y, linewidth=4.0)
     fig = plt.gcf()
     fig.set_size_inches(10, 10)
-    plt.title('Scree Plot')
+    plt.title(title)
     plt.xlabel('Mode')
-    plt.ylabel('Scree')
+    plt.ylabel(ylabel)
     plt.xticks(X)
-    plt.ylim(bottom=0, top=1.2)
+    plt.ylim(bottom=0, top=max(Y)*1.5)
     plt.xlim(left=1, right=N)
     plt.grid()
-    plt.savefig(save_dir+"scree_plot.png")
+    plt.savefig(save_dir+title.lower()+"_plot.png")
     plt.show(block=False)
     plt.pause(3)
     plt.close(fig)

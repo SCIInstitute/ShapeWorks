@@ -832,6 +832,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
+  .def(py::self += py::self)
 
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
@@ -1118,13 +1119,6 @@ PYBIND11_MODULE(shapeworks_py, m)
               &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of shapeworks meshes",
               "meshes"_a)
-
-  .def_static("computeMeanNormals",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::computeMeanNormals(meshes);
-              },
-               "",
-               "meshes"_a)
   ;
 
   // ParticleSystem
@@ -1159,6 +1153,18 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeFullCompactness",
+              &ShapeEvaluation::ComputeFullCompactness,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullGeneralization",
+              &ShapeEvaluation::ComputeFullGeneralization,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificity",
+              &ShapeEvaluation::ComputeFullSpecificity,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
