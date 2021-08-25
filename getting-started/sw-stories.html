@@ -75,6 +75,8 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#hip-joint-fai-pathology">Hip Joint FAI Pathology</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pose-and-shape-of-the-dysplastic-hip-joint">Pose and Shape of the Dysplastic Hip Joint</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#scapular-morphology-in-hill-sachs-patients">Scapular Morphology in Hill-Sachs Patients</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shape-changes-in-atrial-fibrillation">Shape Changes in Atrial Fibrillation</a>
@@ -132,6 +134,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
@@ -293,12 +297,25 @@
 <ul>
 <li>P. Atkins, P. Mukherjee, S. Elhabian, S. Singla, M. Harris, J. Weiss, R. Whitaker, and A. Anderson. Proximal femoral cortical bone thickness in patients with femoroacetabular impingement and normal hips analyzed using statistical shape modeling. In Summer Biomechanics, Bioengineering and Biotransport Conference, 2015.</li>
 <li>P. R. Atkins, S. Y. Elhabian, P. Agrawal, M. D. Harris, R. T. Whitaker, J. A. Weiss, C. L. Peters, and A. E. Anderson. Quantitative comparison of cortical bone thickness using correspondence-based shape modeling in patients with cam femoroacetabular impingement. Journal of Orthopaedic Research, 35(8):1743–1753, 2017.</li>
-<li>P. R. Atkins, S. K. Aoki, R. T. Whitaker, J. A. Weiss, C. L. Peters, and A. E. Anderson. Does removal of subchondral cortical bone provide sufficient resection depth for treatment of cam femoroacetabular impingement? Clinical Orthopaedics and Related Research R , 475(8):1977–1986, 2017.</li>
+<li>P. R. Atkins, S. K. Aoki, R. T. Whitaker, J. A. Weiss, C. L. Peters, and A. E. Anderson. Does removal of subchondral cortical bone provide sufficient resection depth for treatment of cam femoroacetabular impingement? Clinical Orthopaedics and Related ResearchR , 475(8):1977–1986, 2017.</li>
 <li>P. R. Atkins, S. K. Aoki, S. Y. Elhabian, P. Agrawal, R. T. Whitaker, J. A. Weiss, C. L. Peters, and A. E. Anderson. Evaluation of the Sclerotic Subchondral Bone Boundary as a Surgical Resection Guide in the Treatment of Cam-type Femoroacetabular Impingement. In Annual Meeting of Orthopaedic Research Society, 2017.</li>
 <li>P. Atkins, S. Elhabian, P. Agrawal, R. Whitaker, J. Weiss, S. Aoki, C. Peters, and A. Anderson. Can the sclerotic subchondral bone of the proximal femur cam lesion be used as a surgical resection guide? An objective analysis using 3D computed tomography and statistical shape modeling. In International Society of Hip Arthroscopy Annual Scientific Meeting, 2016.</li>
 <li>P. Atkins, S. Elhabian, P. Agrawal, R. Whitaker, J. Weiss, C. Peters, S. Aoki, and A. Anderson. Which radiographic measurements best identify anatomical variation in femoral head anatomy? Analysis using 3D computed tomography and statistical shape modeling. In International Society of Hip Arthroscopy Annual Scientific Meeting, 2016.</li>
-<li>P. Atkins, Y. Shin, P. Agrawal, S. Elhabian, R. Whitaker, J. Weiss, S. Aoki, C. Peters, and A. Anderson. Which Two-dimensional Radiographic Measurements of Cam Femoroacetabular Impingement Best Describe the Three-dimensional Shape of the Proximal Femur? Clinical Orthopaedics and Related Research R, 477(1):242–253, 2019.</li>
+<li>P. Atkins, Y. Shin, P. Agrawal, S. Elhabian, R. Whitaker, J. Weiss, S. Aoki, C. Peters, and A. Anderson. Which Two-dimensional Radiographic Measurements of Cam Femoroacetabular Impingement Best Describe the Three-dimensional Shape of the Proximal Femur? Clinical Orthopaedics and Related ResearchR, 477(1):242–253, 2019.</li>
 <li>P. Atkins, P. Mukherjee, S. Elhabian, S. Singla, R. Whitaker, J. Weiss, and A. Anderson. Warping of template meshes for efficient subject-specific FE mesh generation. In International Symposium of Computer Methods in Biomechanics and Biomedical Engineering, 2015.</li>
+</ul>
+</div>
+<h2 id="pose-and-shape-of-the-dysplastic-hip-joint">Pose and Shape of the Dysplastic Hip Joint</h2>
+<p>Developmental dysplasia of the hip (DDH) describes an undercoverage of the femoral head by the acetabulum and is most often described using angular measurements from radiographs used to estimate joint coverage. Since 3D analyses of the hip joint would be advantageous to defining the true morphology of DDH, an articulated, multiple-domain SSM was developed in ShapeWorks to isolate the morphological variation of the disease. The first four modes of variation largely represented variation in scale and pose, while all six modes included some subtle variations in bone morphology. </p>
+<p><img alt="" src="../img/getting-started/story_ddh.png" /></p>
+<p>While radiographic measurements provide some insight to joint morphology, there may be additional morphological features that better explain joint coverage and hip degeneration in these patients. By evaluating the modes of variation from our joint model against 3D measurements of coverage, we isolated the morphology associated with increased and decreased coverage within this population.</p>
+<p><img alt="" src="../img/getting-started/story_ddh_coverage.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Relevant Papers</p>
+<ul>
+<li>P. Agrawal, J.D. Mozingo, S.Y. Elhabian, A.E. Anderson, R.T. Whitaker. Combined Estimation of Shape and Pose for Statistical Analysis of Articulating Joints. Proceedings of Shape in Medical Imaging: International Workshop, ShapeMI 2020, pp. 111-121, 2020.</li>
+<li>J.D. Mozingo, P.R. Atkins, P. Agrawal, K. Uemura, S.Y. Elhabian, R.T. Whitaker, A.E. Anderson. Morphology of Hip Dysplasia in Japanese Females: A Statistical Shape Modeling Study. Abstract for poster presentation at the 45th Meeting of the American Society of Biomechanics, 2021.</li>
+<li>P.R. Atkins, P. Agrawal, J.D. Mozingo, K. Uemura, A.E. Anderson. Application of an Articulated Statistical Shape Model of the Hip to Predict Clinical Measures of Coverage. Abstract for podium presentation for the International Symposium on Computer Methods in Biomechanics and Biomedical Engineering, 2021.</li>
 </ul>
 </div>
 <h2 id="scapular-morphology-in-hill-sachs-patients">Scapular Morphology in Hill-Sachs Patients</h2>
