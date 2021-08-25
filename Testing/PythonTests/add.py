@@ -32,6 +32,21 @@ def addTest3():
 
 utils.test(addTest3)
 
+def addTest4():
+
+  mesh1 = Mesh(os.environ["DATA"] + "/sphere_00.ply")
+  mesh2 = Mesh(os.environ["DATA"] + "/sphere_00_translated.ply")
+
+  mesh1 += mesh2
+
+  return mesh1 == Mesh(os.environ["DATA"]+"/sphere_add.ply")
+  
+val = addTest4()
+
+if val is False:
+  print("addTest4 failed")
+  sys.exit(1)
+
 def addfailTest():
   img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img2 = Image(os.environ["DATA"] + "/1x2x2.nrrd")

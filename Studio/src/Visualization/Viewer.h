@@ -99,6 +99,7 @@ private:
   void update_actors();
 
   bool showing_feature_map();
+  std::string get_displayed_feature_map();
 
   bool visible_;
 
