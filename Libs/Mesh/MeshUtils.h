@@ -32,7 +32,7 @@ public:
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
   /// determine the reference mesh
-  static int findReferenceMesh(std::vector<Mesh> &meshes);
+  static size_t findReferenceMesh(std::vector<Mesh> &meshes);
 };
 
 } // shapeworks
