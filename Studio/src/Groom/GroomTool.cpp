@@ -75,7 +75,6 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   update_ui();
 
-  //ui_->center_checkbox->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -122,7 +121,6 @@ void GroomTool::handle_progress(int val)
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked()
 {
-  this->session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
   this->load_params();
 }
 
@@ -340,6 +338,8 @@ void GroomTool::activate()
 
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->domain_box->setVisible(domain_names.size() > 1);
+  ui_->global_alignment_image->setVisible(domain_names.size() > 1);
+  ui_->global_alignment_mesh->setVisible(domain_names.size() > 1);
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();

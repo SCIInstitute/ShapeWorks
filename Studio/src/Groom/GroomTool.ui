@@ -129,6 +129,16 @@ background: rgb(255, 255, 127)
               </item>
              </widget>
             </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="global_alignment_image">
+              <property name="text">
+               <string>Global Alignment</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -741,6 +751,16 @@ background: rgb(255, 255, 127)
               <string>Iterative Closest Point</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="global_alignment_mesh">
+            <property name="text">
+             <string>Global Alignment</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
