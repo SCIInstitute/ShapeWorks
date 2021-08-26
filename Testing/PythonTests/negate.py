@@ -10,7 +10,4 @@ def negateTest():
 
   return img.compare(compareImg)
 
-val = negateTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(negateTest)

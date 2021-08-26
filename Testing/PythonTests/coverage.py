@@ -11,7 +11,4 @@ def coverageTest():
 
   return pelvis == compareMesh
 
-val = coverageTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(coverageTest)
