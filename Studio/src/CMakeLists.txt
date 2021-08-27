@@ -145,10 +145,12 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
   Analysis/ShapeEvaluationJob.cpp
+  Analysis/AlignmentJob.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
   Analysis/ShapeEvaluationJob.h
+  Analysis/AlignmentJob.h
   )
 
 SET(STUDIO_DEEPSSM_SRCS

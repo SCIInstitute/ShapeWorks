@@ -30,8 +30,6 @@ void ShapeEvaluationJob::run()
     emit result_ready(this->job_type_, this->stats_.get_specificity(callback));
     break;
   }
-
-  emit finished();
 }
 
 //-----------------------------------------------------------------------------
