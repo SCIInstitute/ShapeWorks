@@ -19,12 +19,11 @@
 #include <Python/PythonWorker.h>
 #include <Job/GroupPvalueJob.h>
 
+#include <jkqtplotter/jkqtplotter.h>
+#include <jkqtplotter/graphs/jkqtpscatter.h>
+
 #include <ui_AnalysisTool.h>
 
-#include <jkqtplotter/jkqtplotter.h>
-#include "jkqtplotter/graphs/jkqtpscatter.h"
-
-//#include <jkqtplotter/graphs/
 
 namespace shapeworks {
 
@@ -37,8 +36,6 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
-  JKQTPlotter plot;
-
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
