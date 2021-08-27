@@ -1,15 +1,13 @@
 #pragma once
 
-#include <Data/Worker.h>
-
-// ShapeWorks
 #include <ParticleShapeStatistics.h>
 
+#include <Data/Worker.h>
 #include <Job/Job.h>
 
 namespace shapeworks {
 
-class ShapeEvaluationWorker : public Job
+class ShapeEvaluationJob : public Job
 {
   Q_OBJECT
 public:
@@ -18,19 +16,16 @@ public:
     CompactnessType, SpecificityType, GeneralizationType
   };
 
+  ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats);
 
-
-  ShapeEvaluationWorker(JobType job_type, ParticleShapeStatistics stats);
-
-   void run() override;
+  void run() override;
 
   QString name() override;
 
-
 signals:
 
-  void report_progress(shapeworks::ShapeEvaluationWorker::JobType job_type, float progress);
-  void result_ready(shapeworks::ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
+  void report_progress(shapeworks::ShapeEvaluationJob::JobType job_type, float progress);
+  void result_ready(shapeworks::ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
 
 private:
 
@@ -42,4 +37,4 @@ private:
 }
 
 Q_DECLARE_METATYPE(Eigen::VectorXd);
-Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationWorker::JobType);
+Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
