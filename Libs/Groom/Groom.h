@@ -44,6 +44,8 @@ protected:
 
 private:
 
+  bool run_alignment();
+
   //! Return the number of operations that will be performed
   int get_total_ops();
 
@@ -58,6 +60,8 @@ private:
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
+
+  Mesh get_mesh(int subject, int domain);
 
   Vector3 center(Image& image);
   void isolate(Image& image);

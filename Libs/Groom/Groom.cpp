@@ -45,98 +45,36 @@ bool Groom::run()
   }
   tbb::atomic<bool> success = true;
 
-  int num_domains = this->project_->get_number_of_domains_per_subject();
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
-      for (size_t i = r.begin(); i < r.end(); ++i) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
+      for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
 
-          if (this->abort_) {
-            success = false;
-            continue;
-          }
-
-          if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
-            if (!this->image_pipeline(subjects[i], domain)) {
-              success = false;
-            }
-          }
-
-          if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
-            if (!this->mesh_pipeline(subjects[i], domain)) {
-              success = false;
-            }
-          }
-
+        if (this->abort_) {
+          success = false;
+          continue;
         }
-      }
-    });
-
-  // alignment
-  for (int domain = 0; domain < num_domains; domain++) {
-    if (this->abort_) {
-      success = false;
-      continue;
-    }
-
-    auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
-
-    if (params.get_use_icp()) {
-      std::vector<Mesh> meshes;
-      for (int i = 0; i < subjects.size(); i++) {
-        auto path = subjects[i]->get_segmentation_filenames()[domain];
 
         if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
-          Image image(path);
-          meshes.push_back(image.toMesh(0.5));
+          if (!this->image_pipeline(subjects[i], domain)) {
+            success = false;
+          }
         }
-        else if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
-          Mesh mesh = MeshUtils::threadSafeReadMesh(path);
-          meshes.push_back(mesh);
+
+        if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+          if (!this->mesh_pipeline(subjects[i], domain)) {
+            success = false;
+          }
         }
       }
-
-      int reference_mesh = MeshUtils::findReferenceMesh(meshes);
-
-      std::cerr << "The reference mesh is " << reference_mesh << "\n";
-
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>{0, subjects.size()},
-        [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t i = r.begin(); i < r.end(); ++i) {
-
-            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-            matrix->Identity();
-
-            if (i != reference_mesh) {
-              Mesh source = meshes[i];
-              Mesh target = meshes[reference_mesh];
-              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
-                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
-            }
-
-            auto subject = subjects[i];
-            // store transform
-            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-            std::vector<double> groomed_transform;
-
-            for (int i = 0; i < 16; i++) {
-              groomed_transform.push_back(matrix->GetData()[i]);
-            }
-            if (domain >= groomed_transforms.size()) {
-              groomed_transforms.resize(domain + 1);
-            }
-            groomed_transforms[domain] = groomed_transform;
-            subject->set_groomed_transforms(groomed_transforms);
-
-          }
-        });
     }
+  });
+
+  if (!this->run_alignment()) {
+    success = false;
   }
-
-
 
   // store back to project
   this->project_->store_subjects();
@@ -349,7 +287,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
   std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
   std::vector<double> groomed_transform;
   auto transform_params = transform->GetParameters();
-  for (int i = 0; i < transform_params.size(); i++) {
+  for (size_t i = 0; i < transform_params.size(); i++) {
     groomed_transform.push_back(transform_params[i]);
   }
   if (domain >= groomed_transforms.size()) {
@@ -426,26 +364,26 @@ Vector3 Groom::center(Image& image)
   return translation;
 
 /*
-  // capture full translation
-  auto com = image.centerOfMass();
-  // set center to origin
-  image.recenter();
-  // calculate translation for center of mass to new center
-  auto diff = image.centerOfMass();
-  Vector3 translation;
-  translation[0] = -diff[0];
-  translation[1] = -diff[1];
-  translation[2] = -diff[2];
+   // capture full translation
+   auto com = image.centerOfMass();
+   // set center to origin
+   image.recenter();
+   // calculate translation for center of mass to new center
+   auto diff = image.centerOfMass();
+   Vector3 translation;
+   translation[0] = -diff[0];
+   translation[1] = -diff[1];
+   translation[2] = -diff[2];
 
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->Translate(-translation);
-  image.applyTransform(xform, Image::NearestNeighbor);
+   AffineTransformPtr xform(AffineTransform::New());
+   xform->Translate(-translation);
+   image.applyTransform(xform, Image::NearestNeighbor);
 
-  translation[0] = com[0];
-  translation[1] = com[1];
-  translation[2] = com[2];
-  return translation;
-  */
+   translation[0] = com[0];
+   translation[1] = com[1];
+   translation[2] = com[2];
+   return translation;
+ */
 }
 
 //---------------------------------------------------------------------------
@@ -501,6 +439,119 @@ bool Groom::get_aborted()
 }
 
 //---------------------------------------------------------------------------
+bool Groom::run_alignment()
+{
+  size_t num_domains = this->project_->get_number_of_domains_per_subject();
+  auto subjects = this->project_->get_subjects();
+
+  auto base_params = GroomParameters(this->project_);
+  if (num_domains > 1 && base_params.get_global_alignment()) { // global alignment for multiple domains
+    std::cerr << "global alignment!\n";
+    std::vector<Mesh> meshes;
+
+    for (size_t i = 0; i < subjects.size(); i++) {
+      Mesh mesh = this->get_mesh(i, 0);
+      for (size_t domain = 1; domain < num_domains; domain++) {
+        mesh += this->get_mesh(i, domain); // combine
+      }
+      meshes.push_back(mesh);
+    }
+
+    size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+    std::cerr << "The reference mesh is " << reference_mesh << "\n";
+
+    tbb::parallel_for(
+      tbb::blocked_range<size_t>{0, subjects.size()},
+      [&](const tbb::blocked_range<size_t>& r) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
+
+        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+        matrix->Identity();
+
+        if (i != reference_mesh) {
+          Mesh source = meshes[i];
+          Mesh target = meshes[reference_mesh];
+          matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                 target.getVTKMesh(), Mesh::Rigid, 100, true);
+        }
+
+        auto subject = subjects[i];
+        // store transform
+        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+        std::vector<double> groomed_transform;
+
+        for (int i = 0; i < 16; i++) {
+          groomed_transform.push_back(matrix->GetData()[i]);
+        }
+        for (size_t domain = 0; domain < num_domains; domain++) {
+
+          if (domain >= groomed_transforms.size()) {
+            groomed_transforms.resize(domain + 1);
+          }
+          groomed_transforms[domain] = groomed_transform;
+          subject->set_groomed_transforms(groomed_transforms);
+        }
+      }
+    });
+  }
+  else {
+
+    // per-domain alignment
+    for (size_t domain = 0; domain < num_domains; domain++) {
+      if (this->abort_) {
+        return false;
+      }
+
+      auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+      if (params.get_use_icp()) {
+        std::vector<Mesh> meshes;
+        for (size_t i = 0; i < subjects.size(); i++) {
+          meshes.push_back(this->get_mesh(i, domain));
+        }
+
+        size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+        std::cerr << "The reference mesh is " << reference_mesh << "\n";
+
+        tbb::parallel_for(
+          tbb::blocked_range<size_t>{0, subjects.size()},
+          [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            matrix->Identity();
+
+            if (i != reference_mesh) {
+              Mesh source = meshes[i];
+              Mesh target = meshes[reference_mesh];
+              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
+            }
+
+            auto subject = subjects[i];
+            // store transform
+            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+            std::vector<double> groomed_transform;
+
+            for (int i = 0; i < 16; i++) {
+              groomed_transform.push_back(matrix->GetData()[i]);
+            }
+            if (domain >= groomed_transforms.size()) {
+              groomed_transforms.resize(domain + 1);
+            }
+            groomed_transforms[domain] = groomed_transform;
+            subject->set_groomed_transforms(groomed_transforms);
+          }
+        });
+      }
+    }
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
 std::string Groom::get_output_filename(std::string input, DomainType domain_type)
 {
   // grab parameters
@@ -533,4 +584,18 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
   return output;
 }
 
+//---------------------------------------------------------------------------
+Mesh Groom::get_mesh(int subject, int domain)
+{
+  auto subjects = this->project_->get_subjects();
+  auto path = subjects[subject]->get_segmentation_filenames()[domain];
 
+  if (subjects[subject]->get_domain_types()[domain] == DomainType::Image) {
+    Image image(path);
+    return image.toMesh(0.5);
+  }
+  else if (subjects[subject]->get_domain_types()[domain] == DomainType::Mesh) {
+    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    return mesh;
+  }
+}
