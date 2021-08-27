@@ -12,6 +12,7 @@
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
+#include <Analysis/AlignmentJob.h>
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
@@ -30,6 +31,8 @@ class GroupPvalueJob;
 class AnalysisTool : public QWidget {
 Q_OBJECT;
 public:
+
+  using AlignmentType = AlignmentJob::AlignmentType;
 
   using PointType = itk::Point<double, 3>;
 
@@ -222,6 +225,8 @@ private:
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
+
+  AlignmentType current_alignment_;
 
 };
 

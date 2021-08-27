@@ -1,10 +1,9 @@
 #pragma once
 
-#include <ParticleShapeStatistics.h>
-
 #include <Data/Worker.h>
 #include <Job/Job.h>
 #include <Libs/Project/Project.h>
+#include <Eigen/Eigen>
 
 namespace shapeworks {
 
