@@ -82,6 +82,8 @@ public Q_SLOTS:
 
   void handle_new_mesh();
 
+  void training_fine_tuning_changed();
+
 signals:
 
   void update_view();

@@ -100,6 +100,7 @@ void PythonWorker::start_job(QSharedPointer<Job> job)
       this->current_job_->run();
       emit this->current_job_->message(this->current_job_->get_completion_message());
     } catch (py::error_already_set& e) {
+      emit error_message(e.what());
       emit this->current_job_->error_message(e.what());
     }
   }
