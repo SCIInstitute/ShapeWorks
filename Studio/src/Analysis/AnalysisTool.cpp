@@ -655,14 +655,14 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->generalization_progress->setValue(0);
   this->ui_->specificity_progress->setValue(0);
 
-  auto job_types = {ShapeEvaluationWorker::JobType::CompactnessType,
-                    ShapeEvaluationWorker::JobType::GeneralizationType,
-                    ShapeEvaluationWorker::JobType::SpecificityType};
+  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+                    ShapeEvaluationJob::JobType::GeneralizationType,
+                    ShapeEvaluationJob::JobType::SpecificityType};
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();
-    auto job = QSharedPointer<ShapeEvaluationWorker>::create(job_type, this->stats_);
-    connect(job.data(), &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
-    connect(job.data(), &ShapeEvaluationWorker::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
+    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, this->stats_);
+    connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+    connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
     worker->run_job(job);
   }
 
@@ -1157,25 +1157,25 @@ void AnalysisTool::initialize_mesh_warper()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type,
+void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type,
                                                Eigen::VectorXd data)
 {
   switch (job_type) {
-  case ShapeEvaluationWorker::JobType::CompactnessType:
+  case ShapeEvaluationJob::JobType::CompactnessType:
     this->eval_compactness_ = data;
     this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes",
                       "Explained Variance");
     this->ui_->compactness_graph->show();
     this->ui_->compactness_progress_widget->hide();
     break;
-  case ShapeEvaluationWorker::JobType::SpecificityType:
+  case ShapeEvaluationJob::JobType::SpecificityType:
     this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes",
                       "Specificity");
     this->eval_specificity_ = data;
     this->ui_->specificity_graph->show();
     this->ui_->specificity_progress_widget->hide();
     break;
-  case ShapeEvaluationWorker::JobType::GeneralizationType:
+  case ShapeEvaluationJob::JobType::GeneralizationType:
     this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes",
                       "Generalization");
     this->eval_generalization_ = data;
@@ -1186,17 +1186,17 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type,
+void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type,
                                                float progress)
 {
   switch (job_type) {
-  case ShapeEvaluationWorker::JobType::CompactnessType:
+  case ShapeEvaluationJob::JobType::CompactnessType:
     this->ui_->compactness_progress->setValue(progress * 100);
     break;
-  case ShapeEvaluationWorker::JobType::SpecificityType:
+  case ShapeEvaluationJob::JobType::SpecificityType:
     this->ui_->specificity_progress->setValue(progress * 100);
     break;
-  case ShapeEvaluationWorker::JobType::GeneralizationType:
+  case ShapeEvaluationJob::JobType::GeneralizationType:
     this->ui_->generalization_progress->setValue(progress * 100);
     break;
   }

@@ -31,8 +31,8 @@ private:
 
   void receive_progress(float progress);
 
-  ParticleShapeStatistics stats_;
   JobType job_type_;
+  ParticleShapeStatistics stats_;
 };
 }
 

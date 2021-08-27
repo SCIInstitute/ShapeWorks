@@ -446,7 +446,6 @@ bool Groom::run_alignment()
 
   auto base_params = GroomParameters(this->project_);
   if (num_domains > 1 && base_params.get_global_alignment()) { // global alignment for multiple domains
-    std::cerr << "global alignment!\n";
     std::vector<Mesh> meshes;
 
     for (size_t i = 0; i < subjects.size(); i++) {

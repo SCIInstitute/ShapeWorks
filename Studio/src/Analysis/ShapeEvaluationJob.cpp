@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "ShapeEvaluationWorker.h"
+#include "ShapeEvaluationJob.h"
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------

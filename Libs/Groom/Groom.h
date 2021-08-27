@@ -34,6 +34,8 @@ public:
 
   static std::vector<std::vector<double>> get_transforms(const std::vector<Mesh> meshes, size_t reference);
 
+  bool run_alignment();
+
 protected:
 
   //! call to be overridden by subclasses
@@ -45,8 +47,6 @@ protected:
   tbb::atomic<int> progress_counter_ = 0;
 
 private:
-
-  bool run_alignment();
 
   //! Return the number of operations that will be performed
   int get_total_ops();

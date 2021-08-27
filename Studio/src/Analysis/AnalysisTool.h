@@ -11,12 +11,11 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
+#include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
-
-#include <Analysis/ShapeEvaluationWorker.h>
 
 class Ui_AnalysisTool;
 class JKQTPlotter;
@@ -148,8 +147,8 @@ public Q_SLOTS:
 
   void group_p_values_clicked();
 
-  void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
-  void handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress);
+  void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
+  void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
 
   void handle_group_pvalues_complete();
 
