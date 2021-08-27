@@ -68,6 +68,7 @@ public Q_SLOTS:
 
   void alignment_checkbox_changed(int state);
   void fill_holes_changed(int state);
+  void global_alignment_changed(int state);
 
   //! Run groom tool
   void on_run_groom_button_clicked();
