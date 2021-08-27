@@ -459,7 +459,6 @@ bool Groom::run_alignment()
 
     size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
 
-    std::cerr << "The reference mesh is " << reference_mesh << "\n";
     auto transforms = Groom::get_transforms(meshes, reference_mesh);
 
     for (size_t i = 0; i < subjects.size(); i++) {
@@ -493,8 +492,6 @@ bool Groom::run_alignment()
         }
 
         size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
-
-        std::cerr << "The reference mesh is " << reference_mesh << "\n";
 
         auto transforms = Groom::get_transforms(meshes, reference_mesh);
 
