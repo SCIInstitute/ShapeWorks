@@ -82,7 +82,7 @@ bool Groom::run()
 }
 
 //---------------------------------------------------------------------------
-bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
+bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
@@ -235,7 +235,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
 }
 
 //---------------------------------------------------------------------------
-bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
+bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
@@ -460,40 +460,21 @@ bool Groom::run_alignment()
     size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
 
     std::cerr << "The reference mesh is " << reference_mesh << "\n";
+    auto transforms = Groom::get_transforms(meshes, reference_mesh);
 
-    tbb::parallel_for(
-      tbb::blocked_range<size_t>{0, subjects.size()},
-      [&](const tbb::blocked_range<size_t>& r) {
-      for (size_t i = r.begin(); i < r.end(); ++i) {
+    for (size_t i = 0; i < subjects.size(); i++) {
+      auto subject = subjects[i];
+      // store transform
+      std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-        matrix->Identity();
-
-        if (i != reference_mesh) {
-          Mesh source = meshes[i];
-          Mesh target = meshes[reference_mesh];
-          matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
-                                                 target.getVTKMesh(), Mesh::Rigid, 100, true);
+      for (size_t domain = 0; domain < num_domains; domain++) {
+        if (domain >= groomed_transforms.size()) {
+          groomed_transforms.resize(domain + 1);
         }
-
-        auto subject = subjects[i];
-        // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-        std::vector<double> groomed_transform;
-
-        for (int i = 0; i < 16; i++) {
-          groomed_transform.push_back(matrix->GetData()[i]);
-        }
-        for (size_t domain = 0; domain < num_domains; domain++) {
-
-          if (domain >= groomed_transforms.size()) {
-            groomed_transforms.resize(domain + 1);
-          }
-          groomed_transforms[domain] = groomed_transform;
-          subject->set_groomed_transforms(groomed_transforms);
-        }
+        groomed_transforms[domain] = transforms[i];
       }
-    });
+      subject->set_groomed_transforms(groomed_transforms);
+    }
   }
   else {
 
@@ -515,36 +496,19 @@ bool Groom::run_alignment()
 
         std::cerr << "The reference mesh is " << reference_mesh << "\n";
 
-        tbb::parallel_for(
-          tbb::blocked_range<size_t>{0, subjects.size()},
-          [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t i = r.begin(); i < r.end(); ++i) {
+        auto transforms = Groom::get_transforms(meshes, reference_mesh);
 
-            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-            matrix->Identity();
+        for (size_t i = 0; i < subjects.size(); i++) {
+          auto subject = subjects[i];
+          // store transform
+          std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-            if (i != reference_mesh) {
-              Mesh source = meshes[i];
-              Mesh target = meshes[reference_mesh];
-              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
-                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
-            }
-
-            auto subject = subjects[i];
-            // store transform
-            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-            std::vector<double> groomed_transform;
-
-            for (int i = 0; i < 16; i++) {
-              groomed_transform.push_back(matrix->GetData()[i]);
-            }
-            if (domain >= groomed_transforms.size()) {
-              groomed_transforms.resize(domain + 1);
-            }
-            groomed_transforms[domain] = groomed_transform;
-            subject->set_groomed_transforms(groomed_transforms);
+          if (domain >= groomed_transforms.size()) {
+            groomed_transforms.resize(domain + 1);
           }
-        });
+          groomed_transforms[domain] = transforms[i];
+          subject->set_groomed_transforms(groomed_transforms);
+        }
       }
     }
   }
@@ -598,4 +562,36 @@ Mesh Groom::get_mesh(int subject, int domain)
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     return mesh;
   }
+  throw std::invalid_argument("invalid domain type");
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>> Groom::get_transforms(const std::vector<Mesh> meshes, size_t reference)
+{
+  std::vector<std::vector<double>> transforms(meshes.size());
+
+  tbb::parallel_for(
+    tbb::blocked_range<size_t>{0, meshes.size()},
+    [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      matrix->Identity();
+
+      if (i != reference) {
+        Mesh source = meshes[i];
+        Mesh target = meshes[reference];
+        matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                               target.getVTKMesh(), Mesh::Rigid, 100, true);
+      }
+
+      std::vector<double> groomed_transform;
+
+      for (int i = 0; i < 16; i++) {
+        groomed_transform.push_back(matrix->GetData()[i]);
+      }
+      transforms[i] = groomed_transform;
+    }
+  });
+  return transforms;
 }

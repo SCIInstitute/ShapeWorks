@@ -32,6 +32,8 @@ public:
   //! Return if grooming was aborted
   bool get_aborted();
 
+  static std::vector<std::vector<double>> get_transforms(const std::vector<Mesh> meshes, size_t reference);
+
 protected:
 
   //! call to be overridden by subclasses
@@ -53,15 +55,16 @@ private:
   void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
-  bool image_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool image_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
   //! Run the mesh based pipeline on a single subject
-  bool mesh_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
 
   Mesh get_mesh(int subject, int domain);
+
 
   Vector3 center(Image& image);
   void isolate(Image& image);
