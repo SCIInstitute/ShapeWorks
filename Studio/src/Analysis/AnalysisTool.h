@@ -182,6 +182,7 @@ private:
 
   void update_group_boxes();
   void update_group_values();
+  void update_domain_alignment_box();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 

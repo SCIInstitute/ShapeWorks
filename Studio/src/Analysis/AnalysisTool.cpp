@@ -24,7 +24,6 @@
 
 #include <ui_AnalysisTool.h>
 
-
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -656,30 +655,16 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->generalization_progress->setValue(0);
   this->ui_->specificity_progress->setValue(0);
 
-  auto worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                     ShapeEvaluationWorker::JobType::CompactnessType);
-  //worker->set_progress_callback()
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
-
-  worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                ShapeEvaluationWorker::JobType::GeneralizationType);
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
-
-  worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                ShapeEvaluationWorker::JobType::SpecificityType);
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
+  auto job_types = {ShapeEvaluationWorker::JobType::CompactnessType,
+                    ShapeEvaluationWorker::JobType::GeneralizationType,
+                    ShapeEvaluationWorker::JobType::SpecificityType};
+  for (auto job_type : job_types) {
+    auto worker = Worker::create_worker();
+    auto job = QSharedPointer<ShapeEvaluationWorker>::create(job_type, this->stats_);
+    connect(job.data(), &ShapeEvaluationWorker::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+    connect(job.data(), &ShapeEvaluationWorker::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
+    worker->run_job(job);
+  }
 
   this->evals_ready_ = true;
 }
@@ -837,6 +822,7 @@ void AnalysisTool::enable_actions(bool newly_enabled)
 
   if (newly_enabled) {
     this->ui_->mesh_warping_radio_button->setChecked(true);
+    this->update_domain_alignment_box();
   }
 
   auto domain_types = this->session_->get_domain_types();
@@ -1033,6 +1019,24 @@ void AnalysisTool::update_group_values()
   this->ui_->group_animate_checkbox->setEnabled(groups_on);
 
   this->group_changed();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_domain_alignment_box()
+{
+  auto domain_names = this->session_->get_project()->get_domain_names();
+
+  bool multiple_domains = domain_names.size() > 1;
+  this->ui_->reference_domain_widget->setVisible(multiple_domains);
+  this->ui_->reference_domain->clear();
+  if (multiple_domains) {
+    this->ui_->reference_domain->addItem("Local Alignment");
+    this->ui_->reference_domain->addItem("Global Alignment");
+    for (auto name : domain_names) {
+      this->ui_->reference_domain->addItem(QString::fromStdString(name));
+    }
+    this->ui_->reference_domain->setCurrentIndex(0);
+  }
 }
 
 //---------------------------------------------------------------------------

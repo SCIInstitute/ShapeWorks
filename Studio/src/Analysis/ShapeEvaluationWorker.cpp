@@ -4,7 +4,8 @@
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
-ShapeEvaluationWorker::ShapeEvaluationWorker()
+ShapeEvaluationWorker::ShapeEvaluationWorker(JobType job_type, ParticleShapeStatistics stats)
+  : job_type_(job_type), stats_(stats)
 {
   qRegisterMetaType<shapeworks::ShapeEvaluationWorker::JobType>(
     "shapeworks::ShapeEvaluationWorker::JobType");
@@ -12,24 +13,7 @@ ShapeEvaluationWorker::ShapeEvaluationWorker()
 }
 
 //-----------------------------------------------------------------------------
-ShapeEvaluationWorker* ShapeEvaluationWorker::create_worker(ParticleShapeStatistics stats,
-                                                            JobType job_type)
-{
-  ShapeEvaluationWorker* shape_evaluation_worker = new ShapeEvaluationWorker();
-  shape_evaluation_worker->stats_ = std::move(stats);
-  shape_evaluation_worker->job_type_ = job_type;
-  return shape_evaluation_worker;
-}
-
-
-//-----------------------------------------------------------------------------
-void ShapeEvaluationWorker::async_evaluate_shape()
-{
-  this->run_job();
-}
-
-//-----------------------------------------------------------------------------
-void ShapeEvaluationWorker::process()
+void ShapeEvaluationWorker::run()
 {
   auto callback = std::bind(&ShapeEvaluationWorker::receive_progress, this, std::placeholders::_1);
   switch (this->job_type_) {
@@ -48,6 +32,12 @@ void ShapeEvaluationWorker::process()
   }
 
   emit finished();
+}
+
+//-----------------------------------------------------------------------------
+QString ShapeEvaluationWorker::name()
+{
+  return "Shape Evaluation";
 }
 
 //-----------------------------------------------------------------------------

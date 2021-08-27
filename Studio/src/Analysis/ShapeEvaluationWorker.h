@@ -5,11 +5,11 @@
 // ShapeWorks
 #include <ParticleShapeStatistics.h>
 
+#include <Job/Job.h>
 
 namespace shapeworks {
 
-
-class ShapeEvaluationWorker : public Worker
+class ShapeEvaluationWorker : public Job
 {
   Q_OBJECT
 public:
@@ -19,13 +19,13 @@ public:
   };
 
 
-  ShapeEvaluationWorker();
 
-  static ShapeEvaluationWorker* create_worker(ParticleShapeStatistics stats, JobType job_type);
+  ShapeEvaluationWorker(JobType job_type, ParticleShapeStatistics stats);
 
-  void async_evaluate_shape();
+   void run() override;
 
-  void process() override;
+  QString name() override;
+
 
 signals:
 
@@ -38,7 +38,6 @@ private:
 
   ParticleShapeStatistics stats_;
   JobType job_type_;
-
 };
 }
 
