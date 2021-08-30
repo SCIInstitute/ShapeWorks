@@ -29,7 +29,7 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 
 class AnalysisTool : public QWidget {
-Q_OBJECT;
+  Q_OBJECT;
 public:
 
   using AlignmentType = AlignmentJob::AlignmentType;
@@ -154,6 +154,7 @@ public Q_SLOTS:
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
 
   void handle_group_pvalues_complete();
+  void handle_alignment_changed(int new_alignment);
 
 signals:
 
@@ -167,7 +168,7 @@ signals:
 
 private:
 
-  void create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
+  void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
 
   void compute_reconstructed_domain_transforms();
 
@@ -226,8 +227,6 @@ private:
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
 
-  AlignmentType current_alignment_;
-
+  AlignmentType current_alignment_{AlignmentType::Local};
 };
-
 }

@@ -2,7 +2,10 @@
 
 #include <vector>
 #include <vnl_vector.h>
+#include <vtkSmartPointer.h>
 #include <itkPoint.h>
+
+class vtkTransform;
 
 namespace shapeworks {
 
@@ -38,6 +41,8 @@ public:
   //! Return which domain a particle belongs to when they are concatenated together
   int get_domain_for_combined_id(int id);
 
+  void set_transform(vtkSmartPointer<vtkTransform> transform);
+
 private:
 
   std::vector<itk::Point<double>> vnl_to_point_vector(const vnl_vector<double>& vnl);
@@ -48,5 +53,6 @@ private:
   std::vector<vnl_vector<double>> local_particles_; // one for each domain
   std::vector<vnl_vector<double>> global_particles_; // one for each domain
 
+  vtkSmartPointer<vtkTransform> transform_;
 };
 }

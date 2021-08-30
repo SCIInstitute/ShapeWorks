@@ -158,4 +158,10 @@ int StudioParticles::get_domain_for_combined_id(int id)
   return 0;
 }
 
+//---------------------------------------------------------------------------
+void StudioParticles::set_transform(vtkSmartPointer<vtkTransform> transform)
+{
+  this->transform_ = transform;
+}
+
 }

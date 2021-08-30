@@ -1210,6 +1210,17 @@ void AnalysisTool::handle_group_pvalues_complete()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::handle_alignment_changed(int new_alignment)
+{
+  if (new_alignment == this->current_alignment_) {
+    return;
+  }
+  this->current_alignment_ = static_cast<AlignmentType>(new_alignment);
+
+
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed()
 {
   this->ui_->reconstruction_options->setVisible(
