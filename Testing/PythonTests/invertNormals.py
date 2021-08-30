@@ -10,8 +10,4 @@ def invertnormalsTest():
 
   return mesh == compareMesh
 
-try:
-  invertnormalsTest()
-except ValueError:
-  print("invertnormalsTest failed")
-  sys.exit(1)
+utils.test(invertnormalsTest)

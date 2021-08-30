@@ -2,7 +2,7 @@ import json
 
 
 def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
-                        decay_lr, fine_tune):
+                        decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate):
     """Prepares a JSON config file"""
     # Define model parameters
     model_parameters = {
@@ -33,8 +33,8 @@ def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_d
         "fine_tune": {
             "enabled": fine_tune,
             "loss": "MSE",
-            "epochs": 2,
-            "learning_rate": 0.001,
+            "epochs": fine_tune_epochs,
+            "learning_rate": fine_tune_learning_rate,
             "decay_lr": True,
             "val_freq": 1
         },

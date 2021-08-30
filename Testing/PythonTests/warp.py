@@ -11,11 +11,7 @@ def warpTest():
 
   return img.compare(compareImg)
 
-try:
-  warpTest()
-except ValueError:
-  print("warpTest failed")
-  sys.exit(1)
+utils.test(warpTest)
 
 def warpfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -25,9 +21,4 @@ def warpfailTest():
 
   return img.compare(compareImg)
 
-try:
-  warpfailTest()
-  print("warpfailTest failed. The function requires target particles.")
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(warpfailTest, TypeError)

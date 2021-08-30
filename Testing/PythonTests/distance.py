@@ -13,11 +13,7 @@ def distanceTest1():
 
   return femur == f2p and pelvis == p2f
 
-try:
-  distanceTest1()
-except ValueError:
-  print("distanceTest1 failed")
-  sys.exit(1)
+utils.test(distanceTest1)
 
 def distanceTest2():
   femur1 = Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
@@ -30,8 +26,4 @@ def distanceTest2():
 
   return femur1 == fwd and femur2 == rev
 
-try:
-  distanceTest2()
-except ValueError:
-  print("distanceTest2 failed")
-  sys.exit(1)
+utils.test(distanceTest2)

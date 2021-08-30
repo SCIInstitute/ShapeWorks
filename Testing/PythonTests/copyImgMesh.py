@@ -11,11 +11,7 @@ def copyTest1():
 
   return img1 == compareImg1 and img2 == compareImg2
 
-try:
-  copyTest1()
-except ValueError:
-  print("copyTest1 failed")
-  sys.exit(1)
+utils.test(copyTest1)
 
 def copyTest2():
   mesh1 = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -26,8 +22,4 @@ def copyTest2():
 
   return mesh1 == compareMesh1 and mesh2 == compareMesh2
 
-try:
-  copyTest2()
-except ValueError:
-  print("copyTest2 failed")
-  sys.exit(1)
+utils.test(copyTest2)

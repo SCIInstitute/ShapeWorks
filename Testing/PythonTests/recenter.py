@@ -10,8 +10,4 @@ def recenterTest():
 
   return img.compare(compareImg)
 
-try:
-  recenterTest()
-except ValueError:
-  print("recenterTest failed")
-  sys.exit(1)
+utils.test(recenterTest)

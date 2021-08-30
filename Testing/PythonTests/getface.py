@@ -9,8 +9,4 @@ def getfaceTest():
 
   return (f == face).all()
 
-try:
-  getfaceTest()
-except ValueError:
-  print("getfaceTest failed")
-  sys.exit(1)
+utils.test(getfaceTest)

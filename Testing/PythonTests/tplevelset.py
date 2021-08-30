@@ -12,11 +12,7 @@ def tplevelsetTest1():
 
   return img.compare(compareImg)
 
-try:
-  tplevelsetTest1()
-except ValueError:
-  print("tplevelsetTest1 failed")
-  sys.exit(1)
+utils.test(tplevelsetTest1)
 
 def tplevelsetTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -28,11 +24,7 @@ def tplevelsetTest2():
 
   return img.compare(compareImg)
 
-try:
-  tplevelsetTest2()
-except ValueError:
-  print("tplevelsetTest2 failed")
-  sys.exit(1)
+utils.test(tplevelsetTest2)
 
 def tplevelsetfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -42,9 +34,4 @@ def tplevelsetfailTest():
 
   return img.compare(compareImg)
 
-try:
-  tplevelsetfailTest()
-  print("tplevelsetfailTest failed. The function requires feautre image.")
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(tplevelsetfailTest, TypeError)

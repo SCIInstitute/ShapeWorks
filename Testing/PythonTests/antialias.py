@@ -10,11 +10,7 @@ def antialiasTest1():
 
   return img.compare(compareImg)
 
-try:
-  antialiasTest1()
-except ValueError:
-  print("antialiasTest1 failed")
-  sys.exit(1)
+utils.test(antialiasTest1)
 
 def antialiasTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def antialiasTest2():
 
   return img.compare(compareImg)
 
-try:
-  antialiasTest2()
-except ValueError:
-  print("antialiasTest2 failed")
-  sys.exit(1)
+utils.test(antialiasTest2)
 
 def antialiasTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,8 +30,4 @@ def antialiasTest3():
 
   return img.compare(compareImg)
 
-try:
-  antialiasTest3()
-except ValueError:
-  print("antialiasTest3 failed")
-  sys.exit(1)
+utils.test(antialiasTest3)

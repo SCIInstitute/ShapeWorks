@@ -45,6 +45,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
+  connect(this->ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &DeepSSMTool::training_fine_tuning_changed);
+
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   this->ui_->validation_split->setValidator(zero_to_hundred);
   this->ui_->testing_split->setValidator(zero_to_hundred);
@@ -123,6 +125,9 @@ void DeepSSMTool::load_params()
   this->ui_->training_learning_rate->setText(QString::number(params.get_training_learning_rate()));
   this->ui_->training_decay_learning->setChecked(params.get_training_decay_learning_rate());
   this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
+  this->ui_->training_fine_tuning_epochs->setText(QString::number(params.get_training_fine_tuning_epochs()));
+  this->ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
+  this->ui_->training_fine_tuning_learning_rate->setText(QString::number(params.get_training_fine_tuning_learning_rate()));
 
   this->update_meshes();
 }
@@ -144,7 +149,9 @@ void DeepSSMTool::store_params()
   params.set_training_learning_rate(this->ui_->training_learning_rate->text().toDouble());
   params.set_training_decay_learning_rate(this->ui_->training_decay_learning->isChecked());
   params.set_training_fine_tuning(this->ui_->training_fine_tuning->isChecked());
-
+  params.set_training_fine_tuning_epochs(this->ui_->training_fine_tuning_epochs->text().toInt());
+  params.set_training_batch_size(this->ui_->training_batch_size->text().toInt());
+  params.set_training_fine_tuning_learning_rate(this->ui_->training_fine_tuning_learning_rate->text().toDouble());
   params.save_to_project();
 }
 
@@ -250,6 +257,13 @@ void DeepSSMTool::handle_new_mesh()
   if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     this->update_testing_meshes();
   }
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::training_fine_tuning_changed()
+{
+  this->ui_->training_fine_tuning_epochs->setEnabled(this->ui_->training_fine_tuning->isChecked());
+  this->ui_->training_fine_tuning_learning_rate->setEnabled(this->ui_->training_fine_tuning->isChecked());
 }
 
 //---------------------------------------------------------------------------
@@ -588,6 +602,9 @@ string DeepSSMTool::get_display_feature()
 //---------------------------------------------------------------------------
 void DeepSSMTool::restore_defaults()
 {
+  // need to save values from the other pages
+  this->store_params();
+
   auto params = DeepSSMParameters(this->session_->get_project());
 
   switch (this->current_tool_) {
@@ -605,6 +622,7 @@ void DeepSSMTool::restore_defaults()
     break;
   }
 
+  this->session_->get_project()->clear_parameters(Parameters::DEEPSSM_PARAMS);
   params.save_to_project();
   this->load_params();
 }
@@ -643,7 +661,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type)
   this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
 
   connect(this->deep_ssm_.data(), &DeepSSMJob::message, this, &DeepSSMTool::message);
-  //connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
+  //connect(this->deep_ssm_.data(), &DeepSSMJob::error_message, this, &DeepSSMTool::error);
   connect(this->deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(this->deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 

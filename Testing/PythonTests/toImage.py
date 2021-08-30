@@ -10,11 +10,7 @@ def toImageTest1():
 
   return img == compareImg
 
-try:
-  toImageTest1()
-except ValueError:
-  print("toImageTest1 failed")
-  sys.exit(1)
+utils.test(toImageTest1)
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
@@ -25,11 +21,7 @@ def toImageTest2():
 
   return img == compareImg
 
-try:
-  toImageTest2()
-except ValueError:
-  print("toImageTest2 failed")
-  sys.exit(1)
+utils.test(toImageTest2)
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
@@ -39,8 +31,4 @@ def toImageTest3():
 
   return img == compareImg
 
-try:
-  toImageTest3()
-except ValueError:
-  print("toImageTest3 failed")
-  sys.exit(1)
+utils.test(toImageTest3)

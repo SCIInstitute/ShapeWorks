@@ -125,13 +125,15 @@ void DeepSSMJob::run_training()
 
   double down_factor = 0.75;
   std::string down_dir = out_dir + "DownsampledImages/";
-  int batch_size = 8;
+  int batch_size = params.get_training_batch_size();
   std::string loader_dir = out_dir + "TorchDataLoaders/";
 
   int epochs = params.get_training_epochs();
   double learning_rate = params.get_training_learning_rate();
   bool decay_lr = params.get_training_decay_learning_rate();
   bool fine_tune = params.get_training_fine_tuning();
+  int fine_tune_epochs = params.get_training_fine_tuning_epochs();
+  double fine_tune_learning_rate = params.get_training_fine_tuning_learning_rate();
   int num_dims = params.get_training_num_dims();
 
   double train_split = (100.0 - params.get_validation_split()) / 100.0;
@@ -145,12 +147,11 @@ void DeepSSMJob::run_training()
   get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
-
   emit message("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
   prepare_config_file(config_file, "model",
                       num_dims, out_dir, loader_dir, aug_dir, epochs,
-                      learning_rate, decay_lr, fine_tune);
+                      learning_rate, decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate);
 
   emit message("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");

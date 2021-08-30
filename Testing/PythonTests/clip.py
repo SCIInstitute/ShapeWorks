@@ -10,11 +10,7 @@ def clipTest1():
 
   return img.compare(compareImg)
 
-try:
-  clipTest1()
-except ValueError:
-  print("clipTest1 failed")
-  sys.exit(1)
+utils.test(clipTest1)
 
 def clipTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def clipTest2():
 
   return img.compare(compareImg)
 
-try:
-  clipTest2()
-except ValueError:
-  print("clipTest2 failed")
-  sys.exit(1)
+utils.test(clipTest2)
 
 def clipTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,11 +30,7 @@ def clipTest3():
 
   return img.compare(compareImg)
 
-try:
-  clipTest3()
-except ValueError:
-  print("clipTest3 failed")
-  sys.exit(1)
+utils.test(clipTest3)
 
 def clipTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -52,11 +40,7 @@ def clipTest4():
 
   return mesh == compareMesh
 
-try:
-  clipTest4()
-except ValueError:
-  print("clipTest4 failed")
-  sys.exit(1)
+utils.test(clipTest4)
 
 def clipTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -66,11 +50,7 @@ def clipTest5():
 
   return mesh == compareMesh
 
-try:
-  clipTest5()
-except ValueError:
-  print("clipTest5 failed")
-  sys.exit(1)
+utils.test(clipTest5)
 
 def clipTest6():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -80,11 +60,7 @@ def clipTest6():
 
   return mesh == compareMesh
 
-try:
-  clipTest6()
-except ValueError:
-  print("clipTest6 failed")
-  sys.exit(1)
+utils.test(clipTest6)
 
 def clipTest7():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -94,11 +70,7 @@ def clipTest7():
 
   return mesh == compareMesh
 
-try:
-  clipTest7()
-except ValueError:
-  print("clipTest7 failed")
-  sys.exit(1)
+utils.test(clipTest7)
 
 def clipfailTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -108,11 +80,7 @@ def clipfailTest1():
 
   return img.compare(compareImg)
 
-try:
-  clipfailTest1()
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(clipfailTest1, ValueError)
 
 def clipfailTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -122,8 +90,4 @@ def clipfailTest2():
 
   return img.compare(compareImg)
 
-try:
-  clipfailTest2()
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(clipfailTest2, ValueError)

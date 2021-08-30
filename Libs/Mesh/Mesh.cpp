@@ -128,6 +128,9 @@ Mesh& Mesh::write(const std::string &pathname)
     }
 
     if (StringUtils::hasSuffix(pathname, ".stl")) {
+      if (getFieldNames().size() > 0)
+        std::cerr << "WARNING: Trying to save mesh with new field. Only vtk and vtp files save associated fields\n";
+
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
@@ -136,6 +139,9 @@ Mesh& Mesh::write(const std::string &pathname)
     }
 
     if (StringUtils::hasSuffix(pathname, ".obj")) {
+      if (getFieldNames().size() > 0)
+        std::cerr << "WARNING: Trying to save mesh with new field. Only vtk and vtp files save associated fields\n";
+
       auto writer = vtkSmartPointer<vtkOBJWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
@@ -144,6 +150,9 @@ Mesh& Mesh::write(const std::string &pathname)
     }
 
     if (StringUtils::hasSuffix(pathname, ".ply")) {
+      if (getFieldNames().size() > 0)
+        std::cerr << "WARNING: Trying to save mesh with new field. Only vtk and vtp files save associated fields\n";
+
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
@@ -200,7 +209,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   smoother->Update();
   this->mesh = smoother->GetOutput();
   // must regenerate normals after smoothing
-  generateNormals();
+  computeNormals();
   return *this;
 }
 
@@ -215,7 +224,7 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   smoother->Update();
   this->mesh = smoother->GetOutput();
   // must regenerate normals after smoothing
-  generateNormals();
+  computeNormals();
   return *this;
 }
 
@@ -298,7 +307,7 @@ Mesh &Mesh::fillHoles()
   auto origNormal = mesh->GetPointData()->GetNormals();
 
   // Make the triangle window order consistent
-  generateNormals();
+  computeNormals();
 
   // Restore the original normals
   mesh->GetPointData()->SetNormals(origNormal);
@@ -478,7 +487,7 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
   return *this;
 }
 
-Mesh& Mesh::generateNormals()
+Mesh& Mesh::computeNormals()
 {
   vtkSmartPointer<vtkPolyDataNormals> normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
@@ -731,11 +740,6 @@ Mesh& Mesh::setField(std::string name, Array array)
   if (array->GetNumberOfTuples() != numVertices) {
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
-  if (array->GetNumberOfComponents() != 1) {
-    std::cerr << "WARNING: Added a multi-component mesh field\n";
-  }
-
-  std::cerr << "WARNING: Only vtk and vtp files save associated fields\n";
 
   array->SetName(name.c_str());
   mesh->GetPointData()->AddArray(array);

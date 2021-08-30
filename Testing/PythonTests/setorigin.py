@@ -10,11 +10,7 @@ def setoriginTest1():
 
   return img.compare(compareImg)
 
-try:
-  setoriginTest1()
-except ValueError:
-  print("setoriginTest1 failed")
-  sys.exit(1)
+utils.test(setoriginTest1)
 
 def setoriginTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def setoriginTest2():
 
   return img.compare(compareImg)
 
-try:
-  setoriginTest2()
-except ValueError:
-  print("setoriginTest2 failed")
-  sys.exit(1)
+utils.test(setoriginTest2)
 
 def setoriginTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,11 +30,7 @@ def setoriginTest3():
 
   return img.compare(compareImg)
 
-try:
-  setoriginTest3()
-except ValueError:
-  print("setoriginTest3 failed")
-  sys.exit(1)
+utils.test(setoriginTest3)
 
 def setoriginTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -52,8 +40,4 @@ def setoriginTest4():
 
   return img.compare(compareImg)
 
-try:
-  setoriginTest4()
-except ValueError:
-  print("setoriginTest4 failed")
-  sys.exit(1)
+utils.test(setoriginTest4)

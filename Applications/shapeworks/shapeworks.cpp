@@ -80,11 +80,13 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Distance::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
-  shapeworks.addCommand(GenerateNormals::getCommand());
+  shapeworks.addCommand(ComputeNormals::getCommand());
   shapeworks.addCommand(ClosestPoint::getCommand());
   shapeworks.addCommand(GeodesicDistance::getCommand());
   shapeworks.addCommand(MeanNormals::getCommand());
   shapeworks.addCommand(Curvature::getCommand());
+  shapeworks.addCommand(SetField::getCommand());
+  shapeworks.addCommand(GetField::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());

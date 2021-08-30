@@ -949,9 +949,9 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a,
        "normal"_a)
 
-  .def("generateNormals",
-       &Mesh::generateNormals,
-       "computes cell normals and orients them such that they point in the same direction")
+  .def("computeNormals",
+       &Mesh::computeNormals,
+       "computes and adds oriented point and cell normals")
 
   .def("toImage",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
@@ -1039,6 +1039,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
+  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1046,6 +1047,20 @@ PYBIND11_MODULE(shapeworks_py, m)
          for (int i=0; i<v.size(); i++) {
            arr->SetTuple1(i, v[i]);
          }
+         return mesh.setField(name, arr);
+       },
+       "sets the given field for points with array",
+       "array"_a, "name"_a)
+
+  //TODO: See github issue #966
+  .def("setField",
+       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
+         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+         arr->SetNumberOfComponents(3);
+         arr->SetNumberOfTuples(v.size());
+         for (int i=0; i<v.size(); i++) {
+           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
+          }
          return mesh.setField(name, arr);
        },
        "sets the given field for points with array",
@@ -1112,13 +1127,58 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def_static("boundingBox",
               py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
-              "calculate bounding box incrementally for shapeworks meshes",
+              "calculate bounding box incrementally for meshes",
               "meshes"_a, "center"_a=false)
 
   .def_static("findReferenceMesh",
               &MeshUtils::findReferenceMesh,
-              "find reference mesh from a set of shapeworks meshes",
+              "find reference mesh from a set of meshes",
               "meshes"_a)
+
+  .def_static("generateNormals",
+              &MeshUtils::generateNormals,
+              "generates and adds normals for points and faces for each mesh in given set of meshes",
+              "meshes"_a, "forceRegen"_a=false)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "filenames"_a, "autoGenerateNormals"_a=true)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(meshes);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "meshes"_a)
   ;
 
   // ParticleSystem

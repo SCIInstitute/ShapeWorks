@@ -9,8 +9,4 @@ def closestpointidTest():
 
   return id == 50
 
-try:
-  closestpointidTest()
-except ValueError:
-  print("closestpointidTest failed")
-  sys.exit(1)
+utils.test(closestpointidTest)

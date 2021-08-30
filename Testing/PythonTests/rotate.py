@@ -10,8 +10,4 @@ def rotateTest():
 
   return img.compare(compareImg)
 
-try:
-  rotateTest()
-except ValueError:
-  print("rotateTest failed")
-  sys.exit(1)
+utils.test(rotateTest)

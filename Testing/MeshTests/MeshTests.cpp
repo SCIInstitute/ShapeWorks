@@ -9,20 +9,49 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, computemeannormalsTest)
+TEST(MeshTests, computemeannormalsTest1)
 {
-  std::vector<Mesh> meshes;
-  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
-  mesh1.generateNormals();
+  std::vector<std::reference_wrapper<const Mesh>> meshes;
+  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_normals.vtk"));
   meshes.push_back(mesh1);
-  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04.vtk"));
-  mesh2.generateNormals();
+  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_normals.vtk"));
   meshes.push_back(mesh2);
 
-  Mesh mesh = MeshUtils::computeMeanNormals(meshes);
+  auto meanNormalsArray = MeshUtils::computeMeanNormals(meshes);
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  mesh.setField("MeanNormals", meanNormalsArray);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/meannormals.vtk");
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
+}
+
+TEST(MeshTests, computemeannormalsTest2)
+{
+  std::vector<std::string> filenames;
+  filenames.push_back(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  filenames.push_back(std::string(TEST_DATA_DIR) + std::string("/m04.vtk"));
+
+  auto meanNormalsArray = MeshUtils::computeMeanNormals(filenames, true);
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  mesh.setField("MeanNormals", meanNormalsArray);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/meannormals.vtk");
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
+}
+
+TEST(MeshTests, generateNormalsTest)
+{
+  std::vector<std::reference_wrapper<Mesh>> meshes;
+  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  meshes.push_back(mesh1);
+  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04.vtk"));
+  meshes.push_back(mesh2);
+  MeshUtils::generateNormals(meshes);
+
+  Mesh ground_truth1(std::string(TEST_DATA_DIR) + std::string("/m03_normals.vtk"));
+  Mesh ground_truth2(std::string(TEST_DATA_DIR) + std::string("/m04_normals.vtk"));
+
+  ASSERT_TRUE(mesh1.compareField(ground_truth1, "Normals") && mesh2.compareField(ground_truth2, "Normals"));
 }
 
 TEST(MeshTests, geodesicTest)
@@ -465,7 +494,7 @@ TEST(MeshTests, getFaceTest)
 TEST(MeshTests, closestpointTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  ellipsoid.generateNormals();
+  ellipsoid.computeNormals();
   auto normals = ellipsoid.getField<vtkDataArray>("Normals");
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
@@ -479,7 +508,7 @@ TEST(MeshTests, closestpointTest1)
 TEST(MeshTests, closestpointTest2)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/sphere_highres.ply");
-  ellipsoid.generateNormals();
+  ellipsoid.computeNormals();
   auto normals = ellipsoid.getField<vtkDataArray>("Normals");
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
@@ -550,10 +579,10 @@ TEST(MeshTests, icpTest)
   ASSERT_TRUE(source == ground_truth);
 }
 
-TEST(MeshTests, generateNormalsTest)
+TEST(MeshTests, computeNormalsTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.generateNormals();
+  femur.computeNormals();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/normals.vtk");
 
   ASSERT_TRUE(femur == ground_truth);

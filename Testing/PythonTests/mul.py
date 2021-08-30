@@ -10,8 +10,4 @@ def mulTest():
 
   return img.compare(compareImg)
 
-try:
-  mulTest()
-except ValueError:
-  print("mulTest failed")
-  sys.exit(1)
+utils.test(mulTest)

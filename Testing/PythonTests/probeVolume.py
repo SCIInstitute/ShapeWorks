@@ -11,8 +11,4 @@ def probevolumeTest():
 
   return mesh == compareMesh
 
-try:
-  probevolumeTest()
-except ValueError:
-  print("probevolumeTest failed")
-  sys.exit(1)
+utils.test(probevolumeTest)

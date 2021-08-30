@@ -9,8 +9,4 @@ def gradientinterpTest():
 
   return vec == [0.7374552488327026, 0.5726523995399475, 0.39806556701660156]
 
-try:
-  gradientinterpTest()
-except ValueError:
-  print("gradientinterpTest failed")
-  sys.exit(1)
+utils.test(gradientinterpTest)

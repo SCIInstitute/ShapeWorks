@@ -10,8 +10,4 @@ def intensityTest():
 
   return img.compare(compareImg)
 
-try:
-  intensityTest()
-except ValueError:
-  print("intensityTest failed")
-  sys.exit(1)
+utils.test(intensityTest)

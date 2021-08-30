@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import sys
 import vtk
 import shapeworks as sw
 
@@ -141,7 +142,6 @@ def compute_line_indices(n, is_closed=True):
 
     return lines
 
-
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
     global sw_logger
@@ -169,3 +169,32 @@ def sw_progress(progress):
     global sw_logger
     if sw_logger is not None:
         sw_logger.progress(progress)
+
+def test(name, failure=False):
+    if failure:
+        try:
+            if name():
+                print(name.__name__ + " failed")
+                sys.exit(1)
+        except Exception as e:
+            print(name.__name__ + " failed (exception): " + str(e))
+            sys.exit(0)
+    else:
+        try:
+            if not name():
+                print(name.__name__ + " failed")
+                sys.exit(1)
+        except Exception as e:
+            print(name.__name__ + " failed (exception): " + str(e))
+            sys.exit(1)
+
+def expectException(name, etype):
+    try:
+        name()
+        print(name.__name__ + " failed (expected an exception)")
+        sys.exit(1)
+    except etype:
+        pass
+    except Exception as e:
+        print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
+        sys.exit(1)

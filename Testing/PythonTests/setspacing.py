@@ -11,11 +11,7 @@ def setspacingTest1():
 
   return np.array_equal(img.spacing(), [2.0, 2.0, 2.0]) and img.compare(compareImg)
 
-try:
-  setspacingTest1()
-except ValueError:
-  print("setspacingTest1 failed")
-  sys.exit(1)
+utils.test(setspacingTest1)
 
 def setspacingTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -27,11 +23,7 @@ def setspacingTest2():
 
   return np.array_equal(img.spacing(), [1.0, 1.0, 1.0]) and img.compare(compareImg)
 
-try:
-  setspacingTest2()
-except ValueError:
-  print("setspacingTest2 failed")
-  sys.exit(1)
+utils.test(setspacingTest2)
 
 def setspacingfailTest():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -41,9 +33,4 @@ def setspacingfailTest():
 
   return img.compare(compareImg)
 
-try:
-  setspacingfailTest()
-  print("setspacingfailTest failed. Setting spacing to 0 is not allowed.")
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(setspacingfailTest, ValueError)

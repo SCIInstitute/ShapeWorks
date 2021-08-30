@@ -11,8 +11,4 @@ def coverageTest():
 
   return pelvis == compareMesh
 
-try:
-  coverageTest()
-except ValueError:
-  print("coverageTest failed")
-  sys.exit(1)
+utils.test(coverageTest)

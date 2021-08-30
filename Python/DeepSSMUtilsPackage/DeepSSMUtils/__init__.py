@@ -15,10 +15,11 @@ def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir)
 
 def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
-					  decay_lr, fine_tune):
+					  decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate):
 	testPytorch()
 	config_file.prepare_config_file(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs,
-									learning_rate, decay_lr, fine_tune)
+									learning_rate, decay_lr, fine_tune,
+                                                                        fine_tune_epochs, fine_tune_learning_rate)
 
 def trainDeepSSM(config_file):
 	testPytorch()
