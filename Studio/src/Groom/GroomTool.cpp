@@ -228,6 +228,12 @@ void GroomTool::store_params()
   params.set_mesh_vtk_windowed_sinc_iterations(ui_->sinc_iterations->text().toInt());
   params.set_mesh_vtk_windowed_sinc_passband(ui_->sinc_passband->text().toDouble());
   params.save_to_project();
+
+  // global settings
+  params = GroomParameters(session_->get_project());
+  params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
+  params.save_to_project();
+
 }
 
 //---------------------------------------------------------------------------
