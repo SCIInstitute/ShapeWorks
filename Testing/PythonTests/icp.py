@@ -12,7 +12,4 @@ def icpTest():
 
   return imgSource == compareImg
 
-val = icpTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(icpTest)

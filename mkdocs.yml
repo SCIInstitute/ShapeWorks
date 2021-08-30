@@ -37,6 +37,7 @@ nav:
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
    - 'Multiple Domains SSM': 'studio/multiple-domains.md'
+   - 'DeepSSM in Studio': 'studio/deepssm-in-studio.md'
 - ShapeWorks in Python:
    - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'  
    - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  

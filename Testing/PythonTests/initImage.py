@@ -7,45 +7,35 @@ from shapeworks import *
 def initImageTest1():
   img = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
-try:
-  initImageTest1()
-except ValueError:
-  print("initImageTest1 failed")
-  sys.exit(1)
+  return img
+
+utils.test(initImageTest1)
 
 # pass invalid path to make sure an exception is thrown
 def initImageTest2():
   img = Image(os.environ["DATA"] + "/not_a_valid_path.nrrd")
 
-try:
-  initImageTest2()
-  print("initImageTest2 failed")
-  sys.exit(1)
-except ValueError:
-  pass
+  return img
+
+utils.expectException(initImageTest2, ValueError)
 
 # load from a numpy array of the correct type
 def initImageTest3():
   arr = np.ones([25,15,5], dtype=np.float32)
   img = Image(arr)
 
-try:
-  initImageTest3()
-except ValueError:
-  print("initImageTest3 failed")
-  sys.exit(1)
+  return img
+
+utils.test(initImageTest3)
 
 # load from a numpy array of an unsupported type
 def initImageTest4():
   arr = np.ones([25,15,5], dtype=np.float64)
   img = Image(arr)
 
-try:
-  initImageTest4()
-  print("initImageTest4 failed")
-  sys.exit(1)
-except ValueError:
-  pass
+  return img
+
+utils.expectException(initImageTest4, ValueError)
 
 # load from a numpy array and ensure the data is correct
 def initImageTest5():
@@ -58,13 +48,7 @@ def initImageTest5():
   compareImg = Image(os.environ["DATA"] + "/imgFromArray.nrrd")
   return img == compareImg
 
-try:
-  if not initImageTest5():
-    print("initImageTest5 failed")
-    sys.exit(1)
-except ValueError:
-  print("initImageTest5 failed (exception)")
-  sys.exit(1)
+utils.test(initImageTest5)
 
 # copy constructor
 def initImageTest6():
@@ -72,13 +56,7 @@ def initImageTest6():
   img_copy = Image(img)
   return img == img_copy
 
-try:
-  if not initImageTest6():
-    print("initImageTest6 failed")
-    sys.exit(1)
-except ValueError:
-  print("initImageTest6 failed (exception)")
-  sys.exit(1)
+utils.test(initImageTest6)
 
 # assignment operator
 def initImageTest7():
@@ -86,10 +64,4 @@ def initImageTest7():
   img_copy = img
   return img == img_copy
 
-try:
-  if not initImageTest7():
-    print("initImageTest7 failed")
-    sys.exit(1)
-except ValueError:
-  print("initImageTest7 failed (exception)")
-  sys.exit(1)
+utils.test(initImageTest7)

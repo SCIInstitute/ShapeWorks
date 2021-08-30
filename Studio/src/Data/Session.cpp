@@ -29,6 +29,7 @@
 #include <Data/Shape.h>
 #include <Data/MeshManager.h>
 #include <Visualization/Visualizer.h>
+#include <Utils/StudioUtils.h>
 
 namespace shapeworks {
 
@@ -36,6 +37,7 @@ const std::string Session::DATA_C("data");
 const std::string Session::GROOM_C("groom");
 const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
+const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
@@ -112,7 +114,7 @@ bool Session::save_project(std::string fname)
   if (filename == "") {
     filename = this->filename_;
   }
-  this->filename_ = filename;
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   QFileInfo fi(filename);
   if (fi.exists()) {
@@ -192,9 +194,9 @@ bool Session::load_project(QString filename)
                           QMessageBox::Ok);
     return false;
   }
-  // clear the project out first
 
-  this->filename_ = filename;
+  // clear the project out first
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   if (filename.toLower().endsWith(".xlsx")) {
     return this->load_xl_project(filename);
@@ -393,7 +395,7 @@ bool Session::load_light_project(QString filename)
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename)
 {
-  this->filename_ = filename;
+  this->filename_ = QFileInfo(filename).absoluteFilePath();
 
   this->set_project_path(QFileInfo(filename).absolutePath());
 
@@ -416,10 +418,10 @@ bool Session::load_xl_project(QString filename)
     auto locals = subjects[i]->get_local_particle_filenames();
     auto worlds = subjects[i]->get_world_particle_filenames();
 
-    if (!shape->import_local_point_files(locals)) {
+    if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
       return false;
     }
-    if (!shape->import_global_point_files(worlds)) {
+    if (!shape->import_global_point_files(StudioUtils::to_string_list(worlds))) {
       return false;
     }
 
@@ -602,16 +604,20 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     list << "";
     list << "";
 
-    std::vector<std::string> local_filenames;
-    std::vector<std::string> world_filenames;
+    QStringList local_filenames;
+    QStringList world_filenames;
     // only single domain supported so far
     for (int j = 0; j < domains_per_shape; j++) {
-      local_filenames.push_back(local[counter + j]);
-      world_filenames.push_back(world[counter + j]);
+      local_filenames << QString::fromStdString(local[counter + j]);
+      world_filenames << QString::fromStdString(world[counter + j]);
     }
     counter += domains_per_shape;
-    this->shapes_[i]->import_local_point_files(local_filenames);
-    this->shapes_[i]->import_global_point_files(world_filenames);
+    if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
+      emit error("Unable to load point files: " + local_filenames.join(", "));
+    }
+    if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
+      emit error("Unable to load point files: " + local_filenames.join(", "));
+    }
     this->shapes_[i]->set_annotations(list);
   }
 

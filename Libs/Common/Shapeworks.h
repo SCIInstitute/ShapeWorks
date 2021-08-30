@@ -31,6 +31,7 @@ using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
 using Array         = vtkSmartPointer<vtkDataArray>;
+using Field         = Array;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
@@ -91,6 +92,7 @@ Vector3 invertValue(const Vector3 &v);
 /// Vector dot and cross products
 Vector3 dotProduct(const Vector3 &a, const Vector3 &b);
 Vector3 crossProduct(const Vector3 &a, const Vector3 &b);
+double length(const Vector3 &v);
 
 /// handy way to specify an axis
 enum Axis { invalid = -1, X, Y, Z };

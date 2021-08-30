@@ -22,7 +22,4 @@ def coordTest():
 
   return c6[0] == 40 and c6[1] == 40 and c6[2] == 40
 
-val = coordTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(coordTest)

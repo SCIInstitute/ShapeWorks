@@ -11,10 +11,7 @@ def warpTest():
 
   return img.compare(compareImg)
 
-val = warpTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(warpTest)
 
 def warpfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,8 +21,4 @@ def warpfailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = warpfailTest()
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(warpfailTest, TypeError)

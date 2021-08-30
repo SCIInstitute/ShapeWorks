@@ -133,6 +133,8 @@ function install_conda() {
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
+  if ! pip install hotelling==0.5.0;                    then return 1; fi
+  if ! pip install statsmodels;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.0.1;                          then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
@@ -197,6 +199,9 @@ function install_conda() {
 
   echo "Installed packages:"
   conda list
+
+  # Set the python path for studio
+  mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   
   return 0
 }

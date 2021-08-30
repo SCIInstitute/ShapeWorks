@@ -64,6 +64,8 @@ Vector3 getNormal(const Plane plane)
   return makeVector({normal[0], normal[1], normal[2]});
 }
 
+double length(const Vector3 &v) { return v.GetNorm(); }
+
 template<>
 Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 

@@ -67,7 +67,7 @@ TEST(UseCaseTests, ellipsoid_cut)
 TEST(UseCaseTests, ellipsoid_evaluate)
 {
   run_use_case("ellipsoid_evaluate",
-               "Output/ellipsoid/evaluation/compactness/scree.txt");
+               "Output/ellipsoid/evaluation/specificity/specificity.txt");
 }
 
 //---------------------------------------------------------------------------
@@ -149,4 +149,11 @@ TEST(UseCaseTests, ellipsoid_pca)
 {
   run_use_case("ellipsoid_pca",
                "Output/ellipsoid/pca/pca_eigen_vectors.txt");
+}
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_pvalues)
+{
+  run_use_case("femur_pvalues",
+               "Output/femur_pvalues/femur_pvalues.txt");
 }

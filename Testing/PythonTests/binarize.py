@@ -10,11 +10,7 @@ def binarizeTest1():
 
   return img.compare(compareImg)
 
-val = binarizeTest1()
-
-if val is False:
-  print("binarizeTest1 failed")
-  sys.exit(1)
+utils.test(binarizeTest1)
 
 def binarizeTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,8 +20,4 @@ def binarizeTest2():
 
   return img.compare(compareImg)
 
-val = binarizeTest2()
-
-if val is False:
-  print("binarizeTest2 failed")
-  sys.exit(1)
+utils.test(binarizeTest2)

@@ -10,7 +10,4 @@ def toDistanceTransformTest():
 
   return img.compare(compareImg)
 
-val = toDistanceTransformTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(toDistanceTransformTest)

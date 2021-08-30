@@ -787,16 +787,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ImageUtils>(m, "ImageUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(filenames, val);
-              },
+              py::overload_cast<const std::vector<std::string>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of filenames",
               "filenames"_a, "isoValue"_a=1.0)
 
   .def_static("boundingBox",
-              [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(images, val);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Image>>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of images",
               "images"_a, "isoValue"_a=1.0)
 
@@ -804,9 +800,9 @@ PYBIND11_MODULE(shapeworks_py, m)
               [](const std::string &source_landmarks,
                  const std::string &target_landmarks,
                  const int stride) -> decltype(auto) {
-                auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks,
-                                                                             target_landmarks,
-                                                                             stride);
+                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
+                                                                 target_landmarks,
+                                                                 stride);
                 return xform_ptr;
               },
               "computes a warp transform from the source to the target landmarks",
@@ -836,6 +832,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
+  .def(py::self += py::self)
 
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
@@ -955,9 +952,9 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a,
        "normal"_a)
 
-  .def("generateNormals",
-       &Mesh::generateNormals,
-       "computes cell normals and orients them such that they point in the same direction")
+  .def("computeNormals",
+       &Mesh::computeNormals,
+       "computes and adds oriented point and cell normals")
 
   .def("toImage",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
@@ -967,8 +964,28 @@ PYBIND11_MODULE(shapeworks_py, m)
        "region"_a=PhysicalRegion(),
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
+  .def("closestPoint",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
+       },
+       "returns closest point to given point on mesh",
+       "point"_a)
+
+  .def("closestPointId",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return mesh.closestPointId(Point({p[0], p[1], p[2]}));
+       },
+       "returns closest point id in this mesh to the given point in space",
+       "point"_a)
+
+  .def("geodesicDistance",
+       &Mesh::geodesicDistance,
+       "computes geodesic distance between two vertices (specified by their indices) on mesh",
+       "source"_a, "target"_a)
+
   .def("distance",
-       &Mesh::distance, "computes surface to surface distance",
+       &Mesh::distance,
+       "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
@@ -999,17 +1016,33 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::numFaces,
        "number of faces")
 
+  .def("points",
+       &Mesh::points,
+       "matrix with number of points with (x,y,z) coordinates of each point")
+
+  .def("faces",
+       &Mesh::faces,
+       "matrix with number of faces with indices of the three points from which each face is composed")
+
   .def("getPoint",
-       [](Mesh &mesh, int i) -> decltype(auto) {
-         return py::array(3, mesh.getPoint(i).GetDataPointer());
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getPoint(id).GetDataPointer());
        },
-       "return (x,y,z) coordinates of vertex at given index",
-       "p"_a)
+       "(x,y,z) coordinates of vertex at given index",
+       "id"_a)
+
+  .def("getFace",
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getFace(id).GetDataPointer());
+       },
+       "return indices of the three points with which the face at the given index is composed",
+       "id"_a)
 
   .def("getFieldNames",
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
+  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1017,6 +1050,20 @@ PYBIND11_MODULE(shapeworks_py, m)
          for (int i=0; i<v.size(); i++) {
            arr->SetTuple1(i, v[i]);
          }
+         return mesh.setField(name, arr);
+       },
+       "sets the given field for points with array",
+       "array"_a, "name"_a)
+
+  //TODO: See github issue #966
+  .def("setField",
+       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
+         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+         arr->SetNumberOfComponents(3);
+         arr->SetNumberOfTuples(v.size());
+         for (int i=0; i<v.size(); i++) {
+           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
+          }
          return mesh.setField(name, arr);
        },
        "sets the given field for points with array",
@@ -1066,31 +1113,75 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldStd,
        "returns the standard deviation of the given field",
        "name"_a)
+
+  .def("compareField",
+       &Mesh::compareField,
+       "compares two meshes based on fields",
+       "other_mesh"_a, "name1"_a, "name2"_a="")
   ;
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, bool center) {
-                return shapeworks::MeshUtils::boundingBox(filenames, center);
-              },
+              py::overload_cast<const std::vector<std::string>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for meshes",
               "filenames"_a, "center"_a=false)
 
   .def_static("boundingBox",
-              [](std::vector<Mesh> meshes, bool center) {
-                return shapeworks::MeshUtils::boundingBox(meshes, center);
-              },
-              "calculate bounding box incrementally for shapeworks meshes",
+              py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
+              "calculate bounding box incrementally for meshes",
               "meshes"_a, "center"_a=false)
 
   .def_static("findReferenceMesh",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::findReferenceMesh(meshes);
-              },
-              "find reference mesh from a set of shapeworks meshes",
+              &MeshUtils::findReferenceMesh,
+              "find reference mesh from a set of meshes",
               "meshes"_a)
+
+  .def_static("generateNormals",
+              &MeshUtils::generateNormals,
+              "generates and adds normals for points and faces for each mesh in given set of meshes",
+              "meshes"_a, "forceRegen"_a=false)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "filenames"_a, "autoGenerateNormals"_a=true)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(meshes);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "meshes"_a)
   ;
 
   // ParticleSystem
@@ -1125,6 +1216,18 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeFullCompactness",
+              &ShapeEvaluation::ComputeFullCompactness,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullGeneralization",
+              &ShapeEvaluation::ComputeFullGeneralization,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificity",
+              &ShapeEvaluation::ComputeFullSpecificity,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
