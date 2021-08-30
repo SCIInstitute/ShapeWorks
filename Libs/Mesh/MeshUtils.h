@@ -7,7 +7,7 @@
 
 namespace shapeworks {
 
-/// Helper functions for meshes 
+/// Helper functions for meshes
 class MeshUtils
 {
 public:
@@ -28,17 +28,28 @@ public:
   /// calculate bounding box incrementally for meshes
   static PhysicalRegion boundingBox(const std::vector<std::string>& filenames, bool center = false);
 
-  /// calculate bounding box incrementally for shapework meshes
+  /// calculate bounding box incrementally for meshes
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
   /// determine the reference mesh
   static int findReferenceMesh(std::vector<Mesh> &meshes);
+
 
   /// boundary loop extractor for a given mesh
   static int boundaryLoopExtractor(std::string filename,Mesh mesh);
 
   /// shared boundary extractor for the left and right mesh
   static int sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r,std::string filename_l, std::string filename_r, std::string filename_shared,double tol);
+
+  /// generates and adds normals for points and faces for each mesh in given set of meshes
+  static void generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen = false);
+
+  /// computes average normals for each point in given set of meshes
+  static Field computeMeanNormals(const std::vector<std::string>& filenames, bool autoGenerateNormals = true);
+
+  /// computes average normals for each point in given set of meshes
+  static Field computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes);
+
 };
 
 } // shapeworks

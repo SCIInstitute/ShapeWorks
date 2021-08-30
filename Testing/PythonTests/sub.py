@@ -11,11 +11,7 @@ def subTest1():
 
   return img.compare(compareImg)
 
-val = subTest1()
-
-if val is False:
-  print("subTest1 failed")
-  sys.exit(1)
+utils.test(subTest1)
 
 def subTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -25,11 +21,7 @@ def subTest2():
 
   return img.compare(compareImg)
 
-val = subTest2()
-
-if val is False:
-  print("subTest2 failed")
-  sys.exit(1)
+utils.test(subTest2)
 
 def subTest3():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -40,11 +32,7 @@ def subTest3():
 
   return img.compare(compareImg)
 
-val = subTest3()
-
-if val is False:
-  print("subTest3 failed")
-  sys.exit(1)
+utils.test(subTest3)
 
 def subfailTest():
   img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -55,8 +43,4 @@ def subfailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = subfailTest()
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(subfailTest, ValueError)

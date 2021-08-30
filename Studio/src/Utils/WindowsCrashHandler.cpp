@@ -216,16 +216,17 @@ int f(int i)
 
 int init_crash_handler()
 {
-  STUDIO_LOG_MESSAGE("Showing a simple callstack of the current thread:\n\n\n");
-  StackWalkTest();
+  //STUDIO_LOG_MESSAGE("Showing a simple callstack of the current thread:\n\n\n");
+  //StackWalkTest();
+  STUDIO_LOG_MESSAGE("Windows Crash Handler Initialized");
 
 #ifdef EXCEPTION_FILTER_TEST
-  printf("\n\n\nShow a the callstack from inside an execption-handler:\n\n\n");
+  //printf("\n\n\nShow a the callstack from inside an execption-handler:\n\n\n");
  // TestExceptionWalking();
 #endif
 
 #ifdef UNHANDLED_EXCEPTION_TEST
-  printf("\n\n\nCatch unhandled exceptions and show the callstack:\n\n\n");
+  //printf("\n\n\nCatch unhandled exceptions and show the callstack:\n\n\n");
   // This will only work, if the programm is *not* started under a debugger
   // If the program is running under a debugger, the debugger will catch this exception ;)
   InitUnhandledExceptionFilter();

@@ -62,10 +62,10 @@ public:
   void reset_groomed_mesh();
 
   /// Import global correspondence point file
-  bool import_global_point_files(std::vector<std::string> filenames);
+  bool import_global_point_files(QStringList filenames);
 
   /// Import local correspondence point file
-  bool import_local_point_files(std::vector<std::string> filenames);
+  bool import_local_point_files(QStringList filenames);
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
@@ -133,6 +133,11 @@ public:
 
   void set_point_features(std::string feature, Eigen::VectorXf values);
 
+  void load_feature_from_scalar_file(std::string filename, std::string feature_name);
+
+  void set_override_feature(std::string feature);
+  std::string get_override_feature();
+
 private:
 
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
@@ -150,6 +155,8 @@ private:
   MeshGroup reconstructed_meshes_;
 
   int group_id_ = 1;
+
+  std::string override_feature_;
 
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;

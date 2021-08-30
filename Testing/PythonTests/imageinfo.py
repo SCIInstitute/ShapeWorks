@@ -11,11 +11,7 @@ def infoTest1():
 
   return size1[0] == size2[0] and size1[1] == size2[1] and size1[2] == size2[2]
 
-val = infoTest1()
-
-if val is False:
-  print("infoTest1 failed")
-  sys.exit(1)
+utils.test(infoTest1)
 
 def infoTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -26,9 +22,4 @@ def infoTest2():
 
   return dims1[0] == dims2[0] and dims1[1] == dims2[1] and dims1[2] == dims2[2]
 
-val = infoTest2()
-
-if val is False:
-  print("infoTest2 failed")
-  sys.exit(1)
-
+utils.test(infoTest2)

@@ -10,11 +10,7 @@ def sigmoidTest1():
 
   return img.compare(compareImg)
 
-val = sigmoidTest1()
-
-if val is False:
-  print("sigmoidTest1 failed")
-  sys.exit(1)
+utils.test(sigmoidTest1)
 
 def sigmoidTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def sigmoidTest2():
 
   return img.compare(compareImg)
 
-val = sigmoidTest2()
-
-if val is False:
-  print("sigmoidTest2 failed")
-  sys.exit(1)
+utils.test(sigmoidTest2)
 
 def sigmoidTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,11 +30,7 @@ def sigmoidTest3():
 
   return img.compare(compareImg)
 
-val = sigmoidTest3()
-
-if val is False:
-  print("sigmoidTest3 failed")
-  sys.exit(1)
+utils.test(sigmoidTest3)
 
 def sigmoidTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -52,8 +40,4 @@ def sigmoidTest4():
 
   return img.compare(compareImg)
 
-val = sigmoidTest4()
-
-if val is False:
-  print("sigmoidTest4 failed")
-  sys.exit(1)
+utils.test(sigmoidTest4)

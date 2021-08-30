@@ -25,7 +25,8 @@ public:
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
   Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
-
+  ///append two meshes
+  Mesh& operator+=(const Mesh& otherMesh);
   /// return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
 
@@ -84,8 +85,8 @@ public:
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
 
-  /// computes cell normals and orients them such that they point in the same direction
-  Mesh& generateNormals();
+  /// computes and adds oriented point and cell normals
+  Mesh& computeNormals();
 
   /// returns closest point on a face in the mesh to the given point in space
   Point3 closestPoint(const Point3 point);
@@ -207,5 +208,7 @@ private:
 
 /// stream insertion operators for Mesh
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
+
+
 
 } // shapeworks

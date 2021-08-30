@@ -1,9 +1,11 @@
 #include "MeshUtils.h"
 #include "ParticleSystem.h"
+#include "Utils.h"
 
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
+#include <vtkDoubleArray.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>
@@ -190,6 +192,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
+<<<<<<< HEAD
 
 
 /*
@@ -469,4 +472,120 @@ int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string fil
 }
 
 
+=======
+void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen)
+{
+  if (meshes.empty())
+    throw std::invalid_argument("No meshes provided to compute average normals");
+
+  for (int i = 0; i < meshes.size(); i++)
+  {
+    bool hasNormals = true;
+    try {
+      meshes[i].get().getField<vtkDataArray>("Normals");
+    }
+    catch (...) {
+      hasNormals = false;
+    }
+
+    if ((!hasNormals) || (hasNormals  && forceRegen))
+      meshes[i].get().computeNormals();
+  }
+}
+
+Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, bool autoGenerateNormals)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("No filenames provided to compute mean normals");
+
+  std::vector<Mesh> meshes;
+  meshes.reserve(filenames.size()); // create a vector large enough for all the meshes that will be loaded
+  for (auto filename : filenames)
+    meshes.push_back(Mesh(filename));
+
+  std::vector<std::reference_wrapper<Mesh>> rmeshes;
+  rmeshes.reserve(meshes.size());
+  for (Mesh& mesh : meshes)
+    rmeshes.push_back(std::reference_wrapper<Mesh>(mesh));
+
+  if (autoGenerateNormals)
+  {
+    std::cerr << "NOTE: Auto generating normals\n";
+    MeshUtils::generateNormals(rmeshes);
+  }
+
+  std::vector<std::reference_wrapper<const Mesh>> cmeshes;
+  for (Mesh& mesh : meshes)
+    cmeshes.push_back(std::reference_wrapper<const Mesh>(mesh));
+
+  return computeMeanNormals(cmeshes);
+}
+
+Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes)
+{
+  if (meshes.empty())
+    throw std::invalid_argument("No meshes provided to compute average normals");
+
+  auto num_normals = meshes[0].get().numPoints();
+  auto num_meshes = meshes.size();
+
+  // convert all normals from all meshes to spherical coords
+  std::vector<std::vector<Point3>> sphericals(num_normals, std::vector<Point3>(num_meshes));
+  for (int j = 0; j < num_meshes; j++)
+  {
+    if (meshes[j].get().numPoints() != num_normals)
+      throw std::invalid_argument("Input meshes do not all have the same number of points");
+
+    auto normals = meshes[j].get().getField<vtkDataArray>("Normals");
+
+    if (num_normals != normals->GetNumberOfTuples())
+      throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");
+
+    for (int i = 0; i < num_normals; i++)
+    {
+      auto n = normals->GetTuple3(i);
+
+      // note: Utils::cartesian2spherical returns atypical (r, phi, theta)
+      Utils::cartesian2spherical(n, sphericals[i][j].GetDataPointer());
+    }
+  }
+
+  // prep data in 1d theta/phi arrays for averageThetaArc function
+  std::vector<std::vector<double>> phis(num_normals, std::vector<double>(num_meshes));
+  std::vector<std::vector<double>> thetas(num_normals, std::vector<double>(num_meshes));
+  for (int i = 0; i < num_normals; i++)
+  {
+    for (int j = 0; j < num_meshes; j++)
+    {
+      phis[i][j] = sphericals[i][j][1];
+      thetas[i][j] = sphericals[i][j][2];
+    }
+  }
+
+  vtkSmartPointer<vtkDoubleArray> normals = vtkSmartPointer<vtkDoubleArray>::New();
+  normals->SetNumberOfComponents(3);
+  normals->SetNumberOfTuples(num_normals);
+  normals->SetName("MeanNormals");
+
+  // compute average value for collection of normals for all meshes
+  std::vector<Vector3> mean_normals(num_normals);
+  for (int i = 0; i < num_normals; i++)
+  {
+    Vector3 avg_spherical_normal = makeVector({1.0,
+                                               Utils::averageThetaArc(phis[i]),
+                                               Utils::averageThetaArc(thetas[i])});
+
+    // note: Utils::spherical2cartesian expects atypical (r, phi, theta)
+    Utils::spherical2cartesian(avg_spherical_normal.GetDataPointer(),
+                               mean_normals[i].GetDataPointer());
+
+    normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
+  }
+
+  std::cerr << "WARNING: Added a multi-component mesh field\n";
+
+  return normals;
+}
+
+>>>>>>> master
 } // shapeworks

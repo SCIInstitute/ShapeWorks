@@ -10,11 +10,7 @@ def computedtTest1():
 
   return img.compare(compareImg)
 
-val = computedtTest1()
-
-if val is False:
-  print("computedtTest1 failed")
-  sys.exit(1)
+utils.test(computedtTest1)
 
 def computedtTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def computedtTest2():
 
   return img.compare(compareImg)
 
-val = computedtTest2()
-
-if val is False:
-  print("computedtTest2 failed")
-  sys.exit(1)
+utils.test(computedtTest2)
 
 def computedtTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,8 +30,4 @@ def computedtTest3():
 
   return img.compare(compareImg)
 
-val = computedtTest3()
-
-if val is False:
-  print("computedtTest3 failed")
-  sys.exit(1)
+utils.test(computedtTest3)

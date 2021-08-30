@@ -173,9 +173,6 @@ void MeshWarper::add_particle_vertices()
 
         // split the current cell into two triangles
         this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index);
-
-        this->reference_mesh_->RemoveDeletedCells();
-
       }
       else {
         vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
@@ -198,11 +195,10 @@ void MeshWarper::add_particle_vertices()
         this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
 
         this->reference_mesh_->DeleteCell(cell_id);
-        this->reference_mesh_->RemoveDeletedCells();
-
       }
     }
   }
+  this->reference_mesh_->RemoveDeletedCells();
 }
 
 //---------------------------------------------------------------------------

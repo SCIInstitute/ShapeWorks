@@ -55,6 +55,7 @@ public:
   void display_sample(int i);
 
   void display_shape(ShapeHandle shape);
+  void display_shapes(QVector<QSharedPointer<Shape>> shapes);
 
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);

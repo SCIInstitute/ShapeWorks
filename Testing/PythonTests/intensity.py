@@ -10,7 +10,4 @@ def intensityTest():
 
   return img.compare(compareImg)
 
-val = intensityTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(intensityTest)
