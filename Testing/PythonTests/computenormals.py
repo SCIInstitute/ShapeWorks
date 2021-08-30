@@ -2,15 +2,12 @@ import os
 import sys
 from shapeworks import *
 
-def generateNormalsTest():
+def computenormalsTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.generateNormals()
+  mesh.computeNormals()
 
   compareMesh = Mesh(os.environ["DATA"] + "/normals.vtk")
 
   return mesh == compareMesh
 
-val = generateNormalsTest()
-
-if val is False:
-  sys.exit(1)
+utils.test(computenormalsTest)
