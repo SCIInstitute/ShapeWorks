@@ -10,9 +10,10 @@ pieces are then jointly optimized
 """
 import os
 import shutil
-from OptimizeUtils import *
-from AnalyzeUtils import *
+import OptimizeUtils 
+import AnalyzeUtils
 import shapeworks as sw
+import glob
 
 def Run_Pipeline(args):
     datasetName = "peanut-v0"
@@ -114,20 +115,72 @@ def Run_Pipeline(args):
         # subprocess.check_call(cmd)
         sw.MeshUtils.boundaryLoopExtractor(fname_out_c,sw.Mesh(fname_m))
 
-    # Copy everything to shape model directory
-    shapeModelDir = outputDirectory + "shape_model/"
-    if not os.path.exists(shapeModelDir):
-        os.makedirs(shapeModelDir)
-    for fname in glob.glob(f'{finalDir}/*'):
-        new_name = shapeModelDir + fname.split('/')[-1]
-        shutil.copy(fname, new_name)
+    # # Copy everything to shape model directory
+    # shapeModelDir = outputDirectory + "shape_model/"
+    # if not os.path.exists(shapeModelDir):
+    #     os.makedirs(shapeModelDir)
+    # for fname in glob.glob(f'{finalDir}/*'):
+    #     new_name = shapeModelDir + fname.split('/')[-1]
+    #     shutil.copy(fname, new_name)
 
-    # TODO Use OptimizeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
-    shutil.copy(f'{outputDirectory}/{datasetName}/shape_models/peanut_shared_boundary/shared_with_contours.xlsx',
-                f'{outputDirectory}/shape_model/')
-    optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
-    subprocess.check_call(optimizeCmd)
+    # # TODO Use OptimizeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
+    # shutil.copy(f'{outputDirectory}/{datasetName}/shape_models/peanut_shared_boundary/new_shared_with_contours.xlsx',
+    #             f'{outputDirectory}/shape_model/')
+    # optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/new_shared_with_contours.xlsx'.split()
+    # subprocess.check_call(optimizeCmd)
 
-    # TODO Use AnalyzeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
-    analyzeCmd = 'ShapeWorksStudio Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
-    subprocess.check_call(analyzeCmd)
+    # # TODO Use AnalyzeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
+    # analyzeCmd = 'ShapeWorksStudio Output/peanut_shared_boundary/shape_model/new_shared_with_contours.xlsx'.split()
+    # subprocess.check_call(analyzeCmd)
+
+
+    mesh_files = sorted(glob.glob(f'{finalDir}/*'))
+    #Make directory to save optimization output
+    point_dir = outputDirectory + 'shape_models_new/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+        "number_of_particles" : [32,256,32,256],
+        "use_normals": [0,0,0,0],
+        "normal_weight": [10.0,10.0,10.0,10.0],
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 1000,
+        "optimization_iterations" : 2500,
+        "starting_regularization" :100,
+        "ending_regularization" : 0.01,
+        "domains_per_shape" : 4,
+        "relative_weighting" : 12, #10, # 1 for segmentation images
+        "initial_relative_weighting" : 0.01,
+        "procrustes_interval" : 3,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "verbosity" : 3,
+        "multiscale_particles" : 8,
+        "domain_type": "contour",
+        "recompute_regularization_interval" : 2
+
+      }
+
+    
+
+    # Execute the optimization function
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, mesh_files, parameter_dictionary)
+
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
+    print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    """
+    Step 3: ANALYZE - Shape Analysis and Visualization
+
+    Now we launch studio to analyze the resulting shape model.
+    For more information about the analysis step, see docs/workflow/analyze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    domains_per_shape = 4
+    AnalyzeUtils.launchShapeWorksStudio(
+        point_dir, mesh_files, local_point_files, world_point_files,domains_per_shape)
