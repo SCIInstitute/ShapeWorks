@@ -445,7 +445,40 @@ bool Groom::run_alignment()
   auto subjects = this->project_->get_subjects();
 
   auto base_params = GroomParameters(this->project_);
-  if (num_domains > 1 && base_params.get_global_alignment()) { // global alignment for multiple domains
+
+  // per-domain alignment
+  for (size_t domain = 0; domain < num_domains; domain++) {
+    if (this->abort_) {
+      return false;
+    }
+
+    auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+    if (params.get_use_icp()) {
+      std::vector<Mesh> meshes;
+      for (size_t i = 0; i < subjects.size(); i++) {
+        meshes.push_back(this->get_mesh(i, domain));
+      }
+
+      size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+      auto transforms = Groom::get_transforms(meshes, reference_mesh);
+
+      for (size_t i = 0; i < subjects.size(); i++) {
+        auto subject = subjects[i];
+        // store transform
+        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+
+        if (domain >= groomed_transforms.size()) {
+          groomed_transforms.resize(domain + 1);
+        }
+        groomed_transforms[domain] = transforms[i];
+        subject->set_groomed_transforms(groomed_transforms);
+      }
+    }
+  }
+
+  if (num_domains > 1) { // global alignment for multiple domains
     std::vector<Mesh> meshes;
 
     for (size_t i = 0; i < subjects.size(); i++) {
@@ -465,49 +498,16 @@ bool Groom::run_alignment()
       // store transform
       std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-      for (size_t domain = 0; domain < num_domains; domain++) {
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transforms[i];
+      size_t domain = num_domains; //end
+      if (domain >= groomed_transforms.size()) {
+        groomed_transforms.resize(domain + 1);
       }
+      groomed_transforms[domain] = transforms[i];
+
       subject->set_groomed_transforms(groomed_transforms);
     }
   }
-  else {
 
-    // per-domain alignment
-    for (size_t domain = 0; domain < num_domains; domain++) {
-      if (this->abort_) {
-        return false;
-      }
-
-      auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
-
-      if (params.get_use_icp()) {
-        std::vector<Mesh> meshes;
-        for (size_t i = 0; i < subjects.size(); i++) {
-          meshes.push_back(this->get_mesh(i, domain));
-        }
-
-        size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
-
-        auto transforms = Groom::get_transforms(meshes, reference_mesh);
-
-        for (size_t i = 0; i < subjects.size(); i++) {
-          auto subject = subjects[i];
-          // store transform
-          std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-
-          if (domain >= groomed_transforms.size()) {
-            groomed_transforms.resize(domain + 1);
-          }
-          groomed_transforms[domain] = transforms[i];
-          subject->set_groomed_transforms(groomed_transforms);
-        }
-      }
-    }
-  }
   return true;
 }
 

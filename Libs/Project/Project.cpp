@@ -297,6 +297,9 @@ void Project::store_subjects()
                                                                GROOMED_TRANSFORMS_PREFIX);
     groomed_transform_columns.push_back(groomed_transform_column_name);
   }
+  if (groomed_transform_columns.size() > 1) {
+    groomed_transform_columns.push_back(std::string(GROOMED_TRANSFORMS_PREFIX) + "global");
+  }
 
   // local and world particle columns
   std::vector<std::string> local_columns;
