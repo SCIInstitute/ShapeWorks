@@ -144,8 +144,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
   ui_->padding_amount->setValue(params.get_padding_amount());
-  ui_->global_alignment_image->setChecked(params.get_global_alignment());
-  ui_->global_alignment_mesh->setChecked(params.get_global_alignment());
 
   ui_->mesh_smooth_method->setCurrentText(
     QString::fromStdString(params.get_mesh_smoothing_method()));
@@ -211,7 +209,6 @@ void GroomTool::store_params()
 
   params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
   params.set_alignment_method(ui_->alignment_box->currentText().toStdString());
-  params.set_global_alignment(ui_->global_alignment_image->isChecked());
 
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());
@@ -223,7 +220,6 @@ void GroomTool::store_params()
   params.set_fill_holes_tool(ui_->fill_holes_checkbox->isChecked());
   params.set_antialias_iterations(ui_->antialias_iterations->value());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
-  params.set_global_alignment(ui_->global_alignment_image->isChecked());
 
   params.set_mesh_smooth(ui_->mesh_smooth->isChecked());
   params.set_mesh_smoothing_method(ui_->mesh_smooth_method->currentText().toStdString());
@@ -342,8 +338,6 @@ void GroomTool::activate()
 
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->domain_box->setVisible(domain_names.size() > 1);
-  ui_->global_alignment_image->setVisible(domain_names.size() > 1);
-  ui_->global_alignment_mesh->setVisible(domain_names.size() > 1);
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();
@@ -376,13 +370,6 @@ void GroomTool::fill_holes_changed(int state)
 {
   ui_->fill_holes_checkbox->setChecked(state);
   ui_->mesh_fill_holes->setChecked(state);
-}
-
-//---------------------------------------------------------------------------
-void GroomTool::global_alignment_changed(int state)
-{
-  ui_->global_alignment_image->setChecked(state);
-  ui_->global_alignment_mesh->setChecked(state);
 }
 
 //---------------------------------------------------------------------------

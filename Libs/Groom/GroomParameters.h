@@ -31,9 +31,6 @@ public:
   std::string get_alignment_method();
   void set_alignment_method(std::string method);
 
-  bool get_global_alignment();
-  void set_global_alignment(bool value);
-
   bool get_isolate_tool();
   void set_isolate_tool(bool value);
 

@@ -244,18 +244,6 @@ void GroomParameters::set_alignment_method(std::string method)
 }
 
 //---------------------------------------------------------------------------
-bool GroomParameters::get_global_alignment()
-{
-  return this->params_.get("global_alignment", false);
-}
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_global_alignment(bool value)
-{
-  this->params_.set("global_alignment", value);
-}
-
-//---------------------------------------------------------------------------
 bool GroomParameters::get_alignment_enabled()
 {
   return this->params_.get("alignment_enabled", true);
