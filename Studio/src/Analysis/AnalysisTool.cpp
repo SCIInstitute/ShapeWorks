@@ -1235,6 +1235,8 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
     }
     shape->set_particle_transform(transform);
   }
+
+  this->evals_ready_ = false;
   this->group_changed();
 }
 

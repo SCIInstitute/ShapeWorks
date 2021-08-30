@@ -18,15 +18,12 @@ void ShapeEvaluationJob::run()
   auto callback = std::bind(&ShapeEvaluationJob::receive_progress, this, std::placeholders::_1);
   switch (this->job_type_) {
   case JobType::CompactnessType:
-    std::cerr << "Running compactness\n";
     emit result_ready(this->job_type_, this->stats_.get_compactness(callback));
     break;
   case JobType::GeneralizationType:
-    std::cerr << "Running generalization\n";
     emit result_ready(this->job_type_, this->stats_.get_generalization(callback));
     break;
   case JobType::SpecificityType:
-    std::cerr << "Running specificity\n";
     emit result_ready(this->job_type_, this->stats_.get_specificity(callback));
     break;
   }
