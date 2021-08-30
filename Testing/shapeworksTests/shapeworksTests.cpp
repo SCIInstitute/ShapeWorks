@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(shapeworksTests, meancurvatureTest)
+{
+  run_use_case("meshcurvature.sh");
+}
+
 TEST(shapeworksTests, meannormalsTest)
 {
   run_use_case("meannormals.sh");

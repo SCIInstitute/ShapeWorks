@@ -542,7 +542,7 @@ double Mesh::geodesicDistance(int source, int target)
   return d[0];
 }
 
-Eigen::VectorXd Mesh::curvature(const CurvatureType type)
+Field Mesh::curvature(const CurvatureType type)
 {
   Eigen::MatrixXd V = points();
 	Eigen::MatrixXi F = faces();
@@ -552,16 +552,28 @@ Eigen::VectorXd Mesh::curvature(const CurvatureType type)
 
   Eigen::VectorXd C;
 
+  vtkSmartPointer<vtkDoubleArray> curv = vtkSmartPointer<vtkDoubleArray>::New();
+  curv->SetNumberOfComponents(1);
+  curv->SetNumberOfTuples(numPoints());
+
   switch (type) {
     case Principal:
-      igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
-      // igl::principal_curvature(V, F, PD1, PD2, C, PV2);
+    {
+      curv->SetName("principal curvature");
+      // igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
+      igl::principal_curvature(V, F, PD1, PD2, C, PV2);
       break;
+    }
     case Gaussian:
+    {
+      curv->SetName("gaussian curvature");
       igl::gaussian_curvature(V, F, C);
       break;
+    }
     case Mean:
     {
+      curv->SetName("mean curvature");
+
       Eigen::MatrixXd HN;
       Eigen::SparseMatrix<double> L,M,Minv;
       igl::cotmatrix(V,F,L);
@@ -585,7 +597,10 @@ Eigen::VectorXd Mesh::curvature(const CurvatureType type)
       throw std::invalid_argument("Unknown Mesh::CurvatureType.");
   }
 
-  return C;
+  for (int i = 0; i < numPoints(); i++)
+    curv->SetValue(i, C[i]);
+
+  return curv;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const

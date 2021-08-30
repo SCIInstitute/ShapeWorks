@@ -9,6 +9,17 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, curvatureTest)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meancurvature.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
+}
+
 TEST(MeshTests, computemeannormalsTest1)
 {
   std::vector<std::reference_wrapper<const Mesh>> meshes;

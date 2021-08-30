@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, meshcurvatureTest)
+{
+  run_use_case("meshcurvature.py");
+}
+
 TEST(pythonTests, initImageTest)
 {
   run_use_case("initImage.py");

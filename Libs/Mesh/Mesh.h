@@ -98,7 +98,8 @@ public:
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
 
-  Eigen::VectorXd curvature(const CurvatureType type = Principal);
+  /// computes and adds curvature (principal (default) or gaussian or mean)
+  Field curvature(const CurvatureType type = Principal);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;

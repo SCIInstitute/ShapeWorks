@@ -827,6 +827,14 @@ PYBIND11_MODULE(shapeworks_py, m)
   .export_values();
   ;
 
+  // Mesh::CurvatureType
+  py::enum_<Mesh::CurvatureType>(mesh, "CurvatureType")
+  .value("Principal", Mesh::CurvatureType::Principal)
+  .value("Gaussian", Mesh::CurvatureType::Gaussian)
+  .value("Mean", Mesh::CurvatureType::Mean)
+  .export_values();
+  ;
+
   // Mesh bindings
   mesh.def(py::init<const std::string &>())
 
@@ -941,6 +949,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5,
        "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
 
+  .def("distance",
+       &Mesh::distance,
+       "computes surface to surface distance",
+       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
          return mesh.clipClosedSurface(makePlane(Point({p[0], p[1], p[2]}), makeVector({n[0], n[1], n[2]})));
@@ -952,14 +965,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("computeNormals",
        &Mesh::computeNormals,
        "computes and adds oriented point and cell normals")
-
-  .def("toImage",
-       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
-       },
-       "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
-       "region"_a=PhysicalRegion(),
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
@@ -980,10 +985,33 @@ PYBIND11_MODULE(shapeworks_py, m)
        "computes geodesic distance between two vertices (specified by their indices) on mesh",
        "source"_a, "target"_a)
 
-  .def("distance",
-       &Mesh::distance,
-       "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+  .def("curvature",
+       [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {
+          auto array = mesh.curvature(type);
+          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                 1};
+          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+          // LOTS of copying going on here, see github #903
+          array->GetData(0, array->GetNumberOfTuples()-1,
+                         0, array->GetNumberOfComponents()-1,
+                         vtkarr);                               // copy1
+          return py::array(py::dtype::of<double>(),
+                         shape,
+                         vtkarr->GetVoidPointer(0));          // copy2
+     },
+     "computes and adds curvature (principal (default) or gaussian or mean)",
+     "type"_a=Mesh::CurvatureType::Principal)
+
+  .def("toImage",
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
+       },
+       "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
+       "region"_a=PhysicalRegion(),
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("toDistanceTransform",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {

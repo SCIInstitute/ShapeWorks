@@ -927,8 +927,8 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void Curvature::buildParser()
 {
-  const std::string prog = "curvature";
-  const std::string desc = ""; // TODO: add description
+  const std::string prog = "mesh-curvature";
+  const std::string desc = "computes and adds curvature";
   parser.prog(prog).description(desc);
 
   std::list<std::string> curvs{"principal", "gaussian", "mean"};
@@ -959,7 +959,7 @@ bool Curvature::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  sharedData.mesh->curvature(curv);
+  sharedData.field = sharedData.mesh->curvature(curv);
   return true;
 }
 
