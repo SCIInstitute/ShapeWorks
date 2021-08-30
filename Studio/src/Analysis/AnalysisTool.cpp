@@ -1225,10 +1225,12 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     if (this->current_alignment_ == AlignmentType::Local) {
       transform = nullptr;
-    } else if (this->current_alignment_ == AlignmentType::Global) {
+    }
+    else if (this->current_alignment_ == AlignmentType::Global) {
       auto domain_names = this->session_->get_project()->get_domain_names();
       transform = shape->get_groomed_transform(domain_names.size());
-    } else {
+    }
+    else {
       transform = shape->get_groomed_transform(new_alignment);
     }
     shape->set_particle_transform(transform);
@@ -1299,27 +1301,36 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_reconstructed_domain_transforms()
 {
-  this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
   auto shapes = this->session_->get_shapes();
-  for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
-    int num_shapes = shapes.size();
-    auto transform = vtkSmartPointer<vtkTransform>::New();
-    double* values = transform->GetMatrix()->GetData();
+  if (this->current_alignment_ == AlignmentType::Local) {
 
-    for (int i = 0; i < shapes.size(); i++) {
-      vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
-      vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+    this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
+    for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
+      int num_shapes = shapes.size();
+      auto transform = vtkSmartPointer<vtkTransform>::New();
+      double* values = transform->GetMatrix()->GetData();
 
-      for (int j = 0; j < 16; j++) {
-        values[j] += (base->GetMatrix()->GetData()[j] -
-                      offset->GetMatrix()->GetData()[j]) / num_shapes;
+      for (int i = 0; i < shapes.size(); i++) {
+        vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
+        vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+
+        for (int j = 0; j < 16; j++) {
+          values[j] += (base->GetMatrix()->GetData()[j] -
+                        offset->GetMatrix()->GetData()[j]) / num_shapes;
+        }
       }
+      this->reconstruction_transforms_[domain] = transform;
     }
-    this->reconstruction_transforms_[domain] = transform;
-  }
 
-  for (int s = 0; s < shapes.size(); s++) {
-    shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
+    for (int s = 0; s < shapes.size(); s++) {
+      shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
+    }
+  }
+  else {
+    this->reconstruction_transforms_.clear();
+    for (int s = 0; s < shapes.size(); s++) {
+      shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
+    }
   }
 }
 
