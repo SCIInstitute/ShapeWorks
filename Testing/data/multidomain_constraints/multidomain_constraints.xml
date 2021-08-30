@@ -249,18 +249,40 @@ sphere40_O_DT.nrrd
 
 <num_planes_per_input>
   1
-  0
   1
-  0
   1
-  0
   1
-  0
+  1
+  1
+  1
+  1
 </num_planes_per_input>
 
 <cutting_planes>
   -10 -1 -10 -10 -1 10 10 -1 -10
+  -10 49 -10 -10 49 10 10 49 -10
   -10 -2 -10 -10 -2 10 10 -2 -10
+  -10 48 -10 -10 48 10 10 48 -10
   -10 -3 -10 -10 -3 10 10 -3 -10
+  -10 47 -10 -10 47 10 10 47 -10
   -10 -4 -10 -10 -4 10 10 -4 -10
+  -10 46 -10 -10 46 10 10 46 -10
 </cutting_planes>
+
+<num_ffcs_per_input>
+0
+1
+0
+1
+0
+1
+0
+1
+</num_ffcs_per_input>
+
+<ffcs>
+ffcs/sphere10.ffc
+ffcs/sphere20.ffc
+ffcs/sphere30.ffc
+ffcs/sphere40.ffc
+</ffcs>
