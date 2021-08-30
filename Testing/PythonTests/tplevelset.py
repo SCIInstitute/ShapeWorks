@@ -12,11 +12,7 @@ def tplevelsetTest1():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest1()
-
-if val is False:
-  print("tplevelsetTest1 failed")
-  sys.exit(1)
+utils.test(tplevelsetTest1)
 
 def tplevelsetTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -28,11 +24,7 @@ def tplevelsetTest2():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest2()
-
-if val is False:
-  print("tplevelsetTest2 failed")
-  sys.exit(1)
+utils.test(tplevelsetTest2)
 
 def tplevelsetfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -42,8 +34,4 @@ def tplevelsetfailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = tplevelsetfailTest()
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(tplevelsetfailTest, TypeError)

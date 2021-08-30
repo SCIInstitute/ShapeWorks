@@ -1,4 +1,3 @@
-
 #include "DeepSSMParameters.h"
 
 namespace shapeworks {
@@ -22,7 +21,9 @@ const std::string TRAIN_LEARNING_RATE = "train_learning_rate";
 const std::string TRAIN_DECAY_LEARNING_RATE = "train_decay_learning_rate";
 const std::string TRAIN_FINE_TUNING = "train_fine_tuning";
 const std::string TRAIN_NUM_DIMS = "train_num_dims";
-
+const std::string TRAIN_BATCH_SIZE = "train_batch_size";
+const std::string TRAIN_FINE_TUNING_EPOCHS = "train_fine_tuning_epochs";
+const std::string TRAIN_FINE_TUNING_LEARNING_RATE = "train_fine_tuning_learning_rate";
 }
 
 namespace Defaults {
@@ -44,6 +45,9 @@ const double TRAIN_LEARNING_RATE = 0.001;
 const bool TRAIN_DECAY_LEARNING_RATE = true;
 const bool TRAIN_FINE_TUNING = true;
 const int TRAIN_NUM_DIMS = 0;
+const int TRAIN_BATCH_SIZE = 8;
+const int TRAIN_FINE_TUNING_EPOCHS = 2;
+const double TRAIN_FINE_TUNING_LEARNING_RATE = 0.001;
 }
 
 //---------------------------------------------------------------------------
@@ -173,6 +177,42 @@ void DeepSSMParameters::set_training_fine_tuning(bool fine_tuning)
 }
 
 //---------------------------------------------------------------------------
+int DeepSSMParameters::get_training_fine_tuning_epochs()
+{
+  return this->params_.get(Keys::TRAIN_FINE_TUNING_EPOCHS, Defaults::TRAIN_FINE_TUNING_EPOCHS);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_fine_tuning_epochs(int epochs)
+{
+  this->params_.set(Keys::TRAIN_FINE_TUNING_EPOCHS, epochs);
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_training_fine_tuning_learning_rate()
+{
+  return this->params_.get(Keys::TRAIN_FINE_TUNING_LEARNING_RATE, Defaults::TRAIN_FINE_TUNING_LEARNING_RATE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_fine_tuning_learning_rate(double rate)
+{
+  this->params_.set(Keys::TRAIN_FINE_TUNING_LEARNING_RATE, rate);
+}
+
+//---------------------------------------------------------------------------
+int DeepSSMParameters::get_training_batch_size()
+{
+  return this->params_.get(Keys::TRAIN_BATCH_SIZE, Defaults::TRAIN_BATCH_SIZE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_batch_size(int batch_size)
+{
+  this->params_.set(Keys::TRAIN_BATCH_SIZE, batch_size);
+}
+
+//---------------------------------------------------------------------------
 double DeepSSMParameters::get_training_split()
 {
   return this->params_.get(Keys::TRAINING_SPLIT, Defaults::TRAINING_SPLIT);
@@ -232,7 +272,8 @@ void DeepSSMParameters::restore_training_defaults()
   this->params_.remove_entry(Keys::TRAIN_LEARNING_RATE);
   this->params_.remove_entry(Keys::TRAIN_DECAY_LEARNING_RATE);
   this->params_.remove_entry(Keys::TRAIN_FINE_TUNING);
+  this->params_.remove_entry(Keys::TRAIN_FINE_TUNING_EPOCHS);
+  this->params_.remove_entry(Keys::TRAIN_BATCH_SIZE);
+  this->params_.remove_entry(Keys::TRAIN_FINE_TUNING_LEARNING_RATE);
 }
-
-
-};
+}

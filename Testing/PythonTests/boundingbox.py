@@ -14,14 +14,7 @@ def imageBoundingBoxTest1():
   
   return region == ground_truth
 
-try:
-  if not imageBoundingBoxTest1():
-    print("imageBoundingBoxTest1 failed")
-    sys.exit(1)
-except ValueError:
-  print("imageBoundingBoxTest1 failed (exception)")
-  sys.exit(1)
-
+utils.test(imageBoundingBoxTest1)
 
 # compute bounding box of a subset of the files
 def imageBoundingBoxTest2():
@@ -37,14 +30,7 @@ def imageBoundingBoxTest2():
 
   return region == ground_truth
 
-try:
-  if not imageBoundingBoxTest2():
-    print("imageBoundingBoxTest2 failed")
-    sys.exit(1)
-except ValueError:
-  print("imageBoundingBoxTest2 failed (exception)")
-  sys.exit(1)
-
+utils.test(imageBoundingBoxTest2)
 
 # try to compute bounding box of nothing
 def imageBoundingBoxfailTest():
@@ -52,13 +38,7 @@ def imageBoundingBoxfailTest():
   region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
   return True
 
-try:
-  imageBoundingBoxfailTest()
-  print("imageBoundingBoxTest3 failed (an expected was exception)")
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
-
+utils.expectException(imageBoundingBoxfailTest, ValueError)
 
 ### Mesh bounding box tests
 
@@ -77,14 +57,7 @@ def meshBoundingBoxTest1():
   return (np.allclose(region.min, ground_truth.min) and
           np.allclose(region.max, ground_truth.max))
 
-try:
-  if not meshBoundingBoxTest1():
-    print("meshBoundingBoxTest1 failed")
-    sys.exit(1)
-except ValueError:
-  print("meshBoundingBoxTest1 failed (exception)")
-  sys.exit(1)
-
+utils.test(meshBoundingBoxTest1)
 
 # try to compute bounding box of nothing
 def meshBoundingBoxfailTest():
@@ -92,9 +65,4 @@ def meshBoundingBoxfailTest():
   region = MeshUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
   return True
 
-try:
-  meshBoundingBoxfailTest()
-  print("meshBoundingBoxTest3 failed (an expected was exception)")
-  sys.exit(1)
-except ValueError:
-  sys.exit(0)
+utils.expectException(meshBoundingBoxfailTest, ValueError)

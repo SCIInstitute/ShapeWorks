@@ -13,7 +13,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <DeepSSM/DeepSSMParameters.h>
-#include <DeepSSM/QDeepSSM.h>
+#include <DeepSSM/DeepSSMJob.h>
 #include <Interface/Style.h>
 
 #include <ui_DeepSSMTool.h>
@@ -43,18 +43,9 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
           this, &DeepSSMTool::show_augmentation_meshes);
 
-  this->py_worker = QSharedPointer<PythonWorker>::create();
-
-  connect(this->py_worker.data(), &PythonWorker::job_finished,
-          this, &DeepSSMTool::handle_thread_complete);
-  connect(this->py_worker.data(), &PythonWorker::message,
-          this, &DeepSSMTool::message);
-  connect(this->py_worker.data(), &PythonWorker::error_message,
-          this, &DeepSSMTool::error);
-  connect(this->py_worker.data(), &PythonWorker::progress,
-          this, &DeepSSMTool::handle_progress);
-
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
+
+  connect(this->ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &DeepSSMTool::training_fine_tuning_changed);
 
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   this->ui_->validation_split->setValidator(zero_to_hundred);
@@ -83,16 +74,16 @@ void DeepSSMTool::tab_changed(int tab)
 {
   switch (tab) {
   case 0:
-    this->current_tool_ = PythonWorker::JobType::DeepSSM_SplitType;
+    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_SplitType;
     break;
   case 1:
-    this->current_tool_ = PythonWorker::JobType::DeepSSM_AugmentationType;
+    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
     break;
   case 2:
-    this->current_tool_ = PythonWorker::JobType::DeepSSM_TrainingType;
+    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TrainingType;
     break;
   case 3:
-    this->current_tool_ = PythonWorker::JobType::DeepSSM_TestingType;
+    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TestingType;
     break;
   }
   this->update_panels();
@@ -134,6 +125,9 @@ void DeepSSMTool::load_params()
   this->ui_->training_learning_rate->setText(QString::number(params.get_training_learning_rate()));
   this->ui_->training_decay_learning->setChecked(params.get_training_decay_learning_rate());
   this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
+  this->ui_->training_fine_tuning_epochs->setText(QString::number(params.get_training_fine_tuning_epochs()));
+  this->ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
+  this->ui_->training_fine_tuning_learning_rate->setText(QString::number(params.get_training_fine_tuning_learning_rate()));
 
   this->update_meshes();
 }
@@ -155,14 +149,16 @@ void DeepSSMTool::store_params()
   params.set_training_learning_rate(this->ui_->training_learning_rate->text().toDouble());
   params.set_training_decay_learning_rate(this->ui_->training_decay_learning->isChecked());
   params.set_training_fine_tuning(this->ui_->training_fine_tuning->isChecked());
-
+  params.set_training_fine_tuning_epochs(this->ui_->training_fine_tuning_epochs->text().toInt());
+  params.set_training_batch_size(this->ui_->training_batch_size->text().toInt());
+  params.set_training_fine_tuning_learning_rate(this->ui_->training_fine_tuning_learning_rate->text().toDouble());
   params.save_to_project();
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::shutdown()
 {
-  this->py_worker->abort_job();
+  this->app_->get_py_worker()->abort_job();
 }
 
 //---------------------------------------------------------------------------
@@ -181,7 +177,7 @@ void DeepSSMTool::run_clicked()
   if (this->tool_is_running_) {
     this->ui_->run_button->setText("Aborting...");
     this->ui_->run_button->setEnabled(false);
-    this->py_worker->abort_job();
+    this->app_->get_py_worker()->abort_job();
   }
   else {
     this->run_tool(this->current_tool_);
@@ -192,18 +188,6 @@ void DeepSSMTool::run_clicked()
 void DeepSSMTool::handle_thread_complete()
 {
   emit progress(100);
-  QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
-
-  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_AugmentationType) {
-    emit message("Data Augmentation Complete.  Duration: " + duration + " seconds");
-  }
-  else if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType) {
-    emit message("Training Complete.  Duration: " + duration + " seconds");
-  }
-  else {
-    emit message("Testing Complete.  Duration: " + duration + " seconds");
-  }
-
   this->update_meshes();
   this->tool_is_running_ = false;
   this->update_panels();
@@ -236,18 +220,18 @@ void DeepSSMTool::update_panels()
   this->ui_->data_panel->hide();
   this->ui_->training_panel->hide();
   switch (this->current_tool_) {
-  case PythonWorker::JobType::DeepSSM_SplitType:
+  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
     this->ui_->run_button->hide();
     break;
-  case PythonWorker::JobType::DeepSSM_AugmentationType:
+  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
     string = "Data Augmentation";
     this->ui_->data_panel->show();
     break;
-  case PythonWorker::JobType::DeepSSM_TrainingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
     string = "Training";
     this->ui_->training_panel->show();
     break;
-  case PythonWorker::JobType::DeepSSM_TestingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
     string = "Testing";
     break;
   }
@@ -270,9 +254,16 @@ void DeepSSMTool::update_split(QLineEdit* source)
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_new_mesh()
 {
-  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
+  if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     this->update_testing_meshes();
   }
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::training_fine_tuning_changed()
+{
+  this->ui_->training_fine_tuning_epochs->setEnabled(this->ui_->training_fine_tuning->isChecked());
+  this->ui_->training_fine_tuning_learning_rate->setEnabled(this->ui_->training_fine_tuning->isChecked());
 }
 
 //---------------------------------------------------------------------------
@@ -353,8 +344,8 @@ void DeepSSMTool::show_training_meshes()
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filenames[i].toStdString()});
-      shape->import_global_point_files({filenames[i].toStdString()});
+      shape->import_local_point_files({filenames[i]});
+      shape->import_global_point_files({filenames[i]});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
                                            "deepssm_error");
       shape->get_reconstructed_meshes();
@@ -375,26 +366,26 @@ void DeepSSMTool::show_training_meshes()
 void DeepSSMTool::show_testing_meshes()
 {
   this->shapes_.clear();
-  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
-  auto id_list = this->deep_ssm_->get_list(QDeepSSM::FileType::ID, QDeepSSM::SplitType::TEST);
+  this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(
+    session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
 
   auto subjects = this->session_->get_project()->get_subjects();
   auto shapes = this->session_->get_shapes();
 
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
+    QString filename = QString("deepssm/model/predictions/FT_Predictions/predicted_ft_") +
+                       QString::fromStdString(id) +
+                       ".particles";
 
-    auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
-                           ".particles";
-
-    if (QFileInfo(QString::fromStdString(filename)).exists()) {
+    if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filename});
-      shape->import_global_point_files({filename});
+      shape->import_local_point_files(QStringList(filename));
+      shape->import_global_point_files(QStringList(filename));
       shape->get_reconstructed_meshes();
       QStringList list;
       list << shapes[i]->get_annotations()[0];
@@ -415,8 +406,9 @@ void DeepSSMTool::show_testing_meshes()
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_testing_meshes()
 {
-  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
-  auto id_list = this->deep_ssm_->get_list(QDeepSSM::FileType::ID, QDeepSSM::SplitType::TEST);
+  this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(
+    session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
 
   auto subjects = this->session_->get_project()->get_subjects();
   auto shapes = this->session_->get_shapes();
@@ -479,17 +471,17 @@ void DeepSSMTool::update_testing_meshes()
 void DeepSSMTool::update_meshes()
 {
   switch (this->current_tool_) {
-  case PythonWorker::JobType::DeepSSM_SplitType:
+  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
     this->shapes_.clear();
     emit update_view();
     break;
-  case PythonWorker::JobType::DeepSSM_AugmentationType:
+  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
     this->show_augmentation_meshes();
     break;
-  case PythonWorker::JobType::DeepSSM_TrainingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
     this->show_training_meshes();
     break;
-  case PythonWorker::JobType::DeepSSM_TestingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
     this->show_testing_meshes();
     break;
   }
@@ -520,19 +512,19 @@ void DeepSSMTool::show_augmentation_meshes()
       bool is_generated = line.contains("Generated");
       if ((is_generated && show_generated) || (!is_generated && show_original)) {
         auto image_file = line.split(',')[0].toStdString();
-        auto particle_file = line.split(',')[1].toStdString();
+        QString particle_file = line.split(',')[1];
 
         auto subject = std::make_shared<Subject>();
         ShapeHandle shape = ShapeHandle(new Shape());
         shape->set_subject(subject);
         shape->set_mesh_manager(this->session_->get_mesh_manager());
-        shape->import_local_point_files({particle_file});
-        shape->import_global_point_files({particle_file});
+        shape->import_local_point_files(QStringList(particle_file));
+        shape->import_global_point_files(QStringList(particle_file));
 
         shape->get_reconstructed_meshes();
 
         QStringList list;
-        list << QFileInfo(QString::fromStdString(particle_file)).baseName();
+        list << QFileInfo(particle_file).baseName();
         list << "";
         list << "";
         list << "";
@@ -600,8 +592,8 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event)
 //---------------------------------------------------------------------------
 string DeepSSMTool::get_display_feature()
 {
-  if (this->current_tool_ == PythonWorker::JobType::DeepSSM_TrainingType ||
-      this->current_tool_ == PythonWorker::JobType::DeepSSM_TestingType) {
+  if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TrainingType ||
+      this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     return "deepssm_error";
   }
   return "";
@@ -610,38 +602,42 @@ string DeepSSMTool::get_display_feature()
 //---------------------------------------------------------------------------
 void DeepSSMTool::restore_defaults()
 {
+  // need to save values from the other pages
+  this->store_params();
+
   auto params = DeepSSMParameters(this->session_->get_project());
 
   switch (this->current_tool_) {
-  case PythonWorker::JobType::DeepSSM_SplitType:
+  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
     params.restore_split_defaults();
     break;
-  case PythonWorker::JobType::DeepSSM_AugmentationType:
+  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
     params.restore_augmentation_defaults();
     break;
-  case PythonWorker::JobType::DeepSSM_TrainingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
     params.restore_training_defaults();
     break;
-  case PythonWorker::JobType::DeepSSM_TestingType:
+  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
     //params.restore_inference_defaults();
     break;
   }
 
+  this->session_->get_project()->clear_parameters(Parameters::DEEPSSM_PARAMS);
   params.save_to_project();
   this->load_params();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(PythonWorker::JobType type)
+void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type)
 {
   this->current_tool_ = type;
   emit progress(-1);
-  if (type == PythonWorker::JobType::DeepSSM_AugmentationType) {
+  if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     emit message("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/Augmentation/TotalData.csv").remove();
   }
-  else if (type == PythonWorker::JobType::DeepSSM_TrainingType) {
+  else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
     emit message("Please Wait: Running Training...");
     // clean
     QDir dir("deepssm/model");
@@ -662,15 +658,14 @@ void DeepSSMTool::run_tool(PythonWorker::JobType type)
   this->update_panels();
 
   this->store_params();
-  this->deep_ssm_ = QSharedPointer<QDeepSSM>::create(session_->get_project());
+  this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
 
-  connect(this->deep_ssm_.data(), &QDeepSSM::message, this, &DeepSSMTool::message);
-  connect(this->deep_ssm_.data(), &QDeepSSM::error, this, &DeepSSMTool::error);
-  connect(this->deep_ssm_.data(), &QDeepSSM::progress, this, &DeepSSMTool::handle_progress);
+  connect(this->deep_ssm_.data(), &DeepSSMJob::message, this, &DeepSSMTool::message);
+  //connect(this->deep_ssm_.data(), &DeepSSMJob::error_message, this, &DeepSSMTool::error);
+  connect(this->deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
+  connect(this->deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 
-  this->py_worker->set_deep_ssm(this->deep_ssm_);
-
-  this->py_worker->run_job(type);
+  this->app_->get_py_worker()->run_job(this->deep_ssm_);
 
   // ensure someone doesn't accidentally abort right after clicking RUN
   this->ui_->run_button->setEnabled(false);

@@ -109,8 +109,8 @@ public:
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
 
-  /// computes cell normals and orients them such that they point in the same direction
-  Mesh& generateNormals();
+  /// computes and adds oriented point and cell normals
+  Mesh& computeNormals();
 
   /// returns closest point on a face in the mesh to the given point in space
   Point3 closestPoint(const Point3 point);
