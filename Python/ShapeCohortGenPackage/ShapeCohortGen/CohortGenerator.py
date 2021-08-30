@@ -1,4 +1,4 @@
-from ShapeCohortGen import Supershapes,Ellipsoids,EllipsoidJoints,CohortGenUtils
+from ShapeCohortGen import Supershapes,Ellipsoids,EllipsoidJoints,CohortGenUtils,Tori
 
 class CohortGenerator():
 	def __init__(self,out_dir):
@@ -56,3 +56,9 @@ class Supershapes2DCohortGenerator(CohortGenerator):
 	def generate_images(self, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30):
 		raise RuntimeError("Unsupported")
 
+class ToriCohortGenerator(CohortGenerator):
+	def __init__(self,out_dir):
+		super().__init__(out_dir)
+	def generate(self, num_samples=3, randomize_center=True, randomize_rotation=True, randomize_ring_radius=True, randomize_cross_section_radius=True):
+		self.meshes = Tori.generate(num_samples, self.out_dir, randomize_center, randomize_rotation, randomize_ring_radius, randomize_cross_section_radius)
+		return self.meshes
