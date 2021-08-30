@@ -12,7 +12,6 @@
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
-#include <Analysis/AlignmentJob.h>
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
@@ -32,7 +31,10 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 public:
 
-  using AlignmentType = AlignmentJob::AlignmentType;
+    enum AlignmentType {
+    Global = -2,
+    Local = -1,
+  };
 
   using PointType = itk::Point<double, 3>;
 
