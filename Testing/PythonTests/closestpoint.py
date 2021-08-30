@@ -5,7 +5,7 @@ from shapeworks import *
 
 def closestpointTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
-  mesh.generateNormals()
+  mesh.computeNormals()
   normals = mesh.getField("Normals")
   p = mesh.getPoint(42)
   pNew = []
@@ -15,17 +15,11 @@ def closestpointTest1():
 
   return np.linalg.norm(p-closeToP) == 0.0
 
-try:
-  if not closestpointTest1():
-    print("closestpointTest1 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("closestpointTest1 failed (exception)")
-  sys.exit(1)
+utils.test(closestpointTest1)
 
 def closestpointTest2():
   mesh = Mesh(os.environ["DATA"] + "/sphere_highres.ply")
-  mesh.generateNormals()
+  mesh.computeNormals()
   normals = mesh.getField("Normals")
   p = mesh.getPoint(42)
   pNew = []
@@ -35,10 +29,4 @@ def closestpointTest2():
 
   return np.linalg.norm(p-closeToP) < 1e-4
 
-try:
-  if not closestpointTest2():
-    print("closestpointTest2 failed")
-    sys.exit(1)
-except RuntimeError:
-  print("closestpointTest2 failed (exception)")
-  sys.exit(1)
+utils.test(closestpointTest2)

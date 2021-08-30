@@ -28,6 +28,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
@@ -83,6 +84,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
             this, SLOT(handle_open_recent()));
   }
   this->update_recent_files();
+
+  this->py_worker_ = QSharedPointer<PythonWorker>::create();
+  connect(this->py_worker_.data(), &PythonWorker::error_message,
+          this, &ShapeWorksStudioApp::handle_error);
 
 #if defined( Q_OS_LINUX )
   this->ui_->action_show_project_folder->setVisible(false);
@@ -165,6 +170,21 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->analysis_tool_.data(), &AnalysisTool::error,
           this, &ShapeWorksStudioApp::handle_error);
 
+  // DeepSSM tool init
+  this->deepssm_tool_ = QSharedPointer<DeepSSMTool>::create(preferences_);
+  this->deepssm_tool_->set_app(this);
+  this->ui_->stacked_widget->addWidget(this->deepssm_tool_.data());
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::warning,
+          this, &ShapeWorksStudioApp::handle_warning);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::error,
+          this, &ShapeWorksStudioApp::handle_error);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
+  connect(this->deepssm_tool_.data(), &DeepSSMTool::update_view, this,
+          &ShapeWorksStudioApp::handle_display_setting_changed);
+
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
@@ -183,6 +203,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_groom_mode);
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
+  this->action_group_->addAction(this->ui_->action_deepssm_mode);
 
   this->lightbox_ = LightboxHandle(new Lightbox());
 
@@ -277,6 +298,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
+
 
   this->handle_message("ShapeWorks Studio Initialized");
 }
@@ -580,6 +602,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
     new_analysis = true;
   }
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
+  this->ui_->action_deepssm_mode->setEnabled(reconstructed && this->session_->get_project()->get_images_present());
   //subtools
   this->groom_tool_->enable_actions();
   this->optimize_tool_->enable_actions();
@@ -607,6 +630,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
+  this->deepssm_tool_->load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -801,6 +825,8 @@ void ShapeWorksStudioApp::handle_new_mesh()
     this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
   }
 
+  this->deepssm_tool_->handle_new_mesh();
+
 }
 
 //---------------------------------------------------------------------------
@@ -823,7 +849,6 @@ void ShapeWorksStudioApp::new_session()
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
-
   connect(this->session_->get_mesh_manager().data(), &MeshManager::progress,
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->session_->get_mesh_manager().data(), &MeshManager::status,
@@ -838,6 +863,7 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+  connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
   this->ui_->notes->setText("");
 
@@ -847,6 +873,7 @@ void ShapeWorksStudioApp::new_session()
   this->visualizer_->set_session(this->session_);
   this->groom_tool_->set_session(this->session_);
   this->optimize_tool_->set_session(this->session_);
+  this->deepssm_tool_->set_session(this->session_);
 }
 
 //---------------------------------------------------------------------------
@@ -862,7 +889,7 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->ui_->controlsDock->setWindowTitle("Analysis");
     this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
     this->on_actionShow_Tool_Window_triggered();
-    this->update_display();
+    this->update_display(true);
     this->ui_->action_analysis_mode->setChecked(true);
   }
   else if (tool_state == Session::GROOM_C) {
@@ -881,6 +908,14 @@ void ShapeWorksStudioApp::update_tool_mode()
     }
     this->update_display();
     this->ui_->action_optimize_mode->setChecked(true);
+  }
+  else if (tool_state == Session::DEEPSSM_C) {
+    this->ui_->stacked_widget->setCurrentWidget(this->deepssm_tool_.data());
+    //this->deepssm_tool_->activate();
+    this->ui_->controlsDock->setWindowTitle("DeepSSM");
+    this->update_display();
+    this->ui_->action_deepssm_mode->setChecked(true);
+    this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
   }
   else { // DATA
     this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
@@ -955,6 +990,14 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::ANALYSIS_C);
+  this->update_tool_mode();
+  this->visualizer_->reset_camera();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_deepssm_mode_triggered()
+{
+  this->session_->parameters().set("tool_state", Session::DEEPSSM_C);
   this->update_tool_mode();
   this->visualizer_->reset_camera();
 }
@@ -1161,59 +1204,80 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  this->current_display_mode_ = mode;
+  std::string tool_state =
+    this->session_->parameters().get("tool_state", Session::DATA_C);
 
-  if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
-
-    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
-    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                      this->session_->particles_present());
-
-    this->session_->calculate_reconstructed_samples();
-    this->visualizer_->display_samples();
+  if (tool_state == Session::DEEPSSM_C) {
+    auto deep_ssm_feature = this->deepssm_tool_->get_display_feature();
+    if (deep_ssm_feature == "") {
+      this->set_feature_map("");
+    } else {
+      this->set_feature_map("");
+      this->set_feature_map(deep_ssm_feature);
+    }
+    this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
+    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   }
   else {
-    if (mode == AnalysisTool::MODE_MEAN_C) {
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-
-      this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->visualizer_->set_mean(
-        this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
-
-      this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+    if (this->get_feature_map() == "deepssm_error") {
+      this->set_feature_map("");
     }
-    else if (mode == AnalysisTool::MODE_PCA_C) {
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-      this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->compute_mode_shape();
-      this->visualizer_->reset_camera();
-    }
-    else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+    this->current_display_mode_ = mode;
+
+    if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
 
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
       this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->particles_present() &&
-                                        reconstruct_ready);
-      this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
-      this->visualizer_->reset_camera();
-    }
-    else { //?
-      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
-      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->particles_present() &&
-                                        reconstruct_ready);
-    } //TODO regression?
+                                        this->session_->particles_present());
 
+      this->session_->calculate_reconstructed_samples();
+      this->visualizer_->display_samples();
+    }
+    else {
+      if (mode == AnalysisTool::MODE_MEAN_C) {
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->visualizer_->set_mean(
+          this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+
+        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+      }
+      else if (mode == AnalysisTool::MODE_PCA_C) {
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->compute_mode_shape();
+        this->visualizer_->reset_camera();
+      }
+      else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                          this->session_->particles_present() &&
+                                          reconstruct_ready);
+        this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
+        this->visualizer_->reset_camera();
+      }
+      else { //?
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                          this->session_->particles_present() &&
+                                          reconstruct_ready);
+      } //TODO regression?
+
+    }
   }
 
-  if (change && !this->is_loading_) { // do not override if loading
+  if ((force || change) && !this->is_loading_) { // do not override if loading
     this->reset_num_viewers();
   }
 
@@ -1580,6 +1644,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_window_state(this->saveState());
 
   this->optimize_tool_->shutdown_threads();
+  this->deepssm_tool_->shutdown();
   STUDIO_CLOSE_LOG();
 }
 
@@ -1659,6 +1724,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->groom_tool_->store_params();
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
+  this->deepssm_tool_->store_params();
 
   if (this->session_->save_project(filename)) {
     this->handle_message("Project Saved");
@@ -2048,6 +2114,13 @@ void ShapeWorksStudioApp::toggle_log_window()
 {
   this->log_window_.setVisible(!this->log_window_.isVisible());
 }
+
+//---------------------------------------------------------------------------
+QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker()
+{
+  return this->py_worker_;
+}
+
 
 
 

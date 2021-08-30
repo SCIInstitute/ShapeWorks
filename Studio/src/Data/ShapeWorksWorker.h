@@ -13,7 +13,10 @@ class ShapeworksWorker : public QObject {
 Q_OBJECT
 
 public:
-  enum ThreadType { GroomType, OptimizeType, ReconstructType };
+  enum ThreadType {
+    GroomType, OptimizeType, ReconstructType
+  };
+
   ShapeworksWorker(ThreadType type,
                    QSharedPointer<QGroom> groom,
                    QSharedPointer<Optimize> optimize,
@@ -38,10 +41,10 @@ Q_SIGNALS:
   void error_message(QString);
   void warning_message(QString);
   void message(QString);
-  void step_made(int val);
   void finished();
 
 private:
+
   QSharedPointer<QGroom> groom_;
   QSharedPointer<Optimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;

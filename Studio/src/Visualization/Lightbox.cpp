@@ -154,15 +154,7 @@ void Lightbox::display_shapes()
     position++;
   }
 
-  if (this->visualizer_->get_feature_map() != "" &&
-      this->visualizer_->get_uniform_feature_range()) {
-    for (int i = 0; i < this->viewers_.size(); i++) {
-      auto shape = this->viewers_[i]->get_shape();
-      if (shape && shape->get_vectors().empty()) {
-        this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
-      }
-    }
-  }
+  this->update_feature_range();
 
   /*
      /// disabled for now
@@ -519,5 +511,19 @@ void Lightbox::set_orientation_marker_viewport()
   }
   this->orientation_marker_widget_->SetCurrentRenderer(this->renderer_);
   this->orientation_marker_widget_->SetViewport(cube_viewport);
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::update_feature_range()
+{
+  if (this->visualizer_->get_feature_map() != "" &&
+      this->visualizer_->get_uniform_feature_range()) {
+    for (int i = 0; i < this->viewers_.size(); i++) {
+      auto shape = this->viewers_[i]->get_shape();
+      if (shape && shape->get_vectors().empty()) {
+        this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
+      }
+    }
+  }
 }
 }

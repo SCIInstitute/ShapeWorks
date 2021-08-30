@@ -13,6 +13,8 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5PrintSupport REQUIRED)
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -21,17 +23,23 @@ include_directories(${Qt5Widgets_INCLUDE_DIRS})
 include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 include_directories(${Qt5Core_INCLUDE_DIRS})
 include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Xml_INCLUDE_DIRS})
+include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
 
 #defines
 add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions(${Qt5OpenGL_DEFINITIONS})
 add_definitions(${Qt5Core_DEFINITIONS})
 add_definitions(${Qt5Gui_DEFINITIONS})
+add_definitions(${Qt5Xml_DEFINITIONS})
+add_definitions(${Qt5PrintSupport_DEFINITIONS})
 
 get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
 get_target_property(QtGui_location Qt5::Gui LOCATION)
 get_target_property(QtCore_location Qt5::Core LOCATION)
 get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
+get_target_property(QtPrintSupport_location Qt5::PrintSupport LOCATION)
+get_target_property(QtXml_location Qt5::Gui LOCATION)
 
 if (NOT WIN32)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
@@ -85,6 +93,17 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/SurfaceReconstructor.cpp
   Data/vtkPolyDataToImageData.cpp
   Data/ShapeWorksWorker.cpp
+  Data/Worker.cpp
+  )
+
+FILE(GLOB STUDIO_JOB_SRCS
+  Job/Job.cpp
+  Job/GroupPvalueJob.cpp
+  )
+
+FILE(GLOB STUDIO_JOB_MOC_HDRS
+  Job/Job.h
+  Job/GroupPvalueJob.h
   )
 
 FILE(GLOB STUDIO_DATA_MOC_HDRS
@@ -95,6 +114,7 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/PreferencesWindow.h
   Data/Session.h
   Data/ShapeWorksWorker.h
+  Data/Worker.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -104,6 +124,13 @@ SET(STUDIO_GROOM_SRCS
 SET(STUDIO_GROOM_MOC_HDRS
   Groom/GroomTool.h
   Groom/QGroom.h
+  )
+
+SET(STUDIO_PYTHON_SRCS
+  Python/PythonWorker.cpp
+  )
+SET(STUDIO_PYTHON_MOC_HDRS
+  Python/PythonWorker.h
   )
 
 SET(STUDIO_OPTIMIZE_SRCS
@@ -117,9 +144,21 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
+  Analysis/ShapeEvaluationWorker.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
+  Analysis/ShapeEvaluationWorker.h
+  )
+
+SET(STUDIO_DEEPSSM_SRCS
+  DeepSSM/DeepSSMTool.cpp
+  DeepSSM/DeepSSMParameters.cpp
+  DeepSSM/DeepSSMJob.cpp
+  )
+SET(STUDIO_DEEPSSM_MOC_HDRS
+  DeepSSM/DeepSSMTool.h
+  DeepSSM/DeepSSMJob.h
   )
 
 SET(STUDIO_UTILS_SRCS
@@ -135,6 +174,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
   Interface/WheelEventForwarder.cpp
+  Interface/Style.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/LogWindow.h
@@ -163,7 +203,10 @@ SET(STUDIO_VISUALIZATION_MOC_HDRS
 SET(STUDIO_SRCS
   ${STUDIO_ANALYSIS_SRCS}
   ${STUDIO_DATA_SRCS}
+  ${STUDIO_JOB_SRCS}
+  ${STUDIO_DEEPSSM_SRCS}
   ${STUDIO_GROOM_SRCS}
+  ${STUDIO_PYTHON_SRCS}
   ${STUDIO_INTERFACE_SRCS}
   ${STUDIO_OPTIMIZE_SRCS}
   ${STUDIO_UTILS_SRCS}
@@ -173,7 +216,10 @@ SET(STUDIO_SRCS
 SET(STUDIO_MOC_HDRS
   ${STUDIO_ANALYSIS_MOC_HDRS}
   ${STUDIO_DATA_MOC_HDRS}
+  ${STUDIO_JOB_MOC_HDRS}
+  ${STUDIO_DEEPSSM_MOC_HDRS}
   ${STUDIO_GROOM_MOC_HDRS}
+  ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
   ${STUDIO_VISUALIZATION_MOC_HDRS}
@@ -273,6 +319,8 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::OpenGL
   Qt5::Core
   Qt5::Gui
+  Qt5::Xml
+  Qt5::PrintSupport
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
@@ -285,6 +333,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Project
   xlnt::xlnt
   Eigen3::Eigen
+  JKQTPlotterSharedLib
   )
 
 INSTALL(TARGETS ShapeWorksStudio
