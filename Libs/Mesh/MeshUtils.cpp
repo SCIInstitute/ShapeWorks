@@ -192,7 +192,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   return std::distance(means.begin(), smallest);
 }
 
-<<<<<<< HEAD
+
 
 
 /*
@@ -472,7 +472,7 @@ int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string fil
 }
 
 
-=======
+
 void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen)
 {
   if (meshes.empty())
@@ -587,5 +587,5 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
   return normals;
 }
 
->>>>>>> master
+
 } // shapeworks
