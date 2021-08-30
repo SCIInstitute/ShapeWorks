@@ -45,6 +45,8 @@ public:
 
 private:
 
+  void transform_global_particles();
+
   std::vector<itk::Point<double>> vnl_to_point_vector(const vnl_vector<double>& vnl);
 
   vnl_vector<double> combine(const std::vector<vnl_vector<double>>& vnl);
@@ -52,6 +54,7 @@ private:
   void set_particles(int domain, std::vector<itk::Point<double>> particles, bool local);
   std::vector<vnl_vector<double>> local_particles_; // one for each domain
   std::vector<vnl_vector<double>> global_particles_; // one for each domain
+  std::vector<vnl_vector<double>> transformed_global_particles_; // one for each domain
 
   vtkSmartPointer<vtkTransform> transform_;
 };

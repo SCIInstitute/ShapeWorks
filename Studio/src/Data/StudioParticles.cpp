@@ -1,12 +1,12 @@
 #include <cassert>
 #include <Data/StudioParticles.h>
+#include <vtkTransform.h>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
 StudioParticles::StudioParticles()
 {
-
 }
 
 //---------------------------------------------------------------------------
@@ -39,6 +39,8 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
     vector[idx++] = particles[i][2];
   }
   points[domain] = vector;
+
+  this->transform_global_particles();
 }
 
 //---------------------------------------------------------------------------
@@ -50,7 +52,7 @@ std::vector<vnl_vector<double>> StudioParticles::get_local_particles()
 //---------------------------------------------------------------------------
 std::vector<vnl_vector<double>> StudioParticles::get_world_particles()
 {
-  return this->global_particles_;
+  return this->transformed_global_particles_;
 }
 
 //---------------------------------------------------------------------------
@@ -62,7 +64,7 @@ std::vector<itk::Point<double>> StudioParticles::get_local_points(int domain)
 //---------------------------------------------------------------------------
 std::vector<itk::Point<double>> StudioParticles::get_world_points(int domain)
 {
-  return this->vnl_to_point_vector(this->global_particles_[domain]);
+  return this->vnl_to_point_vector(this->transformed_global_particles_[domain]);
 }
 
 //---------------------------------------------------------------------------
@@ -92,7 +94,7 @@ vnl_vector<double> StudioParticles::get_local_particles(int domain)
 vnl_vector<double> StudioParticles::get_world_particles(int domain)
 {
   assert(domain < this->global_particles_.size());
-  return this->global_particles_[domain];
+  return this->transformed_global_particles_[domain];
 }
 
 //---------------------------------------------------------------------------
@@ -111,7 +113,7 @@ void StudioParticles::set_world_particles(int domain, vnl_vector<double> particl
     global_particles_.resize(domain + 1);
   }
   global_particles_[domain] = particles;
-
+  this->transform_global_particles();
 }
 
 //---------------------------------------------------------------------------
@@ -123,7 +125,7 @@ vnl_vector<double> StudioParticles::get_combined_local_particles()
 //---------------------------------------------------------------------------
 vnl_vector<double> StudioParticles::get_combined_global_particles()
 {
-  return combine(this->global_particles_);
+  return combine(this->transformed_global_particles_);
 }
 
 //---------------------------------------------------------------------------
@@ -162,6 +164,34 @@ int StudioParticles::get_domain_for_combined_id(int id)
 void StudioParticles::set_transform(vtkSmartPointer<vtkTransform> transform)
 {
   this->transform_ = transform;
+  this->transform_global_particles();
 }
 
+//---------------------------------------------------------------------------
+void StudioParticles::transform_global_particles()
+{
+  this->transformed_global_particles_.clear();
+  if (!this->transform_) {
+    this->transformed_global_particles_ = this->global_particles_;
+  }
+  else {
+    for (int d = 0; d < this->local_particles_.size(); d++) {
+      vnl_vector<double> vnl = this->local_particles_[d];
+
+      for (size_t i = 0; i < vnl.size(); i += 3) {
+        double pt[3];
+        pt[0] = vnl[i];
+        pt[1] = vnl[i + 1];
+        pt[2] = vnl[i + 2];
+
+        double* new_point = this->transform_->TransformPoint(pt);
+        vnl[i] = new_point[0];
+        vnl[i + 1] = new_point[1];
+        vnl[i + 2] = new_point[2];
+      }
+
+      this->transformed_global_particles_.push_back(vnl);
+    }
+  }
+}
 }

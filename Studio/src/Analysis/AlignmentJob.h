@@ -13,8 +13,8 @@ class AlignmentJob : public Job
 public:
 
   enum AlignmentType {
+    Global = -2,
     Local = -1,
-    Global = -2
   };
 
   AlignmentJob(ProjectHandle project, AlignmentType alignment_type);

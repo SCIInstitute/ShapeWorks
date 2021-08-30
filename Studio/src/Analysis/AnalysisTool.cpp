@@ -80,6 +80,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_p_values_button, &QPushButton::clicked, this,
           &AnalysisTool::group_p_values_clicked);
 
+  connect(this->ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::handle_alignment_changed);
+
   this->ui_->surface_open_button->setChecked(false);
   this->ui_->metrics_open_button->setChecked(false);
 
@@ -1030,8 +1033,8 @@ void AnalysisTool::update_domain_alignment_box()
   this->ui_->reference_domain_widget->setVisible(multiple_domains);
   this->ui_->reference_domain->clear();
   if (multiple_domains) {
-    this->ui_->reference_domain->addItem("Local Alignment");
     this->ui_->reference_domain->addItem("Global Alignment");
+    this->ui_->reference_domain->addItem("Local Alignment");
     for (auto name : domain_names) {
       this->ui_->reference_domain->addItem(QString::fromStdString(name));
     }
@@ -1212,12 +1215,25 @@ void AnalysisTool::handle_group_pvalues_complete()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment)
 {
+  new_alignment -= 2;
   if (new_alignment == this->current_alignment_) {
     return;
   }
   this->current_alignment_ = static_cast<AlignmentType>(new_alignment);
 
-
+  for (ShapeHandle shape : this->session_->get_shapes()) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    if (this->current_alignment_ == AlignmentType::Local) {
+      transform = nullptr;
+    } else if (this->current_alignment_ == AlignmentType::Global) {
+      auto domain_names = this->session_->get_project()->get_domain_names();
+      transform = shape->get_groomed_transform(domain_names.size());
+    } else {
+      transform = shape->get_groomed_transform(new_alignment);
+    }
+    shape->set_particle_transform(transform);
+  }
+  this->group_changed();
 }
 
 //---------------------------------------------------------------------------

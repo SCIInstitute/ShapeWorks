@@ -627,6 +627,12 @@ StudioParticles Shape::get_particles()
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform)
+{
+  this->particles_.set_transform(transform);
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 {
   if (domain < this->reconstruction_transforms_.size()) {

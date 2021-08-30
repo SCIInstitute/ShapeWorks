@@ -70,6 +70,8 @@ public:
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
 
+  void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
+
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
 
