@@ -32,10 +32,6 @@ public:
   //! Return if grooming was aborted
   bool get_aborted();
 
-  static std::vector<std::vector<double>> get_transforms(const std::vector<Mesh> meshes, size_t reference);
-
-  bool run_alignment();
-
 protected:
 
   //! call to be overridden by subclasses
@@ -62,6 +58,14 @@ private:
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
+
+  bool run_alignment();
+
+  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
+
+  static std::vector<double> get_identity_transform();
+  static std::vector<double> get_center_transform(const Mesh &mesh);
+  static std::vector<double> convert_transform(itk::AffineTransform<double, 3>::Pointer transform);
 
   Mesh get_mesh(int subject, int domain);
 

@@ -248,8 +248,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   Mesh mesh = MeshUtils::threadSafeReadMesh(path);
 
   // define a groom transform
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
+  auto transform = Groom::get_identity_transform();
 
   if (!this->skip_grooming_) {
 
@@ -273,27 +272,14 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
     // centering
     if (params.get_use_center()) {
-      auto diff = mesh.centerOfMass();
-      itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-      tform[0] = -diff[0];
-      tform[1] = -diff[1];
-      tform[2] = -diff[2];
-      transform->SetTranslation(tform);
+      transform = Groom::get_center_transform(mesh);
       this->increment_progress();
     }
   }
 
   // store transform
   std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-  std::vector<double> groomed_transform;
-  auto transform_params = transform->GetParameters();
-  for (size_t i = 0; i < transform_params.size(); i++) {
-    groomed_transform.push_back(transform_params[i]);
-  }
-  if (domain >= groomed_transforms.size()) {
-    groomed_transforms.resize(domain + 1);
-  }
-  groomed_transforms[domain] = groomed_transform;
+  groomed_transforms[domain] = transform;
   subject->set_groomed_transforms(groomed_transforms);
 
   // save the groomed mesh
@@ -446,6 +432,7 @@ bool Groom::run_alignment()
 
   auto base_params = GroomParameters(this->project_);
 
+  bool global_icp = false;
   // per-domain alignment
   for (size_t domain = 0; domain < num_domains; domain++) {
     if (this->abort_) {
@@ -455,6 +442,7 @@ bool Groom::run_alignment()
     auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
     if (params.get_use_icp()) {
+      global_icp = true;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
         meshes.push_back(this->get_mesh(i, domain));
@@ -462,7 +450,7 @@ bool Groom::run_alignment()
 
       size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
 
-      auto transforms = Groom::get_transforms(meshes, reference_mesh);
+      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
 
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
@@ -489,22 +477,41 @@ bool Groom::run_alignment()
       meshes.push_back(mesh);
     }
 
-    size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
+    if (global_icp) {
+      size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
 
-    auto transforms = Groom::get_transforms(meshes, reference_mesh);
+      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
 
-    for (size_t i = 0; i < subjects.size(); i++) {
-      auto subject = subjects[i];
-      // store transform
-      std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+      for (size_t i = 0; i < subjects.size(); i++) {
+        auto subject = subjects[i];
+        // store transform
+        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-      size_t domain = num_domains; //end
-      if (domain >= groomed_transforms.size()) {
-        groomed_transforms.resize(domain + 1);
+        size_t domain = num_domains; //end
+        if (domain >= groomed_transforms.size()) {
+          groomed_transforms.resize(domain + 1);
+        }
+        groomed_transforms[domain] = transforms[i];
+
+        subject->set_groomed_transforms(groomed_transforms);
       }
-      groomed_transforms[domain] = transforms[i];
+    }
+    else {   // just center
 
-      subject->set_groomed_transforms(groomed_transforms);
+      for (size_t i = 0; i < subjects.size(); i++) {
+        auto subject = subjects[i];
+        auto transform = Groom::get_center_transform(meshes[i]);
+
+        // store transform
+        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+        size_t domain = num_domains; //end
+        if (domain >= groomed_transforms.size()) {
+          groomed_transforms.resize(domain + 1);
+        }
+        groomed_transforms[domain] = transform;
+
+        subject->set_groomed_transforms(groomed_transforms);
+      }
     }
   }
 
@@ -562,7 +569,7 @@ Mesh Groom::get_mesh(int subject, int domain)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double>> Groom::get_transforms(const std::vector<Mesh> meshes, size_t reference)
+std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, size_t reference)
 {
   std::vector<std::vector<double>> transforms(meshes.size());
 
@@ -590,4 +597,38 @@ std::vector<std::vector<double>> Groom::get_transforms(const std::vector<Mesh> m
     }
   });
   return transforms;
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> Groom::get_identity_transform()
+{
+  auto transform = itk::AffineTransform<double, 3>::New();
+  transform->SetIdentity();
+  return Groom::convert_transform(transform);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> Groom::get_center_transform(const Mesh &mesh)
+{
+  auto transform = itk::AffineTransform<double, 3>::New();
+  transform->SetIdentity();
+
+  auto diff = mesh.centerOfMass();
+  itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+  tform[0] = -diff[0];
+  tform[1] = -diff[1];
+  tform[2] = -diff[2];
+  transform->SetTranslation(tform);
+  return Groom::convert_transform(transform);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> Groom::convert_transform(AffineTransform::Pointer transform)
+{
+  std::vector<double> groomed_transform;
+  auto transform_params = transform->GetParameters();
+  for (size_t i = 0; i < transform_params.size(); i++) {
+    groomed_transform.push_back(transform_params[i]);
+  }
+  return groomed_transform;
 }
