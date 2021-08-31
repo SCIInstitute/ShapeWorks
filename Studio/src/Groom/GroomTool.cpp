@@ -74,7 +74,6 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->sinc_passband->setValidator(double_validator);
 
   update_ui();
-
 }
 
 //---------------------------------------------------------------------------
@@ -155,7 +154,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
 
   ui_->sinc_iterations->setText(QString::number(params.get_mesh_vtk_windowed_sinc_iterations()));
   ui_->sinc_passband->setText(QString::number(params.get_mesh_vtk_windowed_sinc_passband()));
-
 }
 
 //---------------------------------------------------------------------------
@@ -177,7 +175,6 @@ void GroomTool::load_params()
       ui_->stacked_widget->setCurrentWidget(ui_->mesh_page);
     }
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -200,7 +197,6 @@ void GroomTool::enable_actions()
     ui_->skip_button->setEnabled(true);
     ui_->run_groom_button->setText("Run Groom");
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -234,7 +230,6 @@ void GroomTool::store_params()
   params = GroomParameters(session_->get_project());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
   params.save_to_project();
-
 }
 
 //---------------------------------------------------------------------------
@@ -247,11 +242,39 @@ void GroomTool::on_run_groom_button_clicked()
     emit progress(100);
     return;
   }
+
+  store_params();
+
+  bool question_dt = false;
+  auto subjects = session_->get_project()->get_subjects();
+  auto domain_names = session_->get_project()->get_domain_names();
+  if (subjects.size() > 0) {
+    for (int domain = 0; domain < domain_names.size(); domain++) {
+      if (subjects[0]->get_domain_types()[domain] == DomainType::Image) {
+        auto params = GroomParameters(session_->get_project(), domain_names[domain]);
+        if (!params.get_fast_marching()) {
+          question_dt = true;
+        }
+      }
+    }
+  }
+  if (question_dt) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Fast Marching is not selected.\n"
+                                  "Are you sure your input data is already a distance transform?\n\n"
+                                  "The image volumes must already be distance transforms.\n\n"
+                                  "Is that correct?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+      return;
+    }
+  }
+
   groom_is_running_ = true;
 
   timer_.start();
 
-  store_params();
 
   emit message("Please wait: running groom step...");
   emit progress(0);
@@ -415,5 +438,4 @@ void GroomTool::update_ui()
   ui_->mesh_smooth_box->setVisible(ui_->mesh_smooth->isChecked());
   ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
 }
-
 }
