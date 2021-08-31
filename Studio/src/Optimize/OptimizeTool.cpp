@@ -132,6 +132,10 @@ void OptimizeTool::handle_optimize_complete()
 
   auto particles = this->optimize_->GetParticles();
   this->session_->update_particles(particles);
+
+  auto procrustes_transforms = this->optimize_->GetProcrustesTransforms();
+  this->session_->update_procrustes_transforms(procrustes_transforms);
+
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
@@ -274,7 +278,6 @@ void OptimizeTool::load_params()
   this->ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
 
   this->update_ui_elements();
-
 }
 
 //---------------------------------------------------------------------------
@@ -346,7 +349,6 @@ void OptimizeTool::shutdown_threads()
     this->optimize_parameters_->set_abort_load(true);
   }
   this->optimize_->AbortOptimization();
-
 }
 
 //---------------------------------------------------------------------------
@@ -362,7 +364,6 @@ void OptimizeTool::update_ui_elements()
 void OptimizeTool::activate()
 {
   this->enable_actions();
-
 }
 
 //---------------------------------------------------------------------------
@@ -413,7 +414,6 @@ void OptimizeTool::update_run_button()
   else {
     this->ui_->run_optimize_button->setText("Run Optimize");
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -471,4 +471,3 @@ void OptimizeTool::setup_domain_boxes()
   QWidget::setTabOrder(this->ui_->narrow_band, this->ui_->run_optimize_button);
   QWidget::setTabOrder(this->ui_->run_optimize_button, this->ui_->restoreDefaults);
 }
-
