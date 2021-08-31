@@ -1082,8 +1082,8 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
     locator->BuildLocator();
 
     // Write mesh for debug purposes
-    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
-    this->write(fnin);
+//    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
+//    this->write(fnin);
 
      return true;
 }
