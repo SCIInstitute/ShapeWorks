@@ -641,7 +641,7 @@ TEST(OptimizeTests, MultiDomainConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 1.5e-1;
+      double slack = 2.5e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
