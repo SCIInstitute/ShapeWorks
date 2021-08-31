@@ -143,6 +143,18 @@ void OptimizeTool::handle_optimize_complete()
 }
 
 //---------------------------------------------------------------------------
+void OptimizeTool::handle_optimize_failed()
+{
+  this->optimization_is_running_ = false;
+  emit progress(100);
+
+  QString duration = QString::number(this->elapsed_timer_.elapsed() / 1000.0, 'f', 1);
+  emit message("Optimize Failed.  Duration: " + duration + " seconds");
+  emit optimize_complete();
+  this->update_run_button();
+}
+
+//---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked()
 {
   if (this->optimization_is_running_) {
@@ -186,6 +198,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
+  connect(worker, &ShapeworksWorker::failure, this, &OptimizeTool::handle_optimize_failed);
   connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
   connect(worker, &ShapeworksWorker::error_message, this, &OptimizeTool::handle_error);
   connect(worker, &ShapeworksWorker::message, this, &OptimizeTool::handle_message);
