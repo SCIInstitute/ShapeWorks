@@ -42,6 +42,7 @@ public:
   int get_domain_for_combined_id(int id);
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
+  void set_procrustes_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
 
 private:
 
@@ -57,5 +58,6 @@ private:
   std::vector<vnl_vector<double>> transformed_global_particles_; // one for each domain
 
   vtkSmartPointer<vtkTransform> transform_;
+  std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
 };
 }

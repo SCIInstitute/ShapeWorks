@@ -75,7 +75,7 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double> > Subject::get_procrustes_transforms() const
+std::vector<std::vector<double>> Subject::get_procrustes_transforms() const
 {
   return this->procrustes_transforms_;
 }

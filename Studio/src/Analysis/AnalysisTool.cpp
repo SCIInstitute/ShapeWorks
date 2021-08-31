@@ -1233,6 +1233,7 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
     else {
       transform = shape->get_groomed_transform(new_alignment);
     }
+
     shape->set_particle_transform(transform);
   }
 

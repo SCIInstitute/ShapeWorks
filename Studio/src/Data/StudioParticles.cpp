@@ -6,8 +6,7 @@ namespace shapeworks {
 
 //---------------------------------------------------------------------------
 StudioParticles::StudioParticles()
-{
-}
+{}
 
 //---------------------------------------------------------------------------
 void StudioParticles::set_local_particles(int domain, std::vector<itk::Point<double>> particles)
@@ -168,6 +167,12 @@ void StudioParticles::set_transform(vtkSmartPointer<vtkTransform> transform)
 }
 
 //---------------------------------------------------------------------------
+void StudioParticles::set_procrustes_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
+{
+  this->procrustes_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
 void StudioParticles::transform_global_particles()
 {
   this->transformed_global_particles_.clear();
@@ -188,6 +193,17 @@ void StudioParticles::transform_global_particles()
         vnl[i] = new_point[0];
         vnl[i + 1] = new_point[1];
         vnl[i + 2] = new_point[2];
+
+        if (d < this->procrustes_transforms_.size() && this->procrustes_transforms_[d]) {
+          pt[0] = vnl[i];
+          pt[1] = vnl[i + 1];
+          pt[2] = vnl[i + 2];
+          double* new_point = this->procrustes_transforms_[d]->TransformPoint(pt);
+          vnl[i] = new_point[0];
+          vnl[i + 1] = new_point[1];
+          vnl[i + 2] = new_point[2];
+        }
+
       }
 
       this->transformed_global_particles_.push_back(vnl);
