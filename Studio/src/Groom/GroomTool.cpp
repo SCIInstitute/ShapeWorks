@@ -121,6 +121,7 @@ void GroomTool::handle_progress(int val)
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked()
 {
+  this->session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
   this->load_params();
 }
 
