@@ -31,7 +31,7 @@ def addTorus(center, radii, rotation, rotation_axis='Y',resolution=50):
     return transformFilter
 
 def generate_tori(filename, meshDir, randomize_center, randomize_rotation, randomize_ring_radius, randomize_cross_section_radius):
-    vtkFileName = meshDir+"tori_"+filename+".vtk"
+    vtkFileName = meshDir+"torus_"+filename+".vtk"
     if randomize_center:
         center_loc = list(np.random.randint(low = 0,high=50,size=3))
     else:
