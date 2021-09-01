@@ -27,6 +27,10 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
           this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_mesh_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::alignment_checkbox_changed);
+  connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &GroomTool::alignment_option_changed);
+  connect(ui_->alignment_mesh_box, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &GroomTool::alignment_option_changed);
 
   connect(ui_->fill_holes_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::fill_holes_changed);
@@ -275,7 +279,6 @@ void GroomTool::on_run_groom_button_clicked()
 
   timer_.start();
 
-
   emit message("Please wait: running groom step...");
   emit progress(0);
 
@@ -393,6 +396,13 @@ void GroomTool::alignment_checkbox_changed(int state)
   ui_->alignment_mesh_checkbox->setChecked(state);
   ui_->alignment_box->setEnabled(state);
   ui_->alignment_mesh_box->setEnabled(state);
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::alignment_option_changed(int index)
+{
+  ui_->alignment_box->setCurrentIndex(index);
+  ui_->alignment_mesh_box->setCurrentIndex(index);
 }
 
 //---------------------------------------------------------------------------
