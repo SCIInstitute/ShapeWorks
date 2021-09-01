@@ -22,6 +22,12 @@ public:
   /// return elapsed time in seconds, optionally printing to console
   static double elapsed(time_point start, time_point end, bool print_elapsed = true);
 
+  /// returns random seed
+  static unsigned rngSeed() { return _rngSeed; }
+
+  /// sets random seed
+  static void setRngSeed(const unsigned seed) { _rngSeed = seed; }
+
   /// returns true if pathname is a directory
   // TODO: in C++17 this is a standard function
   static bool is_directory(const std::string &pathname);
@@ -33,6 +39,9 @@ public:
   /// converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector
   static Matrix33 getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat);
   static Vector3 getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat);
+
+private:
+  static unsigned _rngSeed;
 };
 
 } // shapeworks

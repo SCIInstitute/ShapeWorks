@@ -84,20 +84,22 @@ TEST(MeshTests, fixelementTest)
 
 TEST(MeshTests, cvddecimateTest1)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  femur.cvdDecimate();
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ShapeworksUtils::setRngSeed(26);
+  ellipsoid.cvdDecimate();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
 
-  ASSERT_TRUE(femur == ground_truth);
+  ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
 TEST(MeshTests, cvddecimateTest2)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
-  femur.cvdDecimate(1.0);
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  ShapeworksUtils::setRngSeed(42);
+  ellipsoid.cvdDecimate(1.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
 
-  ASSERT_TRUE(femur == ground_truth);
+  ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
 TEST(MeshTests, smoothTest1)

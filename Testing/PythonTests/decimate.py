@@ -54,7 +54,7 @@ utils.test(decimateTest5)
 
 def decimateTest6():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
-  mesh.cvdDecimate(0.5)
+  mesh.cvdDecimate()
 
   compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate1.ply")
 
