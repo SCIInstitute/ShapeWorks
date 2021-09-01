@@ -493,6 +493,20 @@ def Run_Pipeline(args):
             dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
                                             names, extension='nrrd', compressed=False, verbose=True)
 
+    # If running optimzation in mesh mode, convert distance transforms to meshes
+    if args.mesh_mode:
+        # Make output folder
+        mesh_dir = groom_dir + 'meshes/'
+        if not os.path.exists(mesh_dir):
+            os.mkdir(mesh_dir)
+        # Convert distance transforms to meshes
+        mesh_files = []
+        for dt, shape_name in zip(seg_list, names):
+            print('Ceating mesh from: ' + shape_name)
+            dt.toMesh(0).write(mesh_dir + shape_name + ".ply")
+            mesh_files.append(mesh_dir + shape_name + ".ply")
+        print(mesh_files)
+
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
     Step 3: OPTIMIZE - Particle Based Optimization
@@ -550,9 +564,17 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 64
-    # Execute the optimization function
+
+     # If in mesh mode optimize on meshes
+    if args.mesh_mode:
+        input_files = mesh_files
+        parameter_dictionary["domain_type"] = "mesh"
+    else:
+        input_files = dt_files
+
+    # Execute the optimization function on distance transforms
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
+        point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -567,4 +589,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+        point_dir, input_files, local_point_files, world_point_files)
