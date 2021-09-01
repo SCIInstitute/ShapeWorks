@@ -46,7 +46,7 @@ public:
   /// applies filter to reduce number of triangles in mesh
   Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
 
-  /// applies cvd decimation filter
+  /// applies cvd (centroidal voronoi diagram) decimation filter
   Mesh& cvdDecimate(double percentage = 0.5);
 
   /// handle flipping normals

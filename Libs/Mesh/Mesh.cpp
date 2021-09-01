@@ -240,14 +240,14 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
 Mesh &Mesh::cvdDecimate(double percentage)
 {
   FEVTKimport import;
-  FEMesh* meshFE = import.Load(this->mesh);
+  std::shared_ptr<FEMesh> meshFE(import.Load(this->mesh));
 
-  if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
 
   FECVDDecimationModifier cvd;
   cvd.m_pct = percentage;
   cvd.m_gradient = 1;
-  meshFE = cvd.Apply(meshFE);
+  meshFE = std::shared_ptr<FEMesh>(cvd.Apply(meshFE.get()));
 
   FEVTKExport vtkOut;
   this->mesh = vtkOut.ExportToVTK(*meshFE);

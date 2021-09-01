@@ -871,8 +871,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
    .def("cvdDecimate",
        &Mesh::cvdDecimate,
-       "applies cvd decimation filter",
-       "percentage"_a)
+       "applies cvd (centroidal voronoi diagram) decimation filter",
+       "percentage"_a=0.5)
 
   .def("invertNormals",
        &Mesh::invertNormals,

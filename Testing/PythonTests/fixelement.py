@@ -10,8 +10,4 @@ def fixelementTest():
 
   return mesh == compareMesh
 
-val = fixelementTest()
-
-if val is False:
-  print("fixelementTest failed")
-  sys.exit(1)
+utils.test(fixelementTest)

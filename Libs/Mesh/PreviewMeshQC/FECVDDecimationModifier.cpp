@@ -4,7 +4,11 @@
 #include "FENodeFaceList.h"
 #include "FENodeNodeList.h"
 #include "FEFillHole.h"
+#include "ShapeworksUtils.h"
 #include <algorithm>
+#include <random>
+
+using namespace shapeworks;
 
 //-----------------------------------------------------------------------------
 //! Constructor
@@ -14,16 +18,6 @@ FECVDDecimationModifier::FECVDDecimationModifier()
 	m_sel_pct = 0.0;
 	m_gradient = 0.0;
 	m_bcvd = false;
-}
-
-//-----------------------------------------------------------------------------
-// We need a simple random number generator for creating the seeds. The C rand()
-// function won't do since it only generates numbers less than 32K.
-int randi(int nmax)
-{
-	static unsigned int nseed = 47856987;
-	nseed = 789789812*nseed + 38569741 + rand();
-	return (int)(nseed%nmax);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,10 +99,10 @@ FEMesh* FECVDDecimationModifier::Apply(FEMesh* pm)
 bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 {
 	// nodes on original mesh
-	int N0 = pm->Nodes();
+	const int N0 = pm->Nodes();
 
 	// target number of clusters/vertices
-	int NC = (int) (m_pct*N0);
+	const int NC = (int) (m_pct*N0);
 	if (NC <= 0) return false;
 
 	// allocate cluster data
@@ -117,7 +111,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 	m_Cluster.resize(NC + 1);
 
 	// assign all triangles to the "null" cluster
-	int T0 = pm->Faces();
+	const int T0 = pm->Faces();
 	m_tag.assign(T0, 0);
 
 	// getting the selected elements
@@ -127,9 +121,12 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 		if (pm->Element(i).IsSelected()) selectedFaces.push_back(i);
 	}
 
+	// create random number generator
+	std::mt19937 mt(ShapeworksUtils::rngSeed());
+
 	// assign NC random triangles to a cluster
 	// TODO: make a better algorithm
-	int MAX_TRIES = 2*T0;
+	const int MAX_TRIES = 2*T0;
 	int ntries = 0;
 	int nc = 0;
 	if (selectedFaces.empty() == false)
@@ -144,7 +141,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 		// assign the first nc_sel seeds 
 		while (nc < nc_sel)
 		{
-			int n = randi(sel_faces);
+			int n = mt()%sel_faces;
 			int face_num = selectedFaces[n];
 			if (m_tag[face_num] == 0) m_tag[face_num] = ++nc;
 
@@ -156,7 +153,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 	// assign the remaining seeds
 	while (nc < NC)
 	{
-		int n = randi(T0);
+		int n = mt()%T0;
 		if (m_tag[n] == 0) m_tag[n] = ++nc;
 
 		ntries++;
