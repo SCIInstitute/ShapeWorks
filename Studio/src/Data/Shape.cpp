@@ -180,8 +180,7 @@ bool Shape::import_local_point_files(QStringList filenames)
   for (int i = 0; i < filenames.size(); i++) {
     vnl_vector<double> points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      std::cerr << "had an error aborting\n";
-      return false;
+      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);
