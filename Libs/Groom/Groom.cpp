@@ -149,18 +149,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   if (this->abort_) { return false; }
 
-  // store transform
-  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-  std::vector<double> groomed_transform;
-  auto transform_params = transform->GetParameters();
-  for (int i = 0; i < transform_params.size(); i++) {
-    groomed_transform.push_back(transform_params[i]);
-  }
-  if (domain >= groomed_transforms.size()) {
-    groomed_transforms.resize(domain + 1);
-  }
-  groomed_transforms[domain] = groomed_transform;
-  subject->set_groomed_transforms(groomed_transforms);
 
   // isolate
   if (params.get_isolate_tool()) {
@@ -220,6 +208,19 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     // lock for project data structure
     tbb::mutex::scoped_lock lock(mutex_);
 
+    // store transform
+    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+    std::vector<double> groomed_transform;
+    auto transform_params = transform->GetParameters();
+    for (int i = 0; i < transform_params.size(); i++) {
+      groomed_transform.push_back(transform_params[i]);
+    }
+    if (domain >= groomed_transforms.size()) {
+      groomed_transforms.resize(domain + 1);
+    }
+    groomed_transforms[domain] = groomed_transform;
+    subject->set_groomed_transforms(groomed_transforms);
+
     // update groomed filenames
     std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
     if (domain >= groomed_filenames.size()) {
@@ -277,17 +278,20 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     }
   }
 
-  // store transform
-  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-  groomed_transforms[domain] = transform;
-  subject->set_groomed_transforms(groomed_transforms);
-
   // save the groomed mesh
   MeshUtils::threadSafeWriteMesh(groom_name, mesh);
 
   {
     // lock for project data structure
     tbb::mutex::scoped_lock lock(mutex_);
+
+    // store transform
+    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+    if (domain >= groomed_transforms.size()) {
+      groomed_transforms.resize(domain + 1);
+    }
+    groomed_transforms[domain] = transform;
+    subject->set_groomed_transforms(groomed_transforms);
 
     // update groomed filenames
     std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
@@ -573,6 +577,7 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
 {
   std::vector<std::vector<double>> transforms(meshes.size());
 
+
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, meshes.size()},
     [&](const tbb::blocked_range<size_t>& r) {
@@ -581,17 +586,24 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
       matrix->Identity();
 
+      Mesh target = meshes[reference];
       if (i != reference) {
         Mesh source = meshes[i];
-        Mesh target = meshes[reference];
         matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
                                                target.getVTKMesh(), Mesh::Rigid, 100, true);
       }
 
+
+      auto transform = createMeshTransform(matrix);
+      auto center = target.centerOfMass();
+      transform->PostMultiply();
+      transform->Translate(center[0],center[1],center[2]);
+
+
       std::vector<double> groomed_transform;
 
       for (int i = 0; i < 16; i++) {
-        groomed_transform.push_back(matrix->GetData()[i]);
+        groomed_transform.push_back(transform->GetMatrix()->GetData()[i]);
       }
       transforms[i] = groomed_transform;
     }
