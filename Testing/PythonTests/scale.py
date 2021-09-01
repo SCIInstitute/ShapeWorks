@@ -11,11 +11,7 @@ def scaleTest1():
 
   return img.compare(compareImg)
 
-val = scaleTest1()
-
-if val is False:
-  print("scaleTest1 failed")
-  sys.exit(1)
+utils.test(scaleTest1)
 
 def scaleTest2():
   img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
@@ -25,11 +21,7 @@ def scaleTest2():
 
   return img.compare(compareImg)
 
-val = scaleTest2()
-
-if val is False:
-  print("scaleTest2 failed")
-  sys.exit(1)
+utils.test(scaleTest2)
 
 def scaleTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -39,11 +31,7 @@ def scaleTest3():
 
   return mesh == compareMesh
 
-val = scaleTest3()
-
-if val is False:
-  print("scaleTest3 failed")
-  sys.exit(1)
+utils.test(scaleTest3)
 
 def scaleTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -53,11 +41,7 @@ def scaleTest4():
 
   return mesh == compareMesh
 
-val = scaleTest4()
-
-if val is False:
-  print("scaleTest4 failed")
-  sys.exit(1)
+utils.test(scaleTest4)
 
 def scalefailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -67,8 +51,4 @@ def scalefailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = scalefailTest()
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(scalefailTest, TypeError)

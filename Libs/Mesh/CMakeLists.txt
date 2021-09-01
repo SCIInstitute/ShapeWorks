@@ -75,10 +75,6 @@ install(TARGETS Mesh
 #TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
-TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
-INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
-
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)

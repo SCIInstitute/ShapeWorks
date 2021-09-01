@@ -10,11 +10,7 @@ def blurTest1():
 
   return img.compare(compareImg)
 
-val = blurTest1()
-
-if val is False:
-  print("blurTest1 failed")
-  sys.exit(1)
+utils.test(blurTest1)
 
 def blurTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -24,11 +20,7 @@ def blurTest2():
 
   return img.compare(compareImg)
 
-val = blurTest2()
-
-if val is False:
-  print("blueTest2 failed")
-  sys.exit(1)
+utils.test(blurTest2)
 
 def blurTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -38,8 +30,4 @@ def blurTest3():
 
   return img.compare(compareImg)
 
-val = blurTest3()
-
-if val is False:
-  print("blurTest3 failed")
-  sys.exit(1)
+utils.test(blurTest3)

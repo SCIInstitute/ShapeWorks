@@ -10,11 +10,7 @@ def smoothTest1():
 
   return mesh == compareMesh
 
-val = smoothTest1()
-
-if val is False:
-  print("smoothTest1 failed")
-  sys.exit(1)
+utils.test(smoothTest1)
 
 def smoothTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -24,8 +20,4 @@ def smoothTest2():
 
   return mesh == compareMesh
 
-val = smoothTest2()
-
-if val is False:
-  print("smoothTest2 failed")
-  sys.exit(1)
+utils.test(smoothTest2)
