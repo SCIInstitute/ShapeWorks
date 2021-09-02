@@ -89,7 +89,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->py_worker_.data(), &PythonWorker::error_message,
           this, &ShapeWorksStudioApp::handle_error);
 
-#if defined( Q_OS_LINUX )
+#if defined(Q_OS_LINUX)
   this->ui_->action_show_project_folder->setVisible(false);
 #endif
 
@@ -98,7 +98,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           &ShapeWorksStudioApp::open_project);
 
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
-    (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
+                                   (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
 
   // set the splitter ratio
@@ -184,7 +184,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->deepssm_tool_.data(), &DeepSSMTool::update_view, this,
           &ShapeWorksStudioApp::handle_display_setting_changed);
-
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
@@ -299,7 +298,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
 
-
   this->handle_message("ShapeWorks Studio Initialized");
 }
 
@@ -390,8 +388,8 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered()
   process.setReadChannelMode(QProcess::MergedChannels);
 
 #ifdef _WIN32
-  qstring_path = qstring_path.replace( QString( "/" ), QString( "\\" ) );
-    process.start( "explorer.exe", QStringList() << qstring_path );
+  qstring_path = qstring_path.replace(QString("/"), QString("\\"));
+  process.start("explorer.exe", QStringList() << qstring_path);
 #else
   process.start("open", QStringList() << "-R" << filename);
 #endif
@@ -510,7 +508,6 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
       // On first load, we can check if there was an active scalar on loaded meshes
       this->set_feature_map(this->session_->get_default_feature_map());
     }
-
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
   }
@@ -716,7 +713,6 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-
   /// todo: check if the list has changed before changing
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
@@ -731,7 +727,6 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
 
   this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
-
 }
 
 //---------------------------------------------------------------------------
@@ -826,7 +821,6 @@ void ShapeWorksStudioApp::handle_new_mesh()
   }
 
   this->deepssm_tool_->handle_new_mesh();
-
 }
 
 //---------------------------------------------------------------------------
@@ -884,6 +878,10 @@ void ShapeWorksStudioApp::update_tool_mode()
 
   this->analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
+  for (int i = 0; i < this->ui_->stacked_widget->count(); i++) {
+    this->ui_->stacked_widget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  }
+
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
     this->ui_->controlsDock->setWindowTitle("Analysis");
@@ -922,6 +920,10 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->ui_->controlsDock->setWindowTitle("Data");
     this->ui_->action_import_mode->setChecked(true);
   }
+
+  this->ui_->stacked_widget->widget(this->ui_->stacked_widget->currentIndex())->setSizePolicy(QSizePolicy::Preferred,
+                                                                                              QSizePolicy::Preferred);
+  this->ui_->stacked_widget->adjustSize();
 
   this->on_actionShow_Tool_Window_triggered();
 }
@@ -1050,7 +1052,6 @@ void ShapeWorksStudioApp::handle_points_changed()
     this->last_render_ = render_time.elapsed();
     this->time_since_last_update_.start();
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -1211,7 +1212,8 @@ void ShapeWorksStudioApp::update_display(bool force)
     auto deep_ssm_feature = this->deepssm_tool_->get_display_feature();
     if (deep_ssm_feature == "") {
       this->set_feature_map("");
-    } else {
+    }
+    else {
       this->set_feature_map("");
       this->set_feature_map(deep_ssm_feature);
     }
@@ -1273,7 +1275,6 @@ void ShapeWorksStudioApp::update_display(bool force)
                                           this->session_->particles_present() &&
                                           reconstruct_ready);
       } //TODO regression?
-
     }
   }
 
@@ -1344,7 +1345,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_tool_mode();
 
-
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(
   //  this->preferences_.get_preference("zoom_state", 1));
@@ -1367,7 +1367,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->ui_->zoom_slider->setValue(zoom_value);
 
   this->ui_->notes->setText(QString::fromStdString(
-    this->session_->parameters().get("notes", "")));
+                              this->session_->parameters().get("notes", "")));
 
   this->block_update_ = false;
   this->update_display(true);
@@ -1395,7 +1395,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->handle_progress(100);
   this->handle_message("Project loaded: " + filename);
-
 }
 
 //---------------------------------------------------------------------------
@@ -1412,7 +1411,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
                                                   dir + "mesh", tr(
-      "Supported types (*.vtk *.ply *.vtp *.obj *.stl)"));
+                                                    "Supported types (*.vtk *.ply *.vtp *.obj *.stl)"));
   if (filename.isEmpty()) {
     return;
   }
@@ -1454,8 +1453,7 @@ bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QSt
   try {
     Mesh mesh(poly_data);
     mesh.write(filename.toStdString());
-  }
-  catch (std::exception& e) {
+  } catch (std::exception& e) {
     this->handle_error(e.what());
     return false;
   }
@@ -1533,7 +1531,6 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
       this->handle_error("Error writing particle file: " + filename);
     }
     this->handle_message("Wrote: " + filename);
-
   }
   else {
 
@@ -1555,7 +1552,6 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
       this->handle_message("Wrote: " + name);
     }
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -1600,7 +1596,6 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
       this->handle_message("Wrote: " + name);
     }
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -1738,7 +1733,6 @@ void ShapeWorksStudioApp::save_project(std::string filename)
 
   this->update_table();
   this->setWindowTitle(this->session_->get_display_name());
-
 }
 
 //---------------------------------------------------------------------------
@@ -1865,7 +1859,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
                                                   QString::fromStdString(dir) + fname,
                                                   tr("Particle files (*.particles)"));
   auto basename = filename.toStdString().
-    substr(0, filename.toStdString().find_last_of(".particles") - 9);
+                  substr(0, filename.toStdString().find_last_of(".particles") - 9);
   if (filename.isEmpty()) {
     return;
   }
@@ -2127,11 +2121,5 @@ QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker()
   return this->py_worker_;
 }
 
-
-
-
-
 //---------------------------------------------------------------------------
-
 }
-
