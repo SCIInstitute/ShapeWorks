@@ -4,6 +4,7 @@
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
 #include <Libs/Utils/StringUtils.h>
+#include <ShapeworksUtils.h>
 #include <boost/filesystem.hpp>
 #include <limits>
 
@@ -43,6 +44,29 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
   return true;
 }
 #endif
+
+///////////////////////////////////////////////////////////////////////////////
+// Seed
+///////////////////////////////////////////////////////////////////////////////
+void Seed::buildParser()
+{
+  const std::string prog = "seed";
+  const std::string desc = "sets the seed for random number generation";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--value").action("store").type("int").set_default(std::chrono::system_clock::now().time_since_epoch().count()).help("Value of seed.");
+
+  Command::buildParser();
+}
+
+bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData)
+{
+  int value = static_cast<int>(options.get("value"));
+
+  ShapeworksUtils::setRngSeed(value);
+
+  return true;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Optimize

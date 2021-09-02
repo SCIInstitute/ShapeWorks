@@ -241,7 +241,7 @@ TEST(pythonTests, distanceTest)
 
 TEST(pythonTests, fixElementTest)
 {
-  run_use_case("python fixelement.py");
+  run_use_case("fixelement.py");
 }
 
 TEST(pythonTests, closestpointTest)

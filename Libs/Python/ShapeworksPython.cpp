@@ -70,6 +70,11 @@ PYBIND11_MODULE(shapeworks_py, m)
         "creates transform from 3x3 matrix and translation vector",
         "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
+  m.def("seed",
+        &ShapeworksUtils::setRngSeed,
+        "sets the seed for random number generation (internal use)",
+        "seed"_a=std::chrono::system_clock::now().time_since_epoch().count());
+
   // Axis
   py::enum_<Axis>(m, "Axis")
   .value("invalid", Axis::invalid)

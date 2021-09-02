@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WarpMesh::getCommand());
 
   // Misc Commands
+  shapeworks.addCommand(Seed::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
   shapeworks.addCommand(GroomCommand::getCommand());
 
