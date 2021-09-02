@@ -129,15 +129,15 @@ def create_cpp_xml(filename, outputfilename):
    
 
 def sample_images(inDataList, num_sample,domains_per_shape=1):
-    inputImages = [sw.Image(filename) for filename in inDataList]
+    
     if(domains_per_shape==1):
         print("\n########## Sample subset of data #########\n")
         D = np.zeros((len(inDataList), len(inDataList)))
         for i in range(len(inDataList)):
-            image_1 = inputImages[i].toArray()
+            image_1 = inDataList[i].toArray()
             x, y, z = image_1.shape
             for j in range(i, len(inDataList)):
-                image_2 = inputImages[j].toArray()
+                image_2 = inDataList[j].toArray()
                 x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
                 image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
                              ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
@@ -163,44 +163,41 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
     else:
         meshFilesList=[]
         for i in range(len(inDataList)):
-            filename = os.path.dirname(inDataList[i]) + "/"+os.path.splitext(os.path.basename(inDataList[i]))[0] + ".vtk"
-            sw.Image(inDataList[i]).toMesh(0.5).write(filename)
-            meshFilesList.append(filename)
+            meshFilesList.append(inDataList[i].toMesh(0.5))          
         samples_idx = sample_meshes(meshFilesList,num_sample,domains_per_shape=domains_per_shape)
 
-        [os.remove(file) for file in meshFilesList]
+        
 
     
     print("\n###########################################\n")
     return samples_idx
 
-def combine_domains(inMeshList,num_sample,domains_per_shape=1):
+def combine_domains(inMeshList,domains_per_shape=1):
     num_shapes = int(len(inMeshList)/domains_per_shape)
     newMeshList=[]
     for i in range(num_shapes):
-        shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
+        shape_d0 = inMeshList[i*domains_per_shape]
         for d in range(1,domains_per_shape):
-            shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
-        filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
-        shape_d0.write(filename)
-        newMeshList.append(filename)
+            shape_d0+= inMeshList[(i*domains_per_shape)+d]
+        newMeshList.append(shape_d0)
     return newMeshList
 
 
 
 def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
+    
+
     if(domains_per_shape>1):
-        newMeshList = combine_domains(inMeshList,num_sample,domains_per_shape)
+        inMeshList = combine_domains(inMeshList,domains_per_shape)
 
-    if(domains_per_shape==1):
-        newMeshList = inMeshList
+    
 
-    D = np.zeros((len(newMeshList), len(newMeshList)))
-    for i in range(len(newMeshList)):
-        for j in range(i, len(newMeshList)):
-            mesh1 = sw.Mesh(newMeshList[i])
-            mesh2 = sw.Mesh(newMeshList[j])
+    D = np.zeros((len(inMeshList), len(inMeshList)))
+    for i in range(len(inMeshList)):
+        for j in range(i, len(inMeshList)):
+            mesh1 = inMeshList[i]
+            mesh2 = inMeshList[j]
             dist = mesh1.distance(mesh2).getFieldMean("distance")
             D[i, j] = dist
     D += D.T
@@ -218,8 +215,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
    
     
     print("\n###########################################\n")
-    if(domains_per_shape>1):
-        [os.remove(file) for file in newMeshList]
+    
 
     new_sample_idx =[]
     for i in range(len(samples_idx)):
