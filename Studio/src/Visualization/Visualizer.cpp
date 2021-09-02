@@ -48,6 +48,7 @@ void Visualizer::set_lightbox(LightboxHandle lightbox)
 void Visualizer::set_session(SessionHandle session)
 {
   this->session_ = session;
+  connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
 }
 
 //-----------------------------------------------------------------------------
@@ -242,6 +243,15 @@ void Visualizer::update_viewer_properties()
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::handle_feature_range_changed()
+{
+  feature_manual_range_[0] = session_->get_feature_range_min();
+  feature_manual_range_[1] = session_->get_feature_range_max();
+  this->lightbox_->update_feature_range();
+  this->lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::update_lut()
 {
   int num_points = this->cached_mean_.size() / 3;
@@ -407,7 +417,23 @@ void Visualizer::reset_feature_range()
 //-----------------------------------------------------------------------------
 double* Visualizer::get_feature_range()
 {
+  if (session_->get_feature_auto_scale()) {
+    return this->feature_range_;
+  } else {
+    return this->feature_manual_range_;
+  }
+}
+
+//-----------------------------------------------------------------------------
+double *Visualizer::get_feature_raw_range()
+{
   return this->feature_range_;
+}
+
+//-----------------------------------------------------------------------------
+bool Visualizer::get_feature_range_valid()
+{
+  return this->feature_range_valid_;
 }
 
 //-----------------------------------------------------------------------------

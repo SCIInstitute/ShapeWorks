@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
+    <width>1062</width>
     <height>705</height>
    </rect>
   </property>
@@ -270,13 +270,36 @@
        <property name="bottomMargin">
         <number>3</number>
        </property>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="features">
+       <item row="0" column="2">
+        <widget class="QCheckBox" name="feature_uniform_scale">
          <property name="toolTip">
-          <string>Select feature map</string>
+          <string>Apply a uniform scale for all viewers</string>
          </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
+         <property name="text">
+          <string>Uniform Scale</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Max</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QDoubleSpinBox" name="feature_max">
+         <property name="toolTip">
+          <string>Maximum scalar range</string>
+         </property>
+         <property name="minimum">
+          <double>-9999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>9999999.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -287,7 +310,17 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="features">
+         <property name="toolTip">
+          <string>Select feature map</string>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -300,13 +333,40 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="2">
-        <widget class="QCheckBox" name="feature_uniform_scale">
+       <item row="0" column="5">
+        <widget class="QDoubleSpinBox" name="feature_min">
          <property name="toolTip">
-          <string>Uniform scale for feature map</string>
+          <string>Minimum scalar range</string>
+         </property>
+         <property name="minimum">
+          <double>-9999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>9999999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Min</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QCheckBox" name="feature_auto_scale">
+         <property name="toolTip">
+          <string>Automatic scale range</string>
          </property>
          <property name="text">
-          <string>Uniform Scale</string>
+          <string>Auto</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -323,7 +383,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1040</width>
+     <width>1062</width>
      <height>22</height>
     </rect>
    </property>

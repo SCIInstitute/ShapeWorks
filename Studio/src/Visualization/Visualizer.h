@@ -97,6 +97,12 @@ public:
   //! Get the current feature range
   double* get_feature_range();
 
+  //! Get the current raw feature range
+  double *get_feature_raw_range();
+
+  //! Return if the feature range is valid or not
+  bool get_feature_range_valid();
+
   //! Update the feature range with a given range
   void update_feature_range(double* range);
 
@@ -107,6 +113,8 @@ public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
   void update_viewer_properties();
+
+  void handle_feature_range_changed();
 
 private:
   ShapeHandle create_display_object(const StudioParticles& points,
@@ -137,6 +145,7 @@ private:
   StudioParticles current_shape_;
 
   double feature_range_[2] = {0, 0};
+  double feature_manual_range_[2] = {0, 0};
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
 

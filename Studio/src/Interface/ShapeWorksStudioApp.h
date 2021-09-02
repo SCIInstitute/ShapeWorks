@@ -119,6 +119,8 @@ public Q_SLOTS:
   void handle_clear_cache();
 
   void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_scale();
+
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();

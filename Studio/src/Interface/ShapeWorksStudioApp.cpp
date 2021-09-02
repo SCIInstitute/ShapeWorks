@@ -298,6 +298,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
           &ShapeWorksStudioApp::keyboard_shortcuts);
 
+  this->update_feature_map_scale();
   this->handle_message("ShapeWorks Studio Initialized");
 }
 
@@ -858,6 +859,11 @@ void ShapeWorksStudioApp::new_session()
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
+
+  connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
+  connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this->session_.data(), &Session::set_feature_auto_scale);
+  connect(this->ui_->feature_min, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(), &Session::set_feature_range_min);
+  connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(), &Session::set_feature_range_max);
 
   this->ui_->notes->setText("");
 
@@ -1932,6 +1938,23 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
 void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map)
 {
   this->set_feature_map(feature_map.toStdString());
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_feature_map_scale()
+{
+  bool auto_mode = this->ui_->feature_auto_scale->isChecked();
+  this->ui_->feature_min->setEnabled(!auto_mode);
+  this->ui_->feature_max->setEnabled(!auto_mode);
+  if (!auto_mode) {
+    if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
+      if (visualizer_->get_feature_range_valid()) {
+        double *range = visualizer_->get_feature_raw_range();
+        ui_->feature_min->setValue(range[0]);
+        ui_->feature_max->setValue(range[1]);
+      }
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
