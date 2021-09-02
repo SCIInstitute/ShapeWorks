@@ -129,15 +129,15 @@ def create_cpp_xml(filename, outputfilename):
    
 
 def sample_images(inDataList, num_sample,domains_per_shape=1):
-    
+    inputImages = [sw.Image(filename) for filename in inDataList]
     if(domains_per_shape==1):
         print("\n########## Sample subset of data #########\n")
         D = np.zeros((len(inDataList), len(inDataList)))
         for i in range(len(inDataList)):
-            image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
+            image_1 = inputImages[i].toArray()
             x, y, z = image_1.shape
             for j in range(i, len(inDataList)):
-                image_2 = itk.GetArrayFromImage(itk.imread(inDataList[j], itk.F))
+                image_2 = inputImages[j].toArray()
                 x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
                 image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
                              ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
