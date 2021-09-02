@@ -174,18 +174,24 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
     print("\n###########################################\n")
     return samples_idx
 
+def combine_domains(inMeshList,num_sample,domains_per_shape=1):
+    num_shapes = int(len(inMeshList)/domains_per_shape)
+    newMeshList=[]
+    for i in range(num_shapes):
+        shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
+        for d in range(1,domains_per_shape):
+            shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
+        filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
+        shape_d0.write(filename)
+        newMeshList.append(filename)
+    return newMeshList
+
+
+
 def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
     if(domains_per_shape>1):
-        num_shapes = int(len(inMeshList)/domains_per_shape)
-        newMeshList=[]
-        for i in range(num_shapes):
-            shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
-            for d in range(1,domains_per_shape):
-                shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
-            filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
-            shape_d0.write(filename)
-            newMeshList.append(filename)
+        newMeshList = combine_domains(inMeshList,num_sample,domains_per_shape)
 
     if(domains_per_shape==1):
         newMeshList = inMeshList
