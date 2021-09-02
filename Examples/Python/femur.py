@@ -46,7 +46,8 @@ def Run_Pipeline(args):
 
         # Select data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample))
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -465,7 +466,7 @@ def Run_Pipeline(args):
             # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
             iso_value = 0.5
             seg_bounding_box = sw.ImageUtils.boundingBox(seg_list, iso_value)
-
+            
             """
             Grooming Step 10: Apply cropping and padding
             Now we need to loop over the segmentations and crop them to the size of the bounding box.

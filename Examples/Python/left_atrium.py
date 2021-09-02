@@ -55,8 +55,8 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(
-                file_list_seg, int(args.num_subsample))
+            inputSegs =[sw.Image(filename) for filename in file_list_seg]
+            sample_idx = sw.data.sample_images(inputSegs, int(args.num_subsample))
             file_list_seg = [file_list_seg[i] for i in sample_idx]
             file_list_img = [file_list_img[i] for i in sample_idx]
         else:
