@@ -100,11 +100,9 @@ def find_reference_image_index(inDataList,domains_per_shape=1):
         return sw.MeshUtils.findReferenceMesh(mesh_list)
 
     else:
-        mesh_names = sw.data.combine_domains(inDataList,len(inDataList),domains_per_shape)
-        for name in mesh_names:
-            mesh_list.append(sw.Mesh(name))
+        mesh_list = sw.data.combine_domains(inDataList,domains_per_shape)
         index = sw.MeshUtils.findReferenceMesh(mesh_list)
-        [os.remove(file) for file in mesh_names]
+       
         return index
 
 
