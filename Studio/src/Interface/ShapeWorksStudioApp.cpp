@@ -428,7 +428,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
     filename = filename + ".xlsx";
   }
 
-  this->preferences_.add_recent_file(filename);
+  this->preferences_.add_recent_file(filename, QDir::currentPath());
   this->update_recent_files();
 
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
@@ -559,7 +559,7 @@ void ShapeWorksStudioApp::disable_all_actions()
   this->groom_tool_->disable_actions();
   this->optimize_tool_->disable_actions();
   //recent
-  QStringList recent_files = preferences_.get_recent_files();
+  QStringList recent_files = this->preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), 4);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(false);
@@ -606,7 +606,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->analysis_tool_->enable_actions(new_analysis);
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), 4);
+  int num_recent_files = qMin(recent_files.size(), 8);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(true);
   }
@@ -1340,7 +1340,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
 
-  this->preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath());
+  this->preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
   this->update_recent_files();
 
   this->update_tool_mode();
@@ -1675,36 +1675,15 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 void ShapeWorksStudioApp::update_recent_files()
 {
   QStringList recent_files = this->preferences_.get_recent_files();
-
-  QStringList existing_files;
-  for (int i = 0; i < recent_files.size(); i++) {
-    if (QFile::exists(recent_files[i])) {
-      existing_files << recent_files[i];
-    }
-  }
-  recent_files = existing_files;
-
-  QStringList no_dupes;
-  for (int i = 0; i < recent_files.size(); i++) {
-    bool found_dupe = false;
-    for (int j = 0; j < i; j++) {
-      if (QFileInfo(recent_files[i]).canonicalFilePath() ==
-          QFileInfo(recent_files[j]).canonicalFilePath()) {
-        found_dupe = true;
-      }
-    }
-    if (!found_dupe) {
-      no_dupes << recent_files[i];
-    }
-  }
-  recent_files = no_dupes;
+  QStringList recent_paths = this->preferences_.get_recent_paths();
 
   int num_recent_files = qMin(recent_files.size(), 8); // only 8 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
     this->recent_file_actions_[i]->setText(text);
-    this->recent_file_actions_[i]->setData(recent_files[i]);
+    QStringList user_data = {recent_files[i], recent_paths[i]};
+    this->recent_file_actions_[i]->setData(user_data);
     this->recent_file_actions_[i]->setVisible(true);
   }
 
@@ -1740,7 +1719,11 @@ void ShapeWorksStudioApp::handle_open_recent()
 {
   QAction* action = qobject_cast<QAction*>(sender());
   if (action) {
-    this->open_project(action->data().toString());
+    auto user_data = action->data().toStringList();
+    if (user_data.size() == 2) {
+      QDir::setCurrent(user_data[1]);
+      this->open_project(user_data[0]);
+    }
   }
 }
 
