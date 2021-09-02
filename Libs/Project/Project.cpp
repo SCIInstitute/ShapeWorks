@@ -202,6 +202,7 @@ void Project::load_subjects()
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
+  auto procrustes_transform_columns = this->get_matching_columns(PROCRUSTES_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
   auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
@@ -218,6 +219,7 @@ void Project::load_subjects()
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
+    subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));
     subject->set_image_filenames(this->get_list(image_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
@@ -297,6 +299,18 @@ void Project::store_subjects()
                                                                GROOMED_TRANSFORMS_PREFIX);
     groomed_transform_columns.push_back(groomed_transform_column_name);
   }
+  if (groomed_transform_columns.size() > 1) {
+    groomed_transform_columns.push_back(std::string(GROOMED_TRANSFORMS_PREFIX) + "global");
+  }
+
+  // procrustes transform columns
+  std::vector<std::string> procrustes_transform_columns;
+  for (int i = 0; i < groomed_columns.size(); i++) {
+    std::string procrustes_transform_column_name = replace_string(groomed_columns[i],
+                                                               GROOMED_PREFIX,
+                                                               PROCRUSTES_TRANSFORMS_PREFIX);
+    procrustes_transform_columns.push_back(procrustes_transform_column_name);
+  }
 
   // local and world particle columns
   std::vector<std::string> local_columns;
@@ -345,6 +359,7 @@ void Project::store_subjects()
       this->set_list(groomed_columns, i, groomed_files);
 
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
+      this->set_transform_list(procrustes_transform_columns, i, subject->get_procrustes_transforms());
     }
 
     // features

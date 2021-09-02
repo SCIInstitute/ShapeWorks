@@ -654,6 +654,19 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
 }
 
 //---------------------------------------------------------------------------
+bool Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms)
+{
+  for (size_t i=0;i<transforms.size();i++) {
+    if (this->shapes_.size() > i) {
+      QSharedPointer<Shape> shape = this->shapes_[i];
+      if (shape->get_subject()) {
+        shape->get_subject()->set_procrustes_transforms(transforms[i]);
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 double Session::update_auto_glyph_size()
 {
   this->auto_glyph_size_ = 1;

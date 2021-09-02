@@ -75,20 +75,29 @@ void ShapeworksWorker::process()
       } catch (std::runtime_error e) {
         std::cerr << "Exception: " << e.what() << "\n";
         emit error_message(QString("Error: ") + e.what());
+        emit failure();
+        emit finished();
         return;
       } catch (itk::ExceptionObject& ex) {
         std::cerr << "ITK Exception: " << ex << std::endl;
         emit error_message(QString("ITK Exception: ") + ex.GetDescription());
+        emit failure();
+        emit finished();
         return;
       } catch (std::exception& e) {
         emit error_message(QString("Error: ") + e.what());
+        emit failure();
+        emit finished();
         return;
       } catch (...) {
         emit error_message("Error during optimization!");
+        emit failure();
+        emit finished();
         return;
       }
       if (this->optimize_->GetAborted()) {
         emit message("Optimization Aborted!");
+        emit failure();
         return;
       }
 
@@ -119,6 +128,7 @@ void ShapeworksWorker::process()
         }
         else {
           emit error_message(QString("Error: ") + e.what());
+          emit finished();
           return;
         }
       } catch (std::exception& e) {
@@ -127,10 +137,12 @@ void ShapeworksWorker::process()
         }
         else {
           emit error_message(QString("Error: ") + e.what());
+          emit finished();
           return;
         }
       } catch (...) {
         emit error_message(QString("Error during optimization!"));
+        emit finished();
         return;
       }
       break;

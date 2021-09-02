@@ -64,6 +64,11 @@ public:
   //! Set the groomed transforms (one vector per domain)
   void set_groomed_transforms(std::vector<std::vector<double>> transforms);
 
+  //! Get the procrustes transforms (one vector per domain)
+  std::vector<std::vector<double>> get_procrustes_transforms() const;
+  //! Set the procrustes transforms (one vector per domain)
+  void set_procrustes_transforms(std::vector<std::vector<double>> transforms);
+
   //! Get the group values
   std::map<std::string, std::string> get_group_values() const;
   //! Get a specific group value
@@ -92,6 +97,7 @@ private:
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
+  std::vector<std::vector<double>> procrustes_transforms_;
 
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;

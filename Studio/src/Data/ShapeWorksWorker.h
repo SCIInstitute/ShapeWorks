@@ -38,6 +38,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void result_ready();
+  void failure();
   void error_message(QString);
   void warning_message(QString);
   void message(QString);

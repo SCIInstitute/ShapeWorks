@@ -114,6 +114,7 @@ private:
   static constexpr const char* SHAPE_PREFIX = "shape_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
+  static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";

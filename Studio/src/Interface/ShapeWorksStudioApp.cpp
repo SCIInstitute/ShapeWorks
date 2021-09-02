@@ -1310,10 +1310,16 @@ void ShapeWorksStudioApp::open_project(QString filename)
       this->handle_progress(100);
       return;
     }
-  } catch (std::runtime_error e) {
+  } catch (std::exception &e) {
     this->handle_error(e.what());
     this->handle_error("Project failed to load");
     this->handle_progress(100);
+    return;
+  } catch (std::runtime_error &e) {
+    this->handle_error(e.what());
+    this->handle_error("Project failed to load");
+    this->handle_progress(100);
+    return;
   }
 
   auto project = this->session_->get_project();
