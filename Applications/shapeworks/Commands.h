@@ -90,10 +90,9 @@ COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 COMMAND_DECLARE(WarpMesh, MeshCommand);
 
-// Optimize Commands
+// Misc Commands
+COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
-
-// Groom Commands
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 } // shapeworks

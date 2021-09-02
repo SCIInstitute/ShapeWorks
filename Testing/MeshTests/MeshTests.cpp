@@ -294,14 +294,6 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TEST(MeshTests, fixelementTest)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   femur.fixElement();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
 TEST(MeshTests, clipClosedSurfaceTest1)
 {
   Point p({10.0, 0.0, 10.0});
