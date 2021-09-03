@@ -105,6 +105,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   this->create_glyph_submenu();
+  this->create_iso_submenu();
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
@@ -812,6 +813,48 @@ void ShapeWorksStudioApp::create_glyph_submenu()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::create_iso_submenu()
+{
+  // Glyph options in the render window.
+  QMenu* menu = new QMenu();
+  QWidget* widget = new QWidget();
+  QGridLayout* layout = new QGridLayout(widget);
+
+  if (!this->session_) {
+    return;
+  }
+  auto project = this->session_->get_project();
+
+  auto names = project->get_domain_names();
+  int row = 0;
+  this->iso_opacity_sliders_.clear();
+  for (auto& name : names) {
+    QLabel* size_label = new QLabel(QString::fromStdString(name) + " opacity: ");
+    layout->addWidget(size_label, row, 0, 1, 1);
+
+    QSlider *slider = new QSlider(widget);
+    slider->setOrientation(Qt::Horizontal);
+    slider->setMinimum(1);
+    slider->setMaximum(100);
+    slider->setPageStep(10);
+    slider->setTickPosition(QSlider::TicksBelow);
+    slider->setTickInterval(10);
+    slider->setMinimumWidth(200);
+
+    layout->addWidget(slider, row, 1, 1, 1);
+    widget->setLayout(layout);
+
+    this->iso_opacity_sliders_.push_back(slider);
+    row++;
+  }
+
+  QWidgetAction* widget_action = new QWidgetAction(widget);
+  widget_action->setDefaultWidget(widget);
+  menu->addAction(widget_action);
+  this->ui_->surface_visible_button->setMenu(menu);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
@@ -1406,6 +1449,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->update_view_mode();
   }
 
+  this->create_iso_submenu();
   this->handle_progress(100);
   this->handle_message("Project loaded: " + filename);
 }

@@ -199,6 +199,7 @@ private:
   void set_message(MessageType message_type, QString message);
 
   void create_glyph_submenu();
+  void create_iso_submenu();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -231,6 +232,8 @@ private:
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
+  std::vector<QSlider*> iso_opacity_sliders_;
+
 
   QString current_message_;
 

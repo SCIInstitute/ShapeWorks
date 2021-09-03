@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1062</width>
+    <width>1154</width>
     <height>705</height>
    </rect>
   </property>
@@ -141,7 +141,7 @@
              <string>Show/hide isosurface</string>
             </property>
             <property name="text">
-             <string>...</string>
+             <string/>
             </property>
             <property name="icon">
              <iconset resource="../Resources/ShapeWorksStudio.qrc">
@@ -153,6 +153,9 @@
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::MenuButtonPopup</enum>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -383,7 +386,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1062</width>
+     <width>1154</width>
      <height>22</height>
     </rect>
    </property>
