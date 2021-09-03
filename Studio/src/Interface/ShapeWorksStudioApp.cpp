@@ -104,53 +104,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   // set the splitter ratio
   this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
-  // Glyph options in the render window.
-  QMenu* menu = new QMenu();
-  QWidget* widget = new QWidget();
-  QGridLayout* layout = new QGridLayout(widget);
-
-  QLabel* size_label = new QLabel("Glyph Size: ");
-  layout->addWidget(size_label, 0, 0, 1, 1);
-  size_label = new QLabel("Glyph Detail: ");
-  layout->addWidget(size_label, 1, 0, 1, 1);
-
-  this->glyph_quality_label_ = new QLabel("....");
-  this->glyph_quality_label_->setMinimumWidth(50);
-  this->glyph_size_label_ = new QLabel("....");
-  this->glyph_size_label_->setMinimumWidth(50);
-  layout->addWidget(this->glyph_size_label_, 0, 1, 1, 1);
-  layout->addWidget(this->glyph_quality_label_, 1, 1, 1, 1);
-
-  this->glyph_size_slider_ = new QSlider(widget);
-  this->glyph_size_slider_->setOrientation(Qt::Horizontal);
-  this->glyph_size_slider_->setMinimum(1);
-  this->glyph_size_slider_->setMaximum(100);
-  this->glyph_size_slider_->setPageStep(10);
-  this->glyph_size_slider_->setTickPosition(QSlider::TicksBelow);
-  this->glyph_size_slider_->setTickInterval(10);
-  this->glyph_size_slider_->setMinimumWidth(200);
-
-  this->glyph_auto_size_ = new QCheckBox("Auto");
-
-  this->glyph_quality_slider_ = new QSlider(widget);
-  this->glyph_quality_slider_->setMinimum(1);
-  this->glyph_quality_slider_->setMaximum(20);
-  this->glyph_quality_slider_->setPageStep(3);
-  this->glyph_quality_slider_->setOrientation(Qt::Horizontal);
-  this->glyph_quality_slider_->setTickPosition(QSlider::TicksBelow);
-  this->glyph_quality_slider_->setTickInterval(1);
-  this->glyph_quality_slider_->setMinimumWidth(200);
-  this->ui_->glyphs_visible_button->setMenu(menu);
-
-  layout->addWidget(this->glyph_size_slider_, 0, 2, 1, 1);
-  layout->addWidget(this->glyph_auto_size_, 0, 3, 1, 1);
-  layout->addWidget(this->glyph_quality_slider_, 1, 2, 1, 1);
-  widget->setLayout(layout);
-
-  QWidgetAction* widget_action = new QWidgetAction(widget);
-  widget_action->setDefaultWidget(widget);
-  menu->addAction(widget_action);
-
+  this->create_glyph_submenu();
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
@@ -807,6 +761,57 @@ void ShapeWorksStudioApp::set_message(MessageType message_type, QString message)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::create_glyph_submenu()
+{
+  // Glyph options in the render window.
+  QMenu* menu = new QMenu();
+  QWidget* widget = new QWidget();
+  QGridLayout* layout = new QGridLayout(widget);
+
+  QLabel* size_label = new QLabel("Glyph Size: ");
+  layout->addWidget(size_label, 0, 0, 1, 1);
+  size_label = new QLabel("Glyph Detail: ");
+  layout->addWidget(size_label, 1, 0, 1, 1);
+
+  this->glyph_quality_label_ = new QLabel("....");
+  this->glyph_quality_label_->setMinimumWidth(50);
+  this->glyph_size_label_ = new QLabel("....");
+  this->glyph_size_label_->setMinimumWidth(50);
+  layout->addWidget(this->glyph_size_label_, 0, 1, 1, 1);
+  layout->addWidget(this->glyph_quality_label_, 1, 1, 1, 1);
+
+  this->glyph_size_slider_ = new QSlider(widget);
+  this->glyph_size_slider_->setOrientation(Qt::Horizontal);
+  this->glyph_size_slider_->setMinimum(1);
+  this->glyph_size_slider_->setMaximum(100);
+  this->glyph_size_slider_->setPageStep(10);
+  this->glyph_size_slider_->setTickPosition(QSlider::TicksBelow);
+  this->glyph_size_slider_->setTickInterval(10);
+  this->glyph_size_slider_->setMinimumWidth(200);
+
+  this->glyph_auto_size_ = new QCheckBox("Auto");
+
+  this->glyph_quality_slider_ = new QSlider(widget);
+  this->glyph_quality_slider_->setMinimum(1);
+  this->glyph_quality_slider_->setMaximum(20);
+  this->glyph_quality_slider_->setPageStep(3);
+  this->glyph_quality_slider_->setOrientation(Qt::Horizontal);
+  this->glyph_quality_slider_->setTickPosition(QSlider::TicksBelow);
+  this->glyph_quality_slider_->setTickInterval(1);
+  this->glyph_quality_slider_->setMinimumWidth(200);
+
+  layout->addWidget(this->glyph_size_slider_, 0, 2, 1, 1);
+  layout->addWidget(this->glyph_auto_size_, 0, 3, 1, 1);
+  layout->addWidget(this->glyph_quality_slider_, 1, 2, 1, 1);
+  widget->setLayout(layout);
+
+  QWidgetAction* widget_action = new QWidgetAction(widget);
+  widget_action->setDefaultWidget(widget);
+  menu->addAction(widget_action);
+  this->ui_->glyphs_visible_button->setMenu(menu);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
@@ -862,8 +867,10 @@ void ShapeWorksStudioApp::new_session()
 
   connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this->session_.data(), &Session::set_feature_auto_scale);
-  connect(this->ui_->feature_min, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(), &Session::set_feature_range_min);
-  connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(), &Session::set_feature_range_max);
+  connect(this->ui_->feature_min, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          this->session_.data(), &Session::set_feature_range_min);
+  connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          this->session_.data(), &Session::set_feature_range_max);
 
   this->ui_->notes->setText("");
 
@@ -1949,7 +1956,7 @@ void ShapeWorksStudioApp::update_feature_map_scale()
   if (!auto_mode) {
     if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
       if (visualizer_->get_feature_range_valid()) {
-        double *range = visualizer_->get_feature_raw_range();
+        double* range = visualizer_->get_feature_raw_range();
         ui_->feature_min->setValue(range[0]);
         ui_->feature_max->setValue(range[1]);
       }

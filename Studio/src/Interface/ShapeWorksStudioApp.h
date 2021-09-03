@@ -198,6 +198,8 @@ private:
 
   void set_message(MessageType message_type, QString message);
 
+  void create_glyph_submenu();
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
