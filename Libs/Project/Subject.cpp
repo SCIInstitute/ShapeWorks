@@ -183,6 +183,18 @@ std::vector<std::string> Subject::get_world_particle_filenames()
 }
 
 //---------------------------------------------------------------------------
+void Subject::set_landmarks_filenames(std::vector<std::string> filenames)
+{
+  this->landmarks_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_landmarks_filenames()
+{
+  return this->landmarks_filenames_;
+}
+
+//---------------------------------------------------------------------------
 void Subject::set_image_filenames(std::vector<std::string> filenames)
 {
   this->image_filenames_ = filenames;

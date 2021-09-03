@@ -44,6 +44,11 @@ public:
   //! Get the world particle filenames
   std::vector<std::string> get_world_particle_filenames();
 
+  //! Get the landmarks filenames (one per domain)
+  void set_landmarks_filenames(std::vector<std::string> filenames);
+  //! Set the landmarks filenames
+  std::vector<std::string> get_landmarks_filenames();
+
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
   //! Get the number of domains
@@ -96,6 +101,7 @@ private:
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
+  std::vector<std::string> landmarks_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;
 
