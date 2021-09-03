@@ -1,43 +1,6 @@
 
 # Use Cases
 
-
-## Downloading Use Case Dataset 
-
-Use Case datasets such as the ellipsoid and left atrium datasets will be downloaded
-automatically from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-When running one of the use case example scripts, you will see something like this:
-
-```
-Can't find ellipsoid.zip in the current directory.
-.___________________________.
-|                           |
-|     ShapeWorks Portal     |
-|___________________________|
-
-Downloading the ellipsoid dataset from the ShapeWorks Portal
-Login info is not found in the current directory.
-New ShapeWorks Portal users: Register an account at 
-http://cibc1.sci.utah.edu:8080/#?dialog=register
-Returning ShapeWorks Portal users: Enter your username and password
-
-Username: 
-```
-
-![ShapeWorks Portal Account Registration Screenshot](../img/use-cases/ShapeWorksPortalAccountRegistration.png)
-
-!!! danger
-    Do not use the same password as for your bank account or email!  
-
-
-After registering a free account, you can log in from within the script.
-
-```
-Username: joeshmoe
-Password:
-[1/1 MB]
-joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
-```
 ### Downloaded Data
 
 When a use case is run, it downloads the appropriate zipped data to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all of the output from running the use case is also saved.
@@ -55,7 +18,7 @@ $ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
 The use cases are located at: `Examples/Python/`. When a use case is run, the dataset is automatically downloaded. 
 
 !!! important
-    You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+    You must first register for a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 
 To run a use case, run the following command from the `Examples/Python/` directory:
 
@@ -114,7 +77,42 @@ $ cd /path/to/shapeworks/Examples/Python
 $ ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
 ```    
 
-## Dataset Guidelines
 
+## Downloading Use Case Dataset 
+
+Use Case datasets such as the ellipsoid and left atrium datasets will be downloaded
+automatically from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+When running one of the use case example scripts, you will see something like this:
+
+```
+Can't find ellipsoid.zip in the current directory.
+.___________________________.
+|                           |
+|     ShapeWorks Portal     |
+|___________________________|
+
+Downloading the ellipsoid dataset from the ShapeWorks Portal
+Login info is not found in the current directory.
+New ShapeWorks Portal users: Register an account at 
+http://cibc1.sci.utah.edu:8080/#?dialog=register
+Returning ShapeWorks Portal users: Enter your username and password
+
+Username: 
+```
+
+![ShapeWorks Portal Account Registration Screenshot](../img/use-cases/ShapeWorksPortalAccountRegistration.png)
+
+!!! danger
+    Do not use the same password as for your bank account or email!  
+
+
+After registering a free account, you can log in from within the script.
+
+```
+Username: joeshmoe
+Password:
+[1/1 MB]
+joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
+```
 Check out [How to Add New Datasets?](../dev/datasets.md) for dataset upload instructions and guidelines. 
 
