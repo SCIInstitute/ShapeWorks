@@ -9,7 +9,7 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, curvatureTest)
+TEST(MeshTests, curvatureTest1)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
@@ -18,6 +18,28 @@ TEST(MeshTests, curvatureTest)
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meancurvature.vtk"));
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
+}
+
+TEST(MeshTests, curvatureTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalcurvature.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature"));
+}
+
+TEST(MeshTests, curvatureTest3)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussiancurvature.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature"));
 }
 
 TEST(MeshTests, computemeannormalsTest1)
