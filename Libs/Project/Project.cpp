@@ -209,6 +209,7 @@ void Project::load_subjects()
   auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto name_column = this->get_index_for_column(NAME);
+  auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
 
@@ -218,6 +219,7 @@ void Project::load_subjects()
     subject->set_number_of_domains(this->num_domains_per_subject_);
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_landmarks_filenames(this->get_list(landmarks_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
     subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));
     subject->set_image_filenames(this->get_list(image_columns, i));
@@ -283,6 +285,7 @@ void Project::store_subjects()
   // segmentation columns
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
+  auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
 
   // groomed columns
   std::vector<std::string> groomed_columns;
@@ -311,6 +314,7 @@ void Project::store_subjects()
                                                                PROCRUSTES_TRANSFORMS_PREFIX);
     procrustes_transform_columns.push_back(procrustes_transform_column_name);
   }
+
 
   // local and world particle columns
   std::vector<std::string> local_columns;
@@ -361,6 +365,9 @@ void Project::store_subjects()
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
       this->set_transform_list(procrustes_transform_columns, i, subject->get_procrustes_transforms());
     }
+
+    // landmarks
+    this->set_list(landmarks_columns, i, subject->get_landmarks_filenames());
 
     // features
     auto features = subject->get_feature_filenames();
