@@ -769,6 +769,7 @@ void Viewer::update_actors()
       this->renderer_->AddActor(this->surface_actors_[i]);
     }
   }
+  this->update_opacities();
 }
 
 //-----------------------------------------------------------------------------
@@ -906,6 +907,17 @@ bool Viewer::showing_feature_map()
 void Viewer::update_feature_range(double* range)
 {
   this->update_difference_lut(range[0], range[1]);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_opacities()
+{
+  auto opacities = this->visualizer_->get_opacities();
+  if (opacities.size() == this->surface_mappers_.size()) {
+    for (size_t i=0;i<opacities.size();i++) {
+      this->surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

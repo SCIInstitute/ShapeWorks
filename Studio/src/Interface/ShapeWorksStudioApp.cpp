@@ -826,26 +826,31 @@ void ShapeWorksStudioApp::create_iso_submenu()
   auto project = this->session_->get_project();
 
   auto names = project->get_domain_names();
-  int row = 0;
   this->iso_opacity_sliders_.clear();
-  for (auto& name : names) {
-    QLabel* size_label = new QLabel(QString::fromStdString(name) + " opacity: ");
+  for (size_t row = 0; row < names.size(); row++) {
+    auto name = names[row];
+    QString text = "Opacity";
+    if (names.size() > 1) {
+      text = QString::fromStdString(name) + " opacity: ";
+    }
+    QLabel* size_label = new QLabel(text);
     layout->addWidget(size_label, row, 0, 1, 1);
 
-    QSlider *slider = new QSlider(widget);
+    QSlider* slider = new QSlider(widget);
     slider->setOrientation(Qt::Horizontal);
     slider->setMinimum(1);
     slider->setMaximum(100);
     slider->setPageStep(10);
     slider->setTickPosition(QSlider::TicksBelow);
     slider->setTickInterval(10);
+    slider->setValue(100);
     slider->setMinimumWidth(200);
+    connect(slider, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_opacity_changed);
 
     layout->addWidget(slider, row, 1, 1, 1);
     widget->setLayout(layout);
 
     this->iso_opacity_sliders_.push_back(slider);
-    row++;
   }
 
   QWidgetAction* widget_action = new QWidgetAction(widget);
@@ -924,6 +929,7 @@ void ShapeWorksStudioApp::new_session()
   this->groom_tool_->set_session(this->session_);
   this->optimize_tool_->set_session(this->session_);
   this->deepssm_tool_->set_session(this->session_);
+  this->create_iso_submenu();
 }
 
 //---------------------------------------------------------------------------
@@ -1198,6 +1204,16 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_opacity_changed()
+{
+  std::vector<float> opacities;
+  for (auto& slider : this->iso_opacity_sliders_) {
+    opacities.push_back(slider->value() / 100.0);
+  }
+  this->visualizer_->set_opacities(opacities);
 }
 
 //---------------------------------------------------------------------------

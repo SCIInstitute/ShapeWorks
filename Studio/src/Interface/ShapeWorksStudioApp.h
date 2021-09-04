@@ -105,6 +105,7 @@ public Q_SLOTS:
 
   void handle_display_setting_changed();
   void handle_glyph_changed();
+  void handle_opacity_changed();
 
   void handle_open_recent();
 

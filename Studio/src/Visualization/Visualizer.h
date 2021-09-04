@@ -109,6 +109,12 @@ public:
   //! Request the transform for a given shape and domain
   vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
 
+  //! Set domain opacities
+  void set_opacities(std::vector<float> opacities);
+
+  //! Get domain opacities
+  std::vector<float> get_opacities();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
@@ -148,6 +154,8 @@ private:
   double feature_manual_range_[2] = {0, 0};
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
+
+  std::vector<float> opacities_;
 
 };
 

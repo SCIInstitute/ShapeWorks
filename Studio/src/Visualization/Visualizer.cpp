@@ -481,5 +481,23 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
   return transform;
 }
 
+//-----------------------------------------------------------------------------
+void Visualizer::set_opacities(std::vector<float> opacities)
+{
+  this->opacities_ = opacities;
+  if (this->lightbox_) {
+      foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+        viewer->update_opacities();
+      }
+    this->lightbox_->redraw();
+  }
+}
+
+//-----------------------------------------------------------------------------
+std::vector<float> Visualizer::get_opacities()
+{
+  return this->opacities_;
+}
+
 
 }
