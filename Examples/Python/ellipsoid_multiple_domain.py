@@ -48,7 +48,8 @@ def Run_Pipeline(args):
                                      dataset_name + "/segmentations/*.nrrd"))
 
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(file_list, int(args.num_subsample),domains_per_shape=2)
+            inputImages =[sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample),domains_per_shape=2)
             file_list = [file_list[i] for i in sample_idx]
 
           
@@ -151,15 +152,10 @@ def Run_Pipeline(args):
         For multiple domain data, the reference image has to found for the joint as whole. 
         Hence first generate the combined joint 
         """
-        resampled_shapes_names = []
-        domains_per_shape = 2 
-        for shape_seg, shape_name in zip(shape_seg_list,shape_names):
-            filename = groom_dir + shape_name.split(".nrrd")[0] + "_resampled.vtk"
-            resampled_shapes_names.append(filename)
-            shape_seg.toMesh(0.5).write(filename)
-
-        ref_index = sw.find_reference_image_index(resampled_shapes_names,domains_per_shape)
-        [os.remove(file) for file in resampled_shapes_names]
+        
+        domains_per_shape = 2
+        ref_index = sw.find_reference_image_index(shape_seg_list,domains_per_shape)
+        
         # Make a copy of the reference segmentation
         ref_seg = []
         ref_names = []
@@ -195,7 +191,7 @@ def Run_Pipeline(args):
                 ref_domain, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
             # second we apply the computed transformation, note that shape_seg has
             # already been antialiased, so we can directly apply the transformation
-            shape_seg.applyTransform(rigidTransform,
+            shape_seg_list[i].applyTransform(rigidTransform,
                                      ref_domain.origin(),  ref_domain.dims(),
                                      ref_domain.spacing(), ref_domain.coordsys(),
                                      sw.InterpolationType.Linear)
