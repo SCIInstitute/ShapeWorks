@@ -149,14 +149,12 @@ def Run_Pipeline(args):
         Grooming Step 2: Select a reference
         This step requires breaking the loop to load all of the segmentations at once so the shape
         closest to the mean can be found and selected as the reference. 
-        For multiple domain data, the reference image has to found for the joint as whole. 
-        Hence first generate the combined joint 
         """
         
         domains_per_shape = 2
         ref_index = sw.find_reference_image_index(shape_seg_list,domains_per_shape)
         
-        # Make a copy of the reference segmentation
+        # Make a copy of the reference segmentation 
         ref_seg = []
         ref_names = []
         for d in range(domains_per_shape):
@@ -199,7 +197,7 @@ def Run_Pipeline(args):
             shape_seg_list[i].binarize()
 
         """
-        Grooming Step 2: Converting segmentations to smooth signed distance transforms.
+        Grooming Step 4: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
         a smoother interface we first antialiasing the segmentation then compute the distance transform 
         at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
