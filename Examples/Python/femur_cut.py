@@ -503,8 +503,8 @@ def Run_Pipeline(args):
         mesh_files = []
         for dt, shape_name in zip(seg_list, names):
             print('Ceating mesh from: ' + shape_name)
-            dt.toMesh(0).write(mesh_dir + shape_name + ".ply")
-            mesh_files.append(mesh_dir + shape_name + ".ply")
+            dt.toMesh(0).write(mesh_dir + shape_name + ".vtk")
+            mesh_files.append(mesh_dir + shape_name + ".vtk")
         print(mesh_files)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
