@@ -43,6 +43,7 @@ Below are another examples of bad surfaces for shape modeling where the surface 
 
 ## What is Shape Modeling?
 
+### Shape Parameters
 
 Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by it s inner and outer radii.
 
@@ -65,3 +66,20 @@ Or in other words:
     
 ![Shape Modeling](../img/getting-started/shape-modeling.png)
 
+### Discovering Shape Parameters via Optimization 
+
+ShapeWorks allows for discovering the modes of variation in shape cohorts for which the parameters are unknown. This is done by first optimizing particles that are in correspondence across the population (see [Shape Model Optimization](../workflow/optimize.md)). Next statistical analysis is performed using principal component analysis (PCA), where the mean and modes of shape variation are computed based on the optimized correspondence model. These modes of shape variation can be visualized and used in downstream medical tasks.
+
+Below is an example of a shape model from parameterized ellipsoids that differ along the x and y radius. The mean shape is shown and we can see that 99.9% of the shape variability is explained by just two PCA modes as expected.
+
+![Ellipsoid Shape Model](../img/getting-started/ellipsoid.png)
+
+By animating how the shape changes along the first PCA mode, we can conclude that this represents the variation in the radius along the y-axis.
+
+![Ellispoid 1st mode](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_1st_mode.gif)
+
+And animating along the second PCA mode, we can conclude this represents the variation in the radius along the x-axis.
+
+![Ellispoid 2nd mode](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_2nd_mode.gif)
+
+This example demonstrates that correspondence points defined via ShapeWorks optimization can correctly capture the parameters of a class of shapes. 
