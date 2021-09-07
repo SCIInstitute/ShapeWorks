@@ -51,7 +51,7 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 void Seed::buildParser()
 {
   const std::string prog = "seed";
-  const std::string desc = "sets the seed for random number generation";
+  const std::string desc = "sets the seed for random number generation (useful for debugging)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--value").action("store").type("int").set_default(std::chrono::system_clock::now().time_since_epoch().count()).help("Value of seed.");

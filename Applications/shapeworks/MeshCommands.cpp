@@ -267,7 +267,7 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 void CVDDecimate::buildParser()
 {
   const std::string prog = "cvd-decimate";
-  const std::string desc = "applies cvd decimation filter";
+  const std::string desc = "applies cvd (centroidal voronoi diagram) decimation filter";
 
   parser.prog(prog).description(desc);
 
