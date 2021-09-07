@@ -45,7 +45,7 @@ Below are another examples of bad surfaces for shape modeling where the surface 
 
 ### Shape Parameters
 
-Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by it s inner and outer radii.
+Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by its inner and outer radii.
 
 
 Here is a more complex example of parameterized shapes called *supershapes*, which be used to describe many complex shapes and curves that are found in nature. On the left, you can see sliders that control shape parameters describing a supershape. Every time we change any of these parameters, we get a different shape that belongs to the supershapes family. Hence, these parameters fully describe a shape in this family or population. This video was captured using [Andrew Marsh's](http://andrewmarsh.com/apps/releases/supershapes.html) app website for supershapes generation.
