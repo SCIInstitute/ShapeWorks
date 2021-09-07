@@ -6,7 +6,7 @@ The `ellipsoid_fd` use case is designed to demonstrate the functionality of the 
 
 ![Fixed Domains](../img/use-cases/fixed-domains.png)
 
-## Grooming Data
+## Grooming Steps
 
 This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance transform for each new segmentation.
 

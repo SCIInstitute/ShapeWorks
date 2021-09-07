@@ -1,36 +1,8 @@
 # Femur SSM Directly from Images
 
-## What and Where is the Use Case? 
+## What is the Use Case? 
 
-This use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [Femur: SSM from Meshes](femur.md) use case.
-
-The use case is located at: `Examples/Python/deep-ssm.py`
-
-!!! note "Relevant papers"
-    - Jadie Adams, Riddhish Bhalodia, Shireen Elhabian. Uncertain-DeepSSM: From Images to Probabilistic Shape Models. In MICCAI-ShapeMI, Springer, Cham, 2020.
-    - Riddhish Bhalodia, Shireen Elhabian, Ladislav Kavan, and Ross Whitaker. DeepSSM: a deep learning framework for statistical shape modeling from raw images. In MICCAI-ShapeMI, pp. 244-257. Springer, Cham, 2018.
-    - Riddhish Bhalodia, Anupama Goparaju, Tim Sodergren, Alan Morris, Evgueni Kholmovski, Nassir Marrouche, Joshua Cates, Ross Whitaker, Shireen Elhabian. Deep Learning for End-to-End Atrial Fibrillation Recurrence Estimation. Computing in Cardiology (CinC), 2018.
-
-## Running the Use Case
-
-To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags.
-
-```
-$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py deep_ssm
-```
-
-See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags. Note the following tags are not applicable to this use case:
-
-* `--skip_grooming`
-* `--use_single_scale`
-* `--groom_images`
-
-This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
-
-* Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/). This includes the particle files in `shape_models` created from running the femur use case. 
-* Performs data augmentation as described in [Data Augmentation for Deep Learning](../deep-learning/data-augmentation.md).
-* Creates a DeepSSM model as described in [SSMs Directly from Images](../deep-learning/deep-ssm.md) and uses it to make predictions on unseen images.
+The `deep_ssm` use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [Femur: SSM from Meshes](femur.md) use case.
 
 !!! danger "On CUDA"
     This use case uses Pytorch and requires a GPU to run in a timely manner. When you source `install_shapeworks.sh`, it detects if you have a GPU and and installs the version of Pytorch compatible with your version of CUDA. 
@@ -38,6 +10,12 @@ This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
     Note we only support the three most recent versions of CUDA. If your GPU requires an older CUDA version, you will need to update the Pytorch install in your shapeworks conda environment to the correct CUDA version. For more information on doing so, see [pytorch.org](https://pytorch.org/). 
     
     To do a quick check to see if Pytorch is running on your GPU, you can run the use case with the `--tiny-test` tag. This will quickly run the use case on a few examples and print an error if it is not running on the GPU.
+
+## Supported Tags
+
+``` 
+        --tiny_test
+``` 
 
 ## Use Case Pipeline
 

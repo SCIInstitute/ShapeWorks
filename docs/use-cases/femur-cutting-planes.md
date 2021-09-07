@@ -1,57 +1,20 @@
 # Femur with Cutting Planes
 
-## What and Where is the Use Case?
+## What is the Use Case?
 
-This use case is similar to [Femur: SSM from Meshes](femur.md), but it demonstrates the use of cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, cutting planes can be used to limit the statistical analysis to the common anatomical regions across all samples.
+The `femur_cut` use case is similar to [Femur: SSM from Meshes](femur.md), but it demonstrates the use of cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, cutting planes can be used to limit the statistical analysis to the common anatomical regions across all samples.
 
 ![Femur Lengths](../img/use-cases/femurLengths.png)
 
 !!! note
     The given data (i.e., surface meshes) are not clipped using cutting planes as in [Femur: SSM from Meshes](femur.md), but the cutting planes are fed as an optimization parameter to `shapeworks optimize` command to prevent particles from moving beyond the cutting planes during optimization.
 
-The use case has a pre-defined cutting plane, but you can choose to overwrite it and define the cutting plane interactively by running the use case with the `--interactive` tag. There are two ways to define the cutting plane interactively, as explained in [Running with Interactivity](femur.md#running-with-interactivity).
-
-The use case is located at: `Examples/Python/femur_cut.py`
- 
-## Running the Use Case
-
 !!! important 
     Minimum of 32GB of RAM required to run the full use case.
 
-To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
+## Grooming Steps
 
-To run the full pipeline with multi-scale and the pre-defined cutting plane:
-            
-```
-$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py femur_cut 
-```
-
-This calls `femur_cut.py` (in `Examples/Python/`) to perform the following.
-            
-* Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and meshes. See [Grooming Data](#grooming-data) for details about these preprocessing steps.
-* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorks Studio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
-
-If you wish to start with the optimization step using previously groomed data, add `--skip_grooming` tag.
-
-```
-$ python RunUseCase.py femur_cut --skip_grooming
-```
-
-To groom both the meshes and their corresponding images, use `--groom_images` tag. The image origin, size, and spacing will be used in mesh rasterization. 
-
-```
-$ python RunUseCase.py femur_cut --groom_images
-```
-
-If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes for rasterization, and isotropic spacing will be used unless the user specifies otherwise.
-
-## Grooming Data
-
-We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations). Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
-
+The grooming steps are the same as the [femur use case](femur.md) except clipping is not performed.
 
 1. **Reflect Meshes**: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.
 2. **Meshes to Volumes**: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
@@ -63,14 +26,15 @@ We start with full unsegmented images (CT scans) of each femur's hip and segment
 8. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.
 9. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-## Optimizing Shape Model
+## Supported Tags
 
-Below are the default optimization parameters when running this use case using the `--use_single_scale` tag. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md). Note that `use_shape_statistics_after` parameter is not used when `--use_single_scale` tag is given to the `RunUseCase.py` (in `Examples/Python/`). Also note the use of `adaptivity_mode`, `cutting_plane_counts`, and `cutting_planes` optimization parameters to trigger the constrained particles optimization.
+``` 
+        --use_subsample --num_subsample --groom_images --skip_grooming --use_single_scale --tiny_test
+``` 
 
-```
-$python RunUseCase.py --use_case femur_cut --use_single_scale
-```
+## Optimization Parameters
 
+Below are the default optimization parameters for the use case.
 ```        
         "number_of_particles" : 1024,
         "use_normals": 0,
@@ -94,26 +58,15 @@ $python RunUseCase.py --use_case femur_cut --use_single_scale
         "use_statistics_in_init" : 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes
+        "cutting_planes": cutting_planes,
+        "use_shape_statistics_after" = 64
 ```
 
-This use case can be run using the multi-scale optimization without the `--use_single_scale` tag as follows.
+Here `cutting_plane_counts` is one for every femur and the `cutting_planes` is the same cutting plane points for every femur.
 
-```
-$python RunUseCase.py femur_cut 
-```
+## Analyzing Shape Model        
 
-The `use_shape_statistics_after` parameter is used to trigger the multi-scale optimization mode.
-
-```
-        "use_shape_statistics_after": 64
-```
-
-## Analyzing Shape Model
-
-ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
-
-Here is the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization.
+Here is the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization. Here we can see the particles are constrained to be above the cutting plane.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_cut.mp4" autoplay muted loop controls style="width:100%"></p>
 

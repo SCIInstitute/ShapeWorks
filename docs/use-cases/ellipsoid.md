@@ -50,6 +50,11 @@ Below are the default optimization parameters for this use case.
 
 ## Analyzing Shape Model
 
-ToDO:
-1. Add GIF of the shape model : all dominant modes with the shape statistics plots
-2. Add observations regarding the model like : mode of variations, uniform distribution
+Below is the mean shape reulting from optimization. Here we can see that there is only one major mode of variation.
+![Ellipsoid Optimization](../img/use-cases/ellipsoid_mean.png)
+
+Below are the particles for each sample, we can see they are uniformly distributed.
+![Ellipsoid Samples](../img/use-cases/ellipsoids_samples.png)
+
+Animating along the first PCA mode we can see the variation in the radius along the x-axis.
+![Ellipsoid Mode 1](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mode1.gif)
