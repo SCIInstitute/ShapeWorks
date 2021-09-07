@@ -240,7 +240,7 @@ def generate_2Dimages(segs, outDir, blur_factor, foreground_mean, foreground_var
         print("Generating image " + str(index) + " out of " + str(len(segs)))
         name = seg.replace('segmentations/','images/').replace('_seg.png', '_blur' + str(blur_factor) + '.png')
         img_array = plt.imread(seg, format="png")
-        img_array = img_array/255
+        img_array = img_array/np.max(img_array)
         img_array = blur(img_array, blur_factor)
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = img_array.astype(np.uint8)
