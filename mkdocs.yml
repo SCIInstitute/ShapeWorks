@@ -52,6 +52,7 @@ nav:
 - Use Cases:
    - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
+   - 'Ellipsoid Mesh: Basic Example':           'use-cases/ellipsoid_mesh.md'
    - 'Ellipsoid: Cutting Planes':               'use-cases/ellipsoid-cutting-planes.md'
    - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
    - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
