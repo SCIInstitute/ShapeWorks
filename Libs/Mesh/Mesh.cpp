@@ -677,7 +677,7 @@ std::vector<std::string> Mesh::getFieldNames() const
   return fields;
 }
 
-Mesh& Mesh::setField(std::string name, Array array, bool multi)
+Mesh& Mesh::setField(std::string name, Array array)
 {
   if (!array)
     throw std::invalid_argument("Invalid array.");
@@ -704,8 +704,7 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
   if (name.empty())
     throw std::invalid_argument("Provide name for the new field");
 
-  int numVertices = mesh->GetPoints()->GetNumberOfPoints();
-  if (array->GetNumberOfTuples() != numVertices) {
+  if (array->GetNumberOfTuples() != numFaces()) {
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
   if (array->GetNumberOfComponents() != 1) {
@@ -989,13 +988,13 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
-bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num){
-
+//Splits the mesh for FFCs by setting scalar and vector fields
+bool Mesh::splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num){
     // Extract mesh vertices and faces
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
 
-    vtkSmartPointer<vtkPoints> points = GetIGLMesh(V, F);
+    vtkSmartPointer<vtkPoints> points = getIGLMesh(V, F);
 
     for(size_t bound = 0; bound < boundaries.size(); bound++){
         //std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
@@ -1021,8 +1020,8 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
             // Add first point in boundary
             if(i == 0){
                 lastId = ptid;
-                double pathpt[3];
-                mesh->GetPoint(ptid, pathpt);
+                Point3 pathpt;
+                pathpt = getPoint(ptid);
                 selectionPoints->InsertNextPoint(pathpt[0],pathpt[1],pathpt[2]);
                 boundaryVerts.push_back(ptid);
             }
@@ -1036,8 +1035,8 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
                 vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
                 for(size_t j = 1; j < idL->GetNumberOfIds(); j++){
                     vtkIdType id = idL->GetId(j);
-                    double pathpt[3];
-                    mesh->GetPoint(id, pathpt);
+                    Point3 pathpt;
+                    pathpt = getPoint(ptid);
                     selectionPoints->InsertNextPoint(pathpt[0],pathpt[1],pathpt[2]);
                     boundaryVerts.push_back(id);
                 }
@@ -1089,7 +1088,7 @@ bool Mesh::SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
 }
 
 // Copied directly from Meshwrapper
-Eigen::Vector3d Mesh::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
+Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
   double closest[3];
   int sub_id;
@@ -1100,7 +1099,7 @@ Eigen::Vector3d Mesh::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   return bary;
 }
 
-double Mesh::GetFFCValue(Eigen::Vector3d query){
+double Mesh::getFFCValue(Eigen::Vector3d query){
     locator->BuildLocator();
 
     double closestPoint[3];
@@ -1115,7 +1114,7 @@ double Mesh::GetFFCValue(Eigen::Vector3d query){
 
     // Compute baricentric distances
     Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
-    Eigen::Vector3d bary = ComputeBarycentricCoordinates(cp, cellId);
+    Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
 
     bary = bary/bary.sum();
 
@@ -1124,7 +1123,7 @@ double Mesh::GetFFCValue(Eigen::Vector3d query){
     return (bary*values.transpose()).mean();
 }
 
-Eigen::Vector3d Mesh::GetFFCGradient(Eigen::Vector3d query){
+Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query){
 
     locator->BuildLocator();
 
@@ -1140,7 +1139,7 @@ Eigen::Vector3d Mesh::GetFFCGradient(Eigen::Vector3d query){
     return grad;
 }
 
-vtkSmartPointer<vtkPoints> Mesh::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
+vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
   const int n_verts = this->mesh->GetNumberOfPoints();
   const int n_faces = this->mesh->GetNumberOfCells();
@@ -1369,7 +1368,7 @@ std::vector<Eigen::Matrix3d> Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDo
         vf->SetTuple3(i, grads(i,0), grads(i,1), grads(i,2));
     }
 
-    this->setField("Gradient", vf, true);
+    this->setField("Gradient", vf);
 
     this->mesh->GetCellData()->AddArray(vff);
 

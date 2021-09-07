@@ -159,7 +159,7 @@ public:
   std::vector<std::string> getFieldNames() const;
 
   /// sets the given field for points with array (*does not copy array's values)
-  Mesh& setField(std::string name, Array array, bool multi = false);
+  Mesh& setField(std::string name, Array array);
 
   /// sets the given field for faces with array (*does not copy array's values)
   Mesh& setFieldForFaces(std::string name, Array array);
@@ -220,10 +220,11 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  bool SplitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
+  //Splits the mesh for FFCs by setting scalar and vector fields
+  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
-  double GetFFCValue(Eigen::Vector3d query);
-  Eigen::Vector3d GetFFCGradient(Eigen::Vector3d query);
+  double getFFCValue(Eigen::Vector3d query);
+  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
   //Debug
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
@@ -250,9 +251,9 @@ private:
 
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
 
-  vtkSmartPointer<vtkPoints> GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
 
-  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
 
 };
 

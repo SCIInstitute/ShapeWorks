@@ -41,11 +41,11 @@ public:
   }
 
   Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
-      return mesh->GetFFCGradient(pt);
+      return mesh->getFFCGradient(pt);
     }
 
     double ConstraintEval(const Eigen::Vector3d &pt) const{
-      return mesh->GetFFCValue(pt);
+      return mesh->getFFCValue(pt);
     }
 
 private:
