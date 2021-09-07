@@ -1072,6 +1072,7 @@ bool Mesh::splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, E
 
         std::vector<Eigen::Matrix3d> face_grad_ = this->setGradientFieldForFFCs(absvalues, V, F);
 
+        // For debug. You can visualize the vector and scalar fields for FFCs with this function. Uncomment and run optimization for pop-out visualizations.
         //this->visualizeVectorFieldForFFCs(values, face_grad_, V, F);
 
     } // Per boundary for loop end

@@ -223,6 +223,7 @@ public:
   //Splits the mesh for FFCs by setting scalar and vector fields
   bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
+  // Gets values and gradients for FFCs
   double getFFCValue(Eigen::Vector3d query);
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
@@ -241,19 +242,25 @@ private:
 
   MeshType mesh;
 
+  // This locator member is used for FFCs which queries repeatedly
   vtkSmartPointer<vtkCellLocator> locator;
 
+  // This function visualizes vector and scalar fields for FFCs
   void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
+  // Computes the gradient vector field for FFCs w.r.t the boundary
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
+  // Computes scalar distance field w.r.t. the boundary
   vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
 
+  // Computes whether point is inside or outside the boundary
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
+
 
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
 
-  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // Copied directly from VtkMeshWrapper.
 
 };
 
