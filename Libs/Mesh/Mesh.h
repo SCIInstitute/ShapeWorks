@@ -2,6 +2,7 @@
 
 #include "Shapeworks.h"
 #include "ImageUtils.h"
+#include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <vector>
 #include <vtkSmartPointer.h>
@@ -96,6 +97,9 @@ public:
 
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
+
+  /// computes geodesic distance between a point and all vertices on mesh
+  Eigen::MatrixXd geodesicDistance(const std::vector<Point3> landmark);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;

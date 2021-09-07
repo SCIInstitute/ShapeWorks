@@ -35,13 +35,14 @@ target_include_directories(Mesh PUBLIC
  )
 
 target_link_libraries(
-  Mesh 
+  Mesh
   Image
   Common
+  Optimize
   Utils
-  trimesh2 
-  vgl 
-  vgl_algo 
+  trimesh2
+  vgl
+  vgl_algo
   ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core

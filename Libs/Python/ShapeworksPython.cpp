@@ -976,9 +976,14 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a)
 
   .def("geodesicDistance",
-       &Mesh::geodesicDistance,
+       py::overload_cast<int, int>(&Mesh::geodesicDistance),
        "computes geodesic distance between two vertices (specified by their indices) on mesh",
        "source"_a, "target"_a)
+
+  .def("geodesicDistance",
+       py::overload_cast<const std::vector<Point>>(&Mesh::geodesicDistance),
+       "computes geodesic distance between a set of points and all vertices on mesh",
+       "landmark"_a)
 
   .def("distance",
        &Mesh::distance,

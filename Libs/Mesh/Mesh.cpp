@@ -537,6 +537,22 @@ double Mesh::geodesicDistance(int source, int target)
   return d[0];
 }
 
+Eigen::MatrixXd Mesh::geodesicDistance(const std::vector<Point3> landmark)
+{
+  Eigen::MatrixXd d;
+  VtkMeshWrapper wrap(this->mesh, true);
+
+  for (int i =0; i < landmark.size(); i++)
+  {
+    for (int j = 0; j < numPoints(); j++)
+    {
+      d(i, j) = wrap.ComputeDistance(getPoint(j), -1, landmark[i], -1);
+    }
+  }
+
+  return d;
+}
+
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
   // if no region, use mesh bounding box
