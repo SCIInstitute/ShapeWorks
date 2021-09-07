@@ -165,7 +165,6 @@ bool Shape::import_global_point_files(QStringList filenames)
   for (int i = 0; i < filenames.size(); i++) {
     vnl_vector<double> points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      std::cerr << "had an error aborting\n";
       return false;
     }
     this->global_point_filenames_.push_back(filenames[i].toStdString());
@@ -181,8 +180,7 @@ bool Shape::import_local_point_files(QStringList filenames)
   for (int i = 0; i < filenames.size(); i++) {
     vnl_vector<double> points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      std::cerr << "had an error aborting\n";
-      return false;
+      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);
@@ -470,7 +468,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
             this->apply_feature_to_points(feature, image);
-
           } catch (itk::ExceptionObject& excep) {
             QMessageBox::warning(0, "Unable to open file",
                                  "Error opening file: \"" + filename + "\"");
@@ -565,6 +562,27 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::convert_transform(std::vector<double> list)
+{
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
+  if (list.size() == 12) {
+    double tx = list[9];
+    double ty = list[10];
+    double tz = list[11];
+    transform->Translate(tx, ty, tz);
+  }
+  else if (list.size() == 16) {
+    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    for (int i = 0; i < 16; i++) {
+      matrix->GetData()[i] = list[i];
+    }
+    transform->SetMatrix(matrix);
+  }
+  return transform;
+}
+
+//---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
 {
   auto it = this->point_features_.find(feature);
@@ -580,24 +598,30 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < transforms.size()) {
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    if (transforms[domain].size() == 12) {
-      double tx = transforms[domain][9];
-      double ty = transforms[domain][10];
-      double tz = transforms[domain][11];
-      transform->Translate(tx, ty, tz);
-    }
-    else if (transforms[domain].size() == 16) {
-      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-      for (int i = 0; i < 16; i++) {
-        matrix->GetData()[i] = transforms[domain][i];
-      }
-      transform->SetMatrix(matrix);
-    }
-    return transform;
+    return this->convert_transform(transforms[domain]);
   }
   return nullptr;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain)
+{
+  auto transforms = this->subject_->get_procrustes_transforms();
+  if (domain < transforms.size()) {
+    return this->convert_transform(transforms[domain]);
+  }
+  return nullptr;
+}
+
+//---------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms()
+{
+  auto lists = this->subject_->get_procrustes_transforms();
+  std::vector<vtkSmartPointer<vtkTransform>> transforms;
+  for (size_t i = 0; i < lists.size(); i++) {
+    transforms.push_back(this->convert_transform(lists[i]));
+  }
+  return transforms;
 }
 
 //---------------------------------------------------------------------------
@@ -625,6 +649,13 @@ void Shape::set_particles(StudioParticles particles)
 StudioParticles Shape::get_particles()
 {
   return this->particles_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform)
+{
+  this->particles_.set_procrustes_transforms(this->get_procrustest_transforms());
+  this->particles_.set_transform(transform);
 }
 
 //---------------------------------------------------------------------------
@@ -729,7 +760,6 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
   }
 
   this->set_point_features(feature_name, values);
-
 }
 
 //---------------------------------------------------------------------------
@@ -743,5 +773,4 @@ string Shape::get_override_feature()
 {
   return this->override_feature_;
 }
-
 }

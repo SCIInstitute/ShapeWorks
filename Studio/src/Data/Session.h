@@ -72,6 +72,8 @@ public:
 
   bool update_particles(std::vector<StudioParticles> particles);
 
+  bool update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
+
   bool is_light_project();
 
   bool get_groomed_present();

@@ -75,6 +75,18 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<double>> Subject::get_procrustes_transforms() const
+{
+  return this->procrustes_transforms_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_procrustes_transforms(std::vector<std::vector<double>> transforms)
+{
+  this->procrustes_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
 std::map<std::string, std::string> Subject::get_group_values() const
 {
   return this->group_values_;
