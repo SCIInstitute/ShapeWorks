@@ -10,7 +10,6 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-
 #include <pybind11/operators.h>
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
@@ -18,7 +17,9 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+#include <bitset>
 #include <sstream>
+
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
 
@@ -117,8 +118,9 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init
        // The reasons we don't simply specify py::array_t<float>
        // as a parameter are:
-       // - to take ownership if array type is same as Image::PixelType, and
-       // - to ensure the array isn't silently cast by copying, the default pybind11 behavior
+       // - to take ownership of the array
+       // - to ensure dtype is same as Image::PixelType, and
+       // - to ensure the array isn't silently cast by copying (the default pybind11 behavior)
        ([](py::array& np_array) {
          // get input array info
          auto info = np_array.request();
@@ -184,28 +186,32 @@ PYBIND11_MODULE(shapeworks_py, m)
          size[1] = np_array.shape()[1];
          size[2] = np_array.shape()[0];
 
-         // array is a dtype.float32; just share the data
-         if (info.format == py::format_descriptor<Image::PixelType>::format()) {
-
-           // We increment the Python reference count since if the numpy array
-           // went out of scope, the image memory might be deallocated too soon.
-           np_array.inc_ref();
-
-           // We next pass ownership of the array to Image. The inc_ref prevents
-           // Python from deallocating, and Image dealloates when it's time.
-           // This invalidates existing Python objects, but there is no memory
-           // leak. When to deallocate is decided by Image operations that
-           // replace memory (most that use itk) or its destructor.
-           assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
-           importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
-                                      size[0]*size[1]*size[2]*sizeof(Image::PixelType),
-                                      true /*importer take_ownership*/);
-         }
-         else {
+         // array must be dtype.float32 and own its data to transfer it to Image
+         if (info.format != py::format_descriptor<Image::PixelType>::format()) {
            // inform the user how to create correct type array rather than copy
-           throw std::invalid_argument("array must be same dtype as Image; convert using `arr = np.array(arr, dtype=np.float32)`");
+           throw std::invalid_argument("array must be same dtype as Image; convert using `np.array(arr, dtype=np.float32)`");
+         }
+         if (!np_array.owndata()) {
+           throw std::invalid_argument("error: numpy array does not own data (see `arr.flags()`) to be transferred to Image");
          }
 
+         // pass ownership of the array to Image to prevent Python from
+         // deallocating (the image will dealloate when it's time)
+         std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+         disown_data_flag = ~disown_data_flag;
+         int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
+
+         // transfer ownership by modifying nyumpy.Array OWNDATA flag
+         pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
+         if (np_array.owndata()) {
+           throw std::runtime_error("error transferring data ownership to Image");
+         }
+
+         // import data, passing ownership of memory to ensure there will be no leak
+         assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
+         importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
+                                    size[0]*size[1]*size[2]*sizeof(Image::PixelType),
+                                    true /*importer take_ownership*/);
          ImportType::IndexType start({0,0,0}); // i.e., Coord
          ImportType::RegionType region;
          region.SetIndex(start);
