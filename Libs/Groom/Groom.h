@@ -6,8 +6,6 @@
 #include <tbb/atomic.h>
 #include <tbb/mutex.h>
 
-#include <vtkDecimatePro.h>
-
 namespace shapeworks {
 
 //! High level groom API.

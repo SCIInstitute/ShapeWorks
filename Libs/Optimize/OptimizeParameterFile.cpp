@@ -922,7 +922,7 @@ int OptimizeParameterFile::get_num_inputs(TiXmlHandle* docHandle)
     throw std::invalid_argument(message);
   }
 
-  return inputs.size(); // domains_per_shape;
+  return inputs.size();
 }
 
 //---------------------------------------------------------------------------

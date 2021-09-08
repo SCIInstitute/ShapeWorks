@@ -398,26 +398,16 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     // (e.g. narrow band of 4 means 4 voxels (largest side)
     double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
     domain->SetImage(image, narrow_band_world);
-  }
 
     // Adding meshes for FFCs
-    using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
-    connectorType::Pointer connector = connectorType::New();
-    connector->SetInput(image);
-    connector->Update();
-
-    vtkContourFilter *targetContour = vtkContourFilter::New();
-    targetContour->SetInputData(connector->GetOutput());
-    targetContour->SetValue(0, 0.0);
-    targetContour->Update();
-
-    vtkSmartPointer<vtkPolyData> mesh = targetContour->GetOutput();
+    vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
 
     size_t numPt = mesh->GetNumberOfPoints();
 
     std::cout << "Built mesh with "  << numPt << " vertices." << std::endl;
 
     this->m_meshes.push_back(mesh);
+  }
 
   domain->SetDomainID(m_DomainList.size());
   domain->SetDomainName(name);
