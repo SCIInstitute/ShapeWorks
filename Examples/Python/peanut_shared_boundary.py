@@ -125,13 +125,13 @@ def Run_Pipeline(args):
         shutil.copy(fname, new_name)
 
     # TODO Use OptimizeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
-    shutil.copy(f'{outputDirectory}/{datasetName}/shape_models/peanut_shared_boundary/new_shared_with_contours.xlsx',
+    shutil.copy(f'{outputDirectory}/{datasetName}/shape_models/peanut_shared_boundary/shared_with_contours.xlsx',
                 f'{outputDirectory}/shape_model/')
-    optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/new_shared_with_contours.xlsx'.split()
+    optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
     subprocess.check_call(optimizeCmd)
 
     # TODO Use AnalyzeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
-    analyzeCmd = 'ShapeWorksStudio Output/peanut_shared_boundary/shape_model/new_shared_with_contours.xlsx'.split()
+    analyzeCmd = 'ShapeWorksStudio Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
     subprocess.check_call(analyzeCmd)
 
 
