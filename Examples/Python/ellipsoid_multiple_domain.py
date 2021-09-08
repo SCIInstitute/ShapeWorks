@@ -76,9 +76,7 @@ def Run_Pipeline(args):
         following two steps
         The required grooming steps are: 
         1. Isotropic resampling
-        2. Select a reference
-        3. Rigid alignment
-        4. Create smooth signed distance transforms
+        2. Create smooth signed distance transforms
 
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -146,58 +144,7 @@ def Run_Pipeline(args):
             shape_seg.binarize()
 
         """
-        Grooming Step 2: Select a reference
-        This step requires breaking the loop to load all of the segmentations at once so the shape
-        closest to the mean can be found and selected as the reference. 
-        """
-        
-        domains_per_shape = 2
-        ref_index = sw.find_reference_image_index(shape_seg_list,domains_per_shape)
-        
-        # Make a copy of the reference segmentation 
-        ref_seg = []
-        ref_names = []
-        for d in range(domains_per_shape):
-
-            seg = shape_seg_list[domains_per_shape*ref_index + d ].write(groom_dir + 'reference' + str(d).zfill(2)+'.nrrd')
-            ref_seg.append(seg.antialias(antialias_iterations))
-            ref_names.append(shape_names[domains_per_shape*ref_index + d ])
-        print("Reference found: " , ref_names)
-
-        """
-        Grooming Step 3: Rigid alignment
-        This step rigidly aligns each shape to the selected references. 
-        Rigid alignment involves interpolation, hence we need to convert binary segmentations 
-        to continuous-valued images again. There are two steps:
-            - computing the rigid transformation parameters that would align a segmentation 
-            to the reference shape
-            - applying the rigid transformation to the segmentation
-            - save the aligned images for the next step
-        """
-
-        # Set the alignment parameters
-        iso_value = 1e-20
-        icp_iterations = 200
-        for i in range(len(shape_seg_list)):
-            ref_domain = ref_seg[i%domains_per_shape]
-            ref_name = ref_names[i%domains_per_shape]
-
-            print('Aligning ' + shape_names[i] + ' to ' + ref_name)
-            # compute rigid transformation
-            shape_seg_list[i].antialias(antialias_iterations)
-            rigidTransform = shape_seg_list[i].createTransform(
-                ref_domain, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
-            # second we apply the computed transformation, note that shape_seg has
-            # already been antialiased, so we can directly apply the transformation
-            shape_seg_list[i].applyTransform(rigidTransform,
-                                     ref_domain.origin(),  ref_domain.dims(),
-                                     ref_domain.spacing(), ref_domain.coordsys(),
-                                     sw.InterpolationType.Linear)
-            # then turn antialized-tranformed segmentation to a binary segmentation
-            shape_seg_list[i].binarize()
-
-        """
-        Grooming Step 4: Converting segmentations to smooth signed distance transforms.
+        Grooming Step 2: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
         a smoother interface we first antialiasing the segmentation then compute the distance transform 
         at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
