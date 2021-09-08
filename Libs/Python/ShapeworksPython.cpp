@@ -118,9 +118,14 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init
        // The reasons we don't simply specify py::array_t<float>
        // as a parameter are:
+<<<<<<< HEAD
        // - to take ownership of the array
        // - to ensure dtype is same as Image::PixelType, and
        // - to ensure the array isn't silently cast by copying (the default pybind11 behavior)
+=======
+       // - to take ownership if array type is same as Image::PixelType, and
+       // - to ensure the array isn't silently cast by copying, the default pybind11 behavior
+>>>>>>> 3b8486879fe8beacf10a39757a2715df60d9eedc
        ([](py::array& np_array) {
          // get input array info
          auto info = np_array.request();
