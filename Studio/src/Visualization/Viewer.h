@@ -75,6 +75,8 @@ public:
 
   void update_feature_range(double* range);
 
+  void update_opacities();
+
   QSharedPointer<Shape> get_shape();
 
 private:
