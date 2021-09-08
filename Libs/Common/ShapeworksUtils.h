@@ -7,6 +7,7 @@
 #include <vtkPolyData.h>
 
 #include <chrono>
+#include <random>
 
 namespace shapeworks {
 
@@ -26,7 +27,10 @@ public:
   static unsigned rngSeed() { return _rngSeed; }
 
   /// sets random seed
-  static void setRngSeed(const unsigned seed) { _rngSeed = seed; }
+  static void setRngSeed(const unsigned seed);
+
+  /// generates random number
+  static unsigned generateNumber() { return mt(); }
 
   /// returns true if pathname is a directory
   // TODO: in C++17 this is a standard function
@@ -42,6 +46,7 @@ public:
 
 private:
   static unsigned _rngSeed;
+  static std::mt19937 mt;
 };
 
 } // shapeworks

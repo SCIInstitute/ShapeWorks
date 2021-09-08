@@ -6,7 +6,6 @@
 #include "FEFillHole.h"
 #include "ShapeworksUtils.h"
 #include <algorithm>
-#include <random>
 
 using namespace shapeworks;
 
@@ -121,9 +120,6 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 		if (pm->Element(i).IsSelected()) selectedFaces.push_back(i);
 	}
 
-	// create random number generator
-	std::mt19937 mt(ShapeworksUtils::rngSeed());
-
 	// assign NC random triangles to a cluster
 	// TODO: make a better algorithm
 	const int MAX_TRIES = 2*T0;
@@ -141,7 +137,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 		// assign the first nc_sel seeds 
 		while (nc < nc_sel)
 		{
-			int n = mt()%sel_faces;
+			int n = ShapeworksUtils::generateNumber()%sel_faces;
 			int face_num = selectedFaces[n];
 			if (m_tag[face_num] == 0) m_tag[face_num] = ++nc;
 
@@ -153,7 +149,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 	// assign the remaining seeds
 	while (nc < NC)
 	{
-		int n = mt()%T0;
+		int n = ShapeworksUtils::generateNumber()%T0;
 		if (m_tag[n] == 0) m_tag[n] = ++nc;
 
 		ntries++;

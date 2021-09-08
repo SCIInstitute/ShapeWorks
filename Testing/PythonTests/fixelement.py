@@ -6,7 +6,7 @@ def fixelementTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.fixElement()
 
-  compareMesh = Mesh(os.environ["DATA"] + "/fixelement.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/fixElement.vtk")
 
   return mesh == compareMesh
 
