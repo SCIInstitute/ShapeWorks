@@ -76,6 +76,12 @@
     <li class="toctree-l2"><a class="reference internal" href="#what-surfaces-are-good-for-shape-modeling">What surfaces are ”good” for shape modeling?</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#what-is-shape-modeling">What is Shape Modeling?</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#shape-parameters">Shape Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#discovering-shape-parameters-via-optimization">Discovering Shape Parameters via Optimization</a>
+    </li>
+        </ul>
     </li>
     </ul>
                     </li>
@@ -303,7 +309,8 @@
 <p>For shape modeling purposes, it is recommended that we quality control segmentation results before feeding them to the shape modeling process. Most of these surface integrity issues can be resolved by some data preprocessing step, which is the <a href="../workflow/groom.html">groom stage</a> in a typical <a href="workflow.html">shape modeling workflow</a>. </p>
 </div>
 <h2 id="what-is-shape-modeling">What is Shape Modeling?</h2>
-<p>Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by it s inner and outer radii.</p>
+<h3 id="shape-parameters">Shape Parameters</h3>
+<p>Let’s first consider parameterized geometric shapes. For example, disregarding location, orientiation, and global scale, an ellipse can be fully described by its major and minor radii. A torus can be parameterized by its inner and outer radii.</p>
 <p>Here is a more complex example of parameterized shapes called <em>supershapes</em>, which be used to describe many complex shapes and curves that are found in nature. On the left, you can see sliders that control shape parameters describing a supershape. Every time we change any of these parameters, we get a different shape that belongs to the supershapes family. Hence, these parameters fully describe a shape in this family or population. This video was captured using <a href="http://andrewmarsh.com/apps/releases/supershapes.html">Andrew Marsh's</a> app website for supershapes generation.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/supershapes-gen.mp4" autoplay muted loop controls style="width:100%"></p>
 
@@ -318,6 +325,15 @@
 <p>Shape modeling is the process of discovering significant shape parameters directly from medical data that can fully describe an anatomy in the context of a population.</p>
 </div>
 <p><img alt="Shape Modeling" src="../img/getting-started/shape-modeling.png" /></p>
+<h3 id="discovering-shape-parameters-via-optimization">Discovering Shape Parameters via Optimization</h3>
+<p>ShapeWorks allows for discovering the modes of variation in shape cohorts for which the parameters are unknown. This is done by first optimizing particles that are in correspondence across the population (see <a href="../workflow/optimize.html">Shape Model Optimization</a>). Next statistical analysis is performed using principal component analysis (PCA), where the mean and modes of shape variation are computed based on the optimized correspondence model. These modes of shape variation can be visualized and used in downstream medical tasks.</p>
+<p>Below is an example of a shape model from parameterized ellipsoids that differ along the x and y radius. The mean shape is shown and we can see that 99.9% of the shape variability is explained by just two PCA modes as expected.</p>
+<p><img alt="Ellipsoid Shape Model" src="../img/getting-started/ellipsoid.png" /></p>
+<p>By animating how the shape changes along the first PCA mode, we can conclude that this represents the variation in the radius along the y-axis.</p>
+<p><img alt="Ellispoid 1st mode" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_1st_mode.gif" /></p>
+<p>And animating along the second PCA mode, we can conclude this represents the variation in the radius along the x-axis.</p>
+<p><img alt="Ellispoid 2nd mode" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_2nd_mode.gif" /></p>
+<p>This example demonstrates that correspondence points defined via ShapeWorks optimization can correctly capture the parameters of a class of shapes. </p>
               
             </div>
           </div>
