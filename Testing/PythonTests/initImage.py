@@ -88,3 +88,74 @@ def initImageTest8():
   return np.array_equal(arr1, np.ones([25,15,5], dtype=np.float32) + 1)
 
 utils.test(initImageTest8)
+
+def imageArr():
+    dims = (7,3,2) # NOTE: numpy dims are specified in z, y, x order
+    farr = np.ndarray(dims, dtype=np.float32)
+
+    ival = 10; jval = 50; kval = 1.75
+    for i in range(0, farr.shape[2]):
+        for j in range(0, farr.shape[1]):
+            for k in range(0, farr.shape[0]):
+                farr[k][j][i] = ival*(i/farr.shape[2]) + jval*(j/farr.shape[1]) + kval/farr.shape[0]
+
+    return farr
+
+def imageInitTest1():
+    arr = imageArr()
+    img = Image(arr)
+    compareImg = Image(os.environ["DATA"] + "/image_from_numpy.nrrd")
+
+    # verify image initialized and data ownership was transferred from numpy
+    return not arr.flags['OWNDATA'] and img.compare(compareImg);
+
+utils.test(imageInitTest1)
+
+def imageInitTest2():
+    arr = imageArr()
+    img = Image(arr)
+
+    # verify arr and img still point to same memory
+    img += 100
+    return abs(img.mean() - arr.mean()) <= 1e-4
+    
+utils.test(imageInitTest2)
+
+def imageInitTest3():
+    arr = np.array(imageArr(), dtype = np.float64)
+
+    # verify image cannot be initialized from an array dtype other than np.float32
+    img = Image(arr)
+    
+utils.expectException(imageInitTest3, ValueError)
+
+def imageAssignTest1():
+    from scipy import ndimage
+
+    img = Image(os.environ["DATA"] + "/femur.nrrd")
+
+    # set spacing to show that it's preserved on both copy and assign
+    img.setSpacing((1.5, 0.75, 1))
+
+    # image won't be modified by this filter (it creates a copy)
+    ck = ndimage.gaussian_filter(img.toArray(), 12.0)
+    if np.array_equal(ck, img.toArray()):
+        raise AssertionError("unexpected exception: filter not applied")
+
+    # now test actual assignment
+    img.assign(ck)
+    compareImg = Image(os.environ["DATA"] + "/gaussian_of_femur.nrrd")
+
+    return img.compare(compareImg)
+
+utils.test(imageAssignTest1)
+
+def imageToArrayTest1():
+    img = Image(os.environ["DATA"] + "/image_from_numpy.nrrd")
+    arr = img.toArray()
+    compareArr = imageArr()
+
+    return np.array_equal(arr, compareArr)
+
+utils.test(imageToArrayTest1)
+
