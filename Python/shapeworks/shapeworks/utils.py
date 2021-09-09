@@ -103,7 +103,7 @@ def find_reference_image_index(inDataList,domains_per_shape=1):
         combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
         index = sw.MeshUtils.findReferenceMesh(combined_mesh)
        
-        return index
+        return index,combined_mesh
 
 
 def save_contour_as_vtp(points, lines, filename):
