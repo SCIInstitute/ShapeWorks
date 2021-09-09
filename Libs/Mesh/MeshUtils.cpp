@@ -102,19 +102,19 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<c
   return bbox;
 }
 
-int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
+size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
 {
   std::vector<std::pair<int, int>> pairs;
 
   // enumerate all pairs of meshes
-  for (int i = 0; i < meshes.size(); i++) {
-    for (int j = i + 1; j < meshes.size(); j++) {
+  for (size_t i = 0; i < meshes.size(); i++) {
+    for (size_t j = i + 1; j < meshes.size(); j++) {
       pairs.push_back(std::make_pair(i, j));
     }
   }
 
   // map of pair to distance value
-  std::map<int, double> results;
+  std::map<size_t, double> results;
   // mutex for access to results
   tbb::mutex mutex;
 
@@ -149,18 +149,12 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
       }
     });
 
-  std::vector<double> sums(meshes.size(), 0);
-  std::vector<int> counts(meshes.size(), 0);
   std::vector<double> means(meshes.size(), 0);
 
   double count = meshes.size() - 1;
-  for (int i = 0; i < pairs.size(); i++) {
+  for (size_t i = 0; i < pairs.size(); i++) {
     auto pair = pairs[i];
     double result = results[i];
-    sums[pair.first] += result;
-    sums[pair.second] += result;
-    counts[pair.first]++;
-    counts[pair.second]++;
     means[pair.first] += result / count;
     means[pair.second] += result / count;
   }

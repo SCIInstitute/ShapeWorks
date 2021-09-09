@@ -51,13 +51,24 @@ private:
   void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
-  bool image_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool image_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
   //! Run the mesh based pipeline on a single subject
-  bool mesh_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
+
+  bool run_alignment();
+
+  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
+
+  static std::vector<double> get_identity_transform();
+  static std::vector<double> get_center_transform(const Mesh &mesh);
+  static std::vector<double> convert_transform(itk::AffineTransform<double, 3>::Pointer transform);
+
+  Mesh get_mesh(int subject, int domain);
+
 
   Vector3 center(Image& image);
   void isolate(Image& image);

@@ -142,6 +142,9 @@ def compute_line_indices(n, is_closed=True):
 
     return lines
 
+def get_api_version():
+    return "6.2"
+
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
     global sw_logger

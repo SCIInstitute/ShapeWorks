@@ -40,6 +40,7 @@ call pip install statsmodels
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
+call pip install shapely
 call pip install seaborn
 call pip install mdutils
 call pip install mkdocs
