@@ -324,6 +324,7 @@ void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh){
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
   //std::cout << "Adding arrow actors" << std::endl;
+  vtkSmartPointer<vtkDataArray> vff = mesh->getVTKMesh()->GetCellData()->GetArray(0);
 
   // Computes grad vec for each face
   for(size_t i = 0; i < F.rows(); i++){
@@ -335,8 +336,7 @@ void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh){
       Eigen::Vector3d face_center = (v1+v2+v3)/3;
 
       // Compute gradient of geodesics
-      Eigen::Vector3d G = mesh->getMultiFieldValue("Gradient", i).head(3);
-      Eigen::Vector3d out_grad_eigen = (G.cross(vert_dists)).rowwise().sum();
+      Eigen::Vector3d out_grad_eigen(vff->GetTuple3(i));
       renderer->AddActor(getArrow(face_center, face_center+out_grad_eigen));
       //out_grad_eigen *= geo_dist / out_grad_eigen.norm();
   }
