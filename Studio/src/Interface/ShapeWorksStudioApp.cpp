@@ -290,23 +290,6 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
 
   this->new_session();
 
-  this->update_table();
-  this->update_from_preferences();
-
-  this->lightbox_->clear_renderers();
-  this->analysis_tool_->reset_stats();
-  this->ui_->action_import_mode->setChecked(true);
-  this->ui_->action_groom_mode->setChecked(false);
-  this->ui_->action_optimize_mode->setChecked(false);
-  this->ui_->action_analysis_mode->setChecked(false);
-  this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
-  this->ui_->controlsDock->setWindowTitle("Data");
-  this->preferences_.set_saved();
-  this->enable_possible_actions();
-  this->update_display(true);
-  this->visualizer_->update_viewer_properties();
-
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------
@@ -930,6 +913,25 @@ void ShapeWorksStudioApp::new_session()
   this->optimize_tool_->set_session(this->session_);
   this->deepssm_tool_->set_session(this->session_);
   this->create_iso_submenu();
+
+
+  this->update_table();
+  this->update_from_preferences();
+
+  this->lightbox_->clear_renderers();
+  this->analysis_tool_->reset_stats();
+  this->ui_->action_import_mode->setChecked(true);
+  this->ui_->action_groom_mode->setChecked(false);
+  this->ui_->action_optimize_mode->setChecked(false);
+  this->ui_->action_analysis_mode->setChecked(false);
+  this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
+  this->ui_->controlsDock->setWindowTitle("Data");
+  this->preferences_.set_saved();
+  this->enable_possible_actions();
+  this->update_display(true);
+  this->visualizer_->update_viewer_properties();
+
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------
@@ -971,7 +973,6 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::DEEPSSM_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->deepssm_tool_.data());
-    //this->deepssm_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("DeepSSM");
     this->update_display();
     this->ui_->action_deepssm_mode->setChecked(true);
