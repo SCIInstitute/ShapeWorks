@@ -239,6 +239,11 @@ TEST(pythonTests, distanceTest)
   run_use_case("distance.py");
 }
 
+TEST(pythonTests, fixElementTest)
+{
+  run_use_case("fixelement.py");
+}
+
 TEST(pythonTests, closestpointTest)
 {
   run_use_case("closestpoint.py");
