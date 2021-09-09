@@ -261,9 +261,12 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 // https://stackoverflow.com/a/17382806/207044
 template<typename P>
-bool equalNSigDigits(P a, P b, int n = 4)
+bool equalNSigDigits(P a, P b, int n = 4, double eps = 0.0)
 {
-  return std::abs(a - b) <= pow(0.1, n) * std::max(std::abs(a), std::abs(b));
+  if (eps != 0.0)
+    return std::abs(a-b) <= eps;
+  else
+    return std::abs(a - b) <= pow(0.1, n) * std::max(std::abs(a), std::abs(b));
 }
 
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||

@@ -1220,6 +1220,7 @@ void CompareMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this mesh with another.");
+  parser.add_option("--epsilon").action("store").type("double").set_default(0.0).help("Epsilon [default: %default].");
 
   Command::buildParser();
 }
@@ -1238,7 +1239,9 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  if (sharedData.mesh->compare(Mesh(filename)))
+  double eps = static_cast<double>(options.get("epsilon"));
+
+  if (sharedData.mesh->compare(Mesh(filename), eps))
   {
     std::cout << "compare success\n";
     return true;

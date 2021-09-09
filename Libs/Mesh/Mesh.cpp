@@ -560,7 +560,11 @@ Field Mesh::curvature(const CurvatureType type)
     case Principal:
     {
       curv->SetName("principal curvature");
+
+      // returns maximal curvature value for each vertex
       // igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
+
+      // returns minimal curvature value for each vertex
       igl::principal_curvature(V, F, PD1, PD2, C, PV2);
       break;
     }
@@ -934,7 +938,7 @@ bool Mesh::compareAllFaces(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareAllFields(const Mesh &other_mesh) const
+bool Mesh::compareAllFields(const Mesh &other_mesh, double eps) const
 {
   if (!this->mesh || !other_mesh.mesh)
     throw std::invalid_argument("Invalid meshes");
@@ -956,7 +960,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
 
   // now compare the actual fields
   for (auto field: fields1) {
-    if (!compareField(other_mesh, field)) {
+    if (!compareField(other_mesh, field, "", eps)) {
       std::cerr << field << " fields are not the same\n";
       return false;
     }
@@ -965,7 +969,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2) const
+bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2, double eps) const
 {
   auto field1 = getField<vtkDataArray>(name1);
   auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
@@ -987,7 +991,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
     {
       auto v1(field1->GetTuple(i)[c]);
       auto v2(field2->GetTuple(i)[c]);
-      if (!equalNSigDigits(v1, v2, 5)) {
+      if (!equalNSigDigits(v1, v2, 5, eps)) {
         printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
         return false;
       }
@@ -997,7 +1001,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
   return true;
 }
 
-bool Mesh::compare(const Mesh& other) const
+bool Mesh::compare(const Mesh& other, double eps) const
 {
   if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
   if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
@@ -1005,7 +1009,7 @@ bool Mesh::compare(const Mesh& other) const
   if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
   if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
   if (!compareAllFaces(other))                             { std::cerr << "faces differ\n"; return false; }
-  if (!compareAllFields(other))                            { std::cerr << "fields differ\n"; return false; }
+  if (!compareAllFields(other, eps))                            { std::cerr << "fields differ\n"; return false; }
 
   return true;
 }
@@ -1033,11 +1037,8 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
-
 Mesh& Mesh::operator+=(const Mesh& otherMesh)
 {
-
-  
   // Append the two meshes
   vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
   appendFilter->AddInputData(this->mesh);
@@ -1048,9 +1049,8 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());
   cleanFilter->Update();
 
-  
   this->mesh = cleanFilter->GetOutput();
   return *this;
-  
 }
+
 } // shapeworks

@@ -11,33 +11,66 @@ using namespace shapeworks;
 
 TEST(MeshTests, curvatureTest1)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
   mesh.setField("MeanCurvature", curv);
 
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meancurvature.vtk"));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
 }
 
 TEST(MeshTests, curvatureTest2)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature();
   mesh.setField("PrincipalCurvature", curv);
 
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalcurvature.vtk"));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature"));
 }
 
 TEST(MeshTests, curvatureTest3)
 {
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature"));
+}
+
+TEST(MeshTests, curvatureTest4)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
+}
+
+TEST(MeshTests, curvatureTest5)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature"));
+}
+
+TEST(MeshTests, curvatureTest6)
+{
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
   mesh.setField("GaussianCurvature", curv);
 
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussiancurvature.vtk"));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature"));
 }
