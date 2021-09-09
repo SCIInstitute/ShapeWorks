@@ -38,6 +38,106 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
+// helper function for Image.init and Image.assign
+Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
+  // get input array info
+  auto info = np_array.request();
+
+#if 0
+  /*
+    struct buffer_info {
+    void *ptr;
+    py::ssize_t itemsize;
+    std::string format;
+    py::ssize_t ndim;
+    std::vector<py::ssize_t> shape;
+    std::vector<py::ssize_t> strides;
+    };
+  */
+
+  std::cout << "buffer info: \n"
+            << "\tinfo.ptr: " << info.ptr << std::endl
+            << "\tinfo.itemsize: " << info.itemsize << std::endl
+            << "\tinfo.format: " << info.format << std::endl
+            << "\tinfo.ndim: " << info.ndim << std::endl;
+  std::cout << "\tinfo.shape (zyx): [ ";
+  for (int i = 0; i < info.ndim; i++) {
+    std::cout << info.shape[i] << " ";
+  }
+  std::cout << "]\n\tinfo.strides (zyx): [ ";
+  for (int i = 0; i < info.ndim; i++) {
+    std::cout << info.strides[i] << " ";
+  }
+  std::cout << "]\n";
+  std::cout << "writeable: " << np_array.writeable() << std::endl
+            << "owns data: " << np_array.owndata() << std::endl;
+#endif
+
+  // verify it's 3d
+  if (info.ndim != 3) {
+    throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
+  }
+
+  // verify it's C order, not Fortran order
+  auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+  if (!c_order) {
+    throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
+  }
+
+  // verify data is densely packed by checking strides is same as shape
+  std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
+    info.shape[2]*info.itemsize,
+    info.itemsize};
+  for (int i = 0; i < info.ndim; i++) {
+    if (info.strides[i] != strides[i]) {
+      std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
+      throw std::invalid_argument("array must be densely packed");
+    }
+  }
+
+  // array must be dtype.float32 and own its data to transfer it to Image
+  if (info.format != py::format_descriptor<Image::PixelType>::format()) {
+    // inform the user how to create correct type array rather than copy
+    throw std::invalid_argument("array must be same dtype as Image; convert using `np.array(arr, dtype=np.float32)`");
+  }
+  if (!np_array.owndata()) {
+    throw std::invalid_argument("error: numpy array does not own data (see `arr.flags()`) to be transferred to Image");
+  }
+
+  // Pass ownership of the array to Image to prevent Python from
+  // deallocating (the image will dealloate when it's time).
+  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+  disown_data_flag = ~disown_data_flag;
+  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
+
+  // modify np_array's OWNDATA flag and ensure ownership transfered
+  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
+  if (np_array.owndata()) {
+    throw std::runtime_error("error transferring data ownership to Image");
+  }
+
+  // import data, passing ownership of memory to ensure there will be no leak
+  using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
+  auto importer = ImportType::New();
+
+  ImportType::SizeType size; // i.e., Dims (remember numpy orders zyx)
+  size[0] = np_array.shape()[2];
+  size[1] = np_array.shape()[1];
+  size[2] = np_array.shape()[0];
+
+  assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
+  importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
+                             size[0]*size[1]*size[2]*sizeof(Image::PixelType),
+                             true /*importer take_ownership*/);
+  ImportType::IndexType start({0,0,0}); // i.e., Coord
+  ImportType::RegionType region;
+  region.SetIndex(start);
+  region.SetSize(size);
+  importer->SetRegion(region);
+  importer->Update();
+  return importer->GetOutput();
+}
+
 PYBIND11_MODULE(shapeworks_py, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -110,123 +210,55 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   // Image
   py::class_<Image>(m, "Image")
-  .def(py::init<const std::string &>())
-  .def(py::init<const Image&>())
+    .def(py::init<const std::string &>())
+    .def(py::init<const Image&>())
 
-  // Image constructor from numpy array. Wraps float arrays by default.
-  // Tell user to use `Image(np.copy(array))` if copy is intended.
-  .def(py::init
-       // The reasons we don't simply specify py::array_t<float>
-       // as a parameter are:
-<<<<<<< HEAD
-       // - to take ownership of the array
-       // - to ensure dtype is same as Image::PixelType, and
-       // - to ensure the array isn't silently cast by copying (the default pybind11 behavior)
-=======
-       // - to take ownership if array type is same as Image::PixelType, and
-       // - to ensure the array isn't silently cast by copying, the default pybind11 behavior
->>>>>>> 3b8486879fe8beacf10a39757a2715df60d9eedc
-       ([](py::array& np_array) {
-         // get input array info
-         auto info = np_array.request();
+    // constructor that wraps numpy float32 array
+    .def(py::init
+         // The reasons we don't simply specify py::array_t<float>
+         // as a parameter are:
+         // - to take ownership of the array
+         // - to ensure dtype is same as Image::PixelType, and
+         // - to ensure the array isn't silently cast by copying (the default pybind11 behavior)
+         ([](py::array& np_array) {
+           return Image(wrapNumpyArr(np_array));
+         }),
+         "Initialize an image from a numpy array (must be dtype float32).\nTransfers ownership of the array without copying.\nIf a copy is desired, construct using Image(np.array(arr)).")
 
-#if 0
-         /*
-           struct buffer_info {
-           void *ptr;
-           py::ssize_t itemsize;
-           std::string format;
-           py::ssize_t ndim;
-           std::vector<py::ssize_t> shape;
-           std::vector<py::ssize_t> strides;
-           };
-         */
+    .def("assign",
+         [](Image& image, py::array& np_array) -> decltype(auto) {
 
-         std::cout << "buffer info: \n"
-                   << "\tinfo.ptr: " << info.ptr << std::endl
-                   << "\tinfo.itemsize: " << info.itemsize << std::endl
-                   << "\tinfo.format: " << info.format << std::endl
-                   << "\tinfo.ndim: " << info.ndim << std::endl;
-         std::cout << "\tinfo.shape (zyx): [ ";
-         for (int i = 0; i < info.ndim; i++) {
-           std::cout << info.shape[i] << " ";
-         }
-         std::cout << "]\n\tinfo.strides (zyx): [ ";
-         for (int i = 0; i < info.ndim; i++) {
-           std::cout << info.strides[i] << " ";
-         }
-         std::cout << "]\n";
-         std::cout << "writeable: " << np_array.writeable() << std::endl
-                   << "owns data: " << np_array.owndata() << std::endl;
-#endif
-
-         // verify it's 3d
-         if (info.ndim != 3) {
-           throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
-         }
-
-         // verify it's C order, not Fortran order
-         auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
-         if (!c_order) {
-           throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
-         }
-
-         // verify data is densely packed by checking strides is same as shape
-         std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
-                                          info.shape[2]*info.itemsize,
-                                          info.itemsize};
-         for (int i = 0; i < info.ndim; i++) {
-           if (info.strides[i] != strides[i]) {
-             std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-             throw std::invalid_argument("array must be densely packed");
+           // verify dims are the same as existing image; warn if not
+           auto curr_dims = image.dims();
+           Dims new_dims =
+             {{ static_cast<Dims::SizeValueType>(np_array.shape()[2]),
+                static_cast<Dims::SizeValueType>(np_array.shape()[1]),
+                static_cast<Dims::SizeValueType>(np_array.shape()[0]) }};
+           if (curr_dims[0] != new_dims[0] ||
+               curr_dims[1] != new_dims[1] ||
+               curr_dims[2] != new_dims[2]) {
+             std::cerr << "curr_dims: " << curr_dims[0] << " " << curr_dims[1] << " " << curr_dims[2] << std::endl;
+             std::cerr << "new_dims: " << new_dims[0] << " " << new_dims[1] << " " << new_dims[2] << std::endl;
+             throw std::invalid_argument("dims of new image are not the same as old image.");
            }
-         }
 
-         // transfer data into image using itk importer
-         using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
-         auto importer = ImportType::New();
+           // get existing origin, shape, and coordsys
+           auto origin = image.origin();
+           auto spacing = image.spacing();
+           auto coordsys = image.coordsys();
 
-         ImportType::SizeType size;            // i.e., Dims (remember numpy orders opposite direction)
-         size[0] = np_array.shape()[2];
-         size[1] = np_array.shape()[1];
-         size[2] = np_array.shape()[0];
+           // wrap the numpy array
+           image = Image(wrapNumpyArr(np_array));
 
-         // array must be dtype.float32 and own its data to transfer it to Image
-         if (info.format != py::format_descriptor<Image::PixelType>::format()) {
-           // inform the user how to create correct type array rather than copy
-           throw std::invalid_argument("array must be same dtype as Image; convert using `np.array(arr, dtype=np.float32)`");
-         }
-         if (!np_array.owndata()) {
-           throw std::invalid_argument("error: numpy array does not own data (see `arr.flags()`) to be transferred to Image");
-         }
+           // set new image to have the same origin, shape, and coordsys
+           image.setOrigin(origin);
+           image.setSpacing(spacing);
+           image.setCoordsys(coordsys);
 
-         // pass ownership of the array to Image to prevent Python from
-         // deallocating (the image will dealloate when it's time)
-         std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
-         disown_data_flag = ~disown_data_flag;
-         int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
+           return image;
+         },
+    "Initialize an image from a numpy array (must be dtype float32).\nTransfers ownership of the array without copying.\nIf a copy is desired, construct using Image(np.array(arr)).")
 
-         // transfer ownership by modifying nyumpy.Array OWNDATA flag
-         pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
-         if (np_array.owndata()) {
-           throw std::runtime_error("error transferring data ownership to Image");
-         }
-
-         // import data, passing ownership of memory to ensure there will be no leak
-         assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
-         importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
-                                    size[0]*size[1]*size[2]*sizeof(Image::PixelType),
-                                    true /*importer take_ownership*/);
-         ImportType::IndexType start({0,0,0}); // i.e., Coord
-         ImportType::RegionType region;
-         region.SetIndex(start);
-         region.SetSize(size);
-         importer->SetRegion(region);
-
-         importer->Update();
-         return Image(importer->GetOutput());
-       }),
-       "initialize an image from a numpy array of dtype.float32\nImage wraps the array without copying.\nIf a copy is desired, construct using Image(np.copy(array)).")
 
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
@@ -467,6 +499,16 @@ PYBIND11_MODULE(shapeworks_py, m)
        "sets the image origin in physical space to the given value",
        "origin"_a=std::vector<double>({0,0,0}))
 
+    .def("setCoordsys",
+         [](Image& image, const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &coordsys) {
+           if (coordsys.rows() != 3 || coordsys.cols() != 3) {
+             throw std::invalid_argument("coordsys must be a 3x3 row-major numpy array");
+           }
+           return image.setCoordsys(eigenToItk(coordsys));
+         },
+         "sets the orientation of this image",
+         "coordsys"_a=std::vector<double>({1,0,0, 0,1,0, 0,0,1}))
+
   .def("reflect",
        &Image::reflect,
        "reflect image with respect to logical image center and the specified axis",
@@ -493,8 +535,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        "physical coordinates of center of this image")
 
   .def("coordsys",
-       [](const Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
-       "return coordinate system in which this image lives in physical space")
+       [](const Image &self) -> decltype(auto) {
+         return itkToEigen(self.coordsys());
+       },
+       "return 3x3 coordinate system in which this image lives in physical space")
 
   .def("centerOfMass",
        [](const Image& self, double minVal, double maxVal) -> decltype(auto) {

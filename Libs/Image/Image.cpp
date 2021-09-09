@@ -839,6 +839,20 @@ Image& Image::setSpacing(Vector3 spacing)
   return *this;
 }
 
+Image& Image::setCoordsys(ImageType::DirectionType coordsys)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputDirection(coordsys);
+  filter->ChangeDirectionOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
 Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
