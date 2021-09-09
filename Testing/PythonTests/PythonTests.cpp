@@ -334,3 +334,8 @@ TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
 }
+
+TEST(pythonTests, imagearraypassingTest)
+{
+  run_use_case("imageArrayPassing.py");
+}

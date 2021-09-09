@@ -611,12 +611,15 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
 
   .def("toArray",
-       [](const Image &image, bool for_viewing) -> decltype(auto) {
-         const auto dims = image.dims();
+       [](const Image &image, bool copy, bool for_viewing) -> decltype(auto) {
 
+         // We pass the array in column-major ('F') order when it will be used
+         // for viewing (updating both shape and strides).
+         const auto dims = image.dims();
          auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
-         if (for_viewing)
+         if (for_viewing) {
            shape = std::vector<size_t>{dims[0], dims[1], dims[2]};
+         }
 
          auto strides = std::vector<size_t>{
            dims[0] * dims[1] * sizeof(Image::PixelType),
@@ -629,13 +632,16 @@ PYBIND11_MODULE(shapeworks_py, m)
              dims[0] * dims[1] * sizeof(Image::PixelType)};
 
          const auto py_dtype = py::dtype::of<Image::PixelType>();
+
 #if 0
          std::cout << "Image info: " << std::endl
                    << "\tshape: " << shape[0] << " x " << shape[1] << " x " << shape[2] << std::endl
                    << "\tstrides: " << strides[0] << ", " << strides[1] << ", " << strides[2]
                    << "\tdtype: " << typeid(Image::PixelType).name()
                                   << " (" << sizeof(Image::PixelType) << " bytes)" << std::endl
-                   << "\tpy_dtype: " << py_dtype << std::endl;
+                   << "\tpy_dtype: " << py_dtype << std::endl
+                   << "\tcopy_requested: " << copy << std::endl
+                   << "\tfor_viewing: " << for_viewing << std::endl;
 #endif
 
          // When a valid object is passed as 'base', it tells pybind not to take
@@ -650,11 +656,11 @@ PYBIND11_MODULE(shapeworks_py, m)
            shape,
            strides,
            image.getITKImage()->GetBufferPointer(),
-           dummyDataOwner
+           (copy ? pybind11::handle() : dummyDataOwner)
          };
-         assert(!img.owndata());
+         assert(copy == img.owndata());
 
-         // prevent copying when numpy.ravel is called (transpose will still work fine)
+         // prevent pyvista.wrap from copying (transpose will still work fine)
          if (for_viewing)
            pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
          else
@@ -662,8 +668,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
          return img;
        },
-       "returns raw array of image data, directly sharing data so image pixels can be directly modified;\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; for viewing updates after performing Image operations, be sure to retrieve the array again ('sw2vtkImage' already does this).",
-       "for_viewing"_a=false)
+       "returns raw array of image data, directly sharing data by default, copying if specified.\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; use for_viewing argument to get array in column-major ('F') order ('sw2vtkImage' already does this).",
+       "copy"_a=false, "for_viewing"_a=false)
 
   .def("createTransform",
        py::overload_cast<XFormType>(&Image::createTransform),

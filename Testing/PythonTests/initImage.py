@@ -20,13 +20,22 @@ def initImageTest2():
 utils.expectException(initImageTest2, ValueError)
 
 # load from a numpy array of the correct type
-def initImageTest3():
+def initImageTest3a():
   arr = np.ones([25,15,5], dtype=np.float32)
   img = Image(arr)
 
   return img
 
-utils.test(initImageTest3)
+utils.test(initImageTest3a)
+
+# ensure ownership of numpy array is transferred to image
+def initImageTest3b():
+  arr = np.ones([25,15,5], dtype=np.float32)
+  img = Image(arr)
+
+  return not arr.flags['OWNDATA']
+
+utils.test(initImageTest3b)
 
 # load from a numpy array of an unsupported type
 def initImageTest4():
@@ -65,3 +74,17 @@ def initImageTest7():
   return img == img_copy
 
 utils.test(initImageTest7)
+
+# ensure numpy array is shared, not copied after (non-ITK) sw.Image operation
+def initImageTest8():
+  arr1 = np.ones([25,15,5], dtype=np.float32)
+  img1 = Image(arr1)
+  arr2 = np.ones([25,15,5], dtype=np.float32)
+  img2 = Image(arr2)
+
+  img1 += img2
+
+  # Image + Image modifies original array (ones + ones = twos)
+  return np.array_equal(arr1, np.ones([25,15,5], dtype=np.float32) + 1)
+
+utils.test(initImageTest8)
