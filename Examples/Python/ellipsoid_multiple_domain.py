@@ -143,8 +143,51 @@ def Run_Pipeline(args):
             # make segmetnation binary again
             shape_seg.binarize()
 
+
+
         """
-        Grooming Step 2: Converting segmentations to smooth signed distance transforms.
+        Grooming Step 2: Find reference segmentation by combining the images from all domains. 
+        and align all the shapes using the reference
+        """
+
+        iso_value = 1e-20
+        icp_iterations = 200
+        domains_per_shape=2
+        combined_segs = []
+        ref_index,combined_mesh = sw.find_reference_image_index(shape_seg_list,domains_per_shape=2)
+        for i in range(len(combined_mesh)):
+
+            bbox = combined_mesh[i].boundingBox().pad(20.0)
+            combined_segs.append(combined_mesh[i].toImage(bbox))
+        
+        reference = combined_segs[ref_index].copy()
+        reference.antialias(antialias_iterations)
+
+        for i in range(len(combined_segs)):
+
+            # compute rigid transformation using the combined segmentations
+            combined_segs[i].antialias(antialias_iterations)
+            rigidTransform = combined_segs[i].createTransform(
+                reference, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+
+            # apply the transformation to each domain(each subject)
+            for d in range(domains_per_shape):
+                
+                print("Aligning " + shape_names[i*domains_per_shape+d])
+                
+                shape_seg_list[i*domains_per_shape+d].antialias(antialias_iterations)
+                
+                shape_seg_list[i*domains_per_shape+d].applyTransform(rigidTransform,
+                                         reference.origin(),  reference.dims(),
+                                         reference.spacing(), reference.coordsys(),
+                                         sw.InterpolationType.NearestNeighbor)
+                # then turn antialized-tranformed segmentation to a binary segmentation
+                shape_seg_list[i*domains_per_shape+d].binarize().write(groom_dir+shape_names[i*domains_per_shape+d]+"_aligned.nrrd",compressed=False)
+        
+
+
+        """
+        Grooming Step 3: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
         a smoother interface we first antialiasing the segmentation then compute the distance transform 
         at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
