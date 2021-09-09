@@ -5,6 +5,14 @@
 #include "Eigen/Core"
 #include "Eigen/Dense"
 
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkLookupTable.h>
+#include <vtkArrowSource.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderer.h>
+
 namespace shapeworks {
 
 /// Helper functions for meshes
@@ -42,6 +50,12 @@ public:
 
   /// computes average normals for each point in given set of meshes
   static Field computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes);
+
+  /// This function visualizes vector and scalar fields for FFCs
+  void visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh);
+
+  /// Used as an auxiliary function for vector field visualizations
+  vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
 };
 
 } // shapeworks

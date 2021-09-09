@@ -24,13 +24,6 @@
 #include "geometrycentral/surface/heat_method_distance.h"
 #include "geometrycentral/surface/meshio.h"
 
-#include <vtkLookupTable.h>
-#include <vtkArrowSource.h>
-#include <vtkNamedColors.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderer.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 
 namespace shapeworks {
@@ -181,6 +174,9 @@ public:
   /// gets the value at the given index of field
   double getFieldValue(const std::string& name, int idx) const;
 
+  /// gets the multi value at the given index of field
+  Eigen::VectorXd getMultiFieldValue(const std::string& name, int idx) const;
+
   /// returns the range of the given field
   std::vector<double> getFieldRange(const std::string& name) const;
 
@@ -227,8 +223,8 @@ public:
   double getFFCValue(Eigen::Vector3d query);
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
-  //Debug
-  vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+  // Formats mesh into an IGL format
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
 
 private:
   friend struct SharedCommandData;
@@ -245,9 +241,6 @@ private:
   // This locator member is used for FFCs which queries repeatedly
   vtkSmartPointer<vtkCellLocator> locator;
 
-  // This function visualizes vector and scalar fields for FFCs
-  void visualizeVectorFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, std::vector<Eigen::Matrix3d> face_grad_, Eigen::MatrixXd V, Eigen::MatrixXi F);
-
   // Computes the gradient vector field for FFCs w.r.t the boundary
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
@@ -257,9 +250,7 @@ private:
   // Computes whether point is inside or outside the boundary
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
 
-
-  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
-
+  // Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // Copied directly from VtkMeshWrapper.
 
 };

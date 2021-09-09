@@ -426,6 +426,11 @@ bool Sampler::initialize_ffcs(size_t dom){
 
     std::cout << "Adding free-form constraint to domain " << dom << std::endl;
 
+    // For debug. You can visualize the vector and scalar fields for FFCs with this function.
+    // Uncomment #include "MeshUtils.h" in Sampler.h. Uncomment and run optimization for pop-up visualizations.
+//    MeshUtils mutil;
+//    mutil.visualizeVectorFieldForFFCs(mesh);
+
     return true;
 }
 

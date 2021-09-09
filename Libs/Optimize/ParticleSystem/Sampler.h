@@ -33,6 +33,9 @@
 
 #include "Mesh.h"
 
+// Uncomment to enable FFC visualizations
+//#include "MeshUtils.h"
+
 namespace shapeworks {
 
 /** \class Sampler
