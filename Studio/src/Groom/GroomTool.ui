@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>341</width>
-    <height>640</height>
+    <height>794</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,7 @@ background: rgb(255, 255, 127)
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>15</height>
+             <height>30</height>
             </size>
            </property>
            <layout class="QGridLayout" name="gridLayout_8">
@@ -140,8 +140,14 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="isolate_widget" native="true">
-           <layout class="QGridLayout" name="gridLayout_13">
+          <widget class="QWidget" name="crop_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_18">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -155,6 +161,265 @@ background: rgb(255, 255, 127)
              <number>0</number>
             </property>
             <item row="0" column="0">
+             <widget class="QCheckBox" name="crop_checkbox">
+              <property name="text">
+               <string>Crop</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_14">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="reflect_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_20">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="reflect_column"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="reflect_checkbox">
+              <property name="text">
+               <string>Reflect</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="reflect_equal">
+              <property name="text">
+               <string>=</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QComboBox" name="reflect_choice"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_16">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="resample_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>163</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_17">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="resample_checkbox">
+              <property name="text">
+               <string>Resample</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" rowspan="2" colspan="6">
+             <widget class="QGroupBox" name="resample_box">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>135</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_19">
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
+                <number>6</number>
+               </property>
+               <item row="0" column="2">
+                <widget class="QLineEdit" name="spacing_iso">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="isotropic_checkbox">
+                 <property name="text">
+                  <string>Isotropic</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QLineEdit" name="spacing_y">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLineEdit" name="spacing_x">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QLineEdit" name="spacing_z">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="spacing_label_x">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="spacing_label_y">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLabel" name="spacing_label_z">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Z</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_15">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="isolate_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_13">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="2" column="0">
              <widget class="QCheckBox" name="isolate_checkbox">
               <property name="text">
                <string>Isolate</string>
@@ -176,6 +441,12 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="fill_holes_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_12">
             <property name="leftMargin">
              <number>0</number>
@@ -211,6 +482,18 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="pad_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_7">
             <property name="leftMargin">
              <number>0</number>
@@ -242,7 +525,7 @@ background: rgb(255, 255, 127)
               <property name="minimumSize">
                <size>
                 <width>57</width>
-                <height>0</height>
+                <height>24</height>
                </size>
               </property>
               <property name="maximum">
@@ -287,7 +570,13 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="pad_widget_2" native="true">
+          <widget class="QWidget" name="antialias_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_9">
             <property name="leftMargin">
              <number>0</number>
@@ -358,7 +647,13 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="pad_widget_3" native="true">
+          <widget class="QWidget" name="blur_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_11">
             <property name="leftMargin">
              <number>0</number>
@@ -426,7 +721,13 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget" native="true">
+          <widget class="QWidget" name="fastmarching_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_14">
             <property name="leftMargin">
              <number>0</number>
@@ -442,8 +743,165 @@ background: rgb(255, 255, 127)
             </property>
             <item row="0" column="0">
              <widget class="QCheckBox" name="fastmarching_checkbox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text">
                <string>Fastmarching (Distance Transform)</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_27">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="tp_widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>163</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_21">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0" rowspan="2" colspan="6">
+             <widget class="QGroupBox" name="tp_box">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>135</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_22">
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
+                <number>6</number>
+               </property>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="tp_scaling">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="tp_beta_label">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Beta</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="tp_beta">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="tp_scaling_label">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Scaling</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="tp_iterations">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="tp_alpha">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="tp_alpha_label">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Alpha</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="tp_label_iterations">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Iterations</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="tp_checkbox">
+              <property name="text">
+               <string>Topology Preserving Smoothing</string>
               </property>
               <property name="checked">
                <bool>true</bool>
