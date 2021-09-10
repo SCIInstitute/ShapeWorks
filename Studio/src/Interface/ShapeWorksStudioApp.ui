@@ -175,10 +175,17 @@
              <string>Centering</string>
             </property>
             <property name="text">
-             <string>Center</string>
+             <string>Align</string>
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="alignment_combo">
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
             </property>
            </widget>
           </item>

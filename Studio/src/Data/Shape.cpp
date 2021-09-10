@@ -351,6 +351,29 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
+{
+  auto groom_transform = this->get_groomed_transform(domain);
+  if (!groom_transform) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    return transform;
+  }
+  return groom_transform;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (groom_transform) {
+    return true;
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_original_transform(int domain)
 {
   return this->transform_;
@@ -597,6 +620,9 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
   auto transforms = this->subject_->get_groomed_transforms();
+  if (domain < 0) { // global alignment is stored at the end
+    domain = transforms.size() - 1;
+  }
   if (domain < transforms.size()) {
     return this->convert_transform(transforms[domain]);
   }
@@ -709,29 +735,6 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
 {
   this->reconstruction_transforms_ = transforms;
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
-{
-  auto groom_transform = this->get_groomed_transform(domain);
-  if (!groom_transform) {
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    return transform;
-  }
-  return groom_transform;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::has_alignment()
-{
-  auto groom_transform = this->get_groomed_transform(0);
-  if (groom_transform) {
-    return true;
-  }
-
-  return false;
 }
 
 //---------------------------------------------------------------------------

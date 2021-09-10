@@ -81,9 +81,9 @@ void Visualizer::display_samples()
 void Visualizer::update_samples()
 {
   QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
-    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-      viewer->update_points();
-    }
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
   this->lightbox_->redraw();
 }
 
@@ -227,12 +227,12 @@ void Visualizer::update_viewer_properties()
   }
 
   if (this->lightbox_) {
-      foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-        viewer->set_glyph_size_and_quality(size, quality);
-        viewer->set_show_glyphs(this->show_glyphs_);
-        viewer->set_show_surface(this->show_surface_);
-        viewer->set_color_scheme(this->preferences_.get_color_scheme());
-      }
+    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+      viewer->set_glyph_size_and_quality(size, quality);
+      viewer->set_show_glyphs(this->show_glyphs_);
+      viewer->set_show_surface(this->show_surface_);
+      viewer->set_color_scheme(this->preferences_.get_color_scheme());
+    }
 
     this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
                                             this->preferences_.get_orientation_marker_corner());
@@ -402,6 +402,18 @@ bool Visualizer::get_center()
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::set_alignment_domain(int domain)
+{
+  this->alignment_domain_ = domain;
+}
+
+//-----------------------------------------------------------------------------
+int Visualizer::get_alignment_domain()
+{
+  return this->alignment_domain_;
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::clear_viewers()
 {
   QVector<ShapeHandle> shapes;
@@ -419,13 +431,14 @@ double* Visualizer::get_feature_range()
 {
   if (session_->get_feature_auto_scale()) {
     return this->feature_range_;
-  } else {
+  }
+  else {
     return this->feature_manual_range_;
   }
 }
 
 //-----------------------------------------------------------------------------
-double *Visualizer::get_feature_raw_range()
+double* Visualizer::get_feature_raw_range()
 {
   return this->feature_range_;
 }
@@ -468,11 +481,11 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
 
   if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->get_center()) {
-      transform = shape->get_transform();
+      transform = shape->get_transform(domain);
     }
   }
   else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = shape->get_alignment();
+    transform = shape->get_alignment(domain);
   }
   else {
     transform = shape->get_reconstruction_transform(domain);
@@ -486,9 +499,9 @@ void Visualizer::set_opacities(std::vector<float> opacities)
 {
   this->opacities_ = opacities;
   if (this->lightbox_) {
-      foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-        viewer->update_opacities();
-      }
+    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+      viewer->update_opacities();
+    }
     this->lightbox_->redraw();
   }
 }
@@ -498,6 +511,4 @@ std::vector<float> Visualizer::get_opacities()
 {
   return this->opacities_;
 }
-
-
 }

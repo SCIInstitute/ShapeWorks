@@ -542,7 +542,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      actor->SetUserTransform(this->get_transform(i));
+      actor->SetUserTransform(this->get_transform(this->visualizer_->get_alignment_domain()));
 
       mapper->SetInputData(poly_data);
 
@@ -721,13 +721,14 @@ void Viewer::update_points()
     this->glyph_mapper_->SetLookupTable(this->surface_lut_);
   }
 
-  auto t = this->get_transform(0);
 
-  this->glyph_actor_->SetUserTransform(this->get_transform(0));
+  int alignment_domain = this->visualizer_->get_alignment_domain();
+
+  this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
 
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->visualizer_->get_center()) {
-      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment());
+      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment(alignment_domain));
     }
     else {
       if (!this->shape_->has_alignment()) {
@@ -942,12 +943,8 @@ void Viewer::initialize_surfaces()
 
     for (int i = 0; i < this->number_of_domains_; i++) {
       this->surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
-      //this->surface_mappers_[i]->ScalarVisibilityOff();
-
       this->surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       this->surface_actors_[i]->SetMapper(this->surface_mappers_[i]);
-      //this->surface_actors_[i]->GetProperty()->SetSpecular(.2);
-      //this->surface_actors_[i]->GetProperty()->SetSpecularPower(15);
     }
   }
 }

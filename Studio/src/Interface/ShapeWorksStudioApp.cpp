@@ -212,6 +212,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
           SLOT(handle_slider_update()));
 
+  connect(this->ui_->alignment_combo, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &ShapeWorksStudioApp::handle_alignment_changed);
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
      this->analysis_tool_->set_project( this->session_ );
@@ -289,7 +291,6 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   }
 
   this->new_session();
-
 }
 
 //---------------------------------------------------------------------------
@@ -914,8 +915,8 @@ void ShapeWorksStudioApp::new_session()
   this->deepssm_tool_->set_session(this->session_);
   this->create_iso_submenu();
 
-
   this->update_table();
+  this->update_alignment_options();
   this->update_from_preferences();
 
   this->lightbox_->clear_renderers();
@@ -1218,6 +1219,13 @@ void ShapeWorksStudioApp::handle_opacity_changed()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_alignment_changed()
+{
+  this->visualizer_->set_alignment_domain(this->ui_->alignment_combo->currentIndex() - 1);
+  this->update_display(true);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
@@ -1228,7 +1236,6 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display(bool force)
 {
-  //if (!this->visualizer_ || this->session_->get_num_shapes() <= 0) {
   if (!this->visualizer_) {
     return;
   }
@@ -1251,11 +1258,7 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   if (!this->session_->groomed_present() && this->session_->particles_present()) {
     // legacy will be used
-    //std::cerr << "reconstruct ready\n";
     reconstruct_ready = true;
-  }
-  else {
-    //std::cerr << "reconstruct not ready\n";
   }
 
   if (this->session_->particles_present()) {
@@ -1428,6 +1431,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->reset_camera();
 
   this->update_table();
+  this->update_alignment_options();
 
   this->update_view_mode();
 
@@ -1763,6 +1767,19 @@ void ShapeWorksStudioApp::update_recent_files()
 
   for (int j = num_recent_files; j < 8; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_alignment_options()
+{
+  int num_domains = this->session_->get_domains_per_shape();
+  this->ui_->alignment_combo->setVisible(num_domains > 1);
+  this->ui_->alignment_combo->clear();
+  this->ui_->alignment_combo->addItem("Global");
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  for (auto name : domain_names) {
+    this->ui_->alignment_combo->addItem(QString::fromStdString(name));
   }
 }
 

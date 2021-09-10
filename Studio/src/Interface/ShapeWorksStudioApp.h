@@ -107,6 +107,7 @@ public Q_SLOTS:
   void handle_glyph_changed();
   void handle_opacity_changed();
 
+  void handle_alignment_changed();
   void handle_open_recent();
 
   void handle_color_scheme();
@@ -191,6 +192,7 @@ private:
   void set_feature_uniform_scale(bool value);
 
   void update_recent_files();
+  void update_alignment_options();
 
   void save_project(std::string filename);
 
