@@ -170,6 +170,13 @@
            </widget>
           </item>
           <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="center_checkbox">
             <property name="toolTip">
              <string>Centering</string>
@@ -186,6 +193,20 @@
            <widget class="QComboBox" name="alignment_combo">
             <property name="sizeAdjustPolicy">
              <enum>QComboBox::AdjustToContents</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
@@ -734,7 +755,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="iconSize">
     <size>
-     <width>58</width>
+     <width>52</width>
      <height>52</height>
     </size>
    </property>
