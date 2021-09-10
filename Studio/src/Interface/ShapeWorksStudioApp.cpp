@@ -1223,6 +1223,7 @@ void ShapeWorksStudioApp::handle_alignment_changed()
 {
   this->visualizer_->set_alignment_domain(this->ui_->alignment_combo->currentIndex() - 1);
   this->update_display(true);
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
