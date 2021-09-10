@@ -47,7 +47,8 @@ def Run_Pipeline(args):
                                      dataset_name + "/meshes/*.ply"))
 
         if args.use_subsample:
-            sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample),domains_per_shape=2)
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample),domains_per_shape=2)
             mesh_files = [mesh_files[i] for i in sample_idx]
 
                    
