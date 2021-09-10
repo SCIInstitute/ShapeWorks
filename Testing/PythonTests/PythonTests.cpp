@@ -169,6 +169,11 @@ TEST(pythonTests, warpTest)
   run_use_case("warp.py");
 }
 
+TEST(pythonTests, coordsysTest)
+{
+  run_use_case("coordsys.py");
+}
+
 TEST(pythonTests, setoriginTest)
 {
   run_use_case("setorigin.py");
