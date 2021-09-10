@@ -1,6 +1,9 @@
 // qt
 #include <QThread>
 #include <QSize>
+#include <QFile>
+#include <QFileInfo>
+
 #include <Data/Preferences.h>
 
 #include <iostream>
@@ -207,20 +210,40 @@ void Preferences::set_saved(bool saved)
 //-----------------------------------------------------------------------------
 QStringList Preferences::get_recent_files()
 {
-  return this->settings_.value("Main/recentFileListNew").toStringList();
+  this->update_recent_files();
+  return this->recent_files_;
 }
 
 //-----------------------------------------------------------------------------
-void Preferences::add_recent_file(QString file)
+QStringList Preferences::get_recent_paths()
+{
+  this->update_recent_files();
+  return this->recent_paths_;
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::add_recent_file(QString file, QString path)
 {
   QStringList files = this->get_recent_files();
+  QStringList paths = this->get_recent_paths();
+
+  while (paths.size() < files.size()) {
+    paths << "";
+  }
+
   files.removeAll(file);
   files.prepend(file);
   while (files.size() > Preferences::MAX_RECENT_FILES) {
     files.removeLast();
   }
-
   this->settings_.setValue("Main/recentFileListNew", files);
+
+  paths.removeAll(path);
+  paths.prepend(path);
+  while (paths.size() > Preferences::MAX_RECENT_FILES) {
+    paths.removeLast();
+  }
+  this->settings_.setValue("Main/recentFilePaths", paths);
 }
 
 //-----------------------------------------------------------------------------
@@ -228,8 +251,10 @@ void Preferences::restore_defaults()
 {
   // Don't reset recent files
   auto recent = this->get_recent_files();
+  auto paths = this->get_recent_paths();
   this->settings_.clear();
   this->settings_.setValue("Main/recentFileListNew", recent);
+  this->settings_.setValue("Main/recentFilePaths", paths);
 }
 
 //-----------------------------------------------------------------------------
@@ -250,7 +275,8 @@ void Preferences::set_orientation_marker_type(Preferences::OrientationMarkerType
 Preferences::OrientationMarkerCorner Preferences::get_orientation_marker_corner()
 {
   return static_cast<OrientationMarkerCorner>(this->settings_.value(
-    "Viewer/orientation_marker_corner", OrientationMarkerCorner::upper_right).toInt());
+                                                "Viewer/orientation_marker_corner",
+                                                OrientationMarkerCorner::upper_right).toInt());
 }
 
 //-----------------------------------------------------------------------------
@@ -293,4 +319,44 @@ int Preferences::get_geodesic_cache_multiplier()
 void Preferences::set_geodesic_cache_multiplier(int value)
 {
   this->settings_.setValue("Mesh/geodesic_cache_multiplier", value);
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::update_recent_files()
+{
+  auto recent_files = this->settings_.value("Main/recentFileListNew").toStringList();
+  auto recent_paths = this->settings_.value("Main/recentFilePaths").toStringList();
+
+  while (recent_paths.size() < recent_files.size()) {
+    recent_paths << "";
+  }
+
+  QStringList existing_files;
+  QStringList existing_paths;
+  for (int i = 0; i < recent_files.size(); i++) {
+    if (QFile::exists(recent_files[i])) {
+      existing_files << recent_files[i];
+      existing_paths << recent_paths[i];
+    }
+  }
+  recent_files = existing_files;
+  recent_paths = existing_paths;
+
+  QStringList no_dupes;
+  QStringList no_dupe_paths;
+  for (int i = 0; i < recent_files.size(); i++) {
+    bool found_dupe = false;
+    for (int j = i + 1; j < recent_files.size(); j++) {
+      if (QFileInfo(recent_files[i]).canonicalFilePath() ==
+          QFileInfo(recent_files[j]).canonicalFilePath()) {
+        found_dupe = true;
+      }
+    }
+    if (!found_dupe) {
+      no_dupes << recent_files[i];
+      no_dupe_paths << recent_paths[i];
+    }
+  }
+  this->recent_files_ = no_dupes;
+  this->recent_paths_ = no_dupe_paths;
 }

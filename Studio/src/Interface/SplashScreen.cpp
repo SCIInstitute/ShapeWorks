@@ -99,13 +99,20 @@ void SplashScreen::open_recent()
     return;
   }
 
-  QString full_file_path = current_item->data(Qt::UserRole).toString();
+  QStringList user_data = current_item->data(Qt::UserRole).toStringList();
 
-  if (!QFileInfo(full_file_path).exists()) {
+  if (user_data.size() != 2) {
+    return;
+  }
+  QString full_file_path = user_data[0];
+  QString relative_path = user_data[1];
+
+  if (!QFileInfo::exists(full_file_path)) {
     QMessageBox::critical(0, "Project not found", "The project no longer exists.");
     return;
   }
 
+  QDir::setCurrent(relative_path);
   this->hide();
   QApplication::processEvents();
   emit open_project(full_file_path);
@@ -117,37 +124,16 @@ void SplashScreen::populate_recent_projects()
 {
 
   QStringList recent_files = this->preferences_.get_recent_files();
-
-  QStringList existing_files;
-  for (int i = 0; i < recent_files.size(); i++) {
-    if (QFile::exists(recent_files[i])) {
-      existing_files << recent_files[i];
-    }
-  }
-  recent_files = existing_files;
-
-  QStringList no_dupes;
-  for (int i = 0; i < recent_files.size(); i++) {
-    bool found_dupe = false;
-    for (int j = i + 1; j < recent_files.size(); j++) {
-      if (QFileInfo(recent_files[i]).canonicalFilePath() ==
-          QFileInfo(recent_files[j]).canonicalFilePath()) {
-        found_dupe = true;
-      }
-    }
-    if (!found_dupe) {
-      no_dupes << recent_files[i];
-    }
-  }
-  recent_files = no_dupes;
+  QStringList recent_paths = this->preferences_.get_recent_paths();
 
   int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = QFileInfo(recent_files[i]).fileName();
     QListWidgetItem* new_item = new QListWidgetItem(text);
-    // set the full file path as user data
-    new_item->setData(Qt::UserRole, QVariant(recent_files[i]));
+    // set the full file path and relative path as user data
+    QStringList user_data = {recent_files[i], recent_paths[i]};
+    new_item->setData(Qt::UserRole, QVariant(user_data));
     new_item->setToolTip(recent_files[i]);
     this->ui_->recent_project_listwidget_->addItem(new_item);
   }

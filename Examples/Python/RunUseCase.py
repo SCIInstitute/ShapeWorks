@@ -21,7 +21,7 @@ import shutil
 #check if current directory is writable
 current_dir = os.getcwd()
 if not os.access(current_dir,os.W_OK):
-	raise OSError("You don't have write permission in the current directory. Please copy the Examples folder to a different location to run the use cases")
+    raise OSError("You don't have write permission in the current directory. Please copy the Examples folder to a different location to run the use cases")
 
 
 if __name__ == '__main__':
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     parser.add_argument("--skip_grooming", help="Skip the grooming steps and start with already prepped (i.e., groomed) data", action="store_true")
     parser.add_argument("--groom_images", help = "Apply grooming steps to both the shapes (segmentations or surface meshes) and raw images", action="store_true")
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
+    parser.add_argument("--mesh_mode", help="Run optimization on meshes rather than distance transforms.",action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
     args = parser.parse_args()
 
@@ -68,7 +69,6 @@ if __name__ == '__main__':
         if(dataExists==False):
             print("Please note: For --use_subsample argument the entire dataset will be downloaded. For a quick test use the --tiny_test argument")
             input("Press any key to continue")
-
 
     # import use case and run
     module = __import__(args.use_case.lower())

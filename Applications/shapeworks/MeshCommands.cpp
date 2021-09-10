@@ -262,6 +262,35 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// CVDDecimate
+///////////////////////////////////////////////////////////////////////////////
+void CVDDecimate::buildParser()
+{
+  const std::string prog = "cvd-decimate";
+  const std::string desc = "applies cvd (centroidal voronoi diagram) decimation filter";
+
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
+
+  Command::buildParser();
+}
+
+bool CVDDecimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double percentage = static_cast<double>(options.get("percentage"));
+
+  sharedData.mesh->cvdDecimate(percentage);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // InvertNormals
 ///////////////////////////////////////////////////////////////////////////////
 void InvertNormals::buildParser()
@@ -688,25 +717,18 @@ bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FixMesh
+// FixElement
 ///////////////////////////////////////////////////////////////////////////////
-void FixMesh::buildParser()
+void FixElement::buildParser()
 {
-  const std::string prog = "fix-mesh";
-  const std::string desc = "quality control meshes";
+  const std::string prog = "fix-element";
+  const std::string desc = "fix element winding of mesh";
   parser.prog(prog).description(desc);
-
-  parser.add_option("--smoothbefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
-  parser.add_option("--smoothafter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
-  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
-  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
-  parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
-  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
 
   Command::buildParser();
 }
 
-bool FixMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool FixElement::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -714,14 +736,7 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool smoothBefore = static_cast<bool>(options.get("smoothbefore"));
-  bool smoothAfter = static_cast<bool>(options.get("smoothafter"));
-  double lambda = static_cast<double>(options.get("lambda"));
-  int iterations = static_cast<int>(options.get("iterations"));
-  bool decimate = static_cast<bool>(options.get("decimate"));
-  double percentage = static_cast<double>(options.get("percentage"));
-
-  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fixElement();
   return sharedData.validMesh();
 }
 

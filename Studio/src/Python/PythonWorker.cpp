@@ -127,15 +127,15 @@ void PythonWorker::run_job(QSharedPointer<Job> job)
 //---------------------------------------------------------------------------
 bool PythonWorker::init()
 {
+  std::string script = "install_shapeworks.sh";
+#ifdef _WIN32
+  script = "install_shapeworks.bat";
+#endif
+
   if (this->initialized_) {
     if (!this->initialized_success_) {
-#ifdef _WIN32
-      emit error_message(QString::fromStdString(
-                           "Unable to initialize Python.  Please run install_shapeworks.bat"));
-#else
       emit error_message(
-        QString::fromStdString("Unable to initialize Python. Please run install_shapeworks.sh"));
-#endif
+        QString::fromStdString("Unable to initialize Python. Please run " + script));
     }
     return this->initialized_success_;
   }
@@ -165,13 +165,9 @@ bool PythonWorker::init()
     file.close();
   }
   else {
-#ifdef _WIN32
-    emit error_message(QString::fromStdString(
-                         "Unable to initialize Python.  Please run install_shapeworks.bat"));
-#else
     emit error_message(
-      QString::fromStdString("Unable to initialize Python. Please run install_shapeworks.sh"));
-#endif
+      QString::fromStdString("Unable to initialize Python. Please run " + script));
+
     this->initialized_success_ = false;
     return false;
   }
@@ -189,11 +185,11 @@ bool PythonWorker::init()
     QString path;
     file.open(home.toStdString() + "/.shapeworks/path.txt", std::ios::in);
     if (file.is_open()) {
-        std::string line;
-        while (getline(file, line)) {
-            path = QString::fromStdString(line);
-        }
-        file.close();
+      std::string line;
+      while (getline(file, line)) {
+        path = QString::fromStdString(line);
+      }
+      file.close();
     }
 
     qputenv("PATH", path.toUtf8());
@@ -223,6 +219,17 @@ bool PythonWorker::init()
     py::module logger = py::module::import("logger");
 
     py::module sw_utils = py::module::import("shapeworks.utils");
+
+    py::object get_version = sw_utils.attr("get_api_version");
+    std::string version = get_version().cast<std::string>();
+    if (version != PythonWorker::python_api_version) {
+      emit error_message(
+        QString::fromStdString("Unable to initialize Python. Expected API version " + std::string(PythonWorker::python_api_version) +
+                               " but found API version " + version + ". Please run " + script));
+      this->initialized_success_ = false;
+      return false;
+    }
+
     py::object set_sw_logger = sw_utils.attr("set_sw_logger");
     set_sw_logger(this->python_logger_.data());
 
