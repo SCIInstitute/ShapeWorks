@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(shapeworksTests, meancurvatureTest)
+{
+  run_use_case("meshcurvature.sh");
+}
+
 TEST(shapeworksTests, meannormalsTest)
 {
   run_use_case("meannormals.sh");
@@ -299,11 +304,10 @@ TEST(shapeworksTests, scalemeshTest)
   run_use_case("scalemesh.sh");
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   run_use_case("meshfix.sh");
-// }
+TEST(shapeworksTests, fixelementTest)
+{
+  ASSERT_FALSE(system("bash fixelement.sh"));
+}
 
 TEST(shapeworksTests, clipclosedsurfaceTest)
 {

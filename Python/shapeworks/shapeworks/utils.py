@@ -150,6 +150,9 @@ def compute_line_indices(n, is_closed=True):
 
     return lines
 
+def get_api_version():
+    return "6.2"
+
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
     global sw_logger
@@ -183,26 +186,28 @@ def test(name, failure=False):
         try:
             if name():
                 print(name.__name__ + " failed")
-                sys.exit(1)
+                return False
         except Exception as e:
-            print(name.__name__ + " failed (exception): " + str(e))
-            sys.exit(0)
+            print(name.__name__ + " unexpected failure (exception): " + str(e))
+            return False
     else:
         try:
-            if not name():
+            if name():
+                return True
+            else:
                 print(name.__name__ + " failed")
-                sys.exit(1)
+                return False
         except Exception as e:
             print(name.__name__ + " failed (exception): " + str(e))
-            sys.exit(1)
+            return False
 
 def expectException(name, etype):
     try:
         name()
         print(name.__name__ + " failed (expected an exception)")
-        sys.exit(1)
+        return False
     except etype:
-        pass
+        return True
     except Exception as e:
         print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
-        sys.exit(1)
+        return False

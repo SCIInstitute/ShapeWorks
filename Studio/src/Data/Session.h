@@ -72,7 +72,7 @@ public:
 
   bool update_particles(std::vector<StudioParticles> particles);
 
-  bool update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
+  void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 
   bool is_light_project();
 
@@ -120,7 +120,17 @@ public:
   //! clear particles from session (e.g. groom start, optimize start)
   void clear_particles();
 
+  bool get_feature_auto_scale();
+
+  double get_feature_range_max();
+  double get_feature_range_min();
+  void set_feature_range(double min, double max);
+  void set_feature_range_min(double value);
+  void set_feature_range_max(double value);
+
 public Q_SLOTS:
+  void set_feature_auto_scale(bool value);
+
   void handle_clear_cache();
   void handle_new_mesh();
   void handle_message(QString s);
@@ -134,6 +144,7 @@ signals:
   void new_mesh();
   void message(QString);
   void error(QString);
+  void feature_range_changed();
 
 public:
   // constants

@@ -13,3 +13,6 @@ def SupershapesCohortGenerator(out_dir=os.getcwd()+'/generated_supershapes_cohor
 
 def EllipsoidJointsCohortGenerator(out_dir=os.getcwd()+'/generated_ellipsoid_joint_cohort/'):
 	return CohortGenerator.EllipsoidJointsCohortGenerator(out_dir)
+
+def Supershapes2DCohortGenerator(out_dir=os.getcwd()+'/generated_supershapes_2D_cohort/'):
+	return CohortGenerator.Supershapes2DCohortGenerator(out_dir)

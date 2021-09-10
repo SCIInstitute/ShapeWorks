@@ -87,6 +87,14 @@ public:
 private:
 };
 
+class ShapeworksCommand : public Command
+{
+public:
+  const std::string type() override { return "Shapeworks"; }
+
+private:
+};
+
 }; // shapeworks
 
 std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);

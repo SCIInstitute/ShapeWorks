@@ -105,6 +105,7 @@ public Q_SLOTS:
 
   void handle_display_setting_changed();
   void handle_glyph_changed();
+  void handle_opacity_changed();
 
   void handle_open_recent();
 
@@ -119,6 +120,8 @@ public Q_SLOTS:
   void handle_clear_cache();
 
   void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_scale();
+
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
@@ -196,6 +199,9 @@ private:
 
   void set_message(MessageType message_type, QString message);
 
+  void create_glyph_submenu();
+  void create_iso_submenu();
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
@@ -227,6 +233,8 @@ private:
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
+  std::vector<QSlider*> iso_opacity_sliders_;
+
 
   QString current_message_;
 
