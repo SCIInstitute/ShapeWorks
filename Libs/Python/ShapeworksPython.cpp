@@ -1150,7 +1150,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("compareField",
        &Mesh::compareField,
        "compares two meshes based on fields",
-       "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=0.0)
+       "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
   ;
 
   // MeshUtils

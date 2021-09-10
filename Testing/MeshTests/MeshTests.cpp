@@ -17,7 +17,7 @@ TEST(MeshTests, curvatureTest1)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
 }
 
 TEST(MeshTests, curvatureTest2)
@@ -28,7 +28,7 @@ TEST(MeshTests, curvatureTest2)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
 }
 
 TEST(MeshTests, curvatureTest3)
@@ -39,7 +39,7 @@ TEST(MeshTests, curvatureTest3)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
 }
 
 TEST(MeshTests, curvatureTest4)
@@ -50,7 +50,7 @@ TEST(MeshTests, curvatureTest4)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
 }
 
 TEST(MeshTests, curvatureTest5)
@@ -61,7 +61,7 @@ TEST(MeshTests, curvatureTest5)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
 }
 
 TEST(MeshTests, curvatureTest6)
@@ -72,7 +72,7 @@ TEST(MeshTests, curvatureTest6)
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
 
-  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature"));
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
 }
 
 TEST(MeshTests, computemeannormalsTest1)

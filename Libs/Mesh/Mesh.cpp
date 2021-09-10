@@ -931,7 +931,7 @@ bool Mesh::compareAllFaces(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareAllFields(const Mesh &other_mesh, double eps) const
+bool Mesh::compareAllFields(const Mesh &other_mesh, const double eps) const
 {
   if (!this->mesh || !other_mesh.mesh)
     throw std::invalid_argument("Invalid meshes");
@@ -962,7 +962,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh, double eps) const
   return true;
 }
 
-bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2, double eps) const
+bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2, const double eps) const
 {
   auto field1 = getField<vtkDataArray>(name1);
   auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
@@ -984,9 +984,17 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
     {
       auto v1(field1->GetTuple(i)[c]);
       auto v2(field2->GetTuple(i)[c]);
-      if (!equalNSigDigits(v1, v2, 5, eps)) {
-        printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
-        return false;
+      if (eps > 0) {
+        if (!(std::abs(v1-v2) < eps)) {
+          printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
+          return false;
+        }
+      }
+      else {
+        if (!equalNSigDigits(v1, v2, 5)) {
+          printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
+          return false;
+        }
       }
     }
   }
@@ -994,7 +1002,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
   return true;
 }
 
-bool Mesh::compare(const Mesh& other, double eps) const
+bool Mesh::compare(const Mesh& other, const double eps) const
 {
   if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
   if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
