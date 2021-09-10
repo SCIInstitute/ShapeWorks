@@ -654,7 +654,7 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
 }
 
 //---------------------------------------------------------------------------
-bool Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms)
+void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms)
 {
   for (size_t i=0;i<transforms.size();i++) {
     if (this->shapes_.size() > i) {
@@ -901,6 +901,52 @@ void Session::clear_particles()
 {
   std::vector<StudioParticles> particles(this->get_num_shapes());
   this->update_particles(particles);
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_feature_auto_scale()
+{
+  return this->params_.get("feature_auto_scale", true);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_auto_scale(bool value)
+{
+  this->params_.set("feature_auto_scale", value);
+  emit feature_range_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_feature_range_max()
+{
+  return this->params_.get("feature_range_max", 0);
+}
+
+//---------------------------------------------------------------------------
+double Session::get_feature_range_min()
+{
+  return this->params_.get("feature_range_min", 0);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range(double min, double max)
+{
+  this->set_feature_range_min(min);
+  this->set_feature_range_max(max);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range_min(double value)
+{
+  this->params_.set("feature_range_min", value);
+  emit feature_range_changed();
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range_max(double value)
+{
+  this->params_.set("feature_range_max", value);
+  emit feature_range_changed();
 }
 
 }

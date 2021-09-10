@@ -70,6 +70,11 @@ PYBIND11_MODULE(shapeworks_py, m)
         "creates transform from 3x3 matrix and translation vector",
         "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
+  m.def("seed",
+        &ShapeworksUtils::setRngSeed,
+        "sets the seed for random number generation (internal use)",
+        "seed"_a=std::chrono::system_clock::now().time_since_epoch().count());
+
   // Axis
   py::enum_<Axis>(m, "Axis")
   .value("invalid", Axis::invalid)
@@ -877,6 +882,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
+   .def("cvdDecimate",
+       &Mesh::cvdDecimate,
+       "applies cvd (centroidal voronoi diagram) decimation filter",
+       "percentage"_a=0.5)
+
   .def("invertNormals",
        &Mesh::invertNormals,
        "handle flipping normals")
@@ -943,11 +953,9 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::boundingBox,
        "computes bounding box of current mesh")
 
-  .def("fix",
-       &Mesh::fix,
-       "quality control mesh",
-       "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5,
-       "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("fixElement",
+       &Mesh::fixElement,
+       "fix element winding of mesh")
 
   .def("distance",
        &Mesh::distance,

@@ -140,6 +140,34 @@ TEST(MeshTests, readFailTest)
   ASSERT_TRUE(false);
 }
 
+TEST(MeshTests, fixelementTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.fixElement();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ShapeworksUtils::setRngSeed(26);
+  ellipsoid.cvdDecimate();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest2)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  ShapeworksUtils::setRngSeed(42);
+  ellipsoid.cvdDecimate(1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
 TEST(MeshTests, smoothTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -331,24 +359,6 @@ TEST(MeshTests, scaleTest2)
 
   ASSERT_TRUE(femur == ground_truth);
 }
-
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(MeshTests, fixTest1)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
-// TEST(MeshTests, fixTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   // femur.fix(true, true, 0.5, 1, true, 0.5);
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
 
 TEST(MeshTests, clipClosedSurfaceTest1)
 {

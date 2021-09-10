@@ -304,11 +304,10 @@ TEST(shapeworksTests, scalemeshTest)
   run_use_case("scalemesh.sh");
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   run_use_case("meshfix.sh");
-// }
+TEST(shapeworksTests, fixelementTest)
+{
+  ASSERT_FALSE(system("bash fixelement.sh"));
+}
 
 TEST(shapeworksTests, clipclosedsurfaceTest)
 {
