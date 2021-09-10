@@ -39,12 +39,12 @@ def Run_Pipeline(args):
         sw.data.download_subset(
             args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.ply"))[:6]
+                                     dataset_name + "/meshes/*.vtk"))[:6]
     # Else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.ply"))
+                                     dataset_name + "/meshes/*.vtk"))
 
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]

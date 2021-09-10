@@ -77,7 +77,7 @@ def download_subset(use_case,datasetName,outputDirectory):
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
     elif(use_case=="ellipsoid_multiple_domain_mesh"):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:6]
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     elif(use_case=="supershapes_1mode_contour"):
         if(generate_download_flag(outputDirectory,"contours")):
