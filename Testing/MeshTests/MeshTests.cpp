@@ -624,6 +624,38 @@ TEST(MeshTests, warpTest1)
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
+  output.write("/tmp/check.vtk");
+
+  ASSERT_TRUE(output == ellipsoid_warped);
+}
+
+TEST(MeshTests, warpTest2)
+{
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.vtk");
+  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2_baseline.vtk");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::vector<std::string> paths;
+  paths.push_back(staticPath);
+  paths.push_back(movingPath);
+  ParticleSystem particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.Particles();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  Eigen::MatrixXd movingPoints = allPts.col(1);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
+  output.write("/tmp/check.vtk");
 
   ASSERT_TRUE(output == ellipsoid_warped);
 }
