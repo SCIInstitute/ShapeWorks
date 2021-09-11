@@ -205,6 +205,12 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   if (elem) { output_transform_file = elem->GetText(); }
   optimize->SetOutputTransformFile(output_transform_file);
 
+  // write individual transform files
+  bool write_individual_output_transforms = false;
+  elem = docHandle->FirstChild("write_transform_files").Element();
+  if (elem) { write_individual_output_transforms = (bool) atoi(elem->GetText()); }
+  optimize->SetOutputIndividualTransformFiles(write_individual_output_transforms);
+
   // python filename
   std::string python_file = "";
   elem = docHandle->FirstChild("python_filename").Element();

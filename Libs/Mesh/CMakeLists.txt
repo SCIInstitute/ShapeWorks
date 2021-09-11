@@ -72,10 +72,6 @@ install(TARGETS Mesh
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeCurvatureAndCoordFiles ComputeCurvatureAndCoordFiles.cxx)
-#TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)
-
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)

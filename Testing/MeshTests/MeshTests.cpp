@@ -9,6 +9,72 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, curvatureTest1)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest3)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest4)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest5)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest6)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
 TEST(MeshTests, computemeannormalsTest1)
 {
   std::vector<std::reference_wrapper<const Mesh>> meshes;
@@ -72,6 +138,34 @@ TEST(MeshTests, readFailTest)
   }
 
   ASSERT_TRUE(false);
+}
+
+TEST(MeshTests, fixelementTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.fixElement();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ShapeworksUtils::setRngSeed(26);
+  ellipsoid.cvdDecimate();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest2)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  ShapeworksUtils::setRngSeed(42);
+  ellipsoid.cvdDecimate(1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
 TEST(MeshTests, smoothTest1)
@@ -265,24 +359,6 @@ TEST(MeshTests, scaleTest2)
 
   ASSERT_TRUE(femur == ground_truth);
 }
-
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(MeshTests, fixTest1)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
-// TEST(MeshTests, fixTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   // femur.fix(true, true, 0.5, 1, true, 0.5);
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
 
 TEST(MeshTests, clipClosedSurfaceTest1)
 {

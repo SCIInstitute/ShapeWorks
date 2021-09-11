@@ -4,6 +4,7 @@
 Common utility functions
 """
 import os
+import re
 import itk
 import numpy as np
 from sklearn.cluster import SpectralClustering
@@ -220,4 +221,22 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
         for d in range(domains_per_shape):
             new_sample_idx.append((samples_idx[i]*domains_per_shape)+d)
 
-    return new_sample_idx   
+    return new_sample_idx
+
+def get_optimize_input(distance_transform_files, mesh_mode=False):
+    if mesh_mode:
+        dt_dir = os.path.dirname(distance_transform_files[0])
+        mesh_dir = dt_dir.replace("distance_transforms", "meshes")
+        if not os.path.exists(mesh_dir):
+            os.makedirs(mesh_dir)
+        domain_type = 'mesh'
+        files = []
+        for file in distance_transform_files:
+            mesh_file = file.replace(dt_dir, mesh_dir).replace(".nrrd", ".vtk")
+            print("Writing: " + mesh_file)
+            sw.Image(file).toMesh(0).write(mesh_file)
+            files.append(mesh_file)
+    else:
+        domain_type = 'image'
+        files = distance_transform_files
+    return domain_type, files

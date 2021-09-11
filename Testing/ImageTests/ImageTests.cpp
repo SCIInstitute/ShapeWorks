@@ -822,6 +822,17 @@ TEST(ImageTests, coordsysTest)
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
 
+TEST(ImageTests, setCoordsysTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Image::ImageType::DirectionType coordsys;
+  coordsys.SetIdentity();
+  coordsys[2][2] = -2;
+  image.setCoordsys(coordsys);
+
+  ASSERT_TRUE(image.coordsys() == coordsys);
+}
+
 TEST(ImageTests, negationTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
