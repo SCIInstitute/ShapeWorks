@@ -105,7 +105,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   this->create_glyph_submenu();
-  this->create_iso_submenu();
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
