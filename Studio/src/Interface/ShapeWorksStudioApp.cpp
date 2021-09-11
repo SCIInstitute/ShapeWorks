@@ -1267,7 +1267,12 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  if (this->ui_->action_analysis_mode->isChecked()) {
+  bool analysis_mode = this->ui_->action_analysis_mode->isChecked();
+
+  this->ui_->alignment_combo->setVisible(!analysis_mode);
+  this->ui_->center_checkbox->setVisible(!analysis_mode);
+
+  if (analysis_mode) {
     mode = this->analysis_tool_->get_analysis_mode();
   }
 

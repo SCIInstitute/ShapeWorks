@@ -114,7 +114,7 @@ public:
   void update_feature_range(double* range);
 
   //! Request the transform for a given shape and domain
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
 
   //! Set domain opacities
   void set_opacities(std::vector<float> opacities);

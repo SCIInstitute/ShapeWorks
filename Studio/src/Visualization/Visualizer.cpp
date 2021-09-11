@@ -158,7 +158,7 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
         }
         // we have to transform each domain to its location in order to export an appended mesh
         auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        filter->SetTransform(this->get_transform(shapes[0], domain));
+        filter->SetTransform(this->get_transform(shapes[0], this->get_alignment_domain(), domain));
         filter->SetInputData(meshes[domain]->get_poly_data());
         filter->Update();
         list.push_back(filter->GetOutput());
@@ -476,19 +476,20 @@ bool Visualizer::get_uniform_feature_range(void)
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int domain)
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain)
 {
   vtkSmartPointer<vtkTransform> transform;
 
   if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->get_center()) {
-      transform = shape->get_transform(domain);
+      transform = shape->get_transform(alignment_domain);
     }
   }
   else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = shape->get_alignment(domain);
+    transform = shape->get_alignment(alignment_domain);
   }
   else {
+    std::cerr << "asking for reconstruction transform, domain: " << domain << "\n";
     transform = shape->get_reconstruction_transform(domain);
   }
 

@@ -7,7 +7,6 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkRenderer.h>
-#include <vtkImageActor.h>
 #include <vtkImageData.h>
 #include <vtkRenderWindow.h>
 #include <vtkTextActor.h>
@@ -542,7 +541,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      actor->SetUserTransform(this->get_transform(this->visualizer_->get_alignment_domain()));
+      actor->SetUserTransform(this->get_transform(this->visualizer_->get_alignment_domain(), i));
 
       mapper->SetInputData(poly_data);
 
@@ -724,7 +723,7 @@ void Viewer::update_points()
 
   int alignment_domain = this->visualizer_->get_alignment_domain();
 
-  this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
+  //this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
 
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->visualizer_->get_center()) {
@@ -950,8 +949,8 @@ void Viewer::initialize_surfaces()
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
+vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int domain)
 {
-  return this->visualizer_->get_transform(this->shape_, domain);
+  return this->visualizer_->get_transform(this->shape_, alignment_domain, domain);
 }
 }
