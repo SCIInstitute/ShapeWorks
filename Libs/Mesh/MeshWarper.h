@@ -33,7 +33,7 @@ protected:
   //! Generate warp, return true on success
   virtual bool generate_warp();
 
-  virtual void update_progress(float p) {};
+  virtual void update_progress(float p) {}
 
 private:
 
@@ -52,7 +52,10 @@ private:
   //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
 
-  //! Clean incoming mesh
+  //! Prep incoming mesh
+  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+  //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
@@ -76,8 +79,5 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
-
-
 };
-
 }
