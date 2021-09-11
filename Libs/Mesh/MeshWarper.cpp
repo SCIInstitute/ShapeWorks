@@ -110,7 +110,7 @@ void MeshWarper::add_particle_vertices()
     locator->BuildLocator();
 
     std::vector<vtkSmartPointer<vtkIdList>> new_triangles;
-    int next_point = this->reference_mesh_->GetNumberOfPoints()+1;
+    int next_point = this->reference_mesh_->GetNumberOfPoints();
 
     vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
 
@@ -200,7 +200,6 @@ void MeshWarper::add_particle_vertices()
         vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
         list->SetNumberOfIds(3);
 
-        new_points->InsertNextPoint(pt);
         list->SetId(0, cell->GetPointId(1));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(0));
@@ -211,21 +210,27 @@ void MeshWarper::add_particle_vertices()
         list->SetId(0, cell->GetPointId(2));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(1));
+        new_triangles.push_back(list);
 
         list = vtkSmartPointer<vtkIdList>::New();
         list->SetNumberOfIds(3);
         list->SetId(0, cell->GetPointId(0));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(2));
+        new_triangles.push_back(list);
 
         this->reference_mesh_->DeleteCell(cell_id);
       }
     }
 
     for (int i = 0; i < new_points->GetNumberOfPoints(); i++) {
-      this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
+      int id = this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
+      auto pt = new_points->GetPoint(i);
+      std::cerr << "New Point: " << id << " at " << pt[0] << "," << pt[1] << "," << pt[2] << "\n";
     }
     for (int i = 0; i < new_triangles.size(); i++) {
+      auto triangle = new_triangles[i];
+      std::cerr << "New Triangle: " << triangle->GetId(0) << "," << triangle->GetId(1) << "," << triangle->GetId(2) << "\n";
       this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, new_triangles[i]);
     }
 
