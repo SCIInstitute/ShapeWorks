@@ -109,8 +109,13 @@ void MeshWarper::add_particle_vertices()
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
+    std::vector<vtkSmartPointer<vtkIdList>> new_triangles;
+    int next_point = this->reference_mesh_->GetNumberOfPoints()+1;
+
+    vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
+
     for (int i = 0; i < this->vertices_.rows(); i++) {
-      std::cerr << "eval " << i << "\n";
+      std::cerr << "eval " << i << "\n\n";
       if (done[i]) { continue; }
 
       double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
@@ -146,76 +151,84 @@ void MeshWarper::add_particle_vertices()
       double weights[3];
       this->reference_mesh_->GetCell(cell_id)->EvaluatePosition(point, closest, sub_id, pcoords,
                                                                 dist2, weights);
-      bool same_as_vertex = false;
 
       if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
-        same_as_vertex = true;
+        continue;
       }
 
-      if (!same_as_vertex) {
-        // now we need to check if we are along an edge already.
-        bool on_edge = false;
-        int v0_index = 0, v1_index = 0;
-        double p0[3], p1[3], p2[3];
-        cell->GetPoints()->GetPoint(0, p0);
-        cell->GetPoints()->GetPoint(1, p1);
-        cell->GetPoints()->GetPoint(2, p2);
-        if (weights[2] < 0.01) {
-          on_edge = true;
-          v0_index = cell->GetPointId(0);
-          v1_index = cell->GetPointId(1);
+      // now we need to check if we are along an edge already.
+      bool on_edge = false;
+      int v0_index = 0, v1_index = 0;
+      double p0[3], p1[3], p2[3];
+      cell->GetPoints()->GetPoint(0, p0);
+      cell->GetPoints()->GetPoint(1, p1);
+      cell->GetPoints()->GetPoint(2, p2);
+      if (weights[2] < 0.01) {
+        on_edge = true;
+        v0_index = cell->GetPointId(0);
+        v1_index = cell->GetPointId(1);
+      }
+      else if (weights[0] < 0.01) {
+        on_edge = true;
+        v0_index = cell->GetPointId(1);
+        v1_index = cell->GetPointId(2);
+      }
+      else if (weights[1] < 0.01) {
+        on_edge = true;
+        v0_index = cell->GetPointId(0);
+        v1_index = cell->GetPointId(2);
+      }
+
+      // add the new vertex
+      int new_vertex = next_point++;
+      new_points->InsertNextPoint(pt);
+
+      if (on_edge) {
+        auto neighbors = vtkSmartPointer<vtkIdList>::New();
+        this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
+
+        if (neighbors->GetNumberOfIds() == 1) {   // could be 0 for the boundary of an open mesh
+          // split the neighbor cell into two triangles as well
+          this->split_cell_on_edge(neighbors->GetId(0), new_vertex, v0_index, v1_index, new_triangles);
         }
-        else if (weights[0] < 0.01) {
-          on_edge = true;
-          v0_index = cell->GetPointId(1);
-          v1_index = cell->GetPointId(2);
-        }
-        else if (weights[1] < 0.01) {
-          on_edge = true;
-          v0_index = cell->GetPointId(0);
-          v1_index = cell->GetPointId(2);
-        }
 
-        if (on_edge) {
-          auto neighbors = vtkSmartPointer<vtkIdList>::New();
-          this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
+        // split the current cell into two triangles
+        this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index, new_triangles);
+      }
+      else {
+        // std::cerr << "not on edge\n";
+        vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+        list->SetNumberOfIds(3);
 
-          // add the new vertex
-          int new_vertex = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
+        new_points->InsertNextPoint(pt);
+        list->SetId(0, cell->GetPointId(1));
+        list->SetId(1, new_vertex);
+        list->SetId(2, cell->GetPointId(0));
+        new_triangles.push_back(list);
 
-          if (neighbors->GetNumberOfIds() == 1) { // could be 0 for the boundary of an open mesh
-            // split the neighbor cell into two triangles as well
-            this->split_cell_on_edge(neighbors->GetId(0), new_vertex, v0_index, v1_index);
-          }
+        list = vtkSmartPointer<vtkIdList>::New();
+        list->SetNumberOfIds(3);
+        list->SetId(0, cell->GetPointId(2));
+        list->SetId(1, new_vertex);
+        list->SetId(2, cell->GetPointId(1));
 
-          // split the current cell into two triangles
-          this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index);
-        }
-        else {
-          // std::cerr << "not on edge\n";
-          vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+        list = vtkSmartPointer<vtkIdList>::New();
+        list->SetNumberOfIds(3);
+        list->SetId(0, cell->GetPointId(0));
+        list->SetId(1, new_vertex);
+        list->SetId(2, cell->GetPointId(2));
 
-          int new_vertex = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
-          list->SetNumberOfIds(3);
-          list->SetId(0, cell->GetPointId(1));
-          list->SetId(1, new_vertex);
-          list->SetId(2, cell->GetPointId(0));
-          this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
-
-          list->SetId(0, cell->GetPointId(2));
-          list->SetId(1, new_vertex);
-          list->SetId(2, cell->GetPointId(1));
-          this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
-
-          list->SetId(0, cell->GetPointId(0));
-          list->SetId(1, new_vertex);
-          list->SetId(2, cell->GetPointId(2));
-          this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
-
-          this->reference_mesh_->DeleteCell(cell_id);
-        }
+        this->reference_mesh_->DeleteCell(cell_id);
       }
     }
+
+    for (int i = 0; i < new_points->GetNumberOfPoints(); i++) {
+      this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
+    }
+    for (int i = 0; i < new_triangles.size(); i++) {
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, new_triangles[i]);
+    }
+
     this->reference_mesh_->RemoveDeletedCells();
     this->reference_mesh_ = MeshWarper::clean_mesh(this->reference_mesh_);
   }
@@ -269,7 +282,8 @@ Eigen::MatrixXd MeshWarper::remove_bad_particles(const Eigen::MatrixXd& particle
 }
 
 //---------------------------------------------------------------------------
-void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
+void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
+                                    std::vector<vtkSmartPointer<vtkIdList>> &new_triangles)
 {
   vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
   int p0 = cell->GetPointId(0);
@@ -286,40 +300,50 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
     edge = 2;
   }
 
-  vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
-  list->SetNumberOfIds(3);
   if (edge == 0) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(1));
     list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(2));
     list->SetId(2, cell->GetPointId(0));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
   else if (edge == 1) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(0));
     list->SetId(2, cell->GetPointId(1));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(2));
     list->SetId(2, cell->GetPointId(0));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
   else if (edge == 2) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(0));
     list->SetId(2, cell->GetPointId(1));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(1));
     list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
 
   this->reference_mesh_->DeleteCell(cell_id);

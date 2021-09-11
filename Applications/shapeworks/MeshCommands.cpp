@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 

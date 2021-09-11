@@ -8,9 +8,7 @@
  */
 
 #include <vector>
-#include <string>
 #include <Libs/Mesh/Mesh.h>
-#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
@@ -44,7 +42,7 @@ private:
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
   //! Split a cell on the edge
-  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1);
+  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1, std::vector<vtkSmartPointer<vtkIdList>>& new_triangles);
 
   //! Identify the good particles
   void find_good_particles();
