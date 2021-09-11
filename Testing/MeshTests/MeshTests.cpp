@@ -54,13 +54,23 @@ TEST(MeshTests, generateNormalsTest)
   ASSERT_TRUE(mesh1.compareField(ground_truth1, "Normals") && mesh2.compareField(ground_truth2, "Normals"));
 }
 
-TEST(MeshTests, geodesicTest)
+TEST(MeshTests, geodesicTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   double dist = femur.geodesicDistance(10, 20);
 
   ASSERT_TRUE(std::abs(dist - 1.0083) < 1e-4);
 }
+
+// TODO: Finish this test
+// TEST(MeshTests, geodesicTest2)
+// {
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+//   auto dist = femur.geodesicDistance(femur.getPoint(50));
+//   femur.setField("GeodesicDistanceTo", dist);
+
+//   ASSERT_TRUE(true);
+// }
 
 TEST(MeshTests, readFailTest)
 {

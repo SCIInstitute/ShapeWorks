@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, geodesicTest)
+{
+  run_use_case("geodesic.py");
+}
+
 TEST(pythonTests, initImageTest)
 {
   run_use_case("initImage.py");
@@ -279,10 +284,10 @@ TEST(pythonTests, pointsTest)
   run_use_case("points.py");
 }
 
-TEST(pythonTests, geodesicTest)
-{
-  run_use_case("geodesic.py");
-}
+// TEST(pythonTests, geodesicTest)
+// {
+//   run_use_case("geodesic.py");
+// }
 
 TEST(pythonTests, computenormalsTest)
 {

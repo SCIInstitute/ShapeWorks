@@ -19,6 +19,7 @@ TEST(shapeworksTests, closestpointTest)
   run_use_case("closestpoint.sh");
 }
 
+// TODO: Need to add more tests
 TEST(shapeworksTests, geodesicTest)
 {
   run_use_case("geodesic.sh");

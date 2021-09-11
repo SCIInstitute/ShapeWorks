@@ -852,6 +852,38 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistanceToLandmark
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistanceToLandmark::buildParser()
+{
+  const std::string prog = "geodesic-distance-landmark";
+  const std::string desc = "computes geodesic distance between a point (landmark) and each vertex on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for landmark point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for landmark point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for landmark point.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point landmark({static_cast<double>(options.get("x")),
+                  static_cast<double>(options.get("y")),
+                  static_cast<double>(options.get("z"))});
+
+  sharedData.field = sharedData.mesh->geodesicDistance(landmark);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // MeanNormals
 ///////////////////////////////////////////////////////////////////////////////
 void MeanNormals::buildParser()

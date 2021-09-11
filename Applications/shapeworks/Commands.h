@@ -84,6 +84,7 @@ COMMAND_DECLARE(FixElement, MeshCommand);
 COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
 COMMAND_DECLARE(ClosestPoint, MeshCommand);
 COMMAND_DECLARE(GeodesicDistance, MeshCommand);
+COMMAND_DECLARE(GeodesicDistanceToLandmark, MeshCommand);
 COMMAND_DECLARE(MeanNormals, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);

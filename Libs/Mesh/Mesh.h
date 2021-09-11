@@ -101,8 +101,11 @@ public:
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
 
-  /// computes geodesic distance between a point and all vertices on mesh
-  Eigen::MatrixXd geodesicDistance(const std::vector<Point3> landmark);
+  /// computes geodesic distance between a point (landmark) and each vertex on mesh
+  Field geodesicDistance(const Point3 landmark);
+
+  /// computes geodesic distance between a set of points (curve) and each vertex on mesh
+  Field geodesicDistance(const std::vector<Point3> curve);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;

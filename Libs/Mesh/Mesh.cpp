@@ -530,20 +530,47 @@ double Mesh::geodesicDistance(int source, int target)
   return d[0];
 }
 
-Eigen::MatrixXd Mesh::geodesicDistance(const std::vector<Point3> landmark)
+Field Mesh::geodesicDistance(const Point3 landmark)
 {
-  Eigen::MatrixXd d;
   VtkMeshWrapper wrap(this->mesh, true);
 
-  for (int i =0; i < landmark.size(); i++)
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("GeodesicDistanceTo");
+
+  for (int i = 0; i < numPoints(); i++)
   {
-    for (int j = 0; j < numPoints(); j++)
-    {
-      d(i, j) = wrap.ComputeDistance(getPoint(j), -1, landmark[i], -1);
-    }
+    distance->SetValue(i, wrap.ComputeDistance(getPoint(i), -1, landmark, -1));
   }
 
-  return d;
+  return distance;
+}
+
+Field Mesh::geodesicDistance(const std::vector<Point3> curve)
+{
+  VtkMeshWrapper wrap(this->mesh, true);
+
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("GeodesicDistanceTo");
+
+  for (int i = 0; i < numPoints(); i++)
+  {
+    float distToCurve = 1e20;
+
+    for (int j = 0; j < curve.size(); j++)
+    {
+      double currDistance = wrap.ComputeDistance(getPoint(i), -1, curve[j], -1);
+      if (currDistance < distToCurve)
+        distToCurve = currDistance;
+    }
+
+    distance->SetValue(i, distToCurve);
+  }
+
+  return distance;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
