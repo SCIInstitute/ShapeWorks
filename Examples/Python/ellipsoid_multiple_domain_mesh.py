@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     print("You can change the dataset name and output directory name to try out this use case with other datasets")
 
 
-    dataset_name = "ellipsoid_joint_rotation"
+    dataset_name = "ellipsoid_joint_size"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -51,7 +51,6 @@ def Run_Pipeline(args):
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample),domains_per_shape=2)
             mesh_files = [mesh_files[i] for i in sample_idx]
 
-                   
     # This dataset is prealigned and does not require any grooming steps.
 
     print("\nStep 2. Optimize - Particle Based Optimization\n")
