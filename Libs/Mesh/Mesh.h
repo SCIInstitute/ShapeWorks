@@ -17,6 +17,7 @@ class Mesh
 public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
+  enum CurvatureType { Principal, Gaussian, Mean };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -107,6 +108,9 @@ public:
   /// computes geodesic distance between a set of points (curve) and each vertex on mesh
   Field geodesicDistance(const std::vector<Point3> curve);
 
+  /// computes and adds curvature (principal (default) or gaussian or mean)
+  Field curvature(const CurvatureType type = Principal);
+
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
@@ -185,15 +189,15 @@ public:
   bool compareAllFaces(const Mesh& other_mesh) const;
 
   /// compare if all fields in two meshes are (eps)equal
-  bool compareAllFields(const Mesh& other_mesh) const;
+  bool compareAllFields(const Mesh& other_mesh, const double eps=-1.0) const;
 
   /// compare field of meshes to be (eps)equal (same field for both if only one specified)
-  bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2="") const;
+  bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2="", const double eps=-1.0) const;
 
   // todo: add support for comparison of fields of mesh faces (ex: their normals)
 
   /// compare meshes
-  bool compare(const Mesh& other_mesh) const;
+  bool compare(const Mesh& other_mesh, const double eps=-1.0) const;
 
   /// compare meshes
   bool operator==(const Mesh& other) const { return compare(other); }

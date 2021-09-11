@@ -68,10 +68,6 @@ install(TARGETS Mesh
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeCurvatureAndCoordFiles ComputeCurvatureAndCoordFiles.cxx)
-#TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
 INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)

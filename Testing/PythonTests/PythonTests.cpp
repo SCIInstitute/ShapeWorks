@@ -14,6 +14,11 @@ TEST(pythonTests, geodesicTest)
   run_use_case("geodesic.py");
 }
 
+TEST(pythonTests, meshcurvatureTest)
+{
+  run_use_case("meshcurvature.py");
+}
+
 TEST(pythonTests, initImageTest)
 {
   run_use_case("initImage.py");
@@ -172,6 +177,11 @@ TEST(pythonTests, reflectTest)
 TEST(pythonTests, warpTest)
 {
   run_use_case("warp.py");
+}
+
+TEST(pythonTests, coordsysTest)
+{
+  run_use_case("coordsys.py");
 }
 
 TEST(pythonTests, setoriginTest)

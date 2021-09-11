@@ -86,6 +86,7 @@ COMMAND_DECLARE(ClosestPoint, MeshCommand);
 COMMAND_DECLARE(GeodesicDistance, MeshCommand);
 COMMAND_DECLARE(GeodesicDistanceToLandmark, MeshCommand);
 COMMAND_DECLARE(MeanNormals, MeshCommand);
+COMMAND_DECLARE(Curvature, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
