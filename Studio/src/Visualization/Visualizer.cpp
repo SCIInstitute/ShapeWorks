@@ -222,6 +222,7 @@ void Visualizer::update_viewer_properties()
 {
   double size = this->preferences_.get_glyph_size();
   double quality = this->preferences_.get_glyph_quality();
+  quality = std::max<double>(quality, 3);
   if (this->preferences_.get_glyph_auto_size()) {
     size = this->session_->get_auto_glyph_size();
   }
