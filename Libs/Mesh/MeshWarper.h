@@ -8,7 +8,8 @@
  */
 
 #include <vector>
-#include <Libs/Mesh/Mesh.h>
+#include <vtkPolyData.h>
+#include <Eigen/Eigen>
 
 namespace shapeworks {
 
@@ -28,12 +29,13 @@ public:
 
 protected:
 
-  //! Generate warp, return true on success
-  virtual bool generate_warp();
-
+  //! For overriding to handle progress updates
   virtual void update_progress(float p) {}
 
 private:
+
+  //! Generate warp, return true on success
+  bool generate_warp();
 
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
@@ -42,7 +44,8 @@ private:
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
   //! Split a cell on the edge
-  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1, std::vector<vtkSmartPointer<vtkIdList>>& new_triangles);
+  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
+                          std::vector<vtkSmartPointer<vtkIdList>>& new_triangles);
 
   //! Identify the good particles
   void find_good_particles();
@@ -56,9 +59,11 @@ private:
   //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  //! Generate the warp matrix
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
                             const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
+  //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   Eigen::MatrixXi faces_;

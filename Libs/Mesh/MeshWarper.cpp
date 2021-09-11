@@ -3,14 +3,16 @@
 #include <igl/remove_unreferenced.h>
 
 #include <Libs/Mesh/MeshWarper.h>
+#include <Libs/Mesh/Mesh.h>
 
 #include <vtkCellLocator.h>
 #include <vtkTriangleFilter.h>
 #include <vtkCleanPolyData.h>
 #include <vtkLine.h>
 #include <vtkPolyDataConnectivityFilter.h>
-#include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
+
+#include <set>
 
 // tbb
 #include <tbb/mutex.h>
@@ -33,9 +35,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
   auto points = this->remove_bad_particles(particles);
 
-  Mesh output = MeshWarper::warp_mesh(points);
-
-  vtkSmartPointer<vtkPolyData> poly_data = output.getVTKMesh();
+  vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
 
   for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
     double* p = poly_data->GetPoint(i);
@@ -97,25 +97,23 @@ void MeshWarper::add_particle_vertices()
   bool not_all_done = true;
   float count = 0;
 
-  int round = 1;
+  // Iteratively process the mesh: Find all new vertices that can be added without conflicting
+  // with each other.  If multiple particles (new vertices) land on the same triangle, the we will need
+  // multiple passes since we will have to make the changes and rebuild the locator.
   while (not_all_done) {
-    std::cerr << "Round: " << round++ << "\n";
     not_all_done = false;
 
     this->reference_mesh_->BuildLinks();
-
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
     locator->SetCacheCellBounds(true);
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
     std::vector<vtkSmartPointer<vtkIdList>> new_triangles;
+    vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
     int next_point = this->reference_mesh_->GetNumberOfPoints();
 
-    vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
-
     for (int i = 0; i < this->vertices_.rows(); i++) {
-      std::cerr << "eval " << i << "\n\n";
       if (done[i]) { continue; }
 
       double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
@@ -131,8 +129,6 @@ void MeshWarper::add_particle_vertices()
 
       // grab the closest cell
       vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
-
-      std::cerr << "cell_id = " << cell_id << ": " << cell->GetCellType() << "\n";
 
       if (cell->GetCellType() == VTK_EMPTY_CELL) { // this one was deleted
         not_all_done = true;
@@ -153,6 +149,7 @@ void MeshWarper::add_particle_vertices()
                                                                 dist2, weights);
 
       if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
+        // close enough to a vertex
         continue;
       }
 
@@ -195,8 +192,7 @@ void MeshWarper::add_particle_vertices()
         // split the current cell into two triangles
         this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index, new_triangles);
       }
-      else {
-        // std::cerr << "not on edge\n";
+      else {  // interior to a current triangle
         vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
         list->SetNumberOfIds(3);
 
@@ -223,17 +219,17 @@ void MeshWarper::add_particle_vertices()
       }
     }
 
+    // add new points
     for (int i = 0; i < new_points->GetNumberOfPoints(); i++) {
-      int id = this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
-      auto pt = new_points->GetPoint(i);
-      std::cerr << "New Point: " << id << " at " << pt[0] << "," << pt[1] << "," << pt[2] << "\n";
+      this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
     }
+
+    // add new triangles
     for (int i = 0; i < new_triangles.size(); i++) {
-      auto triangle = new_triangles[i];
-      std::cerr << "New Triangle: " << triangle->GetId(0) << "," << triangle->GetId(1) << "," << triangle->GetId(2) << "\n";
       this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, new_triangles[i]);
     }
 
+    // remove deleted triangles and clean up
     this->reference_mesh_->RemoveDeletedCells();
     this->reference_mesh_ = MeshWarper::clean_mesh(this->reference_mesh_);
   }
