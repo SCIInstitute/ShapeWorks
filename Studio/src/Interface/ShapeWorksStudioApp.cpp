@@ -1269,7 +1269,8 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   bool analysis_mode = this->ui_->action_analysis_mode->isChecked();
 
-  this->ui_->alignment_combo->setVisible(!analysis_mode);
+  int num_domains = this->session_->get_domains_per_shape();
+  this->ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
   this->ui_->center_checkbox->setVisible(!analysis_mode);
 
   if (analysis_mode) {
