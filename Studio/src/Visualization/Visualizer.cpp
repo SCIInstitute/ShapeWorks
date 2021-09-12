@@ -486,7 +486,9 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
     }
   }
   else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = shape->get_alignment(alignment_domain);
+    if (this->get_center()) {
+      transform = shape->get_alignment(alignment_domain);
+    }
   }
   else {
     std::cerr << "asking for reconstruction transform, domain: " << domain << "\n";
