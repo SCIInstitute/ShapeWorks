@@ -597,7 +597,7 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       auto transform = createMeshTransform(matrix);
       auto center = target.centerOfMass();
       transform->PostMultiply();
-      transform->Translate(center[0],center[1],center[2]);
+      transform->Translate(-center[0],-center[1],-center[2]);
 
 
       std::vector<double> groomed_transform;
