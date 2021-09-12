@@ -720,12 +720,12 @@ void Viewer::update_points()
     this->glyph_mapper_->SetLookupTable(this->surface_lut_);
   }
 
-
   int alignment_domain = this->visualizer_->get_alignment_domain();
 
   //this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
 
-  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
+      this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
     if (this->visualizer_->get_center()) {
       this->glyph_actor_->SetUserTransform(this->shape_->get_alignment(alignment_domain));
     }
@@ -920,7 +920,7 @@ void Viewer::update_opacities()
 {
   auto opacities = this->visualizer_->get_opacities();
   if (opacities.size() == this->surface_mappers_.size()) {
-    for (size_t i=0;i<opacities.size();i++) {
+    for (size_t i = 0; i < opacities.size(); i++) {
       this->surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
     }
   }
