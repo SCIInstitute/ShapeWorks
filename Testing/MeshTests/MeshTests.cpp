@@ -624,8 +624,6 @@ TEST(MeshTests, warpTest1)
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
-  output.write("/tmp/check.vtk");
-
   ASSERT_TRUE(output == ellipsoid_warped);
 }
 
