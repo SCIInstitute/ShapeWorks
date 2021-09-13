@@ -73,6 +73,8 @@ The Metrics panel shows the Compactness, Specificity, and Generalization charts.
 
 ![ShapeWorks Studio Analysis Metrics Panel](../img/studio/studio_analyze_metrics.png)
 
+See [Shape Model Evaluation](../new/ssm-eval.md) for more information about shape evaluation.
+
 ### Surface Reconstruction Panel
 
 The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.
