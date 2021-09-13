@@ -1122,13 +1122,46 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("geodesicDistance",
        [](Mesh &mesh, const std::vector<double> p) -> decltype(auto) {
-         return mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
+          auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
+          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                 1};
+          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+          // LOTS of copying going on here, see github #903
+          array->GetData(0, array->GetNumberOfTuples()-1,
+                         0, array->GetNumberOfComponents()-1,
+                         vtkarr);                               // copy1
+          return py::array(py::dtype::of<double>(),
+                         shape,
+                         vtkarr->GetVoidPointer(0));          // copy2
        },
        "computes geodesic distance between a point (landmark) and each vertex on mesh",
        "landmark"_a)
 
   .def("geodesicDistance",
-       py::overload_cast<const std::vector<Point>>(&Mesh::geodesicDistance),
+       [](Mesh &mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
+          std::vector<Point> points;
+          for (int i=0; i<p.size(); i++)
+          {
+            points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
+          }
+          auto array = mesh.geodesicDistance(points);
+          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                 1};
+          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+          // LOTS of copying going on here, see github #903
+          array->GetData(0, array->GetNumberOfTuples()-1,
+                         0, array->GetNumberOfComponents()-1,
+                         vtkarr);                               // copy1
+          return py::array(py::dtype::of<double>(),
+                         shape,
+                         vtkarr->GetVoidPointer(0));          // copy2
+       },
        "computes geodesic distance between a set of points (curve) and all vertices on mesh",
        "curve"_a)
 
