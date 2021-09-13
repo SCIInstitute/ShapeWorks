@@ -69,7 +69,7 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 
 ### Metrics Panel
 
-The Metrics panel shows the Explained Variance chart.  This chart shows how much of the population's variance is explained, cumulatively by each mode.  You can hover over each bar to see the individual values.
+The Metrics panel shows the Compactness, Specificity, and Generalization charts.  These are interactive charts with hover menus and the ability to zoom, pan, etc.
 
 ![ShapeWorks Studio Analysis Metrics Panel](../img/studio/studio_analyze_metrics.png)
 
@@ -120,7 +120,7 @@ Each button has tooltips with descriptions.  The controls from left to right are
 
 * Autoview / reset view
 * Glyph visibility with dropdown for glyph size and detail
-* Isosurface visibility
+* Isosurface visibility with dropdown for surface opacity (of each domain)
 * View mode (original/groomed/reconstructed)
 * Center (whether to center each object based on center of mass)
 * Number of views in lightbox (1,2,4,9,16,25,36,49,64)
@@ -129,7 +129,7 @@ Additionally, when feature volumes or meshes with scalars are loaded, the extend
 
 ![ShapeWorks Studio Viewer Extended Controls](../img/studio/studio_viewer_controls_extended.png)
 
-This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.
+This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.  Additionally, the auto range can be turned off and specified range can be set.
 
 ## Keyboard Shortcuts
 
