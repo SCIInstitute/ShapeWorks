@@ -688,10 +688,8 @@ void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform)
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 {
   if (domain < this->reconstruction_transforms_.size()) {
-    std::cerr << "returning a reconstruction transform\n";
     return this->reconstruction_transforms_[domain];
   }
-  std::cerr << "no transforms, just returning identity\n";
 
   // no transforms, just return identity
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();

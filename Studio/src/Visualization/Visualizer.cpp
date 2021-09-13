@@ -491,7 +491,6 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
     }
   }
   else {
-    std::cerr << "asking for reconstruction transform, domain: " << domain << "\n";
     transform = shape->get_reconstruction_transform(domain);
   }
 

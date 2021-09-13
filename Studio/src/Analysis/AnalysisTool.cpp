@@ -357,6 +357,7 @@ void AnalysisTool::on_group1_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group1_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -369,6 +370,7 @@ void AnalysisTool::on_group2_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group2_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -956,7 +958,6 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   shape->set_particles(points);
   shape->get_reconstructed_meshes();
   shape->set_reconstruction_transforms(this->reconstruction_transforms_);
-  std::cerr << "creating shape from points, transforms size = " << this->reconstruction_transforms_.size() << "\n";
   return shape;
 }
 
@@ -1225,8 +1226,6 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
   for (ShapeHandle shape : this->session_->get_shapes()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     if (this->current_alignment_ == AlignmentType::Local) {
-      //???transform = this->reconstruction_transforms_[]
-      std::cerr << "local, so using nullptr transform\n";
       transform = nullptr;
     }
     else if (this->current_alignment_ == AlignmentType::Global) {
@@ -1310,7 +1309,6 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
 {
   auto shapes = this->session_->get_shapes();
   if (this->current_alignment_ == AlignmentType::Local) {
-    std::cerr << "local!\n";
 
     this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
     for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
@@ -1327,12 +1325,10 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
                         offset->GetMatrix()->GetData()[j]) / num_shapes;
         }
       }
-      std::cerr << "setting a transform\n";
       this->reconstruction_transforms_[domain] = transform;
     }
   }
   else {
-    std::cerr << "not local, clear transforms!\n";
     this->reconstruction_transforms_.clear();
   }
   for (int s = 0; s < shapes.size(); s++) {
