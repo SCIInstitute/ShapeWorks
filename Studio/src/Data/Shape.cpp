@@ -466,7 +466,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
       // first check if we have particle scalars for this feature
       auto point_features = this->get_point_features(feature);
-      if (point_features.size() > 0) { // already loaded as particle scalars
+      if (point_features.size() > 0 && display_mode == Visualizer::MODE_RECONSTRUCTION_C) { // already loaded as particle scalars
         this->set_point_features(feature, point_features);
       }
       else {
