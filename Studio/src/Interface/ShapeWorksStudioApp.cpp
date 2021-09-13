@@ -86,6 +86,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->update_recent_files();
 
   this->py_worker_ = QSharedPointer<PythonWorker>::create();
+  this->py_worker_->set_vtk_output_window(this->studio_vtk_output_window_);
   connect(this->py_worker_.data(), &PythonWorker::error_message,
           this, &ShapeWorksStudioApp::handle_error);
 
