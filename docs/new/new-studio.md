@@ -1,5 +1,22 @@
 # New in ShapeWorks Studio
 
+
+## DeepSSM in Studio
+
+New in Shapeworks 6.2, we have added the ability to run DeepSSM tools in ShapeWorks Studio.
+
+![Studio DeepSSM - Augmentation](../img/studio/studio_deepssm_aug2.png){: width="600" }
+
+See [DeepSSM in Studio](../studio/deepssm-in-studio.md) for more information.
+
+## Multiple Domain Alignments
+
+New in Shapeworks 6.2, we have added support for multiple alignment strategies in ShapeWorks Studio.  This allows analysis with and without articulation with a choice of reference domain, or global alignment.
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_alignments.mp4" autoplay muted loop controls style="width:100%"></p>
+
+See [Multiple Domain Alignments](../studio/multiple-domains.md#multiple-domain-alignments) for more information.
+
 ## Multiple Domains
 
 As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.
