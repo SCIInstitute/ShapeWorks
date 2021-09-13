@@ -252,6 +252,9 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
   this->ui_->difference_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
 }
 
 //---------------------------------------------------------------------------
