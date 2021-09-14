@@ -373,13 +373,13 @@ def plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir):
     plt.bar(X, explained_variance)
     plt.plot(X,cumulative_variance,linewidth=4.0,c='black')
     fig = plt.gcf()
-    fig.set_size_inches(10, 10)
-    plt.title('Variance Plot')
-    plt.xlabel('Mode')
-    plt.ylabel('Explained Variance')
+    fig.set_size_inches(20, 10)
+    plt.title('Variance Plot',fontsize=16)
+    plt.xlabel('Mode',fontsize=16)
+    plt.ylabel('Explained Variance',fontsize=16)
     plt.xticks(X)
-    plt.grid()
-    plt.savefig(shape_models_dir+"variance_plot.png")
+    plt.legend(["Cumulative Explained Variance","Explained Variance"],fontsize=16)
+    plt.savefig(shape_models_dir+"variance_plot.png",dpi=700)
     plt.show(block=False)
     plt.close(fig)
 
@@ -399,8 +399,9 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
         min_dims = 1
     else:
         min_dims = min_dims[-1]+1
+
     print("\nNumber of modes covering 99% varaince - ", min_dims)
-    
+    min_dims = 10 if min_dims>15 else min_dims
     loadings = loadings[:,:min_dims]
     dims = []
     for i in range(len(loadings)):
@@ -411,11 +412,12 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
     loadings = loadings.flatten()
     data = {'PCA Mode':dims, "PCA Score":loadings}
     df = pd.DataFrame(data) 
-    plt.figure(figsize=(6,4),dpi=300)  
+    plt.figure(figsize=(10,6),dpi=300)  
     ax = sns.violinplot(x='PCA Mode', y='PCA Score',\
                         data=df, palette="cool_r", split=True, scale="area")
     fig = plt.gcf()
-    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png")
+    plt.title("Violin Plots Showing the Distribution of the PCA Loadings",fontsize=16)
+    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png",dpi=700)
     plt.show(block=False)
     plt.close(fig)
 
@@ -436,9 +438,9 @@ def plot_mode_line(save_dir,filename,title,ylabel):
     plt.plot(X, Y, linewidth=4.0)
     fig = plt.gcf()
     fig.set_size_inches(10, 10)
-    plt.title(title)
-    plt.xlabel('Mode')
-    plt.ylabel(ylabel)
+    plt.title(title,fontsize=16)
+    plt.xlabel('Mode',fontsize=16)
+    plt.ylabel(ylabel,fontsize=16)
     plt.xticks(X)
     plt.ylim(bottom=0, top=max(Y)*1.5)
     plt.xlim(left=1, right=N)
