@@ -59,3 +59,8 @@ NOTE:The list of `<inputs>` (binary segmentation images) should be ordered consi
 ## Analyzing Shape Model
 
 
+Here is the optimized shape.
+![Ellipsoid Joint Shape Model](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multiple_domain_segs_model.gif)
+
+Below are the particles for each sample, we can see they are uniformly distributed.
+![Ellipsoid Joint Samples](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multi_domain_samples.png)
