@@ -1024,7 +1024,7 @@ void ShapeWorksStudioApp::update_view_mode()
         feature_map_override = this->deepssm_tool_->get_display_feature();
       }
     }
-    else {
+    else if (this->get_tool_state() == Session::ANALYSIS_C) {
       if (this->analysis_tool_->get_display_feature_map() != feature_map) {
         feature_map_override = this->analysis_tool_->get_display_feature_map();
       }
