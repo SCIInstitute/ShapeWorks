@@ -1,50 +1,36 @@
 # Shape Model for Multiple Domains 
 
-## What and Where is the Use Case?
+## What is the Use Case?
 
-This use case demonstrates using ShapeWorks tools to perform the following.
-
-- Generate shape models for anatomies with multiple structures (domains), e.g., joints.
-- Optimization is carried out in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions
-
-The use case is located at: `Examples/Python/ellipsoid_multiple_domain.py`
-
+This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints to capture inter-domains correlations and interactions.
 There are three datasets available for this use case:
-- `ellipsoid_joint_rotation` 
-- `ellipsoid_joint_size`
-- `ellipsoid_joint_size_rotation`
-By defualt, the use case runs on the `ellipsoid_joint_rotation` dataset. The name of the dataset can be changed in the `ellipsoid_multiple_domain.py` file if required.
+
+* ellipsoid_joint_rotation - two stacked ellipsoids with same radiis, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
+* ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radiis in all 3 directions
+* ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid
+
+By defualt, the use case runs on the ellipsoid_joint_rotation dataset.
  
-## Running the Use Case
+## Grooming Steps
 
-To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
+1. **Isotropic Resampling**: Binary segmentations in the ellipsoid joint dataset are resampled to have an isotropic voxel spacing.
+2. **Reference Selection**: 
+For the ellipsoid_joint datasets available on the ShapeWorks portal, the mode of variation are rotation and/or size of the second ellipsoid w.r.t to the first ellipsoid.Hence, we align the shapes using the first domain as the reference. This is domain specific alignment. 
+The reference is selected by first computing the mean (average) distance transform of the segmentations belonging to the reference domain, then selecting the sample closest to that mean (i.e., medoid).
+3. **Rigid Alignment**: For all the shapes in the reference domain selected, the transformation is calculated to factor out translation and rotation. The same transformation is applied to the corresponding shape of the other domain.
+4. **Bounding Box**: The smallest region which fits all of the samples is found.
+5. **Cropping**: The segmentations are cropped to the size of the bounding box.
+6. **Padding**: The segmentations are padded with zeros on every side.
+7. **Distance Transform**: Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-```
-$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py ellipsoid_multiple_domain
-```
+## Supported Tags
 
-This calls `ellipsoid_multiple_domain.py` (in `Examples/Python/`) to perform the following.
-
-* Loads the `ellipsoid joint` dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorks Studio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
-
-## Grooming Data
-
-In this use case, we download pre-aligned data. Hence we require only two groooming steps.
-1. **Isotropic Resampling**: Binary segmentations in `ellipsoid_joint_rotation/segmentations/` are resampled to have an isotropic voxel spacing.
-2. **Distance Transform**: Next,the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
-The use case will be updated soon to demonstrate the full grooming process including alignment. 
-
+``` 
+        --use_subsample --num_subsample --skip_grooming --use_single_scale --tiny_test
+``` 
 ## Optimizing Shape Model
 
-Below are the default optimization parameters when running this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md).
-
-```bash
-$ python RunUseCase.py ellipsoid_multiple_domain
-```
-The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
+NOTE:The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 
 ```python
 {
@@ -72,4 +58,4 @@ The list of `<inputs>` (binary segmentation images) should be ordered consistent
 
 ## Analyzing Shape Model
 
-ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).
+
