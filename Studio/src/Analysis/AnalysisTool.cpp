@@ -971,6 +971,16 @@ void AnalysisTool::set_feature_map(const std::string& feature_map)
 }
 
 //---------------------------------------------------------------------------
+std::string AnalysisTool::get_display_feature_map()
+{
+  if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
+      this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
+    return "p_values";
+  }
+  return this->feature_map_;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_group_boxes()
 {
   // populate the group sets

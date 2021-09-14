@@ -564,6 +564,13 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_center_checked());
+
+  if (this->session_) {
+    this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
+    this->ui_->feature_auto_scale->setChecked(this->session_->get_feature_auto_scale());
+    this->ui_->feature_min->setValue(this->session_->get_feature_range_min());
+    this->ui_->feature_max->setValue(this->session_->get_feature_range_max());
+  }
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
@@ -665,8 +672,6 @@ void ShapeWorksStudioApp::update_table()
   }
   this->ui_->features->setCurrentText(current_feature);
   this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
-
-  this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
 }
 
 //---------------------------------------------------------------------------
@@ -993,6 +998,13 @@ void ShapeWorksStudioApp::update_tool_mode()
 }
 
 //---------------------------------------------------------------------------
+std::string ShapeWorksStudioApp::get_tool_state()
+{
+  std::string tool_state = this->session_->parameters().get("tool_state", Session::DATA_C);
+  return tool_state;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode()
 {
   auto view_mode = this->get_view_mode();
@@ -1002,12 +1014,39 @@ void ShapeWorksStudioApp::update_view_mode()
   this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
   if (this->visualizer_) {
-    //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     if (feature_map == "-none-") { feature_map = ""; }
     this->analysis_tool_->set_feature_map(feature_map);
+
+    std::string feature_map_override = "";
+    if (this->get_tool_state() == Session::DEEPSSM_C) {
+      if (this->deepssm_tool_->get_display_feature() != "") {
+        feature_map_override = this->deepssm_tool_->get_display_feature();
+      }
+    }
+    else {
+      if (this->analysis_tool_->get_display_feature_map() != feature_map) {
+        feature_map_override = this->analysis_tool_->get_display_feature_map();
+      }
+    }
+
+    if (feature_map_override != "") {
+      this->ui_->features->hide();
+      this->ui_->feature_line->setText(QString::fromStdString(feature_map_override));
+      this->ui_->feature_line->setVisible(true);
+      feature_map = feature_map_override;
+    }
+    else {
+      this->ui_->features->show();
+      this->ui_->feature_line->hide();
+    }
+
+    auto feature_maps = this->session_->get_project()->get_feature_names();
+    this->ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "");
+
     this->visualizer_->set_feature_map(feature_map);
     this->visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
+    this->update_feature_map_scale();
     this->update_display(true);
   }
 }
@@ -1291,24 +1330,15 @@ void ShapeWorksStudioApp::update_display(bool force)
   std::string tool_state =
     this->session_->parameters().get("tool_state", Session::DATA_C);
 
+  this->update_view_mode();
+
   if (tool_state == Session::DEEPSSM_C) {
-    auto deep_ssm_feature = this->deepssm_tool_->get_display_feature();
-    if (deep_ssm_feature == "") {
-      this->set_feature_map("");
-    }
-    else {
-      this->set_feature_map("");
-      this->set_feature_map(deep_ssm_feature);
-    }
     this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   }
   else {
-    if (this->get_feature_map() == "deepssm_error") {
-      this->set_feature_map("");
-    }
     this->current_display_mode_ = mode;
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
