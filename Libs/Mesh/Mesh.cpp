@@ -1,3 +1,8 @@
+#include <math.h>
+#include <algorithm>
+#include <vector>
+#include <string>
+
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "Image.h"
@@ -7,6 +12,14 @@
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
 #include "FECVDDecimationModifier.h"
+
+#include <igl/exact_geodesic.h>
+#include <igl/gaussian_curvature.h>
+#include <igl/principal_curvature.h>
+#include <igl/cotmatrix.h>
+#include <igl/massmatrix.h>
+#include <igl/invert_diag.h>
+#include <igl/grad.h>
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -18,7 +31,6 @@
 #include <vtkOBJWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
@@ -38,18 +50,20 @@
 #include <vtkGenericCell.h>
 #include <vtkPlaneCollection.h>
 #include <vtkClipClosedSurface.h>
-#include <igl/exact_geodesic.h>
-#include <igl/gaussian_curvature.h>
-#include <igl/principal_curvature.h>
-#include <igl/cotmatrix.h>
-#include <igl/massmatrix.h>
-#include <igl/invert_diag.h>
-
-//append
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkNew.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkCellData.h>
+#include <vtkSelectPolyData.h>
+#include <vtkDijkstraGraphGeodesicPath.h>
+
+#include <geometrycentral/surface/surface_mesh_factories.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <geometrycentral/surface/heat_method_distance.h>
+
+
 
 namespace shapeworks {
 

@@ -3,28 +3,8 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 
-#include <math.h>
-#include <algorithm>
-#include <vector>
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-#include <string>
+class vtkCellLocator;
 #include <vtkPointData.h>
-#include <vtkCellData.h>
-#include <vtkDataSetAttributes.h>
-#include <vtkSelectPolyData.h>
-#include <vtkClipPolyData.h>
-#include <vtkKdTreePointLocator.h>
-#include <vtkCellLocator.h>
-
-#include <igl/grad.h>
-#include <igl/per_vertex_normals.h>
-#include <geometrycentral/surface/surface_mesh_factories.h>
-#include <geometrycentral/surface/surface_mesh.h>
-#include "geometrycentral/surface/heat_method_distance.h"
-#include "geometrycentral/surface/meshio.h"
-
-#include <vtkDijkstraGraphGeodesicPath.h>
 
 namespace shapeworks {
 

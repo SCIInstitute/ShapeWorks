@@ -6,13 +6,9 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkDoubleArray.h>
-#include <igl/biharmonic_coordinates.h>
-#include <igl/cat.h>
-#include <igl/cotmatrix.h>
+#include <vtkCellData.h>
+
 #include <igl/matrix_to_list.h>
-#include <igl/point_mesh_squared_distance.h>
-#include <igl/remove_unreferenced.h>
-#include <igl/slice.h>
 
 // tbb
 #include <tbb/mutex.h>
