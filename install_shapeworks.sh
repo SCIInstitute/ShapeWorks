@@ -72,9 +72,9 @@ function install_conda() {
 
   echo "Location2"
   # update anaconda
-  conda activate base
-  if ! conda update --yes -n base conda; then return 1; fi
-  if ! conda update --yes --all; then return 1; fi
+#  conda activate base
+#  if ! conda update --yes -n base conda; then return 1; fi
+ # if ! conda update --yes --all; then return 1; fi
 
   echo "Location3"
 
