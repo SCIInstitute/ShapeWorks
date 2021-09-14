@@ -1,37 +1,23 @@
 # Shape Model for Contour Domains
 
-## What and Where is the Use Case?
+## What is the Use Case?
 
-This use case demonstrates using ShapeWorks tools to perform the following.
-- Optimization for N-dimensional contours
-
-The use case is located at: `Examples/Python/supershapes_1mode_contour.py`
-
+This use case demonstrates using ShapeWorks tools to perform optimization for N-dimensional contours.
+Contours are represented as a series of lines, that may be a closed loop. We consider 2D shapes generated from the supershape equation, with a single parameter sampled from a chi-squared distribution.
 Here is an example of the data:
 ![Supershapes contour](../img/use-cases/supershapes_contour.png)
-
-## Running the Use Case
-
-To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
-
-```
-$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py supershapes_1mode_contour
-```
-
-This calls `supershapes_1mode_contour.py` (in `Examples/Python/`) to perform the following.
- 
-* Loads the `supershapes_1mode_contour` dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorks Studio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 ## Grooming Data
 
 In this use case, we download pre-groomed data.
 
+## Supported Tags
+
+This use case does not support any tags
+
 ## Optimizing Shape Model
 
-Below are the default optimization parameters when running this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md).
+Below are the default optimization parameters for this use case.
 
 
 ```python
@@ -60,6 +46,7 @@ Below are the default optimization parameters when running this use case. For a 
 
 ## Analyzing Shape Model
 
-ShapeWorks Studio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
-
+           
+During the generation of the input supershapes data,the n2 and n3 variables were kept constant, and only the n1 variable was varied according to values sampled from a chi squared distribution. We obtain a shape model that accurately captures
+this variation.
 ![Supershapes contour analyze](https://sci.utah.edu/~shapeworks/doc-resources/pngs/supershapes_contour.gif)
