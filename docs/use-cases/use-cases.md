@@ -98,7 +98,12 @@ $ python RunUseCase.py [insert name of use case here] --groom_images
 ```
 $ python RunUseCase.py [insert name of use case here] --use_single_scale
 ```
-         
+* `--mesh_mode`: Use cases that optimize on distance transforms can be run in mesh mode to optimize on meshes instead. When the `--mesh_mode` tag is used groomed distance transforms are converted to meshes (by extracting the isosurface at zero) and those meshes are passed to the optimizer. The `--mesh_mode` tag has no effect on mesh-based use cases.
+
+```
+$ python RunUseCase.py [insert name of image-based use case here] --mesh_mode
+```
+
 * `--tiny_test`: Users can run a fast version of the use case by using the `--tiny_test tag`. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.For tiny test,only a subset of the data will be downloaded directly in the `Output` folder and no zip file will be donwloaded in the `Data` folder.If the data has already been unzipped in `Output` folder, no new data will be downloaded.
 
 ```
