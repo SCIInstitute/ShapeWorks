@@ -47,6 +47,5 @@ Below are the default optimization parameters for this use case.
 ## Analyzing Shape Model
 
            
-During the generation of the input supershapes data,the n2 and n3 variables were kept constant, and only the n1 variable was varied according to values sampled from a chi squared distribution. We obtain a shape model that accurately captures
-this variation.
-![Supershapes contour analyze](https://sci.utah.edu/~shapeworks/doc-resources/pngs/supershapes_contour.gif)
+During the generation of the input supershapes data,the n2 and n3 variables were kept constant, and only the n1 variable was varied according to values sampled from a chi squared distribution. We obtain a shape model that accurately captures this variation(first mode variance = 98%)
+![Supershapes contour analyze](https://sci.utah.edu/~shapeworks/doc-resources/gifs/supershapes_contour.gif)

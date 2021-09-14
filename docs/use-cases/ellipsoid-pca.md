@@ -1,6 +1,6 @@
 # Ellipsoid: Shape Statistics in Python
 
-## What and Where is the Use Case? 
+## What is the Use Case? 
 
 This use case demonstrates the functionality of shape statistics tools of ShapeWorks python API. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. This use case reads the correspondence model of the ellipsoid segmentation images use case.
 
@@ -36,3 +36,5 @@ Using `shape_statistics` object, you can now extract the following entities:
 * Number of shapes in the model: `sampleSize()`
 * Dimension of each shape: `numDims()`
 * Variance explained by each mode: `percentVarByMode()`
+![PCA Loading Violin Plot](https://sci.utah.edu/~shapeworks/doc-resources/gifs/pca_loadings_violin_plot.png)
+![PCA Variance Plot](https://sci.utah.edu/~shapeworks/doc-resources/gifs/variance_plot.png)

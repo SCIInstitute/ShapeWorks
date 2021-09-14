@@ -67,6 +67,7 @@ nav:
    - 'Ellipsoid: Shape Statistics in Python':    'use-cases/ellipsoid-pca.md'   
    - 'Shape Models with Geodesic Distance based Repulsion':   'use-cases/thin-cavity-bean.md'
    - 'Shape Models for N-dimensional Contours':  'use-cases/supershapes-contour.md'
+   - 'Femur: Group Difference Statistics in Python': 'use-cases/femur-pvalues.md'
      
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
