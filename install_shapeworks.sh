@@ -65,14 +65,18 @@ function install_conda() {
     conda config --set auto_activate_base false
   fi
 
+  echo "Location1"
   # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  
+
+  echo "Location2"
   # update anaconda
   conda activate base
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
+
+  echo "Location3"
 
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
@@ -83,6 +87,8 @@ function install_conda() {
   if ! conda install --yes pip=20.2.3; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
 
+  echo "Location4"
+  
   # install shapeworks deps
   if ! conda install --yes \
     cmake=3.18.2 \
@@ -206,6 +212,8 @@ function install_conda() {
   
   return 0
 }
+
+echo "Here we go"
 
 if install_conda; then
   install_pytorch
