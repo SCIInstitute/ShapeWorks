@@ -405,6 +405,11 @@ void AnalysisTool::group_p_values_clicked()
     this->handle_group_pvalues_complete();
   }
   else {
+
+    if (this->group1_list_.size() < 3 || this->group2_list_.size() < 3) {
+      emit error("Unable to compute p-values with less than 3 shapes per group");
+      return;
+    }
     this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
