@@ -531,10 +531,10 @@ private:
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
-  std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
-  std::vector<std::vector<SphereType> > m_Spheres;
-  std::vector< std::vector<FFCType> >  m_FFCs;
-  std::vector< vtkSmartPointer<vtkPolyData> > m_meshes;
+  std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
+  std::vector<std::vector<SphereType>> m_Spheres;
+  std::vector<std::vector<FFCType>>  m_FFCs;
+  std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
 
   unsigned int m_verbosity;
 };
