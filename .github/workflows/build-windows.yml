@@ -51,7 +51,7 @@ jobs:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
+      uses: conda-incubator/setup-miniconda@v2.1.1
       with:
           miniconda-version: 'latest'
           
