@@ -141,7 +141,7 @@ cp -a Documentation "${ROOT}/package/${VERSION}"
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 if [ $? -ne 0 ]; then
     echo "Failed to zip artifact"
     exit 1

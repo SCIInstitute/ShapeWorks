@@ -265,6 +265,7 @@ void Viewer::display_vector_field()
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetNumberOfComponents(3);
 
+  this->update_points();
   this->compute_point_differences(vecs, magnitudes, vectors);
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -312,7 +313,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
   auto mesh_group = this->shape_->get_meshes(this->visualizer_->get_display_mode());
-  if (!mesh_group.valid()) {
+  if (!mesh_group.valid() || points.empty()) {
     return;
   }
 
@@ -370,10 +371,14 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors)
 {
+  if (!this->mesh_ready_) {
+    return;
+  }
+
   for (size_t i = 0; i < this->surface_mappers_.size(); i++) {
 
     vtkPolyData* poly_data = this->surface_mappers_[i]->GetInput();
-    if (!poly_data) {
+    if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
       return;
     }
 
@@ -484,6 +489,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     this->mesh_ready_ = false;
     return;
   }
+  this->mesh_ready_ = true;
 
   QStringList annotations = shape->get_annotations();
   this->corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
@@ -769,6 +775,7 @@ void Viewer::update_actors()
       this->renderer_->AddActor(this->surface_actors_[i]);
     }
   }
+  this->update_opacities();
 }
 
 //-----------------------------------------------------------------------------
@@ -906,6 +913,17 @@ bool Viewer::showing_feature_map()
 void Viewer::update_feature_range(double* range)
 {
   this->update_difference_lut(range[0], range[1]);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_opacities()
+{
+  auto opacities = this->visualizer_->get_opacities();
+  if (opacities.size() == this->surface_mappers_.size()) {
+    for (size_t i=0;i<opacities.size();i++) {
+      this->surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

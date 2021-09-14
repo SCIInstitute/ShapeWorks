@@ -210,10 +210,12 @@ def Run_Pipeline(args):
         parameter_dictionary["number_of_particles"] = [32,32]
         parameter_dictionary["optimization_iterations"] = 25
     
-    
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
 
+    # Execute the optimization function on distance transforms
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -229,4 +231,4 @@ def Run_Pipeline(args):
     """
     domains_per_shape = 2
     AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files,domains_per_shape)
+        point_dir, input_files, local_point_files, world_point_files,domains_per_shape)
