@@ -542,7 +542,7 @@ Field Mesh::geodesicDistance(const Point3 landmark)
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
-  distance->SetName("GeodesicDistanceTo");
+  distance->SetName("GeodesicDistance");
 
   for (int i = 0; i < numPoints(); i++)
   {
@@ -554,28 +554,27 @@ Field Mesh::geodesicDistance(const Point3 landmark)
 
 Field Mesh::geodesicDistance(const std::vector<Point3> curve)
 {
-  VtkMeshWrapper wrap(this->mesh, true);
-
-  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
-  distance->SetNumberOfComponents(1);
-  distance->SetNumberOfTuples(numPoints());
-  distance->SetName("GeodesicDistanceTo");
+  vtkSmartPointer<vtkDoubleArray> minDistance = vtkSmartPointer<vtkDoubleArray>::New();
+  minDistance->SetNumberOfComponents(1);
+  minDistance->SetNumberOfTuples(numPoints());
+  minDistance->SetName("MinGeodesicDistanceToCurve");
 
   for (int i = 0; i < numPoints(); i++)
   {
-    float distToCurve = 1e20;
-
-    for (int j = 0; j < curve.size(); j++)
-    {
-      double currDistance = wrap.ComputeDistance(getPoint(i), -1, curve[j], -1);
-      if (currDistance < distToCurve)
-        distToCurve = currDistance;
-    }
-
-    distance->SetValue(i, distToCurve);
+    minDistance->SetValue(i, 1e20);
   }
 
-  return distance;
+  for (int i = 0; i < curve.size(); i++)
+  {
+    Field distance = geodesicDistance(curve[i]);
+    for (int j = 0; j < numPoints(); j++)
+    {
+      if (distance->GetTuple1(i) < minDistance->GetTuple1(i))
+        minDistance->SetValue(i, distance->GetTuple1(i));
+    }
+  }
+
+  return minDistance;
 }
 
 Field Mesh::curvature(const CurvatureType type)

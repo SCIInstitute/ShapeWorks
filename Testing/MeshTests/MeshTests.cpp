@@ -132,9 +132,21 @@ TEST(MeshTests, geodesicTest1)
 // TEST(MeshTests, geodesicTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-//   auto dist = femur.geodesicDistance(femur.getPoint(50));
-//   femur.setField("GeodesicDistanceTo", dist);
+//   auto distField = femur.geodesicDistance(femur.getPoint(50));
+//   // femur.setField("GeodesicDistanceTo", dist);
+//   for (int i = 0; i < femur.numPoints(); i++)
+//   {
+//     double val1 = femur.geodesicDistance(50, i);
+//     double val2 = distField->GetTuple1(i);
+//     if (std::abs(val1 - val2) < 1e-4)
+//     {
+//       printf("%ith values not equal (%0.8f != %0.8f)\n", i, val1, val2);
+//     }
+//   }
 
+//   // Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
+
+//   // ASSERT_TRUE(femur.compareField(ground_truth, "GeodesicDistanceTo"));
 //   ASSERT_TRUE(true);
 // }
 
