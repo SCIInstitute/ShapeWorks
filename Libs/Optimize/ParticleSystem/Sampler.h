@@ -26,11 +26,6 @@
 
 #include "TriMesh.h"
 
-#include <vtkContourFilter.h>
-#include <vtkPolyDataWriter.h>
-#include <vtkDecimatePro.h>
-#include <vtkDoubleArray.h>
-
 #include "Mesh.h"
 
 // Uncomment to enable FFC visualizations
