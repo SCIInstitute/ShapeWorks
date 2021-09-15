@@ -2,20 +2,20 @@
 
 ## What is the Use Case?
 
-This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints to capture inter-domains correlations and interactions.
+This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints, to capture inter-domains correlations and interactions.
 There are three datasets available for this use case:
 
-* ellipsoid_joint_rotation - two stacked ellipsoids with same radiis, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
-* ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radiis in all 3 directions
+* ellipsoid_joint_rotation - two stacked ellipsoids with the same radii, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
+* ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radii in all three directions
 * ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid
 
-By defualt, the use case runs on the ellipsoid_joint_rotation dataset.
+By default, the use case runs on the ellipsoid_joint_rotation dataset.
  
 ## Grooming Steps
 
-1. **Isotropic Resampling**: Binary segmentations in the ellipsoid joint dataset are resampled to have an isotropic voxel spacing.
+1. **Isotropic Resampling**: Binary segmentations in the ellipsoid joint dataset are resampled with an isotropic voxel spacing.
 2. **Reference Selection**: 
-For the ellipsoid_joint datasets available on the ShapeWorks portal, the mode of variation are rotation and/or size of the second ellipsoid w.r.t to the first ellipsoid.Hence, we align the shapes using the first domain as the reference. This is domain specific alignment. 
+For the ellipsoid_joint datasets available on the ShapeWorks portal, the mode of variation is rotation and/or size of the second ellipsoid w.r.t to the first ellipsoid. Hence, we align the shapes using the first domain as the reference. This is domain-specific alignment. 
 The reference is selected by first computing the mean (average) distance transform of the segmentations belonging to the reference domain, then selecting the sample closest to that mean (i.e., medoid).
 3. **Rigid Alignment**: For all the shapes in the reference domain selected, the transformation is calculated to factor out translation and rotation. The same transformation is applied to the corresponding shape of the other domain.
 4. **Bounding Box**: The smallest region which fits all of the samples is found.
@@ -30,7 +30,7 @@ The reference is selected by first computing the mean (average) distance transfo
 ``` 
 ## Optimizing Shape Model
 
-NOTE:The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
+NOTE: The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 
 ```python
 {
@@ -62,5 +62,5 @@ NOTE:The list of `<inputs>` (binary segmentation images) should be ordered consi
 Here is the optimized shape.
 ![Ellipsoid Joint Shape Model](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multiple_domain_segs_model.gif)
 
-Below are the particles for each sample, we can see they are uniformly distributed.
+Below are the particles for each sample; we can see they are uniformly distributed.
 ![Ellipsoid Joint Samples](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multi_domain_samples.png)

@@ -36,5 +36,5 @@ Using `shape_statistics` object, you can now extract the following entities:
 * Number of shapes in the model: `sampleSize()`
 * Dimension of each shape: `numDims()`
 * Variance explained by each mode: `percentVarByMode()`
-![PCA Loading Violin Plot](https://sci.utah.edu/~shapeworks/doc-resources/gifs/pca_loadings_violin_plot.png)
-![PCA Variance Plot](https://sci.utah.edu/~shapeworks/doc-resources/gifs/variance_plot.png)
+![PCA Loading Violin Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/pca_loadings_violin_plot.png)
+![PCA Variance Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/variance_plot.png)
