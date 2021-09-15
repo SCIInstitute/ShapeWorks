@@ -43,7 +43,8 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(file_list, int(args.num_subsample))
+            inputImages =[sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
