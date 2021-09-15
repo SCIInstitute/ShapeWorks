@@ -230,8 +230,7 @@ void MeshWarper::add_particle_vertices()
     }
 
     // remove deleted triangles and clean up
-    this->reference_mesh_->RemoveDeletedCells();
-    this->reference_mesh_ = MeshWarper::clean_mesh(this->reference_mesh_);
+    this->reference_mesh_ = MeshWarper::recreate_mesh(this->reference_mesh_);
   }
 }
 
@@ -377,6 +376,38 @@ vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData>
   clean->SetInputData(mesh);
   clean->Update();
   return clean->GetOutput();
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyData> mesh)
+{
+  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
+
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> polys;
+
+  // copy points
+  for (vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++) {
+    points->InsertNextPoint(mesh->GetPoint(i));
+  }
+
+  // copy triangles
+  for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
+    vtkCell* cell = this->reference_mesh_->GetCell(i);
+
+    if (cell->GetCellType() != VTK_EMPTY_CELL) { // VTK_EMPTY_CELL means it was deleted
+
+      vtkIdType pts[3];
+      pts[0] = cell->GetPointId(0);
+      pts[1] = cell->GetPointId(1);
+      pts[2] = cell->GetPointId(2);
+      polys->InsertNextCell(3, pts);
+    }
+  }
+
+  poly_data->SetPoints(points);
+  poly_data->SetPolys(polys);
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------

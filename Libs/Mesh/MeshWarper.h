@@ -59,6 +59,9 @@ private:
   //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  //! Recreate mesh, dropping deleted cells
+  vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
   //! Generate the warp matrix
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
                             const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
