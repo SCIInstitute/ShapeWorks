@@ -28,22 +28,21 @@ def sw2vtkImage(swImg, verbose = False):
 
     return vtkImg
 
-# converts shapeworks Mesh object to vtk mesh (currently saves then loads the
-# mesh since getting the vtkPolyData from the C binding isn't working, see
-# GitHub issue #825)
+# converts shapeworks Mesh object to vtk mesh
 def sw2vtkMesh(swMesh, verbose = False):
 
+    # get points and faces of shapeworks mesh
+    points = swMesh.points()
+    faces = swMesh.faces()
+
+    # create polydata
+    vtkMesh = pv.PolyData(points, faces)
+
     if verbose:
-        print('Header information: ')
+        print('shapeworks mesh header information: ')
         print(swMesh)
 
-    # save mesh
-    swMesh.write('temp.vtk')
-
-    # read mesh into an itk mesh data
-    vtkMesh = pv.read('temp.vtk')
-
-    # remove the temp mesh file
-    os.remove('temp.vtk')
+        print('vtk mesh header information: ')
+        print(vtkMesh)
     
     return vtkMesh
