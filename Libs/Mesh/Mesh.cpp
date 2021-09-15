@@ -1191,7 +1191,7 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
 }
 
 double Mesh::getFFCValue(Eigen::Vector3d query){
-    locator->BuildLocator();
+    locator->BuildLocatorIfNeeded();
 
     double closestPoint[3];
     vtkIdType cellId;
@@ -1216,7 +1216,7 @@ double Mesh::getFFCValue(Eigen::Vector3d query){
 
 Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query){
 
-    locator->BuildLocator();
+    locator->BuildLocatorIfNeeded();
 
     double closestPoint[3];
     vtkIdType cellId;
