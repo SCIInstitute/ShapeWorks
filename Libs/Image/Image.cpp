@@ -29,7 +29,6 @@
 #include <itkIntensityWindowingImageFilter.h>
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
-//#include <itkSpatialOrientationAdapter.h>
 #include <itkOrientImageFilter.h>
 
 #include <vtkImageImport.h>
