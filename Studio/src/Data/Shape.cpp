@@ -351,6 +351,29 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
+{
+  auto groom_transform = this->get_groomed_transform(domain);
+  if (!groom_transform) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    return transform;
+  }
+  return groom_transform;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (groom_transform) {
+    return true;
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_original_transform(int domain)
 {
   return this->transform_;
@@ -443,7 +466,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
       // first check if we have particle scalars for this feature
       auto point_features = this->get_point_features(feature);
-      if (point_features.size() > 0) { // already loaded as particle scalars
+      if (point_features.size() > 0 && display_mode == Visualizer::MODE_RECONSTRUCTION_C) { // already loaded as particle scalars
         this->set_point_features(feature, point_features);
       }
       else {
@@ -597,6 +620,9 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
   auto transforms = this->subject_->get_groomed_transforms();
+  if (domain < 0) { // global alignment is stored at the end
+    domain = transforms.size() - 1;
+  }
   if (domain < transforms.size()) {
     return this->convert_transform(transforms[domain]);
   }
@@ -667,6 +693,7 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 
   // no transforms, just return identity
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
   return transform;
 }
 
@@ -709,29 +736,6 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
 {
   this->reconstruction_transforms_ = transforms;
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
-{
-  auto groom_transform = this->get_groomed_transform(domain);
-  if (!groom_transform) {
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    return transform;
-  }
-  return groom_transform;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::has_alignment()
-{
-  auto groom_transform = this->get_groomed_transform(0);
-  if (groom_transform) {
-    return true;
-  }
-
-  return false;
 }
 
 //---------------------------------------------------------------------------

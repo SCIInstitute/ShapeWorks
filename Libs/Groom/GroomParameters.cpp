@@ -223,7 +223,7 @@ void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
 //---------------------------------------------------------------------------
 std::string GroomParameters::get_alignment_method()
 {
-  if (!this->params_.key_exists("alignment")) {
+  if (!this->params_.key_exists("alignment_method")) {
     // if alignment doesn't exist, perhaps the old keys "center" or "icp" do, if so use them
     if (this->params_.key_exists("icp") && this->params_.get("icp", false)) {
       return GROOM_ALIGNMENT_ICP_C;

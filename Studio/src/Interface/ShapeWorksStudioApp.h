@@ -107,6 +107,7 @@ public Q_SLOTS:
   void handle_glyph_changed();
   void handle_opacity_changed();
 
+  void handle_alignment_changed();
   void handle_open_recent();
 
   void handle_color_scheme();
@@ -168,6 +169,9 @@ private:
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
 
+
+  std::string get_tool_state();
+
   void disable_all_actions();
 
   void enable_possible_actions();
@@ -191,6 +195,7 @@ private:
   void set_feature_uniform_scale(bool value);
 
   void update_recent_files();
+  void update_alignment_options();
 
   void save_project(std::string filename);
 
