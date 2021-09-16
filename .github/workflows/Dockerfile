@@ -40,6 +40,7 @@ ENV LDFLAGS=-L/opt/conda/lib
 
 # Get and decompress linuxdeployqt, it's complicated to use fuse with docker due to the kernel module
 RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt.AppImage ; cd $HOME ; ./linuxdeployqt.AppImage --appimage-extract
+RUN cp /root/squashfs-root/usr/bin/linuxdeployqt /usr/bin
 
 RUN add-apt-repository ppa:git-core/ppa
 RUN apt-get update
