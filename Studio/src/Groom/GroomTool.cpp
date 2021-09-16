@@ -231,9 +231,12 @@ void GroomTool::store_params()
   params.save_to_project();
 
   // global settings
-  params = GroomParameters(session_->get_project());
-  params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
-  params.save_to_project();
+  for (auto domain_name : session_->get_project()->get_domain_names()) {
+    params = GroomParameters(session_->get_project(), domain_name);
+    params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
+    params.save_to_project();
+  }
+
 }
 
 //---------------------------------------------------------------------------

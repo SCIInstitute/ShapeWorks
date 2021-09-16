@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QSharedPointer>
 
+#include <vtkSmartPointer.h>
+#include <Visualization/StudioVtkOutputWindow.h>
 #include <Job/Job.h>
 
 namespace shapeworks {
@@ -17,6 +19,8 @@ public:
 
   PythonWorker();
   ~PythonWorker();
+
+  void set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window);
 
   void run_job(QSharedPointer<Job> job);
 
@@ -47,6 +51,8 @@ private:
 
   bool initialized_ = false;
   bool initialized_success_ = false;
+
+  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
   QSharedPointer<PythonLogger> python_logger_;
 

@@ -6,7 +6,7 @@ import os
 def sw2vtkImage(swImg, verbose = False):
 
     # get the numpy array of the shapeworks image as if it were in fortran order
-    array  = swImg.toArray(for_viewing=True)
+    array  = swImg.toArray()
 
     # converting a numpy array to a vtk image using pyvista's wrap function
     vtkImg = pv.wrap(array)

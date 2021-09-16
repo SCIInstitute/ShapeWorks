@@ -219,7 +219,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
         img_array = blur(img.toArray(), blur_factor)
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = np.float32(img_array)
-        img.assign(np.float32(img_array))
+        img = Image(np.float32(img_array))
         img.write(name)
         index += 1
     return get_files(imgDir)

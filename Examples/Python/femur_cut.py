@@ -47,7 +47,8 @@ def Run_Pipeline(args):
 
         # Select data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
