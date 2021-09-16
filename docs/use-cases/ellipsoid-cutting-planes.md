@@ -14,7 +14,7 @@ This use case assumes that the new samples are already aligned with the existing
 ## Supported Tags
 
 ``` 
-        --use_subsample --num_subsample --use_single_scale --tiny_test
+        --use_subsample --num_subsample --use_single_scale --mesh_mode --tiny_test
 ``` 
 ## Optimization Parameters
 

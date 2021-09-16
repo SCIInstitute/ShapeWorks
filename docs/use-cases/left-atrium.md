@@ -30,7 +30,7 @@ Here are the resulting groomed ditsance transforms:
 ## Supported Tags
 
 ``` 
-        --use_subsample --num_subsample --groom_images --skip_grooming --use_single_scale --tiny_test
+        --use_subsample --num_subsample --groom_images --skip_grooming --use_single_scale --mesh_mode --tiny_test
 ``` 
 ## Optimization Parameters
 

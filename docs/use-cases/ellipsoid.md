@@ -21,7 +21,7 @@ The `ellipsoid.py` use case represents the standard use version of a shape model
 ## Supported Tags
 
 ``` 
-        --use_subsample --num_subsample --skip_grooming --use_single_scale --tiny_test
+        --use_subsample --num_subsample --skip_grooming --use_single_scale --mesh_mode --tiny_test
 ``` 
 ## Optimization Parameters
 
