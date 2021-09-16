@@ -52,4 +52,4 @@ See the `ellipsoid_evaluate` use case for detailed examples.
 
 ## Model Evaluation in Studio
 
-Model evaluation is performed in Studio automatically under the metrics panel. See [Studio - Metrics Panel](../studio/getting-started-with-studio.md#metrics-panel) for more information.
+![Under construction, coming soon!](../img/misc/under-construction.png)

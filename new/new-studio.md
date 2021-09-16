@@ -1,35 +1,5 @@
 # New in ShapeWorks Studio
 
-
-## DeepSSM in Studio
-
-New in ShapeWorks 6.2, we have added the ability to run DeepSSM tools in ShapeWorks Studio.
-
-![Studio DeepSSM - Augmentation](../img/studio/studio_deepssm_aug2.png){: width="600" }
-
-See [DeepSSM in Studio](../studio/deepssm-in-studio.md) for more information.
-
-## Multiple Domain Alignments
-
-New in ShapeWorks 6.2, we have added support for multiple alignment strategies in ShapeWorks Studio.  This allows analysis with and without articulation with a choice of reference domain, or global alignment.
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_alignments.mp4" autoplay muted loop controls style="width:100%"></p>
-
-See [Multiple Domain Alignments](../studio/multiple-domains.md#multiple-domain-alignments) for more information.
-
-## Shape Evaluation Charts
-
-New in ShapeWorks 6.2, we have added new shape evaluation charts.  Charts for Compactness, Specificity and Generalizaion are provided.
-
-![Studio DeepSSM - Shape Evaluation](../img/studio/studio_shape_evaluation.png){: width="600" }
-
-## Group p-value Display
-
-New in ShapeWorks 6.2, we have added the ability to view group-wise p-values for surface differences.
-
-![Studio DeepSSM - Group p-value](../img/studio/studio_group_pvalue.png){: width="600" }
-
-
 ## Multiple Domains
 
 As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.
