@@ -773,7 +773,7 @@ QWidget#specificity_panel {
                       <bool>true</bool>
                      </property>
                      <property name="toolTip">
-                      <string>Diff of left to right</string>
+                      <string>Display p-values on surface</string>
                      </property>
                      <property name="text">
                       <string>P-values</string>

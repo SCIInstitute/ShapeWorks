@@ -352,28 +352,6 @@ Vector3 Groom::center(Image& image)
   translation[1] = -diff[1];
   translation[2] = -diff[2];
   return translation;
-
-/*
-   // capture full translation
-   auto com = image.centerOfMass();
-   // set center to origin
-   image.recenter();
-   // calculate translation for center of mass to new center
-   auto diff = image.centerOfMass();
-   Vector3 translation;
-   translation[0] = -diff[0];
-   translation[1] = -diff[1];
-   translation[2] = -diff[2];
-
-   AffineTransformPtr xform(AffineTransform::New());
-   xform->Translate(-translation);
-   image.applyTransform(xform, Image::NearestNeighbor);
-
-   translation[0] = com[0];
-   translation[1] = com[1];
-   translation[2] = com[2];
-   return translation;
- */
 }
 
 //---------------------------------------------------------------------------
@@ -597,7 +575,7 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       auto transform = createMeshTransform(matrix);
       auto center = target.centerOfMass();
       transform->PostMultiply();
-      transform->Translate(center[0],center[1],center[2]);
+      transform->Translate(-center[0],-center[1],-center[2]);
 
 
       std::vector<double> groomed_transform;

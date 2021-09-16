@@ -34,12 +34,19 @@ public:
   /// set display mode (original, groomed, reconstructed)
   void set_display_mode(std::string mode);
 
+  //! return the current display mode
   std::string get_display_mode();
 
   /// turn automatic centering on/off
   void set_center(bool center);
 
+  //! get centering on/off
   bool get_center();
+
+  //! set the alignment domain
+  void set_alignment_domain(int domain);
+  //! get the current alignment domain
+  int get_alignment_domain();
 
   /// turn on/off glyph display
   void set_show_glyphs(bool show);
@@ -107,7 +114,7 @@ public:
   void update_feature_range(double* range);
 
   //! Request the transform for a given shape and domain
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
 
   //! Set domain opacities
   void set_opacities(std::vector<float> opacities);
@@ -131,8 +138,7 @@ private:
 
   std::string display_mode_;
   std::string feature_map_;
-
-private:
+  int alignment_domain_;
 
   bool center_;
   bool needs_camera_reset_ = true;
