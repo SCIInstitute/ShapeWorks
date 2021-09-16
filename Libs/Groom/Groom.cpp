@@ -92,16 +92,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   // load the image
   Image image(path);
 
-  // set orientation to RAI
-  using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
-  Orienter::Pointer orienter = Orienter::New();
-  orienter->UseImageDirectionOn();
-  orienter->SetDesiredCoordinateOrientation(
-    itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-  orienter->SetInput(image.getITKImage());
-  orienter->Update();
-  image = Image(orienter->GetOutput());
-
   // define a groom transform
   auto transform = itk::AffineTransform<double, 3>::New();
   transform->SetIdentity();
