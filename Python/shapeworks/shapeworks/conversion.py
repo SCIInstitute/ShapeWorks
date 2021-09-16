@@ -33,10 +33,14 @@ def sw2vtkMesh(swMesh, verbose = False):
 
     # get points and faces of shapeworks mesh
     points = swMesh.points()
-    faces = swMesh.faces()
+    swfaces = swMesh.faces()
+
+    # create array of type (num of points defining each face, indices of vertices which comprise that face)
+    npFaces = np.full((swMesh.numFaces(), 1), 3)
+    vtkFaces = np.column_stack((npFaces, swfaces))
 
     # create polydata
-    vtkMesh = pv.PolyData(points, faces)
+    vtkMesh = pv.PolyData(points, vtkFaces)
 
     if verbose:
         print('shapeworks mesh header information: ')
