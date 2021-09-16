@@ -7,7 +7,7 @@ Contours are represented as a series of lines, that may be a closed loop. We con
 Here is an example of the data:
 ![Supershapes contour](../img/use-cases/supershapes_contour.png)
 
-## Grooming Data
+## Grooming Steps
 
 In this use case, we download pre-groomed data.
 

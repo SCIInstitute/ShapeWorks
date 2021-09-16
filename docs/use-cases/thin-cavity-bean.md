@@ -10,6 +10,10 @@ The `thin_cavity_bean` use case demonstrates using ShapeWorks tools to perform t
 Here is an example of the data:
 ![Thin cavity bean](../img/use-cases/thin_cavity_bean.png)
 
+## Grooming Steps
+
+In this use case, we download pre-groomed data.
+
 ## Supported Tags
 
 ``` 

@@ -21,7 +21,7 @@ In this use case, we download pre-groomed data. The use case will be updated soo
 ``` 
         --use_subsample --num_subsample --use_single_scale --tiny_test
 ``` 
-## Optimizing Shape Model
+## Optimization Parameters
 
 NOTE:The list of `<inputs>` (surface mesh ) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 

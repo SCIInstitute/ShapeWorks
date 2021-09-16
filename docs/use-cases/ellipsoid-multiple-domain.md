@@ -28,7 +28,7 @@ The reference is selected by first computing the mean (average) distance transfo
 ``` 
         --use_subsample --num_subsample --skip_grooming --use_single_scale --tiny_test
 ``` 
-## Optimizing Shape Model
+## Optimization Parameters
 
 NOTE: The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 
@@ -57,7 +57,6 @@ NOTE: The list of `<inputs>` (binary segmentation images) should be ordered cons
 ```
 
 ## Analyzing Shape Model
-
 
 Here is the optimized shape.
 ![Ellipsoid Joint Shape Model](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multiple_domain_segs_model.gif)
