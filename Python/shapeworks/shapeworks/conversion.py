@@ -42,11 +42,18 @@ def sw2vtkMesh(swMesh, verbose = False):
     # create polydata
     vtkMesh = pv.PolyData(points, vtkFaces)
 
+    # add fields to polydata
+    fieldNames = swMesh.getFieldNames()
+
+    for name in fieldNames:
+        field = swMesh.getField(name)
+        vtkMesh.field_arrays.append(field, name)
+
     if verbose:
         print('shapeworks mesh header information: ')
         print(swMesh)
 
         print('vtk mesh header information: ')
         print(vtkMesh)
-    
+
     return vtkMesh
