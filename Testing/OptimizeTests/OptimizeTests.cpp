@@ -80,6 +80,84 @@ TEST(OptimizeTests, sample)
   ASSERT_LT(value, 100);
 }
 
+TEST(OptimizeTests, sphere_huge)
+{
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere_huge");
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one necessary file to make sure we re-run
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("sphere.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100);
+}
+
+TEST(OptimizeTests, sphere_tiny)
+{
+  setupenv(std::string(TEST_DATA_DIR) + "/sphere_tiny");
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one necessary file to make sure we re-run
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("sphere.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100);
+}
+
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test)
 {
