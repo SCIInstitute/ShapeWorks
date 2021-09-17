@@ -168,6 +168,9 @@ public:
   /// sets the image spacing to the given value
   Image& setSpacing(Vector3 spacing);
 
+  /// sets the coordinate system in which this image lives in physical space
+  Image& setCoordsys(ImageType::DirectionType coordsys);
+
   // query functions //
 
   /// logical dimensions of the image

@@ -8,27 +8,29 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 import shapeworks as sw
+from shapeworks.utils import sw_message
+
 
 ######################## Data loading functions ####################################
 
 '''
 Reads csv and makes train and validation data loaders
 '''
-def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None):
-	print("Creating training and validation torch loaders:")
+def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+	sw_message("Creating training and validation torch loaders:")
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
-	# split into train (80%) validation(20%)
-	cut = int(len(images)*.80) 
-	print("Turning to tensors...")
+	# split into train and validation (e.g. 80% vs 20%)
+	cut = int(len(images) * train_split)
+	sw_message("Turning to tensors...")
 	train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut])
-	print(str(len(train_data)) + ' in training set')
+	sw_message(str(len(train_data)) + ' in training set')
 	val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:])
-	print(str(len(val_data)) + ' in validation set')
+	sw_message(str(len(val_data)) + ' in validation set')
 
-	print("Saving data loaders...")
+	sw_message("Saving data loaders...")
 	trainloader = DataLoader(
 			train_data,
 			batch_size=batch_size,
@@ -48,14 +50,14 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 		)
 	val_path = loader_dir + 'validation'
 	torch.save(validationloader, val_path)
-	print("Training and validation loaders complete.\n")
+	sw_message("Training and validation loaders complete.\n")
 	return train_path, val_path
 
 '''
 Makes test data loader
 '''
 def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
-	print("Creating test torch loader:")
+	sw_message("Creating test torch loader:")
 	# get data
 	image_paths = []
 	scores = []
@@ -76,9 +78,9 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	name_file = open(loader_dir + 'test_names.txt', 'w+')
 	name_file.write(str(test_names))
 	name_file.close()
-	print("Test names saved to: " + loader_dir + "test_names.txt")
+	sw_message("Test names saved to: " + loader_dir + "test_names.txt")
 	# Make loader
-	print("Creating and saving test dataloader...")
+	sw_message("Creating and saving test dataloader...")
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
@@ -88,7 +90,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 		)
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
-	print("Test loader complete.\n")
+	sw_message("Test loader complete.\n")
 	return test_path, test_names
 
 ################################ Helper functions ######################################
@@ -98,7 +100,7 @@ returns images, scores, models, prefixes from CSV
 '''
 def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 	# get all data and targets
-	print("Reading all data...")
+	sw_message("Reading all data...")
 	image_paths = []
 	scores = []
 	models = []
@@ -137,7 +139,7 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 Shuffle all data
 '''
 def shuffle_data(images, scores, models, prefixes):
-	print("Shuffling.")
+	sw_message("Shuffling.")
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
 	images, scores, models, prefixes = zip(*c)
@@ -176,7 +178,7 @@ def get_particles(model_path):
 	f = open(model_path, "r")
 	data = []
 	for line in f.readlines():
-		points = line.replace(' \n','').split(" ")
+		points = line.split()
 		points = [float(i) for i in points]
 		data.append(points)
 	return(data)
@@ -195,9 +197,9 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 			res_img = os.path.join(down_dir, img_name)
 			if not os.path.exists(res_img):
 				apply_down_sample(image_path, res_img, down_factor)
-			img = np.transpose(sw.Image(res_img).toArray())
-		else:
-			img = np.transpose(sw.Image(image_path).toArray())
+			image_path = res_img
+        # for_viewing returns 'F' order, i.e., transpose, needed for this array
+		img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
 		all_images.append(img)
 	all_images = np.array(all_images)
 	# get mean and std

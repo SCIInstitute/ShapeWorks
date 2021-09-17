@@ -11,11 +11,7 @@ def centerofmassTest1():
 
   return img.compare(compareImg)
 
-val = centerofmassTest1()
-
-if val is False:
-  print("centerofmassTest1 failed")
-  sys.exit(1)
+utils.test(centerofmassTest1)
 
 def centerofmassTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -26,8 +22,4 @@ def centerofmassTest2():
 
   return img.compare(compareImg)
 
-val = centerofmassTest2()
-
-if val is False:
-  print("centerofmassTest2 failed")
-  sys.exit(1)
+utils.test(centerofmassTest2)

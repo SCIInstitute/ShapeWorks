@@ -15,6 +15,8 @@ namespace shapeworks {
 #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
+unsigned ShapeworksUtils::_rngSeed = std::chrono::system_clock::now().time_since_epoch().count();
+std::mt19937 ShapeworksUtils::mt;
 
 /// looks at the pathname to see if it's a file or a directory or neither
 bool statdatpath(const std::string &pathname, bool isdir = false)
@@ -26,6 +28,12 @@ bool statdatpath(const std::string &pathname, bool isdir = false)
   else {
     return isdir ? S_ISDIR(info.st_mode) : S_ISREG(info.st_mode);
   }
+}
+
+void ShapeworksUtils::setRngSeed(const unsigned seed)
+{
+  _rngSeed = seed;
+  mt.seed(_rngSeed);
 }
 
 bool ShapeworksUtils::is_directory(const std::string &pathname)
@@ -56,6 +64,20 @@ Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat)
 Vector3 ShapeworksUtils::getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat)
 {
   return makeVector({mat->GetElement(0,3), mat->GetElement(1,3), mat->GetElement(2,3)});
+}
+
+double ShapeworksUtils::elapsed(ShapeworksUtils::time_point start,
+                                ShapeworksUtils::time_point end,
+                                bool print_elapsed)
+{
+  // Calculating total time taken by the program.
+  double time_taken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+  time_taken *= 1e-9;
+
+  if (print_elapsed)
+    cout << "Elapsed: " << std::fixed << time_taken << std::setprecision(9) << " sec" << endl;
+
+  return time_taken;
 }
 
 } // shapeworks

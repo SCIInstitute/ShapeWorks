@@ -10,11 +10,7 @@ def resizeTest1():
 
   return img.compare(compareImg)
 
-val = resizeTest1()
-
-if val is False:
-  print("resizeTest1 failed")
-  sys.exit(1)
+utils.test(resizeTest1)
 
 def resizeTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -24,11 +20,7 @@ def resizeTest2():
 
   return img.compare(compareImg)
 
-val = resizeTest2()
-
-if val is False:
-  print("resizeTest2 failed")
-  sys.exit(1)
+utils.test(resizeTest2)
 
 def resizeTest3():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -38,11 +30,7 @@ def resizeTest3():
 
   return img.compare(compareImg)
 
-val = resizeTest3()
-
-if val is False:
-  print("resizeTest3 failed")
-  sys.exit(1)
+utils.test(resizeTest3)
 
 def resizeTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -52,11 +40,7 @@ def resizeTest4():
 
   return img.compare(compareImg)
 
-val = resizeTest4()
-
-if val is False:
-  print("resizeTest4 failed")
-  sys.exit(1)
+utils.test(resizeTest4)
 
 def resizefailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -66,9 +50,4 @@ def resizefailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = resizefailTest()
-  print("resizefailTest failed. There should be no default version of this function.")
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(resizefailTest, TypeError)

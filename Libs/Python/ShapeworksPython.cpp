@@ -10,7 +10,6 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-
 #include <pybind11/operators.h>
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
@@ -18,7 +17,9 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+#include <bitset>
 #include <sstream>
+
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
 
@@ -36,6 +37,106 @@ using namespace pybind11::literals;
 #include "EigenUtils.h"
 
 using namespace shapeworks;
+
+// helper function for Image.init and Image.assign
+Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
+  // get input array info
+  auto info = np_array.request();
+
+#if 0
+  /*
+    struct buffer_info {
+    void *ptr;
+    py::ssize_t itemsize;
+    std::string format;
+    py::ssize_t ndim;
+    std::vector<py::ssize_t> shape;
+    std::vector<py::ssize_t> strides;
+    };
+  */
+
+  std::cout << "buffer info: \n"
+            << "\tinfo.ptr: " << info.ptr << std::endl
+            << "\tinfo.itemsize: " << info.itemsize << std::endl
+            << "\tinfo.format: " << info.format << std::endl
+            << "\tinfo.ndim: " << info.ndim << std::endl;
+  std::cout << "\tinfo.shape (zyx): [ ";
+  for (int i = 0; i < info.ndim; i++) {
+    std::cout << info.shape[i] << " ";
+  }
+  std::cout << "]\n\tinfo.strides (zyx): [ ";
+  for (int i = 0; i < info.ndim; i++) {
+    std::cout << info.strides[i] << " ";
+  }
+  std::cout << "]\n";
+  std::cout << "writeable: " << np_array.writeable() << std::endl
+            << "owns data: " << np_array.owndata() << std::endl;
+#endif
+
+  // verify it's 3d
+  if (info.ndim != 3) {
+    throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
+  }
+
+  // verify it's C order, not Fortran order
+  auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+  if (!c_order) {
+    throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
+  }
+
+  // verify data is densely packed by checking strides is same as shape
+  std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
+    info.shape[2]*info.itemsize,
+    info.itemsize};
+  for (int i = 0; i < info.ndim; i++) {
+    if (info.strides[i] != strides[i]) {
+      std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
+      throw std::invalid_argument("array must be densely packed");
+    }
+  }
+
+  // array must be dtype.float32 and own its data to transfer it to Image
+  if (info.format != py::format_descriptor<Image::PixelType>::format()) {
+    // inform the user how to create correct type array rather than copy
+    throw std::invalid_argument("array must be same dtype as Image; convert using `np.array(arr, dtype=np.float32)`");
+  }
+  if (!np_array.owndata()) {
+    throw std::invalid_argument("error: numpy array does not own data (see `arr.flags()`) to be transferred to Image");
+  }
+
+  // Pass ownership of the array to Image to prevent Python from
+  // deallocating (the image will dealloate when it's time).
+  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+  disown_data_flag = ~disown_data_flag;
+  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
+
+  // modify np_array's OWNDATA flag and ensure ownership transfered
+  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
+  if (np_array.owndata()) {
+    throw std::runtime_error("error transferring data ownership to Image");
+  }
+
+  // import data, passing ownership of memory to ensure there will be no leak
+  using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
+  auto importer = ImportType::New();
+
+  ImportType::SizeType size; // i.e., Dims (remember numpy orders zyx)
+  size[0] = np_array.shape()[2];
+  size[1] = np_array.shape()[1];
+  size[2] = np_array.shape()[0];
+
+  assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
+  importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
+                             size[0]*size[1]*size[2]*sizeof(Image::PixelType),
+                             true /*importer take_ownership*/);
+  ImportType::IndexType start({0,0,0}); // i.e., Coord
+  ImportType::RegionType region;
+  region.SetIndex(start);
+  region.SetSize(size);
+  importer->SetRegion(region);
+  importer->Update();
+  return importer->GetOutput();
+}
 
 PYBIND11_MODULE(shapeworks_py, m)
 {
@@ -69,6 +170,11 @@ PYBIND11_MODULE(shapeworks_py, m)
         },
         "creates transform from 3x3 matrix and translation vector",
         "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
+
+  m.def("seed",
+        &ShapeworksUtils::setRngSeed,
+        "sets the seed for random number generation (internal use)",
+        "seed"_a=std::chrono::system_clock::now().time_since_epoch().count());
 
   // Axis
   py::enum_<Axis>(m, "Axis")
@@ -109,93 +215,55 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   // Image
   py::class_<Image>(m, "Image")
-  .def(py::init<const std::string &>())
-  .def(py::init<const Image&>())
+    .def(py::init<const std::string &>())
+    .def(py::init<const Image&>())
 
-  // Image constructor from numpy array (copies array, ensuring )
-  .def(py::init
-       ([](py::array& np_array) {
-          // get input array info
-          auto info = np_array.request();
+    // constructor that wraps numpy float32 array
+    .def(py::init
+         // The reasons we don't simply specify py::array_t<float>
+         // as a parameter are:
+         // - to take ownership of the array
+         // - to ensure dtype is same as Image::PixelType, and
+         // - to ensure the array isn't silently cast by copying (the default pybind11 behavior)
+         ([](py::array& np_array) {
+           return Image(wrapNumpyArr(np_array));
+         }),
+         "Initialize an image from a numpy array (must be dtype float32).\nTransfers ownership of the array without copying.\nIf a copy is desired, construct using Image(np.array(arr)).")
 
-#if 0
-          /*
-          struct buffer_info {
-            void *ptr;
-            py::ssize_t itemsize;
-            std::string format;
-            py::ssize_t ndim;
-            std::vector<py::ssize_t> shape;
-            std::vector<py::ssize_t> strides;
-          };
-          */
+    .def("assign",
+         [](Image& image, py::array& np_array) -> decltype(auto) {
 
-          std::cout << "buffer info: \n"
-                    << "\tinfo.itemsize: " << info.itemsize << std::endl
-                    << "\tinfo.format: " << info.format << std::endl
-                    << "\tinfo.ndim: " << info.ndim << std::endl;
-          std::cout << "\tinfo.shape: [ ";
-          for (int i = 0; i < info.ndim; i++) {
-            std::cout << info.shape[i] << " ";
-          }
-          std::cout << "]\n\tinfo.strides: [ ";
-          for (int i = 0; i < info.ndim; i++) {
-            std::cout << info.strides[i] << " ";
-          }
-          std::cout << "]\n";
-          std::cout << "writeable: " << np_array.writeable() << std::endl
-                    << "owns data: " << np_array.owndata() << std::endl;
-#endif
+           // verify dims are the same as existing image; warn if not
+           auto curr_dims = image.dims();
+           Dims new_dims =
+             {{ static_cast<Dims::SizeValueType>(np_array.shape()[2]),
+                static_cast<Dims::SizeValueType>(np_array.shape()[1]),
+                static_cast<Dims::SizeValueType>(np_array.shape()[0]) }};
+           if (curr_dims[0] != new_dims[0] ||
+               curr_dims[1] != new_dims[1] ||
+               curr_dims[2] != new_dims[2]) {
+             std::cerr << "curr_dims: " << curr_dims[0] << " " << curr_dims[1] << " " << curr_dims[2] << std::endl;
+             std::cerr << "new_dims: " << new_dims[0] << " " << new_dims[1] << " " << new_dims[2] << std::endl;
+             throw std::invalid_argument("dims of new image are not the same as old image.");
+           }
 
-          // Verify info type is same as Image::PixelType (currently hard-coded as float). The
-          // reasons we don't simply specify py::array_t<float> as a parameter are:
-          // - to show an error if another type is sent, and
-          // - to ensure the array isn't silently cast, the default of pybind11.
-          if (info.format != py::format_descriptor<Image::PixelType>::format()) {
-            throw std::invalid_argument("array must be of dtype.float32");
-          }
+           // get existing origin, shape, and coordsys
+           auto origin = image.origin();
+           auto spacing = image.spacing();
+           auto coordsys = image.coordsys();
 
-          // verify it's 2d or 3d
-          if (info.ndim < 2 || info.ndim > 3) {
-            throw std::invalid_argument(std::string("array must be 2d or 3d, but ndim = ") + std::to_string(info.ndim));
-          }
+           // wrap the numpy array
+           image = Image(wrapNumpyArr(np_array));
 
-          // verify data is densely packed by checking strides is same as shape
-          const py::ssize_t scalar_size = sizeof(Image::PixelType);
-          std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
-                                           info.shape[2]*scalar_size,
-                                           scalar_size};
-          for (int i = 0; i < info.ndim; i++) {
-            if (info.strides[i] != strides[i]) {
-              std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-              throw std::invalid_argument("array must be densely packed");
-            }
-          }
+           // set new image to have the same origin, shape, and coordsys
+           image.setOrigin(origin);
+           image.setSpacing(spacing);
+           image.setCoordsys(coordsys);
 
-          // if (dtype.float32) just steal array from python (#966):
-          // - np_array owners data = false
-          // - itk importer pass ownership = true
+           return image;
+         },
+    "Initialize an image from a numpy array (must be dtype float32).\nTransfers ownership of the array without copying.\nIf a copy is desired, construct using Image(np.array(arr)).")
 
-          // create itk importer to copy data into image
-          using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
-          auto importer = ImportType::New();
-          importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr), np_array.size(), false /*pass ownership*/);
-
-          ImportType::SizeType size;            // i.e., Dims
-          size[0] = np_array.shape()[2];
-          size[1] = np_array.shape()[1];
-          size[2] = np_array.shape()[0];
-
-          ImportType::IndexType start({0,0,0}); // i.e., Coord
-          ImportType::RegionType region;
-          region.SetIndex(start);
-          region.SetSize(size);
-
-          importer->SetRegion(region);
-          importer->Update();
-          return Image(importer->GetOutput());
-        }),
-       "initialize an image from a numpy array of dtype.float32")
 
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
@@ -436,6 +504,16 @@ PYBIND11_MODULE(shapeworks_py, m)
        "sets the image origin in physical space to the given value",
        "origin"_a=std::vector<double>({0,0,0}))
 
+    .def("setCoordsys",
+         [](Image& image, const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &coordsys) {
+           if (coordsys.rows() != 3 || coordsys.cols() != 3) {
+             throw std::invalid_argument("coordsys must be a 3x3 row-major numpy array");
+           }
+           return image.setCoordsys(eigenToItk(coordsys));
+         },
+         "sets the orientation of this image",
+         "coordsys"_a=std::vector<double>({1,0,0, 0,1,0, 0,0,1}))
+
   .def("reflect",
        &Image::reflect,
        "reflect image with respect to logical image center and the specified axis",
@@ -462,8 +540,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        "physical coordinates of center of this image")
 
   .def("coordsys",
-       [](const Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
-       "return coordinate system in which this image lives in physical space")
+       [](const Image &self) -> decltype(auto) {
+         return itkToEigen(self.coordsys());
+       },
+       "return 3x3 coordinate system in which this image lives in physical space")
 
   .def("centerOfMass",
        [](const Image& self, double minVal, double maxVal) -> decltype(auto) {
@@ -536,13 +616,65 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
 
   .def("toArray",
-       [](const Image &image) -> decltype(auto) {
+       [](const Image &image, bool copy, bool for_viewing) -> decltype(auto) {
+
+         // We pass the array in column-major ('F') order when it will be used
+         // for viewing (updating both shape and strides).
          const auto dims = image.dims();
-         const auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
-         return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(),
-                          shape, image.getITKImage()->GetBufferPointer());
+         auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
+         if (for_viewing) {
+           shape = std::vector<size_t>{dims[0], dims[1], dims[2]};
+         }
+
+         auto strides = std::vector<size_t>{
+           dims[0] * dims[1] * sizeof(Image::PixelType),
+           dims[0] * sizeof(Image::PixelType),
+           sizeof(Image::PixelType)};
+         if (for_viewing)
+           strides = std::vector<size_t>{
+             sizeof(Image::PixelType),
+             dims[0] * sizeof(Image::PixelType),
+             dims[0] * dims[1] * sizeof(Image::PixelType)};
+
+         const auto py_dtype = py::dtype::of<Image::PixelType>();
+
+#if 0
+         std::cout << "Image info: " << std::endl
+                   << "\tshape: " << shape[0] << " x " << shape[1] << " x " << shape[2] << std::endl
+                   << "\tstrides: " << strides[0] << ", " << strides[1] << ", " << strides[2]
+                   << "\tdtype: " << typeid(Image::PixelType).name()
+                                  << " (" << sizeof(Image::PixelType) << " bytes)" << std::endl
+                   << "\tpy_dtype: " << py_dtype << std::endl
+                   << "\tcopy_requested: " << copy << std::endl
+                   << "\tfor_viewing: " << for_viewing << std::endl;
+#endif
+
+         // When a valid object is passed as 'base', it tells pybind not to take
+         // ownership of the data because 'base' will (allegedly) own it. Note
+         // that ANY valid object is good for this purpose. This means that
+         // image will continue to own its own array, which will be deleted
+         // along with image (or when most itk operations are performed since
+         // they tend to allocate fresh data).
+         py::str dummyDataOwner;
+         py::array img{
+           py_dtype,
+           shape,
+           strides,
+           image.getITKImage()->GetBufferPointer(),
+           (copy ? pybind11::handle() : dummyDataOwner)
+         };
+         assert(copy == img.owndata());
+
+         // prevent pyvista.wrap from copying (transpose will still work fine)
+         if (for_viewing)
+           pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
+         else
+           pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+
+         return img;
        },
-       "returns raw array of image data (note: spacing, origin, coordsys are not preserved)")
+       "returns raw array of image data, directly sharing data by default, copying if specified.\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; use for_viewing argument to get array in column-major ('F') order ('sw2vtkImage' already does this).",
+       "copy"_a=false, "for_viewing"_a=false)
 
   .def("createTransform",
        py::overload_cast<XFormType>(&Image::createTransform),
@@ -787,16 +919,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ImageUtils>(m, "ImageUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(filenames, val);
-              },
+              py::overload_cast<const std::vector<std::string>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of filenames",
               "filenames"_a, "isoValue"_a=1.0)
 
   .def_static("boundingBox",
-              [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
-                return shapeworks::ImageUtils::boundingBox(images, val);
-              },
+              py::overload_cast<const std::vector<std::reference_wrapper<const Image>>&, Image::PixelType>(&ImageUtils::boundingBox),
               "compute largest bounding box surrounding the specified isovalue of the specified set of images",
               "images"_a, "isoValue"_a=1.0)
 
@@ -804,9 +932,9 @@ PYBIND11_MODULE(shapeworks_py, m)
               [](const std::string &source_landmarks,
                  const std::string &target_landmarks,
                  const int stride) -> decltype(auto) {
-                auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks,
-                                                                             target_landmarks,
-                                                                             stride);
+                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
+                                                                 target_landmarks,
+                                                                 stride);
                 return xform_ptr;
               },
               "computes a warp transform from the source to the target landmarks",
@@ -831,11 +959,20 @@ PYBIND11_MODULE(shapeworks_py, m)
   .export_values();
   ;
 
+  // Mesh::CurvatureType
+  py::enum_<Mesh::CurvatureType>(mesh, "CurvatureType")
+  .value("Principal", Mesh::CurvatureType::Principal)
+  .value("Gaussian", Mesh::CurvatureType::Gaussian)
+  .value("Mean", Mesh::CurvatureType::Mean)
+  .export_values();
+  ;
+
   // Mesh bindings
   mesh.def(py::init<const std::string &>())
 
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
+  .def(py::self += py::self)
 
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
@@ -872,6 +1009,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
+   .def("cvdDecimate",
+       &Mesh::cvdDecimate,
+       "applies cvd (centroidal voronoi diagram) decimation filter",
+       "percentage"_a=0.5)
 
   .def("invertNormals",
        &Mesh::invertNormals,
@@ -939,11 +1080,14 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::boundingBox,
        "computes bounding box of current mesh")
 
-  .def("fix",
-       &Mesh::fix,
-       "quality control mesh",
-       "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5,
-       "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("fixElement",
+       &Mesh::fixElement,
+       "fix element winding of mesh")
+
+  .def("distance",
+       &Mesh::distance,
+       "computes surface to surface distance",
+       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
@@ -953,9 +1097,48 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a,
        "normal"_a)
 
-  .def("generateNormals",
-       &Mesh::generateNormals,
-       "computes cell normals and orients them such that they point in the same direction")
+  .def("computeNormals",
+       &Mesh::computeNormals,
+       "computes and adds oriented point and cell normals")
+
+  .def("closestPoint",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
+       },
+       "returns closest point to given point on mesh",
+       "point"_a)
+
+  .def("closestPointId",
+       [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
+         return mesh.closestPointId(Point({p[0], p[1], p[2]}));
+       },
+       "returns closest point id in this mesh to the given point in space",
+       "point"_a)
+
+  .def("geodesicDistance",
+       &Mesh::geodesicDistance,
+       "computes geodesic distance between two vertices (specified by their indices) on mesh",
+       "source"_a, "target"_a)
+
+  .def("curvature",
+       [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {
+          auto array = mesh.curvature(type);
+          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                 1};
+          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+          // LOTS of copying going on here, see github #903
+          array->GetData(0, array->GetNumberOfTuples()-1,
+                         0, array->GetNumberOfComponents()-1,
+                         vtkarr);                               // copy1
+          return py::array(py::dtype::of<double>(),
+                         shape,
+                         vtkarr->GetVoidPointer(0));          // copy2
+     },
+     "computes and adds curvature (principal (default) or gaussian or mean)",
+     "type"_a=Mesh::CurvatureType::Principal)
 
   .def("toImage",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
@@ -964,10 +1147,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
        "region"_a=PhysicalRegion(),
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
-
-  .def("distance",
-       &Mesh::distance, "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
@@ -997,17 +1176,33 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::numFaces,
        "number of faces")
 
+  .def("points",
+       &Mesh::points,
+       "matrix with number of points with (x,y,z) coordinates of each point")
+
+  .def("faces",
+       &Mesh::faces,
+       "matrix with number of faces with indices of the three points from which each face is composed")
+
   .def("getPoint",
-       [](Mesh &mesh, int i) -> decltype(auto) {
-         return py::array(3, mesh.getPoint(i).GetDataPointer());
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getPoint(id).GetDataPointer());
        },
-       "return (x,y,z) coordinates of vertex at given index",
-       "p"_a)
+       "(x,y,z) coordinates of vertex at given index",
+       "id"_a)
+
+  .def("getFace",
+       [](Mesh &mesh, int id) -> decltype(auto) {
+         return py::array(3, mesh.getFace(id).GetDataPointer());
+       },
+       "return indices of the three points with which the face at the given index is composed",
+       "id"_a)
 
   .def("getFieldNames",
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
+  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1015,6 +1210,20 @@ PYBIND11_MODULE(shapeworks_py, m)
          for (int i=0; i<v.size(); i++) {
            arr->SetTuple1(i, v[i]);
          }
+         return mesh.setField(name, arr);
+       },
+       "sets the given field for points with array",
+       "array"_a, "name"_a)
+
+  //TODO: See github issue #966
+  .def("setField",
+       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
+         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+         arr->SetNumberOfComponents(3);
+         arr->SetNumberOfTuples(v.size());
+         for (int i=0; i<v.size(); i++) {
+           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
+          }
          return mesh.setField(name, arr);
        },
        "sets the given field for points with array",
@@ -1064,31 +1273,75 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldStd,
        "returns the standard deviation of the given field",
        "name"_a)
+
+  .def("compareField",
+       &Mesh::compareField,
+       "compares two meshes based on fields",
+       "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
   ;
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
   .def_static("boundingBox",
-              [](std::vector<std::string> filenames, bool center) {
-                return shapeworks::MeshUtils::boundingBox(filenames, center);
-              },
+              py::overload_cast<const std::vector<std::string>&, bool>(&MeshUtils::boundingBox),
               "calculate bounding box incrementally for meshes",
               "filenames"_a, "center"_a=false)
 
   .def_static("boundingBox",
-              [](std::vector<Mesh> meshes, bool center) {
-                return shapeworks::MeshUtils::boundingBox(meshes, center);
-              },
-              "calculate bounding box incrementally for shapeworks meshes",
+              py::overload_cast<const std::vector<std::reference_wrapper<const Mesh>>&, bool>(&MeshUtils::boundingBox),
+              "calculate bounding box incrementally for meshes",
               "meshes"_a, "center"_a=false)
 
   .def_static("findReferenceMesh",
-              [](std::vector<Mesh> meshes) {
-                return shapeworks::MeshUtils::findReferenceMesh(meshes);
-              },
-              "find reference mesh from a set of shapeworks meshes",
+              &MeshUtils::findReferenceMesh,
+              "find reference mesh from a set of meshes",
               "meshes"_a)
+
+  .def_static("generateNormals",
+              &MeshUtils::generateNormals,
+              "generates and adds normals for points and faces for each mesh in given set of meshes",
+              "meshes"_a, "forceRegen"_a=false)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "filenames"_a, "autoGenerateNormals"_a=true)
+
+  .def_static("computeMeanNormals",
+               [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
+                  auto array = MeshUtils::computeMeanNormals(meshes);
+                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                         1};
+                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+                  // LOTS of copying going on here, see github #903
+                  array->GetData(0, array->GetNumberOfTuples()-1,
+                                 0, array->GetNumberOfComponents()-1,
+                                 vtkarr);                               // copy1
+                  return py::array(py::dtype::of<double>(),
+                                   shape,
+                                   vtkarr->GetVoidPointer(0));          // copy2
+               },
+               "computes average normals for each point in given set of meshes",
+               "meshes"_a)
   ;
 
   // ParticleSystem
@@ -1123,6 +1376,18 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeFullCompactness",
+              &ShapeEvaluation::ComputeFullCompactness,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullGeneralization",
+              &ShapeEvaluation::ComputeFullGeneralization,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificity",
+              &ShapeEvaluation::ComputeFullSpecificity,
+              "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")

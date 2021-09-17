@@ -10,11 +10,7 @@ def reflectTest1():
 
   return img.compare(compareImg)
 
-val = reflectTest1()
-
-if val is False:
-  print("reflectTest1 failed")
-  sys.exit(1)
+utils.test(reflectTest1)
 
 def reflectTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -24,11 +20,7 @@ def reflectTest2():
 
   return img.compare(compareImg)
 
-val = reflectTest2()
-
-if val is False:
-  print("reflectTest2 failed")
-  sys.exit(1)
+utils.test(reflectTest2)
 
 def reflectTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -38,11 +30,7 @@ def reflectTest3():
 
   return mesh == compareMesh
 
-val = reflectTest3()
-
-if val is False:
-  print("reflectTest3 failed")
-  sys.exit(1)
+utils.test(reflectTest3)
 
 def reflectTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -52,11 +40,7 @@ def reflectTest4():
 
   return mesh == compareMesh
 
-val = reflectTest4()
-
-if val is False:
-  print("reflectTest4 failed")
-  sys.exit(1)
+utils.test(reflectTest4)
 
 def reflectfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -66,8 +50,4 @@ def reflectfailTest():
 
   return img.compare(compareImg)
 
-try:
-  val = reflectfailTest()
-  sys.exit(1)
-except TypeError:
-  sys.exit(0)
+utils.expectException(reflectfailTest, TypeError)

@@ -42,10 +42,17 @@ def Run_Pipeline(args):
     save_dir = eval_dir + '/compactness/'
 
     # Calculate compactness and saved the values in scree.txt
-    sw.ShapeEvaluation.ComputeCompactness(
-        particleSystem=particleSystem, nModes=1, saveTo=save_dir+"scree.txt")
+    # Get the compactness of a specific mode 
+    nCompactness = sw.ShapeEvaluation.ComputeCompactness(particleSystem=particleSystem,nModes=3)
+    print("Compactness value of the 3rd mode - ", nCompactness)
+
+    # Get compactness of all the modes
+    allCompactness = sw.ShapeEvaluation.ComputeFullCompactness(particleSystem=particleSystem)
+    filename = "scree.txt"
+    np.savetxt(save_dir+filename,allCompactness)
+
     if not args.tiny_test:
-        sw.plot.plot_scree(save_dir)
+        sw.plot.plot_mode_line(save_dir,filename,"Compactness","Explained Variance")
 
     """
     ########################################################################################################
@@ -63,10 +70,19 @@ def Run_Pipeline(args):
     save_dir = eval_dir + '/generalization/'
 
     # Calculate generalization
-    sw.ShapeEvaluation.ComputeGeneralization(
-        particleSystem=particleSystem, nModes=1, saveTo=save_dir)
+    # Get the generalization of a specific mode and saves the reconstructions
+    nGeneralization = sw.ShapeEvaluation.ComputeGeneralization(particleSystem=particleSystem, nModes=3,saveTo=save_dir)
+    print("Generalization value of the 3rd mode - ", nGeneralization)
+
+    #Get generalization values for all modes
+    allGeneralization = sw.ShapeEvaluation.ComputeFullGeneralization(particleSystem=particleSystem)
+    filename = "generalization.txt"
+    np.savetxt(save_dir+filename,allGeneralization)
+
     if not args.tiny_test:
+        sw.plot.plot_mode_line(save_dir,filename,"Generalization","Generalization")
         sw.plot.visualize_reconstruction(save_dir)
+
 
     """
     ########################################################################################################
@@ -84,8 +100,14 @@ def Run_Pipeline(args):
     # directory where the reconstructions related to specificity will be saved
     save_dir = eval_dir + '/specificity/'
 
-    # Calculate specificity
-    sw.ShapeEvaluation.ComputeSpecificity(
-        particleSystem=particleSystem, nModes=1, saveTo=save_dir)
+    # Calculate specificity of a given mode and saves the reconstructions
+    nSpecificity = sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particleSystem, nModes=3,saveTo=save_dir)
+    print("Specificity value of the 3rd mode - ", nSpecificity)
+
+    #Get specificity values for all modes
+    allSpecificity = sw.ShapeEvaluation.ComputeFullSpecificity(particleSystem=particleSystem)
+    filename = "specificity.txt"
+    np.savetxt(save_dir+filename,allSpecificity)
     if not args.tiny_test:
+        sw.plot.plot_mode_line(save_dir,filename,"Specificity","Specificity")
         sw.plot.visualize_reconstruction(save_dir)

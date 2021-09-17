@@ -448,7 +448,6 @@ TEST(ImageTests, boundingBoxTest1)
   };
 
   PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
-  std::cout << "pregion: " << physicalregion << std::endl;
   PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
   ASSERT_TRUE(physicalregion == ground_truth_p);
@@ -457,19 +456,20 @@ TEST(ImageTests, boundingBoxTest1)
 TEST(ImageTests, boundingBoxTest2)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
-  std::vector<Image> images;
-  Image img1(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_1.nrrd")); images.push_back(img1);
-  Image img2(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_2.nrrd")); images.push_back(img2);
-  Image img3(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_3.nrrd")); images.push_back(img3);
-  Image img4(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_4.nrrd")); images.push_back(img4);
-  Image img5(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_5.nrrd")); images.push_back(img5);
-  Image img6(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_6.nrrd")); images.push_back(img6);
-  Image img7(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_7.nrrd")); images.push_back(img7);
-  Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
-  Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
+  Image img1(images_location + "seg.ellipsoid_1.nrrd");
+  Image img2(images_location + "seg.ellipsoid_2.nrrd");
+  Image img3(images_location + "seg.ellipsoid_3.nrrd");
+  Image img4(images_location + "seg.ellipsoid_4.nrrd");
+  Image img5(images_location + "seg.ellipsoid_5.nrrd");
+  Image img6(images_location + "seg.ellipsoid_6.nrrd");
+  Image img7(images_location + "seg.ellipsoid_7.nrrd");
+  Image img8(images_location + "seg.ellipsoid_8.nrrd");
+  Image img9(images_location + "seg.ellipsoid_9.nrrd");
+
+  std::vector<std::reference_wrapper<const Image>> images
+  {img1, img2, img3, img4, img5, img6, img7, img8, img9};
 
   PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
-  std::cout << "pregion: " << physicalregion << std::endl;
   PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
   ASSERT_TRUE(physicalregion == ground_truth_p);
@@ -822,6 +822,17 @@ TEST(ImageTests, coordsysTest)
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
 
+TEST(ImageTests, setCoordsysTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Image::ImageType::DirectionType coordsys;
+  coordsys.SetIdentity();
+  coordsys[2][2] = -2;
+  image.setCoordsys(coordsys);
+
+  ASSERT_TRUE(image.coordsys() == coordsys);
+}
+
 TEST(ImageTests, negationTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
@@ -1171,4 +1182,38 @@ TEST(ImageTests, statsTest)
               equalNSigDigits(max, 1.0) &&
               equalNSigDigits(mean, 0.004166) &&
               equalNSigDigits(std, 0.062299));
+}
+
+TEST(ImageTests, orientationTest1)
+{
+  // ensure no change for correctly oriented images
+  Image image(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, orientationTest2)
+{
+  // ensure orientation is updated when reading images with undesired orientation
+  Image lpi(std::string(TEST_DATA_DIR) + "/orientation_lpi.nrrd");
+  Image rpi(std::string(TEST_DATA_DIR) + "/orientation_rpi.nrrd");
+  Image sal(std::string(TEST_DATA_DIR) + "/orientation_sal.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+
+  ASSERT_TRUE(lpi == ground_truth &&
+              rpi == ground_truth &&
+              sal == ground_truth);
+}
+
+TEST(ImageTests, orientationTest3)
+{
+  // ensure com alignment works after reading images with undesired orientation
+  Image image(std::string(TEST_DATA_DIR) + "/orientation_rpi.nrrd");
+  auto com = image.centerOfMass();
+  auto ctr = image.center();
+  image.translate(ctr - com);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_translated.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }

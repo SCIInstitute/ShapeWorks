@@ -69,11 +69,6 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
-  # update anaconda
-  conda activate base
-  if ! conda update --yes -n base conda; then return 1; fi
-  if ! conda update --yes --all; then return 1; fi
-
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
@@ -133,6 +128,9 @@ function install_conda() {
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
+  if ! pip install hotelling==0.5.0;                    then return 1; fi
+  if ! pip install statsmodels;                         then return 1; fi
+  if ! pip install shapely;                             then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.0.1;                          then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
@@ -197,6 +195,9 @@ function install_conda() {
 
   echo "Installed packages:"
   conda list
+
+  # Set the python path for studio
+  mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   
   return 0
 }

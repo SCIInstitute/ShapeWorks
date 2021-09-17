@@ -43,7 +43,8 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(file_list, int(args.num_subsample))
+            inputImages =[sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -283,9 +284,13 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 32
-    # Execute the optimization function
+
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+
+    # Execute the optimization function on distance transforms
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
+        point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -300,4 +305,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+        point_dir, input_files, local_point_files, world_point_files)

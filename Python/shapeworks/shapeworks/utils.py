@@ -1,7 +1,11 @@
 import numpy as np
 import os
+import sys
 import vtk
 import shapeworks as sw
+
+# Global shapeworks logger object (e.g. attached to Studio)
+sw_logger = None
 
 # helper function to determine the best grid size (rows and columns) given the number of samples in a dataset.
 def postive_factors(num_samples):
@@ -87,12 +91,20 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
-def find_reference_image_index(inDataList):
+def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
         mesh = img.toMesh(0.5)
         mesh_list.append(mesh)
-    return sw.MeshUtils.findReferenceMesh(mesh_list)
+    if(domains_per_shape==1):
+        return sw.MeshUtils.findReferenceMesh(mesh_list)
+
+    else:
+        combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh)
+       
+        return index,combined_mesh
+
 
 def save_contour_as_vtp(points, lines, filename):
     """
@@ -137,3 +149,65 @@ def compute_line_indices(n, is_closed=True):
         lines[i] = [i, (i+1)%n]
 
     return lines
+
+def get_api_version():
+    return "6.2"
+
+def set_sw_logger(log_object):
+    """Set the shapeworks logger object"""
+    global sw_logger
+    sw_logger = log_object
+
+
+def sw_message(str):
+    """If sw_logger is set, use it to log a message, otherwise print to console"""
+    global sw_logger
+    if sw_logger is not None:
+        sw_logger.log(str)
+    else:
+        print(str)
+
+def sw_check_abort():
+    """If sw_logger is set, use it to check if abort has been called"""
+    global sw_logger
+    if sw_logger is not None:
+        return sw_logger.check_abort()
+    else:
+        return False
+
+def sw_progress(progress):
+    """If sw_logger is set, use it, otherwise do nothing"""
+    global sw_logger
+    if sw_logger is not None:
+        sw_logger.progress(progress)
+
+def test(name, failure=False):
+    if failure:
+        try:
+            if name():
+                print(name.__name__ + " failed")
+                return False
+        except Exception as e:
+            print(name.__name__ + " unexpected failure (exception): " + str(e))
+            return False
+    else:
+        try:
+            if name():
+                return True
+            else:
+                print(name.__name__ + " failed")
+                return False
+        except Exception as e:
+            print(name.__name__ + " failed (exception): " + str(e))
+            return False
+
+def expectException(name, etype):
+    try:
+        name()
+        print(name.__name__ + " failed (expected an exception)")
+        return False
+    except etype:
+        return True
+    except Exception as e:
+        print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
+        return False

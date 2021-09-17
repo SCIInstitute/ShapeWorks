@@ -1,5 +1,7 @@
 #include "Testing.h"
 
+#include <fstream>
+
 #ifdef _WIN32
   #include <io.h>
   #define access _access_s
@@ -26,11 +28,23 @@ void run_use_case(const std::string& name, const std::string& check_file)
 
   // delete the file to make sure it's remade
   std::remove(file.c_str());
+  std::remove("output.txt");
 
   // run python
-  std::string command = "python RunUseCase.py " + name + " --tiny_test";
+  std::string command = "python RunUseCase.py " + name + " --tiny_test 1> output.txt 2>&1";
   std::cerr << "Running command: " << command << "\n";
-  ASSERT_FALSE(system(command.c_str()));
+  bool result = system(command.c_str());
+  if (result) {
+    std::cerr << "Error running command, output: " << command << "\n";
+    std::ifstream file("output.txt");
+    if (file.good()) {
+      std::string line;
+      while (std::getline(file, line)) {
+        std::cerr << line << "\n";
+      }
+    }
+  }
+  ASSERT_FALSE(result);
 
   ASSERT_TRUE(file_exists(file));
 }
@@ -67,7 +81,7 @@ TEST(UseCaseTests, ellipsoid_cut)
 TEST(UseCaseTests, ellipsoid_evaluate)
 {
   run_use_case("ellipsoid_evaluate",
-               "Output/ellipsoid/evaluation/compactness/scree.txt");
+               "Output/ellipsoid/evaluation/specificity/specificity.txt");
 }
 
 //---------------------------------------------------------------------------
@@ -149,4 +163,11 @@ TEST(UseCaseTests, ellipsoid_pca)
 {
   run_use_case("ellipsoid_pca",
                "Output/ellipsoid/pca/pca_eigen_vectors.txt");
+}
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_pvalues)
+{
+  run_use_case("femur_pvalues",
+               "Output/femur_pvalues/femur_pvalues.txt");
 }

@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
@@ -138,7 +139,7 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allowbackintersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--allowbackintersections").action("store").type("bool").set_default(true).help("Allow back-intersections in coverage calculation [default: true].");
   parser.add_option("--anglethreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
   parser.add_option("--backsearchradius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
@@ -240,7 +241,7 @@ void Decimate::buildParser()
 
   parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
   parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: false].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: true].");
 
   Command::buildParser();
 }
@@ -258,6 +259,35 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
   bool preserveTopology = static_cast<bool>(options.get("preservetopology"));
 
   sharedData.mesh->decimate(reduction, angle, preserveTopology);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CVDDecimate
+///////////////////////////////////////////////////////////////////////////////
+void CVDDecimate::buildParser()
+{
+  const std::string prog = "cvd-decimate";
+  const std::string desc = "applies cvd (centroidal voronoi diagram) decimation filter";
+
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
+
+  Command::buildParser();
+}
+
+bool CVDDecimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double percentage = static_cast<double>(options.get("percentage"));
+
+  sharedData.mesh->cvdDecimate(percentage);
   return sharedData.validMesh();
 }
 
@@ -619,7 +649,7 @@ void Distance::buildParser()
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
-  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print largest distance of any point in mesh to target [default: %default].");
+  parser.add_option("--summary").action("store").type("bool").set_default(true).help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
 }
@@ -664,18 +694,18 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// GenerateNormals
+// ComputeNormals
 ///////////////////////////////////////////////////////////////////////////////
-void GenerateNormals::buildParser()
+void ComputeNormals::buildParser()
 {
-  const std::string prog = "generate-normals";
-  const std::string desc = "computes cell normals and orients them such that they point in the same direction";
+  const std::string prog = "compute-normals";
+  const std::string desc = "computes and adds oriented point and cell normals";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
 
-bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -683,30 +713,23 @@ bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  sharedData.mesh->generateNormals();
+  sharedData.mesh->computeNormals();
   return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FixMesh
+// FixElement
 ///////////////////////////////////////////////////////////////////////////////
-void FixMesh::buildParser()
+void FixElement::buildParser()
 {
-  const std::string prog = "fix-mesh";
-  const std::string desc = "quality control meshes";
+  const std::string prog = "fix-element";
+  const std::string desc = "fix element winding of mesh";
   parser.prog(prog).description(desc);
-
-  parser.add_option("--smoothbefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
-  parser.add_option("--smoothafter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
-  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
-  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
-  parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
-  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
 
   Command::buildParser();
 }
 
-bool FixMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool FixElement::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -714,14 +737,7 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool smoothBefore = static_cast<bool>(options.get("smoothbefore"));
-  bool smoothAfter = static_cast<bool>(options.get("smoothafter"));
-  double lambda = static_cast<double>(options.get("lambda"));
-  int iterations = static_cast<int>(options.get("iterations"));
-  bool decimate = static_cast<bool>(options.get("decimate"));
-  double percentage = static_cast<double>(options.get("percentage"));
-
-  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fixElement();
   return sharedData.validMesh();
 }
 
@@ -762,6 +778,205 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
 
   sharedData.mesh->clipClosedSurface(makePlane(point, normal));
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ClosestPoint
+///////////////////////////////////////////////////////////////////////////////
+void ClosestPoint::buildParser()
+{
+  const std::string prog = "closest-point";
+  const std::string desc = "returns closest point to given point on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for point.");
+
+  Command::buildParser();
+}
+
+bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point point({static_cast<double>(options.get("x")),
+               static_cast<double>(options.get("y")),
+               static_cast<double>(options.get("z"))});
+
+  std::cout << "Closest point to given point on mesh: " << sharedData.mesh->closestPoint(point) << "\n";
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistance
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistance::buildParser()
+{
+  const std::string prog = "geodesic-distance";
+  const std::string desc = "computes geodesic distance between two vertices on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x for source point.");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y for source point.");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z for source point.");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x for target point.");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y for target point.");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z for target point.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point source({static_cast<double>(options.get("x1")),
+                static_cast<double>(options.get("y1")),
+                static_cast<double>(options.get("z1"))});
+
+  Point target({static_cast<double>(options.get("x2")),
+                static_cast<double>(options.get("y2")),
+                static_cast<double>(options.get("z2"))});
+
+  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(sharedData.mesh->closestPointId(source),
+                                                           sharedData.mesh->closestPointId(target)) << "\n";
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeanNormals
+///////////////////////////////////////////////////////////////////////////////
+void MeanNormals::buildParser()
+{
+  const std::string prog = "mean-normals";
+  const std::string desc = "computes average normals for each point in given set of meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
+  parser.add_option("--generatenormals").action("store").type("bool").set_default(true).help("Auto generate normals if the mesh does not have normals [default: true].");
+
+  Command::buildParser();
+}
+
+bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::vector<std::string> filenames = options.get("names");
+  bool generateNormals = static_cast<bool>(options.get("generatenormals"));
+
+  sharedData.field = MeshUtils::computeMeanNormals(filenames, generateNormals);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetField
+///////////////////////////////////////////////////////////////////////////////
+void SetField::buildParser()
+{
+  const std::string prog = "set-field";
+  const std::string desc = "adds the current field to the current mesh with the given name.";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+
+  Command::buildParser();
+}
+
+bool SetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  if (!sharedData.field)
+  {
+    std::cerr << "No field initialized to set\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  sharedData.mesh->setField(name, sharedData.field);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GetField
+///////////////////////////////////////////////////////////////////////////////
+void GetField::buildParser()
+{
+  const std::string prog = "get-field";
+  const std::string desc = "gets field of mesh with given name";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+
+  Command::buildParser();
+}
+
+bool GetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  sharedData.field = sharedData.mesh->getField<vtkDataArray>(name);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Curvature
+///////////////////////////////////////////////////////////////////////////////
+void Curvature::buildParser()
+{
+  const std::string prog = "mesh-curvature";
+  const std::string desc = "computes and adds curvature";
+  parser.prog(prog).description(desc);
+
+  std::list<std::string> curvs{"principal", "gaussian", "mean"};
+  parser.add_option("--type").action("store").type("choice").choices(curvs.begin(), curvs.end()).set_default("principal").help("Curvature type to use [default: %default].");
+
+  Command::buildParser();
+}
+
+bool Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string curvopt(options.get("type"));
+
+  Mesh::CurvatureType curv;
+  if (curvopt == "principal")
+    curv = Mesh::Principal;
+  else if (curvopt == "gaussian")
+    curv = Mesh::Gaussian;
+  else if (curvopt == "mean")
+    curv = Mesh::Mean;
+  else {
+    std::cerr << "no such curvature type: " << curvopt << std::endl;
+    return false;
+  }
+
+  sharedData.field = sharedData.mesh->curvature(curv);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1021,6 +1236,7 @@ void CompareMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this mesh with another.");
+  parser.add_option("--epsilon").action("store").type("double").set_default(-1.0).help("Epsilon [default: %default].");
 
   Command::buildParser();
 }
@@ -1039,7 +1255,9 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  if (sharedData.mesh->compare(Mesh(filename)))
+  double eps = static_cast<double>(options.get("epsilon"));
+
+  if (sharedData.mesh->compare(Mesh(filename), eps))
   {
     std::cout << "compare success\n";
     return true;

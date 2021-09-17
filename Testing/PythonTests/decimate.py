@@ -10,11 +10,7 @@ def decimateTest1():
 
   return mesh == compareMesh
 
-val = decimateTest1()
-
-if val is False:
-  print("decimateTest1 failed")
-  sys.exit(1)
+utils.test(decimateTest1)
 
 def decimateTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -24,11 +20,7 @@ def decimateTest2():
 
   return mesh == compareMesh
 
-val = decimateTest2()
-
-if val is False:
-  print("decimateTest2 failed")
-  sys.exit(1)
+utils.test(decimateTest2)
 
 def decimateTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -38,10 +30,7 @@ def decimateTest3():
 
   return mesh == compareMesh
 
-val = decimateTest3()
-
-if val is False:
-  sys.exit(1)
+utils.test(decimateTest3)
 
 def decimateTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -51,10 +40,7 @@ def decimateTest4():
 
   return mesh == compareMesh
 
-val = decimateTest4()
-
-if val is False:
-  sys.exit(1)
+utils.test(decimateTest4)
 
 def decimateTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -64,7 +50,26 @@ def decimateTest5():
 
   return mesh == compareMesh
 
-val = decimateTest5()
+utils.test(decimateTest5)
 
-if val is False:
-  sys.exit(1)
+def decimateTest6():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
+  seed(26)
+  mesh.cvdDecimate()
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate1.ply")
+
+  return mesh == compareMesh
+
+utils.test(decimateTest6)
+
+def decimateTest7():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
+  seed(42)
+  mesh.cvdDecimate(1.0)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate2.vtk")
+
+  return mesh == compareMesh
+
+utils.test(decimateTest7)

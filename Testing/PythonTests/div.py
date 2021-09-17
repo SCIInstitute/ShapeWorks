@@ -2,7 +2,7 @@ import os
 import sys
 from shapeworks import *
 
-def divTest1():
+def divTest():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img /= 3.14
 
@@ -10,7 +10,4 @@ def divTest1():
 
   return img.compare(compareImg)
 
-val = divTest1()
-
-if val is False:
-  sys.exit(1)
+utils.test(divTest)

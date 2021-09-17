@@ -14,7 +14,4 @@ def findReferenceMeshTest():
 
   return MeshUtils.findReferenceMesh(meshList) == 2
 
-val = findReferenceMeshTest()
-if val is False:
-  print("findRereferenceMeshTest failed")
-  sys.exit(1)
+utils.test(findReferenceMeshTest)

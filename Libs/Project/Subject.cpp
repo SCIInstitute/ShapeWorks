@@ -75,6 +75,18 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<double>> Subject::get_procrustes_transforms() const
+{
+  return this->procrustes_transforms_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_procrustes_transforms(std::vector<std::vector<double>> transforms)
+{
+  this->procrustes_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
 std::map<std::string, std::string> Subject::get_group_values() const
 {
   return this->group_values_;
@@ -135,6 +147,18 @@ void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 }
 
 //---------------------------------------------------------------------------
+std::string Subject::get_display_name()
+{
+  return this->display_name_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_display_name(std::string display_name)
+{
+  this->display_name_ = display_name;
+}
+
+//---------------------------------------------------------------------------
 void Subject::set_local_particle_filenames(std::vector<std::string> filenames)
 {
   this->local_particle_filenames_ = filenames;
@@ -156,4 +180,28 @@ void Subject::set_world_particle_filenames(std::vector<std::string> filenames)
 std::vector<std::string> Subject::get_world_particle_filenames()
 {
   return this->world_particle_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_landmarks_filenames(std::vector<std::string> filenames)
+{
+  this->landmarks_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_landmarks_filenames()
+{
+  return this->landmarks_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_image_filenames(std::vector<std::string> filenames)
+{
+  this->image_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_image_filenames()
+{
+  return this->image_filenames_;
 }

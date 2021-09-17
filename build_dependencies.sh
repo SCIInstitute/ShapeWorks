@@ -19,6 +19,7 @@ ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.5.0"
+JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v7.0.0"
 libigl_VER="v2.2.0-fix"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
@@ -249,6 +250,31 @@ build_xlnt()
   XLNT_DIR=${INSTALL_DIR}
 }
 
+build_jkqtplotter()
+{
+  echo ""
+  echo "## Building JKQTPlotter..."
+  cd ${BUILD_DIR}
+  git clone --depth 1 --branch ${JKQTPLOTTER_VER} https://github.com/akenmorris/JKQtPlotter.git jkqtplotter
+  cd jkqtplotter
+  # fix compile on windows
+  sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
+      cmake --build . --config ${BUILD_TYPE} || exit 1
+      cmake --build . --config ${BUILD_TYPE} --target install
+  else
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  JKQTPLOTTER_DIR=${INSTALL_DIR}
+}
+
 build_openvdb()
 {
   echo ""
@@ -392,6 +418,12 @@ build_all()
 
   if [[ -z $GEOMETRY_CENTRAL_DIR ]]; then
     build_geometry_central
+  fi
+
+  if [[ -z $JKQTPLOTTER_DIR ]]; then
+    if [[ $BUILD_GUI = 1 ]]; then
+      build_jkqtplotter
+    fi
   fi
 
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks

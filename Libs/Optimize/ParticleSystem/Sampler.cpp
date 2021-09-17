@@ -365,7 +365,7 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
-void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
+void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
@@ -378,6 +378,8 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
     domain->SetImage(image, narrow_band_world);
   }
 
+  domain->SetDomainID(m_DomainList.size());
+  domain->SetDomainName(name);
   m_DomainList.push_back(domain);
 }
 
