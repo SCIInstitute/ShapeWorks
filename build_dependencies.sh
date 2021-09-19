@@ -395,8 +395,7 @@ build_all()
 
   ## build dependencies if their locations were not specified
   if [[ -z $OpenVDB_DIR ]]; then
-  echo "asdf"
-  #  build_openvdb
+    build_openvdb
   fi
 
   if [[ -z $VXL_DIR ]]; then
