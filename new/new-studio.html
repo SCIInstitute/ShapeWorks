@@ -110,21 +110,21 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#group-p-value-display">Group p-value Display</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#multiple-domains">Multiple Domains</a>
+    <li class="toctree-l2"><a class="reference internal" href="#scalar-range-controls">Scalar range controls</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#mesh-grooming">Mesh Grooming</a>
+    <li class="toctree-l2"><a class="reference internal" href="#surface-opacity-controls">Surface opacity controls</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#mesh-support">Mesh Support</a>
+    <li class="toctree-l2"><a class="reference internal" href="#added-narrow-band-optimization-parameter">Added narrow band optimization parameter</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#improved-studio-interface">Improved Studio Interface</a>
+    <li class="toctree-l2"><a class="reference internal" href="#new-message-history-window">New message history window</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#surface-reconstruction">Surface Reconstruction</a>
+    <li class="toctree-l2"><a class="reference internal" href="#new-suppressible-error-dialog">New suppressible error dialog</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dynamic-loading">Dynamic Loading</a>
+    <li class="toctree-l2"><a class="reference internal" href="#multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-particles-movement">Live Particles Movement</a>
+    <li class="toctree-l2"><a class="reference internal" href="#allow-initial-landmark-points">Allow initial landmark points</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#feature-maps">Feature Maps</a>
+    <li class="toctree-l2"><a class="reference internal" href="#mesh-warping-improvements">Mesh warping improvements</a>
     </li>
     </ul>
                     </li>
@@ -293,7 +293,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="new-in-shapeworks-studio">New in ShapeWorks Studio</h1>
+                <h1 id="new-in-shapeworks-studio-62">New in ShapeWorks Studio 6.2</h1>
 <h2 id="deepssm-in-studio">DeepSSM in Studio</h2>
 <p>New in ShapeWorks 6.2, we have added the ability to run DeepSSM tools in ShapeWorks Studio.</p>
 <p><img alt="Studio DeepSSM - Augmentation" src="../img/studio/studio_deepssm_aug2.png" width="600" /></p>
@@ -305,10 +305,38 @@
 <p>See <a href="../studio/multiple-domains.html#multiple-domain-alignments">Multiple Domain Alignments</a> for more information.</p>
 <h2 id="shape-evaluation-charts">Shape Evaluation Charts</h2>
 <p>New in ShapeWorks 6.2, we have added new shape evaluation charts.  Charts for Compactness, Specificity and Generalizaion are provided.</p>
+<p>See <a href="../studio/getting-started-with-studio.html#metrics-panel">Studio Metrics Panel</a> for more information.</p>
 <p><img alt="Studio DeepSSM - Shape Evaluation" src="../img/studio/studio_shape_evaluation.png" width="600" /></p>
 <h2 id="group-p-value-display">Group p-value Display</h2>
-<p>New in ShapeWorks 6.2, we have added the ability to view group-wise p-values for surface differences.</p>
+<p>New in ShapeWorks 6.2, Studio has the ability to view group-wise p-values for surface differences.</p>
 <p><img alt="Studio DeepSSM - Group p-value" src="../img/studio/studio_group_pvalue.png" width="600" /></p>
+<h2 id="scalar-range-controls">Scalar range controls</h2>
+<p>New in ShapeWorks 6.2, Studio feature maps, p-value displays, deepssm surface error displays allow for manual control over scalar colormap values.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_scale.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h2 id="surface-opacity-controls">Surface opacity controls</h2>
+<p>Shape surface opacity can now be controlled on a per domain basis.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_opacity_controls.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h2 id="added-narrow-band-optimization-parameter">Added narrow band optimization parameter</h2>
+<p>The narrow band optimization parameter has been added to Studio's Optimize parameter dialog.  This allows the user to modifiy the narrow band from the default of 4 in the rare event that it needs modification.</p>
+<h2 id="new-message-history-window">New message history window</h2>
+<p>A new button in the lower corner has been added that brings up the message history from the status bar.</p>
+<p><img alt="Studio Message History" src="../img/studio/studio_message_history.png" width="600" /></p>
+<h2 id="new-suppressible-error-dialog">New suppressible error dialog</h2>
+<p>The error dialog has been replaced with a new dialog containing a checkbox to suppress further messages</p>
+<p><img alt="Studio Error Message" src="../img/studio/studio_error_message.png" width="400" /></p>
+<h2 id="multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</h2>
+<p>When exporting data in the presences of multiple anatomies/domains, you may now export a combined file, or one for each domain.</p>
+<p><img alt="Studio Multiple Domain Question" src="../img/studio/studio_multiple_domain_question.png" width="400" /></p>
+<h2 id="allow-initial-landmark-points">Allow initial landmark points</h2>
+<p>Initial particle positions can be specified in a Project Spreadsheet using the column prefix <code>landmarks_file_&lt;name&gt;</code> where <code>&lt;name&gt;</code> is the name of each shape domain.  For example:</p>
+<p><img alt="Studio Initial Landmarks" src="../img/studio/studio_initial_landmarks.png" width="400" /></p>
+<p>These landmarks will be used as the initial positions of particles during optimization.  They are not yet visualized within Studio before optimization.</p>
+<h2 id="mesh-warping-improvements">Mesh warping improvements</h2>
+<p>Multiple sources of crashes during mesh warping have been fixed and the overall speed has been dramatically improved.</p>
+<hr />
+<h1 id="new-in-shapeworks-studio-61">New in ShapeWorks Studio 6.1</h1>
 <h2 id="multiple-domains">Multiple Domains</h2>
 <p>As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.</p>
 <p><img alt="ShapeWorks Project with Multiple Domains - Analyze" src="../img/studio/studio_multiple_domain_analyze.png" /></p>
