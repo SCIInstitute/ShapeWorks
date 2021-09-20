@@ -1154,7 +1154,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
       lastId = ptid;
     }
 
-    std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
+    //std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
     vtkSmartPointer<vtkSelectPolyData> select = vtkSelectPolyData::New();
     select->SetLoop(selectionPoints);
@@ -1371,7 +1371,7 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
   absvalues->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
   absvalues->SetName("absvalues");
 
-  std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
+  //std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
 
   // debug
   Eigen::MatrixXd C(this->mesh->GetNumberOfPoints(), 3);
