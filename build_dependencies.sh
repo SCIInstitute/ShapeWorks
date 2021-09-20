@@ -24,7 +24,7 @@ OpenVDB_VER="v7.0.0"
 libigl_VER="v2.2.0-fix"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 
-WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc /Gv /arch:AVX2 /fp:fast"
+WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc /arch:AVX2 /fp:fast"
 WIN_LFLAGS="-LTCG /DEBUG"
 FLAGS="-g" # turn on symbols for all builds
 
