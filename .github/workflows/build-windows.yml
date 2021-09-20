@@ -63,6 +63,10 @@ jobs:
       shell: bash -l {0}
       run: source ./install_shapeworks.sh
 
+    - name: conda cleanup
+      shell: bash -l {0}
+      run: conda clean -p -t
+      
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
