@@ -161,15 +161,11 @@ void GroomTool::set_ui_from_params(GroomParameters params)
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::load_params()
+void GroomTool::update_page()
 {
-  auto params = GroomParameters(session_->get_project(), current_domain_);
-  set_ui_from_params(params);
-
-  auto subjects = session_->get_project()->get_subjects();
-
   int domain_id = ui_->domain_box->currentIndex();
 
+  auto subjects = session_->get_project()->get_subjects();
   if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > domain_id) {
 
     if (subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
@@ -179,6 +175,16 @@ void GroomTool::load_params()
       ui_->stacked_widget->setCurrentWidget(ui_->mesh_page);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::load_params()
+{
+  auto params = GroomParameters(session_->get_project(), current_domain_);
+  set_ui_from_params(params);
+
+
+  this->update_page();
 }
 
 //---------------------------------------------------------------------------
@@ -382,14 +388,7 @@ void GroomTool::activate()
     }
   }
 
-  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
-    if (subjects[0]->get_domain_types()[0] == DomainType::Image) {
-      ui_->stacked_widget->setCurrentWidget(ui_->image_page);
-    }
-    if (subjects[0]->get_domain_types()[0] == DomainType::Mesh) {
-      ui_->stacked_widget->setCurrentWidget(ui_->mesh_page);
-    }
-  }
+  this->update_page();
 }
 
 //---------------------------------------------------------------------------

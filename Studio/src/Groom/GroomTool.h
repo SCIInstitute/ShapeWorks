@@ -82,6 +82,8 @@ private:
 
   void set_ui_from_params(GroomParameters params);
 
+  void update_page();
+
   Preferences& preferences_;
 
   QList<QThread*> threads_;
