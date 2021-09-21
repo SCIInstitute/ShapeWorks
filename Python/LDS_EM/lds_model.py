@@ -4,6 +4,7 @@ from numpy.linalg import det as det
 
 '''
 LDS model class
+TODO: update to handle data with shape (N,T,P)
 Input:
     - data: with shape (T, P) where T is the number of time points and P is the dimension of the data
     - obs_params: class of observation params
@@ -11,8 +12,7 @@ Input:
 '''
 class LDS():
     def __init__(self, data, obs_params=None, state_params=None, prior_initialize=False, random_initial=False):
-        # observation
-        self.T, self.P = data.shape
+        # observation data
         self.X = data
         
         # observation parameters
@@ -25,7 +25,8 @@ class LDS():
         self.A = state_params.A
         self.latent_Sigma = state_params.latent_Sigma
 
-        # hidden state dimension
+        # dimensions
+        self.T, self.P = data.shape
         self.L = self.A.shape[0]
         
         # TODO: E-step parameters
@@ -35,6 +36,7 @@ class LDS():
     
     '''
     Initialize mu and v
+    TODO: update to handle data with shape (N,T,P)
     '''   
     def initialize_states_prior(self):
         self.mu_predict = [0] * self.T
@@ -182,8 +184,9 @@ class LDS():
 
 '''
 Observation parameters class
+    TODO: add defaults
     - obs_matrix: is the PxL loading/observation-system matrix
-    - observe_Sigma: is the PxP observation covariance matrix
+    - obs_Sigma: is the PxP observation covariance matrix
 '''
 class obs_params():
     def __init__(self, obs_matrix, obs_Sigma):
@@ -192,6 +195,7 @@ class obs_params():
 
 '''
 State parameters class
+    TODO: add defaults
     - trans_matrix: is the LxL transition matrix
     - latent_Sigma: is the LxL latent covariance matrix
     - init_mu: is the L latent prior mean
@@ -203,3 +207,82 @@ class state_params():
         self.latent_Sigma = latent_Sigma
         self.init_mu = init_mu
         self.init_V = init_Sigma
+
+'''
+Create default data for testing
+TODO: add N
+'''
+class DefaultData():
+    def __init__(self, T, P, L):
+        self.T = T
+        self.P = P
+        self.L = L
+        self.generate_states()
+        self.generate_data()
+    def generate_states(self):
+        self.mu_0 = np.ones(self.L)
+        self.V_0 = np.eye(self.L)
+        self.A = 0.99*self.random_rotation(self.L, theta=45)
+        self.latent_Sigma = 0.5*np.eye(self.L)
+        self.C =  np.random.randn(self.P, self.L)
+        self.obs_Sigma = 0.25*np.eye(self.P)
+
+        self.mu = [0] * self.T
+        self.sigma= [0] * self.T
+        self.mu[0] = self.mu_0
+        self.sigma[0] = self.sigma_0
+        for t in range(1, self.T):
+            self.mu[t] = np.matmul(self.A, self.mu[t-1])
+            self.sigma[t] = self.latent_Sigma
+
+        return self.mu, self.sigma
+
+    '''
+    Generate data using state and observation equations
+    '''
+    def generate_data(self):
+        self.z = [0] * self.T
+        self.epsilon = [0] * self.T
+        self.data = np.zeros((self.T, self.p))
+        for t in range(self.T):
+            self.z[t] = np.random.multivariate_normal(self.mu[t], self.sigma[t])
+            self.epsilon[t] = np.random.multivariate_normal(np.zeros(self.P), self.obs_Sigma)
+            self.data[t, :] = np.matmul(self.W, self.z[t]) + self.epsilon[t]
+        return self.data
+
+    def log_likelihood(self):
+        # TODOD: compute the log likelihood function
+
+        ll_obs = sum([0.5*np.matmul(np.expand_dims(self.data[t]-np.matmul(self.C, self.h[t]), 1).T,
+                                    np.matmul(inv(self.R),np.expand_dims(self.data[t]-np.matmul(self.C,self.h[t]), 1)))
+                                    for t in range(self.T)]) + (self.T/2)*np.log(det(self.R))
+        # print('llobs')
+        # print(ll_obs)
+        # print('Q')
+        # print(self.Q)
+        ll_state = sum([0.5*np.matmul(np.expand_dims(self.h[t]-np.matmul(self.A, self.h[t-1]), 1).T,
+                                    np.matmul(inv(self.Q), np.expand_dims(self.h[t]-np.matmul(self.A, self.h[t-1]), 1)))
+                                    for t in range(1, self.T)]) + ((self.T-1)/2)*np.log(det(self.Q))
+        # print('state')
+        # print(ll_state)
+        ll_prior = 0.5*np.matmul(np.expand_dims(self.h[0]-self.mu_0, 1).T,
+                                    np.matmul(inv(self.sigma_0), np.expand_dims(self.h[0]-self.mu_0, 1))) + \
+                   0.5*np.log(det(self.sigma_0))
+
+        self.ll = -ll_obs -ll_state-ll_prior-((self.T *(self.p+self.q))/2)*np.log(2*np.pi)
+
+        return self.ll
+    def random_rotation(self, n, theta=None):
+        if theta is None:
+            # Sample a random, slow rotation
+            theta = 0.5 * np.pi * np.random.rand()
+
+        if n == 1:
+            return np.random.rand() * np.eye(1)
+
+        rot = np.array([[np.cos(theta), -np.sin(theta)],
+                        [np.sin(theta), np.cos(theta)]])
+        out = np.zeros((n, n))
+        out[:2, :2] = rot
+        q = np.linalg.qr(np.random.randn(n, n))[0]
+        return q.dot(out).dot(q.T)
