@@ -69,6 +69,9 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
   connect(ui_->isotropic_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
+  connect(ui_->reflect_column, qOverload<const QString&>(
+            &QComboBox::currentIndexChanged), this, &GroomTool::update_reflect_choices);
+
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
 
@@ -181,13 +184,47 @@ void GroomTool::update_page()
 }
 
 //---------------------------------------------------------------------------
+void GroomTool::update_reflect_columns()
+{
+  if (!session_ || !session_->get_project()) {
+    return;
+  }
+  auto project = session_->get_project();
+  auto headers = project->get_headers();
+  this->ui_->reflect_column->clear();
+  for (auto header: headers) {
+    this->ui_->reflect_column->addItem(QString::fromStdString(header));
+  }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::update_reflect_choices()
+{
+  auto project = session_->get_project();
+  auto column = ui_->reflect_column->currentText();
+  auto subjects = session_->get_project()->get_subjects();
+
+  auto rows = project->get_string_column(column.toStdString());
+
+  ui_->reflect_choice->clear();
+  QStringList list;
+  for (int row = 0; row < rows.size(); row++) {
+    list << QString::fromStdString(rows[row]);
+  }
+  list.removeDuplicates();
+  for (auto item : list) {
+    ui_->reflect_choice->addItem(item);
+  }
+}
+
+//---------------------------------------------------------------------------
 void GroomTool::load_params()
 {
   auto params = GroomParameters(session_->get_project(), current_domain_);
   set_ui_from_params(params);
 
-
   this->update_page();
+  this->update_reflect_columns();
 }
 
 //---------------------------------------------------------------------------
@@ -245,7 +282,6 @@ void GroomTool::store_params()
     params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
     params.save_to_project();
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -374,6 +410,7 @@ void GroomTool::on_skip_button_clicked()
 void GroomTool::set_session(QSharedPointer<Session> session)
 {
   session_ = session;
+  this->update_reflect_choices();
 }
 
 //---------------------------------------------------------------------------
@@ -464,5 +501,4 @@ void GroomTool::update_ui()
   ui_->spacing_iso->setEnabled(iso_mode);
 }
 //---------------------------------------------------------------------------
-
 }

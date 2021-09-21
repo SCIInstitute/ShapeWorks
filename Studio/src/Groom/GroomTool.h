@@ -84,6 +84,9 @@ private:
 
   void update_page();
 
+  void update_reflect_columns();
+  void update_reflect_choices();
+
   Preferences& preferences_;
 
   QList<QThread*> threads_;
