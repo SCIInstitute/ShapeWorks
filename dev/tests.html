@@ -301,14 +301,14 @@
 Python scripts should be added to Testing/PythonTests</p>
 <div class="highlight"><pre><span></span><code>TEST(pythonTests, nameoftestTest)
 {
-  ASSERT_FALSE(system(&quot;python script.py&quot;));
+  run_use_case(&quot;script.py&quot;);
 }
 </code></pre></div>
 <p>For testing from Command Line interface, use Testing/shapeworksTests/shapeworksTests.cpp<br />
 Shell scripts should be added to Testing/shapeworksTests</p>
 <div class="highlight"><pre><span></span><code>TEST(shapeworksTests, nameoftestTest)
 {
-  ASSERT_FALSE(system(&quot;bash script.sh&quot;));
+  run_use_case(&quot;script.sh&quot;);
 }
 </code></pre></div>
 <p>Testing data should be placed in Testing/data.</p>
