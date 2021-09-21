@@ -66,6 +66,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->mesh_smooth_method, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &GroomTool::update_ui);
 
+  connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
+
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
 
@@ -449,5 +451,8 @@ void GroomTool::update_ui()
   ui_->mesh_smooth_stack->setCurrentIndex(ui_->mesh_smooth_method->currentIndex());
   ui_->mesh_smooth_box->setVisible(ui_->mesh_smooth->isChecked());
   ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
+  ui_->resample_box->setVisible(ui_->resample_checkbox->isChecked());
 }
+//---------------------------------------------------------------------------
+
 }

@@ -239,26 +239,29 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="resample_widget" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>163</height>
-            </size>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <layout class="QGridLayout" name="gridLayout_17">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>6</number>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
-            <item row="0" column="0">
+            <item>
              <widget class="QCheckBox" name="resample_checkbox">
               <property name="text">
                <string>Resample</string>
@@ -268,7 +271,7 @@ background: rgb(255, 255, 127)
               </property>
              </widget>
             </item>
-            <item row="1" column="0" rowspan="2" colspan="6">
+            <item>
              <widget class="QGroupBox" name="resample_box">
               <property name="minimumSize">
                <size>
@@ -400,27 +403,30 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="isolate_widget" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
            <layout class="QGridLayout" name="gridLayout_13">
             <property name="leftMargin">
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
             </property>
             <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <property name="spacing">
              <number>0</number>
             </property>
             <item row="2" column="0">
              <widget class="QCheckBox" name="isolate_checkbox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Isolate</string>
               </property>
@@ -441,27 +447,30 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="fill_holes_widget" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_12">
+           <layout class="QGridLayout" name="gridLayout_12" rowstretch="0,0,0,0,0" rowminimumheight="0,0,0,0,0">
             <property name="leftMargin">
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
             </property>
             <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <property name="spacing">
              <number>0</number>
             </property>
             <item row="4" column="0">
              <widget class="QCheckBox" name="fill_holes_checkbox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Fill Holes</string>
               </property>
