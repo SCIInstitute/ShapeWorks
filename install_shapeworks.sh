@@ -69,11 +69,6 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
-  # update anaconda
-  conda activate base
-  if ! conda update --yes -n base conda; then return 1; fi
-  if ! conda update --yes --all; then return 1; fi
-
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"

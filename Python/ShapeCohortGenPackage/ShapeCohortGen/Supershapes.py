@@ -40,10 +40,9 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
 
-        # Temporarily save mesh as stl and convert it to vtk
+        # Save mesh as stl 
         shapeMesh.export(meshDir + name + ".stl")
-        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
-        os.remove(meshDir + name + ".stl")
+
 
     return get_files(meshDir)
 
