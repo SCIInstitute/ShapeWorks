@@ -107,7 +107,7 @@ TEST(ImageTests, isoresampleImageAnisotropicTest)
 TEST(ImageTests, isoresampleDistanceTransformIsotropicTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-isotropic-dt.nrrd");
-  image.antialias().resample().binarize().recenter();
+  image.resample();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-isotropic-dt-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -116,7 +116,7 @@ TEST(ImageTests, isoresampleDistanceTransformIsotropicTest)
 TEST(ImageTests, isoresampleDistanceTransformAnisotropicTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-anisotropic-dt.nrrd");
-  image.antialias().resample().binarize().recenter();
+  image.resample();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-dt-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
