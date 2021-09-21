@@ -81,7 +81,7 @@ public:
 
 private:
 
-  vtkSmartPointer<vtkTransform> get_transform(int domain);
+  vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
 
   void initialize_surfaces();
 

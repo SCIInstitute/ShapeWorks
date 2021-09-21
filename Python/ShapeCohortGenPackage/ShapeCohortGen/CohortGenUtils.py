@@ -216,15 +216,10 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
         print("Generating image " + str(index) + " out of " + str(len(segs)))
         name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
         img = Image(seg)
-        img_array = img.toArray()
-        img_array = blur(img_array, blur_factor)
+        img_array = blur(img.toArray(), blur_factor)
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = np.float32(img_array)
-        origin = img.origin()
-        img = Image(img_array)  # note: when we resolve #903 (shared data) we'll
-                                # no longer even need to create an image since
-                                # the array itself will be shared (issue #903)
-        img.setOrigin(origin)
+        img = Image(np.float32(img_array))
         img.write(name)
         index += 1
     return get_files(imgDir)

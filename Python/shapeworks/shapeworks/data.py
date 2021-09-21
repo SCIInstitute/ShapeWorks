@@ -4,6 +4,7 @@
 Common utility functions
 """
 import os
+import re
 import itk
 import numpy as np
 from sklearn.cluster import SpectralClustering
@@ -76,7 +77,7 @@ def download_subset(use_case,datasetName,outputDirectory):
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
     elif(use_case=="ellipsoid_multiple_domain_mesh"):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:6]
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     elif(use_case=="supershapes_1mode_contour"):
         if(generate_download_flag(outputDirectory,"contours")):
@@ -134,10 +135,10 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
         print("\n########## Sample subset of data #########\n")
         D = np.zeros((len(inDataList), len(inDataList)))
         for i in range(len(inDataList)):
-            image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
+            image_1 = inDataList[i].toArray()
             x, y, z = image_1.shape
             for j in range(i, len(inDataList)):
-                image_2 = itk.GetArrayFromImage(itk.imread(inDataList[j], itk.F))
+                image_2 = inDataList[j].toArray()
                 x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
                 image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
                              ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
@@ -163,38 +164,41 @@ def sample_images(inDataList, num_sample,domains_per_shape=1):
     else:
         meshFilesList=[]
         for i in range(len(inDataList)):
-            filename = os.path.dirname(inDataList[i]) + "/"+os.path.splitext(os.path.basename(inDataList[i]))[0] + ".vtk"
-            sw.Image(inDataList[i]).toMesh(0.5).write(filename)
-            meshFilesList.append(filename)
+            meshFilesList.append(inDataList[i].toMesh(0.5))          
         samples_idx = sample_meshes(meshFilesList,num_sample,domains_per_shape=domains_per_shape)
 
-        [os.remove(file) for file in meshFilesList]
+        
 
     
     print("\n###########################################\n")
     return samples_idx
 
+def combine_domains(inMeshList,domains_per_shape=1):
+    num_shapes = int(len(inMeshList)/domains_per_shape)
+    newMeshList=[]
+    for i in range(num_shapes):
+        shape_d0 = inMeshList[i*domains_per_shape]
+        for d in range(1,domains_per_shape):
+            shape_d0+= inMeshList[(i*domains_per_shape)+d]
+        newMeshList.append(shape_d0)
+    return newMeshList
+
+
+
 def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
+    
+
     if(domains_per_shape>1):
-        num_shapes = int(len(inMeshList)/domains_per_shape)
-        newMeshList=[]
-        for i in range(num_shapes):
-            shape_d0 = sw.Mesh(inMeshList[i*domains_per_shape])
-            for d in range(1,domains_per_shape):
-                shape_d0+= sw.Mesh(inMeshList[(i*domains_per_shape)+d])
-            filename = os.path.dirname(inMeshList[0])+"shape_"+str(i).zfill(2)+".vtk"
-            shape_d0.write(filename)
-            newMeshList.append(filename)
+        inMeshList = combine_domains(inMeshList,domains_per_shape)
 
-    if(domains_per_shape==1):
-        newMeshList = inMeshList
+    
 
-    D = np.zeros((len(newMeshList), len(newMeshList)))
-    for i in range(len(newMeshList)):
-        for j in range(i, len(newMeshList)):
-            mesh1 = sw.Mesh(newMeshList[i])
-            mesh2 = sw.Mesh(newMeshList[j])
+    D = np.zeros((len(inMeshList), len(inMeshList)))
+    for i in range(len(inMeshList)):
+        for j in range(i, len(inMeshList)):
+            mesh1 = inMeshList[i]
+            mesh2 = inMeshList[j]
             dist = mesh1.distance(mesh2).getFieldMean("distance")
             D[i, j] = dist
     D += D.T
@@ -212,12 +216,29 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
    
     
     print("\n###########################################\n")
-    if(domains_per_shape>1):
-        [os.remove(file) for file in newMeshList]
+    
 
     new_sample_idx =[]
     for i in range(len(samples_idx)):
         for d in range(domains_per_shape):
             new_sample_idx.append((samples_idx[i]*domains_per_shape)+d)
 
-    return new_sample_idx   
+    return new_sample_idx
+
+def get_optimize_input(distance_transform_files, mesh_mode=False):
+    if mesh_mode:
+        dt_dir = os.path.dirname(distance_transform_files[0])
+        mesh_dir = dt_dir.replace("distance_transforms", "meshes")
+        if not os.path.exists(mesh_dir):
+            os.makedirs(mesh_dir)
+        domain_type = 'mesh'
+        files = []
+        for file in distance_transform_files:
+            mesh_file = file.replace(dt_dir, mesh_dir).replace(".nrrd", ".vtk")
+            print("Writing: " + mesh_file)
+            sw.Image(file).toMesh(0).write(mesh_file)
+            files.append(mesh_file)
+    else:
+        domain_type = 'image'
+        files = distance_transform_files
+    return domain_type, files

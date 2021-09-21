@@ -9,6 +9,72 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, curvatureTest1)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest3)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest4)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest5)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest6)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
 TEST(MeshTests, computemeannormalsTest1)
 {
   std::vector<std::reference_wrapper<const Mesh>> meshes;
@@ -624,7 +690,35 @@ TEST(MeshTests, warpTest1)
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
+  ASSERT_TRUE(output == ellipsoid_warped);
+}
 
+TEST(MeshTests, warpTest2)
+{
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.vtk");
+  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2_baseline.vtk");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::vector<std::string> paths;
+  paths.push_back(staticPath);
+  paths.push_back(movingPath);
+  ParticleSystem particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.Particles();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  Eigen::MatrixXd movingPoints = allPts.col(1);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
   ASSERT_TRUE(output == ellipsoid_warped);
 }
 

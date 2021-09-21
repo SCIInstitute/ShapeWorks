@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     print("You can change the dataset name and output directory name to try out this use case with other datasets")
 
 
-    dataset_name = "ellipsoid_joint_rotation"
+    dataset_name = "ellipsoid_joint_size"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -39,18 +39,18 @@ def Run_Pipeline(args):
         sw.data.download_subset(
             args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.ply"))[:6]
+                                     dataset_name + "/meshes/*.vtk"))[:6]
     # Else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.ply"))
+                                     dataset_name + "/meshes/*.vtk"))
 
         if args.use_subsample:
-            sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample),domains_per_shape=2)
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample),domains_per_shape=2)
             mesh_files = [mesh_files[i] for i in sample_idx]
 
-                   
     # This dataset is prealigned and does not require any grooming steps.
 
     print("\nStep 2. Optimize - Particle Based Optimization\n")

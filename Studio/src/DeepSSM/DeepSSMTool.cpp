@@ -7,6 +7,7 @@
 #include <QMessageBox>
 
 // shapeworks
+#include <Libs/Mesh/Mesh.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Data/ShapeWorksWorker.h>

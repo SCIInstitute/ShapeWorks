@@ -29,6 +29,7 @@
 #include <itkIntensityWindowingImageFilter.h>
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
+#include <itkOrientImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -107,7 +108,22 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
     throw std::invalid_argument(std::string(exp.what()));
   }
 
-  return reader->GetOutput();
+  // reorient the image to RAI if it's not already
+  ImageType::Pointer img = reader->GetOutput();
+  if (itk::SpatialOrientationAdapter().FromDirectionCosines(img->GetDirection()) !=
+      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI) {
+    using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
+    Orienter::Pointer orienter = Orienter::New();
+    orienter->UseImageDirectionOn();
+    // set orientation to RAI
+    orienter->SetDesiredCoordinateOrientation(
+      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    orienter->SetInput(img);
+    orienter->Update();
+    img = orienter->GetOutput();
+  }
+
+  return img;
 }
 
 Image& Image::operator-()
@@ -833,6 +849,20 @@ Image& Image::setSpacing(Vector3 spacing)
   filter->SetInput(this->image);
   filter->SetOutputSpacing(spacing);
   filter->ChangeSpacingOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
+Image& Image::setCoordsys(ImageType::DirectionType coordsys)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputDirection(coordsys);
+  filter->ChangeDirectionOn();
   filter->Update();
   this->image = filter->GetOutput();
 

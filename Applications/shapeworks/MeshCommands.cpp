@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
@@ -648,7 +649,7 @@ void Distance::buildParser()
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
-  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print largest distance of any point in mesh to target [default: true].");
+  parser.add_option("--summary").action("store").type("bool").set_default(true).help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
 }
@@ -938,6 +939,47 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Curvature
+///////////////////////////////////////////////////////////////////////////////
+void Curvature::buildParser()
+{
+  const std::string prog = "mesh-curvature";
+  const std::string desc = "computes and adds curvature";
+  parser.prog(prog).description(desc);
+
+  std::list<std::string> curvs{"principal", "gaussian", "mean"};
+  parser.add_option("--type").action("store").type("choice").choices(curvs.begin(), curvs.end()).set_default("principal").help("Curvature type to use [default: %default].");
+
+  Command::buildParser();
+}
+
+bool Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string curvopt(options.get("type"));
+
+  Mesh::CurvatureType curv;
+  if (curvopt == "principal")
+    curv = Mesh::Principal;
+  else if (curvopt == "gaussian")
+    curv = Mesh::Gaussian;
+  else if (curvopt == "mean")
+    curv = Mesh::Mean;
+  else {
+    std::cerr << "no such curvature type: " << curvopt << std::endl;
+    return false;
+  }
+
+  sharedData.field = sharedData.mesh->curvature(curv);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()
@@ -1194,6 +1236,7 @@ void CompareMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this mesh with another.");
+  parser.add_option("--epsilon").action("store").type("double").set_default(-1.0).help("Epsilon [default: %default].");
 
   Command::buildParser();
 }
@@ -1212,7 +1255,9 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  if (sharedData.mesh->compare(Mesh(filename)))
+  double eps = static_cast<double>(options.get("epsilon"));
+
+  if (sharedData.mesh->compare(Mesh(filename), eps))
   {
     std::cout << "compare success\n";
     return true;

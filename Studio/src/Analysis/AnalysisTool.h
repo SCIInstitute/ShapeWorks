@@ -134,6 +134,8 @@ public Q_SLOTS:
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
+  std::string get_display_feature_map();
+
   void group_changed();
 
   bool groups_active();

@@ -822,6 +822,17 @@ TEST(ImageTests, coordsysTest)
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
 
+TEST(ImageTests, setCoordsysTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Image::ImageType::DirectionType coordsys;
+  coordsys.SetIdentity();
+  coordsys[2][2] = -2;
+  image.setCoordsys(coordsys);
+
+  ASSERT_TRUE(image.coordsys() == coordsys);
+}
+
 TEST(ImageTests, negationTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
@@ -1171,4 +1182,38 @@ TEST(ImageTests, statsTest)
               equalNSigDigits(max, 1.0) &&
               equalNSigDigits(mean, 0.004166) &&
               equalNSigDigits(std, 0.062299));
+}
+
+TEST(ImageTests, orientationTest1)
+{
+  // ensure no change for correctly oriented images
+  Image image(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, orientationTest2)
+{
+  // ensure orientation is updated when reading images with undesired orientation
+  Image lpi(std::string(TEST_DATA_DIR) + "/orientation_lpi.nrrd");
+  Image rpi(std::string(TEST_DATA_DIR) + "/orientation_rpi.nrrd");
+  Image sal(std::string(TEST_DATA_DIR) + "/orientation_sal.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_rai.nrrd");
+
+  ASSERT_TRUE(lpi == ground_truth &&
+              rpi == ground_truth &&
+              sal == ground_truth);
+}
+
+TEST(ImageTests, orientationTest3)
+{
+  // ensure com alignment works after reading images with undesired orientation
+  Image image(std::string(TEST_DATA_DIR) + "/orientation_rpi.nrrd");
+  auto com = image.centerOfMass();
+  auto ctr = image.center();
+  image.translate(ctr - com);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/orientation_translated.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }

@@ -47,7 +47,8 @@ def Run_Pipeline(args):
 
         # Select data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -91,7 +92,9 @@ def Run_Pipeline(args):
 
         # set name specific variables
         img_suffix = "1x_hip"
-        reference_side = "left"  # somewhat arbitrary, could be R for right
+        ref_side = "R" 
+        if args.tiny_test:
+            ref_side = "L" # so reflection happens
         # Set cutting plane
         cutting_plane_points = np.array(
             [[-1.0, -1.0, -675], [1.0, -1.0, -675], [-1.0, 1.0, -675]])
@@ -132,7 +135,7 @@ def Run_Pipeline(args):
                     if prefix in image_files[index]:
                         corresponding_image_file = image_files[index]
                         break
-                if "R" in name:
+                if ref_side in name:
                     print("Reflecting " + name)
                     # Reflect corresponding image and find mesh reflection point
                     img1 = sw.Image(corresponding_image_file)
@@ -347,7 +350,7 @@ def Run_Pipeline(args):
                 Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
                 meshes so that all of the femurs can be aligned.
                 """
-                if "R" in name:
+                if ref_side in name:
                     print("Reflecting " + name)
                     arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
                     mesh.reflect(sw.X)
@@ -548,9 +551,13 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 64
-    # Execute the optimization function
+
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+
+    # Execute the optimization function on distance transforms
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
+        point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -565,4 +572,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+        point_dir, input_files, local_point_files, world_point_files)
