@@ -68,6 +68,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
   connect(ui_->isotropic_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
+  connect(ui_->reflect_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
   connect(ui_->reflect_column, qOverload<const QString&>(
             &QComboBox::currentIndexChanged), this, &GroomTool::update_reflect_choices);
@@ -499,6 +500,10 @@ void GroomTool::update_ui()
   ui_->spacing_y->setEnabled(!iso_mode);
   ui_->spacing_z->setEnabled(!iso_mode);
   ui_->spacing_iso->setEnabled(iso_mode);
+
+  ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
+
 }
 //---------------------------------------------------------------------------
 }
