@@ -28,8 +28,12 @@
 
 #include "Mesh.h"
 
-// Uncomment to enable FFC visualizations
-//#include "MeshUtils.h"
+// Uncomment to visualize FFCs with scalar and vector fields
+//#define VIZFFC
+
+#if defined(VIZFFC)
+    #include "MeshUtils.h"
+#endif
 
 namespace shapeworks {
 
