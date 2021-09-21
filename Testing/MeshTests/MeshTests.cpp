@@ -9,6 +9,26 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, geodesicTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+
+  auto start1 = shapeworks::ShapeworksUtils::now();
+  auto distField = femur.geodesicDistance(femur.getPoint(50));
+  auto end1 = shapeworks::ShapeworksUtils::now();
+  std::cout << "Using VtkMeshWrapper: " << shapeworks::ShapeworksUtils::elapsed(start1, end1) << "\n";
+
+  auto start2 = shapeworks::ShapeworksUtils::now();
+  for (int i = 0; i < femur.numPoints(); i++)
+  {
+    double val1 = femur.geodesicDistance(50, i);
+  }
+  auto end2 = shapeworks::ShapeworksUtils::now();
+  std::cout << "Using igl: " << shapeworks::ShapeworksUtils::elapsed(start2, end2) << "\n";
+
+  ASSERT_TRUE(true);
+}
+
 TEST(MeshTests, curvatureTest1)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));

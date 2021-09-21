@@ -38,18 +38,14 @@
 #include <vtkGenericCell.h>
 #include <vtkPlaneCollection.h>
 #include <vtkClipClosedSurface.h>
+#include <vtkAppendPolyData.h>
+#include <vtkCleanPolyData.h>
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
 #include <igl/principal_curvature.h>
 #include <igl/cotmatrix.h>
 #include <igl/massmatrix.h>
 #include <igl/invert_diag.h>
-
-//append
-#include <vtkAppendPolyData.h>
-#include <vtkCleanPolyData.h>
-#include <vtkNew.h>
-#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -207,6 +203,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   }
   smoother->Update();
   this->mesh = smoother->GetOutput();
+
   // must regenerate normals after smoothing
   computeNormals();
   return *this;
@@ -521,21 +518,38 @@ int Mesh::closestPointId(const Point3 point)
   return closestPointId;
 }
 
-double Mesh::geodesicDistance(int source, int target)
+double Mesh::geodesicDistance(int source, int target, const GeodesicMethod method)
 {
-  Eigen::MatrixXd V = points();
-  Eigen::MatrixXi F = faces();
-  Eigen::VectorXd VS(1), VT(1);
-  VS[0] = source;
-  VT[0] = target;
-  Eigen::VectorXd FS, FT;
   Eigen::VectorXd d;
 
-  igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
+  switch (method) {
+    case Heat:
+    {
+      VtkMeshWrapper wrap(this->mesh, true);
+      d[0] = wrap.ComputeDistance(source, -1, target, -1);
+      break;
+    }
+    case Exact:
+    {
+      Eigen::MatrixXd V = points();
+      Eigen::MatrixXi F = faces();
+      Eigen::VectorXd VS(1), VT(1);
+      VS[0] = source;
+      VT[0] = target;
+      Eigen::VectorXd FS, FT;
+      Eigen::VectorXd d;
+
+      igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
+      break;
+    }
+    default:
+      throw std::invalid_argument("Unknown Mesh::GeodesicMethod.");
+  }
+
   return d[0];
 }
 
-Field Mesh::geodesicDistance(const Point3 landmark)
+Field Mesh::geodesicDistance(const Point3 landmark, const GeodesicMethod method)
 {
   VtkMeshWrapper wrap(this->mesh, true);
 
@@ -552,7 +566,7 @@ Field Mesh::geodesicDistance(const Point3 landmark)
   return distance;
 }
 
-Field Mesh::geodesicDistance(const std::vector<Point3> curve)
+Field Mesh::geodesicDistance(const std::vector<Point3> curve, const GeodesicMethod method)
 {
   vtkSmartPointer<vtkDoubleArray> minDistance = vtkSmartPointer<vtkDoubleArray>::New();
   minDistance->SetNumberOfComponents(1);
