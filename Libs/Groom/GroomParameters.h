@@ -79,6 +79,16 @@ public:
   bool get_use_icp();
   bool get_use_center();
 
+  bool get_crop();
+  void set_crop(bool crop);
+
+  bool get_reflect();
+  void set_reflect(bool reflect);
+  std::string get_reflect_column();
+  void set_reflect_column(std::string column);
+  std::string get_reflect_choice();
+  void set_reflect_choice(std::string choice);
+
   void restore_defaults();
 
   // constants
@@ -93,7 +103,5 @@ private:
   Parameters params_;
   ProjectHandle project_;
   std::string domain_name_;
-
 };
-
 }

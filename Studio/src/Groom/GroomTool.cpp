@@ -165,6 +165,11 @@ void GroomTool::set_ui_from_params(GroomParameters params)
 
   ui_->sinc_iterations->setText(QString::number(params.get_mesh_vtk_windowed_sinc_iterations()));
   ui_->sinc_passband->setText(QString::number(params.get_mesh_vtk_windowed_sinc_passband()));
+
+  ui_->crop_checkbox->setChecked(params.get_crop());
+  ui_->reflect_checkbox->setChecked(params.get_reflect());
+  ui_->reflect_column->setCurrentText(QString::fromStdString(params.get_reflect_column()));
+  ui_->reflect_choice->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
 }
 
 //---------------------------------------------------------------------------
@@ -192,10 +197,17 @@ void GroomTool::update_reflect_columns()
   }
   auto project = session_->get_project();
   auto headers = project->get_headers();
-  this->ui_->reflect_column->clear();
+
+  QStringList reflect_columns;
   for (auto header: headers) {
-    this->ui_->reflect_column->addItem(QString::fromStdString(header));
+    reflect_columns << QString::fromStdString(header);
   }
+
+  if (reflect_columns != this->reflect_columns_) {
+    this->ui_->reflect_column->clear();
+    this->ui_->reflect_column->addItems(reflect_columns);
+  }
+  this->reflect_columns_ = reflect_columns;
 }
 
 //---------------------------------------------------------------------------
@@ -275,6 +287,12 @@ void GroomTool::store_params()
   params.set_mesh_vtk_laplacian_relaxation(ui_->laplacian_relaxation->text().toDouble());
   params.set_mesh_vtk_windowed_sinc_iterations(ui_->sinc_iterations->text().toInt());
   params.set_mesh_vtk_windowed_sinc_passband(ui_->sinc_passband->text().toDouble());
+
+  params.set_crop(ui_->crop_checkbox->isChecked());
+  params.set_reflect(ui_->reflect_checkbox->isChecked());
+  params.set_reflect_column(ui_->reflect_column->currentText().toStdString());
+  params.set_reflect_choice(ui_->reflect_choice->currentText().toStdString());
+
   params.save_to_project();
 
   // global settings
@@ -503,7 +521,6 @@ void GroomTool::update_ui()
 
   ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
-
 }
 //---------------------------------------------------------------------------
 }

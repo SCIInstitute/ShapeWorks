@@ -1,7 +1,22 @@
-
 #include "GroomParameters.h"
 
+#include <iostream>
+
 namespace shapeworks {
+
+namespace Keys {
+const std::string CROP = "crop";
+const std::string REFLECT = "reflect";
+const std::string REFLECT_COLUMN = "reflect_column";
+const std::string REFLECT_CHOICE = "reflect_choice";
+const std::string RESAMPLE = "resample";
+}
+
+namespace Defaults {
+const bool crop = true;
+const bool reflect = false;
+const bool resample = true;
+}
 
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
 const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
@@ -266,4 +281,52 @@ bool GroomParameters::get_use_center()
 {
   return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_CENTER_C;
 }
-};
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_crop()
+{
+  return this->params_.get(Keys::CROP, Defaults::crop);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_crop(bool crop)
+{
+  this->params_.set(Keys::CROP, crop);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_reflect()
+{
+  return this->params_.get(Keys::REFLECT, Defaults::reflect);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_reflect(bool reflect)
+{
+  this->params_.set(Keys::REFLECT, reflect);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_reflect_column()
+{
+  return this->params_.get(Keys::REFLECT_COLUMN, "");
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_reflect_column(std::string column)
+{
+  this->params_.set(Keys::REFLECT_COLUMN, column);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_reflect_choice()
+{
+  return this->params_.get(Keys::REFLECT_CHOICE, "");
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_reflect_choice(std::string choice)
+{
+  this->params_.set(Keys::REFLECT_CHOICE, choice);
+}
+}

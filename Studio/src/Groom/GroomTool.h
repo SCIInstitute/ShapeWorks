@@ -102,5 +102,7 @@ private:
 
   std::string current_domain_;
 
+  QStringList reflect_columns_;
+
 };
 }
