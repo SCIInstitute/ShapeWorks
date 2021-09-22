@@ -203,15 +203,15 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  //Splits the mesh for FFCs by setting scalar and vector fields
+  /// Splits the mesh for FFCs by setting scalar and vector fields
   bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
-  // Gets values and gradients for FFCs
+  /// Gets values and gradients for FFCs
   double getFFCValue(Eigen::Vector3d query);
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
-  // Formats mesh into an IGL format
-  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh
+  /// Formats mesh into an IGL format
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
 private:
   friend struct SharedCommandData;
@@ -225,20 +225,21 @@ private:
 
   MeshType mesh;
 
-  // This locator member is used for FFCs which queries repeatedly
+  /// This locator member is used for FFCs which queries repeatedly
   vtkSmartPointer<vtkCellLocator> locator;
 
-  // Computes the gradient vector field for FFCs w.r.t the boundary
+  /// Computes the gradient vector field for FFCs w.r.t the boundary
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
-  // Computes scalar distance field w.r.t. the boundary
+  /// Computes scalar distance field w.r.t. the boundary
   vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
 
-  // Computes whether point is inside or outside the boundary
+  /// Computes whether point is inside or outside the boundary
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
 
-  // Computes baricentric coordinates given a query point and a face number
-  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // Copied directly from VtkMeshWrapper.
+  /// Computes baricentric coordinates given a query point and a face number
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
 
 };
 

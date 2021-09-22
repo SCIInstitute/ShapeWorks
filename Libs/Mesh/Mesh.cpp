@@ -1096,7 +1096,6 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
-//Splits the mesh for FFCs by setting scalar and vector fields
 bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query,
                      size_t dom, size_t num)
 {
@@ -1197,7 +1196,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
   return true;
 }
 
-// Copied directly from Meshwrapper
+// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
   double closest[3];
@@ -1251,6 +1250,7 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query){
   return grad;
 }
 
+// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
   const int n_verts = this->mesh->GetNumberOfPoints();
