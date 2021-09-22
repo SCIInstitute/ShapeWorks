@@ -136,43 +136,6 @@ void GroomTool::on_restore_defaults_clicked()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::set_ui_from_params(GroomParameters params)
-{
-  ui_->alignment_mesh_checkbox->setChecked(params.get_alignment_enabled());
-  ui_->alignment_image_checkbox->setChecked(params.get_alignment_enabled());
-
-  auto alignment = params.get_alignment_method();
-  ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
-  ui_->alignment_mesh_box->setCurrentText(QString::fromStdString(alignment));
-
-  ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
-  ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
-  ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
-  ui_->blur_checkbox->setChecked(params.get_blur_tool());
-  ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
-  ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
-  ui_->mesh_fill_holes->setChecked(params.get_fill_holes_tool());
-  ui_->antialias_iterations->setValue(params.get_antialias_iterations());
-  ui_->blur_sigma->setValue(params.get_blur_amount());
-  ui_->padding_amount->setValue(params.get_padding_amount());
-
-  ui_->mesh_smooth_method->setCurrentText(
-    QString::fromStdString(params.get_mesh_smoothing_method()));
-  ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
-
-  ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
-  ui_->laplacian_relaxation->setText(QString::number(params.get_mesh_vtk_laplacian_relaxation()));
-
-  ui_->sinc_iterations->setText(QString::number(params.get_mesh_vtk_windowed_sinc_iterations()));
-  ui_->sinc_passband->setText(QString::number(params.get_mesh_vtk_windowed_sinc_passband()));
-
-  ui_->crop_checkbox->setChecked(params.get_crop());
-  ui_->reflect_checkbox->setChecked(params.get_reflect());
-  ui_->reflect_column->setCurrentText(QString::fromStdString(params.get_reflect_column()));
-  ui_->reflect_choice->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
-}
-
-//---------------------------------------------------------------------------
 void GroomTool::update_page()
 {
   int domain_id = ui_->domain_box->currentIndex();
@@ -259,6 +222,79 @@ void GroomTool::enable_actions()
   else {
     ui_->skip_button->setEnabled(true);
     ui_->run_groom_button->setText("Run Groom");
+  }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::set_ui_from_params(GroomParameters params)
+{
+  ui_->alignment_mesh_checkbox->setChecked(params.get_alignment_enabled());
+  ui_->alignment_image_checkbox->setChecked(params.get_alignment_enabled());
+
+  auto alignment = params.get_alignment_method();
+  ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
+  ui_->alignment_mesh_box->setCurrentText(QString::fromStdString(alignment));
+
+  ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
+  ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
+  ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
+  ui_->blur_checkbox->setChecked(params.get_blur_tool());
+  ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
+  ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
+  ui_->mesh_fill_holes->setChecked(params.get_fill_holes_tool());
+  ui_->antialias_iterations->setValue(params.get_antialias_iterations());
+  ui_->blur_sigma->setValue(params.get_blur_amount());
+  ui_->padding_amount->setValue(params.get_padding_amount());
+
+  ui_->mesh_smooth_method->setCurrentText(
+    QString::fromStdString(params.get_mesh_smoothing_method()));
+  ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
+
+  ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
+  ui_->laplacian_relaxation->setText(QString::number(params.get_mesh_vtk_laplacian_relaxation()));
+
+  ui_->sinc_iterations->setText(QString::number(params.get_mesh_vtk_windowed_sinc_iterations()));
+  ui_->sinc_passband->setText(QString::number(params.get_mesh_vtk_windowed_sinc_passband()));
+
+  ui_->crop_checkbox->setChecked(params.get_crop());
+  ui_->reflect_checkbox->setChecked(params.get_reflect());
+  ui_->reflect_column->setCurrentText(QString::fromStdString(params.get_reflect_column()));
+  ui_->reflect_choice->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
+
+  ui_->resample_checkbox->setChecked(params.get_resample());
+  ui_->isotropic_checkbox->setChecked(params.get_isotropic());
+
+  auto subjects = session_->get_project()->get_subjects();
+  int domain_id = ui_->domain_box->currentIndex();
+
+  if (!subjects.empty() && subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
+
+    if (params.get_iso_spacing() == 0.0) {
+      if (session_ && session_->get_project()->get_subjects().size() > 0) {
+        auto subject = session_->get_project()->get_subjects()[0];
+        if (subject->get_segmentation_filenames().size() > domain_id) {
+          try {
+            auto path = subject->get_segmentation_filenames()[domain_id];
+            if (path != "") {
+              // load the image
+              Image image(path);
+              auto spacing = image.spacing();
+              auto min_spacing = std::min<double>(std::min<double>(spacing[0], spacing[1]), spacing[2]);
+              params.set_iso_spacing(min_spacing);
+              params.set_spacing({spacing[0], spacing[1], spacing[2]});
+            }
+          } catch (std::exception& e) {
+            emit error_message(e.what());
+          }
+        }
+      }
+    }
+
+    auto spacing = params.get_spacing();
+    ui_->spacing_iso->setText(QString::number(params.get_iso_spacing()));
+    ui_->spacing_x->setText(QString::number(spacing[0]));
+    ui_->spacing_y->setText(QString::number(spacing[1]));
+    ui_->spacing_z->setText(QString::number(spacing[2]));
   }
 }
 

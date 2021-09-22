@@ -82,12 +82,23 @@ public:
   bool get_crop();
   void set_crop(bool crop);
 
+  // reflection
   bool get_reflect();
   void set_reflect(bool reflect);
   std::string get_reflect_column();
   void set_reflect_column(std::string column);
   std::string get_reflect_choice();
   void set_reflect_choice(std::string choice);
+
+  // resampling
+  bool get_resample();
+  void set_resample(bool resample);
+  bool get_isotropic();
+  void set_isotropic(bool isotropic);
+  double get_iso_spacing();
+  void set_iso_spacing(double spacing);
+  std::vector<double> get_spacing();
+  void set_spacing(std::vector<double> spacing);
 
   void restore_defaults();
 

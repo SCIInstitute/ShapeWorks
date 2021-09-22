@@ -10,12 +10,18 @@ const std::string REFLECT = "reflect";
 const std::string REFLECT_COLUMN = "reflect_column";
 const std::string REFLECT_CHOICE = "reflect_choice";
 const std::string RESAMPLE = "resample";
+const std::string ISOTROPIC = "isotropic";
+const std::string ISO_SPACING = "iso_spacing";
+const std::string SPACING = "spacing";
 }
 
 namespace Defaults {
 const bool crop = true;
 const bool reflect = false;
 const bool resample = true;
+const bool isotropic = true;
+const double iso_spacing = 0.0;
+const std::vector<double> spacing{0, 0, 0};
 }
 
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
@@ -328,5 +334,53 @@ std::string GroomParameters::get_reflect_choice()
 void GroomParameters::set_reflect_choice(std::string choice)
 {
   this->params_.set(Keys::REFLECT_CHOICE, choice);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_resample()
+{
+  return this->params_.get(Keys::RESAMPLE, Defaults::resample);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_resample(bool resample)
+{
+  this->params_.set(Keys::RESAMPLE, resample);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_isotropic()
+{
+  return this->params_.get(Keys::ISOTROPIC, Defaults::isotropic);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_isotropic(bool isotropic)
+{
+  this->params_.set(Keys::ISOTROPIC, isotropic);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_iso_spacing()
+{
+  return this->params_.get(Keys::ISO_SPACING, Defaults::iso_spacing);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_iso_spacing(double spacing)
+{
+  this->params_.set(Keys::ISO_SPACING, spacing);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> GroomParameters::get_spacing()
+{
+  return this->params_.get(Keys::SPACING, Defaults::spacing);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_spacing(std::vector<double> spacing)
+{
+  this->params_.set(Keys::SPACING, spacing);
 }
 }
