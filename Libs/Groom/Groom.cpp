@@ -139,7 +139,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   if (this->abort_) { return false; }
 
-
   // isolate
   if (params.get_isolate_tool()) {
     this->isolate(image);
@@ -152,6 +151,30 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   if (params.get_fill_holes_tool()) {
     image.closeHoles();
     this->increment_progress();
+  }
+
+  if (this->abort_) { return false; }
+
+  // crop
+  if (params.get_crop()) {
+    PhysicalRegion region = image.physicalBoundingBox(0.5);
+    image.crop(region);
+  }
+
+  if (this->abort_) { return false; }
+
+  // resample
+  if (params.get_resample()) {
+    auto spacing = params.get_spacing();
+    if (params.get_isotropic()) {
+      auto iso = params.get_iso_spacing();
+      spacing = {iso, iso, iso};
+    }
+    Vector v;
+    v[0] = spacing[0];
+    v[1] = spacing[1];
+    v[2] = spacing[2];
+    image.resample(v, Image::InterpolationType::NearestNeighbor);
   }
 
   if (this->abort_) { return false; }
@@ -545,7 +568,6 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
 {
   std::vector<std::vector<double>> transforms(meshes.size());
 
-
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, meshes.size()},
     [&](const tbb::blocked_range<size_t>& r) {
@@ -561,12 +583,10 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
                                                target.getVTKMesh(), Mesh::Rigid, 100, true);
       }
 
-
       auto transform = createMeshTransform(matrix);
       auto center = target.centerOfMass();
       transform->PostMultiply();
-      transform->Translate(-center[0],-center[1],-center[2]);
-
+      transform->Translate(-center[0], -center[1], -center[2]);
 
       std::vector<double> groomed_transform;
 

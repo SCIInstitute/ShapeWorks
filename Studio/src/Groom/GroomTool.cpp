@@ -265,9 +265,10 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->isotropic_checkbox->setChecked(params.get_isotropic());
 
   auto subjects = session_->get_project()->get_subjects();
-  int domain_id = ui_->domain_box->currentIndex();
+  int domain_id = std::max<int>(ui_->domain_box->currentIndex(), 0);
 
-  if (!subjects.empty() && subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
+  if (!subjects.empty() && !subjects[0]->get_domain_types().empty() &&
+      subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
 
     if (params.get_iso_spacing() == 0.0) {
       if (session_ && session_->get_project()->get_subjects().size() > 0) {
@@ -328,6 +329,12 @@ void GroomTool::store_params()
   params.set_reflect(ui_->reflect_checkbox->isChecked());
   params.set_reflect_column(ui_->reflect_column->currentText().toStdString());
   params.set_reflect_choice(ui_->reflect_choice->currentText().toStdString());
+
+  params.set_resample(ui_->resample_checkbox->isChecked());
+  params.set_isotropic(ui_->isotropic_checkbox->isChecked());
+  params.set_iso_spacing(ui_->spacing_iso->text().toDouble());
+  params.set_spacing({ui_->spacing_x->text().toDouble(), ui_->spacing_x->text().toDouble(),
+                      ui_->spacing_z->text().toDouble()});
 
   params.save_to_project();
 
