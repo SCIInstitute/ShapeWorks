@@ -78,7 +78,7 @@ def add_mesh_to_plotter(pvPlotter,      # pyvista plotter
 def plot_volumes(volumeList,              # list of shapeworks images to be visualized
                  volumeNames     = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                  use_same_window = False, # plot using multiple rendering windows if false
-                 is_interactive  = True,  # to enable interactive plots
+                 notebook        = False, # Plots inline if true
                  show_borders    = True,  # show borders for each rendering window
                  shade_volumes   = True,  # use shading when performing volume rendering
                  color_map       = "coolwarm", # color map for volume rendering, e.g., 'bone', 'coolwarm', 'cool', 'viridis', 'magma'
@@ -86,7 +86,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
                  show_bounds     = True,  # show volume bounding box
                  show_all_edges  = True,  # add an unlabeled and unticked box at the boundaries of plot
                  font_size       = 10,    # text font size for windows
-                 link_views      = True   # link all rendering windows so that they share same camera and axes boundaries
+                 link_views      = True  # link all rendering windows so that they share same camera and axes boundaries,
                 ):
     """
     Renders all segmentations in a dataset using a pyvista plotter to render
@@ -114,7 +114,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -160,7 +160,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
 def plot_meshes(meshList,                # list of shapeworks meshes to be visualized
                 meshNames       = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                 use_same_window = False, # plot using multiple rendering windows if false
-                is_interactive  = True,  # to enable interactive plots
+                notebook        = False, # Plots inline if true
                 show_borders    = True,  # show borders for each rendering window
                 meshes_color    = 'tan', # color to be used for meshes (can be a list with same size as meshList if different colors are needed)
                 mesh_style      = "surface", # visualization style of mesh. style='surface', style='wireframe', style='points'
@@ -203,7 +203,7 @@ def plot_meshes(meshList,                # list of shapeworks meshes to be visua
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         # notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -253,7 +253,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
                             objectsType,             # list of 'vol', 'mesh' of same size as objectList
                             objectNames     = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                             use_same_window = False, # plot using multiple rendering windows if false
-                            is_interactive  = True,  # to enable interactive plots
+                            notebook        = False, # Plots inline if true
                             show_borders    = True,  # show borders for each rendering window
                             meshes_color    = 'tan', # color to be used for meshes (can be a list with same size as meshList if different colors are needed)
                             mesh_style      = "surface", # visualization style of mesh. style='surface', style='wireframe', style='points'
@@ -292,7 +292,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
