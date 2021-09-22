@@ -38,9 +38,16 @@ Analysis options are similar for multiple domains as for single domain usage.  E
 
 ## Mixed-type Domains 
 
-The way multiple domains in ShapeWorks is implemented is totally domain-type agnostic, where shapes models can be groomed, optimized, and analyzed for cohorts of mixed-types such as meshes and contours. Here is an example of grooming, optimizing, and analyzing a multi-domain model with the pelvis given as a surface mesh and the femur given as a binary segmentation.
+Multiple domains in ShapeWorks are implemented in a domain-type agnostic, where shapes models can be groomed, optimized, and analyzed for cohorts of mixed-types such as meshes and binary segmentations. Here is an example of grooming, optimizing, and analyzing a multi-domain model with the pelvis given as a surface mesh and the femur given as a binary segmentation.
 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/multiple-domains-mixed-types.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
+## Multiple Domain Alignments
+
+In the presence of multiple anatomies, there are multiple alignment strategies that can be employed.  These strategies can be explored as part of the Analysis module.  The correspondence model can be aligned based on any particular reference domain, a global alignment, or with all articulation removed (local alignment).
+
+Below is an example of these four options with a pelvis and femur model.
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/multiple-domains-mixed-types.mp4" autoplay muted loop controls style="width:100%"></p>
