@@ -114,7 +114,7 @@ jobs:
 
     - name: Copy Libraries
       working-directory: "C:/build"
-      run: xcopy /f C:\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
+      run: xcopy /f C:\deps\bin\*.dll C:\build\bin\Release
 
     - name: Build Binary Package
       shell: bash -l {0}
