@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - win_space
     tags:
     - '*'
   pull_request:
@@ -20,6 +21,10 @@ jobs:
     runs-on: windows-latest
     
     steps:
+
+    - name: check space
+      shell: bash -l {0}
+      run: df -h
       
     - name: Checkout code
       uses: actions/checkout@v2
@@ -65,6 +70,10 @@ jobs:
     - name: conda cleanup
       shell: bash -l {0}
       run: conda clean -p -t
+
+    - name: check space
+      shell: bash -l {0}
+      run: df -h
       
     - name: Cache dependencies
       id: cache-dependencies
@@ -91,7 +100,13 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DVXL_DIR="C:\deps\vxl\build" -DITK_DIR="C:\deps\lib\cmake\ITK-5.0" -DVTK_DIR="C:\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="C:\deps\share\eigen3\cmake" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRY_CENTRAL_DIR="C:\deps\geometry-central" -DBuild_Studio=ON
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DVXL_DIR="C:\deps\vxl\build" -DITK_DIR="C:\deps\lib\cmake\ITK-5.0" -DVTK_DIR="C:\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="C:\deps\share\eigen3\cmake" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRY_CENTRAL_DIR="C:\deps\geometry-central" -DBuild_Studio=ON
+
+
+    - name: check space
+      shell: bash -l {0}
+      run: df -h
+
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash -l {0}
@@ -120,6 +135,10 @@ jobs:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
 
+    - name: check space
+      shell: bash -l {0}
+      run: df -h
+        
     - name: Deploy
       if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
