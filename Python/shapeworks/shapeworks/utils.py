@@ -91,12 +91,20 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
-def find_reference_image_index(inDataList):
+def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
         mesh = img.toMesh(0.5)
         mesh_list.append(mesh)
-    return sw.MeshUtils.findReferenceMesh(mesh_list)
+    if(domains_per_shape==1):
+        return sw.MeshUtils.findReferenceMesh(mesh_list)
+
+    else:
+        combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh)
+       
+        return index,combined_mesh
+
 
 def save_contour_as_vtp(points, lines, filename):
     """

@@ -8,9 +8,8 @@
  */
 
 #include <vector>
-#include <string>
-#include <Libs/Mesh/Mesh.h>
-#include <boost/filesystem.hpp>
+#include <vtkPolyData.h>
+#include <Eigen/Eigen>
 
 namespace shapeworks {
 
@@ -30,12 +29,13 @@ public:
 
 protected:
 
-  //! Generate warp, return true on success
-  virtual bool generate_warp();
-
-  virtual void update_progress(float p) {};
+  //! For overriding to handle progress updates
+  virtual void update_progress(float p) {}
 
 private:
+
+  //! Generate warp, return true on success
+  bool generate_warp();
 
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
@@ -44,7 +44,8 @@ private:
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
   //! Split a cell on the edge
-  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1);
+  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
+                          std::vector<vtkSmartPointer<vtkIdList>>& new_triangles);
 
   //! Identify the good particles
   void find_good_particles();
@@ -52,12 +53,20 @@ private:
   //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
 
-  //! Clean incoming mesh
+  //! Prep incoming mesh
+  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+  //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  //! Recreate mesh, dropping deleted cells
+  vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+  //! Generate the warp matrix
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
                             const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
+  //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   Eigen::MatrixXi faces_;
@@ -76,8 +85,5 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
-
-
 };
-
 }

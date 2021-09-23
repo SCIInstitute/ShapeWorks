@@ -96,7 +96,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
                                 m_CuttingPlanes[i][j].c);
-        std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
+        if(m_verbosity >= 1) std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
       }
     }
 
@@ -104,7 +104,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
-        std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
+         if(m_verbosity >= 1) std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
       }
     }
 
@@ -113,7 +113,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
 
       // Adding free-form constraints to constraint object
       //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
-      if(m_FFCs.size() > 1){
+      if (m_FFCs.size() > 1) {
           for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
             initialize_ffcs(i);
           }
@@ -376,15 +376,16 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
 }
 
 void Sampler::AddFreeFormConstraint(unsigned int i,
-                           const std::vector< std::vector< Eigen::Vector3d > > boundaries,
-                      const Eigen::Vector3d query){
-    if (m_FFCs.size() < i + 1) {
-      m_FFCs.resize(i + 1);
-    }
+                                    const std::vector<std::vector<Eigen::Vector3d> > boundaries,
+                                    const Eigen::Vector3d query)
+{
+  if (m_FFCs.size() < i + 1) {
+    m_FFCs.resize(i + 1);
+  }
 
-    m_FFCs[i].push_back(FFCType());
-    m_FFCs[i][m_FFCs[i].size() - 1].boundaries = boundaries;
-    m_FFCs[i][m_FFCs[i].size() - 1].query = query;
+  m_FFCs[i].push_back(FFCType());
+  m_FFCs[i][m_FFCs[i].size() - 1].boundaries = boundaries;
+  m_FFCs[i][m_FFCs[i].size() - 1].query = query;
 }
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
@@ -401,11 +402,6 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
 
     // Adding meshes for FFCs
     vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
-
-    size_t numPt = mesh->GetNumberOfPoints();
-
-    std::cout << "Built mesh with "  << numPt << " vertices." << std::endl;
-
     this->m_meshes.push_back(mesh);
   }
 
@@ -414,24 +410,23 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   m_DomainList.push_back(domain);
 }
 
-bool Sampler::initialize_ffcs(size_t dom){
-    std::shared_ptr<Mesh> mesh(new Mesh(m_meshes[dom]));
+bool Sampler::initialize_ffcs(size_t dom)
+{
+  auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
 
-    for(size_t i = 0; i < m_FFCs[dom].size(); i++){
-        std::cout << "Spplitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
-        mesh->splitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
-    }
+  for (size_t i = 0; i < m_FFCs[dom].size(); i++) {
+    if(m_verbosity >= 1) std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+    mesh->splitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+  }
 
-    this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
+  this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
 
-    std::cout << "Adding free-form constraint to domain " << dom << std::endl;
+#if defined(VIZFFC)
+  MeshUtils mutil;
+  mutil.visualizeVectorFieldForFFCs(mesh);
+#endif
 
-    // For debug. You can visualize the vector and scalar fields for FFCs with this function.
-    // Uncomment #include "MeshUtils.h" in Sampler.h. Uncomment and run optimization for pop-up visualizations.
-//    MeshUtils mutil;
-//    mutil.visualizeVectorFieldForFFCs(mesh);
-
-    return true;
+  return true;
 }
 
 } // end namespace

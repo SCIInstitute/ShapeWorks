@@ -26,15 +26,14 @@
 
 #include "TriMesh.h"
 
-#include <vtkContourFilter.h>
-#include <vtkPolyDataWriter.h>
-#include <vtkDecimatePro.h>
-#include <vtkDoubleArray.h>
-
 #include "Mesh.h"
 
-// Uncomment to enable FFC visualizations
-//#include "MeshUtils.h"
+// Uncomment to visualize FFCs with scalar and vector fields
+//#define VIZFFC
+
+#if defined(VIZFFC)
+    #include "MeshUtils.h"
+#endif
 
 namespace shapeworks {
 
@@ -536,10 +535,10 @@ private:
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
-  std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
-  std::vector<std::vector<SphereType> > m_Spheres;
-  std::vector< std::vector<FFCType> >  m_FFCs;
-  std::vector< vtkSmartPointer<vtkPolyData> > m_meshes;
+  std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
+  std::vector<std::vector<SphereType>> m_Spheres;
+  std::vector<std::vector<FFCType>>  m_FFCs;
+  std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
 
   unsigned int m_verbosity;
 };

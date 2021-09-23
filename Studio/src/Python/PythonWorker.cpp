@@ -92,6 +92,12 @@ PythonWorker::~PythonWorker()
 }
 
 //---------------------------------------------------------------------------
+void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window)
+{
+  this->studio_vtk_output_window_ = output_window;
+}
+
+//---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job)
 {
   if (this->init()) {
@@ -232,6 +238,9 @@ bool PythonWorker::init()
 
     py::object set_sw_logger = sw_utils.attr("set_sw_logger");
     set_sw_logger(this->python_logger_.data());
+
+    // must reset the output window so that vtkPython's from conda's python doesn't take over
+    vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
 
     STUDIO_LOG_MESSAGE("Embedded Python Interpreter Initialized");
   } catch (py::error_already_set& e) {

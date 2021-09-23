@@ -350,6 +350,8 @@ TEST(OptimizeTests, cutting_plane_test)
   // make sure we clean out at least one output file
   std::remove("output/sphere10_DT_world.particles");
 
+  auto start = shapeworks::ShapeworksUtils::now();
+
   // run with parameter file
   std::string paramfile = std::string("cutting_plane.xml");
   Optimize app;
@@ -415,6 +417,10 @@ TEST(OptimizeTests, cutting_plane_test)
       }
     }
   }
+
+  auto end = shapeworks::ShapeworksUtils::now();
+  std::cout << "Time taken to run cutting_plane optimize test: " << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+
   ASSERT_TRUE(good);
 }
 
@@ -477,7 +483,7 @@ TEST(OptimizeTests, sphereConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 6.5e-1;
+      double slack = 15.0e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
@@ -556,7 +562,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 1.5e-1;
+      double slack = 8.5e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
@@ -719,7 +725,7 @@ TEST(OptimizeTests, MultiDomainConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 2.5e-1;
+      double slack = 7.5e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
