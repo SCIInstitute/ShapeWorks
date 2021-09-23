@@ -5,13 +5,7 @@
 #include "Eigen/Core"
 #include "Eigen/Dense"
 
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkLookupTable.h>
-#include <vtkArrowSource.h>
-#include <vtkNamedColors.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRenderer.h>
+class vtkActor;
 
 namespace shapeworks {
 

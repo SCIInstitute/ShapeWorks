@@ -2,6 +2,15 @@
 #include "ParticleSystem.h"
 #include "Utils.h"
 
+
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkLookupTable.h>
+#include <vtkArrowSource.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderer.h>
+
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
