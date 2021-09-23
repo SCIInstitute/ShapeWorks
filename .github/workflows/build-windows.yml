@@ -148,14 +148,3 @@ jobs:
         title: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
-
-    - name: Check Space
-      working-directory: ${{runner.workspace}}/build
-      shell: bash -l {0}
-      run: df -h
-
-      # Free up some space for caches to be made
-    - name: Clean Up
-      working-directory: ${{runner.workspace}}/build
-      shell: bash -l {0}
-      run: rm -rf bin
