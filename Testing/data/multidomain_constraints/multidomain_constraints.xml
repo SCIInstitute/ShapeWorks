@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<number_of_particles> 32 </number_of_particles>
+<number_of_particles> 32 32 </number_of_particles>
 <iterations_per_split> 500 </iterations_per_split>
 <starting_regularization> 500.0 </starting_regularization>
 <ending_regularization> 10.0 </ending_regularization>
@@ -13,22 +13,32 @@
 <!-- needed to fully turn on cutting planes -->
 <adaptivity_mode> 0 </adaptivity_mode>
 
+<domains_per_shape> 2 </domains_per_shape>
+
 <output_dir>
 output
 </output_dir>
 
 <inputs>
 sphere10_DT.nrrd
+sphere10_O_DT.nrrd
 sphere20_DT.nrrd
+sphere20_O_DT.nrrd
 sphere30_DT.nrrd
+sphere30_O_DT.nrrd
 sphere40_DT.nrrd
+sphere40_O_DT.nrrd
 </inputs>
 
 <spheres_per_domain>
   25
+  0
   25
+  0
   25
+  0
   25
+  0
 </spheres_per_domain>
 
 <sphere_radii>
@@ -242,11 +252,37 @@ sphere40_DT.nrrd
   1
   1
   1
+  1
+  1
+  1
+  1
 </num_planes_per_input>
 
 <cutting_planes>
   -10 -1 -10 -10 -1 10 10 -1 -10
+  -10 49 -10 -10 49 10 10 49 -10
   -10 -2 -10 -10 -2 10 10 -2 -10
+  -10 48 -10 -10 48 10 10 48 -10
   -10 -3 -10 -10 -3 10 10 -3 -10
+  -10 47 -10 -10 47 10 10 47 -10
   -10 -4 -10 -10 -4 10 10 -4 -10
+  -10 46 -10 -10 46 10 10 46 -10
 </cutting_planes>
+
+<num_ffcs_per_input>
+0
+1
+0
+1
+0
+1
+0
+1
+</num_ffcs_per_input>
+
+<ffcs>
+ffcs/sphere10.ffc
+ffcs/sphere20.ffc
+ffcs/sphere30.ffc
+ffcs/sphere40.ffc
+</ffcs>

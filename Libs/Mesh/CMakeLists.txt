@@ -47,6 +47,7 @@ target_link_libraries(
   igl::core
   Particles
   TBB::tbb
+  geometry-central
   Boost::filesystem
   )
 
