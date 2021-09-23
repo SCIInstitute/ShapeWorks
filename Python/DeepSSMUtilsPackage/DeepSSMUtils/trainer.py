@@ -160,8 +160,8 @@ def supervised_train(config_file):
 			train_losses.append(loss.item())
 			train_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 			train_rel_losses.append(train_rel_loss.item())
-			pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
-			true_particles.append(mdl.squeeze().detach().cpu().numpy())
+			pred_particles.extend(pred_mdl.detach().cpu().numpy())
+			true_particles.extend(mdl.detach().cpu().numpy())
 		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/train_")
 		# test validation
 		pred_particles = []
@@ -179,8 +179,8 @@ def supervised_train(config_file):
 				val_losses.append(v_loss.item())
 				val_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 				val_rel_losses.append(val_rel_loss.item())
-				pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
-				true_particles.append(mdl.squeeze().detach().cpu().numpy())
+				pred_particles.extend(pred_mdl.detach().cpu().numpy())
+				true_particles.extend(mdl.detach().cpu().numpy())
 			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/validation_")
 			# log
 			train_mr_MSE = np.mean(np.sqrt(train_losses))
@@ -260,8 +260,8 @@ def supervised_train(config_file):
 				train_losses.append(loss.item())
 				train_rel_loss = F.mse_loss(pred_mdl, mdl) / F.mse_loss(pred_mdl*0, mdl)
 				train_rel_losses.append(train_rel_loss.item())
-				pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
-				true_particles.append(mdl.squeeze().detach().cpu().numpy())
+				pred_particles.extend(pred_mdl.detach().cpu().numpy())
+				true_particles.extend(mdl.detach().cpu().numpy())
 			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/train_")
 			# test validation
 			pred_particles = []
@@ -283,8 +283,8 @@ def supervised_train(config_file):
 						best_ft_val_rel_error = val_rel_loss
 						best_ft_epoch = e
 						torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
-					pred_particles.append(pred_mdl.squeeze().detach().cpu().numpy())
-					true_particles.append(mdl.squeeze().detach().cpu().numpy())
+					pred_particles.extend(pred_mdl.detach().cpu().numpy())
+					true_particles.extend(mdl.detach().cpu().numpy())
 				train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/validation_")
 				# log
 				train_mr_MSE = np.mean(np.sqrt(train_losses))

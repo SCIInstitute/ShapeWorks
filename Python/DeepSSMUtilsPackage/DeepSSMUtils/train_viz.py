@@ -6,10 +6,6 @@ import numpy as np
 def write_examples(pred_particles, true_particles, out_dir):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
-	# take care of batches if there are any
-	if len(pred_particles.shape) != 3:
-		pred_particles = pred_particles.reshape((pred_particles.shape[0]*pred_particles.shape[1], pred_particles.shape[2], pred_particles.shape[3]))
-		true_particles = true_particles.reshape((true_particles.shape[0]*true_particles.shape[1], true_particles.shape[2], true_particles.shape[3]))
 	# get min, mean, and max errors
 	mses = np.mean(np.mean((pred_particles - true_particles)**2, axis=2), axis=1)
 	median_index = np.argsort(mses)[len(mses)//2]
