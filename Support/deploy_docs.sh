@@ -29,7 +29,6 @@ else
     exit 1
 fi
 
-python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -40,10 +39,13 @@ git reset --hard HEAD
 git remote rm origin
 git remote add origin "${remote_repo}"
 
+# remove local gh-pages branch, if any
 git branch -D gh-pages
-git checkout gh-pages
+# get remote gh-pages branch
+git checkout --track origin/gh-pages
 git pull --rebase
 git checkout master
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
 
       

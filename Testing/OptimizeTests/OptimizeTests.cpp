@@ -272,6 +272,8 @@ TEST(OptimizeTests, cutting_plane_test)
   // make sure we clean out at least one output file
   std::remove("output/sphere10_DT_world.particles");
 
+  auto start = shapeworks::ShapeworksUtils::now();
+
   // run with parameter file
   std::string paramfile = std::string("cutting_plane.xml");
   Optimize app;
@@ -337,6 +339,10 @@ TEST(OptimizeTests, cutting_plane_test)
       }
     }
   }
+
+  auto end = shapeworks::ShapeworksUtils::now();
+  std::cout << "Time taken to run cutting_plane optimize test: " << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+
   ASSERT_TRUE(good);
 }
 
