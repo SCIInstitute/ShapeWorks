@@ -273,12 +273,6 @@ background: rgb(255, 255, 127)
             </item>
             <item>
              <widget class="QGroupBox" name="resample_box">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>135</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <weight>50</weight>
@@ -298,14 +292,7 @@ background: rgb(255, 255, 127)
                <property name="bottomMargin">
                 <number>6</number>
                </property>
-               <item row="0" column="2">
-                <widget class="QLineEdit" name="spacing_iso">
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
+               <item row="0" column="1">
                 <widget class="QCheckBox" name="isotropic_checkbox">
                  <property name="text">
                   <string>Isotropic</string>
@@ -315,28 +302,7 @@ background: rgb(255, 255, 127)
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QLineEdit" name="spacing_y">
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QLineEdit" name="spacing_x">
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLineEdit" name="spacing_z">
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
+               <item row="0" column="0">
                 <spacer name="horizontalSpacer">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -349,42 +315,92 @@ background: rgb(255, 255, 127)
                  </property>
                 </spacer>
                </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="spacing_label_x">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>X</string>
-                 </property>
+               <item row="0" column="2">
+                <widget class="QLineEdit" name="spacing_iso">
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="spacing_label_y">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Y</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
+               <item row="2" column="0" colspan="3">
+                <widget class="QWidget" name="spacing_xyz" native="true">
+                 <layout class="QGridLayout" name="gridLayout_16">
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>6</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="spacing_label_x">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>X</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="4">
+                   <widget class="QLabel" name="spacing_label_z">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>Z</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="spacing_x">
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QLabel" name="spacing_label_y">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>Y</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="3">
+                   <widget class="QLineEdit" name="spacing_y">
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="5">
+                   <widget class="QLineEdit" name="spacing_z">
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QLabel" name="spacing_label_z">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Z</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+               <item row="1" column="0" colspan="3">
+                <widget class="Line" name="line_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -1285,9 +1301,6 @@ background: rgb(255, 255, 127)
   <tabstop>resample_checkbox</tabstop>
   <tabstop>isotropic_checkbox</tabstop>
   <tabstop>spacing_iso</tabstop>
-  <tabstop>spacing_x</tabstop>
-  <tabstop>spacing_y</tabstop>
-  <tabstop>spacing_z</tabstop>
   <tabstop>isolate_checkbox</tabstop>
   <tabstop>fill_holes_checkbox</tabstop>
   <tabstop>autopad_checkbox</tabstop>
