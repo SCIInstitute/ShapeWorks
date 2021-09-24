@@ -47,4 +47,4 @@ RUN apt-get update
 RUN apt-get upgrade git -y
 RUN git --version
 RUN apt-get install zip -y
-RUN apt-get install -y libegl1-mesa
+RUN apt-get install -y libegl1-mesa libcups2
