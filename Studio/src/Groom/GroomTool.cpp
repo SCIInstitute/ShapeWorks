@@ -333,7 +333,7 @@ void GroomTool::store_params()
   params.set_resample(ui_->resample_checkbox->isChecked());
   params.set_isotropic(ui_->isotropic_checkbox->isChecked());
   params.set_iso_spacing(ui_->spacing_iso->text().toDouble());
-  params.set_spacing({ui_->spacing_x->text().toDouble(), ui_->spacing_x->text().toDouble(),
+  params.set_spacing({ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(),
                       ui_->spacing_z->text().toDouble()});
 
   params.save_to_project();
