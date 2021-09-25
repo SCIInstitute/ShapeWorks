@@ -1,4 +1,4 @@
-# Femur: SSM on Segmentations from Meshes
+# Femur: SSM on Distance Transforms from Meshes
 
 ## What is the Use Case?
 
