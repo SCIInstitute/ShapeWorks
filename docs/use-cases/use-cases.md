@@ -56,7 +56,7 @@ $ python RunUseCase.py --help
 ```
 A decription of each optional argument and how ot use it is provided below.
 
-#### --use-subsample
+#### --use_subsample
 Users can run a use case on a subset of the data by adding the `--use_subsample` argument followed by the `--num_subsample` argument with the number of samples you wish to use. This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is determined by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample`, it will use the default number of subsamples which is 3. Note the entire dataset will still be downloaded to run the clustering.
 
 ```
