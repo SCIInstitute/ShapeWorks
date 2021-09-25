@@ -64,7 +64,7 @@ Once the python code runs the optimization, the files are saved in the `Output` 
 ### Single-Scale Optimization
 
 Here is the mean shape of the optimized shape mode using single-scale optimization.
-![left Atrium singleScale](../img/use-cases/leftatrium_singlescale.png)
+![left Atrium singleScale](../../img/use-cases/leftatrium_singlescale.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using single-scale optimization.
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_singlescale_pca.mp4" autoplay muted loop controls style="width:100%"></p>
@@ -74,7 +74,7 @@ Here is a video showing the shape modes of variation (computed using principal c
 
 Here is the mean shape of the optimized shape mode using multi-scale optimization.
      
-![left Atrium Multi-scale](../img/use-cases/leftatrium_multiscale.png)
+![left Atrium Multi-scale](../../img/use-cases/leftatrium_multiscale.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using multi-scale optimization.
 
