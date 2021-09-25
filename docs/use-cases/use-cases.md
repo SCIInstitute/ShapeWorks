@@ -1,7 +1,7 @@
 # Getting Started with Use Cases
 
 ## What is a Use Case?
-Use cases are Python examples that can help the user get familiar with using ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/) and is automoatically downloaded when the use case is run.
+Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/) and downloads automatically when the use case runs.
 
 Most use cases demomstrates the [Shape Modeling Workflow](../getting-started/workflow.md):
 
@@ -9,7 +9,7 @@ Most use cases demomstrates the [Shape Modeling Workflow](../getting-started/wor
 2. [Optimizing](../workflow/optimize.md) a correpsondence model on the groomed data.
 3. [Analyzing](../workflow/analyze.md) the correspondence model.
 
-However, some do not involve grooming and some only demonstrate the functionality of ShapeWorks statistical tools. For an overview and brief description of the avialable use cases, see [Examples](../getting-started/examples.md).
+However, some do not involve grooming, and some only demonstrate the functionality of ShapeWorks statistical tools. For an overview and brief description of the available use cases, see [Examples](../getting-started/examples.md).
 
 ## Running A Use Case
 
@@ -36,25 +36,25 @@ Note: You are only required to enter your credentials the first time you run a u
 
 ### Use Case Data
 
-When a use case is run, it downloads the appropriate zipped data to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all the output from running the use case is also saved.
+When a use case runs, the appropriate zipped data downloads to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all the output from running the use case is also saved.
 
-The downloaded data includes the raw data the use case starts with (segmentations, meshes, and/or images) as well as the expected output from the final grooming step of the use case (i.e., distance transforms) and the shape model generated from running the use case (particle files and XML). 
+The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and XML). 
 
-An "analyze.xml" file is included so that the resulting shape model can be visualized in studio without running the use case.
+An "analyze.xml" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
 ```
 $ cd Examples/Python/Output/ellipsoid/
 $ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
 ```
 
-### Use Cases Arguements
+### Use Cases Arguments
 
-When calling `RunUseCase.py` various optional arguements can be used. 
-To see the full list of suppported arguements from the command line, run:
+When calling `RunUseCase.py`, various optional arguments can be used. 
+To see the complete list of supported arguments from the command line, run:
 ```
 $ python RunUseCase.py --help
 ```
-A decription of each optional argument and how ot use it is provided below.
+A description of each optional argument and how to use it is provided below.
 
 #### --use_subsample
 Users can run a use case on a subset of the data by adding the `--use_subsample` argument followed by the `--num_subsample` argument with the number of samples you wish to use. This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is determined by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample`, it will use the default number of subsamples which is 3. Note the entire dataset will still be downloaded to run the clustering.
@@ -71,14 +71,14 @@ $ python RunUseCase.py [use case name] --skip_grooming
 ```
            
 #### --groom_images
-Some use case datasets include both segmentations and corresponding unsegmented imaging data. In these cases, when the '--groom_images' argument is used, the images are carried through the grooming process with the segmentations so that they remain in alignment. This is useful if the user wishes to analyze the corrspondence model in realtion to unsegmented images.
+Some use case datasets include both segmentations and corresponding unsegmented imaging data. In these cases, when the '--groom_images' argument is used, the images are carried through the grooming process with the segmentations so that they remain in alignment. This is useful if the user wishes to analyze the correspondence model in relation to unsegmented images.
 
 ```
 $ python RunUseCase.py [use case name] --groom_images
 ```
           
 #### --use_single_scale
-Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo *initialization* and *optimization* stages. The multi-scale triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). 
+Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo *initialization* and *optimization* stages. The multi-scale argument triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). 
 
 The differences between *initialization* and *optimization* stages are: 
 
@@ -145,8 +145,8 @@ Below is a list of the currently exposed algorithmic parameters in the use cases
 For a full decription of parameters, please see: [optimization parameters](../workflow/optimize.md#On-Algorithmic-Parameters). All the keys of in this parameter dictionary correspond to the [XML tags](../workflow/optimize.md#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
 
 ### [Analysis of Results](../workflow/analyze.md)
-The resulting correspondence points from optimzation can be viewed and anlayzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `analyze.xml` file for viewing the results in Studio. Studio opens automatically when the use case is done running. 
+The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `analyze.xml` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-This `anaylze.xml` file can be reopened at anytime after running the use case for subsequent analysis by calling `ShapeworksStudio analyze.xml`. For a full description of how to analyze results in Studio, see: [Analyzing Results](../workflow/analyze.md).
+This `anaylze.xml` file can be reopened at any time after running the use case for subsequent analysis by calling `ShapeworksStudio analyze.xml`. For a full description of how to analyze results in Studio, see [Analyzing Results](../workflow/analyze.md).
