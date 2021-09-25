@@ -1,22 +1,21 @@
 # Fixed Domains for Ellipsoid: Correspondences on New Shape
 
 ## What is the Use Case? 
+The `ellipsoid_fd` use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. Fixed domains is used in cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use a dataset which contains a previously generated shape model on ellipsoids (see [Ellispoid Use Case](ellipsoid.md)) and prepped segmentations of five new ellipsoids.
 
-The `ellipsoid_fd` use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. Fixed domains is used in cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use a dataset which contains a previously generated shape model on ellipsoids and prepped segmentations of five new ellipsoids.
-
-![Fixed Domains](../img/use-cases/fixed-domains.png)
+![Fixed Domains](../../img/use-cases/fixed-domains.png)
 
 ## Grooming Steps
-
 This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance transform for each new segmentation.
 
-## Supported Tags
+Below are the pre-existing (first fifteen) and new (last five) groomed distance transforms.
+![Fixed domain ellipsoid distance transforms](../../img/use-cases/ellipsoids_fd_input.png)
 
-``` 
-        --tiny_test
-``` 
+## Relevant Arguments
+[--tiny_test](../use-cases.md#-tiny_test)
+
 ## Optimization Parameters
-
+The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case. Note the `number_fixed_domains` and `fixed_domain_model_dir` parameters.
 
 ```
@@ -52,7 +51,7 @@ In `ellipsoid_fd.py`, the following is defined.
 ## Analyzing Shape Model
 
 Here we can see the optimized particles for the new samples (numbers 15-19). The particles for the original samples (0-14) have remained the same.
-![Ellipsoid FD Optimization](../img/use-cases/ellipsoid_fd.png)
+![Ellipsoid FD Optimization](../../img/use-cases/ellipsoid_fd.png)
 
 The primary mode of variation is along the x-axis as it was before adding the new shapes.
 ![Ellipsoid FD Mode 1](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_fd_mode1.gif)

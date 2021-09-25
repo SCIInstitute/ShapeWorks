@@ -1,40 +1,29 @@
 # Femur with Cutting Planes
 
 ## What is the Use Case?
-
-The `femur_cut` use case is similar to [Femur: SSM from Meshes](femur.md), but it demonstrates the use of cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, cutting planes can be used to limit the statistical analysis to the common anatomical regions across all samples.
-
-![Femur Lengths](../img/use-cases/femurLengths.png)
-
-!!! note
-    The given data (i.e., surface meshes) are not clipped using cutting planes as in [Femur: SSM from Meshes](femur.md), but the cutting planes are fed as an optimization parameter to `shapeworks optimize` command to prevent particles from moving beyond the cutting planes during optimization.
+The `femur_cut` use case demonstrates an alternative approach to the [femur use case](femur.md) by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the [femur use case](femur.md) with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the [femur use case](femur.md).
 
 !!! important 
     Minimum of 32GB of RAM required to run the full use case.
 
 ## Grooming Steps
+The grooming steps are the same as the [femur use case](femur.md), except clipping is not performed. Please refer back to the [femur grooming steps](femur.md#grooming-steps) for a full explanation of grooming.
 
-The grooming steps are the same as the [femur use case](femur.md) except clipping is not performed.
+Note because the clipping step is skipped, the groomed femurs vary in shaft length:
+![Groomed femur_cut input](../../img/use-cases/femur_cut_groomed.png)
 
-1. **Reflect Meshes**: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.
-2. **Meshes to Volumes**: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
-3. **Isotropic Resampling**: Both the image and rasterized segmentations are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also produce segmentations with smaller voxel spacing, thereby reducing aliasing artifacts (i.e., staircase/jagged surface) due to binarization. 
-4. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
-5. **Center of Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment. 
-6. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-7. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images. The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case, we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.
-8. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.
-9. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
-
-## Supported Tags
-
-``` 
-        --use_subsample --num_subsample --groom_images --skip_grooming --use_single_scale --mesh_mode --tiny_test
-``` 
+## Relevant Arguments
+[--groom_images](../use-cases.md#-groom_images)
+[--use_subsample](../use-cases.md#-use_subsample)
+[--num_subsample](../use-cases.md#-use_subsample)
+[--skip_grooming](../use-cases.md#-skip_grooming)
+[--use_single_scale](../use-cases.md#-use_single_scale)
+[--mesh_mode](../use-cases.md#-mesh_mode)
+[--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-
-Below are the default optimization parameters for the use case.
+The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+Below are the default optimization parameters for this use case.
 ```        
         "number_of_particles" : 1024,
         "use_normals": 0,
@@ -65,8 +54,7 @@ Below are the default optimization parameters for the use case.
 Here `cutting_plane_counts` is one for every femur and the `cutting_planes` is the same cutting plane points for every femur.
 
 ## Analyzing Shape Model        
-
-Here is the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization. Here we can see the particles are constrained to be above the cutting plane.
+Below we can see the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization. Here we can see the particles are constrained to be above the cutting plane.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_cut.mp4" autoplay muted loop controls style="width:100%"></p>
 

@@ -1,30 +1,28 @@
 # Thin Cavity Bean: Shape Model with Geodesic Distances
 
 ## What is the Use Case?
-
-The `thin_cavity_bean` use case demonstrates using ShapeWorks tools to perform the following.
-
-- Geodesic distance based repulsion for mesh domains
-- Build a shape model where shapes are given as triangular surface meshes
+The `thin_cavity_bean` use case demonstrates using geodesic distance based repulsion for mesh domains in optimization.
 
 Here is an example of the data:
-![Thin cavity bean](../img/use-cases/thin_cavity_bean.png)
+![Thin cavity bean](../../img/use-cases/thin_cavity_bean.png)
+
+The shapes vary only in location of the thin cavity. This use case demonstrates that ShapeWorks optimization with geodescic distance can correctly capture this mode of variation.
 
 ## Grooming Steps
+In this use case, we download pre-groomed data. Here are some examples of the meshes:
+![Thin cavity bean meshes](../../img/use-cases/bean_input.png)
 
-In this use case, we download pre-groomed data.
+## Relevant Arguments
+[--use_subsample](../use-cases.md#-use_subsample)
+[--num_subsample](../use-cases.md#-use_subsample)
+[--use_single_scale](../use-cases.md#-use_single_scale)
+[--tiny_test](../use-cases.md#-tiny_test)
 
-## Supported Tags
-
-``` 
-        --use_subsample --num_subsample --use_single_scale --tiny_test
-``` 
 ## Optimization Parameters
+The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+Below are the default optimization parameters for this use case.
 
-Below are the default optimization parameters when running this use case. 
-
-```python
-{
+```
         "number_of_particles": 1024,
         "use_normals": 1,
         "normal_weight": 10.0,
@@ -45,7 +43,6 @@ Below are the default optimization parameters when running this use case.
         "verbosity": 3,
         "use_shape_statistics_after": 32,
         "geodesics_enabled": 1
-}
 ```
 
 Note `geodesics_enabled` is set to on.
