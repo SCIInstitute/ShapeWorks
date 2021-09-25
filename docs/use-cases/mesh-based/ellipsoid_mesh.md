@@ -1,21 +1,20 @@
 # Ellipsoid Mesh: Basic Example
 
 ## What is the Use Case? 
-
 This use case uses the same dataset as the `ellipsoid` use case, but optimization is done on meshes rather than distance transforms. The dataset comprises of axis-aligned ellipsoids with varying radii along the x-axis. The `ellipsoid_mesh` use case represents the standard use version of a shape modeling workflow from meshes using ShapeWorks. 
 
-
 ## Grooming Steps
+This use case starts with pre-aligned meshes and does not require grooming.  
+![Ellipsoid meshes](../../img/use-cases/ellipsoid_mesh_input.png)
 
-This use case starts with pre-aligned meshes. 
+## Relevant Arguments
+[--use_subsample](../use-cases.md#-use_subsample)
+[--num_subsample](../use-cases.md#-use_subsample)
+[--use_single_scale](../use-cases.md#-use_single_scale)
+[--tiny_test](../use-cases.md#-tiny_test)
 
-## Supported Tags
-
-``` 
-        --use_subsample --num_subsample --use_single_scale --tiny_test
-``` 
 ## Optimization Parameters
-
+The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 
 ```
@@ -40,9 +39,8 @@ Below are the default optimization parameters for this use case.
 ```
 
 ## Analyzing Shape Model
-
 Below is the mean shape reulting from optimization. Here we can see that there is only one major mode of variation.
-![Ellipsoid Mesh Optimization](../img/use-cases/ellipsoid_mesh.png)
+![Ellipsoid Mesh Optimization](../../img/use-cases/ellipsoid_mesh.png)
 
 Animating along the first PCA mode we can see the variation in the radius along the x-axis.
 ![Ellipsoid Mesh Mode 1](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mesh_mode1.gif)
