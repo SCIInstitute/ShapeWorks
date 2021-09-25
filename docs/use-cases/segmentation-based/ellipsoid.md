@@ -9,7 +9,7 @@ The `ellipsoid.py` use case represents the standard use version of a shape model
 
 ## Grooming Steps
 
-This is how the segmentations in the dataset look before grooming.![This is how the segmentations in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_pre_groom.png)
+This is how the segmentations in the dataset look before grooming.Here it can been seen that the ellipsoids have random centers andn orientations.![This is how the segmentations in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_pre_groom.png)
 
 1. [**Isotropic Resampling**](../../workflow/groom.md#resampling-images-and-segmentations): Binary segmentations in `ellipsoid/segmentations/` are resampled to have an isotropic voxel spacing.
 2. [**Center-of-Mass Alignment**](../../workflow/groom.md#aligning-segmentations): This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
@@ -20,7 +20,7 @@ This is how the segmentations in the dataset look before grooming.![This is how 
 7. [**Padding**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are padded with zeros on every side.
 8. [**Distance Transform**](../../workflow/groom.md#converting-segmentations-to-smooth-signed-distance-transforms): Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-Distance transform obtained after grooming.![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_post_groom.png)
+Distance transform obtained after grooming.The ellipsoids are now centred and aligned ready to be sent to the optimizer![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
@@ -56,7 +56,7 @@ Below are the default optimization parameters for this use case.
 ```
 
 ## Analyzing Shape Model
-Once the python code runs the optimization, the files are saved in the `Output` folder after which the ShapeWorks Studio is launched from the python code to analyze the model. 
+Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 
 Below is the mean shape reulting from optimization. Here we can see that there is only one major mode of variation.
 ![Ellipsoid Optimization](../../img/use-cases/ellipsoid_mean.png)

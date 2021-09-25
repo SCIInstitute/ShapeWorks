@@ -1,4 +1,4 @@
-# Femur: Shape Model from Meshes
+# Femur: SSM from Segmentations
 
 ## What is the Use Case?
 
@@ -28,7 +28,7 @@ We start with full unsegmented images (CT scans) of each femur's hip and segment
 9. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.
 10. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-![Grooming steps](../img/use-cases/FemurGroomPipeline.PNG)
+![Grooming steps](../../img/use-cases/FemurGroomPipeline.PNG)
 
 ## Supported Tags
 
@@ -66,10 +66,10 @@ Here is the mean shape of the optimized shape mode using single-scale optimizati
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mean.mp4" autoplay muted loop controls style="width:100%"></p>
 
 Here are femur samples with their optimized correspondences.
-![Femur Samples](../img/use-cases/femur_samples.png)
+![Femur Samples](../../img/use-cases/femur_samples.png)
 
 Zooming in some femur samples.
-![Zoom Femur Samples](../img/use-cases/femur_samples_zoom.png)
+![Zoom Femur Samples](../../img/use-cases/femur_samples_zoom.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 

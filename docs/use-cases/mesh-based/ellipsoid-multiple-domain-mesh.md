@@ -1,4 +1,4 @@
-# Shape Model for Multiple Domains directly from Mesh
+# SSM for Multiple Domains directly from Mesh
 
 ## What is the Use Case?
 
@@ -16,13 +16,14 @@ By defualt, the use case runs on the ellipsoid_joint_rotation dataset.
 
 In this use case, we download pre-groomed data. The use case will be updated soon to demonstrate the full mesh grooming process.
 
-## Supported Tags
+## Relevant Arguments
+[--use_subsample](../use-cases.md#-use_subsample)
+[--num_subsample](../use-cases.md#-use_subsample)
+[--use_single_scale](../use-cases.md#-use_single_scale)
+[--tiny_test](../use-cases.md#-tiny_test)
 
-``` 
-        --use_subsample --num_subsample --use_single_scale --tiny_test
-``` 
 ## Optimization Parameters
-
+The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details.
 NOTE:The list of `<inputs>` (surface mesh ) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 
 ```python
@@ -50,9 +51,9 @@ NOTE:The list of `<inputs>` (surface mesh ) should be ordered consistently for e
 ```
 
 ## Analyzing Shape Model
-
+Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 Here is the optimized shape.
 ![Ellipsoid Joint Shape Model](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multiple_domain_segs_model.gif)
 
 Below are the particles for each sample, we can see they are uniformly distributed.
-![Ellipsoid Joint Samples](https://sci.utah.edu/~shapeworks/doc-resources/gifs/multi_domain_samples.png)
+![Ellipsoid Joint Samples](https://sci.utah.edu/~shapeworks/doc-resources/pngs/multi_domain_samples.png)

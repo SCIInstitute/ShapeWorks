@@ -11,12 +11,12 @@ Here is an example of the data:
 
 In this use case, we download pre-groomed data.
 
-## Supported Tags
+## Relevant Arguments
 
-This use case does not support any tags
+This use case does not support any arguments
 
 ## Optimizing Shape Model
-
+The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details.
 Below are the default optimization parameters for this use case.
 
 
@@ -45,7 +45,7 @@ Below are the default optimization parameters for this use case.
 ```
 
 ## Analyzing Shape Model
-
+Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
            
 During the generation of the input supershapes data,the n2 and n3 variables were kept constant, and only the n1 variable was varied according to values sampled from a chi squared distribution. We obtain a shape model that accurately captures this variation(first mode variance = 98%)
 ![Supershapes contour analyze](https://sci.utah.edu/~shapeworks/doc-resources/gifs/supershapes_contour.gif)
