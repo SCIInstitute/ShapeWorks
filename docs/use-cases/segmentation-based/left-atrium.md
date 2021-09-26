@@ -1,4 +1,4 @@
-# Left Atrium: SSM from Segmentations
+# Left Atrium: Shape Model from Segmentations
 
 ## What is the Use Case? 
 

@@ -1,4 +1,4 @@
-# Femur SSM Directly from Images
+# Femur Shape Model Directly from Images
 
 ## What is the Use Case? 
 The `deep_ssm` use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [femur use case](../mesh-based/femur.md).

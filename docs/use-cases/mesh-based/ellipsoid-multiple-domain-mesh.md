@@ -1,4 +1,4 @@
-# SSM for Multiple Domains directly from Mesh
+# Shape Model for Multiple Domains directly from Mesh
 
 ## What is the Use Case?
 

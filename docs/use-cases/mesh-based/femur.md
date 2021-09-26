@@ -1,4 +1,4 @@
-# Femur: SSM on Distance Transforms from Meshes
+# Femur: Shape Model on Distance Transforms from Meshes
 
 ## What is the Use Case?
 

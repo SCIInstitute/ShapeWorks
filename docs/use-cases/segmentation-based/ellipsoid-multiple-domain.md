@@ -1,4 +1,4 @@
-# SSM for Multiple Domains 
+# Shape Model for Multiple Domains from Segmentations
 
 ## What is the Use Case?
 

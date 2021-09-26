@@ -1,16 +1,17 @@
-# Shape Model for Contour Domains
+# Supershapes:Shape Model for Contour Domains
 
 ## What is the Use Case?
 
 This use case demonstrates using ShapeWorks tools to perform optimization for N-dimensional contours.
 Contours are represented as a series of lines, that may be a closed loop. We consider 2D shapes generated from the supershape equation, with a single parameter sampled from a chi-squared distribution.
 Here is an example of the data:
-![Supershapes contour](../img/use-cases/supershapes_contour.png)
+![Supershapes contour](../../img/use-cases/supershapes_contour.png)
 
 ## Grooming Steps
 
 In this use case, we download pre-groomed data.
-
+The input contours are: 
+![input contours](https://sci.utah.edu/~shapeworks/doc-resources/pngs/supershapes_input.png)
 ## Relevant Arguments
 
 This use case does not support any arguments

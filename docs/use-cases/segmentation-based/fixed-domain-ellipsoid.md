@@ -1,4 +1,4 @@
-# Fixed Domains for Ellipsoid: Correspondences on New Shape
+# Fixed Domains Ellipsoid: Shape Model on New Shapes
 
 ## What is the Use Case? 
 The `ellipsoid_fd` use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. Fixed domains is used in cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use a dataset which contains a previously generated shape model on ellipsoids (see [Ellispoid Use Case](ellipsoid.md)) and prepped segmentations of five new ellipsoids.
