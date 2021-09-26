@@ -71,6 +71,7 @@ nav:
    - Statistics Based Use Cases:
       - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'   
       - 'Femur: Group Difference Statistics in Python':              'use-cases/stats-based/femur-pvalues.md'
+      - 'Ellipsoid: Shape Evaluation in Python':                     'use-cases/stats-based/ellipsoid-evaluate.md'
    - Deep Learning Based Use Cases:
       - 'Femur SSM Directly from Images':                            'use-cases/deep-learning-based/deep-ssm-femur.md'
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
