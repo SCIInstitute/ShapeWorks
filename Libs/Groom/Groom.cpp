@@ -122,7 +122,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   // reflection
   if (params.get_reflect()) {
-    this->add_reflect_transform(transform, params.get_reflect_axis());
+    auto table = subject->get_table_values();
+    if (table.find(params.get_reflect_column()) != table.end()) {
+      if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+        this->add_reflect_transform(transform, params.get_reflect_axis());
+      }
+    }
   }
 
   // centering
@@ -269,7 +274,12 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
     // reflection
     if (params.get_reflect()) {
-      this->add_reflect_transform(transform, params.get_reflect_axis());
+      auto table = subject->get_table_values();
+      if (table.find(params.get_reflect_column()) != table.end()) {
+        if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+          this->add_reflect_transform(transform, params.get_reflect_axis());
+        }
+      }
     }
 
     // centering
@@ -570,16 +580,15 @@ std::vector<double> Groom::get_identity_transform()
 void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image &image)
 {
   auto com = image.centerOfMass();
-  transform->Translate(-com[0],-com[1],-com[2]);
+  transform->Translate(-com[0], -com[1], -com[2]);
 }
 
 //---------------------------------------------------------------------------
 void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh &mesh)
 {
   auto com = mesh.centerOfMass();
-  transform->Translate(-com[0],-com[1],-com[2]);
+  transform->Translate(-com[0], -com[1], -com[2]);
 }
-
 
 //---------------------------------------------------------------------------
 void Groom::add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string &reflect_axis)
