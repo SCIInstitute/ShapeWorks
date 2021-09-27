@@ -89,6 +89,8 @@ public:
   void set_reflect_column(std::string column);
   std::string get_reflect_choice();
   void set_reflect_choice(std::string choice);
+  std::string get_reflect_axis();
+  void  set_reflect_axis(std::string axies);
 
   // resampling
   bool get_resample();

@@ -9,6 +9,7 @@ const std::string CROP = "crop";
 const std::string REFLECT = "reflect";
 const std::string REFLECT_COLUMN = "reflect_column";
 const std::string REFLECT_CHOICE = "reflect_choice";
+const std::string REFLECT_AXIS = "reflect_axis";
 const std::string RESAMPLE = "resample";
 const std::string ISOTROPIC = "isotropic";
 const std::string ISO_SPACING = "iso_spacing";
@@ -18,6 +19,7 @@ const std::string SPACING = "spacing";
 namespace Defaults {
 const bool crop = true;
 const bool reflect = false;
+const std::string reflect_axis = "X";
 const bool resample = true;
 const bool isotropic = true;
 const double iso_spacing = 0.0;
@@ -334,6 +336,18 @@ std::string GroomParameters::get_reflect_choice()
 void GroomParameters::set_reflect_choice(std::string choice)
 {
   this->params_.set(Keys::REFLECT_CHOICE, choice);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_reflect_axis()
+{
+  return this->params_.get(Keys::REFLECT_AXIS, Defaults::reflect_axis);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_reflect_axis(std::string axis)
+{
+  return this->params_.set(Keys::REFLECT_AXIS, axis);
 }
 
 //---------------------------------------------------------------------------

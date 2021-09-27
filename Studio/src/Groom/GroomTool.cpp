@@ -163,7 +163,9 @@ void GroomTool::update_reflect_columns()
 
   QStringList reflect_columns;
   for (auto header: headers) {
-    reflect_columns << QString::fromStdString(header);
+    if (header != "") {
+      reflect_columns << QString::fromStdString(header);
+    }
   }
 
   if (reflect_columns != this->reflect_columns_) {
@@ -260,6 +262,7 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->reflect_checkbox->setChecked(params.get_reflect());
   ui_->reflect_column->setCurrentText(QString::fromStdString(params.get_reflect_column()));
   ui_->reflect_choice->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
+  ui_->reflect_axis->setCurrentText(QString::fromStdString(params.get_reflect_axis()));
 
   ui_->resample_checkbox->setChecked(params.get_resample());
   ui_->isotropic_checkbox->setChecked(params.get_isotropic());
@@ -329,6 +332,8 @@ void GroomTool::store_params()
   params.set_reflect(ui_->reflect_checkbox->isChecked());
   params.set_reflect_column(ui_->reflect_column->currentText().toStdString());
   params.set_reflect_choice(ui_->reflect_choice->currentText().toStdString());
+  params.set_reflect_axis(ui_->reflect_axis->currentText().toStdString());
+
 
   params.set_resample(ui_->resample_checkbox->isChecked());
   params.set_isotropic(ui_->isotropic_checkbox->isChecked());
@@ -564,6 +569,7 @@ void GroomTool::update_ui()
 
   ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
 }
 //---------------------------------------------------------------------------
 }

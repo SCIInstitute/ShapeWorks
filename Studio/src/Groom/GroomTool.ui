@@ -201,9 +201,6 @@ background: rgb(255, 255, 127)
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="reflect_column"/>
-            </item>
             <item row="0" column="0">
              <widget class="QCheckBox" name="reflect_checkbox">
               <property name="text">
@@ -213,6 +210,19 @@ background: rgb(255, 255, 127)
                <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="reflect_on_label">
+              <property name="text">
+               <string>On</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="reflect_column"/>
             </item>
             <item row="0" column="2">
              <widget class="QLabel" name="reflect_equal">
@@ -226,6 +236,25 @@ background: rgb(255, 255, 127)
             </item>
             <item row="0" column="3">
              <widget class="QComboBox" name="reflect_choice"/>
+            </item>
+            <item row="0" column="5">
+             <widget class="QComboBox" name="reflect_axis">
+              <item>
+               <property name="text">
+                <string>X</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Z</string>
+               </property>
+              </item>
+             </widget>
             </item>
            </layout>
           </widget>
