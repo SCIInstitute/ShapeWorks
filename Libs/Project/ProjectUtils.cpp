@@ -22,4 +22,14 @@ vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::v
   }
   return transform;
 }
+
+//---------------------------------------------------------------------------
+std::vector<double> ProjectUtils::convert_transform(vtkSmartPointer<vtkTransform> transform)
+{
+  std::vector<double> list;
+  for (int i = 0; i < 16; i++) {
+    list.push_back(transform->GetMatrix()->GetData()[i]);
+  }
+  return list;
+}
 }

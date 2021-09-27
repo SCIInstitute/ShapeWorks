@@ -68,6 +68,8 @@ public:
   std::vector<std::vector<double>> get_groomed_transforms() const;
   //! Set the groomed transforms (one vector per domain)
   void set_groomed_transforms(std::vector<std::vector<double>> transforms);
+  //! Set the i-th groomed transform
+  void set_groomed_transform(int i, std::vector<double> transform);
 
   //! Get the procrustes transforms (one vector per domain)
   std::vector<std::vector<double>> get_procrustes_transforms() const;

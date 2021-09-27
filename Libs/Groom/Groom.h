@@ -64,13 +64,13 @@ private:
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
 
   static std::vector<double> get_identity_transform();
-  static std::vector<double> get_center_transform(const Mesh &mesh);
-  static std::vector<double> convert_transform(itk::AffineTransform<double, 3>::Pointer transform);
+  static void add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string& reflect_axis);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image& image);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh& mesh);
 
   Mesh get_mesh(int subject, int domain);
 
 
-  Vector3 center(Image& image);
   void isolate(Image& image);
 
   bool verbose_ = false;

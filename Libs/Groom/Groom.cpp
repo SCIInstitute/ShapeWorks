@@ -9,6 +9,7 @@
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Project/ProjectUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -93,17 +94,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   Image image(path);
 
   // define a groom transform
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
 
   if (this->skip_grooming_) {
     std::vector<std::vector<double>> groomed_transforms;
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
-    }
-    groomed_transforms.push_back(groomed_transform);
+    groomed_transforms.push_back(ProjectUtils::convert_transform(transform));
     subject->set_groomed_transforms(groomed_transforms);
 
     {
@@ -124,16 +120,14 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     return true;
   }
 
+  // reflection
+  if (params.get_reflect()) {
+    this->add_reflect_transform(transform, params.get_reflect_axis());
+  }
+
   // centering
   if (params.get_use_center()) {
-    auto centering = this->center(image);
-
-    itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-    tform[0] = centering[0];
-    tform[1] = centering[1];
-    tform[2] = centering[2];
-    transform->SetTranslation(tform);
-
+    this->add_center_transform(transform, image);
     this->increment_progress();
   }
 
@@ -221,18 +215,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     // lock for project data structure
     tbb::mutex::scoped_lock lock(mutex_);
 
-    // store transform
-    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
-    }
-    if (domain >= groomed_transforms.size()) {
-      groomed_transforms.resize(domain + 1);
-    }
-    groomed_transforms[domain] = groomed_transform;
-    subject->set_groomed_transforms(groomed_transforms);
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
 
     // update groomed filenames
     std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
@@ -262,7 +245,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   Mesh mesh = MeshUtils::threadSafeReadMesh(path);
 
   // define a groom transform
-  auto transform = Groom::get_identity_transform();
+  auto transform = vtkSmartPointer<vtkTransform>::New();
 
   if (!this->skip_grooming_) {
 
@@ -284,9 +267,14 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
       this->increment_progress();
     }
 
+    // reflection
+    if (params.get_reflect()) {
+      this->add_reflect_transform(transform, params.get_reflect_axis());
+    }
+
     // centering
     if (params.get_use_center()) {
-      transform = Groom::get_center_transform(mesh);
+      this->add_center_transform(transform, mesh);
       this->increment_progress();
     }
   }
@@ -299,12 +287,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     tbb::mutex::scoped_lock lock(mutex_);
 
     // store transform
-    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-    if (domain >= groomed_transforms.size()) {
-      groomed_transforms.resize(domain + 1);
-    }
-    groomed_transforms[domain] = transform;
-    subject->set_groomed_transforms(groomed_transforms);
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
 
     // update groomed filenames
     std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
@@ -354,17 +337,6 @@ void Groom::isolate(Image& image)
   cast_filter->Update();
 
   image = Image(cast_filter->GetOutput());
-}
-
-//---------------------------------------------------------------------------
-Vector3 Groom::center(Image& image)
-{
-  auto diff = image.centerOfMass();
-  Vector3 translation;
-  translation[0] = -diff[0];
-  translation[1] = -diff[1];
-  translation[2] = -diff[2];
-  return translation;
 }
 
 //---------------------------------------------------------------------------
@@ -495,17 +467,11 @@ bool Groom::run_alignment()
 
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
-        auto transform = Groom::get_center_transform(meshes[i]);
-
+        auto transform = vtkSmartPointer<vtkTransform>::New();
+        Groom::add_center_transform(transform, meshes[i]);
         // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
         size_t domain = num_domains; //end
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transform;
-
-        subject->set_groomed_transforms(groomed_transforms);
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
   }
@@ -584,16 +550,9 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       }
 
       auto transform = createMeshTransform(matrix);
-      auto center = target.centerOfMass();
       transform->PostMultiply();
-      transform->Translate(-center[0], -center[1], -center[2]);
-
-      std::vector<double> groomed_transform;
-
-      for (int i = 0; i < 16; i++) {
-        groomed_transform.push_back(transform->GetMatrix()->GetData()[i]);
-      }
-      transforms[i] = groomed_transform;
+      Groom::add_center_transform(transform, target);
+      transforms[i] = ProjectUtils::convert_transform(transform);
     }
   });
   return transforms;
@@ -602,33 +561,39 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
 //---------------------------------------------------------------------------
 std::vector<double> Groom::get_identity_transform()
 {
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
-  return Groom::convert_transform(transform);
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
+  return ProjectUtils::convert_transform(transform);
 }
 
 //---------------------------------------------------------------------------
-std::vector<double> Groom::get_center_transform(const Mesh &mesh)
+void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image &image)
 {
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
-
-  auto diff = mesh.centerOfMass();
-  itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-  tform[0] = -diff[0];
-  tform[1] = -diff[1];
-  tform[2] = -diff[2];
-  transform->SetTranslation(tform);
-  return Groom::convert_transform(transform);
+  auto com = image.centerOfMass();
+  transform->Translate(-com[0],-com[1],-com[2]);
 }
 
 //---------------------------------------------------------------------------
-std::vector<double> Groom::convert_transform(AffineTransform::Pointer transform)
+void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh &mesh)
 {
-  std::vector<double> groomed_transform;
-  auto transform_params = transform->GetParameters();
-  for (size_t i = 0; i < transform_params.size(); i++) {
-    groomed_transform.push_back(transform_params[i]);
+  auto com = mesh.centerOfMass();
+  transform->Translate(-com[0],-com[1],-com[2]);
+}
+
+
+//---------------------------------------------------------------------------
+void Groom::add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string &reflect_axis)
+{
+  Vector scale(makeVector({1, 1, 1}));
+  if (reflect_axis == "X") {
+    scale[Axis::X] = -1;
   }
-  return groomed_transform;
+  else if (reflect_axis == "Y") {
+    scale[Axis::Y] = -1;
+  }
+  else if (reflect_axis == "Z") {
+    scale[Axis::Z] = -1;
+  }
+  transform->Scale(scale[0], scale[1], scale[2]);
 }
+//---------------------------------------------------------------------------
