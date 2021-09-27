@@ -21,6 +21,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
+#include <vtkReverseSense.h>
 
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
@@ -35,6 +36,10 @@ Viewer::Viewer()
 {
 
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
+  this->reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
+  this->reverse_sphere_->SetInputConnection(this->sphere_source_->GetOutputPort());
+  this->reverse_sphere_->ReverseNormalsOff();
+  this->reverse_sphere_->ReverseCellsOn();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->surface_lut_->SetTableRange(0, 1);
@@ -541,8 +546,16 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      actor->SetUserTransform(this->get_transform(this->visualizer_->get_alignment_domain(), i));
-
+      auto transform = this->get_transform(this->visualizer_->get_alignment_domain(), i);
+      if (Viewer::is_reverse(transform)) { // if it's been reflected we need to reverse
+        vtkSmartPointer<vtkReverseSense> reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
+        reverse_filter->SetInputData(poly_data);
+        reverse_filter->ReverseNormalsOff();
+        reverse_filter->ReverseCellsOn();
+        reverse_filter->Update();
+        poly_data = reverse_filter->GetOutput();
+      }
+      actor->SetUserTransform(transform);
       mapper->SetInputData(poly_data);
 
       int domain_scheme = (this->scheme_ + i) % this->color_schemes_.size();
@@ -724,21 +737,30 @@ void Viewer::update_points()
 
   //this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
 
+  bool reverse = false;
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
       this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
     if (this->visualizer_->get_center()) {
-      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment(alignment_domain));
+      auto transform = this->shape_->get_alignment(alignment_domain);
+      reverse = Viewer::is_reverse(transform);
+      this->glyph_actor_->SetUserTransform(transform);
     }
     else {
       if (!this->shape_->has_alignment()) {
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
         transform->DeepCopy(this->shape_->get_original_transform());
         transform->Inverse();
+        reverse = Viewer::is_reverse(transform);
         this->glyph_actor_->SetUserTransform(transform);
       }
     }
   }
 
+  if (reverse) {
+    this->glyphs_->SetSourceConnection(this->reverse_sphere_->GetOutputPort());
+  } else {
+    this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+  }
   this->glyph_points_->Modified();
 }
 
@@ -772,6 +794,7 @@ void Viewer::update_actors()
 
   if (this->show_surface_ && this->meshes_.valid()) {
     for (int i = 0; i < this->number_of_domains_; i++) {
+      this->surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       this->renderer_->AddActor(this->surface_actors_[i]);
     }
   }
@@ -952,5 +975,17 @@ void Viewer::initialize_surfaces()
 vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int domain)
 {
   return this->visualizer_->get_transform(this->shape_, alignment_domain, domain);
+}
+
+//-----------------------------------------------------------------------------
+bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform)
+{
+  bool reverse = false;
+  for (int i=0;i<3;i++) {
+    if (transform->GetScale()[i] < 0) {
+      reverse = true;
+    }
+  }
+  return reverse;
 }
 }
