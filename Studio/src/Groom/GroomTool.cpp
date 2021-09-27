@@ -68,10 +68,24 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
   connect(ui_->isotropic_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
-  connect(ui_->reflect_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
-  connect(ui_->reflect_column, qOverload<const QString&>(
-            &QComboBox::currentIndexChanged), this, &GroomTool::update_reflect_choices);
+  connect(ui_->reflect_checkbox, &QCheckBox::stateChanged, this, &GroomTool::reflect_checkbox_changed);
+  connect(ui_->reflect_checkbox_mesh, &QCheckBox::stateChanged, this, &GroomTool::reflect_checkbox_changed);
+
+  connect(ui_->reflect_column, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_column_changed);
+  connect(ui_->reflect_column_mesh, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_column_changed);
+
+  connect(ui_->reflect_choice, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_choice_changed);
+  connect(ui_->reflect_choice_mesh, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_choice_changed);
+
+  connect(ui_->reflect_axis, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_axis_changed);
+  connect(ui_->reflect_axis_mesh, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::reflect_axis_changed);
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -171,6 +185,8 @@ void GroomTool::update_reflect_columns()
   if (reflect_columns != this->reflect_columns_) {
     this->ui_->reflect_column->clear();
     this->ui_->reflect_column->addItems(reflect_columns);
+    this->ui_->reflect_column_mesh->clear();
+    this->ui_->reflect_column_mesh->addItems(reflect_columns);
   }
   this->reflect_columns_ = reflect_columns;
 }
@@ -185,6 +201,7 @@ void GroomTool::update_reflect_choices()
   auto rows = project->get_string_column(column.toStdString());
 
   ui_->reflect_choice->clear();
+  ui_->reflect_choice_mesh->clear();
   QStringList list;
   for (int row = 0; row < rows.size(); row++) {
     list << QString::fromStdString(rows[row]);
@@ -192,6 +209,7 @@ void GroomTool::update_reflect_choices()
   list.removeDuplicates();
   for (auto item : list) {
     ui_->reflect_choice->addItem(item);
+    ui_->reflect_choice_mesh->addItem(item);
   }
 }
 
@@ -260,9 +278,13 @@ void GroomTool::set_ui_from_params(GroomParameters params)
 
   ui_->crop_checkbox->setChecked(params.get_crop());
   ui_->reflect_checkbox->setChecked(params.get_reflect());
+  ui_->reflect_checkbox_mesh->setChecked(params.get_reflect());
   ui_->reflect_column->setCurrentText(QString::fromStdString(params.get_reflect_column()));
+  ui_->reflect_column_mesh->setCurrentText(QString::fromStdString(params.get_reflect_column()));
   ui_->reflect_choice->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
+  ui_->reflect_choice_mesh->setCurrentText(QString::fromStdString(params.get_reflect_choice()));
   ui_->reflect_axis->setCurrentText(QString::fromStdString(params.get_reflect_axis()));
+  ui_->reflect_axis_mesh->setCurrentText(QString::fromStdString(params.get_reflect_axis()));
 
   ui_->resample_checkbox->setChecked(params.get_resample());
   ui_->isotropic_checkbox->setChecked(params.get_isotropic());
@@ -333,7 +355,6 @@ void GroomTool::store_params()
   params.set_reflect_column(ui_->reflect_column->currentText().toStdString());
   params.set_reflect_choice(ui_->reflect_choice->currentText().toStdString());
   params.set_reflect_axis(ui_->reflect_axis->currentText().toStdString());
-
 
   params.set_resample(ui_->resample_checkbox->isChecked());
   params.set_isotropic(ui_->isotropic_checkbox->isChecked());
@@ -515,6 +536,36 @@ void GroomTool::alignment_option_changed(int index)
 }
 
 //---------------------------------------------------------------------------
+void GroomTool::reflect_checkbox_changed(int state)
+{
+  ui_->reflect_checkbox->setChecked(state);
+  ui_->reflect_checkbox_mesh->setChecked(state);
+  update_ui();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::reflect_column_changed(int index)
+{
+  ui_->reflect_column->setCurrentIndex(index);
+  ui_->reflect_column_mesh->setCurrentIndex(index);
+  this->update_reflect_choices();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::reflect_choice_changed(int index)
+{
+  ui_->reflect_choice->setCurrentIndex(index);
+  ui_->reflect_choice_mesh->setCurrentIndex(index);
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::reflect_axis_changed(int index)
+{
+  ui_->reflect_axis->setCurrentIndex(index);
+  ui_->reflect_axis_mesh->setCurrentIndex(index);
+}
+
+//---------------------------------------------------------------------------
 void GroomTool::fill_holes_changed(int state)
 {
   ui_->fill_holes_checkbox->setChecked(state);
@@ -570,6 +621,9 @@ void GroomTool::update_ui()
   ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_choice_mesh->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_column_mesh->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_axis_mesh->setEnabled(ui_->reflect_checkbox->isChecked());
 }
 //---------------------------------------------------------------------------
 }

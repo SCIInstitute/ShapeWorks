@@ -69,6 +69,12 @@ public Q_SLOTS:
   void alignment_checkbox_changed(int state);
   void alignment_option_changed(int index);
 
+  void reflect_checkbox_changed(int state);
+  void reflect_column_changed(int index);
+  void reflect_choice_changed(int index);
+  void reflect_axis_changed(int index);
+
+
   void fill_holes_changed(int state);
 
   //! Run groom tool
