@@ -144,7 +144,9 @@ std::vector<std::string> Project::get_matching_columns(const std::string& prefix
 std::vector<std::string> Project::get_matching_columns(const std::vector<std::string> prefixes)
 {
   for (auto prefix : prefixes) {
-    this->matching_columns_.insert(prefix);
+    if (prefix != "") {
+      this->matching_columns_.insert(prefix);
+    }
   }
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -212,6 +214,7 @@ void Project::load_subjects()
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
+  auto all_columns = this->get_headers();
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -267,6 +270,14 @@ void Project::load_subjects()
       extra_values[elem] = value;
     }
     subject->set_extra_values(extra_values);
+
+    std::map<std::string, std::string> table_values;
+    for (auto elem : this->get_headers()) {
+      auto value = this->get_value(this->get_index_for_column(elem),
+                                   i + 2); //+1 for header, +1 for 1-based index
+      table_values[elem] = value;
+    }
+    subject->set_table_values(table_values);
 
     this->segmentations_present_ = !seg_columns.empty();
     this->groomed_present_ = !groomed_columns.empty();

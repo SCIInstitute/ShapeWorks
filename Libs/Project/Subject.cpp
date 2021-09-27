@@ -156,6 +156,18 @@ void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 }
 
 //---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_table_values() const
+{
+  return this->table_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_table_values(std::map<std::string, std::string> table_values)
+{
+  this->table_values_ = table_values;
+}
+
+//---------------------------------------------------------------------------
 std::string Subject::get_display_name()
 {
   return this->display_name_;

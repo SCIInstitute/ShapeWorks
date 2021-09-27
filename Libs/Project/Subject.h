@@ -88,6 +88,10 @@ public:
   std::map<std::string, std::string> get_extra_values() const;
   void set_extra_values(std::map<std::string, std::string> extra_values);
 
+  //! Get all table values
+  std::map<std::string, std::string> get_table_values() const;
+  void set_table_values(std::map<std::string, std::string> table_values);
+
   //! Get the display name
   std::string get_display_name();
   //! Set the display name
@@ -110,5 +114,6 @@ private:
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
+  std::map<std::string, std::string> table_values_;
 };
 }
