@@ -3,7 +3,7 @@
 ## What is the Use Case?
 
 This use case demonstrates using ShapeWorks tools to perform optimization for N-dimensional contours.
-Contours are represented as a series of lines, that may be a closed loop. We consider 2D shapes generated from the supershape equation, with a single parameter sampled from a chi-squared distribution.
+Contours are represented as a series of lines, that may be a closed loop. We consider 2D shapes generated from [the supershape equation](http://paulbourke.net/geometry/supershape/), with a single parameter sampled from a chi-squared distribution.
 Here is an example of the data:
 ![Supershapes contour](../../img/use-cases/supershapes_contour.png)
 
