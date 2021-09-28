@@ -171,6 +171,9 @@ private:
   std::set<std::string> matching_columns_;
   std::vector<std::string> mesh_scalars_;
 
+  std::vector<std::string> feature_names_;
+  bool feature_names_set_{false};
+
   std::vector<std::string> input_prefixes_;
 
   const int supported_version_{2};
