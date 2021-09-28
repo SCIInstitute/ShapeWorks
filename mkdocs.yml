@@ -66,8 +66,8 @@ nav:
    - Contour Based Use Cases:
       - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
    - Constraints Based Use Cases:
-      - 'Ellipsoid: Shape Model with Cutting Planes':                'use-cases/contraint-based/ellipsoid-cutting-planes.md'
-      - 'Femur:Shape Model with Cutting Planes':                     'use-cases//contraint-based/femur-cutting-planes.md'
+      - 'Ellipsoid: Shape Model with Cutting Planes':                'use-cases/constraint-based/ellipsoid-cutting-planes.md'
+      - 'Femur:Shape Model with Cutting Planes':                     'use-cases//constraint-based/femur-cutting-planes.md'
    - Statistics Based Use Cases:
       - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'   
       - 'Femur: Group Difference Statistics in Python':              'use-cases/stats-based/femur-pvalues.md'

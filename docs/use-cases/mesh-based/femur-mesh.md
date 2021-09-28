@@ -47,10 +47,10 @@ Note `domain_type` is 'mesh'.
 
 Here is the mean shape of the optimized shape mode using single-scale optimization.
 
-![Femur Mean Shape](../img/use-cases/femur-mesh/mean.png)
+![Femur Mean Shape](../../img/use-cases/femur-mesh/mean.png)
 
 Here are femur samples with their optimized correspondences.
-![Femur Samples](../img/use-cases/femur-mesh/samples.png)
+![Femur Samples](../../img/use-cases/femur-mesh/samples.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 
