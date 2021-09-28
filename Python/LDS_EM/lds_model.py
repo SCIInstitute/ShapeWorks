@@ -193,6 +193,17 @@ class LDS_Model():
         self.J_matrix = J_matrix
 
     '''
+    Get expections needed for M step
+    '''
+    def _expectations(self):
+        # self.E_h = self.mu_smooth
+        # self.E_h_ht = [self.sigma_smooth[t] + np.matmul(self.mu_smooth[t], self.mu_smooth[t].T) for t in range(self.T)]
+        # self.E_h_h1t = [np.matmul(self.J[t-1], self.sigma_smooth[t]) +\
+        #                 np.matmul(np.expand_dims(self.mu_smooth[t], 1), np.expand_dims(self.mu_smooth[t-1], 1).T) for t in range(1, self.T)]
+        # self.E_h1_ht = [np.matmul(self.J[t], self.sigma_smooth[t-1]) + np.matmul(np.expand_dims(self.mu_smooth[t-1], 1), np.expand_dims(self.mu_smooth[t], 1).T) for t in range(1, self.T)]
+        pass
+        
+    '''
     Sample observation using states and observation statistics
     '''
     def sample_observation(self):
@@ -227,13 +238,6 @@ class LDS_Model():
                     for t in range(1, self.T)])
         # eq:completeLL
         self.ll = ll_prior + ll_state + ll_obs
-
-    '''
-    Get expections needed for M step
-    '''
-    def _expectations(self):
-       # TODO
-       pass
 
     '''
     M_step helper: update observation matrix
