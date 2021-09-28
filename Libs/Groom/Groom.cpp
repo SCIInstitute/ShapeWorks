@@ -422,7 +422,12 @@ bool Groom::run_alignment()
       global_icp = true;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-        meshes.push_back(this->get_mesh(i, domain));
+        auto mesh = this->get_mesh(i, domain);
+
+        auto list = subjects[i]->get_groomed_transforms()[domain];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        mesh.applyTransform(transform);
+        meshes.push_back(mesh);
       }
 
       size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
@@ -431,14 +436,14 @@ bool Groom::run_alignment()
 
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
-        // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transforms[i];
-        subject->set_groomed_transforms(groomed_transforms);
+        auto list = subjects[i]->get_groomed_transforms()[domain];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        transform->PostMultiply();
+        transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
+
+        // store transform
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
   }
@@ -451,6 +456,12 @@ bool Groom::run_alignment()
       for (size_t domain = 1; domain < num_domains; domain++) {
         mesh += this->get_mesh(i, domain); // combine
       }
+
+      // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
+      auto list = subjects[i]->get_groomed_transforms()[0];
+      vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+      mesh.applyTransform(transform);
+
       meshes.push_back(mesh);
     }
 
@@ -462,15 +473,15 @@ bool Groom::run_alignment()
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-
         size_t domain = num_domains; //end
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transforms[i];
 
-        subject->set_groomed_transforms(groomed_transforms);
+        // grab the first domain's initial transform (e.g. potentially reflect) and combine
+        auto list = subjects[i]->get_groomed_transforms()[0];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        transform->PostMultiply();
+        transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
+
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
     else {   // just center
