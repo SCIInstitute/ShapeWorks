@@ -1,7 +1,7 @@
 # Femur Shape Model Directly from Images
 
 ## What is the Use Case? 
-The `deep_ssm` use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [femur use case](../mesh-based/femur.md).
+The `deep_ssm` use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [femur use case](../mesh-based/femur.md). Note running this use case does not require running the [femur use case](../mesh-based/femur.md), the required data will automatically be downloaded.
 
 !!! danger "On CUDA"
     This use case uses Pytorch and requires a GPU to run in a timely manner. When you source `install_shapeworks.sh`, it detects if you have a GPU and installs the version of Pytorch compatible with your version of CUDA. 
