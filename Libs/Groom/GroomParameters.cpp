@@ -389,7 +389,11 @@ void GroomParameters::set_iso_spacing(double spacing)
 //---------------------------------------------------------------------------
 std::vector<double> GroomParameters::get_spacing()
 {
-  return this->params_.get(Keys::SPACING, Defaults::spacing);
+  std::vector<double> spacing = this->params_.get(Keys::SPACING, Defaults::spacing);
+  if (spacing.size() != 3) {
+    spacing = Defaults::spacing;
+  }
+  return spacing;
 }
 
 //---------------------------------------------------------------------------
