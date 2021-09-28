@@ -9,7 +9,7 @@ There are three datasets available for this use case:
 * ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radii in all three directions
 * ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid
 
-By default, the use case runs on the ellipsoid_joint_rotation dataset.
+By default, the use case runs on the ellipsoid_joint_rotation dataset. The dataset can be changed by changing the name and output folder at the beginning of the Python script. 
  
 ## Grooming Steps
 This is how the segmentations in the dataset look before grooming.Here it can been seen that the ellipsoids have random centers andn orientations.![This is how the segmentations in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_pre_groom.png)

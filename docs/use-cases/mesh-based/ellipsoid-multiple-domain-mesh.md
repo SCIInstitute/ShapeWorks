@@ -10,7 +10,7 @@ There are three datasets available for this use case:
 * ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radiis in all 3 directions
 * ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid
 
-By defualt, the use case runs on the ellipsoid_joint_rotation dataset.
+By defualt, the use case runs on the ellipsoid_joint_rotation dataset. The dataset can be changed by changing the name and output folder at the beginning of the Python script. 
 
 ## Grooming Data
 
