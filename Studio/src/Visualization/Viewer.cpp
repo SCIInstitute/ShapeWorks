@@ -982,7 +982,7 @@ bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform)
 {
   bool reverse = false;
   for (int i=0;i<3;i++) {
-    if (transform->GetScale()[i] < 0) {
+    if (transform && transform->GetScale()[i] < 0) {
       reverse = true;
     }
   }

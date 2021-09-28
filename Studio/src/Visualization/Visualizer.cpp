@@ -478,7 +478,7 @@ bool Visualizer::get_uniform_feature_range(void)
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain)
 {
-  vtkSmartPointer<vtkTransform> transform;
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 
   if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->get_center()) {
