@@ -442,7 +442,13 @@ def Run_Pipeline(args):
         point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
-        print("Done with tiny test")
+        # compare against baseline
+        ps1 = sw.ParticleSystem(glob.glob("Output/left_atrium/shape_models/32/*.particles"))
+        ps2 = sw.ParticleSystem(glob.glob("Data/Verification/left_atrium/tiny_test/*.particles"))
+        if not ps1.Compare(ps2):
+            print("Error: particle system did not match ground truth")
+            exit(-1)
+        print("Done with tiny test, verification succeeded.")
         exit()
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
