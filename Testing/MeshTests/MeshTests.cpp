@@ -9,24 +9,40 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, geodesicTest)
+TEST(MeshTests, geodesicTest1)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  double dist = ellipsoid.geodesicDistance(10, 20);
 
-  auto start1 = shapeworks::ShapeworksUtils::now();
+  ASSERT_TRUE(std::abs(dist - 1.64581) < 1e-4);
+}
+
+TEST(MeshTests, geodesicTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
   auto distField = femur.geodesicDistance(femur.getPoint(50));
-  auto end1 = shapeworks::ShapeworksUtils::now();
-  std::cout << "Using VtkMeshWrapper: " << shapeworks::ShapeworksUtils::elapsed(start1, end1) << "\n";
+  femur.setField("GeodesicDistanceToLandmark", distField);
 
-  auto start2 = shapeworks::ShapeworksUtils::now();
-  for (int i = 0; i < femur.numPoints(); i++)
-  {
-    double val1 = femur.geodesicDistance(50, i);
-  }
-  auto end2 = shapeworks::ShapeworksUtils::now();
-  std::cout << "Using igl: " << shapeworks::ShapeworksUtils::elapsed(start2, end2) << "\n";
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
 
-  ASSERT_TRUE(true);
+  ASSERT_TRUE(femur.compareField(ground_truth, "GeodesicDistanceToLandmark"));
+}
+
+TEST(MeshTests, geodesicTest3)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+
+  std::vector<Point3> curve;
+  curve.push_back(ellipsoid.getPoint(100));
+  curve.push_back(ellipsoid.getPoint(200));
+  curve.push_back(ellipsoid.getPoint(300));
+
+  auto distField = ellipsoid.geodesicDistance(curve);
+  ellipsoid.setField("GeodesicDistanceToCurve", distField);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic2.vtk"));
+
+  ASSERT_TRUE(ellipsoid.compareField(ground_truth, "GeodesicDistanceToCurve"));
 }
 
 TEST(MeshTests, curvatureTest1)
@@ -139,36 +155,6 @@ TEST(MeshTests, generateNormalsTest)
 
   ASSERT_TRUE(mesh1.compareField(ground_truth1, "Normals") && mesh2.compareField(ground_truth2, "Normals"));
 }
-
-TEST(MeshTests, geodesicTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  double dist = femur.geodesicDistance(10, 20);
-
-  ASSERT_TRUE(std::abs(dist - 1.0083) < 1e-4);
-}
-
-// TODO: Finish this test
-// TEST(MeshTests, geodesicTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-//   auto distField = femur.geodesicDistance(femur.getPoint(50));
-//   // femur.setField("GeodesicDistanceTo", dist);
-//   for (int i = 0; i < femur.numPoints(); i++)
-//   {
-//     double val1 = femur.geodesicDistance(50, i);
-//     double val2 = distField->GetTuple1(i);
-//     if (std::abs(val1 - val2) < 1e-4)
-//     {
-//       printf("%ith values not equal (%0.8f != %0.8f)\n", i, val1, val2);
-//     }
-//   }
-
-//   // Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
-
-//   // ASSERT_TRUE(femur.compareField(ground_truth, "GeodesicDistanceTo"));
-//   ASSERT_TRUE(true);
-// }
 
 TEST(MeshTests, readFailTest)
 {

@@ -18,7 +18,6 @@ public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
   enum CurvatureType { Principal, Gaussian, Mean };
-  enum GeodesicMethod { Heat, Exact };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -103,13 +102,13 @@ public:
   int closestPointId(const Point3 point);
 
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
-  double geodesicDistance(int source, int target, const GeodesicMethod method = Heat);
+  double geodesicDistance(int source, int target);
 
   /// computes geodesic distance between a point (landmark) and each vertex on mesh
-  Field geodesicDistance(const Point3 landmark, const GeodesicMethod method = Heat);
+  Field geodesicDistance(const Point3 landmark);
 
   /// computes geodesic distance between a set of points (curve) and each vertex on mesh
-  Field geodesicDistance(const std::vector<Point3> curve, const GeodesicMethod method = Heat);
+  Field geodesicDistance(const std::vector<Point3> curve);
 
   /// computes and adds curvature (principal (default) or gaussian or mean)
   Field curvature(const CurvatureType type = Principal);

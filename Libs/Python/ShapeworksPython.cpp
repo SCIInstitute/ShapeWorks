@@ -967,13 +967,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .export_values();
   ;
 
-  // Mesh::GeodesicMethod
-  py::enum_<Mesh::GeodesicMethod>(mesh, "GeodesicMethod")
-  .value("Heat", Mesh::GeodesicMethod::Heat)
-  .value("Exact", Mesh::GeodesicMethod::Exact)
-  .export_values();
-  ;
-
   // Mesh bindings
   mesh.def(py::init<const std::string &>())
 
@@ -1123,13 +1116,13 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a)
 
   .def("geodesicDistance",
-       py::overload_cast<int, int, Mesh::GeodesicMethod>(&Mesh::geodesicDistance),
+       py::overload_cast<int, int>(&Mesh::geodesicDistance),
        "computes geodesic distance between two vertices (specified by their indices) on mesh",
-       "source"_a, "target"_a, "method"_a=Mesh::GeodesicMethod::Heat)
+       "source"_a, "target"_a)
 
   .def("geodesicDistance",
-       [](Mesh &mesh, const std::vector<double> p, const Mesh::GeodesicMethod method) -> decltype(auto) {
-          auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}), method);
+       [](Mesh &mesh, const std::vector<double> p) -> decltype(auto) {
+          auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
           const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
                                                  static_cast<unsigned long>(array->GetNumberOfComponents()),
                                                  1};
@@ -1145,16 +1138,16 @@ PYBIND11_MODULE(shapeworks_py, m)
                          vtkarr->GetVoidPointer(0));          // copy2
        },
        "computes geodesic distance between a point (landmark) and each vertex on mesh",
-       "landmark"_a, "method"_a=Mesh::GeodesicMethod::Heat)
+       "landmark"_a)
 
   .def("geodesicDistance",
-       [](Mesh &mesh, const std::vector<std::vector<double>> p, const Mesh::GeodesicMethod method) -> decltype(auto) {
+       [](Mesh &mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
           std::vector<Point> points;
           for (int i=0; i<p.size(); i++)
           {
             points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
           }
-          auto array = mesh.geodesicDistance(points, method);
+          auto array = mesh.geodesicDistance(points);
           const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
                                                  static_cast<unsigned long>(array->GetNumberOfComponents()),
                                                  1};
@@ -1170,7 +1163,7 @@ PYBIND11_MODULE(shapeworks_py, m)
                          vtkarr->GetVoidPointer(0));          // copy2
        },
        "computes geodesic distance between a set of points (curve) and all vertices on mesh",
-       "curve"_a, "method"_a=Mesh::GeodesicMethod::Heat)
+       "curve"_a)
 
   .def("distance",
        &Mesh::distance,
@@ -1261,7 +1254,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   //TODO: See github issue #966
   .def("setField",
-       [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
+       [](Mesh &mesh, std::string name, std::vector<double>& v) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
          arr->SetNumberOfValues(v.size());
          for (int i=0; i<v.size(); i++) {
@@ -1270,11 +1263,11 @@ PYBIND11_MODULE(shapeworks_py, m)
          return mesh.setField(name, arr);
        },
        "sets the given field for points with array",
-       "array"_a, "name"_a)
+       "name"_a, "array"_a)
 
   //TODO: See github issue #966
   .def("setField",
-       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
+       [](Mesh &mesh, std::string name, std::vector<std::vector<double>>& v) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
          arr->SetNumberOfComponents(3);
          arr->SetNumberOfTuples(v.size());
@@ -1284,7 +1277,7 @@ PYBIND11_MODULE(shapeworks_py, m)
          return mesh.setField(name, arr);
        },
        "sets the given field for points with array",
-       "array"_a, "name"_a)
+       "name"_a, "array"_a)
 
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {

@@ -40,7 +40,6 @@
 #include <vtkClipClosedSurface.h>
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
-#include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
 #include <igl/principal_curvature.h>
 #include <igl/cotmatrix.h>
@@ -518,45 +517,22 @@ int Mesh::closestPointId(const Point3 point)
   return closestPointId;
 }
 
-double Mesh::geodesicDistance(int source, int target, const GeodesicMethod method)
-{
-  Eigen::VectorXd d;
-
-  switch (method) {
-    case Heat:
-    {
-      VtkMeshWrapper wrap(this->mesh, true);
-      d[0] = wrap.ComputeDistance(source, -1, target, -1);
-      break;
-    }
-    case Exact:
-    {
-      Eigen::MatrixXd V = points();
-      Eigen::MatrixXi F = faces();
-      Eigen::VectorXd VS(1), VT(1);
-      VS[0] = source;
-      VT[0] = target;
-      Eigen::VectorXd FS, FT;
-      Eigen::VectorXd d;
-
-      igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
-      break;
-    }
-    default:
-      throw std::invalid_argument("Unknown Mesh::GeodesicMethod.");
-  }
-
-  return d[0];
-}
-
-Field Mesh::geodesicDistance(const Point3 landmark, const GeodesicMethod method)
+double Mesh::geodesicDistance(int source, int target)
 {
   VtkMeshWrapper wrap(this->mesh, true);
+  double distance = wrap.ComputeDistance(source, -1, target, -1);
 
+  return distance;
+}
+
+Field Mesh::geodesicDistance(const Point3 landmark)
+{
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
-  distance->SetName("GeodesicDistance");
+  distance->SetName("GeodesicDistanceToLandmark");
+
+  VtkMeshWrapper wrap(this->mesh, true);
 
   for (int i = 0; i < numPoints(); i++)
   {
@@ -566,12 +542,12 @@ Field Mesh::geodesicDistance(const Point3 landmark, const GeodesicMethod method)
   return distance;
 }
 
-Field Mesh::geodesicDistance(const std::vector<Point3> curve, const GeodesicMethod method)
+Field Mesh::geodesicDistance(const std::vector<Point3> curve)
 {
   vtkSmartPointer<vtkDoubleArray> minDistance = vtkSmartPointer<vtkDoubleArray>::New();
   minDistance->SetNumberOfComponents(1);
   minDistance->SetNumberOfTuples(numPoints());
-  minDistance->SetName("MinGeodesicDistanceToCurve");
+  minDistance->SetName("GeodesicDistanceToCurve");
 
   for (int i = 0; i < numPoints(); i++)
   {
