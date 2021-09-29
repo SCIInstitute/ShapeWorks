@@ -134,9 +134,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   // centering
   if (params.get_use_center()) {
     this->add_center_transform(transform, image);
-    this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // isolate
@@ -144,7 +142,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     this->isolate(image);
     this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // fill holes
@@ -152,15 +149,14 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     image.closeHoles();
     this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // crop
   if (params.get_crop()) {
     PhysicalRegion region = image.physicalBoundingBox(0.5);
     image.crop(region);
+    this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // autopad
@@ -169,10 +165,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     this->fix_origin(image);
     this->increment_progress();
   }
-
-
-
-
   if (this->abort_) { return false; }
 
   // antialias
@@ -180,7 +172,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     image.antialias(params.get_antialias_iterations());
     this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // resample
@@ -196,7 +187,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     v[2] = spacing[2];
     image.resample(v, Image::InterpolationType::Linear);
   }
-
   if (this->abort_) { return false; }
 
   // create distance transform
@@ -290,7 +280,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     // centering
     if (params.get_use_center()) {
       this->add_center_transform(transform, mesh);
-      this->increment_progress();
     }
   }
 
@@ -374,18 +363,27 @@ int Groom::get_total_ops()
   int num_tools = 0;
 
   auto domains = this->project_->get_domain_names();
+  auto subjects = this->project_->get_subjects();
 
   for (int i = 0; i < domains.size(); i++) {
 
     auto params = GroomParameters(this->project_, domains[i]);
 
-    num_tools += params.get_use_center() ? 1 : 0;
-    num_tools += params.get_isolate_tool() ? 1 : 0;
-    num_tools += params.get_fill_holes_tool() ? 1 : 0;
-    num_tools += params.get_auto_pad_tool() ? 1 : 0;
-    num_tools += params.get_antialias_tool() ? 1 : 0;
-    num_tools += params.get_fast_marching() ? 10 : 0;
-    num_tools += params.get_blur_tool() ? 1 : 0;
+    if (subjects[i]->get_domain_types()[i] == DomainType::Image) {
+      num_tools += params.get_isolate_tool() ? 1 : 0;
+      num_tools += params.get_fill_holes_tool() ? 1 : 0;
+      num_tools += params.get_crop() ? 1 : 0;
+      num_tools += params.get_auto_pad_tool() ? 1 : 0;
+      num_tools += params.get_antialias_tool() ? 1 : 0;
+      num_tools += params.get_resample() ? 1 : 0;
+      num_tools += params.get_fast_marching() ? 10 : 0;
+      num_tools += params.get_blur_tool() ? 1 : 0;
+    }
+
+    if (subjects[i]->get_domain_types()[i] == DomainType::Mesh) {
+      num_tools += params.get_fill_holes_tool() ? 1 : 0;
+      num_tools += params.get_mesh_smooth() ? 1 : 0;
+    }
   }
 
   return num_subjects * num_tools;
