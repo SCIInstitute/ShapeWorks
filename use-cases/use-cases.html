@@ -151,49 +151,101 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="use-cases.html">Getting Started with Use Cases</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#downloading-use-case-dataset">Downloading Use Case Dataset</a>
+    <li class="toctree-l2"><a class="reference internal" href="#what-is-a-use-case">What is a Use Case?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-a-use-case">Running A Use Case</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#downloaded-data">Downloaded Data</a>
+    <li class="toctree-l3"><a class="reference internal" href="#use-case-data">Use Case Data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-cases-arguments">Use Cases Arguments</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#-use_subsample">--use_subsample</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#-skip_grooming">--skip_grooming</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#-groom_images">--groom_images</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#-use_single_scale">--use_single_scale</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#-mesh_mode">--mesh_mode</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#-tiny_test">--tiny_test</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#running-use-case">Running Use Case</a>
+        </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#running-subsequent-analysis">Running Subsequent Analysis</a>
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-workflow-overview">Use Case Workflow Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#grooming">Grooming</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dataset-guidelines">Dataset Guidelines</a>
+    <li class="toctree-l3"><a class="reference internal" href="#optimization">Optimization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#analysis-of-results">Analysis of Results</a>
+    </li>
+        </ul>
     </li>
     </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid.html">Ellipsoid: Basic Example</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="constraint-based/ellipsoid-cutting-planes.md">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur.html">Femur: SSM from Meshes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur-cutting-planes.html">Femur with Cutting Planes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="lumps.html">Lumps: SSM directly from meshes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -281,97 +333,120 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="use-cases">Use Cases</h1>
-<h2 id="downloading-use-case-dataset">Downloading Use Case Dataset</h2>
-<p>Use Case datasets such as the ellipsoid and left atrium datasets will be downloaded
-automatically from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.
-When running one of the use case example scripts, you will see something like this:</p>
-<div class="highlight"><pre><span></span><code>Can&#39;t find ellipsoid.zip in the current directory.
-.___________________________.
-|                           |
-|     ShapeWorks Portal     |
-|___________________________|
-
-Downloading the ellipsoid dataset from the ShapeWorks Portal
-Login info is not found in the current directory.
-New ShapeWorks Portal users: Register an account at 
-http://cibc1.sci.utah.edu:8080/#?dialog=register
-Returning ShapeWorks Portal users: Enter your username and password
-
-Username: 
-</code></pre></div>
-<p><img alt="ShapeWorks Portal Account Registration Screenshot" src="../img/use-cases/ShapeWorksPortalAccountRegistration.png" /></p>
+                <h1 id="getting-started-with-use-cases">Getting Started with Use Cases</h1>
+<h2 id="what-is-a-use-case">What is a Use Case?</h2>
+<p>Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a> and downloads automatically when the use case runs.</p>
+<p>Most use cases demomstrates the <a href="../getting-started/workflow.html">Shape Modeling Workflow</a>:</p>
+<ol>
+<li><a href="../workflow/groom.html">Grooming</a> a dataset for optimization.</li>
+<li><a href="../workflow/optimize.html">Optimizing</a> a correpsondence model on the groomed data.</li>
+<li><a href="../workflow/analyze.html">Analyzing</a> the correspondence model.</li>
+</ol>
+<p>However, some do not involve grooming, and some only demonstrate the functionality of ShapeWorks statistical tools. For an overview and brief description of the available use cases, see <a href="../getting-started/examples.html">Examples</a>.</p>
+<h2 id="running-a-use-case">Running A Use Case</h2>
+<p>The use cases are located at: <code>Examples/Python/</code>. To run a use case, run the following commands with the <code>shapeworks</code> environment activated:
+<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
+$ python RunUseCase.py [use case name]
+</code></pre></div></p>
+<p>To see the names currently supported use cases and the complete list of optional arguments, run:
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Using <strong>bash</strong> on Windows</p>
+<p>Windows also has several Unix shells such as <strong>git-bash</strong> available. These also work with <code>conda activate shapeworks</code> in the same way. However, there is one crucial issue: running Python scripts requires prefixing with <code>winpty</code>. For example, <code>winpty python RunUseCase.py ...</code>.</p>
+</div>
+<p>When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a <em>free</em> ShapeWorks account by visiting the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
-<p>Do not use the same password as for your bank account or email!  </p>
+<p>Do not use the same password as for your bank account or email.</p>
 </div>
-<p>After registering a free account, you can log in from within the script.</p>
-<div class="highlight"><pre><span></span><code>Username: joeshmoe
-Password:
-[1/1 MB]
-joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
-</code></pre></div>
-<h3 id="downloaded-data">Downloaded Data</h3>
-<p>When a use case is run, it downloads the appropriate zipped data to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all of the output from running the use case is also saved.</p>
-<p>The downloaded data includes the raw data the use case starts with (segmentations, meshes, and/or images) as well as the output from the final grooming step of the use case (i.e. distance transforms) and the shape model generated from running the use case (particle files and xmls). </p>
-<p>To visualize a shape model, open the included "analyze.xml" file can be opened in Studio. 
+<p>After registering a free account, you can log in from within the script. 
+Note: You are only required to enter your credentials the first time you run a use case. </p>
+<h3 id="use-case-data">Use Case Data</h3>
+<p>When a use case runs, the appropriate zipped data downloads to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all the output from running the use case is also saved.</p>
+<p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and XML). </p>
+<p>An "analyze.xml" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
 <div class="highlight"><pre><span></span><code>$ cd Examples/Python/Output/ellipsoid/
 $ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
 </code></pre></div></p>
-<h2 id="running-use-case">Running Use Case</h2>
-<p>The use cases are located at: <code>Examples/Python/</code>. When a use case is run, the dataset is automatically downloaded. </p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>You must first register of a <em>free</em> ShapeWorks account by visiting the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</p>
-</div>
-<p>To run a use case, run the following command from the <code>Examples/Python/</code> directory:</p>
-<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py [insert name of use case here]
-</code></pre></div>
-<p>For names for the use cases that are currently released and the full list of optional tags, run:</p>
+<h3 id="use-cases-arguments">Use Cases Arguments</h3>
+<p>When calling <code>RunUseCase.py</code>, various optional arguments can be used. 
+To see the complete list of supported arguments from the command line, run:
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Using <strong>bash</strong> on Windows</p>
-<p>Windows also has a number of unix shells such as <strong>git-bash</strong> available. These also work with <code>conda activate shapeworks</code> in the same way. However, there is one important issue: running Python scripts requires prefixing with <code>winpty</code>. For example, <code>winpty python RunUseCase.py ...</code>.</p>
-</div>
-<ul>
-<li><code>--use_subsample</code>: To run on a subset of the data in the use case, add the <code>--use_subsample</code> tag followed by the <code>--num_subsample</code> tag with the number of samples you wish to use. For example:</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --use_subsample --num_subsample 10
+A description of each optional argument and how to use it is provided below.</p>
+<h4 id="-use_subsample">--use_subsample</h4>
+<p>Users can run a use case on a subset of the data by adding the <code>--use_subsample</code> argument followed by the <code>--num_subsample</code> argument with the number of samples you wish to use. This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is determined by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code>, it will use the default number of subsamples which is 3. Note the entire dataset will still be downloaded to run the clustering.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --use_subsample --num_subsample 10
 </code></pre></div>
-<p>This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code> it will use the default number of subsamples which is 3.In order to run the clustering, the entire dataset will be downloaded.</p>
-<ul>
-<li><code>--skip_grooming</code>: When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add <code>--skip_grooming</code> tag.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --skip_grooming
+<h4 id="-skip_grooming">--skip_grooming</h4>
+<p>When this argument is used, the grooming steps (if any) are skipped. Instead the expected groomed output from the downloaded .zip folder is used in optimization. This arguement is useful a user wishes to start with the optimization step.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --skip_grooming
 </code></pre></div>
-<ul>
-<li><code>--groom_images</code>: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the images through the grooming process with the segmentation, the <code>--groom_images</code> tag must be used. Note if this tag is used with a use case that does not have images, a warning will be printed and the tag will be ignored.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --groom_images
+<h4 id="-groom_images">--groom_images</h4>
+<p>Some use case datasets include both segmentations and corresponding unsegmented imaging data. In these cases, when the '--groom_images' argument is used, the images are carried through the grooming process with the segmentations so that they remain in alignment. This is useful if the user wishes to analyze the correspondence model in relation to unsegmented images.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --groom_images
 </code></pre></div>
-<ul>
-<li><code>--use_single_scale</code>: Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. The multi-scale triggers both the initialization and optimization stages, while the single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). The default mode is mutli-scale. To run single-scale, use the <code>--use_single_scale</code> tag.</li>
-</ul>
-<p><div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --use_single_scale
+<h4 id="-use_single_scale">--use_single_scale</h4>
+<p>Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. The multi-scale argument triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). </p>
+<p>The differences between <em>initialization</em> and <em>optimization</em> stages are: </p>
+<ol>
+<li>
+<p>How important the correspondence (inter-surface) objective is compared to the surface sampling (intra-surface) term using a relative weighting parameter. Hence, the  <code>initial_relative_weighting</code> parameter is the weight used in the initialization stage, and the <code>relative_weighting</code> is the weight used for the optimization stage.</p>
+</li>
+<li>
+<p>How the notion of correspondence (inter-surface) is quantified. In initialization, especially when we do not have enough particles to describe the geometry of each surface, we use mean energy (i.e., pushing all shapes in the shape space to the mean shape or, in other words, the covariance matrix is assumed to be identity). In optimization, we use the entropy of the distribution of the shapes (assuming Gaussian-distributed shapes), which is quantified based on the covariance matrix. In the multi-scale setting, we can use shape statistics at later scales using the <code>use_shape_statistics_after</code> parameter, where we have more particles that can reveal the covariance structure.The default mode is multi-scale. To run single-scale, use the <code>--use_single_scale</code> argument.</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --use_single_scale
 </code></pre></div>
-* <code>--mesh_mode</code>: Use cases that optimize on distance transforms can be run in mesh mode to optimize on meshes instead. When the <code>--mesh_mode</code> tag is used groomed distance transforms are converted to meshes (by extracting the isosurface at zero) and those meshes are passed to the optimizer. The <code>--mesh_mode</code> tag has no effect on mesh-based use cases.</p>
+<h4 id="-mesh_mode">--mesh_mode</h4>
+<p>Use cases that optimize on distance transforms can be run in mesh mode to optimize on meshes instead. When the <code>--mesh_mode</code> argument is used, groomed distance transforms are converted to meshes (by extracting the isosurface at zero), and those meshes are passed to the optimizer. The <code>--mesh_mode</code> argument does not affect mesh-based use cases.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of image-based use case here] --mesh_mode
 </code></pre></div>
-<ul>
-<li><code>--tiny_test</code>: Users can run a fast version of the use case by using the <code>--tiny_test tag</code>. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.For tiny test,only a subset of the data will be downloaded directly in the <code>Output</code> folder and no zip file will be donwloaded in the <code>Data</code> folder.If the data has already been unzipped in <code>Output</code> folder, no new data will be downloaded.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [insert name of use case here] --tiny_test
+<h4 id="-tiny_test">--tiny_test</h4>
+<p>Users can run a fast version of the use case using the <code>--tiny_test</code> argument. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to quickly test that use cases can run, not to create a good correspondence model. Only a subset of the data will be downloaded directly in the <code>Output</code> folder for the tiny test, and no zip file will be downloaded in the <code>Data</code> folder. No new data will be downloaded if the data has already been unzipped in the <code>Output</code> folder.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --tiny_test
 </code></pre></div>
-<h2 id="running-subsequent-analysis">Running Subsequent Analysis</h2>
-<p>To run ShapeWorks Studio again without running the full pipeline, you must first navigate to the <code>Examples/Python/</code> directory, and then run ShapeWorks Studio on the appropriate analysis XML file.  For example:</p>
-<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
-$ ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
+<h2 id="use-case-workflow-overview">Use Case Workflow Overview</h2>
+<p>The use cases which demomstrate the <a href="../getting-started/workflow.html">Shape Modeling Workflow</a> follow this general outline:</p>
+<h3 id="grooming"><a href="../workflow/groom.html">Grooming</a></h3>
+<p>Grooming involves pre-processing steps to prepare the data for optimization. This involves generating aligned distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes. The grooming steps are unique to each use case, but common steps are explained here: <a href="../workflow/groom.html#Common-Pre-Processing-Steps-for-Segmentations">Common Grooming Steps</a>.</p>
+<p>Note some use cases start with pre-aligned data that does not require grooming. </p>
+<h3 id="optimization"><a href="../workflow/optimize.html">Optimization</a></h3>
+<p>Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in a python dictionary which is used to generate a parameter XML file and optimization is run from the command line. </p>
+<p>Below is a list of the currently exposed algorithmic parameters in the use cases:
+<div class="highlight"><pre><span></span><code>{
+        &quot;number_of_particles&quot;: 1024,
+        &quot;use_shape_statistics_after&quot;: 32, 
+        &quot;use_normals&quot;: 0, 
+        &quot;normal_weight&quot;: 0.0, 
+        &quot;checkpointing_interval&quot; : 10000, 
+        &quot;keep_checkpoints&quot; : 0, 
+        &quot;iterations_per_split&quot; : 4000, 
+        &quot;optimization_iterations&quot; : 500, 
+        &quot;starting_regularization&quot; : 10, 
+        &quot;ending_regularization&quot; : 1, 
+        &quot;recompute_regularization_interval&quot; : 2,
+        &quot;domains_per_shape&quot; : 1,
+        &quot;domain_type&quot; : &#39;mesh&#39;,
+        &quot;relative_weighting&quot; : 10,
+        &quot;initial_relative_weighting&quot; : 1,
+        &quot;procrustes_interval&quot; : 1,
+        &quot;procrustes_scaling&quot; : 1,
+        &quot;save_init_splits&quot; : 0,
+        &quot;verbosity&quot; : 2,
+        &quot;cutting_plane_counts&quot;: cutting_plane_counts,
+        &quot;cutting_planes&quot;: cutting_planes
+}
 </code></pre></div>
-<h2 id="dataset-guidelines">Dataset Guidelines</h2>
-<p>Check out <a href="../dev/datasets.html">How to Add New Datasets?</a> for dataset upload instructions and guidelines. </p>
+For a full decription of parameters, please see: <a href="../workflow/optimize.html#On-Algorithmic-Parameters">optimization parameters</a>. All the keys of in this parameter dictionary correspond to the <a href="../workflow/optimize.html#xml-parameter-file">XML tags</a>, except for <code>"normal_weight"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
+<h3 id="analysis-of-results"><a href="../workflow/analyze.html">Analysis of Results</a></h3>
+<p>The resulting correspondence points from optimization can be viewed and analyzed in <strong>ShapeWorks Studio</strong>. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an <code>analyze.xml</code> file for viewing the results in Studio. Studio opens automatically when the use case finishes running. </p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p>This <code>anaylze.xml</code> file can be reopened at any time after running the use case for subsequent analysis by calling <code>ShapeworksStudio analyze.xml</code>. For a full description of how to analyze results in Studio, see <a href="../workflow/analyze.html">Analyzing Results</a>.</p>
               
             </div>
           </div>
@@ -379,7 +454,7 @@ $ ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ellipsoid.html" class="btn btn-neutral float-right" title="Ellipsoid: Basic Example">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="segmentation-based/ellipsoid.html" class="btn btn-neutral float-right" title="Ellipsoid: Basic Example">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../deep-learning/deep-ssm.html" class="btn btn-neutral" title="SSMs Directly from Images"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -417,7 +492,7 @@ $ ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
       <span><a href="../deep-learning/deep-ssm.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="ellipsoid.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="segmentation-based/ellipsoid.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

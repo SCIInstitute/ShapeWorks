@@ -151,47 +151,77 @@
                 <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="use-cases.html">Getting Started with Use Cases</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid.html">Ellipsoid: Basic Example</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="constraint-based/ellipsoid-cutting-planes.md">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur.html">Femur: SSM from Meshes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur-cutting-planes.html">Femur with Cutting Planes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="lumps.html">Lumps: SSM directly from meshes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#what-and-where-is-the-use-case">What and Where is the Use Case?</a>
+    <li class="toctree-l2"><a class="reference internal" href="#what-is-the-use-case">What is the Use Case?</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#running-the-use-case">Running the Use Case</a>
+    <li class="toctree-l2"><a class="reference internal" href="#grooming-steps">Grooming Steps</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#grooming-data">Grooming Data</a>
+    <li class="toctree-l2"><a class="reference internal" href="#supported-tags">Supported Tags</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#optimizing-shape-model">Optimizing Shape Model</a>
+    <li class="toctree-l2"><a class="reference internal" href="#optimizing-parameters">Optimizing Parameters</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#analyzing-shape-model">Analyzing Shape Model</a>
     </li>
     </ul>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Meshes</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="thin-cavity-bean.html">Shape Models with Geodesic Distance based Repulsion</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="supershapes-contour.html">Shape Models for N-dimensional Contours</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">For Developers</span></p>
@@ -280,7 +310,7 @@
             <div class="section">
               
                 <h1 id="right-ventricle-highly-variable-shapes">Right Ventricle: Highly Variable Shapes</h1>
-<h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
+<h2 id="what-is-the-use-case">What is the Use Case?</h2>
 <p>This use case demonstrates using ShapeWorks tools to perform the following.</p>
 <ul>
 <li>Model the highly variable shapes of the right ventricle</li>
@@ -293,12 +323,7 @@
 <p class="admonition-title">Important</p>
 <p>This use case is not yet released!</p>
 </div>
-<h2 id="running-the-use-case">Running the Use Case</h2>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>This use case is not yet added to the use case list!</p>
-</div>
-<h2 id="grooming-data">Grooming Data</h2>
+<h2 id="grooming-steps">Grooming Steps</h2>
 <p>For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
 <ol>
 <li><strong>Isotropic Resampling</strong>: Binary segmentations are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.</li>
@@ -310,7 +335,10 @@
 <li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
 </ol>
 <p><img alt="RV_groom" src="../img/use-cases/RV_groom.png" /></p>
-<h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
+<h2 id="supported-tags">Supported Tags</h2>
+<div class="highlight"><pre><span></span><code>        --use_subsample --num_subsample --skip_grooming --tiny_test
+</code></pre></div>
+<h2 id="optimizing-parameters">Optimizing Parameters</h2>
 <p><img alt="Under construction, coming soon!" src="../img/misc/under-construction.png" /></p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p><img alt="Under construction, coming soon!" src="../img/misc/under-construction.png" /></p>
@@ -321,10 +349,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="deep-ssm-femur.html" class="btn btn-neutral float-right" title="Femur SSM Directly from Images">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../dev/build.html" class="btn btn-neutral float-right" title="How to Build ShapeWorks from Source?">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="lumps.html" class="btn btn-neutral" title="Lumps: SSM directly from meshes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="deep-learning-based/deep-ssm-femur.html" class="btn btn-neutral" title="Femur SSM Directly from Images"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -356,10 +384,10 @@
         </span>
     
     
-      <span><a href="lumps.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="deep-learning-based/deep-ssm-femur.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="deep-ssm-femur.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../dev/build.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

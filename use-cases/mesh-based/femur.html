@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/use-cases/mesh-based/femur.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Femur: Shape Model on Distance Transforms from Meshes - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Femur: Shape Model on Distance Transforms from Meshes";
+    var mkdocs_page_input_path = "use-cases/mesh-based/femur.md";
+    var mkdocs_page_url = "/software/shapeworks.html/use-cases/mesh-based/femur.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="#">Mesh Based Use Cases</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-the-use-case">What is the Use Case?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#grooming-steps">Grooming Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#relevant-arguments">Relevant Arguments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#optimization-parameters">Optimization Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#analyzing-shape-model">Analyzing Shape Model</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="../constraint-based/ellipsoid-cutting-planes.md">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Use Cases &raquo;</li>
+        
+      
+        
+          <li>Mesh Based Use Cases &raquo;</li>
+        
+      
+    
+    <li>Femur: Shape Model on Distance Transforms from Meshes</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/mesh-based/femur.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="femur-shape-model-on-distance-transforms-from-meshes">Femur: Shape Model on Distance Transforms from Meshes</h1>
+<h2 id="what-is-the-use-case">What is the Use Case?</h2>
+<p>The <code>femur</code> use case demonstrates using shape modeling workflow on real-world femur dataset. The shape representation in the dataset are triangular surface meshes, but optimiaztion is done on signed distance transforms. Additionally, this dataset contains corresponding imaging data (e.g., CT) which are groomed along with the shapes when <code>--groom_images</code> is used.</p>
+<p>There are both left and right femurs in this dataset, thus some must be relfected so that they can all be aligned. The femur meshes in this data set have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane.
+<img alt="Femur Lengths" src="../../img/use-cases/femurLengths.png" /></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Minimum of 32GB of RAM required to run the full use case.</p>
+</div>
+<h2 id="grooming-steps">Grooming Steps</h2>
+<p>Here is what the femur meshes look like before grooming:
+<img alt="Ungroomed femurs" src="../../img/use-cases/femur_ungroomed.png" /></p>
+<p>We start with these meshes as well as the full unsegmented images (CT scans) of each femur's hip. The surface meshes are first converted to image-based representation (i.e., binary segmentations). Each step's results are shown for the shapes (note every step is performed on both the shapes the corresponding images, although the resulting images are not shown here). </p>
+<ol>
+<li><a href="../../workflow/groom.html#reflect-meshes"><strong>Reflect Meshes</strong></a>: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.</li>
+<li><a href="../../workflow/groom.html#meshes-to-volumes"><strong>Meshes to Volumes</strong></a>: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. </li>
+<li><a href="../../workflow/groom.html#resampling-images-and-segmentations"><strong>Isotropic Resampling</strong></a>: Both the image and rasterized segmentations are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also produce segmentations with smaller voxel spacing, thereby reducing aliasing artifacts (i.e., staircase/jagged surface) due to binarization. </li>
+<li><a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Padding</strong></a>: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.</li>
+<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Center-of-Mass Alignment</strong></a>: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment. </li>
+<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Reference Selection</strong></a>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
+<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Rigid Alignment</strong></a>: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images. The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case, we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.</li>
+<li><a href="../../workflow/groom.html#clip-segmentations"><strong>Clip Segmentations</strong></a>: Because the femur segmentations vary in shaft lengths, we use the defined cutting plane to clip them, so only the region of interest remains.</li>
+<li><a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Cropping</strong></a>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the given dataset segmentations.</li>
+<li><a href="../../workflow/groom.html#converting-segmentations-to-smooth-signed-distance-transforms"><strong>Distance Transform</strong></a>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
+</ol>
+<p><img alt="Grooming steps" src="../../img/use-cases/FemurGroomPipeline.PNG" /></p>
+<p>Here are the resulting groomed femurs:
+<img alt="Groomed femurs" src="../../img/use-cases/femur_groomed.png" /></p>
+<h2 id="relevant-arguments">Relevant Arguments</h2>
+<p><a href="../use-cases.html#-groom_images">--groom_images</a>
+<a href="../use-cases.html#-use_subsample">--use_subsample</a>
+<a href="../use-cases.html#-use_subsample">--num_subsample</a>
+<a href="../use-cases.html#-skip_grooming">--skip_grooming</a>
+<a href="../use-cases.html#-use_single_scale">--use_single_scale</a>
+<a href="../use-cases.html#-mesh_mode">--mesh_mode</a>
+<a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
+<h2 id="optimization-parameters">Optimization Parameters</h2>
+<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. 
+Below are the default optimization parameters for this use case.</p>
+<div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot; : 1024,
+        &quot;use_normals&quot;: 0,
+        &quot;normal_weight&quot;: 10.0,
+        &quot;checkpointing_interval&quot; : 200,
+        &quot;keep_checkpoints&quot; : 1,
+        &quot;iterations_per_split&quot; : 4000,
+        &quot;optimization_iterations&quot; : 4000,
+        &quot;starting_regularization&quot; : 100,
+        &quot;ending_regularization&quot; : 0.1,
+        &quot;recompute_regularization_interval&quot; : 2,
+        &quot;domains_per_shape&quot; : 1,
+        &quot;domain_type&quot; : &#39;image&#39;,
+        &quot;relative_weighting&quot; : 10,
+        &quot;initial_relative_weighting&quot; : 1,
+        &quot;procrustes_interval&quot; : 1,
+        &quot;procrustes_scaling&quot; : 1,
+        &quot;save_init_splits&quot; : 1,
+        &quot;verbosity&quot; : 2,
+        &quot;use_statistics_in_init&quot; : 0
+        &quot;use_shape_statistics_after&quot;: 64 
+</code></pre></div>
+<h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
+<p>Here is the mean shape of the optimized shape mode using single-scale optimization.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mean.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p>Here are femur samples with their optimized correspondences.
+<img alt="Femur Samples" src="../../img/use-cases/femur_samples.png" /></p>
+<p>Zooming in some femur samples.
+<img alt="Zoom Femur Samples" src="../../img/use-cases/femur_samples_zoom.png" /></p>
+<p>Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_pca.mp4" autoplay muted loop controls style="width:100%"></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="femur-mesh.html" class="btn btn-neutral float-right" title="Femur-Mesh: Shape Model directly from Mesh">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="ellipsoid_mesh.html" class="btn btn-neutral" title="Ellipsoid Mesh: Basic Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="ellipsoid_mesh.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="femur-mesh.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
