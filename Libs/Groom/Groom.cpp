@@ -162,21 +162,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   if (this->abort_) { return false; }
 
-  // resample
-  if (params.get_resample()) {
-    auto spacing = params.get_spacing();
-    if (params.get_isotropic()) {
-      auto iso = params.get_iso_spacing();
-      spacing = {iso, iso, iso};
-    }
-    Vector v;
-    v[0] = spacing[0];
-    v[1] = spacing[1];
-    v[2] = spacing[2];
-    image.resample(v, Image::InterpolationType::NearestNeighbor);
-  }
-
-  if (this->abort_) { return false; }
 
   // autopad
   if (params.get_auto_pad_tool()) {
@@ -190,6 +175,22 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   if (params.get_antialias_tool()) {
     image.antialias(params.get_antialias_iterations());
     this->increment_progress();
+  }
+
+  if (this->abort_) { return false; }
+
+  // resample
+  if (params.get_resample()) {
+    auto spacing = params.get_spacing();
+    if (params.get_isotropic()) {
+      auto iso = params.get_iso_spacing();
+      spacing = {iso, iso, iso};
+    }
+    Vector v;
+    v[0] = spacing[0];
+    v[1] = spacing[1];
+    v[2] = spacing[2];
+    image.resample(v, Image::InterpolationType::Linear);
   }
 
   if (this->abort_) { return false; }
