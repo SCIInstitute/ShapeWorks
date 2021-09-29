@@ -20,6 +20,7 @@
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
 #include <itkOrientImageFilter.h>
+#include <itkRegionOfInterestImageFilter.h>
 
 using namespace shapeworks;
 
@@ -162,12 +163,15 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   if (this->abort_) { return false; }
 
-
   // autopad
   if (params.get_auto_pad_tool()) {
     image.pad(params.get_padding_amount());
+    this->fix_origin(image);
     this->increment_progress();
   }
+
+
+
 
   if (this->abort_) { return false; }
 
@@ -348,6 +352,18 @@ void Groom::isolate(Image& image)
   cast_filter->Update();
 
   image = Image(cast_filter->GetOutput());
+}
+
+//---------------------------------------------------------------------------
+void Groom::fix_origin(Image &image)
+{
+  ImageType::Pointer img = image.getITKImage();
+  using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
+  RegionFilterType::Pointer region_filter = RegionFilterType::New();
+  region_filter->SetInput(img);
+  region_filter->SetRegionOfInterest(img->GetLargestPossibleRegion());
+  region_filter->UpdateLargestPossibleRegion();
+  image = Image(region_filter->GetOutput());
 }
 
 //---------------------------------------------------------------------------

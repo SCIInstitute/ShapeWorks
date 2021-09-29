@@ -98,7 +98,6 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->sinc_iterations->setValidator(zero_and_up);
   ui_->sinc_passband->setValidator(double_validator);
 
-  ui_->tp_widget->hide();
   update_ui();
 }
 
