@@ -42,4 +42,22 @@ ParticleSystem::ParticleSystem(const Eigen::MatrixXd& matrix)
   this->P = matrix;
 }
 
+bool ParticleSystem::Compare(const ParticleSystem &other) const
+{
+  if (P.rows() != other.P.rows() || P.cols() != other.P.cols()) {
+    std::cerr << "Rows/Columns mismatch\n";
+    return false;
+  }
+  bool same = true;
+  for (int r=0; r<P.rows(); r++) {
+    for (int c=0; c<P.cols(); c++) {
+      if (!equalNSigDigits(P(r,c),other.P(r,c),4)) {
+        std::cerr << "("<<r<<","<<c<<"): " << P(r,c) << " vs " << other.P(r,c) << "\n";
+        same = false;
+      }
+    }
+  }
+  return same;
+}
+
 }

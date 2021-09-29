@@ -35,6 +35,8 @@ public:
     return P.rows();
   }
 
+  bool Compare(const ParticleSystem& other) const;
+
 private:
   friend struct SharedCommandData;
 
