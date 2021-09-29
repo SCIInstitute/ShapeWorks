@@ -2,7 +2,6 @@
 
 #include "Shapeworks.h"
 #include "ImageUtils.h"
-#include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 class vtkCellLocator;
 #include <vtkPointData.h>

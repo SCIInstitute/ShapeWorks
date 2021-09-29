@@ -12,6 +12,7 @@
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
 #include "FECVDDecimationModifier.h"
+#include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
