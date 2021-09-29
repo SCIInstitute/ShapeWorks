@@ -4,10 +4,7 @@
 #include "ImageUtils.h"
 #include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
-#include <vector>
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-#include <string>
+class vtkCellLocator;
 #include <vtkPointData.h>
 
 namespace shapeworks {
@@ -153,6 +150,9 @@ public:
   /// sets the given field for points with array (*does not copy array's values)
   Mesh& setField(std::string name, Array array);
 
+  /// sets the given field for faces with array (*does not copy array's values)
+  Mesh& setFieldForFaces(std::string name, Array array);
+
   /// gets the field (*does not copy array's values)
   template<typename T>
   vtkSmartPointer<T> getField(const std::string& name) const
@@ -169,6 +169,9 @@ public:
 
   /// gets the value at the given index of field
   double getFieldValue(const std::string& name, int idx) const;
+
+  /// gets the multi value at the given index of field
+  Eigen::VectorXd getMultiFieldValue(const std::string& name, int idx) const;
 
   /// returns the range of the given field
   std::vector<double> getFieldRange(const std::string& name) const;
@@ -209,6 +212,16 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
+  /// Splits the mesh for FFCs by setting scalar and vector fields
+  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
+
+  /// Gets values and gradients for FFCs
+  double getFFCValue(Eigen::Vector3d query);
+  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
+
+  /// Formats mesh into an IGL format
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
@@ -220,6 +233,23 @@ private:
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
+
+  /// This locator member is used for FFCs which queries repeatedly
+  vtkSmartPointer<vtkCellLocator> locator;
+
+  /// Computes the gradient vector field for FFCs w.r.t the boundary
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
+
+  /// Computes scalar distance field w.r.t. the boundary
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+
+  /// Computes whether point is inside or outside the boundary
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
+
+  /// Computes baricentric coordinates given a query point and a face number
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+
 };
 
 /// stream insertion operators for Mesh
