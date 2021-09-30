@@ -594,7 +594,7 @@ TransformPtr Image::createTransform(const Image &target, XFormType type, float i
 
   switch (type) {
     case CenterOfMass:
-      transform = createCenterOfMassTransform();
+      transform = createCenterOfMassTransform(); // fixme: remove this
       break;
     case IterativeClosestPoint:
       if (!target.image) { throw std::invalid_argument("Invalid target image"); }
@@ -1004,8 +1004,21 @@ TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, flo
 {
   Mesh sourceContour = toMesh(isoValue);
   Mesh targetContour = target_dt.toMesh(isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
-  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+
+  try {
+    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
+    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  }
+  catch (std::invalid_argument) {
+    std::cerr << "failed to create ICP transform.\n";
+    if (sourceContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for source\n";
+    }
+    if (targetContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for target\n";
+    }
+  }
+  return AffineTransform::New();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)

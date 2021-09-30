@@ -6,6 +6,12 @@
 
 namespace shapeworks {
 
+// Returns a 4x4 Eigen (col-major) from the given 3x4 (left-hand) itk::Transform.
+Eigen::MatrixXd itkTransformToEigen(TransformPtr itk_xform);
+
+// Returns a 3x4 itk::AffineTransform from the given (col-major) 4x4 Eigen::Matrix
+TransformPtr eigen44ToItkTransform(const Eigen::Matrix<double, 4, 4> &eigen_mat);
+
 template<typename T>
 using VnlMatrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
