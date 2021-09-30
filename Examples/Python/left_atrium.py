@@ -442,9 +442,11 @@ def Run_Pipeline(args):
         point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
-        # compare against baseline
-        ps1 = sw.ParticleSystem(glob.glob("Output/left_atrium/shape_models/32/*.particles"))
-        ps2 = sw.ParticleSystem(glob.glob("Data/Verification/left_atrium/tiny_test/*.particles"))
+        # compare against baseline particles
+        files = local_point_files + world_point_files
+        ps1 = sw.ParticleSystem(files)
+        verification_dir = "Data/Verification/left_atrium/tiny_test/"
+        ps2 = sw.ParticleSystem([verification_dir + os.path.basename(f) for f in files])
         if not ps1.Compare(ps2):
             print("Error: particle system did not match ground truth")
             exit(-1)
