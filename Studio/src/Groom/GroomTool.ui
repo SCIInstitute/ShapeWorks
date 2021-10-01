@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>341</width>
-    <height>580</height>
+    <height>1024</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,6 +83,18 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="isolate_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_13">
             <property name="leftMargin">
              <number>0</number>
@@ -127,6 +139,18 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="fill_holes_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <layout class="QGridLayout" name="gridLayout_12" rowstretch="0,0,0,0,0" rowminimumheight="0,0,0,0,0">
             <property name="leftMargin">
              <number>0</number>
@@ -171,6 +195,12 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="crop_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -192,6 +222,12 @@ background: rgb(255, 255, 127)
             </property>
             <item row="0" column="0">
              <widget class="QCheckBox" name="crop_checkbox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Crop</string>
               </property>
@@ -204,7 +240,7 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line">
+          <widget class="Line" name="line_6">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -224,7 +260,7 @@ background: rgb(255, 255, 127)
              <height>30</height>
             </size>
            </property>
-           <layout class="QGridLayout" name="gridLayout_7">
+           <layout class="QGridLayout" name="pad_layout">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -237,10 +273,20 @@ background: rgb(255, 255, 127)
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <item row="0" column="3">
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>165</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="2">
              <widget class="QLabel" name="pad_amount_label">
               <property name="enabled">
                <bool>true</bool>
@@ -250,12 +296,12 @@ background: rgb(255, 255, 127)
               </property>
              </widget>
             </item>
-            <item row="0" column="5">
+            <item row="0" column="3">
              <widget class="QSpinBox" name="padding_amount">
               <property name="minimumSize">
                <size>
-                <width>57</width>
-                <height>24</height>
+                <width>60</width>
+                <height>0</height>
                </size>
               </property>
               <property name="maximum">
@@ -276,38 +322,31 @@ background: rgb(255, 255, 127)
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>165</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
            </layout>
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line_2">
+          <widget class="Line" name="line_17">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="antialias_widget" native="true">
+          <widget class="QWidget" name="antialias_widget_2" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
              <height>30</height>
             </size>
            </property>
-           <layout class="QGridLayout" name="gridLayout_9">
+           <layout class="QGridLayout" name="antialias_layout_2">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -320,11 +359,11 @@ background: rgb(255, 255, 127)
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="3">
+            <item row="1" column="3">
              <widget class="QSpinBox" name="antialias_iterations">
               <property name="minimumSize">
                <size>
-                <width>57</width>
+                <width>60</width>
                 <height>0</height>
                </size>
               </property>
@@ -336,8 +375,8 @@ background: rgb(255, 255, 127)
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <spacer name="horizontalSpacer_6">
+            <item row="1" column="1">
+             <spacer name="horizontalSpacer_7">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -349,7 +388,7 @@ background: rgb(255, 255, 127)
               </property>
              </spacer>
             </item>
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QCheckBox" name="antialias_checkbox">
               <property name="text">
                <string>Antialias</string>
@@ -359,7 +398,7 @@ background: rgb(255, 255, 127)
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
+            <item row="1" column="2">
              <widget class="QLabel" name="antialias_iterations_label">
               <property name="text">
                <string>Iterations</string>
@@ -370,12 +409,25 @@ background: rgb(255, 255, 127)
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QWidget" name="resample_widget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="spacing">
@@ -393,13 +445,6 @@ background: rgb(255, 255, 127)
             <property name="bottomMargin">
              <number>6</number>
             </property>
-            <item>
-             <widget class="Line" name="line_16">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
             <item>
              <widget class="QCheckBox" name="resample_checkbox">
               <property name="text">
@@ -558,6 +603,12 @@ background: rgb(255, 255, 127)
          </item>
          <item>
           <widget class="QWidget" name="fastmarching_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -812,13 +863,6 @@ background: rgb(255, 255, 127)
              </widget>
             </item>
            </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="Line" name="line_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
           </widget>
          </item>
          <item>
@@ -1276,8 +1320,6 @@ background: rgb(255, 255, 127)
   <tabstop>fill_holes_checkbox</tabstop>
   <tabstop>autopad_checkbox</tabstop>
   <tabstop>padding_amount</tabstop>
-  <tabstop>antialias_checkbox</tabstop>
-  <tabstop>antialias_iterations</tabstop>
   <tabstop>blur_checkbox</tabstop>
   <tabstop>blur_sigma</tabstop>
   <tabstop>fastmarching_checkbox</tabstop>
