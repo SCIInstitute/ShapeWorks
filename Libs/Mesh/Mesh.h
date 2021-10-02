@@ -12,7 +12,7 @@ class Mesh
 {
 public:
   enum AlignmentType { Rigid, Similarity, Affine };
-  enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
+  enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
@@ -82,8 +82,8 @@ public:
   /// fix element winding of mesh
   Mesh& fixElement();
 
-  /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
-  Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
+  /// computes surface to surface distance, compute method: PointToPoint (default) or PointToCell
+  Mesh& distance(const Mesh &target, const DistanceMethod method = PointToPoint);
 
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
@@ -124,10 +124,10 @@ public:
   Point3 centerOfMass() const;
 
   /// number of points
-  vtkIdType numPoints() const { return mesh->GetNumberOfPoints(); }
+  int numPoints() const { return mesh->GetNumberOfPoints(); }
 
   /// number of faces
-  vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+  int numFaces() const { return mesh->GetNumberOfCells(); }
 
   /// matrix with number of points with (x,y,z) coordinates of each point
   Eigen::MatrixXd points() const;
@@ -136,10 +136,10 @@ public:
   Eigen::MatrixXi faces() const;
 
   /// (x,y,z) coordinates of vertex at given index
-  Point3 getPoint(vtkIdType id) const;
+  Point3 getPoint(int id) const;
 
   /// return indices of the three points with which the face at the given index is composed
-  IPoint3 getFace(vtkIdType id) const;
+  IPoint3 getFace(int id) const;
 
   // fields of mesh points //
 

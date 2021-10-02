@@ -12,15 +12,23 @@ using namespace shapeworks;
 TEST(MeshTests, geodesicTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  double dist = ellipsoid.geodesicDistance(10, 20);
+  const int p1 = 10;
+  const int p2 = 200;
+  double geodesic_dist = ellipsoid.geodesicDistance(p1, p2);
+  std::cout << "geodesic_dist: " << geodesic_dist << std::endl;
 
-  ASSERT_TRUE(std::abs(dist - 1.64581) < 1e-4);
+  auto pt1 = ellipsoid.getPoint(p1);
+  auto pt2 = ellipsoid.getPoint(p2);
+  auto euclidean_dist = pt2.EuclideanDistanceTo(pt1);
+
+  ASSERT_TRUE(std::abs(euclidean_dist - 6.70625) < 1e-4);
+  ASSERT_TRUE(std::abs(geodesic_dist - 6.577) < 1e-4);
 }
 
 TEST(MeshTests, geodesicTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-  auto distField = femur.geodesicDistance(femur.getPoint(50));
+  auto distField = femur.geodesicDistance(femur.getPoint(200));
   femur.setField("GeodesicDistanceToLandmark", distField);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
@@ -540,7 +548,7 @@ TEST(MeshTests, distanceTest2)
 {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
+  femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
   femur2.distance(femur1);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");

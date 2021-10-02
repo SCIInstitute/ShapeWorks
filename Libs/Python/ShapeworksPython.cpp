@@ -954,8 +954,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   // Mesh::DistanceMethod
   py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
-  .value("POINT_TO_POINT", Mesh::DistanceMethod::POINT_TO_POINT)
-  .value("POINT_TO_CELL", Mesh::DistanceMethod::POINT_TO_CELL)
+  .value("PointToPoint", Mesh::DistanceMethod::PointToPoint)
+  .value("PointToCell", Mesh::DistanceMethod::PointToCell)
   .export_values();
   ;
 
@@ -1086,8 +1086,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("distance",
        &Mesh::distance,
-       "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+       "computes surface to surface distance using the specified method (PointToPoint or PointToCell)",
+       "target"_a, "method"_a=Mesh::DistanceMethod::PointToPoint)
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
@@ -1164,11 +1164,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        },
        "computes geodesic distance between a set of points (curve) and all vertices on mesh",
        "curve"_a)
-
-  .def("distance",
-       &Mesh::distance,
-       "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("curvature",
        [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {

@@ -431,7 +431,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 
   switch(method)
   {
-    case POINT_TO_POINT:
+    case PointToPoint:
     {
       vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
       targetPointLocator->SetDataSet(target.mesh);
@@ -447,7 +447,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
     }
     break;
 
-    case POINT_TO_CELL:
+    case PointToCell:
     {
       vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
       targetCellLocator->SetDataSet(target.mesh);
@@ -535,10 +535,12 @@ int Mesh::closestPointId(const Point3 point)
 
 double Mesh::geodesicDistance(int source, int target)
 {
-  VtkMeshWrapper wrap(this->mesh, true);
-  double distance = wrap.ComputeDistance(source, -1, target, -1);
+  if (source < 0 || target < 0 || numPoints() < source || numPoints() < target) {
+    throw std::invalid_argument("requested point ids outside range of points available in mesh");
+  }
 
-  return distance;
+  VtkMeshWrapper wrap(this->mesh, true);
+  return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
 }
 
 Field Mesh::geodesicDistance(const Point3 landmark)
@@ -548,12 +550,19 @@ Field Mesh::geodesicDistance(const Point3 landmark)
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
+  auto start = ShapeworksUtils::now();
   VtkMeshWrapper wrap(this->mesh, true);
+  auto now = ShapeworksUtils::now();
+  std::cout << ShapeworksUtils::elapsed(start, now, false) << " to wrap mesh" << std::endl;
 
+  start = now;
+  std::cout << "computing distance from " << landmark << std::endl;
   for (int i = 0; i < numPoints(); i++)
   {
     distance->SetValue(i, wrap.ComputeDistance(getPoint(i), -1, landmark, -1));
   }
+  now = ShapeworksUtils::now();
+  std::cout << ShapeworksUtils::elapsed(start, now, false) << " to compute distances" << std::endl;
 
   return distance;
 }
@@ -717,7 +726,7 @@ Point3 Mesh::centerOfMass() const
   return center;
 }
 
-Point3 Mesh::getPoint(vtkIdType id) const
+Point3 Mesh::getPoint(int id) const
 {
   if (this->numPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
@@ -726,7 +735,7 @@ Point3 Mesh::getPoint(vtkIdType id) const
   return Point3({point[0], point[1], point[2]});
 }
 
-IPoint3 Mesh::getFace(vtkIdType id) const
+IPoint3 Mesh::getFace(int id) const
 {
   if (mesh->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
