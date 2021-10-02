@@ -47,7 +47,7 @@ TEST(MeshTests, geodesicTest3)
   auto distField = ellipsoid.geodesicDistance(curve);
   ellipsoid.setField("GeodesicDistanceToCurve", distField);
 
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic2.vtk"));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic_curve.vtk"));
 
   ASSERT_TRUE(ellipsoid.compareField(ground_truth, "GeodesicDistanceToCurve"));
 }

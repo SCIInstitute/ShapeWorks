@@ -41,7 +41,7 @@ def geodesicTest3():
   distField = mesh.geodesicDistance(curve)
   mesh.setField("GeodesicDistanceToCurve", distField)
 
-  ground_truth = Mesh(os.environ["DATA"] + "/geodesic2.vtk")
+  ground_truth = Mesh(os.environ["DATA"] + "/geodesic_curve_py.vtk")
 
   return mesh.compareField(ground_truth, "GeodesicDistanceToCurve")
 
