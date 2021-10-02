@@ -124,19 +124,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
     return pt_a.EuclideanDistanceTo(pt_b);
   }
 
-  // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if (idx_a >=0 && geo_lq_pidx_ == idx_a) {
-    face_a = geo_lq_face_;
-    bary_a = geo_lq_bary_;
-  } else {
-    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
-
-    geo_lq_pidx_ = idx_a;
-    geo_lq_face_ = face_a;
-    geo_lq_bary_ = bary_a;
-  }
+  face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
 
   // Find the triangle for the point b
   // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
@@ -209,19 +199,9 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
     particle_neighboorhood_[idx_a] = test_dist;
   }
 
-  // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if (geo_lq_pidx_ == idx_a) {
-    face_a = geo_lq_face_;
-    bary_a = geo_lq_bary_;
-  } else {
-    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
-
-    geo_lq_pidx_ = idx_a;
-    geo_lq_face_ = face_a;
-    geo_lq_bary_ = bary_a;
-  }
+  face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
 
   // Find the triangle for the point b
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
@@ -289,7 +269,6 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
     }
 
     particle_triangles_[idx] = ending_face;
-    geo_lq_pidx_ = -1;
 
     this->CalculateNormalAtPoint(new_point_pt, idx);
   }
@@ -818,7 +797,6 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
     particle_triangles_.resize(idx + 1, -1);
   }
   this->particle_triangles_[idx] = -1;
-  this->geo_lq_pidx_ = -1;
 }
 
 //---------------------------------------------------------------------------

@@ -550,19 +550,12 @@ Field Mesh::geodesicDistance(const Point3 landmark)
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
-  auto start = ShapeworksUtils::now();
   VtkMeshWrapper wrap(this->mesh, true);
-  auto now = ShapeworksUtils::now();
-  std::cout << ShapeworksUtils::elapsed(start, now, false) << " to wrap mesh" << std::endl;
 
-  start = now;
-  std::cout << "computing distance from " << landmark << std::endl;
   for (int i = 0; i < numPoints(); i++)
   {
-    distance->SetValue(i, wrap.ComputeDistance(getPoint(i), -1, landmark, -1));
+    distance->SetValue(i, wrap.ComputeDistance(landmark, -1, getPoint(i), -1));
   }
-  now = ShapeworksUtils::now();
-  std::cout << ShapeworksUtils::elapsed(start, now, false) << " to compute distances" << std::endl;
 
   return distance;
 }

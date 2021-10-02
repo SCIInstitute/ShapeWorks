@@ -15,7 +15,6 @@ TEST(MeshTests, geodesicTest1)
   const int p1 = 10;
   const int p2 = 200;
   double geodesic_dist = ellipsoid.geodesicDistance(p1, p2);
-  std::cout << "geodesic_dist: " << geodesic_dist << std::endl;
 
   auto pt1 = ellipsoid.getPoint(p1);
   auto pt2 = ellipsoid.getPoint(p2);
