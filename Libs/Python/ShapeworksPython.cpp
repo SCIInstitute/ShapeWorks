@@ -138,6 +138,17 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   return importer->GetOutput();
 }
 
+// Let's pass these arrays (see issue #1495)
+py::array arrToPy(Array array) {
+  const auto shape = std::vector<size_t> {  // numpy shape is zyx but for some reason we pass yxz
+    static_cast<unsigned long>(array->GetNumberOfTuples()),
+    static_cast<unsigned long>(array->GetNumberOfComponents()),
+    1 };
+  return py::array(py::dtype::of<double>(),
+                   shape,
+                   array->GetVoidPointer(0));
+}
+
 PYBIND11_MODULE(shapeworks_py, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -1123,19 +1134,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("geodesicDistance",
        [](Mesh &mesh, const std::vector<double> p) -> decltype(auto) {
           auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
-          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                 1};
-          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-          // LOTS of copying going on here, see github #903
-          array->GetData(0, array->GetNumberOfTuples()-1,
-                         0, array->GetNumberOfComponents()-1,
-                         vtkarr);                               // copy1
-          return py::array(py::dtype::of<double>(),
-                         shape,
-                         vtkarr->GetVoidPointer(0));          // copy2
+          return arrToPy(array);
        },
        "computes geodesic distance between a point (landmark) and each vertex on mesh",
        "landmark"_a)
@@ -1148,19 +1147,7 @@ PYBIND11_MODULE(shapeworks_py, m)
             points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
           }
           auto array = mesh.geodesicDistance(points);
-          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                 1};
-          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-          // LOTS of copying going on here, see github #903
-          array->GetData(0, array->GetNumberOfTuples()-1,
-                         0, array->GetNumberOfComponents()-1,
-                         vtkarr);                               // copy1
-          return py::array(py::dtype::of<double>(),
-                         shape,
-                         vtkarr->GetVoidPointer(0));          // copy2
+          return arrToPy(array);
        },
        "computes geodesic distance between a set of points (curve) and all vertices on mesh",
        "curve"_a)
@@ -1168,19 +1155,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("curvature",
        [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {
           auto array = mesh.curvature(type);
-          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                 1};
-          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-          // LOTS of copying going on here, see github #903
-          array->GetData(0, array->GetNumberOfTuples()-1,
-                         0, array->GetNumberOfComponents()-1,
-                         vtkarr);                               // copy1
-          return py::array(py::dtype::of<double>(),
-                         shape,
-                         vtkarr->GetVoidPointer(0));          // copy2
+          return arrToPy(array);
      },
      "computes and adds curvature (principal (default) or gaussian or mean)",
      "type"_a=Mesh::CurvatureType::Principal)
@@ -1247,7 +1222,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
-  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::string name, std::vector<double>& v) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1260,7 +1234,6 @@ PYBIND11_MODULE(shapeworks_py, m)
        "sets the given field for points with array",
        "name"_a, "array"_a)
 
-  //TODO: See github issue #966
   .def("setField",
        [](Mesh &mesh, std::string name, std::vector<std::vector<double>>& v) -> decltype(auto) {
          vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1277,19 +1250,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {
          auto array = mesh.getField<vtkDataArray>(name);
-         const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                1};
-         auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-         vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-         // LOTS of copying going on here, see github #903
-         array->GetData(0, array->GetNumberOfTuples()-1,
-                        0, array->GetNumberOfComponents()-1,
-                        vtkarr);                               // copy1
-         return py::array(py::dtype::of<double>(),
-                          shape,
-                          vtkarr->GetVoidPointer(0));          // copy2
+         return arrToPy(array);
        },
        "gets the field",
        "name"_a)
@@ -1303,6 +1264,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldValue,
        "gets the value at the given index of field",
        "idx"_a, "name"_a)
+
+    .def("getMultiFieldValue",
+         &Mesh::getMultiFieldValue,
+         "gets the vector value at the given index of field",
+         "idx"_a, "name"_a)
 
   .def("getFieldRange",
        &Mesh::getFieldRange,
@@ -1351,19 +1317,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
-                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                         1};
-                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-                  // LOTS of copying going on here, see github #903
-                  array->GetData(0, array->GetNumberOfTuples()-1,
-                                 0, array->GetNumberOfComponents()-1,
-                                 vtkarr);                               // copy1
-                  return py::array(py::dtype::of<double>(),
-                                   shape,
-                                   vtkarr->GetVoidPointer(0));          // copy2
+                  return arrToPy(array);
                },
                "computes average normals for each point in given set of meshes",
                "filenames"_a, "autoGenerateNormals"_a=true)
@@ -1371,19 +1325,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(meshes);
-                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                         1};
-                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-                  // LOTS of copying going on here, see github #903
-                  array->GetData(0, array->GetNumberOfTuples()-1,
-                                 0, array->GetNumberOfComponents()-1,
-                                 vtkarr);                               // copy1
-                  return py::array(py::dtype::of<double>(),
-                                   shape,
-                                   vtkarr->GetVoidPointer(0));          // copy2
+                  return arrToPy(array);
                },
                "computes average normals for each point in given set of meshes",
                "meshes"_a)

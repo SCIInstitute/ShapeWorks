@@ -566,11 +566,7 @@ Field Mesh::geodesicDistance(const std::vector<Point3> curve)
   minDistance->SetNumberOfComponents(1);
   minDistance->SetNumberOfTuples(numPoints());
   minDistance->SetName("GeodesicDistanceToCurve");
-
-  for (int i = 0; i < numPoints(); i++)
-  {
-    minDistance->SetValue(i, 1e20);
-  }
+  minDistance->Fill(1e20);
 
   for (int i = 0; i < curve.size(); i++)
   {
