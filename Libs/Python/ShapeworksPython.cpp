@@ -22,6 +22,7 @@ using namespace pybind11::literals;
 
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
 
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -139,14 +140,52 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
 }
 
 // Let's pass these arrays (see issue #1495)
-py::array arrToPy(Array array) {
-  const auto shape = std::vector<size_t> {  // numpy shape is zyx but for some reason we pass yxz
-    static_cast<unsigned long>(array->GetNumberOfTuples()),
-    static_cast<unsigned long>(array->GetNumberOfComponents()),
-    1 };
-  return py::array(py::dtype::of<double>(),
-                   shape,
-                   array->GetVoidPointer(0));
+py::array arrToPy(Array array, bool copy = false) {
+  const size_t elemsize = array->GetElementComponentSize();
+  const auto shape = std::vector<size_t> {
+    1,
+    static_cast<size_t>(array->GetNumberOfTuples()),
+    static_cast<size_t>(array->GetNumberOfComponents())
+  };
+  const auto strides = std::vector<size_t>{
+    shape[0] * shape[1] * elemsize,
+    shape[0] * elemsize,
+    elemsize
+  };
+
+  // Reimplemented in vtkUnsignedShortArray, vtkUnsignedLongLongArray, vtkUnsignedLongArray, vtkUnsignedIntArray, vtkUnsignedCharArray, vtkSignedCharArray, vtkShortArray, vtkLongLongArray, vtkLongArray, vtkIntArray, vtkIdTypeArray, vtkFloatArray, vtkDoubleArray, vtkCharArray, and vtkBitArray.
+  py::dtype py_type;
+  if (vtkDoubleArray::SafeDownCast(array)) {
+    py_type = py::dtype::of<double>();
+  }
+  else if (vtkFloatArray::SafeDownCast(array)) {
+    py_type = py::dtype::of<float>();
+  }
+  else {
+    throw std::invalid_argument("arrToPy passed currently unhandled array type");
+  }
+#if 0
+  std::cout << "type of array: " << typeid(array).name() << std::endl
+            << "X (num_components): " << array->GetNumberOfComponents() << std::endl
+            << "Y (num_tuples): " << array->GetNumberOfTuples() << std::endl
+            << "sizeof(element): " << array->GetElementComponentSize() << std::endl
+            << "py_type: " << py_type.kind() << std::endl
+            << "size: " << py_type.itemsize() << std::endl;
+#endif
+
+  py::str dummyDataOwner;
+  py::array img{
+    py_type,
+    shape,
+    strides,
+    array->GetVoidPointer(0),
+    (copy ? pybind11::handle() : dummyDataOwner)
+  };
+  assert(copy == img.owndata());
+
+  pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+
+  return img;
 }
 
 PYBIND11_MODULE(shapeworks_py, m)
