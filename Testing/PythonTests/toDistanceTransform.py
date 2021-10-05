@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def toDistanceTransformTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   img = mesh.toDistanceTransform()
@@ -10,4 +12,6 @@ def toDistanceTransformTest():
 
   return img.compare(compareImg)
 
-utils.test(toDistanceTransformTest)
+success &= utils.test(toDistanceTransformTest)
+
+sys.exit(not success)

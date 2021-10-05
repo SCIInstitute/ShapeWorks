@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def fieldTest1():
   dist = Mesh(os.environ["DATA"] + "/meshdistance2.vtk")
   a = dist.getFieldValue("distance", 0)
@@ -10,7 +12,7 @@ def fieldTest1():
 
   return abs(a - 0.375761) < 1e-4 and abs(b - 2.18114) < 1e-4 and abs(c - 6.915) < 1e-4
 
-utils.test(fieldTest1)
+success &= utils.test(fieldTest1)
 
 def fieldTest2():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
@@ -21,7 +23,7 @@ def fieldTest2():
 
   return a == 1 and b == 1 and abs(c - 0.57735) < 1e-4 and d == 0
 
-utils.test(fieldTest2)
+success &= utils.test(fieldTest2)
 
 def fieldTest3():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
@@ -30,4 +32,6 @@ def fieldTest3():
 
   return scalarRange[0] == 1 and scalarRange[1] == 1 and normalsRange[0] == -1 and normalsRange[1] == 1
 
-utils.test(fieldTest3)
+success &= utils.test(fieldTest3)
+
+sys.exit(not success)
