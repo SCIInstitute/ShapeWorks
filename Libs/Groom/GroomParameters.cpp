@@ -4,33 +4,75 @@
 
 namespace shapeworks {
 
-namespace Keys {
-const std::string CROP = "crop";
-const std::string REFLECT = "reflect";
-const std::string REFLECT_COLUMN = "reflect_column";
-const std::string REFLECT_CHOICE = "reflect_choice";
-const std::string REFLECT_AXIS = "reflect_axis";
-const std::string RESAMPLE = "resample";
-const std::string ISOTROPIC = "isotropic";
-const std::string ISO_SPACING = "iso_spacing";
-const std::string SPACING = "spacing";
-}
-
-namespace Defaults {
-const bool crop = true;
-const bool reflect = false;
-const std::string reflect_axis = "X";
-const bool resample = true;
-const bool isotropic = true;
-const double iso_spacing = 0.0;
-const std::vector<double> spacing{0, 0, 0};
-}
-
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
 const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
 
 const std::string GroomParameters::GROOM_ALIGNMENT_CENTER_C("Center");
 const std::string GroomParameters::GROOM_ALIGNMENT_ICP_C("Iterative Closest Point");
+
+namespace Keys {
+constexpr const char* CROP = "crop";
+constexpr const char* REFLECT = "reflect";
+constexpr const char* REFLECT_COLUMN = "reflect_column";
+constexpr const char* REFLECT_CHOICE = "reflect_choice";
+constexpr const char* REFLECT_AXIS = "reflect_axis";
+constexpr const char* RESAMPLE = "resample";
+constexpr const char* ISOTROPIC = "isotropic";
+constexpr const char* ISO_SPACING = "iso_spacing";
+constexpr const char* SPACING = "spacing";
+constexpr const char* CONVERT_MESH = "convert_to_mesh";
+constexpr const char* FILL_MESH_HOLES = "fill_mesh_holes";
+constexpr const char* FILL_HOLES = "fill_holes";
+constexpr const char* ISOLATE = "isolate";
+constexpr const char* PAD = "pad";
+constexpr const char* PAD_VALUE = "pad_value";
+constexpr const char* ANTIALIAS = "antialias";
+constexpr const char* ANTIALIAS_AMOUNT = "antialias_amount";
+constexpr const char* BLUR = "blur";
+constexpr const char* BLUR_SIGMA = "blur_sigma";
+constexpr const char* FASTMARCHING = "fastmarching";
+
+constexpr const char* MESH_SMOOTH = "mesh_smooth";
+constexpr const char* MESH_SMOOTHING_METHOD = "mesh_smoothing_method";
+constexpr const char* MESH_SMOOTHING_VTK_LAPLACIAN_ITERATIONS = "mesh_smoothing_vtk_laplacian_iterations";
+constexpr const char* MESH_SMOOTHING_VTK_LAPLACIAN_RELAXATION = "mesh_smoothing_vtk_laplacian_relaxation";
+constexpr const char* MESH_SMOOTHING_VTK_WINDOWED_SINC_ITERATIONS = "mesh_smoothing_vtk_windowed_sinc_iterations";
+constexpr const char* MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND = "mesh_smoothing_vtk_windowed_sinc_passband";
+
+constexpr const char* ALIGNMENT_METHOD = "alignment_method";
+constexpr const char* ALIGNMENT_ENABLED = "alignment_enabled";
+constexpr const char* GROOM_OUTPUT_PREFIX = "groom_output_prefix";
+}
+
+namespace Defaults {
+const bool crop = true;
+const bool reflect = false;
+const char* reflect_axis = "X";
+const bool resample = true;
+const bool isotropic = true;
+const double iso_spacing = 0.0;
+const std::vector<double> spacing{0, 0, 0};
+const bool convert_mesh = false;
+const bool fill_holes = true;
+const bool fill_holes_mesh = true;
+const bool isolate = true;
+const bool pad = true;
+const int pad_value = 10;
+const bool antialias = true;
+const int antialias_amount = 10;
+const bool blur = true;
+const double blur_sigma = 2.0;
+const bool fastmarching = true;
+const char* groom_output_prefix = "groomed";
+const bool mesh_smooth = false;
+const std::string mesh_smoothing_method = GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C;
+const int mesh_smoothing_vtk_laplacian_iterations = 10;
+const double mesh_smoothing_vtk_laplacian_relaxation = 1.0;
+const int mesh_smoothing_vtk_windowed_sinc_iterations = 10;
+const double mesh_smoothing_vtk_windowed_sinc_passband = 0.05;
+const std::string alignment_method = GroomParameters::GROOM_ALIGNMENT_ICP_C;
+const bool alignment_enabled = true;
+}
 
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
@@ -48,109 +90,121 @@ void GroomParameters::restore_defaults()
 //---------------------------------------------------------------------------
 bool GroomParameters::get_isolate_tool()
 {
-  return this->params_.get("isolate", true);
+  return this->params_.get(Keys::ISOLATE, Defaults::isolate);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_isolate_tool(bool value)
 {
-  this->params_.set("isolate", value);
+  this->params_.set(Keys::ISOLATE, value);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_fill_holes_tool()
 {
-  return this->params_.get("fill_holes", true);
+  return this->params_.get(Keys::FILL_HOLES, Defaults::fill_holes);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_fill_holes_tool(bool value)
 {
-  this->params_.set("fill_holes", value);
+  this->params_.set(Keys::FILL_HOLES, value);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_fill_mesh_holes_tool()
+{
+  return this->params_.get(Keys::FILL_MESH_HOLES, Defaults::fill_holes_mesh);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_fill_mesh_holes_tool(bool value)
+{
+  this->params_.set(Keys::FILL_MESH_HOLES, value);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_auto_pad_tool()
 {
-  return this->params_.get("pad", true);
+  return this->params_.get(Keys::PAD, Defaults::pad);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_auto_pad_tool(bool value)
 {
-  this->params_.set("pad", value);
+  this->params_.set(Keys::PAD, value);
 }
 
 //---------------------------------------------------------------------------
 int GroomParameters::get_padding_amount()
 {
-  return this->params_.get("pad_value", 10);
+  return this->params_.get(Keys::PAD_VALUE, Defaults::pad_value);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_padding_amount(int padding_amount)
 {
-  this->params_.set("pad_value", padding_amount);
+  this->params_.set(Keys::PAD_VALUE, padding_amount);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_antialias_tool()
 {
-  return this->params_.get("antialias", true);
+  return this->params_.get(Keys::ANTIALIAS, Defaults::antialias);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_antialias_tool(bool value)
 {
-  this->params_.set("antialias", value);
+  this->params_.set(Keys::ANTIALIAS, value);
 }
 
 //---------------------------------------------------------------------------
 int GroomParameters::get_antialias_iterations()
 {
-  return this->params_.get("antialias_amount", 10);
+  return this->params_.get(Keys::ANTIALIAS_AMOUNT, Defaults::antialias_amount);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_antialias_iterations(int iterations)
 {
-  this->params_.set("antialias_amount", iterations);
+  this->params_.set(Keys::ANTIALIAS_AMOUNT, iterations);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_blur_tool()
 {
-  return this->params_.get("blur", true);
+  return this->params_.get(Keys::BLUR, Defaults::blur);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_blur_tool(bool value)
 {
-  this->params_.set("blur", value);
+  this->params_.set(Keys::BLUR, value);
 }
 
 //---------------------------------------------------------------------------
 double GroomParameters::get_blur_amount()
 {
-  return this->params_.get("blur_sigma", 2.0);
+  return this->params_.get(Keys::BLUR_SIGMA, Defaults::blur_sigma);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_blur_amount(double blur_amount)
 {
-  this->params_.set("blur_sigma", blur_amount);
+  this->params_.set(Keys::BLUR_SIGMA, blur_amount);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_fast_marching()
 {
-  return this->params_.get("fastmarching", true);
+  return this->params_.get(Keys::FASTMARCHING, Defaults::fastmarching);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_fast_marching(bool value)
 {
-  this->params_.set("fastmarching", value);
+  this->params_.set(Keys::FASTMARCHING, value);
 }
 
 //---------------------------------------------------------------------------
@@ -162,91 +216,95 @@ void GroomParameters::save_to_project()
 //---------------------------------------------------------------------------
 std::string GroomParameters::get_groom_output_prefix()
 {
-  return this->params_.get("groom_output_prefix", "groomed");
+  return this->params_.get(Keys::GROOM_OUTPUT_PREFIX, Defaults::groom_output_prefix);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_groom_output_prefix(std::string prefix)
 {
-  this->params_.set("groom_output_prefix", prefix);
+  this->params_.set(Keys::GROOM_OUTPUT_PREFIX, prefix);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_mesh_smooth()
 {
-  return this->params_.get("mesh_smooth", false);
+  return this->params_.get(Keys::MESH_SMOOTH, Defaults::mesh_smooth);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_smooth(bool value)
 {
-  this->params_.set("mesh_smooth", value);
+  this->params_.set(Keys::MESH_SMOOTH, value);
 }
 
 //---------------------------------------------------------------------------
 std::string GroomParameters::get_mesh_smoothing_method()
 {
-  return this->params_.get("mesh_smoothing_method", GROOM_SMOOTH_VTK_LAPLACIAN_C);
+  return this->params_.get(Keys::MESH_SMOOTHING_METHOD, Defaults::mesh_smoothing_method);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_smoothing_method(std::string method)
 {
-  this->params_.set("mesh_smoothing_method", method);
+  this->params_.set(Keys::MESH_SMOOTHING_METHOD, method);
 }
 
 //---------------------------------------------------------------------------
 int GroomParameters::get_mesh_vtk_laplacian_iterations()
 {
-  return this->params_.get("mesh_smoothing_vtk_laplacian_iterations", 10);
+  return this->params_.get(Keys::MESH_SMOOTHING_VTK_LAPLACIAN_ITERATIONS,
+                           Defaults::mesh_smoothing_vtk_laplacian_iterations);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_vtk_laplacian_iterations(int iterations)
 {
-  this->params_.set("mesh_smoothing_vtk_laplacian_iterations", iterations);
+  this->params_.set(Keys::MESH_SMOOTHING_VTK_LAPLACIAN_ITERATIONS, iterations);
 }
 
 //---------------------------------------------------------------------------
 double GroomParameters::get_mesh_vtk_laplacian_relaxation()
 {
-  return this->params_.get("mesh_smoothing_vtk_laplacian_relaxation", 1);
+  return this->params_.get(Keys::MESH_SMOOTHING_VTK_LAPLACIAN_RELAXATION,
+                           Defaults::mesh_smoothing_vtk_laplacian_relaxation);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_vtk_laplacian_relaxation(double relaxation)
 {
-  this->params_.set("mesh_smoothing_vtk_laplacian_relaxation", relaxation);
+  this->params_.set(Keys::MESH_SMOOTHING_VTK_LAPLACIAN_RELAXATION, relaxation);
 }
 
 //---------------------------------------------------------------------------
 int GroomParameters::get_mesh_vtk_windowed_sinc_iterations()
 {
-  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_iterations", 10);
+  return this->params_.get(Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_ITERATIONS,
+                           Defaults::mesh_smoothing_vtk_windowed_sinc_iterations);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_vtk_windowed_sinc_iterations(int iterations)
 {
-  this->params_.set("mesh_smoothing_vtk_windowed_sinc_iterations", iterations);
+  this->params_.set(Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_ITERATIONS, iterations);
 }
 
 //---------------------------------------------------------------------------
 double GroomParameters::get_mesh_vtk_windowed_sinc_passband()
 {
-  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_passband", 0.05);
+  return this->params_.get(Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND,
+                           Defaults::mesh_smoothing_vtk_windowed_sinc_passband);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
 {
-  this->params_.set("mesh_smoothing_vtk_windowed_sinc_passband", passband);
+  this->params_.set(Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND, passband);
 }
 
 //---------------------------------------------------------------------------
 std::string GroomParameters::get_alignment_method()
 {
-  if (!this->params_.key_exists("alignment_method")) {
+  if (!this->params_.key_exists(Keys::ALIGNMENT_METHOD)) {
     // if alignment doesn't exist, perhaps the old keys "center" or "icp" do, if so use them
     if (this->params_.key_exists("icp") && this->params_.get("icp", false)) {
       return GROOM_ALIGNMENT_ICP_C;
@@ -257,25 +315,25 @@ std::string GroomParameters::get_alignment_method()
       }
     }
   }
-  return this->params_.get("alignment_method", GROOM_ALIGNMENT_CENTER_C);
+  return this->params_.get(Keys::ALIGNMENT_METHOD, GROOM_ALIGNMENT_CENTER_C);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_alignment_method(std::string method)
 {
-  this->params_.set("alignment_method", method);
+  this->params_.set(Keys::ALIGNMENT_METHOD, method);
 }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_alignment_enabled()
 {
-  return this->params_.get("alignment_enabled", true);
+  return this->params_.get(Keys::ALIGNMENT_ENABLED, Defaults::alignment_enabled);
 }
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_alignment_enabled(bool value)
 {
-  this->params_.set("alignment_enabled", value);
+  this->params_.set(Keys::ALIGNMENT_ENABLED, value);
 }
 
 //---------------------------------------------------------------------------
@@ -300,6 +358,18 @@ bool GroomParameters::get_crop()
 void GroomParameters::set_crop(bool crop)
 {
   this->params_.set(Keys::CROP, crop);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_convert_to_mesh()
+{
+  return this->params_.get(Keys::CONVERT_MESH, Defaults::convert_mesh);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_convert_to_mesh(bool value)
+{
+  this->params_.set(Keys::CONVERT_MESH, value);
 }
 
 //---------------------------------------------------------------------------

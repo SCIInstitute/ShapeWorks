@@ -145,14 +145,19 @@ void GroomTool::update_page()
   auto subjects = session_->get_project()->get_subjects();
   if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > domain_id) {
 
-    if (subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
+    bool is_image = subjects[0]->get_domain_types()[domain_id] == DomainType::Image;
+    bool is_mesh = subjects[0]->get_domain_types()[domain_id] == DomainType::Mesh;
+
+    if (is_image) {
       ui_->image_panel->show();
-    } else {
+    }
+    else {
       ui_->image_panel->hide();
     }
-    if (subjects[0]->get_domain_types()[domain_id] == DomainType::Mesh) {
+    if (is_mesh || (is_image && this->ui_->convert_mesh_checkbox->isChecked())) {
       ui_->mesh_panel->show();
-    } else {
+    }
+    else {
       ui_->mesh_panel->hide();
     }
   }

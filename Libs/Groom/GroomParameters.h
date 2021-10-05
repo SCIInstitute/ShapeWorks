@@ -37,6 +37,9 @@ public:
   bool get_fill_holes_tool();
   void set_fill_holes_tool(bool value);
 
+  bool get_fill_mesh_holes_tool();
+  void set_fill_mesh_holes_tool(bool value);
+
   bool get_auto_pad_tool();
   void set_auto_pad_tool(bool value);
 
@@ -81,6 +84,10 @@ public:
 
   bool get_crop();
   void set_crop(bool crop);
+
+  bool get_convert_to_mesh();
+  void set_convert_to_mesh(bool value);
+
 
   // reflection
   bool get_reflect();
