@@ -59,13 +59,16 @@ bool Groom::run()
           continue;
         }
 
-        if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+        bool is_image = subjects[0]->get_domain_types()[domain] == DomainType::Image;
+        bool is_mesh = subjects[0]->get_domain_types()[domain] == DomainType::Mesh;
+
+        if (is_image) {
           if (!this->image_pipeline(subjects[i], domain)) {
             success = false;
           }
         }
 
-        if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+        if (is_mesh) {
           if (!this->mesh_pipeline(subjects[i], domain)) {
             success = false;
           }
@@ -121,6 +124,8 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     return true;
   }
 
+  this->run_image_pipeline(image, params);
+
   // reflection
   if (params.get_reflect()) {
     auto table = subject->get_table_values();
@@ -135,8 +140,47 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   if (params.get_use_center()) {
     this->add_center_transform(transform, image);
   }
+
   if (this->abort_) { return false; }
 
+  // groomed filename
+  std::string groomed_name = this->get_output_filename(path, DomainType::Image);
+
+  if (params.get_convert_to_mesh()) {
+    Mesh mesh = image.toMesh(0.0);
+    this->run_mesh_pipeline(mesh, params);
+    groomed_name = this->get_output_filename(path, DomainType::Mesh);
+    // save the groomed mesh
+    MeshUtils::threadSafeWriteMesh(groomed_name, mesh);
+  }
+  else {
+    // save image
+    image.write(groomed_name);
+  }
+
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groomed_name;
+
+    // store filenames back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::run_image_pipeline(Image& image, GroomParameters params)
+{
   // isolate
   if (params.get_isolate_tool()) {
     this->isolate(image);
@@ -203,31 +247,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     this->increment_progress();
   }
 
-  if (this->abort_) { return false; }
-
-  // groomed filename
-  std::string dt_name = this->get_output_filename(path, DomainType::Image);
-
-  // save image
-  image.write(dt_name);
-
-  {
-    // lock for project data structure
-    tbb::mutex::scoped_lock lock(mutex_);
-
-    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
-
-    // update groomed filenames
-    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
-    if (domain >= groomed_filenames.size()) {
-      groomed_filenames.resize(domain + 1);
-    }
-    groomed_filenames[domain] = dt_name;
-
-    // store filenames back to subject
-    subject->set_groomed_filenames(groomed_filenames);
-  }
-
   return true;
 }
 
@@ -249,23 +268,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   if (!this->skip_grooming_) {
 
-    if (params.get_fill_holes_tool()) {
-      mesh.fillHoles();
-      this->increment_progress();
-    }
-
-    if (params.get_mesh_smooth()) {
-      if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
-        mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
-                    params.get_mesh_vtk_laplacian_relaxation());
-      }
-      else if (params.get_mesh_smoothing_method() ==
-               GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
-        mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
-                        params.get_mesh_vtk_windowed_sinc_passband());
-      }
-      this->increment_progress();
-    }
+    this->run_mesh_pipeline(mesh, params);
 
     // reflection
     if (params.get_reflect()) {
@@ -304,6 +307,28 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     subject->set_groomed_filenames(groomed_filenames);
   }
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::run_mesh_pipeline(Mesh &mesh, GroomParameters params)
+{
+  if (params.get_fill_holes_tool()) {
+    mesh.fillHoles();
+    this->increment_progress();
+  }
+
+  if (params.get_mesh_smooth()) {
+    if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
+      mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
+                  params.get_mesh_vtk_laplacian_relaxation());
+    }
+    else if (params.get_mesh_smoothing_method() ==
+             GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
+      mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(), params.get_mesh_vtk_windowed_sinc_passband());
+    }
+    this->increment_progress();
+  }
   return true;
 }
 

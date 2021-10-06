@@ -22,7 +22,7 @@ class Session;
 class ShapeWorksStudioApp;
 
 class GroomTool : public QWidget {
-Q_OBJECT;
+  Q_OBJECT;
 public:
 
   GroomTool(Preferences& prefs);
@@ -74,9 +74,6 @@ public Q_SLOTS:
   void reflect_choice_changed(int index);
   void reflect_axis_changed(int index);
 
-
-  void fill_holes_changed(int state);
-
   //! Run groom tool
   void on_run_groom_button_clicked();
 
@@ -109,6 +106,5 @@ private:
   std::string current_domain_;
 
   QStringList reflect_columns_;
-
 };
 }

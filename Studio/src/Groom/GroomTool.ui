@@ -889,7 +889,7 @@ background: rgb(12, 255, 127)
         <property name="minimumSize">
          <size>
           <width>50</width>
-          <height>50</height>
+          <height>30</height>
          </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_10">

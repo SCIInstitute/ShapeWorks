@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GroomParameters.h>
+
 #include <Libs/Project/Project.h>
 #include <Libs/Image/Image.h>
 
@@ -53,8 +55,12 @@ private:
   //! Run image based pipeline on a single subject
   bool image_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
+  bool run_image_pipeline(Image& image, GroomParameters params);
+
   //! Run the mesh based pipeline on a single subject
   bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
+
+  bool run_mesh_pipeline(Mesh& mesh, GroomParameters params);
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);

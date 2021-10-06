@@ -27,7 +27,7 @@ public:
   std::vector<std::string> get_segmentation_filenames();
 
   //! Return the domain types
-  std::vector<DomainType> get_domain_types();
+  std::vector<DomainType> get_domain_types(bool groomed = false);
 
   //! Set groomed filenames
   void set_groomed_filenames(std::vector<std::string> filenames);

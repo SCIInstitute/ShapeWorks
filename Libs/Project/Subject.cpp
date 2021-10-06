@@ -114,11 +114,11 @@ std::string Subject::get_group_value(std::string group_name)
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Subject::get_domain_types()
+std::vector<DomainType> Subject::get_domain_types(bool groomed)
 {
   std::vector<DomainType> domain_types;
   auto list = this->segmentation_filenames_;
-  if (this->segmentation_filenames_.empty()) {
+  if (this->segmentation_filenames_.empty() || groomed) {
     list = this->groomed_filenames_;
   }
   for (auto name: list) {

@@ -28,10 +28,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &GroomTool::alignment_option_changed);
 
-  connect(ui_->fill_holes_checkbox, &QCheckBox::stateChanged,
-          this, &GroomTool::fill_holes_changed);
-  connect(ui_->mesh_fill_holes, &QCheckBox::stateChanged,
-          this, &GroomTool::fill_holes_changed);
+  connect(ui_->convert_mesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_page);
 
   ui_->alignment_image_checkbox->setToolTip("Pre-alignment options");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
@@ -252,10 +249,12 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->blur_checkbox->setChecked(params.get_blur_tool());
   ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
   ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
-  ui_->mesh_fill_holes->setChecked(params.get_fill_holes_tool());
+  ui_->mesh_fill_holes->setChecked(params.get_fill_mesh_holes_tool());
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
   ui_->padding_amount->setValue(params.get_padding_amount());
+
+  ui_->convert_mesh_checkbox->setChecked(params.get_convert_to_mesh());
 
   ui_->mesh_smooth_method->setCurrentText(
     QString::fromStdString(params.get_mesh_smoothing_method()));
@@ -327,8 +326,10 @@ void GroomTool::store_params()
   params.set_blur_amount(ui_->blur_sigma->value());
   params.set_isolate_tool(ui_->isolate_checkbox->isChecked());
   params.set_fill_holes_tool(ui_->fill_holes_checkbox->isChecked());
+  params.set_fill_mesh_holes_tool(ui_->mesh_fill_holes->isChecked());
   params.set_antialias_iterations(ui_->antialias_iterations->value());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
+  params.set_convert_to_mesh(ui_->convert_mesh_checkbox->isChecked());
 
   params.set_mesh_smooth(ui_->mesh_smooth->isChecked());
   params.set_mesh_smoothing_method(ui_->mesh_smooth_method->currentText().toStdString());
@@ -543,13 +544,6 @@ void GroomTool::reflect_choice_changed(int index)
 void GroomTool::reflect_axis_changed(int index)
 {
   ui_->reflect_axis->setCurrentIndex(index);
-}
-
-//---------------------------------------------------------------------------
-void GroomTool::fill_holes_changed(int state)
-{
-  ui_->fill_holes_checkbox->setChecked(state);
-  ui_->mesh_fill_holes->setChecked(state);
 }
 
 //---------------------------------------------------------------------------
