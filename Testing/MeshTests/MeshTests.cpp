@@ -223,7 +223,7 @@ TEST(MeshTests, smoothTest2)
 
 TEST(MeshTests, smoothSincTest)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   femur.smoothSinc(10,0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
 
@@ -653,7 +653,7 @@ TEST(MeshTests, fieldTest1)
 
 TEST(MeshTests, fieldTest2)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
   double c = mesh.getFieldValue("Normals", 4231);
@@ -667,7 +667,7 @@ TEST(MeshTests, fieldTest2)
 
 TEST(MeshTests, fieldTest3)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   std::vector<double> scalarRange = mesh.getFieldRange("scalars");
   std::vector<double> normalsRange = mesh.getFieldRange("Normals");
 

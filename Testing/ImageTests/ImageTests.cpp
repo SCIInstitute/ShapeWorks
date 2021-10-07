@@ -1143,7 +1143,7 @@ TEST(ImageTests, toMeshTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Mesh mesh = image.toMesh(1.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
 
   ASSERT_TRUE(mesh == ground_truth);
 }
