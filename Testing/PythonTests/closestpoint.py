@@ -34,4 +34,3 @@ def closestpointTest2():
 success &= utils.test(closestpointTest2)
 
 sys.exit(not success)
-

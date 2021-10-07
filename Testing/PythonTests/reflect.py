@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def reflectTest1():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img.reflect(Axis.Z)
@@ -10,7 +12,7 @@ def reflectTest1():
 
   return img.compare(compareImg)
 
-utils.test(reflectTest1)
+success &= utils.test(reflectTest1)
 
 def reflectTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -20,7 +22,7 @@ def reflectTest2():
 
   return img.compare(compareImg)
 
-utils.test(reflectTest2)
+success &= utils.test(reflectTest2)
 
 def reflectTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -30,7 +32,7 @@ def reflectTest3():
 
   return mesh == compareMesh
 
-utils.test(reflectTest3)
+success &= utils.test(reflectTest3)
 
 def reflectTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -40,7 +42,7 @@ def reflectTest4():
 
   return mesh == compareMesh
 
-utils.test(reflectTest4)
+success &= utils.test(reflectTest4)
 
 def reflectfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -50,4 +52,6 @@ def reflectfailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(reflectfailTest, TypeError)
+success &= utils.expectException(reflectfailTest, TypeError)
+
+sys.exit(not success)

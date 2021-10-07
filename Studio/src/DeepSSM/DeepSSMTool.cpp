@@ -128,7 +128,8 @@ void DeepSSMTool::load_params()
   this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
   this->ui_->training_fine_tuning_epochs->setText(QString::number(params.get_training_fine_tuning_epochs()));
   this->ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
-  this->ui_->training_fine_tuning_learning_rate->setText(QString::number(params.get_training_fine_tuning_learning_rate()));
+  this->ui_->training_fine_tuning_learning_rate->setText(QString::number(
+                                                           params.get_training_fine_tuning_learning_rate()));
 
   this->update_meshes();
 }
@@ -327,17 +328,24 @@ void DeepSSMTool::show_training_meshes()
   this->shapes_.clear();
 
   QStringList filenames;
-  filenames << "deepssm/model/val_examples/best_validation.particles";
-  filenames << "deepssm/model/val_examples/mean_validation.particles";
-  filenames << "deepssm/model/val_examples/worst_validation.particles";
+  filenames << "deepssm/model/examples/validation_best.particles";
+  filenames << "deepssm/model/examples/validation_median.particles";
+  filenames << "deepssm/model/examples/validation_worst.particles";
+  filenames << "deepssm/model/examples/train_best.particles";
+  filenames << "deepssm/model/examples/train_median.particles";
+  filenames << "deepssm/model/examples/train_worst.particles";
 
   QStringList names;
-  names << "best" << "mean" << "worst";
+  names << "best validation" << "median validation" << "worst validation";
+  names << "best training" << "median training" << "worst training";
 
   QStringList scalar_filenames;
-  scalar_filenames << "deepssm/model/val_examples/best_validation.scalars";
-  scalar_filenames << "deepssm/model/val_examples/mean_validation.scalars";
-  scalar_filenames << "deepssm/model/val_examples/worst_validation.scalars";
+  scalar_filenames << "deepssm/model/examples/validation_best.scalars";
+  scalar_filenames << "deepssm/model/examples/validation_median.scalars";
+  scalar_filenames << "deepssm/model/examples/validation_worst.scalars";
+  scalar_filenames << "deepssm/model/examples/train_best.scalars";
+  scalar_filenames << "deepssm/model/examples/train_median.scalars";
+  scalar_filenames << "deepssm/model/examples/train_worst.scalars";
 
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo(filenames[i]).exists()) {

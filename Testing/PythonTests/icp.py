@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def icpTest():
   imgSource = Image(os.environ["DATA"] + "/smooth1.nrrd")
   imgTarget = Image(os.environ["DATA"] + "/smooth2.nrrd")
@@ -12,4 +14,6 @@ def icpTest():
 
   return imgSource == compareImg
 
-utils.test(icpTest)
+success &= utils.test(icpTest)
+
+sys.exit(not success)

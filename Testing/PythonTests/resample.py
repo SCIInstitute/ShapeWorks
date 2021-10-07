@@ -3,6 +3,8 @@ import sys
 import numpy as np
 from shapeworks import *
 
+success = True
+
 def resampleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.resample([1, 1, 1])
@@ -11,7 +13,7 @@ def resampleTest1():
 
   return img.compare(compareImg)
 
-utils.test(resampleTest1)
+success &= utils.test(resampleTest1)
 
 def resampleTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -21,7 +23,7 @@ def resampleTest2():
 
   return img.compare(compareImg)
 
-utils.test(resampleTest2)
+success &= utils.test(resampleTest2)
 
 def resampleTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -31,7 +33,7 @@ def resampleTest3():
 
   return img.compare(compareImg)
 
-utils.test(resampleTest3)
+success &= utils.test(resampleTest3)
 
 def resampleTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -41,7 +43,7 @@ def resampleTest4():
 
   return img.compare(compareImg)
 
-utils.test(resampleTest4)
+success &= utils.test(resampleTest4)
 
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -52,4 +54,6 @@ def resampleTest5():
 
   return img.compare(compareImg)
 
-utils.test(resampleTest5)
+success &= utils.test(resampleTest5)
+
+sys.exit(not success)
