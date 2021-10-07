@@ -39,12 +39,11 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
-// helper function for Image.init and Image.assign
-Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
+/// print buffer info for the given array (dims, format, strides, etc)
+void printNumpyArrayInfo(const py::array& np_array) {
   // get input array info
   auto info = np_array.request();
 
-#if 0
   /*
     struct buffer_info {
     void *ptr;
@@ -58,43 +57,65 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
 
   std::cout << "buffer info: \n"
             << "\tinfo.ptr: " << info.ptr << std::endl
+            << "writeable: " << np_array.writeable() << std::endl
+            << "owns data: " << np_array.owndata() << std::endl
             << "\tinfo.itemsize: " << info.itemsize << std::endl
             << "\tinfo.format: " << info.format << std::endl
             << "\tinfo.ndim: " << info.ndim << std::endl;
-  std::cout << "\tinfo.shape (zyx): [ ";
-  for (int i = 0; i < info.ndim; i++) {
-    std::cout << info.shape[i] << " ";
+  std::cout << "shape ([z][y]x): ";
+  for (auto& n: info.shape) {
+    std::cout << n << " ";
   }
-  std::cout << "]\n\tinfo.strides (zyx): [ ";
-  for (int i = 0; i < info.ndim; i++) {
-    std::cout << info.strides[i] << " ";
+  std::cout << "\nstrides ([z][y]x): ";
+  for (auto& n: info.strides) {
+    std::cout << n << " ";
   }
-  std::cout << "]\n";
-  std::cout << "writeable: " << np_array.writeable() << std::endl
-            << "owns data: " << np_array.owndata() << std::endl;
-#endif
+  std::cout << std::endl;
+}
+
+/// verify py::array has expected order and is densely packed, throw if not
+void verifyOrderAndPacking(const py::array& np_array) {
+  auto info = np_array.request();
+  std::cout << "are we contiguous?" << std::endl;
+
+  // verify it's C order, not Fortran order
+  auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+  if (!c_order) {
+    throw std::invalid_argument("array must be C_CONTIGUOUS; use numpy.transpose() to reorder");
+  }
+  std::cout << "we are contiguous!" << std::endl;
+
+  // verify data is densely packed by checking strides is same as shape
+  std::vector<py::ssize_t> strides(info.ndim, info.itemsize);
+  for (int i = 0; i < info.ndim-1; i++) {
+    for (int j = 1; j < info.ndim; j++) {
+      strides[i] *= info.shape[j];
+    }
+  }
+
+  for (int i = 0; i < info.ndim; i++) {
+    if (info.strides[i] != strides[i]) {
+      throw std::invalid_argument(std::string("array not densely packed in ") + std::to_string(i) +
+                                  std::string("th dimension: expected ") + std::to_string(strides[i]) +
+                                  std::string(" strides, not ") + std::to_string(info.strides[i]));
+    }
+  }
+}
+
+/// helper function for Image.init and Image.assign
+Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
+  printNumpyArrayInfo(np_array);
+
+  // get input array info
+  auto info = np_array.request();
 
   // verify it's 3d
   if (info.ndim != 3) {
     throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
   }
 
-  // verify it's C order, not Fortran order
-  auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
-  if (!c_order) {
-    throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
-  }
-
-  // verify data is densely packed by checking strides is same as shape
-  std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
-    info.shape[2]*info.itemsize,
-    info.itemsize};
-  for (int i = 0; i < info.ndim; i++) {
-    if (info.strides[i] != strides[i]) {
-      std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-      throw std::invalid_argument("array must be densely packed");
-    }
-  }
+  // verify py::array
+  verifyOrderAndPacking(np_array);
 
   // array must be dtype.float32 and own its data to transfer it to Image
   if (info.format != py::format_descriptor<Image::PixelType>::format()) {
@@ -139,21 +160,123 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   return importer->GetOutput();
 }
 
-// Let's pass these arrays (see issue #1495)
-py::array arrToPy(Array array, bool copy = false) {
-  const size_t elemsize = array->GetElementComponentSize();
-  const auto shape = std::vector<size_t> {
-    1,
-    static_cast<size_t>(array->GetNumberOfTuples()),
-    static_cast<size_t>(array->GetNumberOfComponents())
-  };
-  const auto strides = std::vector<size_t>{
-    shape[0] * shape[1] * elemsize,
-    shape[0] * elemsize,
-    elemsize
-  };
+/// converts py::array to vtkDataArray, taking ownership of data
+Array pyToArr(py::array& np_array) {
+  printNumpyArrayInfo(np_array);
+  std::cout << "it's weird we're not even making it to the function anymore..." << std::endl;
 
-  // Reimplemented in vtkUnsignedShortArray, vtkUnsignedLongLongArray, vtkUnsignedLongArray, vtkUnsignedIntArray, vtkUnsignedCharArray, vtkSignedCharArray, vtkShortArray, vtkLongLongArray, vtkLongArray, vtkIntArray, vtkIdTypeArray, vtkFloatArray, vtkDoubleArray, vtkCharArray, and vtkBitArray.
+  //
+  // Verify the data is of appropriate size, shape, type, and ownership.
+  //
+  // get input array info
+  auto info = np_array.request();
+  std::cout << "I have your info here, Ma'am." << std::endl;
+
+  // determine dimension of field (shape[0] is z in numpy)
+  std::cout << "info.ndim: " << info.ndim << std::endl;
+  std::cout << "shape: ";
+  for (auto& n: info.shape) {
+    std::cout << n << " ";
+  }
+  std::cout << "\nstrides: ";
+  for (auto& n: info.strides) {
+    std::cout << n << " ";
+  }
+  std::cout << std::endl;
+
+  // verify py::array
+  verifyOrderAndPacking(np_array);
+
+  // verify format
+  if (!(info.format == py::format_descriptor<float>::format() ||
+        info.format == py::format_descriptor<double>::format())) {
+    throw std::invalid_argument(std::string("numpy dtype ") + std::string(info.format) + std::string(" not yet accepted (currently only float32 and float64) (i.e., " + py::format_descriptor<float>::format()) + " and " + py::format_descriptor<double>::format() + ")");
+  }
+
+  // verify dims (ex: 2d is an array of vectors, 1d is an array of scalars)
+  if (info.ndim < 1 || info.ndim > 2) {
+    throw std::invalid_argument(std::string("array must be either 1d or 2d, but ndim = ") + std::to_string(info.ndim));
+  }
+
+  // array must own its data to transfer it to Image
+  // NOTE: it could be shared, but this avoids a potential dangling pointer
+  if (!np_array.owndata()) {
+    throw std::invalid_argument("numpy array must own the data to be transferred to Mesh (maybe pass `arr.copy()`)");
+  }
+
+  //
+  // Create the vtkDataArray and pass the numpy data in.
+  //
+  // determine nvalues, ncomponents
+  auto nvalues = info.shape[0];
+  auto ncomponents = info.ndim > 1 ? info.shape[1] : 1;
+
+  // create vtkDataArray pointer, set number of components, allocate and pass data
+  auto vtkarr = Array();
+  if (info.format == py::format_descriptor<float>::format()) {
+    auto arr = vtkFloatArray::New();
+    arr->SetArray(static_cast<float*>(info.ptr), nvalues * ncomponents, 0 /*0 passes ownership*/);
+    vtkarr = arr;
+  }
+  else if (info.format == py::format_descriptor<double>::format()) {
+    auto arr = vtkDoubleArray::New();
+    arr->SetArray(static_cast<double*>(info.ptr), nvalues * ncomponents, 0 /*0 passes ownership*/);
+    vtkarr = arr;
+  }
+  else {
+    throw std::invalid_argument("numpy dtype not yet accepted (currently only float32 and float64)");
+    // Other options: vtkUnsignedShortArray, vtkUnsignedLongLongArray, vtkUnsignedLongArray, vtkUnsignedIntArray, vtkUnsignedCharArray, vtkSignedCharArray, vtkShortArray, vtkLongLongArray, vtkLongArray, vtkIntArray, vtkIdTypeArray, vtkFloatArray, vtkDoubleArray, vtkCharArray, and vtkBitArray.
+  }
+  vtkarr->SetNumberOfComponents(ncomponents);
+
+  // Remove ownership to prevent Python from deallocating (vtkArray will do that
+  // when it's time) by modifying np_array's OWNDATA flag.
+  std::cout << "TODO: simplify modifying py::array flags. Jebus!" << std::endl;
+  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+  disown_data_flag = ~disown_data_flag;
+  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
+  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
+  if (np_array.owndata()) {
+    throw std::runtime_error("error transferring data ownership to Image");
+  }
+
+  return vtkarr;
+}
+
+/// ways of tranferring Arrays to Python, copy being the least efficient but most conservative
+enum ArrayTransferOptions {
+  COPY_ARRAY,  // copies and (by definition) grants ownership
+  SHARE_ARRAY, // does not copy or grant ownership
+  MOVE_ARRAY   // does not copy, grants ownership if possible
+};
+
+/// convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer
+py::array arrToPy(Array& array, ArrayTransferOptions xfer = COPY_ARRAY) {
+  const size_t elemsize = array->GetElementComponentSize();
+  auto shape = std::vector<size_t> { static_cast<size_t>(array->GetNumberOfTuples()) };
+  if (array->GetNumberOfComponents() > 1) {
+    shape.push_back(static_cast<size_t>(array->GetNumberOfComponents()));
+  }
+  auto strides = std::vector<size_t>();
+  if (array->GetNumberOfComponents() > 1) {
+    strides = std::vector<size_t> {
+      static_cast<size_t>(array->GetNumberOfComponents() * elemsize),
+      elemsize
+    };
+  }
+  else {
+    strides = std::vector<size_t> { elemsize };
+  }
+  // std::cout << "shape: ";
+  // for (auto& n: shape) {
+  //   std::cout << n << " ";
+  // }
+  // std::cout << "\nstrides: ";
+  // for (auto& n: strides) {
+  //   std::cout << n << " ";
+  // }
+  // std::cout << std::endl;
+
   py::dtype py_type;
   if (vtkDoubleArray::SafeDownCast(array)) {
     py_type = py::dtype::of<double>();
@@ -163,6 +286,7 @@ py::array arrToPy(Array array, bool copy = false) {
   }
   else {
     throw std::invalid_argument("arrToPy passed currently unhandled array type");
+    // Other options: vtkUnsignedShortArray, vtkUnsignedLongLongArray, vtkUnsignedLongArray, vtkUnsignedIntArray, vtkUnsignedCharArray, vtkSignedCharArray, vtkShortArray, vtkLongLongArray, vtkLongArray, vtkIntArray, vtkIdTypeArray, vtkFloatArray, vtkDoubleArray, vtkCharArray, and vtkBitArray.
   }
 #if 0
   std::cout << "type of array: " << typeid(array).name() << std::endl
@@ -179,10 +303,28 @@ py::array arrToPy(Array array, bool copy = false) {
     shape,
     strides,
     array->GetVoidPointer(0),
-    (copy ? pybind11::handle() : dummyDataOwner)
+    (xfer == COPY_ARRAY ? pybind11::handle() : dummyDataOwner)
   };
-  assert(copy == img.owndata());
 
+  if (xfer == MOVE_ARRAY) {
+    if (array->GetReferenceCount() == 1) {
+      array->SetReferenceCount(2); // NOTE: tricks vtk into never deleting this array
+      std::bitset<32> own_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+      int own_data_flag_int = static_cast<int>(own_data_flag.to_ulong());
+      pybind11::detail::array_proxy(img.ptr())->flags |= own_data_flag_int;
+    }
+    else {
+      // If array has other references, it will only be shared with Python.
+      std::cerr << "NOTE: sharing array (unable to transfer ownership from C++)" << std::endl;
+    }
+  }
+
+  // TODO: throw this in a function &| find the pybind11 func if it exists
+  // set c-contiguous and not f-contiguous, not both (i.e., "NPY_ARRAY_FORCECAST_")
+  std::bitset<32> f_order_flag = pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
+  f_order_flag = ~f_order_flag;
+  int f_order_flag_int = static_cast<int>(f_order_flag.to_ulong());
+  pybind11::detail::array_proxy(img.ptr())->flags &= f_order_flag_int;
   pybind11::detail::array_proxy(img.ptr())->flags |= pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
 
   return img;
@@ -1173,7 +1315,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("geodesicDistance",
        [](Mesh &mesh, const std::vector<double> p) -> decltype(auto) {
           auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
-          return arrToPy(array);
+          return arrToPy(array, MOVE_ARRAY);
        },
        "computes geodesic distance between a point (landmark) and each vertex on mesh",
        "landmark"_a)
@@ -1186,7 +1328,7 @@ PYBIND11_MODULE(shapeworks_py, m)
             points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
           }
           auto array = mesh.geodesicDistance(points);
-          return arrToPy(array);
+          return arrToPy(array, MOVE_ARRAY);
        },
        "computes geodesic distance between a set of points (curve) and all vertices on mesh",
        "curve"_a)
@@ -1194,7 +1336,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("curvature",
        [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {
           auto array = mesh.curvature(type);
-          return arrToPy(array);
+          return arrToPy(array, MOVE_ARRAY);
      },
      "computes and adds curvature (principal (default) or gaussian or mean)",
      "type"_a=Mesh::CurvatureType::Principal)
@@ -1262,26 +1404,9 @@ PYBIND11_MODULE(shapeworks_py, m)
        "print all field names in mesh")
 
   .def("setField",
-       [](Mesh &mesh, std::string name, std::vector<double>& v) -> decltype(auto) {
-         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
-         arr->SetNumberOfValues(v.size());
-         for (int i=0; i<v.size(); i++) {
-           arr->SetTuple1(i, v[i]);
-         }
-         return mesh.setField(name, arr);
-       },
-       "sets the given field for points with array",
-       "name"_a, "array"_a)
-
-  .def("setField",
-       [](Mesh &mesh, std::string name, std::vector<std::vector<double>>& v) -> decltype(auto) {
-         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
-         arr->SetNumberOfComponents(3);
-         arr->SetNumberOfTuples(v.size());
-         for (int i=0; i<v.size(); i++) {
-           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
-          }
-         return mesh.setField(name, arr);
+       [](Mesh &mesh, const std::string& name, py::array& array) -> decltype(auto) {
+         auto vtkarr = pyToArr(array);
+         return mesh.setField(name, vtkarr);
        },
        "sets the given field for points with array",
        "name"_a, "array"_a)
@@ -1289,7 +1414,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {
          auto array = mesh.getField<vtkDataArray>(name);
-         return arrToPy(array);
+         if (!array) {
+           throw std::invalid_argument("field '" + name + "' does not exist");
+         }
+         return arrToPy(array, SHARE_ARRAY);
        },
        "gets the field",
        "name"_a)
@@ -1356,7 +1484,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
-                  return arrToPy(array);
+                  return arrToPy(array, MOVE_ARRAY);
                },
                "computes average normals for each point in given set of meshes",
                "filenames"_a, "autoGenerateNormals"_a=true)
@@ -1364,7 +1492,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(meshes);
-                  return arrToPy(array);
+                  return arrToPy(array, MOVE_ARRAY);
                },
                "computes average normals for each point in given set of meshes",
                "meshes"_a)

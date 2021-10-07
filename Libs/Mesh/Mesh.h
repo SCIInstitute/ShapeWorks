@@ -152,7 +152,7 @@ public:
   /// sets the given field for faces with array (*does not copy array's values)
   Mesh& setFieldForFaces(std::string name, Array array);
 
-  /// gets the field (*does not copy array's values)
+  /// gets a pointer to the requested field, null if field doesn't exist
   template<typename T>
   vtkSmartPointer<T> getField(const std::string& name) const
   {
@@ -166,13 +166,13 @@ public:
   /// sets the given index of field to value
   void setFieldValue(const std::string& name, int idx, double value);
 
-  /// gets the value at the given index of field
+  /// gets the value at the given index of field (NOTE: returns first component of vector fields)
   double getFieldValue(const std::string& name, int idx) const;
 
   /// gets the multi value at the given index of field
   Eigen::VectorXd getMultiFieldValue(const std::string& name, int idx) const;
 
-  /// returns the range of the given field
+  /// returns the range of the given field (NOTE: returns range of first component of vector fields)
   std::vector<double> getFieldRange(const std::string& name) const;
 
   /// returns the mean the given field
