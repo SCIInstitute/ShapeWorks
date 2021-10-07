@@ -126,7 +126,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+  FetchAndCacheFirstPoint(pt_a, idx_a, face_a, bary_a);
 
   // Find the triangle for the point b
   // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
@@ -183,6 +183,25 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 }
 
 //---------------------------------------------------------------------------
+// Fetches face/triangle index and barycentric coordinates of point in face,
+// caching or retrieving results from cache if already cached.
+void VtkMeshWrapper::FetchAndCacheFirstPoint(const PointType pt_a, int idx_a,
+                                             int& face_a, vec3& bary_a) const
+{
+  if (geo_lq_cached_ && pt_a == geo_lq_pt_a_) {
+    face_a = geo_lq_face_;
+    bary_a = geo_lq_bary_;
+  } else {
+    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+
+    geo_lq_cached_ = true;
+    geo_lq_face_ = face_a;
+    geo_lq_bary_ = bary_a;
+    geo_lq_pt_a_ = pt_a;
+  }
+}
+
+//---------------------------------------------------------------------------
 bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
                                       const PointType &pt_b, int idx_b,
                                       double test_dist, double& dist) const
@@ -201,7 +220,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
 
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+  FetchAndCacheFirstPoint(pt_a, idx_a, face_a, bary_a);
 
   // Find the triangle for the point b
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
@@ -269,6 +288,7 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
     }
 
     particle_triangles_[idx] = ending_face;
+    geo_lq_cached_ = false;
 
     this->CalculateNormalAtPoint(new_point_pt, idx);
   }
@@ -797,6 +817,7 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
     particle_triangles_.resize(idx + 1, -1);
   }
   this->particle_triangles_[idx] = -1;
+  this->geo_lq_cached_ = false;
 }
 
 //---------------------------------------------------------------------------
