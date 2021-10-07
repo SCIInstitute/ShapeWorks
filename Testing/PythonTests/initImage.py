@@ -91,6 +91,7 @@ def initImageTest8():
 
 success &= utils.test(initImageTest8)
 
+# helper function for testing images initialized from arrays
 def imageArr():
   dims = (7,3,2) # NOTE: numpy dims are specified in z, y, x order
   farr = np.ndarray(dims, dtype=np.float32)
@@ -102,8 +103,6 @@ def imageArr():
         farr[k][j][i] = ival*(i/farr.shape[2]) + jval*(j/farr.shape[1]) + kval/farr.shape[0]
 
   return farr
-
-utils.test(imageArr)
 
 def imageInitTest1():
   arr = imageArr()

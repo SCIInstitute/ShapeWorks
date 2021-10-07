@@ -76,19 +76,17 @@ void printNumpyArrayInfo(const py::array& np_array) {
 /// verify py::array has expected order and is densely packed, throw if not
 void verifyOrderAndPacking(const py::array& np_array) {
   auto info = np_array.request();
-  std::cout << "are we contiguous?" << std::endl;
 
   // verify it's C order, not Fortran order
   auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
   if (!c_order) {
     throw std::invalid_argument("array must be C_CONTIGUOUS; use numpy.transpose() to reorder");
   }
-  std::cout << "we are contiguous!" << std::endl;
 
   // verify data is densely packed by checking strides is same as shape
   std::vector<py::ssize_t> strides(info.ndim, info.itemsize);
   for (int i = 0; i < info.ndim-1; i++) {
-    for (int j = 1; j < info.ndim; j++) {
+    for (int j = i+1; j < info.ndim; j++) {
       strides[i] *= info.shape[j];
     }
   }
@@ -102,9 +100,25 @@ void verifyOrderAndPacking(const py::array& np_array) {
   }
 }
 
+/// sets the OWNDATA flag of the given array to `owns`
+void setOwnership(py::array& array, bool owns) {
+  std::bitset<32> own_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
+  if (!owns) {
+    int disown_data_flag = static_cast<int>(~own_data_flag.to_ulong());
+    pybind11::detail::array_proxy(array.ptr())->flags &= disown_data_flag;
+  }
+  else {
+    pybind11::detail::array_proxy(array.ptr())->flags |= static_cast<int>(own_data_flag.to_ulong());
+  }
+
+  if (array.owndata() != owns) {
+    throw std::runtime_error("error modifying python array ownership");
+  }
+}
+
 /// helper function for Image.init and Image.assign
 Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
-  printNumpyArrayInfo(np_array);
+  //printNumpyArrayInfo(np_array);
 
   // get input array info
   auto info = np_array.request();
@@ -114,7 +128,7 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
     throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
   }
 
-  // verify py::array
+  // verify py::array (throws on error)
   verifyOrderAndPacking(np_array);
 
   // array must be dtype.float32 and own its data to transfer it to Image
@@ -127,16 +141,8 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   }
 
   // Pass ownership of the array to Image to prevent Python from
-  // deallocating (the image will dealloate when it's time).
-  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
-  disown_data_flag = ~disown_data_flag;
-  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
-
-  // modify np_array's OWNDATA flag and ensure ownership transfered
-  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
-  if (np_array.owndata()) {
-    throw std::runtime_error("error transferring data ownership to Image");
-  }
+  // deallocating (the shapeworks Image will dealloate when it's time).
+  setOwnership(np_array, false);
 
   // import data, passing ownership of memory to ensure there will be no leak
   using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
@@ -162,29 +168,15 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
 
 /// converts py::array to vtkDataArray, taking ownership of data
 Array pyToArr(py::array& np_array) {
-  printNumpyArrayInfo(np_array);
-  std::cout << "it's weird we're not even making it to the function anymore..." << std::endl;
+  //printNumpyArrayInfo(np_array);
 
   //
   // Verify the data is of appropriate size, shape, type, and ownership.
   //
   // get input array info
   auto info = np_array.request();
-  std::cout << "I have your info here, Ma'am." << std::endl;
 
-  // determine dimension of field (shape[0] is z in numpy)
-  std::cout << "info.ndim: " << info.ndim << std::endl;
-  std::cout << "shape: ";
-  for (auto& n: info.shape) {
-    std::cout << n << " ";
-  }
-  std::cout << "\nstrides: ";
-  for (auto& n: info.strides) {
-    std::cout << n << " ";
-  }
-  std::cout << std::endl;
-
-  // verify py::array
+  // verify py::array (throws on error)
   verifyOrderAndPacking(np_array);
 
   // verify format
@@ -229,16 +221,8 @@ Array pyToArr(py::array& np_array) {
   }
   vtkarr->SetNumberOfComponents(ncomponents);
 
-  // Remove ownership to prevent Python from deallocating (vtkArray will do that
-  // when it's time) by modifying np_array's OWNDATA flag.
-  std::cout << "TODO: simplify modifying py::array flags. Jebus!" << std::endl;
-  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
-  disown_data_flag = ~disown_data_flag;
-  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
-  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
-  if (np_array.owndata()) {
-    throw std::runtime_error("error transferring data ownership to Image");
-  }
+  // prevent Python from deallocating since vtk will do that when it's time
+  setOwnership(np_array, false);
 
   return vtkarr;
 }
@@ -267,15 +251,6 @@ py::array arrToPy(Array& array, ArrayTransferOptions xfer = COPY_ARRAY) {
   else {
     strides = std::vector<size_t> { elemsize };
   }
-  // std::cout << "shape: ";
-  // for (auto& n: shape) {
-  //   std::cout << n << " ";
-  // }
-  // std::cout << "\nstrides: ";
-  // for (auto& n: strides) {
-  //   std::cout << n << " ";
-  // }
-  // std::cout << std::endl;
 
   py::dtype py_type;
   if (vtkDoubleArray::SafeDownCast(array)) {
@@ -309,9 +284,7 @@ py::array arrToPy(Array& array, ArrayTransferOptions xfer = COPY_ARRAY) {
   if (xfer == MOVE_ARRAY) {
     if (array->GetReferenceCount() == 1) {
       array->SetReferenceCount(2); // NOTE: tricks vtk into never deleting this array
-      std::bitset<32> own_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
-      int own_data_flag_int = static_cast<int>(own_data_flag.to_ulong());
-      pybind11::detail::array_proxy(img.ptr())->flags |= own_data_flag_int;
+      setOwnership(img, true);
     }
     else {
       // If array has other references, it will only be shared with Python.
@@ -319,7 +292,6 @@ py::array arrToPy(Array& array, ArrayTransferOptions xfer = COPY_ARRAY) {
     }
   }
 
-  // TODO: throw this in a function &| find the pybind11 func if it exists
   // set c-contiguous and not f-contiguous, not both (i.e., "NPY_ARRAY_FORCECAST_")
   std::bitset<32> f_order_flag = pybind11::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
   f_order_flag = ~f_order_flag;
