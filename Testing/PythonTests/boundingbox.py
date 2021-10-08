@@ -4,6 +4,8 @@ import glob
 import numpy as np
 from shapeworks import *
 
+success = True
+
 ### Image bounding box tests
 
 # compute bounding box of all files
@@ -14,7 +16,7 @@ def imageBoundingBoxTest1():
   
   return region == ground_truth
 
-utils.test(imageBoundingBoxTest1)
+success &= utils.test(imageBoundingBoxTest1)
 
 # compute bounding box of a subset of the files
 def imageBoundingBoxTest2():
@@ -30,7 +32,7 @@ def imageBoundingBoxTest2():
 
   return region == ground_truth
 
-utils.test(imageBoundingBoxTest2)
+success &= utils.test(imageBoundingBoxTest2)
 
 # try to compute bounding box of nothing
 def imageBoundingBoxfailTest():
@@ -38,7 +40,7 @@ def imageBoundingBoxfailTest():
   region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
   return True
 
-utils.expectException(imageBoundingBoxfailTest, ValueError)
+success &= utils.expectException(imageBoundingBoxfailTest, ValueError)
 
 ### Mesh bounding box tests
 
@@ -57,7 +59,7 @@ def meshBoundingBoxTest1():
   return (np.allclose(region.min, ground_truth.min) and
           np.allclose(region.max, ground_truth.max))
 
-utils.test(meshBoundingBoxTest1)
+success &= utils.test(meshBoundingBoxTest1)
 
 # try to compute bounding box of nothing
 def meshBoundingBoxfailTest():
@@ -65,4 +67,6 @@ def meshBoundingBoxfailTest():
   region = MeshUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
   return True
 
-utils.expectException(meshBoundingBoxfailTest, ValueError)
+success &= utils.expectException(meshBoundingBoxfailTest, ValueError)
+
+sys.exit(not success)

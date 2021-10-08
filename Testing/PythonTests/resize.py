@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def resizeTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.resize([0, 0, 0])
@@ -10,7 +12,7 @@ def resizeTest1():
 
   return img.compare(compareImg)
 
-utils.test(resizeTest1)
+success &= utils.test(resizeTest1)
 
 def resizeTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -20,7 +22,7 @@ def resizeTest2():
 
   return img.compare(compareImg)
 
-utils.test(resizeTest2)
+success &= utils.test(resizeTest2)
 
 def resizeTest3():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -30,7 +32,7 @@ def resizeTest3():
 
   return img.compare(compareImg)
 
-utils.test(resizeTest3)
+success &= utils.test(resizeTest3)
 
 def resizeTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -40,7 +42,7 @@ def resizeTest4():
 
   return img.compare(compareImg)
 
-utils.test(resizeTest4)
+success &= utils.test(resizeTest4)
 
 def resizefailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -50,4 +52,6 @@ def resizefailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(resizefailTest, TypeError)
+success &= utils.expectException(resizefailTest, TypeError)
+
+sys.exit(not success)

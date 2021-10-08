@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def distanceTest1():
   femur = Mesh(os.environ["DATA"] + "/femur.vtk")
   pelvis = Mesh(os.environ["DATA"] + "/pelvis.vtk")
@@ -13,12 +15,12 @@ def distanceTest1():
 
   return femur == f2p and pelvis == p2f
 
-utils.test(distanceTest1)
+success &= utils.test(distanceTest1)
 
 def distanceTest2():
   femur1 = Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
   femur2 = Mesh(os.environ["DATA"] + "/m04_L_femur.ply")
-  femur1.distance(femur2, Mesh.DistanceMethod.POINT_TO_CELL)
+  femur1.distance(femur2, Mesh.DistanceMethod.PointToCell)
   femur2.distance(femur1)
 
   fwd = Mesh(os.environ["DATA"] + "/meshdistance1p2c.vtk")
@@ -26,4 +28,6 @@ def distanceTest2():
 
   return femur1 == fwd and femur2 == rev
 
-utils.test(distanceTest2)
+success &= utils.test(distanceTest2)
+
+sys.exit(not success)

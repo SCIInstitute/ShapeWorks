@@ -665,9 +665,9 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   bool summary = static_cast<bool>(options.get("summary"));
 
   std::string methodopt(options.get("method"));
-  auto method{Mesh::POINT_TO_POINT};
-  if (methodopt == "point-to-point") method = Mesh::POINT_TO_POINT;
-  else if (methodopt == "point-to-cell") method = Mesh::POINT_TO_CELL;
+  auto method{Mesh::PointToPoint};
+  if (methodopt == "point-to-point") method = Mesh::PointToPoint;
+  else if (methodopt == "point-to-cell") method = Mesh::PointToCell;
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
@@ -821,12 +821,8 @@ void GeodesicDistance::buildParser()
   const std::string desc = "computes geodesic distance between two vertices on mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x for source point.");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y for source point.");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z for source point.");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x for target point.");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y for target point.");
-  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z for target point.");
+  parser.add_option("--v1").action("store").type("int").set_default(-1).help("Index of first point in mesh.");
+  parser.add_option("--v2").action("store").type("int").set_default(-1).help("Index of second point in mesh.");
 
   Command::buildParser();
 }
@@ -839,16 +835,43 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
     return false;
   }
 
-  Point source({static_cast<double>(options.get("x1")),
-                static_cast<double>(options.get("y1")),
-                static_cast<double>(options.get("z1"))});
+  int v1 = static_cast<int>(options.get("v1"));
+  int v2 = static_cast<int>(options.get("v2"));
 
-  Point target({static_cast<double>(options.get("x2")),
-                static_cast<double>(options.get("y2")),
-                static_cast<double>(options.get("z2"))});
+  std::cout << "Geodesic Distance between two points: "
+            << sharedData.mesh->geodesicDistance(v1, v2) << std::endl;
+  return sharedData.validMesh();
+}
 
-  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(sharedData.mesh->closestPointId(source),
-                                                           sharedData.mesh->closestPointId(target)) << "\n";
+///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistanceToLandmark
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistanceToLandmark::buildParser()
+{
+  const std::string prog = "geodesic-distance-landmark";
+  const std::string desc = "computes geodesic distance between a point (landmark) and each vertex on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for landmark point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for landmark point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for landmark point.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point landmark({static_cast<double>(options.get("x")),
+                  static_cast<double>(options.get("y")),
+                  static_cast<double>(options.get("z"))});
+
+  sharedData.field = sharedData.mesh->geodesicDistance(landmark);
   return sharedData.validMesh();
 }
 

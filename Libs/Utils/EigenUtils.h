@@ -39,6 +39,14 @@ Eigen::Map<Eigen::Matrix<T, NRows, NCols, Eigen::RowMajor>> wrapDataWithEigen(T 
   return Eigen::Map<Eigen::Matrix<T, NRows, NCols, Eigen::RowMajor>>(data);
 }
 
+/// Wrap a data pointer of the specified size with Eigen::Matrix.
+template<typename T>
+Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+wrapDataWithEigen(T *data, size_t nrows, size_t ncols)
+{
+  return Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(data, nrows, ncols);
+}
+
 /// Wrap data pointer with itk::Matrix. Handy for efficiently going back and forth between Python numpy arrays.
 /// WARNING: This function actually just copies data.
 template<unsigned NRows, unsigned NCols, typename T>

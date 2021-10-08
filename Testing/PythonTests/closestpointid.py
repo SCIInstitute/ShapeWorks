@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def closestpointidTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
   p = mesh.getPoint(50)
@@ -9,4 +11,6 @@ def closestpointidTest():
 
   return id == 50
 
-utils.test(closestpointidTest)
+success &= utils.test(closestpointidTest)
+
+sys.exit(not success)

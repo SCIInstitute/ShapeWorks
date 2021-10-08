@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def clipTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip([0, 20, 0], [1, 55, 0], [1, 75, 0], 0.0)
@@ -10,7 +12,7 @@ def clipTest1():
 
   return img.compare(compareImg)
 
-utils.test(clipTest1)
+success &= utils.test(clipTest1)
 
 def clipTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -20,7 +22,7 @@ def clipTest2():
 
   return img.compare(compareImg)
 
-utils.test(clipTest2)
+success &= utils.test(clipTest2)
 
 def clipTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -30,7 +32,7 @@ def clipTest3():
 
   return img.compare(compareImg)
 
-utils.test(clipTest3)
+success &= utils.test(clipTest3)
 
 def clipTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -40,7 +42,7 @@ def clipTest4():
 
   return mesh == compareMesh
 
-utils.test(clipTest4)
+success &= utils.test(clipTest4)
 
 def clipTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -50,7 +52,7 @@ def clipTest5():
 
   return mesh == compareMesh
 
-utils.test(clipTest5)
+success &= utils.test(clipTest5)
 
 def clipTest6():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -60,7 +62,7 @@ def clipTest6():
 
   return mesh == compareMesh
 
-utils.test(clipTest6)
+success &= utils.test(clipTest6)
 
 def clipTest7():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -70,7 +72,7 @@ def clipTest7():
 
   return mesh == compareMesh
 
-utils.test(clipTest7)
+success &= utils.test(clipTest7)
 
 def clipfailTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -80,7 +82,7 @@ def clipfailTest1():
 
   return img.compare(compareImg)
 
-utils.expectException(clipfailTest1, ValueError)
+success &= utils.expectException(clipfailTest1, ValueError)
 
 def clipfailTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -90,4 +92,6 @@ def clipfailTest2():
 
   return img.compare(compareImg)
 
-utils.expectException(clipfailTest2, ValueError)
+success &= utils.expectException(clipfailTest2, ValueError)
+
+sys.exit(not success)

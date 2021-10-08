@@ -1,6 +1,9 @@
 import os
+import sys
 import numpy as np
 from shapeworks import *
+
+success = True
 
 def pointsTest():
   mesh = Mesh(os.environ["DATA"] + "/simple_ellipsoid.ply")
@@ -12,4 +15,6 @@ def pointsTest():
 
   return points.shape[0] == 14 and points.shape[1] == 3 and np.linalg.norm(v0-g0) < 1e-4 and np.linalg.norm(vn-gn) < 1e-4
 
-utils.test(pointsTest)
+success &= utils.test(pointsTest)
+
+sys.exit(not success)
