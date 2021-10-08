@@ -183,7 +183,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
   // with an increased neighborhood radius.
   int err;
   sigma =  this->EstimateSigma(idx, neighborhood, domain, weights,pos, sigma, epsilon, err);
-  
+
   while (err != 0)
     {
     neighborhood_radius *= 2.0;

@@ -45,6 +45,9 @@ ParticleEnsembleEntropyFunction<VDimension>
     // you start deleting particles.
     const unsigned int num_samples = m_ShapeMatrix->cols();
     const unsigned int num_dims    = m_ShapeMatrix->rows();
+  std::cerr << "---------------------\n";
+    std::cerr << "num_dims = " << num_dims << "\n";
+    std::cerr << "num_samples = " << num_samples << "\n";
 
 
     // Do we need to resize the covariance matrix?
@@ -179,6 +182,10 @@ ParticleEnsembleEntropyFunction<VDimension>
 //    }
 //    else
 //        std::cout << "CorrMean_ENERGY = " << m_CurrentEnergy << std::endl;
+
+std::cerr << " OLD m_PointsUpdate->rows() = " << m_PointsUpdate->rows() << "\n";
+std::cerr << " OLD m_PointsUpdate->cols() = " << m_PointsUpdate->cols() << "\n";
+
 }
 
 template <unsigned int VDimension>
@@ -187,6 +194,7 @@ ParticleEnsembleEntropyFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
+
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
@@ -219,8 +227,14 @@ ParticleEnsembleEntropyFunction<VDimension>
 
     energy = tmp(0,0);
 
+    //if (idx == 0 && d == 0) {
+      std::cerr << "LegacyEvaluate: " << d << ":" << idx << "\n";
+    //}
     for (unsigned int i = 0; i< VDimension; i++)
     {
+      //if (idx == 0 && d == 0) {
+        std::cerr << "access m_PointsUpdate(" << k+i << "," << (d / DomainsPerShape) << ")\n";
+      //}
         gradE[i] = m_PointsUpdate->get(k + i, d / DomainsPerShape);
     }
 

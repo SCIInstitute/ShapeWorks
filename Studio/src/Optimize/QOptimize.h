@@ -34,6 +34,8 @@ signals:
 
 private:
 
+  void check_for_swap();
+
   itk::MemberCommand<QOptimize>::Pointer iterate_command_;
 
   // for concurrent access

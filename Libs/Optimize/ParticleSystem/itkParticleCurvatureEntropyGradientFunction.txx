@@ -176,6 +176,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, distances, pos,
                                   m_CurrentSigma, epsilon, err, m_avgKappa);
 
+  if (idx == 5 && d == 1) {
+
+    //std::cerr << "neighborhood radius = " << neighborhood_radius << ", size() = " << m_CurrentNeighborhood.size() << ", sigma = " << m_CurrentSigma << "\n";
+  }
+
+
   while (err != 0)
     {
     neighborhood_radius *= 2.0;

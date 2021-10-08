@@ -111,7 +111,134 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
         }
       }
     }
+    this->check_for_swap();
     emit progress(this->m_iteration_count * 100 / this->m_total_iterations, message);
+  }
+}
+
+//---------------------------------------------------------------------------
+void QOptimize::check_for_swap()
+{
+  std::cerr << "------------------------\n";
+  //std::cerr << "check for swap\n";
+  std::vector<itk::Point<double>> mean;
+  if (m_global_points.size() < 1) {
+    return;
+  }
+  int num_particles = m_global_points[0].size();
+  int num_shapes = m_global_points.size();
+  for (int i = 0; i < num_particles; i++) {
+    itk::Point<double> point;
+    point[0] = 0;
+    point[1] = 0;
+    point[2] = 0;
+
+    for (int d = 0; d < num_shapes; d++) {
+      auto shape = m_global_points[d];
+      point[0] += shape[i][0];
+      point[1] += shape[i][1];
+      point[2] += shape[i][2];
+    }
+    point[0] /= num_shapes;
+    point[1] /= num_shapes;
+    point[2] /= num_shapes;
+    mean.push_back(point);
+  }
+
+  double mean_nearest = 0;
+  for (int i = 0; i < num_particles; i++) {
+    double nearest = std::numeric_limits<double>::max();
+    for (int j = 0; j < num_particles; j++) {
+      if (i == j) {continue;}
+      double dist = mean[i].EuclideanDistanceTo(mean[j]);
+      //std::cerr << "dist = " << dist << "\n";
+      nearest = std::min<double>(nearest, dist);
+    }
+    mean_nearest += nearest;
+  }
+  mean_nearest /= num_particles;
+  std::cerr << "mean_nearest = " << mean_nearest << "\n";
+
+  double radius = mean_nearest * 1.5;
+  for (int i = 0; i < num_particles; i++) {
+    std::vector<int> neighbors;
+    for (int j = 0; j < num_particles; j++) {
+      if (i == j) {continue;}
+      double dist = mean[i].EuclideanDistanceTo(mean[j]);
+      if (dist < radius) {
+        neighbors.push_back(j);
+      }
+    }
+
+
+    // neighbors contains the neighbors of particle i
+
+
+    using VectorType = itk::Vector<double, 3>;
+
+/*
+    for (int k = 0; k < neighbors.size(); k++) {
+
+      VectorType u;
+      u[0] = mean[i][0] - mean[neighbors[k]][0];
+      u[1] = mean[i][1] - mean[neighbors[k]][1];
+      u[2] = mean[i][2] - mean[neighbors[k]][2];
+
+      VectorType v;
+      for (int d = 0; d < num_shapes; d++) {
+        v[0] = m_global_points[d][i][0] - m_global_points[d][k][0];
+        v[1] = m_global_points[d][i][1] - m_global_points[d][k][1];
+        v[2] = m_global_points[d][i][2] - m_global_points[d][k][2];
+        double dot = u * v;
+        if (i == 5) {
+          std::cerr << "dot for " << i << " and " << k << " on d:" << d << " = " << dot << "\n";
+        }
+        if (dot < 0) {
+          std::cerr << "uh oh, perhaps domain " << d << ", particle " << i << " and " << k << " is flipped?\n";
+        }
+      }
+
+      std::cerr << neighbors[k] << " ";
+    }
+*/
+
+
+    if (neighbors.size() > 2) {
+
+      if (i == 5) {
+        std::cerr << "5's neighbors on mean are: ";
+        for (int k = 0; k < neighbors.size(); k++) {
+          std::cerr << neighbors[k] << " ";
+        }
+        std::cerr << "\n";
+      }
+
+      for (int d = 0; d < num_shapes; d++) {
+
+        std::vector<int> neighbors_local;
+
+        for (int j = 0; j < num_particles; j++) {
+          if (i == j) { continue; }
+          double dist = m_global_points[d][i].EuclideanDistanceTo(m_global_points[d][j]);
+          if (dist < mean_nearest * 1.25) {
+            if (d == 1 && i == 5) {
+              std::cerr << "1:5 neighbor = " << j << "\n";
+            }
+            neighbors_local.push_back(j);
+            bool found = false;
+            for (int k = 0; k < neighbors.size(); k++) {
+              if (neighbors[k] == j) {
+                found = true;
+              }
+            }
+            if (!found) {
+              std::cerr << "perhaps domain " << d << ", particle " << j << " is flipped?\n";
+            }
+          }
+        }
+      }
+    }
+
   }
 }
 

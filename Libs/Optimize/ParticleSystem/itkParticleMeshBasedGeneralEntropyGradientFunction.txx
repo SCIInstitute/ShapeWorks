@@ -24,12 +24,12 @@ void
 ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 ::ComputeUpdates(const ParticleSystemType *c)
 {
-    num_dims = m_ShapeData->rows();
+    num_dims = m_ShapeData->rows();  // includes dimensions for normals, etc
     num_samples = m_ShapeData->cols();
 
-     int rows = 0;
+    int rows = 0;
     for (int i = 0; i < m_DomainsPerShape; i++)
-        rows += VDimension*c->GetNumberOfParticles(i);
+        rows += VDimension*c->GetNumberOfParticles(i);  // rows will only include X/Y/Z
 
     // Do we need to resize the update matrix?
     if (m_PointsUpdate->rows() != rows
@@ -39,6 +39,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     m_PointsUpdate->fill(0.0);
 
     vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
+    //std::cerr << "num_dims = " << num_dims << "\n";
+    //std::cerr << "num_samples = " << num_samples << "\n";
 
     m_points_mean->clear();
     m_points_mean->set_size(num_dims,1);
@@ -202,6 +204,117 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << std::endl;
 //    }
 
+
+  auto mean = [=](int particle_id) {
+    itk::Point<double> p1;
+    int idx = particle_id * 6;
+    for (int k = 0; k < 3; k++) {
+      p1[k] = (*m_points_mean)(idx + k, 0);
+    }
+    return p1;
+  };
+
+  auto shape_point = [=](int domain, int particle_id) {
+    itk::Point<double> p1;
+    int idx = particle_id * 6;
+    for (int k = 0; k < 3; k++) {
+      p1[k] = (*m_ShapeData)(idx + k, domain);
+    }
+    return p1;
+  };
+
+  int num_particles = rows / 3;
+  double mean_nearest = 0;
+  for (int i=0;i<num_particles;i++) {
+    double nearest = std::numeric_limits<double>::max();
+
+    itk::Point<double> p1 = mean(i);
+
+    for (int j=0;j<num_particles;j++) {
+      if (i == j) {continue;}
+
+      itk::Point<double> p2 = mean(j);
+
+      double dist = p1.EuclideanDistanceTo(p2);
+      nearest = std::min<double>(nearest, dist);
+    }
+    mean_nearest += nearest;
+  }
+
+  mean_nearest /= num_particles;
+
+  int num_shapes = num_samples;
+
+//  std::cerr << "m_ShapeData->rows() = " << m_ShapeData->rows() << "\n";
+//  std::cerr << "m_ShapeData->cols() = " << m_ShapeData->cols() << "\n";
+
+  double radius = mean_nearest * 1.5;
+  for (int i = 0; i < num_particles; i++) {
+    std::vector<int> neighbors;
+    for (int j = 0; j < num_particles; j++) {
+      if (i == j) {continue;}
+      double dist = mean(i).EuclideanDistanceTo(mean(j));
+      if (dist < radius) {
+        neighbors.push_back(j);
+      }
+    }
+/*
+    if (i == 5) {
+      std::cerr << "5's neighbors on mean are: ";
+      for (int k = 0; k < neighbors.size(); k++) {
+        std::cerr << neighbors[k] << " ";
+      }
+      std::cerr << "\n";
+    }
+    */
+    // neighbors now contains the neighbors of particle i
+
+
+    using VectorType = itk::Vector<double, 3>;
+
+    if (neighbors.size() > 2) {
+      if (i == 5) {
+      std::cerr << "Optimizer: mean_nearest = " << mean_nearest << "\n";
+    }
+
+      for (int d = 0; d < num_shapes; d++) {
+
+        std::vector<int> neighbors_local;
+
+        for (int j = 0; j < num_particles; j++) {
+          if (i == j) { continue; }
+          double dist = shape_point(d, i).EuclideanDistanceTo(shape_point(d, j));
+          if (dist < mean_nearest * 1.25) {
+            if (d == 1 && i == 5) {
+              std::cerr << "Optimizer: 1:5 neighbor = " << j << "\n";
+            }
+            neighbors_local.push_back(j);
+            bool found = false;
+            for (int k = 0; k < neighbors.size(); k++) {
+              if (neighbors[k] == j) {
+                found = true;
+              }
+            }
+            if (!found) {
+              std::cerr << "Optimizer: perhaps domain " << d << ", particle " << j
+                        << " is flipped?\n";
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+/*
+  std::cerr << "---------------------------\n";
+  std::cerr << "m_points_mean->rows() = " << m_points_mean->rows() << "\n";
+  std::cerr << "m_points_mean->cols() = " << m_points_mean->cols() << "\n";
+  std::cerr << " m_ShapeData->rows() = " << m_ShapeData->rows() << "\n";
+  std::cerr << " m_ShapeData->cols() = " << m_ShapeData->cols() << "\n";
+  std::cerr << " m_PointsUpdate->rows() = " << m_PointsUpdate->rows() << "\n";
+  std::cerr << " m_PointsUpdate->cols() = " << m_PointsUpdate->cols() << "\n";
+  */
 }
 
 template <unsigned int VDimension>
@@ -261,8 +374,17 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     VectorType gradE;
     unsigned int k = idx * VDimension + num;
-    for (unsigned int i = 0; i< VDimension; i++)
-        gradE[i] = m_PointsUpdate->get(k + i, sampNum);
+
+    //if (idx == 0 && d == 0) {
+      //std::cerr << "MeshBaseEvaluate: " << d << ":" << idx << "\n";
+    //}
+
+    for (unsigned int i = 0; i< VDimension; i++) {
+      //if (idx == 0 && d == 0) {
+        //std::cerr << "access m_PointsUpdate(" << k+i << "," << sampNum << ")\n";
+      //}
+      gradE[i] = m_PointsUpdate->get(k + i, sampNum);
+    }
 
     return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }

@@ -211,7 +211,8 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
-  optimize->SetVerbosity(this->get_verbosity());
+//  optimize->SetVerbosity(this->get_verbosity());
+  optimize->SetVerbosity(10);
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
