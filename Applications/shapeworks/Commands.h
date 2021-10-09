@@ -59,6 +59,7 @@ COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(SmoothSinc, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
+COMMAND_DECLARE(CVDDecimate, MeshCommand);
 COMMAND_DECLARE(InvertNormals, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(TransformMesh, MeshCommand);
@@ -79,20 +80,21 @@ COMMAND_DECLARE(FieldRange, MeshCommand);
 COMMAND_DECLARE(FieldMean, MeshCommand);
 COMMAND_DECLARE(FieldStd, MeshCommand);
 COMMAND_DECLARE(FieldNames, MeshCommand);
-COMMAND_DECLARE(FixMesh, MeshCommand);
+COMMAND_DECLARE(FixElement, MeshCommand);
 COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
 COMMAND_DECLARE(ClosestPoint, MeshCommand);
 COMMAND_DECLARE(GeodesicDistance, MeshCommand);
+COMMAND_DECLARE(GeodesicDistanceToLandmark, MeshCommand);
 COMMAND_DECLARE(MeanNormals, MeshCommand);
+COMMAND_DECLARE(Curvature, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 COMMAND_DECLARE(WarpMesh, MeshCommand);
 
-// Optimize Commands
+// Misc Commands
+COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
-
-// Groom Commands
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 } // shapeworks

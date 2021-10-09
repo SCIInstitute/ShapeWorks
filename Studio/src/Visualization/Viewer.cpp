@@ -7,7 +7,6 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkRenderer.h>
-#include <vtkImageActor.h>
 #include <vtkImageData.h>
 #include <vtkRenderWindow.h>
 #include <vtkTextActor.h>
@@ -265,6 +264,7 @@ void Viewer::display_vector_field()
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetNumberOfComponents(3);
 
+  this->update_points();
   this->compute_point_differences(vecs, magnitudes, vectors);
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -312,7 +312,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
   auto mesh_group = this->shape_->get_meshes(this->visualizer_->get_display_mode());
-  if (!mesh_group.valid()) {
+  if (!mesh_group.valid() || points.empty()) {
     return;
   }
 
@@ -370,10 +370,14 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors)
 {
+  if (!this->mesh_ready_) {
+    return;
+  }
+
   for (size_t i = 0; i < this->surface_mappers_.size(); i++) {
 
     vtkPolyData* poly_data = this->surface_mappers_[i]->GetInput();
-    if (!poly_data) {
+    if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
       return;
     }
 
@@ -484,6 +488,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     this->mesh_ready_ = false;
     return;
   }
+  this->mesh_ready_ = true;
 
   QStringList annotations = shape->get_annotations();
   this->corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
@@ -536,7 +541,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      actor->SetUserTransform(this->get_transform(i));
+      actor->SetUserTransform(this->get_transform(this->visualizer_->get_alignment_domain(), i));
 
       mapper->SetInputData(poly_data);
 
@@ -715,13 +720,14 @@ void Viewer::update_points()
     this->glyph_mapper_->SetLookupTable(this->surface_lut_);
   }
 
-  auto t = this->get_transform(0);
+  int alignment_domain = this->visualizer_->get_alignment_domain();
 
-  this->glyph_actor_->SetUserTransform(this->get_transform(0));
+  //this->glyph_actor_->SetUserTransform(this->get_transform(alignment_domain));
 
-  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
+      this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
     if (this->visualizer_->get_center()) {
-      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment());
+      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment(alignment_domain));
     }
     else {
       if (!this->shape_->has_alignment()) {
@@ -769,6 +775,7 @@ void Viewer::update_actors()
       this->renderer_->AddActor(this->surface_actors_[i]);
     }
   }
+  this->update_opacities();
 }
 
 //-----------------------------------------------------------------------------
@@ -909,6 +916,17 @@ void Viewer::update_feature_range(double* range)
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_opacities()
+{
+  auto opacities = this->visualizer_->get_opacities();
+  if (opacities.size() == this->surface_mappers_.size()) {
+    for (size_t i = 0; i < opacities.size(); i++) {
+      this->surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 QSharedPointer<Shape> Viewer::get_shape()
 {
   return this->shape_;
@@ -924,19 +942,15 @@ void Viewer::initialize_surfaces()
 
     for (int i = 0; i < this->number_of_domains_; i++) {
       this->surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
-      //this->surface_mappers_[i]->ScalarVisibilityOff();
-
       this->surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       this->surface_actors_[i]->SetMapper(this->surface_mappers_[i]);
-      //this->surface_actors_[i]->GetProperty()->SetSpecular(.2);
-      //this->surface_actors_[i]->GetProperty()->SetSpecularPower(15);
     }
   }
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
+vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int domain)
 {
-  return this->visualizer_->get_transform(this->shape_, domain);
+  return this->visualizer_->get_transform(this->shape_, alignment_domain, domain);
 }
 }

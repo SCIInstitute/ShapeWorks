@@ -197,9 +197,9 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 			res_img = os.path.join(down_dir, img_name)
 			if not os.path.exists(res_img):
 				apply_down_sample(image_path, res_img, down_factor)
-			img = np.transpose(sw.Image(res_img).toArray())
-		else:
-			img = np.transpose(sw.Image(image_path).toArray())
+			image_path = res_img
+        # for_viewing returns 'F' order, i.e., transpose, needed for this array
+		img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
 		all_images.append(img)
 	all_images = np.array(all_images)
 	# get mean and std

@@ -38,7 +38,7 @@ The next step is to train the DeepSSM model. Some training parameters are expose
 
 ![Studio DeepSSM - Train Params](../img/studio/studio_deepssm_train1.png){: width="600" }
 
-As the model trains, each epoch the display updates. The "Training Output" table logs the epochs, learning rate, and training and validation errors. The training and validation error are also plotted over epochs in a scatterplot below. To the right, examples of validation predictions are displayed and updated every epoch. Here we can see the examples with the greatest, smallest, and closest to the mean error. The distance from the predicted particles to the true particles is displayed as a heat map with a corresponding scale. This gives an idea of model prediction quality as the model trains. 
+As the model trains, each epoch the display updates. The "Training Output" table logs the epochs, learning rate, and training and validation errors. The training and validation error are also plotted over epochs in a scatterplot below. To the right, examples of training andvalidation predictions are displayed and updated every epoch. Here we can see the examples with the greatest, smallest, and median error. The distance from the predicted particles to the true particles is displayed as a heat map with a corresponding scale. This gives an idea of model prediction quality as the model trains. 
 
 ![Studio DeepSSM - Training](../img/studio/studio_deepssm_train2.png){: width="600" }
 

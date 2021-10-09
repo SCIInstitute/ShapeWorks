@@ -167,10 +167,14 @@ private:
   const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
   void ClearGeodesicCache() const;
 
-  // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
-  // distances _from_ the same point as the previous query.
-  mutable int geo_lq_pidx_{-1};
+  // Store some info about the last query. This accelerates the computation
+  // because the optimizer generally asks for the distances _from_ the same
+  // point as the previous query.
+  mutable bool geo_lq_cached_{false};
+  mutable PointType geo_lq_pt_a_{-1};
   mutable int geo_lq_face_{-1};
   mutable Eigen::Vector3d geo_lq_bary_;
+  void FetchAndCacheFirstPoint(const PointType pt_a, int idx_a,
+                               int& face_a, Eigen::Vector3d& bary_a) const;
 };
 }

@@ -9,6 +9,115 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, geodesicTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  const int p1 = 10;
+  const int p2 = 200;
+  double geodesic_dist = ellipsoid.geodesicDistance(p1, p2);
+
+  auto pt1 = ellipsoid.getPoint(p1);
+  auto pt2 = ellipsoid.getPoint(p2);
+  auto euclidean_dist = pt2.EuclideanDistanceTo(pt1);
+
+  ASSERT_TRUE(std::abs(euclidean_dist - 6.70625) < 1e-4);
+  ASSERT_TRUE(std::abs(geodesic_dist - 6.577) < 1e-4);
+}
+
+TEST(MeshTests, geodesicTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  auto distField = femur.geodesicDistance(femur.getPoint(200));
+  femur.setField("GeodesicDistanceToLandmark", distField);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
+
+  ASSERT_TRUE(femur.compareField(ground_truth, "GeodesicDistanceToLandmark"));
+}
+
+TEST(MeshTests, geodesicTest3)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+
+  std::vector<Point3> curve;
+  curve.push_back(ellipsoid.getPoint(100));
+  curve.push_back(ellipsoid.getPoint(200));
+  curve.push_back(ellipsoid.getPoint(300));
+
+  auto distField = ellipsoid.geodesicDistance(curve);
+  ellipsoid.setField("GeodesicDistanceToCurve", distField);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic_curve.vtk"));
+
+  ASSERT_TRUE(ellipsoid.compareField(ground_truth, "GeodesicDistanceToCurve"));
+}
+
+TEST(MeshTests, curvatureTest1)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest3)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest4)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
+  mesh.setField("MeanCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest5)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature();
+  mesh.setField("PrincipalCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
+}
+
+TEST(MeshTests, curvatureTest6)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
+  auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
+  mesh.setField("GaussianCurvature", curv);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
+
+  ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
+}
+
 TEST(MeshTests, computemeannormalsTest1)
 {
   std::vector<std::reference_wrapper<const Mesh>> meshes;
@@ -54,14 +163,6 @@ TEST(MeshTests, generateNormalsTest)
   ASSERT_TRUE(mesh1.compareField(ground_truth1, "Normals") && mesh2.compareField(ground_truth2, "Normals"));
 }
 
-TEST(MeshTests, geodesicTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  double dist = femur.geodesicDistance(10, 20);
-
-  ASSERT_TRUE(std::abs(dist - 1.0083) < 1e-4);
-}
-
 TEST(MeshTests, readFailTest)
 {
   try {
@@ -72,6 +173,34 @@ TEST(MeshTests, readFailTest)
   }
 
   ASSERT_TRUE(false);
+}
+
+TEST(MeshTests, fixelementTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.fixElement();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ShapeworksUtils::setRngSeed(26);
+  ellipsoid.cvdDecimate();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest2)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  ShapeworksUtils::setRngSeed(42);
+  ellipsoid.cvdDecimate(1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
+
+  ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
 TEST(MeshTests, smoothTest1)
@@ -94,7 +223,7 @@ TEST(MeshTests, smoothTest2)
 
 TEST(MeshTests, smoothSincTest)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   femur.smoothSinc(10,0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
 
@@ -266,24 +395,6 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(MeshTests, fixTest1)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
-// TEST(MeshTests, fixTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   // femur.fix(true, true, 0.5, 1, true, 0.5);
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
 TEST(MeshTests, clipClosedSurfaceTest1)
 {
   Point p({10.0, 0.0, 10.0});
@@ -436,7 +547,7 @@ TEST(MeshTests, distanceTest2)
 {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
+  femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
   femur2.distance(femur1);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
@@ -542,7 +653,7 @@ TEST(MeshTests, fieldTest1)
 
 TEST(MeshTests, fieldTest2)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
   double c = mesh.getFieldValue("Normals", 4231);
@@ -556,7 +667,7 @@ TEST(MeshTests, fieldTest2)
 
 TEST(MeshTests, fieldTest3)
 {
-  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   std::vector<double> scalarRange = mesh.getFieldRange("scalars");
   std::vector<double> normalsRange = mesh.getFieldRange("Normals");
 
@@ -614,7 +725,35 @@ TEST(MeshTests, warpTest1)
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
+  ASSERT_TRUE(output == ellipsoid_warped);
+}
 
+TEST(MeshTests, warpTest2)
+{
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.vtk");
+  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2_baseline.vtk");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
+  std::vector<std::string> paths;
+  paths.push_back(staticPath);
+  paths.push_back(movingPath);
+  ParticleSystem particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.Particles();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  Eigen::MatrixXd movingPoints = allPts.col(1);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
   ASSERT_TRUE(output == ellipsoid_warped);
 }
 

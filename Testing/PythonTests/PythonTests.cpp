@@ -9,6 +9,16 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, sw2vtkmeshTest)
+{
+  run_use_case("sw2vtkmesh.py");
+}
+
+TEST(pythonTests, meshcurvatureTest)
+{
+  run_use_case("meshcurvature.py");
+}
+
 TEST(pythonTests, initImageTest)
 {
   run_use_case("initImage.py");
@@ -169,6 +179,11 @@ TEST(pythonTests, warpTest)
   run_use_case("warp.py");
 }
 
+TEST(pythonTests, coordsysTest)
+{
+  run_use_case("coordsys.py");
+}
+
 TEST(pythonTests, setoriginTest)
 {
   run_use_case("setorigin.py");
@@ -237,6 +252,11 @@ TEST(pythonTests, coverageTest)
 TEST(pythonTests, distanceTest)
 {
   run_use_case("distance.py");
+}
+
+TEST(pythonTests, fixElementTest)
+{
+  run_use_case("fixelement.py");
 }
 
 TEST(pythonTests, closestpointTest)

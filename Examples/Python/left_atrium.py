@@ -55,8 +55,8 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(
-                file_list_seg, int(args.num_subsample))
+            inputSegs =[sw.Image(filename) for filename in file_list_seg]
+            sample_idx = sw.data.sample_images(inputSegs, int(args.num_subsample))
             file_list_seg = [file_list_seg[i] for i in sample_idx]
             file_list_img = [file_list_img[i] for i in sample_idx]
         else:
@@ -434,11 +434,12 @@ def Run_Pipeline(args):
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 128
 
-    """
-    Now we execute the particle optimization function.
-    """
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+
+    # Execute the optimization function on distance transforms
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
+        point_dir, input_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -454,4 +455,4 @@ def Run_Pipeline(args):
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
     AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+        point_dir, input_files, local_point_files, world_point_files)

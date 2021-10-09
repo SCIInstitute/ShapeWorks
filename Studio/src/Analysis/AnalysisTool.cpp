@@ -19,12 +19,10 @@
 #include <Python/PythonWorker.h>
 #include <Job/GroupPvalueJob.h>
 
-#include <ui_AnalysisTool.h>
-
 #include <jkqtplotter/jkqtplotter.h>
-#include "jkqtplotter/graphs/jkqtpscatter.h"
+#include <jkqtplotter/graphs/jkqtpscatter.h>
 
-//#include <jkqtplotter/graphs/
+#include <ui_AnalysisTool.h>
 
 namespace shapeworks {
 
@@ -37,8 +35,6 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
-  JKQTPlotter plot;
-
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
@@ -83,6 +79,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->group_p_values_button, &QPushButton::clicked, this,
           &AnalysisTool::group_p_values_clicked);
+
+  connect(this->ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::handle_alignment_changed);
 
   this->ui_->surface_open_button->setChecked(false);
   this->ui_->metrics_open_button->setChecked(false);
@@ -253,6 +252,9 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
   this->ui_->difference_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
 }
 
 //---------------------------------------------------------------------------
@@ -358,6 +360,7 @@ void AnalysisTool::on_group1_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group1_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -370,6 +373,7 @@ void AnalysisTool::on_group2_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group2_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -401,6 +405,11 @@ void AnalysisTool::group_p_values_clicked()
     this->handle_group_pvalues_complete();
   }
   else {
+
+    if (this->group1_list_.size() < 3 || this->group2_list_.size() < 3) {
+      emit error("Unable to compute p-values with less than 3 shapes per group");
+      return;
+    }
     this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
@@ -659,30 +668,16 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->generalization_progress->setValue(0);
   this->ui_->specificity_progress->setValue(0);
 
-  auto worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                     ShapeEvaluationWorker::JobType::CompactnessType);
-  //worker->set_progress_callback()
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
-
-  worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                ShapeEvaluationWorker::JobType::GeneralizationType);
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
-
-  worker = ShapeEvaluationWorker::create_worker(this->stats_,
-                                                ShapeEvaluationWorker::JobType::SpecificityType);
-  connect(worker, &ShapeEvaluationWorker::result_ready, this,
-          &AnalysisTool::handle_eval_thread_complete);
-  connect(worker, &ShapeEvaluationWorker::report_progress, this,
-          &AnalysisTool::handle_eval_thread_progress);
-  worker->async_evaluate_shape();
+  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+                    ShapeEvaluationJob::JobType::GeneralizationType,
+                    ShapeEvaluationJob::JobType::SpecificityType};
+  for (auto job_type : job_types) {
+    auto worker = Worker::create_worker();
+    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, this->stats_);
+    connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
+    connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
+    worker->run_job(job);
+  }
 
   this->evals_ready_ = true;
 }
@@ -840,6 +835,7 @@ void AnalysisTool::enable_actions(bool newly_enabled)
 
   if (newly_enabled) {
     this->ui_->mesh_warping_radio_button->setChecked(true);
+    this->update_domain_alignment_box();
   }
 
   auto domain_types = this->session_->get_domain_types();
@@ -980,6 +976,16 @@ void AnalysisTool::set_feature_map(const std::string& feature_map)
 }
 
 //---------------------------------------------------------------------------
+std::string AnalysisTool::get_display_feature_map()
+{
+  if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
+      this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
+    return "p_values";
+  }
+  return this->feature_map_;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_group_boxes()
 {
   // populate the group sets
@@ -1036,6 +1042,24 @@ void AnalysisTool::update_group_values()
   this->ui_->group_animate_checkbox->setEnabled(groups_on);
 
   this->group_changed();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_domain_alignment_box()
+{
+  auto domain_names = this->session_->get_project()->get_domain_names();
+
+  bool multiple_domains = domain_names.size() > 1;
+  this->ui_->reference_domain_widget->setVisible(multiple_domains);
+  this->ui_->reference_domain->clear();
+  if (multiple_domains) {
+    this->ui_->reference_domain->addItem("Global Alignment");
+    this->ui_->reference_domain->addItem("Local Alignment");
+    for (auto name : domain_names) {
+      this->ui_->reference_domain->addItem(QString::fromStdString(name));
+    }
+    this->ui_->reference_domain->setCurrentIndex(0);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1156,25 +1180,25 @@ void AnalysisTool::initialize_mesh_warper()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type,
+void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type,
                                                Eigen::VectorXd data)
 {
   switch (job_type) {
-  case ShapeEvaluationWorker::JobType::CompactnessType:
+  case ShapeEvaluationJob::JobType::CompactnessType:
     this->eval_compactness_ = data;
     this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes",
                       "Explained Variance");
     this->ui_->compactness_graph->show();
     this->ui_->compactness_progress_widget->hide();
     break;
-  case ShapeEvaluationWorker::JobType::SpecificityType:
+  case ShapeEvaluationJob::JobType::SpecificityType:
     this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes",
                       "Specificity");
     this->eval_specificity_ = data;
     this->ui_->specificity_graph->show();
     this->ui_->specificity_progress_widget->hide();
     break;
-  case ShapeEvaluationWorker::JobType::GeneralizationType:
+  case ShapeEvaluationJob::JobType::GeneralizationType:
     this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes",
                       "Generalization");
     this->eval_generalization_ = data;
@@ -1185,17 +1209,17 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationWorker::JobType jo
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type,
+void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type,
                                                float progress)
 {
   switch (job_type) {
-  case ShapeEvaluationWorker::JobType::CompactnessType:
+  case ShapeEvaluationJob::JobType::CompactnessType:
     this->ui_->compactness_progress->setValue(progress * 100);
     break;
-  case ShapeEvaluationWorker::JobType::SpecificityType:
+  case ShapeEvaluationJob::JobType::SpecificityType:
     this->ui_->specificity_progress->setValue(progress * 100);
     break;
-  case ShapeEvaluationWorker::JobType::GeneralizationType:
+  case ShapeEvaluationJob::JobType::GeneralizationType:
     this->ui_->generalization_progress->setValue(progress * 100);
     break;
   }
@@ -1205,6 +1229,36 @@ void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationWorker::JobType jo
 void AnalysisTool::handle_group_pvalues_complete()
 {
   emit progress(100);
+  emit update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_alignment_changed(int new_alignment)
+{
+  new_alignment -= 2;
+  if (new_alignment == this->current_alignment_) {
+    return;
+  }
+  this->current_alignment_ = static_cast<AlignmentType>(new_alignment);
+
+  for (ShapeHandle shape : this->session_->get_shapes()) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    if (this->current_alignment_ == AlignmentType::Local) {
+      transform = nullptr;
+    }
+    else if (this->current_alignment_ == AlignmentType::Global) {
+      auto domain_names = this->session_->get_project()->get_domain_names();
+      transform = shape->get_groomed_transform(domain_names.size());
+    }
+    else {
+      transform = shape->get_groomed_transform(new_alignment);
+    }
+
+    shape->set_particle_transform(transform);
+  }
+
+  this->evals_ready_ = false;
+  this->group_changed();
   emit update_view();
 }
 
@@ -1271,25 +1325,30 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_reconstructed_domain_transforms()
 {
-  this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
   auto shapes = this->session_->get_shapes();
-  for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
-    int num_shapes = shapes.size();
-    auto transform = vtkSmartPointer<vtkTransform>::New();
-    double* values = transform->GetMatrix()->GetData();
+  if (this->current_alignment_ == AlignmentType::Local) {
 
-    for (int i = 0; i < shapes.size(); i++) {
-      vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
-      vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+    this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
+    for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
+      int num_shapes = shapes.size();
+      auto transform = vtkSmartPointer<vtkTransform>::New();
+      double* values = transform->GetMatrix()->GetData();
 
-      for (int j = 0; j < 16; j++) {
-        values[j] += (base->GetMatrix()->GetData()[j] -
-                      offset->GetMatrix()->GetData()[j]) / num_shapes;
+      for (int i = 0; i < shapes.size(); i++) {
+        vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
+        vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+
+        for (int j = 0; j < 16; j++) {
+          values[j] += (base->GetMatrix()->GetData()[j] -
+                        offset->GetMatrix()->GetData()[j]) / num_shapes;
+        }
       }
+      this->reconstruction_transforms_[domain] = transform;
     }
-    this->reconstruction_transforms_[domain] = transform;
   }
-
+  else {
+    this->reconstruction_transforms_.clear();
+  }
   for (int s = 0; s < shapes.size(); s++) {
     shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
   }

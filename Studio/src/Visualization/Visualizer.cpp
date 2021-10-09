@@ -48,6 +48,7 @@ void Visualizer::set_lightbox(LightboxHandle lightbox)
 void Visualizer::set_session(SessionHandle session)
 {
   this->session_ = session;
+  connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
 }
 
 //-----------------------------------------------------------------------------
@@ -80,9 +81,9 @@ void Visualizer::display_samples()
 void Visualizer::update_samples()
 {
   QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
-    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-      viewer->update_points();
-    }
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
   this->lightbox_->redraw();
 }
 
@@ -157,7 +158,7 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
         }
         // we have to transform each domain to its location in order to export an appended mesh
         auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        filter->SetTransform(this->get_transform(shapes[0], domain));
+        filter->SetTransform(this->get_transform(shapes[0], this->get_alignment_domain(), domain));
         filter->SetInputData(meshes[domain]->get_poly_data());
         filter->Update();
         list.push_back(filter->GetOutput());
@@ -221,17 +222,18 @@ void Visualizer::update_viewer_properties()
 {
   double size = this->preferences_.get_glyph_size();
   double quality = this->preferences_.get_glyph_quality();
+  quality = std::max<double>(quality, 3);
   if (this->preferences_.get_glyph_auto_size()) {
     size = this->session_->get_auto_glyph_size();
   }
 
   if (this->lightbox_) {
-      foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-        viewer->set_glyph_size_and_quality(size, quality);
-        viewer->set_show_glyphs(this->show_glyphs_);
-        viewer->set_show_surface(this->show_surface_);
-        viewer->set_color_scheme(this->preferences_.get_color_scheme());
-      }
+    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+      viewer->set_glyph_size_and_quality(size, quality);
+      viewer->set_show_glyphs(this->show_glyphs_);
+      viewer->set_show_surface(this->show_surface_);
+      viewer->set_color_scheme(this->preferences_.get_color_scheme());
+    }
 
     this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
                                             this->preferences_.get_orientation_marker_corner());
@@ -239,6 +241,15 @@ void Visualizer::update_viewer_properties()
 
     this->lightbox_->redraw();
   }
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::handle_feature_range_changed()
+{
+  feature_manual_range_[0] = session_->get_feature_range_min();
+  feature_manual_range_[1] = std::max<double>(feature_manual_range_[0], session_->get_feature_range_max());
+  this->lightbox_->update_feature_range();
+  this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -392,6 +403,18 @@ bool Visualizer::get_center()
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::set_alignment_domain(int domain)
+{
+  this->alignment_domain_ = domain;
+}
+
+//-----------------------------------------------------------------------------
+int Visualizer::get_alignment_domain()
+{
+  return this->alignment_domain_;
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::clear_viewers()
 {
   QVector<ShapeHandle> shapes;
@@ -407,7 +430,24 @@ void Visualizer::reset_feature_range()
 //-----------------------------------------------------------------------------
 double* Visualizer::get_feature_range()
 {
+  if (session_->get_feature_auto_scale()) {
+    return this->feature_range_;
+  }
+  else {
+    return this->feature_manual_range_;
+  }
+}
+
+//-----------------------------------------------------------------------------
+double* Visualizer::get_feature_raw_range()
+{
   return this->feature_range_;
+}
+
+//-----------------------------------------------------------------------------
+bool Visualizer::get_feature_range_valid()
+{
+  return this->feature_range_valid_;
 }
 
 //-----------------------------------------------------------------------------
@@ -436,17 +476,19 @@ bool Visualizer::get_uniform_feature_range(void)
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int domain)
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain)
 {
   vtkSmartPointer<vtkTransform> transform;
 
   if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->get_center()) {
-      transform = shape->get_transform();
+      transform = shape->get_transform(alignment_domain);
     }
   }
   else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = shape->get_alignment();
+    if (this->get_center()) {
+      transform = shape->get_alignment(alignment_domain);
+    }
   }
   else {
     transform = shape->get_reconstruction_transform(domain);
@@ -455,5 +497,21 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
   return transform;
 }
 
+//-----------------------------------------------------------------------------
+void Visualizer::set_opacities(std::vector<float> opacities)
+{
+  this->opacities_ = opacities;
+  if (this->lightbox_) {
+    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+      viewer->update_opacities();
+    }
+    this->lightbox_->redraw();
+  }
+}
 
+//-----------------------------------------------------------------------------
+std::vector<float> Visualizer::get_opacities()
+{
+  return this->opacities_;
+}
 }

@@ -10,10 +10,6 @@ REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
-call conda activate base
-call conda update --yes -n base -c defaults conda
-call conda update --yes --all
-
 call conda create --yes --name %CONDAENV% python=3.7
 call conda activate %CONDAENV%
 
@@ -40,6 +36,7 @@ call pip install statsmodels
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
+call pip install shapely
 call pip install seaborn
 call pip install mdutils
 call pip install mkdocs

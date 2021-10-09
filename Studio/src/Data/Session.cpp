@@ -1,4 +1,3 @@
-
 #include <vector>
 
 // qt
@@ -41,9 +40,9 @@ const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
-                                                        preferences_(prefs),
-                                                        mesh_manager_(QSharedPointer<MeshManager>(
-                                                          new MeshManager(preferences_)))
+  preferences_(prefs),
+  mesh_manager_(QSharedPointer<MeshManager>(
+                  new MeshManager(preferences_)))
 {
   this->parent_ = nullptr;
   connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
@@ -161,7 +160,7 @@ bool Session::save_project(std::string fname)
       auto particles = this->shapes_[i]->get_particles();
       for (int i = 0; i < local_files.size(); i++) {
         this->save_particles_file(local_files[i], particles.get_local_particles(i));
-        this->save_particles_file(world_files[i], particles.get_world_particles(i));
+        this->save_particles_file(world_files[i], particles.get_raw_world_particles(i));
       }
     }
     this->unsaved_particle_files_ = false;
@@ -545,7 +544,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
 void
 Session::load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape)
 {
-  assert (file_names.size() % domains_per_shape == 0);
+  assert(file_names.size() % domains_per_shape == 0);
   int num_subjects = file_names.size() / domains_per_shape;
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
@@ -584,7 +583,7 @@ Session::load_groomed_files(std::vector<std::string> file_names, double iso, int
 bool Session::load_point_files(std::vector<std::string> local, std::vector<std::string> world,
                                int domains_per_shape)
 {
-  assert (local.size() % domains_per_shape == 0);
+  assert(local.size() % domains_per_shape == 0);
   int num_subjects = local.size() / domains_per_shape;
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
@@ -651,6 +650,19 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
   this->unsaved_particle_files_ = true;
   emit points_changed();
   return true;
+}
+
+//---------------------------------------------------------------------------
+void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms)
+{
+  for (size_t i = 0; i < transforms.size(); i++) {
+    if (this->shapes_.size() > i) {
+      QSharedPointer<Shape> shape = this->shapes_[i];
+      if (shape->get_subject()) {
+        shape->get_subject()->set_procrustes_transforms(transforms[i]);
+      }
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -721,11 +733,11 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
-    foreach(int i, list) {
-      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
-      subjects.erase(subjects.begin() + i);
-      this->shapes_.erase(this->shapes_.begin() + i);
-    }
+  foreach(int i, list) {
+    std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
+    subjects.erase(subjects.begin() + i);
+    this->shapes_.erase(this->shapes_.begin() + i);
+  }
 
   this->project_->get_subjects();
   this->renumber_shapes();
@@ -754,7 +766,7 @@ bool Session::particles_present()
 
   if (this->shapes_.size() > 0) {
     auto shape = this->shapes_[0];
-    return (shape->get_global_correspondence_points().size() > 0);
+    return shape->get_global_correspondence_points().size() > 0;
   }
 
   return true;
@@ -890,4 +902,49 @@ void Session::clear_particles()
   this->update_particles(particles);
 }
 
+//---------------------------------------------------------------------------
+bool Session::get_feature_auto_scale()
+{
+  return this->params_.get("feature_auto_scale", true);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_auto_scale(bool value)
+{
+  this->params_.set("feature_auto_scale", value);
+  emit feature_range_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_feature_range_max()
+{
+  return this->params_.get("feature_range_max", 0);
+}
+
+//---------------------------------------------------------------------------
+double Session::get_feature_range_min()
+{
+  return this->params_.get("feature_range_min", 0);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range(double min, double max)
+{
+  this->set_feature_range_min(min);
+  this->set_feature_range_max(max);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range_min(double value)
+{
+  this->params_.set("feature_range_min", value);
+  emit feature_range_changed();
+}
+
+//---------------------------------------------------------------------------
+void Session::set_feature_range_max(double value)
+{
+  this->params_.set("feature_range_max", value);
+  emit feature_range_changed();
+}
 }
