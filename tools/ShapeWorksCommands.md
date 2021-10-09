@@ -1453,17 +1453,35 @@ shapeworks  geodesic-distance [args]...
 
 **-h, --help:** show this help message and exit
 
-**--x1=DOUBLE:** Value of x for source point.
+**--v1=INT:** Index of first point in mesh.
 
-**--y1=DOUBLE:** Value of y for source point.
+**--v2=INT:** Index of second point in mesh.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### geodesic-distance-landmark
 
-**--z1=DOUBLE:** Value of z for source point.
 
-**--x2=DOUBLE:** Value of x for target point.
+**Usage:**
 
-**--y2=DOUBLE:** Value of y for target point.
+```
+shapeworks  geodesic-distance-landmark [args]...
+```  
 
-**--z2=DOUBLE:** Value of z for target point.  
+
+**Description:** computes geodesic distance between a point (landmark) and each vertex on mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--x=DOUBLE:** Value of x for landmark point.
+
+**--y=DOUBLE:** Value of y for landmark point.
+
+**--z=DOUBLE:** Value of z for landmark point.  
   
 <a href="#top">Back to Top</a>
   

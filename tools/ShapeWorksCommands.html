@@ -371,6 +371,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#geodesic-distance">geodesic-distance</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#geodesic-distance-landmark">geodesic-distance-landmark</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#get-field">get-field</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#get-field-value">get-field-value</a>
@@ -1165,12 +1167,20 @@
 <p><strong>Description:</strong> computes geodesic distance between two vertices on mesh  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--x1=DOUBLE:</strong> Value of x for source point.</p>
-<p><strong>--y1=DOUBLE:</strong> Value of y for source point.</p>
-<p><strong>--z1=DOUBLE:</strong> Value of z for source point.</p>
-<p><strong>--x2=DOUBLE:</strong> Value of x for target point.</p>
-<p><strong>--y2=DOUBLE:</strong> Value of y for target point.</p>
-<p><strong>--z2=DOUBLE:</strong> Value of z for target point.  </p>
+<p><strong>--v1=INT:</strong> Index of first point in mesh.</p>
+<p><strong>--v2=INT:</strong> Index of second point in mesh.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="geodesic-distance-landmark">geodesic-distance-landmark</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  geodesic-distance-landmark [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes geodesic distance between a point (landmark) and each vertex on mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--x=DOUBLE:</strong> Value of x for landmark point.</p>
+<p><strong>--y=DOUBLE:</strong> Value of y for landmark point.</p>
+<p><strong>--z=DOUBLE:</strong> Value of z for landmark point.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="get-field">get-field</h3>
