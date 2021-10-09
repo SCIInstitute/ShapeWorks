@@ -206,23 +206,24 @@ void QOptimize::check_for_swap()
     if (neighbors.size() > 2) {
 
       if (i == 5) {
-        std::cerr << "5's neighbors on mean are: ";
+        //std::cerr << "5's neighbors on mean are: ";
         for (int k = 0; k < neighbors.size(); k++) {
-          std::cerr << neighbors[k] << " ";
+//          std::cerr << neighbors[k] << " ";
         }
-        std::cerr << "\n";
+//        std::cerr << "\n";
       }
 
       for (int d = 0; d < num_shapes; d++) {
 
         std::vector<int> neighbors_local;
 
+        bool bad = false;
         for (int j = 0; j < num_particles; j++) {
           if (i == j) { continue; }
           double dist = m_global_points[d][i].EuclideanDistanceTo(m_global_points[d][j]);
           if (dist < mean_nearest * 1.25) {
             if (d == 1 && i == 5) {
-              std::cerr << "1:5 neighbor = " << j << "\n";
+            //  std::cerr << "1:5 neighbor = " << j << "\n";
             }
             neighbors_local.push_back(j);
             bool found = false;
@@ -232,9 +233,12 @@ void QOptimize::check_for_swap()
               }
             }
             if (!found) {
-              std::cerr << "perhaps domain " << d << ", particle " << j << " is flipped?\n";
+              bad = true;
             }
           }
+        }
+        if (bad) {
+          //std::cerr << "perhaps domain " << d << ", particle " << i << " is flipped?\n";
         }
       }
     }
