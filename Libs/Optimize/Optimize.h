@@ -29,6 +29,8 @@
 
 namespace shapeworks {
 
+
+
 class MatrixContainer {
   public:
   Eigen::MatrixXd matrix_;

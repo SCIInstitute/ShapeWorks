@@ -21,6 +21,8 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
+#include <vtkMinimalStandardRandomSequence.h>
+#include <vtkNamedColors.h>
 
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
@@ -660,6 +662,7 @@ void Viewer::update_points()
     return;
   }
 
+
   vnl_vector<double> correspondence_points;
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
     correspondence_points = this->shape_->get_global_correspondence_points_for_display();
@@ -739,7 +742,10 @@ void Viewer::update_points()
     }
   }
 
+
   this->glyph_points_->Modified();
+  this->update_flippy();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -952,5 +958,162 @@ void Viewer::initialize_surfaces()
 vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int domain)
 {
   return this->visualizer_->get_transform(this->shape_, alignment_domain, domain);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_flippy()
+{
+  for (int i=0;i<this->flippy_actors_.size();i++) {
+    this->renderer_->RemoveActor(this->flippy_actors_[i]);
+  }
+
+  itk::Point<double> p;
+  p[0] = 0;
+  p[1] = 0;
+  p[2] = 0;
+  //this->shape_->flipped_particles.push_back(0);
+  //this->shape_->targets.push_back(p);
+
+  // Set the background color.
+  vtkNew<vtkNamedColors> colors;
+  std::array<unsigned char, 4> bkg{{26, 51, 77, 255}};
+  colors->SetColor("BkgColor", bkg.data());
+
+  for (int i=0;i<this->shape_->neighbors.size();i++) {
+    double startPoint[3];
+    int particle_id = this->shape_->neighbors[i];
+    startPoint[0] = this->glyph_point_set_->GetPoint(particle_id)[0];
+    startPoint[1] = this->glyph_point_set_->GetPoint(particle_id)[1];
+    startPoint[2] = this->glyph_point_set_->GetPoint(particle_id)[2];
+
+
+    // Create spheres for start and end point
+    vtkNew<vtkSphereSource> sphereStartSource;
+    sphereStartSource->SetCenter(startPoint);
+    sphereStartSource->SetRadius(1.8);
+    vtkNew<vtkPolyDataMapper> sphereStartMapper;
+    sphereStartMapper->SetInputConnection(sphereStartSource->GetOutputPort());
+    vtkNew<vtkActor> sphereStart;
+    sphereStart->SetMapper(sphereStartMapper);
+    sphereStart->GetProperty()->SetColor(colors->GetColor3d("Lavender").GetData());
+    sphereStart->GetProperty()->SetOpacity(0.25);
+
+    this->flippy_actors_.push_back(sphereStart);
+
+    this->renderer_->AddActor(sphereStart);
+  }
+
+
+  //std::cerr << "Update flippies, size = " << this->shape_->flipped_particles.size() << "\n";
+  for (int i=0;i<this->shape_->flipped_particles.size();i++) {
+    int particle_id = this->shape_->flipped_particles[i];
+    if (particle_id < this->glyph_point_set_->GetNumberOfPoints()) {
+      double startPoint[3];
+      double endPoint[3];
+      startPoint[0] = this->glyph_point_set_->GetPoint(particle_id)[0];
+      startPoint[1] = this->glyph_point_set_->GetPoint(particle_id)[1];
+      startPoint[2] = this->glyph_point_set_->GetPoint(particle_id)[2];
+
+      endPoint[0] = this->shape_->targets[i][0];
+      endPoint[1] = this->shape_->targets[i][1];
+      endPoint[2] = this->shape_->targets[i][2];
+
+
+      // Compute a basis
+      double normalizedX[3];
+      double normalizedY[3];
+      double normalizedZ[3];
+
+      // The X axis is a vector from start to end
+      vtkMath::Subtract(endPoint, startPoint, normalizedX);
+      double length = vtkMath::Norm(normalizedX);
+      vtkMath::Normalize(normalizedX);
+
+      // The Z axis is an arbitrary vector cross X
+      double arbitrary[3];
+      vtkNew<vtkMinimalStandardRandomSequence> rng;
+      for (auto j = 0; j < 3; ++j)
+      {
+        rng->Next();
+        arbitrary[j] = rng->GetRangeValue(-10, 10);
+      }
+      vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
+      vtkMath::Normalize(normalizedZ);
+
+      // The Y axis is Z cross X
+      vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
+      vtkNew<vtkMatrix4x4> matrix;
+
+      // Create the direction cosine matrix
+      matrix->Identity();
+      for (auto i = 0; i < 3; i++)
+      {
+        matrix->SetElement(i, 0, normalizedX[i]);
+        matrix->SetElement(i, 1, normalizedY[i]);
+        matrix->SetElement(i, 2, normalizedZ[i]);
+      }
+
+      // Apply the transforms
+      vtkNew<vtkTransform> transform;
+      transform->Translate(startPoint);
+      transform->Concatenate(matrix);
+      transform->Scale(length, length, length);
+
+      vtkNew<vtkArrowSource> arrowSource;
+      arrowSource->SetShaftRadius(0.01);
+      arrowSource->SetTipRadius(0.05);
+
+      // Transform the polydata
+      vtkNew<vtkTransformPolyDataFilter> transformPD;
+      transformPD->SetTransform(transform);
+      transformPD->SetInputConnection(arrowSource->GetOutputPort());
+
+      // Create a mapper and actor for the arrow
+      vtkNew<vtkPolyDataMapper> mapper;
+      vtkNew<vtkActor> actor;
+      mapper->SetInputConnection(transformPD->GetOutputPort());
+      actor->SetMapper(mapper);
+      actor->GetProperty()->SetColor(colors->GetColor3d("Cyan").GetData());
+
+      // Create spheres for start and end point
+      vtkNew<vtkSphereSource> sphereStartSource;
+      sphereStartSource->SetCenter(startPoint);
+      sphereStartSource->SetRadius(1.8);
+      vtkNew<vtkPolyDataMapper> sphereStartMapper;
+      sphereStartMapper->SetInputConnection(sphereStartSource->GetOutputPort());
+      vtkNew<vtkActor> sphereStart;
+      sphereStart->SetMapper(sphereStartMapper);
+      sphereStart->GetProperty()->SetColor(colors->GetColor3d("Yellow").GetData());
+      sphereStart->GetProperty()->SetOpacity(0.25);
+
+      vtkNew<vtkSphereSource> sphereEndSource;
+      sphereEndSource->SetCenter(endPoint);
+      sphereEndSource->SetRadius(0.5);
+      vtkNew<vtkPolyDataMapper> sphereEndMapper;
+      sphereEndMapper->SetInputConnection(sphereEndSource->GetOutputPort());
+      vtkNew<vtkActor> sphereEnd;
+      sphereEnd->SetMapper(sphereEndMapper);
+      sphereEnd->GetProperty()->SetColor(colors->GetColor3d("Magenta").GetData());
+      sphereEnd->GetProperty()->SetOpacity(1.0);
+
+
+      // Add the actor to the scene
+      //this->flippy_actors_.push_back(actor);
+      //renderer->AddActor(sphereStart);
+      //renderer->AddActor(sphereEnd);
+      //renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
+
+      this->flippy_actors_.push_back(actor);
+      this->flippy_actors_.push_back(sphereStart);
+      this->flippy_actors_.push_back(sphereEnd);
+
+      this->renderer_->AddActor(actor);
+      this->renderer_->AddActor(sphereStart);
+      this->renderer_->AddActor(sphereEnd);
+
+    }
+  }
+
+
 }
 }

@@ -16,6 +16,7 @@
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImageDomainWithGradN.h"
 #include "Libs/Utils/Utils.h"
+#include <Libs/Optimize/Global.h>
 
 namespace itk
 {
@@ -248,11 +249,15 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //  std::cerr << "m_ShapeData->rows() = " << m_ShapeData->rows() << "\n";
 //  std::cerr << "m_ShapeData->cols() = " << m_ShapeData->cols() << "\n";
 
+  Global& global = Global::global();
+  global.flipped_particles.clear();
+  global.flipped_domains.clear();
+
   if (num_particles < 6) {
     return;
   }
   double radius = mean_nearest * 1.5;
-//  for (int i = 0; i < num_particles; i++) {
+  //for (int i = 0; i < num_particles; i++) {
     for (int i = 5; i < 6; i++) {
     std::vector<int> neighbors;
     for (int j = 0; j < num_particles; j++) {
@@ -278,7 +283,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     if (neighbors.size() > 2) {
       if (i == 5) {
-        std::cerr << "Optimizer: mean_nearest = " << mean_nearest << "\n";
+        //std::cerr << "Optimizer: mean_nearest = " << mean_nearest << "\n";
       }
 
       for (int d = 0; d < num_shapes; d++) {
@@ -286,15 +291,17 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         std::vector<int> neighbors_local;
 
         bool bad = false;
+        if (d == 1 && i == 5) {
+          //std::cerr << "Optimizer: 1:5 neighbors:";
+        }
         for (int j = 0; j < num_particles; j++) {
           if (i == j) { continue; }
           double dist = shape_point(d, i).EuclideanDistanceTo(shape_point(d, j));
           if (dist < mean_nearest * 1.25) {
-            std::cerr << "Optimizer: 1:5 neighbors:";
             if (d == 1 && i == 5) {
-              std::cerr << " " << j;
+            //  std::cerr << " " << j;
             }
-            std::cerr << "\n";
+            //std::cerr << "\n";
             neighbors_local.push_back(j);
             bool found = false;
             for (int k = 0; k < neighbors.size(); k++) {
@@ -311,7 +318,9 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
         if (bad) {
           std::cerr << "Optimizer: perhaps domain " << d << ", particle " << i << " is flipped?\n";
-
+          global.flipped_particles.push_back(i);
+          global.flipped_domains.push_back(d);
+          global.neighbors = neighbors;
           // now generate force that moves it towards the center of the neighbors from mean
 
 
@@ -321,14 +330,15 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
           center[2] = 0;
 
           for (int k = 0; k < neighbors.size(); k++) {
-            center[0] = center[0] + shape_point(d, k)[0];
-            center[1] = center[1] + shape_point(d, k)[1];
-            center[2] = center[2] + shape_point(d, k)[2];
+            center[0] = center[0] + shape_point(d, neighbors[k])[0];
+            center[1] = center[1] + shape_point(d, neighbors[k])[1];
+            center[2] = center[2] + shape_point(d, neighbors[k])[2];
           }
           center[0] = center[0] / neighbors.size();
           center[1] = center[1] / neighbors.size();
           center[2] = center[2] / neighbors.size();
-
+          std::cerr << "center: " << center[0] << ", " << center[1] << ", " << center[2] << "\n";
+          global.targets.push_back(center);
 
           m_PointsUpdate->put(3*i+0, d, center[0] - shape_point(d, i)[0]);
           m_PointsUpdate->put(3*i+1, d, center[1] - shape_point(d, i)[1]);

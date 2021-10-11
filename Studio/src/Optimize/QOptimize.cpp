@@ -111,7 +111,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
         }
       }
     }
-    this->check_for_swap();
+    //this->check_for_swap();
     emit progress(this->m_iteration_count * 100 / this->m_total_iterations, message);
   }
 }
@@ -119,7 +119,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 //---------------------------------------------------------------------------
 void QOptimize::check_for_swap()
 {
-  std::cerr << "------------------------\n";
+  //std::cerr << "------------------------\n";
   //std::cerr << "check for swap\n";
   std::vector<itk::Point<double>> mean;
   if (m_global_points.size() < 1) {
@@ -157,7 +157,7 @@ void QOptimize::check_for_swap()
     mean_nearest += nearest;
   }
   mean_nearest /= num_particles;
-  std::cerr << "mean_nearest = " << mean_nearest << "\n";
+  //std::cerr << "mean_nearest = " << mean_nearest << "\n";
 
   double radius = mean_nearest * 1.5;
   for (int i = 0; i < num_particles; i++) {

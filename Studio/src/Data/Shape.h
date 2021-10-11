@@ -25,6 +25,10 @@ class Shape {
 
 public:
 
+  std::vector<int> flipped_particles;
+  std::vector<itk::Point<double>> targets;
+  std::vector<int> neighbors;
+
   //! TODO: replace this wherever it is used
   class Point {
 public:

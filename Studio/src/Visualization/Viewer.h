@@ -100,6 +100,8 @@ private:
 
   void update_actors();
 
+  void update_flippy();
+
   bool showing_feature_map();
   std::string get_displayed_feature_map();
 
@@ -159,5 +161,7 @@ private:
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
+
+  std::vector<vtkSmartPointer<vtkActor>> flippy_actors_;
 };
 }

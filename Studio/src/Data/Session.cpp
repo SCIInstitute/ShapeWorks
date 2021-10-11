@@ -29,6 +29,7 @@
 #include <Data/MeshManager.h>
 #include <Visualization/Visualizer.h>
 #include <Utils/StudioUtils.h>
+#include <Libs/Optimize/Global.h>
 
 namespace shapeworks {
 
@@ -631,6 +632,8 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<StudioParticles> particles)
 {
+  Global& global = Global::global();
+
   for (int i = 0; i < particles.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
@@ -643,6 +646,17 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
       shape->set_subject(subject);
       this->project_->get_subjects().push_back(subject);
       this->shapes_.push_back(shape);
+    }
+
+    shape->flipped_particles.clear();
+    shape->targets.clear();
+
+    for (int j=0;j<global.flipped_domains.size();j++) {
+      if (global.flipped_domains[j] == i) {
+        shape->flipped_particles.push_back(global.flipped_particles[j]);
+        shape->targets.push_back(global.targets[j]);
+        shape->neighbors = global.neighbors;
+      }
     }
     shape->set_particles(particles[i]);
   }
