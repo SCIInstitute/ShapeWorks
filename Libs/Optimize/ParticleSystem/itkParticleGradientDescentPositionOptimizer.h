@@ -45,7 +45,7 @@ public:
 
   /** Type of the domain. */
   typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);
 
@@ -57,7 +57,7 @@ public:
 
   /** Type of the gradient function. */
   typedef ParticleVectorFunction<VDimension> GradientFunctionType;
-  
+
   /** Numerical vector type. */
   typedef typename GradientFunctionType::VectorType VectorType;
 
@@ -80,8 +80,10 @@ public:
   {    this->m_StopOptimization = true;  }
 
   inline void AbortProcessing()
-  {    this->m_StopOptimization = true;
-       this->m_AbortProcessing = true;  }
+  {
+    this->m_StopOptimization = true;
+    this->m_AbortProcessing = true;
+  }
 
   /** Get/Set the number of iterations performed by the solver. */
   itkGetMacro(NumberOfIterations, unsigned int);
@@ -89,7 +91,7 @@ public:
 
   void SetVerbosity(unsigned int val)
   {
-      m_verbosity = val;
+    m_verbosity = val;
   }
 
   unsigned int GetVerbosity()
@@ -107,7 +109,7 @@ public:
   /** Get/Set the precision of the solution. */
   itkGetMacro(Tolerance, double);
   itkSetMacro(Tolerance, double);
-  
+
   /** Get/Set the ParticleSystem modified by this optimizer. */
   itkGetObjectMacro(ParticleSystem, ParticleSystemType);
   itkSetObjectMacro(ParticleSystem, ParticleSystemType);
@@ -124,7 +126,7 @@ protected:
   {
     Superclass::PrintSelf(os, indent);
   }
-  virtual ~ParticleGradientDescentPositionOptimizer() {};
+  virtual ~ParticleGradientDescentPositionOptimizer() {}
 
 private:
   typename ParticleSystemType::Pointer m_ParticleSystem;
@@ -135,12 +137,9 @@ private:
   unsigned int m_MaximumNumberOfIterations;
   double m_Tolerance;
   double m_TimeStep;
-  std::vector< std::vector<double> > m_TimeSteps;
+  std::vector< std::vector<double>> m_TimeSteps;
   unsigned int m_verbosity;
 
   void ResetTimeStepVectors();
 };
-
-
 } // end namespace
-
