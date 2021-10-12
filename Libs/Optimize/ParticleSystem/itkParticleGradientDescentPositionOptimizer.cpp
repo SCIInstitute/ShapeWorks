@@ -1,13 +1,9 @@
 const int global_iteration = 1;
 
 #include <algorithm>
-#include <ctime>
-#include <time.h>
-#include <string>
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include <vector>
-#include <fstream>
 #include <sstream>
 #include "MemoryUsage.h"
 #include <chrono>
@@ -24,6 +20,7 @@ ParticleGradientDescentPositionOptimizer::ParticleGradientDescentPositionOptimiz
   m_MaximumNumberOfIterations = 0;
   m_Tolerance = 0.0;
   m_TimeStep = 1.0;
+  m_verbosity = 0;
 }
 
 void ParticleGradientDescentPositionOptimizer::ResetTimeStepVectors()
@@ -70,7 +67,6 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
   ResetTimeStepVectors();
   double minimumTimeStep = 1.0;
 
-  const double pi = std::acos(-1.0);
   unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
 
   unsigned int counter = 0;
