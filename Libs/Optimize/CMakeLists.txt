@@ -12,6 +12,7 @@ add_library(Optimize STATIC
   ./ParticleSystem/TriMeshWrapper.cpp
   ./ParticleSystem/VtkMeshWrapper.cpp
   ./ParticleSystem/OptimizationVisualizer.cpp
+  ParticleSystem/itkParticleGradientDescentPositionOptimizer.cpp
   )
 
 target_link_libraries(Optimize

@@ -633,6 +633,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 bool Session::update_particles(std::vector<StudioParticles> particles)
 {
   Global& global = Global::global();
+  tbb::mutex::scoped_lock lock(global.mutex_);
 
   for (int i = 0; i < particles.size(); i++) {
     QSharedPointer<Shape> shape;

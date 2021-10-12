@@ -9,6 +9,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleGeneralShapeMatrix.h"
 #include <algorithm>
 #include <limits>
 
@@ -37,14 +38,16 @@ public:
   typedef ParticleGradientDescentPositionOptimizer Self;
   typedef Object Superclass;
   typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Type of the domain. */
   typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+
+  typedef ParticleGeneralShapeMatrix<double, VDimension> ShapeDataType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);
@@ -118,6 +121,9 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  void SetShapeData(ShapeDataType* s)
+  {    m_ShapeData = s;  }
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -139,6 +145,10 @@ private:
   double m_TimeStep;
   std::vector< std::vector<double>> m_TimeSteps;
   unsigned int m_verbosity;
+
+  typename ShapeDataType::Pointer m_ShapeData;
+
+  void CheckForSwaps();
 
   void ResetTimeStepVectors();
 };

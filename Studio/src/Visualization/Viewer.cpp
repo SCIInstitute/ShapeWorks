@@ -23,6 +23,7 @@
 #include <vtkScalarBarActor.h>
 #include <vtkMinimalStandardRandomSequence.h>
 #include <vtkNamedColors.h>
+#include <vtkCubeSource.h>
 
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
@@ -1076,9 +1077,12 @@ void Viewer::update_flippy()
       actor->GetProperty()->SetColor(colors->GetColor3d("Cyan").GetData());
 
       // Create spheres for start and end point
-      vtkNew<vtkSphereSource> sphereStartSource;
+      vtkNew<vtkCubeSource> sphereStartSource;
       sphereStartSource->SetCenter(startPoint);
-      sphereStartSource->SetRadius(1.8);
+      //sphereStartSource->SetRadius(1.8);
+      sphereStartSource->SetXLength(1.8);
+      sphereStartSource->SetYLength(1.8);
+      sphereStartSource->SetZLength(1.8);
       vtkNew<vtkPolyDataMapper> sphereStartMapper;
       sphereStartMapper->SetInputConnection(sphereStartSource->GetOutputPort());
       vtkNew<vtkActor> sphereStart;

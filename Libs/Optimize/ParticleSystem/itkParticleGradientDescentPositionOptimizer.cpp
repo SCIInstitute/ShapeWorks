@@ -11,8 +11,12 @@ const int global_iteration = 1;
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 
-namespace itk
-{
+#include <Libs/Optimize/Global.h>
+
+
+namespace itk {
+
+//-----------------------------------------------------------------------------
 ParticleGradientDescentPositionOptimizer::ParticleGradientDescentPositionOptimizer()
 {
   m_StopOptimization = false;
@@ -23,6 +27,7 @@ ParticleGradientDescentPositionOptimizer::ParticleGradientDescentPositionOptimiz
   m_verbosity = 0;
 }
 
+//-----------------------------------------------------------------------------
 void ParticleGradientDescentPositionOptimizer::ResetTimeStepVectors()
 {
   // Make sure the time step vector is the right size
@@ -43,6 +48,7 @@ void ParticleGradientDescentPositionOptimizer::ResetTimeStepVectors()
   }
 }
 
+//-----------------------------------------------------------------------------
 void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimization()
 {
   /// uncomment this to run single threaded
@@ -92,6 +98,11 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
     }
     counter++;
 
+    if (counter % 1 == 0) {
+      std::cerr << "about to check for swaps\n";
+      this->CheckForSwaps();
+    }
+
     // Iterate over each domain
     tbb::parallel_for(
       tbb::blocked_range<size_t>{0, numdomains},
@@ -127,7 +138,8 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed;
             VectorType original_gradient =
-              localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+              localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed,
+                                              energy);
 
             PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
@@ -138,7 +150,8 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
             double newenergy, gradmag;
             while (true) {
               // Step A scale the projected gradient by the current time step
-              VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+              VectorType gradient =
+                original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
@@ -164,7 +177,7 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
 
               if (newenergy < energy) { // good move, increase timestep for next time
                 m_TimeSteps[dom][k] *= factor;
-                if (gradmag > maxchange) {maxchange = gradmag;}
+                if (gradmag > maxchange) { maxchange = gradmag; }
                 break;
               }
               else {// bad move, reset point position and back off on timestep
@@ -176,7 +189,7 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
                   m_TimeSteps[dom][k] /= factor;
                 }
                 else { // keep the move with timestep 1.0 anyway
-                  if (gradmag > maxchange) {maxchange = gradmag;}
+                  if (gradmag > maxchange) { maxchange = gradmag; }
                   break;
                 }
               }
@@ -189,7 +202,8 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
     m_GradientFunction->AfterIteration();
 
     const auto accTimerEnd = std::chrono::steady_clock::now();
-    const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
+    const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+      accTimerEnd - accTimerBegin).count();
 
     if (m_verbosity > 2) {
       std::cout << m_NumberOfIterations << ". " << msElapsed << "ms";
@@ -202,8 +216,9 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
     }
     else if (m_verbosity > 1) {
       if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
-        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " <<
-          minimumTimeStep << std::endl;
+        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange
+                  << ", minimumTimeStep = " <<
+                  minimumTimeStep << std::endl;
       }
     }
 
@@ -213,7 +228,8 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
     // max number of iterations is reached or maximum distance moved by any
     // particle is less than the specified precision.
     if (maxchange < m_Tolerance) {
-      std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
+      std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange
+                << std::endl;
       m_StopOptimization = true;
     }
 
@@ -223,6 +239,7 @@ void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimizat
   }   // end while stop optimization
 }
 
+//-----------------------------------------------------------------------------
 void
 ParticleGradientDescentPositionOptimizer::AugmentedLagrangianConstraints(
   VectorType& gradient, const PointType& pt, const size_t& dom, const double& maximumUpdateAllowed)
@@ -254,4 +271,162 @@ ParticleGradientDescentPositionOptimizer::AugmentedLagrangianConstraints(
   }
   m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
 }
+
+//-----------------------------------------------------------------------------
+void ParticleGradientDescentPositionOptimizer::CheckForSwaps()
+{
+  auto shape_point = [=](int domain, int particle_id) {
+    itk::Point<double> p1;
+    int idx = particle_id * 6;
+    for (int k = 0; k < 3; k++) {
+      p1[k] = (*m_ShapeData)(idx + k, domain);
+    }
+    return p1;
+  };
+
+  std::cerr << "ZZZZZZZZZZZZZZZ " << m_ShapeData->rows() << " x " << m_ShapeData->cols() << "\n";
+
+
+  int num_dims = m_ShapeData->rows();  // includes dimensions for normals, etc
+
+  // compute the mean particles
+  typedef vnl_matrix<double> vnl_matrix_type;
+  vnl_matrix_type m_points_mean;
+  m_points_mean.set_size(num_dims, 1);
+  m_points_mean.fill(0.0);
+  for (unsigned int i = 0; i < num_dims; i++) {
+    m_points_mean.put(i, 0, (m_ShapeData->get_n_rows(i, 1)).mean());
+  }
+
+  auto mean = [=](int particle_id) {
+    itk::Point<double> p1;
+    int idx = particle_id * 6;
+    for (int k = 0; k < 3; k++) {
+      p1[k] = m_points_mean(idx + k, 0);
+    }
+    return p1;
+  };
+
+
+  int rows = 0;
+  for (int i = 0; i < m_ParticleSystem->GetDomainsPerShape(); i++) {
+    rows += VDimension * m_ParticleSystem->GetNumberOfParticles(i);  // rows will only include X/Y/Z
+  }
+
+  int num_particles = rows / 3;
+  int num_samples = m_ShapeData->cols();
+
+  double mean_nearest = 0;
+  for (int i = 0; i < num_particles; i++) {
+    double nearest = std::numeric_limits<double>::max();
+
+    itk::Point<double> p1 = mean(i);
+
+    for (int j = 0; j < num_particles; j++) {
+      if (i == j) { continue; }
+
+      itk::Point<double> p2 = mean(j);
+
+      double dist = p1.EuclideanDistanceTo(p2);
+      nearest = std::min<double>(nearest, dist);
+    }
+    mean_nearest += nearest;
+  }
+
+  mean_nearest /= num_particles;
+
+  int num_shapes = num_samples;
+  double neighborhood_radius = mean_nearest * 1.2;
+
+  std::cerr << "Descent: mean_nearest = " << mean_nearest << "\n";
+
+  auto ps = m_ParticleSystem;
+
+  if (num_particles < 6) {
+    return;
+  }
+  //for (int i = 0; i < num_particles; i++) {
+  for (int p = 5; p < 6; p++) {
+    using Neighborhood = ParticleSystemType::PointVectorType;
+    std::vector<Neighborhood> neighborhoods;
+
+    std::vector<int> counts(num_particles, 0);
+    for (int d = 0; d < num_shapes; d++) {
+      std::vector<double> m_CurrentWeights;
+      std::vector<double> distances;
+
+      Neighborhood n = ps->FindNeighborhoodPoints(ps->GetPosition(p, d), p, m_CurrentWeights,
+                                                  distances, neighborhood_radius, d);
+      neighborhoods.push_back(n);
+      for (const auto& pair : n) {
+        if (pair.Index == p) {
+          std::cerr << "Why does it give itself?\n";
+        } else {
+          counts[pair.Index]++;
+        }
+      }
+    }
+
+    int max_val = *(max_element(std::begin(counts), std::end(counts))); // at most max_val agreement
+
+    double threshold = num_shapes / 2.0;
+    //auto count = std::count_if(v.begin(), v.end(),[&](auto const& val){ return val > threshold; });
+
+
+    std::cerr << "neighborhood: ";
+    std::vector<int> neighborhood;
+    for (int i = 0; i < counts.size(); i++) {
+      if (counts[i] > threshold) {
+        std::cerr << i << " ";
+        neighborhood.push_back(i);
+      }
+    }
+    std::cerr << "\n";
+
+    if (neighborhood.size() > 3) { // need at least 3 particles with agreement >50%
+      for (int d = 0; d < num_shapes; d++) {
+        if (d >= neighborhoods.size()) {
+          std::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
+          return;
+        }
+        auto n = neighborhoods[d];
+        int probably_bad = 0;
+        for (int i=0;i<n.size();i++) {
+          int particle_id = n[i].Index;
+          if (particle_id >= counts.size()) {
+            std::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n";
+            return;
+          }
+          if (counts[particle_id] < threshold) {
+            probably_bad++;
+          }
+        }
+        if (probably_bad > n.size() / 3.0) {
+          std::cerr << "Descent: perhaps domain " << d << ", particle " << p << " is flipped?\n";
+
+
+          Global& global = Global::global();
+          tbb::mutex::scoped_lock lock(global.mutex_);
+          global.flipped_particles.clear();
+          global.flipped_domains.clear();
+
+
+          itk::Point<double> center;
+          center[0] = 0;
+          center[1] = 0;
+          center[2] = 0;
+
+          global.targets.push_back(center);
+          global.flipped_particles.push_back(p);
+          global.flipped_domains.push_back(d);
+          global.neighbors = neighborhood;
+
+        }
+      }
+    }
+
+  }
+
+}
+
 } // end namespace

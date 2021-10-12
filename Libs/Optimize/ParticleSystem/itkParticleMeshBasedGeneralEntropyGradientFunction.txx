@@ -206,6 +206,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //    }
 
 
+  return;
+
   auto mean = [=](int particle_id) {
     itk::Point<double> p1;
     int idx = particle_id * 6;
