@@ -1,13 +1,3 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleGradientDescentPositionOptimizer_txx
-#define __itkParticleGradientDescentPositionOptimizer_txx
 
 const int global_iteration = 1;
 
@@ -16,6 +6,7 @@ const int global_iteration = 1;
 #include <time.h>
 #include <string>
 #include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleGradientDescentPositionOptimizer.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -28,9 +19,7 @@ const int global_iteration = 1;
 
 namespace itk
 {
-  template <class TGradientNumericType, unsigned int VDimension>
-  ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
-    ::ParticleGradientDescentPositionOptimizer()
+  ParticleGradientDescentPositionOptimizer::ParticleGradientDescentPositionOptimizer()
   {
     m_StopOptimization = false;
     m_NumberOfIterations = 0;
@@ -39,8 +28,7 @@ namespace itk
     m_TimeStep = 1.0;
   }
 
-  template <class TGradientNumericType, unsigned int VDimension>
-  void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::ResetTimeStepVectors()
+  void ParticleGradientDescentPositionOptimizer::ResetTimeStepVectors()
   {
     // Make sure the time step vector is the right size
     while (m_TimeSteps.size() != m_ParticleSystem->GetNumberOfDomains())
@@ -64,9 +52,7 @@ namespace itk
     }
   }
 
-  template <class TGradientNumericType, unsigned int VDimension>
-  void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
-    ::StartAdaptiveGaussSeidelOptimization()
+  void ParticleGradientDescentPositionOptimizer::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
     //tbb::task_scheduler_init init(1);
@@ -250,9 +236,8 @@ namespace itk
     } // end while stop optimization
   }
 
-template<class TGradientNumericType, unsigned int VDimension>
 void
-ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
+ParticleGradientDescentPositionOptimizer::AugmentedLagrangianConstraints(
   VectorType& gradient, const PointType& pt, const size_t& dom, const double& maximumUpdateAllowed)
 {
   // Step B 2: Augmented lagrangian constraint method
@@ -284,5 +269,3 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
 }
 
 } // end namespace
-
-#endif

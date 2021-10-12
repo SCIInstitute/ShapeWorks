@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleGradientDescentPositionOptimizer.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleGradientDescentPositionOptimizer_h
-#define __itkParticleGradientDescentPositionOptimizer_h
+#pragma once
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -41,10 +26,13 @@ namespace itk
  * computed).
  *
  */
-template <class TGradientNumericType, unsigned int VDimension>
 class ParticleGradientDescentPositionOptimizer : public Object
 {
 public:
+
+  using TGradientNumericType = float;
+  static constexpr unsigned int VDimension = 3;
+
   /** Standard class typedefs */
   typedef ParticleGradientDescentPositionOptimizer Self;
   typedef Object Superclass;
@@ -155,8 +143,4 @@ private:
 
 
 } // end namespace
-
-#include "itkParticleGradientDescentPositionOptimizer.txx"
-
-#endif
 

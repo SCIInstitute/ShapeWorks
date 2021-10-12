@@ -53,7 +53,7 @@ public:
 
   using MeanCurvatureCacheType = itk::ParticleMeanCurvatureAttribute<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
-  using OptimizerType = itk::ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
+  using OptimizerType = itk::ParticleGradientDescentPositionOptimizer;
 
   /** Convenient typedef for storing cutting plane information */
   struct CuttingPlaneType {

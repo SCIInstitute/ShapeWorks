@@ -36,6 +36,7 @@
 #include <pybind11/embed.h>
 
 #include <tbb/global_control.h>
+#include <tbb/task_scheduler_init.h>
 
 namespace py = pybind11;
 
