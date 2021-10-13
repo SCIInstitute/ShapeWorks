@@ -759,8 +759,10 @@ TEST(MeshTests, warpTest2)
 
 TEST(MeshTests, warpTest3)
 {
+  // the output here is terrible because the particles are bad, but this test case is included
+  // because it demonstrated a crash in the mesh warping code
   Mesh reference( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.ply");
-  Mesh baseline( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.ply");
+  Mesh baseline( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3_baseline.vtk");
 
   std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.particles";
   std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3b.particles";
