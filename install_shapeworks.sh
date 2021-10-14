@@ -95,7 +95,6 @@ function install_conda() {
     pybind11=2.5.0 \
     notebook=6.1.5 \
     nbformat=4.4.0 \
-    nbconvert=6.1.0 \
     pkg-config=0.29.2
   then return 1; fi
 
@@ -124,7 +123,8 @@ function install_conda() {
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=20.2.3; then return 1; fi
-
+  if ! python -m pip install --upgrade pip; then return 1; fi
+  
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
