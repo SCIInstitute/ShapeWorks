@@ -171,7 +171,12 @@ function install_conda() {
   if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
-  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
+
+  echo "pip version:"
+  pip --version
+
+  echo "Install mkdocs-jupyter..."
+  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
   conda install --yes jupyter_contrib_nbextensions
@@ -183,11 +188,6 @@ function install_conda() {
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes
-  fi
-
-  # install any additional Linux dependencies
-  if [[ "$(uname)" == "Linux" ]]; then
-    echo "nothing additional to install for Linux"
   fi
 
   conda info
