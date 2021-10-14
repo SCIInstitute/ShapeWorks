@@ -123,7 +123,6 @@ function install_conda() {
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi
-  if ! python -m pip install --upgrade pip; then return 1; fi
   
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
@@ -154,6 +153,8 @@ function install_conda() {
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
+    if [[ "$(uname)" == "Linux" ]]; then
+
       echo "Running under GitHub Action"
       pushd $HOME/miniconda3/envs/shapeworks/lib
       ls libffi*
@@ -161,6 +162,7 @@ function install_conda() {
 	  ln -s libffi.7.dylib libffi.6.dylib
       fi
       popd
+    fi
   fi
 
   
@@ -173,10 +175,6 @@ function install_conda() {
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
 
-  echo "pip version:"
-  pip --version
-
-  echo "Install mkdocs-jupyter..."
   if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
