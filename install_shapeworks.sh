@@ -17,7 +17,7 @@ CONDAENV=shapeworks
 if [[ "$#" -eq 1 ]]; then
    CONDAENV=$1
 fi
-echo "creating new conda environment for ShapeWorks called $CONDAENV..."
+echo "Creating new conda environment for ShapeWorks called $CONDAENV..."
 
 # PyTorch installation
 function install_pytorch() {
@@ -47,7 +47,7 @@ function install_pytorch() {
 
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
-    echo "installing anaconda..."
+    echo "Installing Miniconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
       curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
       bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
@@ -155,7 +155,7 @@ function install_conda() {
   if [[ "$GITHUB_ACTION" != "" ]]; then
     if [[ "$(uname)" == "Linux" ]]; then
 
-      echo "Running under GitHub Action"
+      echo "Running under GitHub Action, creating libffi link"
       pushd $HOME/miniconda3/envs/shapeworks/lib
       ls libffi*
       if [ ! -f libffi.6.dylib ]; then
@@ -189,11 +189,6 @@ function install_conda() {
     nbstripout --install --attributes .gitattributes
   fi
 
-  conda info
-
-  echo "Installed packages:"
-  conda list
-
   # Set the python path for studio
   mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   
@@ -202,7 +197,18 @@ function install_conda() {
 
 if install_conda; then
   install_pytorch
+
+  echo "Conda info:"
+  conda info
+
+  echo "Conda installed packages:"
+  conda list
+
+  echo "Pip installed packages:"
+  pip list
+
   echo "$CONDAENV environment successfully created/updated!"
+  
   conda activate $CONDAENV
 else
   echo "Problem encountered creating/updating $CONDAENV conda environment."
