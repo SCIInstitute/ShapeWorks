@@ -41,7 +41,7 @@ success &= utils.test(multifieldvalueTest)
 
 def fieldrangeTest():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  scalarRange = mesh.getFieldRange("scalars")
+  scalarRange = range(mesh.getField("scalars"))
 
   return abs(scalarRange[0] - -4.21119) < 1e-4 and abs(scalarRange[1] - 4.52366) < 1e-4
 
@@ -49,7 +49,7 @@ success &= utils.test(fieldrangeTest)
 
 def missingfieldTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getFieldRange("nonexistent_fieldname")
+  field = range(mesh.getField("nonexistent_fieldname"))
 
 success &= utils.expectException(missingfieldTest, ValueError)
 

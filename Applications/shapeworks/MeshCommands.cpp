@@ -658,13 +658,6 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   bool summary = static_cast<bool>(options.get("summary"));
 
   std::string methodopt(options.get("method"));
-  auto method{Mesh::PointToPoint};
-  if (methodopt == "point-to-point") method = Mesh::PointToPoint;
-  else if (methodopt == "point-to-cell") method = Mesh::PointToCell;
-  else {
-    std::cerr << "no such distance method: " << methodopt << std::endl;
-    return false;
-  }
 
   std::string otherMesh = static_cast<std::string>(options.get("name"));
   if (otherMesh == "")
@@ -674,12 +667,22 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   Mesh other(otherMesh);
-  sharedData.mesh->distance(other, method);
+
+  if (methodopt == "point-to-point") {
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToPoint);
+  }
+  else if (methodopt == "point-to-cell") {
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToCell);
+  }
+  else {
+    std::cerr << "no such distance method: " << methodopt << std::endl;
+    return false;
+  }
 
   if (summary)
   {
-    auto range = sharedData.mesh->getFieldRange("distance");
-    auto dist = std::max(range[0], range[1]);
+    auto distRange = range(sharedData.field);
+    auto dist = std::max(distRange[0], distRange[1]);
     std::cout << "Maximum distance to target mesh: " << dist << std::endl;
   }
 
@@ -801,7 +804,12 @@ bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &s
                static_cast<double>(options.get("y")),
                static_cast<double>(options.get("z"))});
 
-  std::cout << "Closest point to given point on mesh: " << sharedData.mesh->closestPoint(point) << "\n";
+  bool outside = false;
+  vtkIdType face_id = -1;
+  auto closest_pt = sharedData.mesh->closestPoint(point, outside, face_id);
+  std::cout << "Closest point to given point on mesh: " << closest_pt << std::endl
+            << "- outside mesh: " << (outside ? "true" : "false") << std::endl
+            << "- face_id: " << face_id << std::endl;
   return sharedData.validMesh();
 }
 
@@ -950,7 +958,7 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  sharedData.field = sharedData.mesh->getField<vtkDataArray>(name);
+  sharedData.field = sharedData.mesh->getField(name);
   return true;
 }
 
@@ -1081,8 +1089,8 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::vector<double> range = sharedData.mesh->getFieldRange(name);
-  std::cout << "[" << range[0] << "," << range[1] << "]\n";
+  std::vector<double> fieldRange = range(sharedData.mesh->getField(name));
+  std::cout << "[" << fieldRange[0] << "," << fieldRange[1] << "]\n";
   return sharedData.validMesh();
 }
 
@@ -1110,7 +1118,7 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldMean(name) << "\n";
+  std::cout << mean(sharedData.mesh->getField(name)) << "\n";
   return sharedData.validMesh();
 }
 
@@ -1138,7 +1146,7 @@ bool FieldStd::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldStd(name) << "\n";
+  std::cout << stddev(sharedData.mesh->getField(name)) << "\n";
   return sharedData.validMesh();
 }
 

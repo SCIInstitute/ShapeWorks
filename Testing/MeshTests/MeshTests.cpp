@@ -543,8 +543,8 @@ TEST(MeshTests, distanceTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  femur.distance(pelvis);
-  pelvis.distance(femur);
+  femur.setField("distance", femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint));
+  pelvis.setField("distance", pelvis.distance(femur, Mesh::DistanceMethod::PointToPoint));
 
   Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
   Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
@@ -556,8 +556,8 @@ TEST(MeshTests, distanceTest2)
 {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
-  femur2.distance(femur1);
+  femur1.setField("distance", femur1.distance(femur2, Mesh::DistanceMethod::PointToCell));
+  femur2.setField("distance", femur2.distance(femur1, Mesh::DistanceMethod::PointToPoint));
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
@@ -615,28 +615,32 @@ TEST(MeshTests, closestpointTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   ellipsoid.computeNormals();
-  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto normals = ellipsoid.getField("Normals");
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p + v;
-  auto closeToP = ellipsoid.closestPoint(pNew);
+  bool outside = false;
+  vtkIdType face_id = -1;
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6) && outside == true && face_id == 90);
 }
 
 TEST(MeshTests, closestpointTest2)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/sphere_highres.ply");
   ellipsoid.computeNormals();
-  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto normals = ellipsoid.getField("Normals");
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p - v * 1.1;
-  auto closeToP = ellipsoid.closestPoint(pNew);
+  bool outside = false;
+  vtkIdType face_id = -1;
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6) && outside == false && face_id == 9);
 }
 
 TEST(MeshTests, closestpointIdTest)
@@ -677,8 +681,8 @@ TEST(MeshTests, fieldTest2)
 TEST(MeshTests, fieldTest3)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
-  std::vector<double> scalarRange = mesh.getFieldRange("scalars");
-  std::vector<double> normalsRange = mesh.getFieldRange("Normals");
+  std::vector<double> scalarRange = range(mesh.getField("scalars"));
+  std::vector<double> normalsRange = range(mesh.getField("Normals"));
 
   ASSERT_TRUE(scalarRange[0]==1);
   ASSERT_TRUE(scalarRange[1]==1);
@@ -837,5 +841,4 @@ TEST(MeshTests, addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
-
 }

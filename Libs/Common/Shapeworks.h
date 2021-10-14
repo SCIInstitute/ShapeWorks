@@ -11,6 +11,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
+#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -102,6 +103,15 @@ bool axis_is_valid(const Axis &axis);
 
 /// convert degrees to radians
 double degToRad(const double deg);
+
+/// incrementally compute (single-component) mean of field
+double mean(const Field field);
+
+/// compute (single-component) standard deviation of field
+double stddev(const Field field);
+
+/// compute (single-component) range of field
+std::vector<double> range(const Field field);
 
 /// Handy functions to perform operations on Points and Vectors with which ITK is more restrictive
 class Image;

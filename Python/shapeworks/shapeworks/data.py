@@ -199,7 +199,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
         for j in range(i, len(inMeshList)):
             mesh1 = inMeshList[i]
             mesh2 = inMeshList[j]
-            dist = mesh1.distance(mesh2).getFieldMean("distance")
+            dist = sw.mean(mesh1.distance(mesh2).getField("distance"))
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))

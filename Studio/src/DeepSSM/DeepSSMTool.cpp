@@ -456,12 +456,12 @@ void DeepSSMTool::update_testing_meshes()
         if (group.valid()) {
           Mesh m(group.meshes()[0]->get_poly_data());
           m.distance(base);
-          double average_distance = m.getFieldMean("distance");
+          double average_distance = mean(m.getField("distance"));
 
           QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
           table->setItem(idx - 1, 1, new_item);
 
-          auto field = m.getField<vtkDataArray>("distance");
+          auto field = m.getField("distance");
           field->SetName("deepssm_error");
           group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
         }

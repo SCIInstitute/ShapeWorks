@@ -91,6 +91,24 @@ PYBIND11_MODULE(shapeworks_py, m)
   .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
   .export_values();
 
+  m.def("mean",
+        [](py::array& field) {
+          return mean(pyToArr(field, false/*take_ownership*/));
+        },
+        "incrementally compute (single-component) mean of field");
+
+  m.def("stddev",
+        [](py::array& field) {
+          return stddev(pyToArr(field, false/*take_ownership*/));
+        },
+        "compute (single-component) standard deviation of field");
+
+  m.def("range",
+        [](py::array& field) {
+          return range(pyToArr(field, false/*take_ownership*/));
+        },
+        "compute (single-component) range of field");
+
   // Image
   py::class_<Image>(m, "Image")
     .def(py::init<const std::string &>())
@@ -859,13 +877,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .export_values();
   ;
 
-  // Mesh::DistanceMethod
-  py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
-  .value("PointToPoint", Mesh::DistanceMethod::PointToPoint)
-  .value("PointToCell", Mesh::DistanceMethod::PointToCell)
-  .export_values();
-  ;
-
   // Mesh::CurvatureType
   py::enum_<Mesh::CurvatureType>(mesh, "CurvatureType")
   .value("Principal", Mesh::CurvatureType::Principal)
@@ -1009,10 +1020,21 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::fixElement,
        "fix element winding of mesh")
 
+  .def("vertexDistance",
+       [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
+          auto array = mesh.distance(target, Mesh::DistanceMethod::PointToPoint);
+          return arrToPy(array, MOVE_ARRAY);
+       },
+       "computes distance from vertices of this mesh to closest vertices of target mesh",
+       "target"_a)
+
   .def("distance",
-       &Mesh::distance,
-       "computes surface to surface distance using the specified method (PointToPoint or PointToCell)",
-       "target"_a, "method"_a=Mesh::DistanceMethod::PointToPoint)
+       [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
+          auto array = mesh.distance(target);
+          return arrToPy(array, MOVE_ARRAY);
+       },
+       "computes distance from vertices of this mesh to closest point on faces of target mesh",
+       "target"_a)
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
@@ -1028,7 +1050,10 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
-         return py::array(3, mesh.closestPoint(Point({p[0], p[1], p[2]})).GetDataPointer());
+         bool outside = false;
+         vtkIdType face_id = -1;
+         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), outside, face_id);
+         return py::make_tuple(py::array(3, pt.GetDataPointer()), outside, face_id);
        },
        "returns closest point to given point on mesh",
        "point"_a)
@@ -1041,7 +1066,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a)
 
   .def("geodesicDistance",
-       py::overload_cast<int, int>(&Mesh::geodesicDistance),
+       static_cast<double (Mesh::*)(int,int) const>(&Mesh::geodesicDistance),
+       //py::overload_cast_const<int, int>(&Mesh::geodesicDistance),
        "computes geodesic distance between two vertices (specified by their indices) on mesh",
        "source"_a, "target"_a)
 
@@ -1151,7 +1177,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {
-         auto array = mesh.getField<vtkDataArray>(name);
+         auto array = mesh.getField(name);
          if (!array) {
            throw std::invalid_argument("field '" + name + "' does not exist");
          }
@@ -1170,25 +1196,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        "gets the value at the given index of field",
        "idx"_a, "name"_a)
 
-    .def("getMultiFieldValue",
-         &Mesh::getMultiFieldValue,
-         "gets the vector value at the given index of field",
-         "idx"_a, "name"_a)
-
-  .def("getFieldRange",
-       &Mesh::getFieldRange,
-       "returns the range of the given field",
-       "name"_a)
-
-  .def("getFieldMean",
-       &Mesh::getFieldMean,
-       "returns the mean the given field",
-       "name"_a)
-
-  .def("getFieldStd",
-       &Mesh::getFieldStd,
-       "returns the standard deviation of the given field",
-       "name"_a)
+  .def("getMultiFieldValue",
+       &Mesh::getMultiFieldValue,
+       "gets the vector value at the given index of field",
+       "idx"_a, "name"_a)
 
   .def("compareField",
        &Mesh::compareField,
