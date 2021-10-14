@@ -74,9 +74,6 @@ function install_conda() {
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
-  # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=20.2.3; then return 1; fi
-
   # install shapeworks deps
   if ! conda install --yes \
     cmake=3.18.2 \
@@ -123,6 +120,9 @@ function install_conda() {
       libuuid=2.32.1
     then return 1; fi
   fi
+
+  # pip is needed in sub-environments or the base env's pip will silently install to base
+  if ! conda install --yes pip=20.2.3; then return 1; fi
 
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
