@@ -61,16 +61,30 @@ background: rgb(12, 255, 127)
       <property name="leftMargin">
        <number>0</number>
       </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
       <property name="rightMargin">
        <number>0</number>
       </property>
       <item>
+       <widget class="QLabel" name="image_grooming_label">
+        <property name="text">
+         <string>Image Grooming</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_16">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="isolate_widget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -113,29 +127,6 @@ background: rgb(12, 255, 127)
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="Line" name="line_16">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Image Grooming</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -149,16 +140,10 @@ background: rgb(12, 255, 127)
       <item>
        <widget class="QWidget" name="fill_holes_widget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_12" rowstretch="0,0,0,0,0" rowminimumheight="0,0,0,0,0">
          <property name="leftMargin">
@@ -205,29 +190,23 @@ background: rgb(12, 255, 127)
       <item>
        <widget class="QWidget" name="crop_widget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_18">
          <property name="leftMargin">
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="0" column="0">
           <widget class="QCheckBox" name="crop_checkbox">
@@ -274,13 +253,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="0" column="1">
           <spacer name="horizontalSpacer_3">
@@ -310,7 +289,7 @@ background: rgb(12, 255, 127)
            <property name="minimumSize">
             <size>
              <width>60</width>
-             <height>0</height>
+             <height>24</height>
             </size>
            </property>
            <property name="maximum">
@@ -360,20 +339,20 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="1" column="3">
           <widget class="QSpinBox" name="antialias_iterations">
            <property name="minimumSize">
             <size>
              <width>60</width>
-             <height>0</height>
+             <height>24</height>
             </size>
            </property>
            <property name="maximum">
@@ -427,16 +406,10 @@ background: rgb(12, 255, 127)
       <item>
        <widget class="QWidget" name="resample_widget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="spacing">
@@ -629,13 +602,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="0" column="0">
           <widget class="QCheckBox" name="fastmarching_checkbox">
@@ -676,13 +649,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="0" column="2">
           <widget class="QLabel" name="blur_sigma_label">
@@ -718,8 +691,8 @@ background: rgb(12, 255, 127)
           <widget class="QDoubleSpinBox" name="blur_sigma">
            <property name="minimumSize">
             <size>
-             <width>57</width>
-             <height>0</height>
+             <width>0</width>
+             <height>24</height>
             </size>
            </property>
            <property name="value">
@@ -756,13 +729,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="1" column="0">
           <widget class="QCheckBox" name="convert_mesh_checkbox">
@@ -788,12 +761,6 @@ background: rgb(12, 255, 127)
    </item>
    <item>
     <widget class="QWidget" name="mesh_panel" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <property name="spacing">
        <number>0</number>
@@ -819,12 +786,6 @@ background: rgb(12, 255, 127)
       </item>
       <item>
        <widget class="QLabel" name="mesh_label">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
-        </property>
         <property name="text">
          <string>Mesh Grooming</string>
         </property>
@@ -846,13 +807,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="spacing">
           <number>0</number>
@@ -886,24 +847,18 @@ background: rgb(12, 255, 127)
       </item>
       <item>
        <widget class="QWidget" name="smooth_mesh_widget" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>50</width>
-          <height>30</height>
-         </size>
-        </property>
         <layout class="QGridLayout" name="gridLayout_10">
          <property name="leftMargin">
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>3</number>
+          <number>6</number>
          </property>
          <property name="spacing">
           <number>6</number>
@@ -1107,13 +1062,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="2" column="0">
           <widget class="QCheckBox" name="reflect_checkbox">
@@ -1193,13 +1148,13 @@ background: rgb(12, 255, 127)
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="spacing">
           <number>0</number>
