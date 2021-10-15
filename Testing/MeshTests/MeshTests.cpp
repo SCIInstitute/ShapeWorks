@@ -757,6 +757,37 @@ TEST(MeshTests, warpTest2)
   ASSERT_TRUE(output == ellipsoid_warped);
 }
 
+TEST(MeshTests, warpTest3)
+{
+  // the output here is terrible because the particles are bad, but this test case is included
+  // because it demonstrated a crash in the mesh warping code
+  Mesh reference( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.ply");
+  Mesh baseline( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3_baseline.vtk");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.particles";
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3b.particles";
+  std::vector<std::string> paths;
+  paths.push_back(staticPath);
+  paths.push_back(movingPath);
+  ParticleSystem particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.Particles();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  Eigen::MatrixXd movingPoints = allPts.col(1);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
+  ASSERT_TRUE(output == baseline);
+}
+
 TEST(MeshTests, findReferenceMeshTest)
 {
   std::vector<Mesh> meshes;

@@ -176,13 +176,24 @@ void MeshWarper::add_particle_vertices()
         v1_index = cell->GetPointId(2);
       }
 
+      auto neighbors = vtkSmartPointer<vtkIdList>::New();
+      this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
+
+      if (on_edge) { // first confirm that the other cell hasn't been deleted already
+        if (neighbors->GetNumberOfIds() == 1) {   // could be 0 for the boundary of an open mesh
+          vtkCell* other_cell = this->reference_mesh_->GetCell(neighbors->GetId(0));
+          if (other_cell->GetCellType() == VTK_EMPTY_CELL) { // this one was deleted
+            not_all_done = true;
+            continue;
+          }
+        }
+      }
+
       // add the new vertex
       int new_vertex = next_point++;
       new_points->InsertNextPoint(pt);
 
       if (on_edge) {
-        auto neighbors = vtkSmartPointer<vtkIdList>::New();
-        this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
 
         if (neighbors->GetNumberOfIds() == 1) {   // could be 0 for the boundary of an open mesh
           // split the neighbor cell into two triangles as well
