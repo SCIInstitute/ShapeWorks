@@ -66,6 +66,7 @@ def _promptLogin():
     if 'SW_PORTAL_LOGIN' in os.environ:
         print('Using portal login from $SW_PORTAL_LOGIN')
         combined = os.environ['SW_PORTAL_LOGIN']
+        print(f"Using LOGIN {combined}")
         username = combined.split(":")[0]
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
         try:
