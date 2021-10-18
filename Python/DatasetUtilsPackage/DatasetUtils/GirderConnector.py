@@ -48,7 +48,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-
+    print(f"Using Server: {serverAddres}")
     accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once
