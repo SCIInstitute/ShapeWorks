@@ -5,6 +5,7 @@
 
 class vtkCellLocator;
 #include <vtkPointData.h>
+#include <vtkMassProperties.h>
 
 namespace shapeworks {
 
@@ -204,7 +205,7 @@ public:
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
   /// Splits the mesh for FFCs by setting scalar and vector fields
-  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
+  bool splitMeshByFFC(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
   /// Gets values and gradients for FFCs
   double getFFCValue(Eigen::Vector3d query);
@@ -212,6 +213,17 @@ public:
 
   /// Formats mesh into an IGL format
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+  /// Clips mesh based on field
+  vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
+
+  /// Returns surface area in squared-units
+  double getSurfaceArea(){
+      vtkSmartPointer<vtkMassProperties> massProperties = vtkSmartPointer<vtkMassProperties>::New();
+      massProperties->SetInputData(this->getVTKMesh());
+
+      return massProperties->GetSurfaceArea();
+  }
 
 private:
   friend struct SharedCommandData;
@@ -239,7 +251,6 @@ private:
 
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
-
 
 };
 

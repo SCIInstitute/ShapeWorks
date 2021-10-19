@@ -253,6 +253,12 @@ public:
   //! Return the narrow band to be used
   double GetNarrowBand();
 
+  //! Sets AdaptiveSplitting
+  void SetAdaptiveSplitting(bool v){m_adaptive_splitting = v;}
+
+  //! Return the narrow band to be used
+  bool GetAdaptiveSplitting(){return m_adaptive_splitting;}
+
   //! Set the number of particles when correspondence based multiscale takes over
   void SetUseShapeStatisticsAfter(int num_particles);
 
@@ -398,6 +404,7 @@ protected:
   std::vector<int> m_domain_flags;
   double m_narrow_band = 0.0;
   bool m_narrow_band_set = false;
+  bool m_adaptive_splitting = true;
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;

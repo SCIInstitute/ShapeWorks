@@ -518,7 +518,7 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
-  bool initialize_ffcs(size_t dom);
+  std::shared_ptr<Mesh> initialize_ffcs(size_t dom);
 
 private:
   Sampler(const Sampler&); //purposely not implemented

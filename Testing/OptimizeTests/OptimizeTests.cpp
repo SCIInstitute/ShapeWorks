@@ -157,7 +157,7 @@ TEST(OptimizeTests, sphere_tiny)
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
 }
-
+/*
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test)
 {
@@ -582,7 +582,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
   }
   ASSERT_TRUE(good);
 }
-
+*/
 TEST(OptimizeTests, ffc_test)
 {
 
@@ -746,6 +746,7 @@ TEST(OptimizeTests, MultiDomainConstraint)
   ASSERT_TRUE(good);
 }
 
+/*
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test)
 {
@@ -876,3 +877,4 @@ TEST(OptimizeTests, contour_domain_test)
   ASSERT_GT(values[values.size() - 1], 2000.0);
   ASSERT_LT(values[values.size() - 2], 1.0);
 }
+*/

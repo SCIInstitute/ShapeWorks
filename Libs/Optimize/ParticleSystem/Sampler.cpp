@@ -111,13 +111,36 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
 
-      // Adding free-form constraints to constraint object
-      //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
-      if (m_FFCs.size() > 1) {
-          for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
-            initialize_ffcs(i);
+      // Computing surface area for expected particle spacing determination
+      std::shared_ptr<Mesh> surfaceAreaMesh = std::make_shared<Mesh>(m_meshes[i]);
+
+      // Adding free-form constraints to constraint object and applying FFCs to the surface area mesh
+      if (m_FFCs.size() > i && m_FFCs[i].size() > 0) {
+        std::shared_ptr<Mesh> ffcmesh = initialize_ffcs(i);
+
+        surfaceAreaMesh = std::make_shared<Mesh>(ffcmesh->clipByField("inout", 0.0));
+        //surfaceAreaMesh->write("dev/mesh_FFC_Clipped_" + std::to_string(i) + ".vtk");
+      }
+
+      // Applying plane constraints
+      if (m_CuttingPlanes.size() > i && m_CuttingPlanes[i].size() > 0) {
+          std::vector<itk::PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
+          for (unsigned int j = 0; j < planeConsts.size(); j++){
+            Eigen::Vector3d normal = planeConsts[j].GetPlaneNormal();
+            Eigen::Vector3d point = planeConsts[j].GetPlanePoint();
+            Plane p = Plane::New();
+            p->SetNormal(normal(0), normal(1), normal(2));
+            p->SetOrigin(point(0), point(1), point(2));
+            surfaceAreaMesh->clip(p);
           }
       }
+
+      double SurfaceArea = surfaceAreaMesh->getSurfaceArea();
+      std::cout << "Surface Area = " << SurfaceArea << std::endl;
+
+      //surfaceAreaMesh->write("dev/mesh_CP_Clipped_" + std::to_string(i) + ".vtk");
+
+      //***********************************************Add results to particle systems
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -410,13 +433,13 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   m_DomainList.push_back(domain);
 }
 
-bool Sampler::initialize_ffcs(size_t dom)
+std::shared_ptr<Mesh> Sampler::initialize_ffcs(size_t dom)
 {
-  auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
+  std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(m_meshes[dom]);
 
   for (size_t i = 0; i < m_FFCs[dom].size(); i++) {
     if(m_verbosity >= 1) std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
-    mesh->splitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+    mesh->splitMeshByFFC(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
   }
 
   this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
@@ -426,7 +449,7 @@ bool Sampler::initialize_ffcs(size_t dom)
   mutil.visualizeVectorFieldForFFCs(mesh);
 #endif
 
-  return true;
+  return mesh;
 }
 
 } // end namespace
