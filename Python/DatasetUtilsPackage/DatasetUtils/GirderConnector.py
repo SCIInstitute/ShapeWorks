@@ -68,7 +68,9 @@ def _promptLogin():
         combined = os.environ['SW_PORTAL_LOGIN']
         print(f"Using LOGIN {combined}")
         username = combined.split(":")[0]
+        print(f"username = {username}")
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
+        print(f"usernamePasswordHash = {usernamePasswordHash}")
         try:
             basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
         except ValueError as e:
