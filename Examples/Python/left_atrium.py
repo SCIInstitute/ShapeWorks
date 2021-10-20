@@ -443,11 +443,13 @@ def Run_Pipeline(args):
 
     if args.tiny_test:
         # compare against baseline particles
-        files = local_point_files + world_point_files
+        files = world_point_files
         ps1 = sw.ParticleSystem(files)
+
         verification_dir = "Data/Verification/left_atrium/tiny_test/"
         ps2 = sw.ParticleSystem([verification_dir + os.path.basename(f) for f in files])
-        if not ps1.Compare(ps2):
+
+        if not ps1.CompactnessCompare(ps2):
             print("Error: particle system did not match ground truth")
             exit(-1)
         print("Done with tiny test, verification succeeded.")
