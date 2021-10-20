@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def findReferenceMeshTest():
   mesh1 = Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
   mesh2 = Mesh(os.environ["DATA"] + "/m04_L_femur.ply")
@@ -14,4 +16,6 @@ def findReferenceMeshTest():
 
   return MeshUtils.findReferenceMesh(meshList) == 2
 
-utils.test(findReferenceMeshTest)
+success &= utils.test(findReferenceMeshTest)
+
+sys.exit(not success)

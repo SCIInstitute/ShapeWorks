@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def computenormalsTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.computeNormals()
@@ -10,4 +12,6 @@ def computenormalsTest():
 
   return mesh == compareMesh
 
-utils.test(computenormalsTest)
+success &= utils.test(computenormalsTest)
+
+sys.exit(not success)

@@ -28,7 +28,7 @@ REM reactivate shapeworks environment
 call conda activate base
 call conda activate %CONDAENV%
 
-call pip install --upgrade pip
+call conda install --yes pip=21.2.4
 call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
 call pip install hotelling==0.5.0

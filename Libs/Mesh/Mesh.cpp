@@ -12,6 +12,7 @@
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
 #include "FECVDDecimationModifier.h"
+#include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
@@ -53,8 +54,6 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkNew.h>
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
 #include <vtkCellData.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
@@ -62,8 +61,6 @@
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/heat_method_distance.h>
-
-
 
 namespace shapeworks {
 
@@ -221,6 +218,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   }
   smoother->Update();
   this->mesh = smoother->GetOutput();
+
   // must regenerate normals after smoothing
   computeNormals();
   return *this;
@@ -433,7 +431,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 
   switch(method)
   {
-    case POINT_TO_POINT:
+    case PointToPoint:
     {
       vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
       targetPointLocator->SetDataSet(target.mesh);
@@ -449,7 +447,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
     }
     break;
 
-    case POINT_TO_CELL:
+    case PointToCell:
     {
       vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
       targetCellLocator->SetDataSet(target.mesh);
@@ -537,16 +535,50 @@ int Mesh::closestPointId(const Point3 point)
 
 double Mesh::geodesicDistance(int source, int target)
 {
-  Eigen::MatrixXd V = points();
-  Eigen::MatrixXi F = faces();
-  Eigen::VectorXd VS(1), VT(1);
-  VS[0] = source;
-  VT[0] = target;
-  Eigen::VectorXd FS, FT;
-  Eigen::VectorXd d;
+  if (source < 0 || target < 0 || numPoints() < source || numPoints() < target) {
+    throw std::invalid_argument("requested point ids outside range of points available in mesh");
+  }
 
-  igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
-  return d[0];
+  VtkMeshWrapper wrap(this->mesh, true);
+  return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
+}
+
+Field Mesh::geodesicDistance(const Point3 landmark)
+{
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("GeodesicDistanceToLandmark");
+
+  VtkMeshWrapper wrap(this->mesh, true);
+
+  for (int i = 0; i < numPoints(); i++)
+  {
+    distance->SetValue(i, wrap.ComputeDistance(landmark, -1, getPoint(i), -1));
+  }
+
+  return distance;
+}
+
+Field Mesh::geodesicDistance(const std::vector<Point3> curve)
+{
+  vtkSmartPointer<vtkDoubleArray> minDistance = vtkSmartPointer<vtkDoubleArray>::New();
+  minDistance->SetNumberOfComponents(1);
+  minDistance->SetNumberOfTuples(numPoints());
+  minDistance->SetName("GeodesicDistanceToCurve");
+  minDistance->Fill(1e20);
+
+  for (int i = 0; i < curve.size(); i++)
+  {
+    Field distance = geodesicDistance(curve[i]);
+    for (int j = 0; j < numPoints(); j++)
+    {
+      if (distance->GetTuple1(j) < minDistance->GetTuple1(j))
+        minDistance->SetValue(j, distance->GetTuple1(j));
+    }
+  }
+
+  return minDistance;
 }
 
 Field Mesh::curvature(const CurvatureType type)
@@ -683,7 +715,7 @@ Point3 Mesh::centerOfMass() const
   return center;
 }
 
-Point3 Mesh::getPoint(vtkIdType id) const
+Point3 Mesh::getPoint(int id) const
 {
   if (this->numPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
@@ -692,7 +724,7 @@ Point3 Mesh::getPoint(vtkIdType id) const
   return Point3({point[0], point[1], point[2]});
 }
 
-IPoint3 Mesh::getFace(vtkIdType id) const
+IPoint3 Mesh::getFace(int id) const
 {
   if (mesh->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 

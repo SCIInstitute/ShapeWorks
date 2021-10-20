@@ -3,6 +3,8 @@ import sys
 import numpy as np
 from shapeworks import *
 
+success = True
+
 def closestpointTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
   mesh.computeNormals()
@@ -15,7 +17,7 @@ def closestpointTest1():
 
   return np.linalg.norm(p-closeToP) == 0.0
 
-utils.test(closestpointTest1)
+success &= utils.test(closestpointTest1)
 
 def closestpointTest2():
   mesh = Mesh(os.environ["DATA"] + "/sphere_highres.ply")
@@ -29,4 +31,6 @@ def closestpointTest2():
 
   return np.linalg.norm(p-closeToP) < 1e-4
 
-utils.test(closestpointTest2)
+success &= utils.test(closestpointTest2)
+
+sys.exit(not success)
