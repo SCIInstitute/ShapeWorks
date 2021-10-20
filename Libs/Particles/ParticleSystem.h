@@ -37,7 +37,7 @@ public:
 
   bool ExactCompare(const ParticleSystem& other) const;
 
-  bool CompactnessCompare(const ParticleSystem& other) const;
+  bool EvaluationCompare(const ParticleSystem& other) const;
 
 private:
   friend struct SharedCommandData;

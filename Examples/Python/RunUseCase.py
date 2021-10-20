@@ -61,6 +61,7 @@ if __name__ == '__main__':
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
     parser.add_argument("--mesh_mode", help="Run optimization on meshes rather than distance transforms.",action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
+    parser.add_argument("--verify", help="Run as a full test", action="store_true")
     args = parser.parse_args()
 
     if args.use_subsample:

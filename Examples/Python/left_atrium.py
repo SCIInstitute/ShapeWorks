@@ -441,18 +441,10 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, input_files, parameter_dictionary)
 
-    if args.tiny_test:
-        # compare against baseline particles
-        files = world_point_files
-        ps1 = sw.ParticleSystem(files)
-
-        verification_dir = "Data/Verification/left_atrium/tiny_test/"
-        ps2 = sw.ParticleSystem([verification_dir + os.path.basename(f) for f in files])
-
-        if not ps1.CompactnessCompare(ps2):
-            print("Error: particle system did not match ground truth")
+    if args.tiny_test or args.verify:
+        if not AnalyzeUtils.verify(args, world_point_files):
             exit(-1)
-        print("Done with tiny test, verification succeeded.")
+        print("Done with test, verification succeeded.")
         exit()
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")

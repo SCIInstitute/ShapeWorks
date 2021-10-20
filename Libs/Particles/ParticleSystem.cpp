@@ -62,18 +62,40 @@ bool ParticleSystem::ExactCompare(const ParticleSystem &other) const
   return same;
 }
 
-bool ParticleSystem::CompactnessCompare(const ParticleSystem& other) const
+bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
 {
   auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
   auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
-
   if (compactness1.size() != compactness2.size()) {
     return false;
   }
-
   if (compactness1.size() > 0 && compactness2.size() > 0) {
     std::cerr << "Comparing compactness: " << compactness1[0] << " vs " << compactness2[0] << "\n";
     if (!equalNSigDigits(compactness1[0], compactness2[0], 2)) {
+      return false;
+    }
+  }
+
+  auto gen1 = ShapeEvaluation::ComputeFullGeneralization(*this);
+  auto gen2 = ShapeEvaluation::ComputeFullGeneralization(other);
+  if (gen1.size() != gen2.size()) {
+    return false;
+  }
+  if (gen1.size() > 0 && gen2.size() > 0) {
+    std::cerr << "Comparing generalization: " << gen1[0] << " vs " << gen2[0] << "\n";
+    if (!equalNSigDigits(gen1[0], gen2[0], 2)) {
+      return false;
+    }
+  }
+
+  auto spec1 = ShapeEvaluation::ComputeFullSpecificity(*this);
+  auto spec2 = ShapeEvaluation::ComputeFullSpecificity(other);
+  if (spec1.size() != spec2.size()) {
+    return false;
+  }
+  if (spec1.size() > 0 && spec2.size() > 0) {
+    std::cerr << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << "\n";
+    if (!equalNSigDigits(spec1[0], spec2[0], 2)) {
       return false;
     }
   }

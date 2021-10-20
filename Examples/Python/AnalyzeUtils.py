@@ -7,6 +7,7 @@ import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 import OptimizeUtils
+import shapeworks as sw
 
 
 def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
@@ -61,3 +62,26 @@ def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles,
     print("\n\nTo re-run ShapeWorksStudio, run:\n")
     print(f" cd {os.getcwd()}")
     print(f" {' '.join(execCommand)}\n\n")
+
+
+def verify(args, world_point_files):
+    # compare against baseline particles
+    files = world_point_files
+    ps1 = sw.ParticleSystem(files)
+
+    type = "full"
+    if args.tiny_test:
+        type = "tiny_test"
+
+    verification_dir = f"Data/Verification/{args.use_case.lower()}/{type}/"
+    baseline = [verification_dir + os.path.basename(f) for f in files]
+    for file in baseline:
+        if not os.path.exists(file):
+            print(f"Error: baseline file {file} does not exist")
+    ps2 = sw.ParticleSystem(baseline)
+
+    if not ps1.EvaluationCompare(ps2):
+        print("Error: particle system did not match ground truth")
+        return False
+    return True
+
