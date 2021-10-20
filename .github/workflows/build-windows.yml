@@ -84,7 +84,7 @@ jobs:
       run: cmake -E make_directory "C:/build"
 
     - name: Check Disk Space1
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}
       shell: bash -l {0}
       run: df -h
       
@@ -105,7 +105,7 @@ jobs:
       run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE --parallel
 
     - name: Check Disk Space2
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}
       shell: bash -l {0}
       run: df -h
 
@@ -120,7 +120,7 @@ jobs:
       run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
 
     - name: Check Disk Space3
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}
       shell: bash -l {0}
       run: df -h
       
@@ -137,7 +137,7 @@ jobs:
         path: ${{runner.workspace}}\ShapeWorks\artifacts
 
     - name: Check Disk Space4
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}
       shell: bash -l {0}
       run: df -h
         
