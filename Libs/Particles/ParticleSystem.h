@@ -35,7 +35,9 @@ public:
     return P.rows();
   }
 
-  bool Compare(const ParticleSystem& other) const;
+  bool ExactCompare(const ParticleSystem& other) const;
+
+  bool CompactnessCompare(const ParticleSystem& other) const;
 
 private:
   friend struct SharedCommandData;

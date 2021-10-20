@@ -1,4 +1,6 @@
 #include "ParticleSystem.h"
+#include "ShapeEvaluation.h"
+#include "Shapeworks.h"
 
 namespace shapeworks {
 
@@ -42,7 +44,7 @@ ParticleSystem::ParticleSystem(const Eigen::MatrixXd& matrix)
   this->P = matrix;
 }
 
-bool ParticleSystem::Compare(const ParticleSystem &other) const
+bool ParticleSystem::ExactCompare(const ParticleSystem &other) const
 {
   if (P.rows() != other.P.rows() || P.cols() != other.P.cols()) {
     std::cerr << "Rows/Columns mismatch\n";
@@ -58,6 +60,25 @@ bool ParticleSystem::Compare(const ParticleSystem &other) const
     }
   }
   return same;
+}
+
+bool ParticleSystem::CompactnessCompare(const ParticleSystem& other) const
+{
+  auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
+  auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
+
+  if (compactness1.size() != compactness2.size()) {
+    return false;
+  }
+
+  if (compactness1.size() > 0 && compactness2.size() > 0) {
+    std::cerr << "Comparing compactness: " << compactness1[0] << " vs " << compactness2[0] << "\n";
+    if (!equalNSigDigits(compactness1[0], compactness2[0], 2)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 }
