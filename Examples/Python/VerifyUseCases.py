@@ -24,14 +24,15 @@ start = time.time()
 # run_case("lumps --tiny_test")
 # run_case("left_atrium --tiny_test")
 # run_case("femur --tiny_test")
-# run_case("femur_groom_images --tiny_test")
 # run_case("femur_cut --tiny_test")
 # run_case("deep_ssm --tiny_test")
 # run_case("supershapes_1mode_contour --tiny_test")
 # run_case("thin_cavity_bean --tiny_test")
-run_case("ellipsoid_multiple_domain --tiny_test")
+# run_case("ellipsoid_multiple_domain --tiny_test")
 # run_case("ellipsoid_multiple_domain_mesh --tiny_test")
 # run_case("ellipsoid_pca --tiny_test")
+
+run_case("ellipsoid --verify")
 
 end = time.time()
 
