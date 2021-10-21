@@ -64,6 +64,18 @@ if __name__ == '__main__':
     parser.add_argument("--verify", help="Run as a full test", action="store_true")
     args = parser.parse_args()
 
+
+    type = ""
+    if args.tiny_test:
+        type = "tiny_test_"
+    scale = "multiscale"
+    if args.use_single_scale:
+        scale = "singlescale"
+    mode = ""
+    if args.mesh_mode:
+        mode = "_mesh_mode"
+    args.option_set = f"{type}{scale}{mode}"
+
     if args.use_subsample:
         dataExists = sw.data.dataset_exists_check(args.use_case)
         args.use_subsample = args.num_subsample
