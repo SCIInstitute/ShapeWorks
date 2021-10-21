@@ -24,7 +24,7 @@ def Run_Pipeline(args):
     sw.data.download_and_unzip_dataset(dataset_name, output_directory)
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
 
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
@@ -55,8 +55,11 @@ def Run_Pipeline(args):
     """
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
+    # If tiny test or verify, check results and exit
+    if args.tiny_test or args.verify:
+        if not AnalyzeUtils.verify(args, world_point_files):
+            exit(-1)
+        print("Done with test, verification succeeded.")
         exit()
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
