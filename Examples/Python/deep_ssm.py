@@ -163,7 +163,14 @@ def Run_Pipeline(args):
     DeepSSMUtils.testDeepSSM(config_file)
     print('Predicted particles saved at: ' + prediction_dir)
 
-    if args.tiny_test:
+    # If tiny test or verify, check results and exit
+    if args.tiny_test or args.verify:
+        if args.tiny_test:
+            if not os.path.exists("Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles"):
+                print("tiny test failed")
+                exit(-1)
+            # TODO: verify full run
+        print("Done with test, verification succeeded.")
         exit()
 
     print("\n\n\nStep 6. Analyze results.\n")
