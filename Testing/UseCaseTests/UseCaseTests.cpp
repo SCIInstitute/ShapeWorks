@@ -34,9 +34,8 @@ void run_use_case(const std::string& name, const std::string& check_file)
   std::string command = "python RunUseCase.py " + name + " --tiny_test 1> output.txt 2>&1";
   std::cerr << "Running command: " << command << "\n";
   bool result = system(command.c_str());
-  if (result || 1) {
-    std::cerr << "Use Case Output: " << command << "\n";
-//    std::cerr << "Error running command, output: " << command << "\n";
+  if (result) {
+    std::cerr << "Error running command, output: " << command << "\n";
     std::ifstream file("output.txt");
     if (file.good()) {
       std::string line;
