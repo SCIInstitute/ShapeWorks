@@ -73,11 +73,16 @@ def verify(args, world_point_files):
     for file in files:
         print(file)
 
-    type = "full"
-    if args.tiny_test:
-        type = "tiny_test"
+    # Copy to results dir
+    check_dir = f"Output/Results/{args.use_case.lower()}/{args.option_set}/"
+    if not os.path.exists(check_dir):
+        os.makedirs(check_dir)
 
-    verification_dir = f"Data/Verification/{args.use_case.lower()}/{type}/"
+    for file in files:
+        shutil.copy(file, check_dir)
+
+    verification_dir = f"Data/Verification/{args.use_case.lower()}/{args.option_set}/"
+
     baseline = [verification_dir + os.path.basename(f) for f in files]
 
     print(f"\nBaseline:")
