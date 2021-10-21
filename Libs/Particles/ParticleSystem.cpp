@@ -95,7 +95,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
   if (spec1.size() > 0 && spec2.size() > 0) {
     std::cerr << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << "\n";
-    if (!equalNSigDigits(spec1[0], spec2[0], 2)) {
+    if (!equalNSigDigits(spec1[0], spec2[0], 1)) {
       return false;
     }
   }
