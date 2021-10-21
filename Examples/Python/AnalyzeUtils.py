@@ -69,15 +69,26 @@ def verify(args, world_point_files):
     files = world_point_files
     ps1 = sw.ParticleSystem(files)
 
+    print(f"Comparing results in:")
+    for file in files:
+        print(file)
+
     type = "full"
     if args.tiny_test:
         type = "tiny_test"
 
     verification_dir = f"Data/Verification/{args.use_case.lower()}/{type}/"
     baseline = [verification_dir + os.path.basename(f) for f in files]
+
+    print(f"\nBaseline:")
+    for file in baseline:
+        print(file)
+
     for file in baseline:
         if not os.path.exists(file):
             print(f"Error: baseline file {file} does not exist")
+            return False
+        
     ps2 = sw.ParticleSystem(baseline)
 
     if not ps1.EvaluationCompare(ps2):
