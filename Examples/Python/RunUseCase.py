@@ -74,6 +74,8 @@ if __name__ == '__main__':
     mode = ""
     if args.mesh_mode:
         mode = "_mesh_mode"
+    if args.groom_images:
+        mode = f"{mode}_groom_images"
     args.option_set = f"{type}{scale}{mode}"
 
     if args.use_subsample:
