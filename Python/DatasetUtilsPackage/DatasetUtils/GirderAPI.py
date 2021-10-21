@@ -110,8 +110,6 @@ def getCollectionInfo(serverAddress, accessToken, collectionName):
         params = {'text': '\"' + collectionName + '\"'}, 
         headers = {'Girder-Token': accessToken}, 
         actionMessage = actionMessage)
-    print(f"response = {response}")
-    print(f"response.json() = {response.json()}")
     collectionList = response.json()
     if len(collectionList) == 0:
         raise ValueError('ERROR %s. Found 0 collections.' % actionMessage)

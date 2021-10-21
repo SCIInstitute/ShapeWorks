@@ -12,7 +12,7 @@ _CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.ut
 _VERSION = 'v2'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
-serverAddress = 'http://cicero.sci.utah.edu:8080/'
+serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 
 def printDataPortalWelcome():
@@ -66,11 +66,8 @@ def _promptLogin():
     if 'SW_PORTAL_LOGIN' in os.environ:
         print('Using portal login from $SW_PORTAL_LOGIN')
         combined = os.environ['SW_PORTAL_LOGIN']
-        print(f"Using LOGIN {combined}")
         username = combined.split(":")[0]
-        print(f"username = {username}")
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
-        print(f"usernamePasswordHash = {usernamePasswordHash}")
         try:
             basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
         except ValueError as e:
