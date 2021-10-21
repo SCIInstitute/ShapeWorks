@@ -441,6 +441,7 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, input_files, parameter_dictionary)
 
+    # If tiny test or verify, check results and exit
     if args.tiny_test or args.verify:
         if not AnalyzeUtils.verify(args, world_point_files):
             exit(-1)
