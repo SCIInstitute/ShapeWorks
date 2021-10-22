@@ -20,14 +20,10 @@ static bool file_exists(const std::string& filename)
 //---------------------------------------------------------------------------
 void run_use_case(const std::string& name)
 {
-  // check that one of the resulting files exists
-  std::string file = std::string(PYTHON_EXAMPLES_DIR) + "/" + check_file;
-
   // change to the python examples directory
   chdir(std::string(PYTHON_EXAMPLES_DIR).c_str());
 
-  // delete the file to make sure it's remade
-  std::remove(file.c_str());
+  // delete the out file to make sure it's remade
   std::remove("output.txt");
 
   // run python
@@ -45,6 +41,7 @@ void run_use_case(const std::string& name)
     }
   }
   ASSERT_FALSE(result);
+}
 
 
 //---------------------------------------------------------------------------
@@ -116,9 +113,9 @@ TEST(UseCaseTests, femur_cut)
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, deep_ssm)
 {
-  run_use_case("deep_ssm",
-               "Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles");
+  run_use_case("deep_ssm");
 }
+
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, supershapes_1mode_contour)
 {
