@@ -73,7 +73,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   bool good = true;
   if (compactness1.size() > 0 && compactness2.size() > 0) {
     std::cout << "Comparing compactness: " << compactness1[0] << " vs " << compactness2[0] << "\n";
-    if (!equalNSigDigits(compactness1[0], compactness2[0], 2)) {
+    if (!epsEqual(compactness1[0], compactness2[0], 0.01)) {
       good = false;
     }
   }
@@ -85,7 +85,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
   if (gen1.size() > 0 && gen2.size() > 0) {
     std::cout << "Comparing generalization: " << gen1[0] << " vs " << gen2[0] << "\n";
-    if (!equalNSigDigits(gen1[0], gen2[0], 1)) {
+    if (!epsEqual(gen1[0], gen2[0], 0.1)) {
       good = false;
     }
   }
@@ -97,7 +97,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
   if (spec1.size() > 0 && spec2.size() > 0) {
     std::cout << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << "\n";
-    if (!equalNSigDigits(spec1[0], spec2[0], 1)) {
+    if (!epsEqual(spec1[0], spec2[0], 0.1)) {
       good = false;
     }
   }
