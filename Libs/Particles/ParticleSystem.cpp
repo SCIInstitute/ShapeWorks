@@ -97,7 +97,8 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
   if (spec1.size() > 0 && spec2.size() > 0) {
     std::cout << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << "\n";
-    if (!epsEqual(spec1[0], spec2[0], 0.1)) {
+    double diff = std::abs(spec1[0] - spec2[0]);
+    if (diff < 0.1 * spec1[0] && diff < 0.1 * spec2[0]) {
       good = false;
     }
   }
