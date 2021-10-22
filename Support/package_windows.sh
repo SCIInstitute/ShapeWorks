@@ -40,6 +40,7 @@ cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Libra
 
 
 cp -r $BUILD/bin/Release bin
+rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
 # Run auto-documentation
