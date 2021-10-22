@@ -88,7 +88,7 @@ def Run_Pipeline(args):
                                                              world_point_list=train_world_particle_list)
     aug_data_csv = aug_dir + "TotalData.csv"
 
-    if not args.tiny_test:
+    if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
     print("\n\n\nStep 3. Reformat Data for Pytorch\n")
