@@ -122,6 +122,9 @@ public:
   //! Get domain opacities
   std::vector<float> get_opacities();
 
+  //! Get the current glyph size
+  double get_current_glyph_size();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
@@ -162,6 +165,8 @@ private:
   bool feature_range_uniform_ = true;
 
   std::vector<float> opacities_;
+
+  double current_glyph_size_{0};
 
 };
 
