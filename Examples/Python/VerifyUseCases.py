@@ -74,13 +74,13 @@ def main():
     print("---------------------------------------------")
     print(f"The following use cases passed ({len(passed)})")
     for item in passed:
-        print(f"{item} : PASSED")
+        print(f"[ PASSED ] : {item}")
 
     if len(failed) > 0:
         print("\n---------------------------------------------")
         print(f"The following use cases failed ({len(failed)})")
         for item in failed:
-            print(f"{item} : FAILED")
+            print(f"[ FAILED ] : {item}")
 
     total = len(passed) + len(failed)
     pass_percent = len(passed) / total
