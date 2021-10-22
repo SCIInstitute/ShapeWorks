@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/use-cases/segmentation-based/ellipsoid-multiple-domain.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/use-cases/constraint-based/ellipsoid-cutting-planes.html">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Shape Model for Multiple Domains from Segmentations - ShapeWorks</title>
+  <title>Ellipsoid: Shape Model with Cutting Planes - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Shape Model for Multiple Domains from Segmentations";
-    var mkdocs_page_input_path = "use-cases/segmentation-based/ellipsoid-multiple-domain.md";
-    var mkdocs_page_url = "/software/shapeworks.html/use-cases/segmentation-based/ellipsoid-multiple-domain.html";
+    var mkdocs_page_name = "Ellipsoid: Shape Model with Cutting Planes";
+    var mkdocs_page_input_path = "use-cases/constraint-based/ellipsoid-cutting-planes.md";
+    var mkdocs_page_url = "/software/shapeworks.html/use-cases/constraint-based/ellipsoid-cutting-planes.html";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
@@ -151,27 +151,15 @@
                 <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="../use-cases.html">Getting Started with Use Cases</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="#">Segmentation Based Use Cases</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="ellipsoid.html">Ellipsoid: Basic Example</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
                 </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
-    <ul class="current">
-    <li class="toctree-l3"><a class="reference internal" href="#what-is-the-use-case">What is the Use Case?</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#grooming-steps">Grooming Steps</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#relevant-arguments">Relevant Arguments</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#optimization-parameters">Optimization Parameters</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#analyzing-shape-model">Analyzing Shape Model</a>
-    </li>
-    </ul>
+                <li class="toctree-l2"><a class="reference internal" href="../segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
                 </li>
     </ul>
                     </li>
@@ -197,11 +185,23 @@
                 </li>
     </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="#">Constraints Based Use Cases</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-the-use-case">What is the Use Case?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#grooming-steps">Grooming Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#relevant-arguments">Relevant Arguments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#optimization-parameters">Optimization Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#analyzing-shape-models">Analyzing Shape Models</a>
+    </li>
+    </ul>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                <li class="toctree-l2"><a class="reference internal" href="femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
                 </li>
     </ul>
                     </li>
@@ -294,14 +294,14 @@
         
       
         
-          <li>Segmentation Based Use Cases &raquo;</li>
+          <li>Constraints Based Use Cases &raquo;</li>
         
       
     
-    <li>Shape Model for Multiple Domains from Segmentations</li>
+    <li>Ellipsoid: Shape Model with Cutting Planes</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/segmentation-based/ellipsoid-multiple-domain.md"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/constraint-based/ellipsoid-cutting-planes.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -313,30 +313,15 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="shape-model-for-multiple-domains-from-segmentations">Shape Model for Multiple Domains from Segmentations</h1>
+                <h1 id="ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</h1>
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
-<p>This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints, to capture inter-domains correlations and interactions.
-There are three datasets available for this use case:</p>
-<ul>
-<li>ellipsoid_joint_rotation - two stacked ellipsoids with the same radii, with the top ellipsoid rotating w.r.t the bottom ellipsoid. </li>
-<li>ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radii in all three directions</li>
-<li>ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid</li>
-</ul>
-<p>By default, the use case runs on the ellipsoid_joint_rotation dataset. The dataset can be changed by changing the name and output folder at the beginning of the Python script. </p>
+<p>The <code>ellipsoid_cut</code> example demonstrates using multiple cutting planes to constrain the distribution of particles on ellipsoids which are already aligned. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. </p>
+<p>Here is an example of where the cutting planes intersect and ellipsoid:</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_trim.mp4" autoplay muted loop controls style="width:100%"></p>
+
 <h2 id="grooming-steps">Grooming Steps</h2>
-<p>This is how the segmentations in the dataset look before grooming.Here it can been seen that the ellipsoids have random centers andn orientations.<img alt="This is how the segmentations in the dataset look before grooming." src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_pre_groom.png" /></p>
-<ol>
-<li><a href="../../workflow/groom.html#resampling-images-and-segmentations"><strong>Isotropic Resampling</strong></a>: Binary segmentations in the ellipsoid joint dataset are resampled with an isotropic voxel spacing.</li>
-<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Reference Selection</strong></a>: 
-For the ellipsoid_joint datasets available on the ShapeWorks portal, the mode of variation is rotation and/or size of the second ellipsoid w.r.t to the first ellipsoid. Hence, we align the shapes using the first domain as the reference. This is domain-specific alignment. 
-The reference is selected by first computing the mean (average) distance transform of the segmentations belonging to the reference domain, then selecting the sample closest to that mean (i.e., medoid).</li>
-<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Rigid Alignment</strong></a>: For all the shapes in the reference domain selected, the transformation is calculated to factor out translation and rotation. The same transformation is applied to the corresponding shape of the other domain.
-4.<a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Bounding Box</strong></a>:  The smallest region which fits all of the samples is found.</li>
-<li><a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Cropping</strong></a>: The segmentations are cropped to the size of the bounding box.</li>
-<li><a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Padding</strong></a>: The segmentations are padded with zeros on every side.</li>
-<li><a href="../../workflow/groom.html#converting-segmentations-to-smooth-signed-distance-transforms"><strong>Distance Transform</strong></a>: Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
-</ol>
-<p>Distance transform obtained after grooming.The ellipsoid joints are now centred and aligned ready to be sent to the optimizer<img alt="Distance transform obtained after grooming" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_post_groom.png" /></p>
+<p>This use case starts with pre-aligned segmentations. The only grooming step is <a href="../../workflow/groom.html#converting-segmentations-to-smooth-signed-distance-transforms">computing the signed distance transform</a> for each segmentation.
+<img alt="Ellipsoid cut distance transforms" src="../../img/use-cases/ellipsoid_cut_input.png" /></p>
 <h2 id="relevant-arguments">Relevant Arguments</h2>
 <p><a href="../use-cases.html#-use_subsample">--use_subsample</a>
 <a href="../use-cases.html#-use_subsample">--num_subsample</a>
@@ -345,37 +330,35 @@ The reference is selected by first computing the mean (average) distance transfo
 <a href="../use-cases.html#-mesh_mode">--mesh_mode</a>
 <a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
 <h2 id="optimization-parameters">Optimization Parameters</h2>
-<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionory in Python</a> for more details.
-NOTE: The list of <code>&lt;inputs&gt;</code> (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
-Below are the default optimization parameters for this use case.
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-        <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">512</span><span class="p">,</span><span class="mi">512</span><span class="p">],</span>
-        <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span>
-        <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span><span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="s2">&quot;domain_type&quot;</span> <span class="p">:</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
-        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">3</span>
-
-      <span class="p">}</span>
-</code></pre></div></p>
-<h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>Once the python code runs the optimization, the files are saved in the <code>Output</code> folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
-Here is the optimized shape.
-<img alt="Ellipsoid Joint Shape Model" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/multiple_domain_segs_model.gif" /></p>
-<p>Below are the particles for each sample; we can see they are uniformly distributed.
-<img alt="Ellipsoid Joint Samples" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/multi_domain_samples.png" /></p>
+<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. 
+Below are the default optimization parameters for this use case.</p>
+<div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot;: 32,
+        &quot;use_normals&quot;: 1,
+        &quot;normal_weight&quot;: 15.0,
+        &quot;checkpointing_interval&quot;: 200,
+        &quot;keep_checkpoints&quot;: 0,
+        &quot;iterations_per_split&quot;: 3000,
+        &quot;optimization_iterations&quot;: 3000,
+        &quot;starting_regularization&quot;: 100,
+        &quot;ending_regularization&quot;: 10,
+        &quot;recompute_regularization_interval&quot;: 2,
+        &quot;domains_per_shape&quot;: 1,
+        &quot;domain_type&quot;: &#39;image&#39;,
+        &quot;relative_weighting&quot;: 15,
+        &quot;initial_relative_weighting&quot;: 0.05,
+        &quot;procrustes_interval&quot;: 0,
+        &quot;procrustes_scaling&quot;: 0,
+        &quot;save_init_splits&quot;: 0,
+        &quot;verbosity&quot;: 2,
+        &quot;adaptivity_mode&quot;: 0,
+        &quot;cutting_plane_counts&quot;: cutting_plane_counts,
+        &quot;cutting_planes&quot;: cutting_planes
+</code></pre></div>
+<p>Here <code>cutting_plane_counts</code> is two for every ellipsoid and there are 15 ellipsoids so it is a list of twos of length 15.
+The <code>cutting_planes</code> parameter is a list of the two cutting plane points of length 15.</p>
+<h2 id="analyzing-shape-models">Analyzing Shape Models</h2>
+<p>Below we can see the resulting shape model where correspondence points do not lie beyond the cutting planes and only a secton of the ellipsoids are modeled. </p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_studio.mp4" autoplay muted loop controls style="width:100%"></p>
               
             </div>
           </div>
@@ -383,10 +366,10 @@ Here is the optimized shape.
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../mesh-based/ellipsoid_mesh.html" class="btn btn-neutral float-right" title="Ellipsoid Mesh: Basic Example">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="femur-cutting-planes.html" class="btn btn-neutral float-right" title="Femur:Shape Model with Cutting Planes">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="fixed-domain-ellipsoid.html" class="btn btn-neutral" title="Fixed Domains Ellipsoid: Shape Model on New Shapes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../contour-based/supershapes-contour.html" class="btn btn-neutral" title="Supershapes:Shape Model for Contour Domains"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -418,10 +401,10 @@ Here is the optimized shape.
         </span>
     
     
-      <span><a href="fixed-domain-ellipsoid.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../contour-based/supershapes-contour.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../mesh-based/ellipsoid_mesh.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="femur-cutting-planes.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
