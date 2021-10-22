@@ -3,11 +3,13 @@ import sys
 from numpy import identity, array_equal
 from shapeworks import *
 
+success = True
+
 def getCoordsysTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   return array_equal(img.coordsys(), identity(3))
 
-utils.test(getCoordsysTest1)
+success &= utils.test(getCoordsysTest1)
 
 def setCoordsysTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -15,4 +17,6 @@ def setCoordsysTest1():
   img.setCoordsys(csys)
   return array_equal(img.coordsys(), csys)
 
-utils.test(setCoordsysTest1)
+success &= utils.test(setCoordsysTest1)
+
+sys.exit(not success)

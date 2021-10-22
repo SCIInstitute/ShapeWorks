@@ -272,6 +272,8 @@ TEST(OptimizeTests, cutting_plane_test)
   // make sure we clean out at least one output file
   std::remove("output/sphere10_DT_world.particles");
 
+  auto start = shapeworks::ShapeworksUtils::now();
+
   // run with parameter file
   std::string paramfile = std::string("cutting_plane.xml");
   Optimize app;
@@ -337,6 +339,10 @@ TEST(OptimizeTests, cutting_plane_test)
       }
     }
   }
+
+  auto end = shapeworks::ShapeworksUtils::now();
+  std::cout << "Time taken to run cutting_plane optimize test: " << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+
   ASSERT_TRUE(good);
 }
 
@@ -399,7 +405,7 @@ TEST(OptimizeTests, sphereConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 6.5e-1;
+      double slack = 15.0e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
@@ -478,7 +484,170 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
       auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
         domain)->GetConstraints()->ViolationReportData(p);
 
-      double slack = 1.5e-1;
+      double slack = 8.5e-1;
+
+      for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < violation_report_data[j].size(); k++) {
+          if (violation_report_data[j][k] > slack)
+            std::cout << "VIOLATION: Shape# " << int(domain / domains_per_shape) << " domain# "
+                      << domain % domains_per_shape << " point# " << i << " " << types[j]
+                      << " constraint " << k << " of magnitude " << violation_report_data[j][k]
+                      << " by point " << p << std::endl;
+          //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# "
+          // << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint "
+          // << k << " with evaluation " << violation_report_data[j][k] << " by point "
+          // << p << std::endl;
+          if (violation_report_data[j][k] > slack) good = false;
+        }
+      }
+    }
+  }
+  ASSERT_TRUE(good);
+}
+
+TEST(OptimizeTests, ffc_test)
+{
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/ffc");
+  chdir(test_location.c_str());
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("ffc.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  std::cout << "Loading parameters-----" << std::endl;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  std::cout << "Running-----" << std::endl;
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
+
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k = 0;
+         k < app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
+  bool good = true;
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    for (size_t i = 0; i < lists[domain].size(); i++) {
+      itk::FixedArray<double, 3> p = lists[domain][i];
+
+      auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
+        domain)->GetConstraints()->ViolationReportData(p);
+
+      double slack = 3.0e-1;
+
+      for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < violation_report_data[j].size(); k++) {
+          if (violation_report_data[j][k] > slack)
+            std::cout << "VIOLATION: Shape# " << int(domain / domains_per_shape) << " domain# "
+                      << domain % domains_per_shape << " point# " << i << " " << types[j]
+                      << " constraint " << k << " of magnitude " << violation_report_data[j][k]
+                      << " by point " << p << std::endl;
+          //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# "
+          // << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint "
+          // << k << " with evaluation " << violation_report_data[j][k] << " by point " << p << std::endl;
+          if (violation_report_data[j][k] > slack) good = false;
+        }
+      }
+    }
+  }
+  ASSERT_TRUE(good);
+}
+
+TEST(OptimizeTests, MultiDomainConstraint)
+{
+  setupenv(std::string(TEST_DATA_DIR) + "/multidomain_constraints");
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("multidomain_constraints.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
+
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k = 0;
+         k < app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
+  bool good = true;
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    for (size_t i = 0; i < lists[domain].size(); i++) {
+      itk::FixedArray<double, 3> p = lists[domain][i];
+
+      auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
+        domain)->GetConstraints()->ViolationReportData(p);
+
+      double slack = 7.5e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {

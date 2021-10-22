@@ -104,6 +104,24 @@ TEST(ImageTests, isoresampleImageAnisotropicTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, isoresampleDistanceTransformIsotropicTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/binary-isotropic-dt.nrrd");
+  image.resample();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-isotropic-dt-isoresampled.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, isoresampleDistanceTransformAnisotropicTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/binary-anisotropic-dt.nrrd");
+  image.resample();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-dt-isoresampled.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, recentertest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
@@ -1125,7 +1143,7 @@ TEST(ImageTests, toMeshTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Mesh mesh = image.toMesh(1.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
 
   ASSERT_TRUE(mesh == ground_truth);
 }

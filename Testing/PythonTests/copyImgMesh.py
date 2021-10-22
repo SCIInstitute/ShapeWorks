@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def copyTest1():
   img1 = Image(os.environ["DATA"] + "/femur.nrrd")
   img2 = img1.copy()
@@ -11,7 +13,7 @@ def copyTest1():
 
   return img1 == compareImg1 and img2 == compareImg2
 
-utils.test(copyTest1)
+success &= utils.test(copyTest1)
 
 def copyTest2():
   mesh1 = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -22,4 +24,6 @@ def copyTest2():
 
   return mesh1 == compareMesh1 and mesh2 == compareMesh2
 
-utils.test(copyTest2)
+success &= utils.test(copyTest2)
+
+sys.exit(not success)

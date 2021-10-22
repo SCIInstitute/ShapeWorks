@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def extractlabelTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.extractLabel()
@@ -10,7 +12,7 @@ def extractlabelTest1():
 
   return img.compare(compareImg)
 
-utils.test(extractlabelTest1)
+success &= utils.test(extractlabelTest1)
 
 def extractlabelTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -20,7 +22,7 @@ def extractlabelTest2():
 
   return img.compare(compareImg)
 
-utils.test(extractlabelTest2)
+success &= utils.test(extractlabelTest2)
 
 def extractlabelTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -30,7 +32,7 @@ def extractlabelTest3():
 
   return img.compare(compareImg)
 
-utils.test(extractlabelTest3)
+success &= utils.test(extractlabelTest3)
 
 def extractlabelTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -40,4 +42,6 @@ def extractlabelTest4():
 
   return img.compare(compareImg)
 
-utils.test(extractlabelTest4)
+success &= utils.test(extractlabelTest4)
+
+sys.exit(not success)

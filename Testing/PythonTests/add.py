@@ -1,5 +1,8 @@
 import os
+import sys
 from shapeworks import *
+
+success = True
 
 def addTest1():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -9,7 +12,7 @@ def addTest1():
 
   return img.compare(compareImg)
 
-utils.test(addTest1)
+success &= utils.test(addTest1)
 
 def addTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -19,7 +22,7 @@ def addTest2():
 
   return img.compare(compareImg)
 
-utils.test(addTest2)
+success &= utils.test(addTest2)
 
 def addTest3():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -30,7 +33,7 @@ def addTest3():
 
   return img.compare(compareImg)
 
-utils.test(addTest3)
+success &= utils.test(addTest3)
 
 def addTest4():
 
@@ -41,11 +44,7 @@ def addTest4():
 
   return mesh1 == Mesh(os.environ["DATA"]+"/sphere_add.ply")
   
-val = addTest4()
-
-if val is False:
-  print("addTest4 failed")
-  sys.exit(1)
+success &= addTest4()
 
 def addfailTest():
   img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -56,4 +55,6 @@ def addfailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(addfailTest, ValueError)
+success &= utils.expectException(addfailTest, ValueError)
+
+sys.exit(not success)

@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def smoothTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.smooth(10, 0.01)
@@ -10,7 +12,7 @@ def smoothTest1():
 
   return mesh == compareMesh
 
-utils.test(smoothTest1)
+success &= utils.test(smoothTest1)
 
 def smoothTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -20,4 +22,6 @@ def smoothTest2():
 
   return mesh == compareMesh
 
-utils.test(smoothTest2)
+success &= utils.test(smoothTest2)
+
+sys.exit(not success)

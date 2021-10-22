@@ -3,6 +3,8 @@ import sys
 import numpy as np
 from shapeworks import *
 
+success = True
+
 def sw2vtkTest():
   swMesh = Mesh(os.environ["DATA"] + "/meanCurvatureEllipsoid.vtk")
   vtkMesh = sw2vtkMesh(swMesh)
@@ -19,4 +21,6 @@ def sw2vtkTest():
 
   return (swMesh.numPoints() == vtkMesh.n_points and swMesh.numFaces() == vtkMesh.n_cells)
 
-utils.test(sw2vtkTest)
+success &= utils.test(sw2vtkTest)
+
+sys.exit(not success)

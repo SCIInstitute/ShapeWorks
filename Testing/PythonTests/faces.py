@@ -1,6 +1,9 @@
 import os
+import sys
 import numpy as np
 from shapeworks import *
+
+success = True
 
 def facesTest():
   mesh = Mesh(os.environ["DATA"] + "/simple_ellipsoid.ply")
@@ -12,4 +15,6 @@ def facesTest():
 
   return faces.shape[0] == 24 and faces.shape[1] == 3 and (f0 == g0).all() and (fn == gn).all()
 
-utils.test(facesTest)
+success &= utils.test(facesTest)
+
+sys.exit(not success)

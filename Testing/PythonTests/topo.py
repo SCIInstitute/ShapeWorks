@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def topoTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   topoImg = img.topologyPreservingSmooth(20.0, 10.0, 10.0)
@@ -10,7 +12,7 @@ def topoTest1():
 
   return topoImg.compare(compareImg)
 
-utils.test(topoTest1)
+success &= utils.test(topoTest1)
 
 def topoTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -20,4 +22,6 @@ def topoTest2():
 
   return topoImg.compare(compareImg)
 
-utils.test(topoTest2)
+success &= utils.test(topoTest2)
+
+sys.exit(not success)
