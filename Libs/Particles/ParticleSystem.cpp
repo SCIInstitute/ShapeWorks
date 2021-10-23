@@ -85,7 +85,8 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
   if (gen1.size() > 0 && gen2.size() > 0) {
     std::cout << "Comparing generalization: " << gen1[0] << " vs " << gen2[0] << "\n";
-    if (!epsEqual(gen1[0], gen2[0], 0.1)) {
+    double diff = std::abs(gen1[0] - gen2[0]);
+    if (diff > 0.1 * gen1[0] || diff > 0.1 * gen2[0]) {
       good = false;
     }
   }
