@@ -65,7 +65,7 @@ def main():
         run_case("lumps --verify")
         run_case("thin_cavity_bean --verify")
         run_case("supershapes_1mode_contour --verify")
-        run_case("deep_ssm --verify")
+#        run_case("deep_ssm --verify")
 
     end = time.time()
 
