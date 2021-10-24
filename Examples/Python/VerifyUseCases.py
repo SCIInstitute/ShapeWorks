@@ -2,20 +2,54 @@
 import time
 import subprocess
 import argparse
+import sys
+from subprocess import PIPE, run
+from subprocess import Popen, PIPE, STDOUT
 
 passed = []
 failed = []
 
 
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("verify.log", "w")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        # this flush method is needed for python 3 compatibility.
+        # this handles the flush command by doing nothing.
+        # you might want to specify some extra behavior here.
+        pass
+
+    def __getattr__(self, attr):
+        return getattr(self.terminal, attr)
+
+
+sys.stdout = Logger()
+
+
 def run_case(use_case):
     command = f"python RunUseCase.py {use_case}"
-    ret = subprocess.call(command.split())
+    print(f"\n----------------------------------------------------------------")
+    print(f"* Running : {command}")
+    print(f"----------------------------------------------------------------")
+    start = time.time()
+
+    result = run(command.split(), stdout=sys.stdout, stderr=sys.stdout, universal_newlines=True)
+    ret = result.returncode
+
+    end = time.time()
+    duration = f"{end - start:6.0f} seconds"
     if ret:
-        print(f"{use_case} : FAILED")
-        failed.append(use_case)
+        print(f"{use_case} : {duration} : FAILED")
+        failed.append([duration, use_case])
     else:
-        print(f"{use_case} : PASSED")
-        passed.append(use_case)
+        print(f"{use_case} : {duration} : PASSED")
+        passed.append([duration, use_case])
 
 
 def main():
@@ -65,7 +99,7 @@ def main():
         run_case("lumps --verify")
         run_case("thin_cavity_bean --verify")
         run_case("supershapes_1mode_contour --verify")
-#        run_case("deep_ssm --verify")
+    #        run_case("deep_ssm --verify")
 
     end = time.time()
 
@@ -74,13 +108,13 @@ def main():
     print("---------------------------------------------")
     print(f"The following use cases passed ({len(passed)})")
     for item in passed:
-        print(f"[ PASSED ] : {item}")
+        print(f"[ PASSED ] : {item[0]} : {item[1]}")
 
     if len(failed) > 0:
         print("\n---------------------------------------------")
         print(f"The following use cases failed ({len(failed)})")
         for item in failed:
-            print(f"[ FAILED ] : {item}")
+            print(f"[ FAILED ] : {item[0]} : {item[1]}")
 
     total = len(passed) + len(failed)
     pass_percent = len(passed) / total
