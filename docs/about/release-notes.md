@@ -1,5 +1,34 @@
 # Release Notes
 
+## ShapeWorks 6.2 - 2021-11-01
+
+![](../img/about/release6.2.png)
+
+
+### What is new?
+
+
+#### ShapeWorks Back-end
+#### ShapeWorks Front-end
+#### Deep Learning & Shape Modeling
+#### User's Support
+
+### Improvements
+
+#### ShapeWorks Back-end
+#### ShapeWorks Front-end
+#### Deep Learning & Shape Modeling
+#### User's Support
+
+### Fixes
+
+#### ShapeWorks Back-end
+#### ShapeWorks Front-end
+#### Deep Learning & Shape Modeling
+#### User's Support
+
+
+
 ## ShapeWorks 6.1 - 2021-06-28
 
 ![](../img/about/release6.1.png)
