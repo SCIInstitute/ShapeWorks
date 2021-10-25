@@ -5,6 +5,10 @@ import argparse
 import sys
 from subprocess import PIPE, run
 from subprocess import Popen, PIPE, STDOUT
+import io
+import selectors
+import subprocess
+import sys
 
 passed = []
 failed = []
@@ -32,6 +36,44 @@ class Logger(object):
 sys.stdout = Logger()
 
 
+# adapted from:
+# https://gist.github.com/nawatts/e2cdca610463200c12eac2a14efc0bfb#file-capture-and-print-subprocess-output-py
+def run_command(subprocess_args):
+    # Start subprocess
+    # bufsize = 1 means output is line buffered
+    # universal_newlines = True is required for line buffering
+    process = subprocess.Popen(subprocess_args,
+                               bufsize=1,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               universal_newlines=True)
+
+    def handle_output(stream):
+        # Because the process' output is line buffered, there's only ever one
+        # line to read when this function is called
+        line = stream.readline()
+        sys.stdout.write(line)
+
+    # Register callback for an "available for read" event from subprocess' stdout stream
+    selector = selectors.DefaultSelector()
+    selector.register(process.stdout, selectors.EVENT_READ, handle_output)
+
+    # Loop until subprocess is terminated
+    while process.poll() is None:
+        # Wait for events and handle them with their registered callbacks
+        events = selector.select()
+        for key, mask in events:
+            callback = key.data
+            callback(key.fileobj)
+
+    # Get process return code
+    return_code = process.wait()
+    selector.close()
+
+    success = (return_code == 0)
+    return success
+
+
 def run_case(use_case):
     command = f"python RunUseCase.py {use_case}"
     print(f"\n----------------------------------------------------------------")
@@ -39,17 +81,16 @@ def run_case(use_case):
     print(f"----------------------------------------------------------------")
     start = time.time()
 
-    result = run(command.split(), stdout=sys.stdout, stderr=sys.stdout, universal_newlines=True)
-    ret = result.returncode
+    success = run_command(command.split())
 
     end = time.time()
     duration = f"{end - start:6.0f} seconds"
-    if ret:
-        print(f"{use_case} : {duration} : FAILED")
-        failed.append([duration, use_case])
-    else:
+    if success:
         print(f"{use_case} : {duration} : PASSED")
         passed.append([duration, use_case])
+    else:
+        print(f"{use_case} : {duration} : FAILED")
+        failed.append([duration, use_case])
 
 
 def main():
