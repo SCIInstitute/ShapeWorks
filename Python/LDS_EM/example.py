@@ -1,7 +1,7 @@
 import lds_model
 import numpy as np
 import matplotlib.pyplot as plt
-
+np.random.seed(0)
 
 '''
 Input: N - number of samples, T - number of time points

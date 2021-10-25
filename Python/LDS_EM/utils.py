@@ -1,4 +1,5 @@
 import numpy as np 
+np.random.seed(0)
 
 def random_rotation(n, theta=None):
     if theta is None:

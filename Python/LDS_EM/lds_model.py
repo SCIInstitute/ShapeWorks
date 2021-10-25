@@ -2,6 +2,7 @@ import utils
 import numpy as np
 from numpy.linalg import inv as inv
 from numpy.linalg import det as det
+np.random.seed(0)
 
 '''
 Observation parameters class
@@ -17,14 +18,14 @@ class Obs_params():
     def set_W(W):
         self.W = W
     def set_obs_Sigma(obs_Sigma):
-        self.obs_sigma = obs_Sigma
+        self.obs_Sigma = obs_Sigma
 
 '''
 State parameters class
     Input: L - dimension of latent space
     - trans_matrix: is the LxL transition matrix
     - state_Sigma: is the LxL latent covariance matrix
-    - init_mu: is the L latent prior mean
+    - mu_0: is the L latent prior mean
     - init_Sigma: is the LxL latent prior variance
 '''
 class State_params():
@@ -32,16 +33,16 @@ class State_params():
         # defaults
         self.A = 0.99*utils.random_rotation(L)
         self.state_Sigma = 0.1*np.eye(L)
-        self.init_mu = np.ones(L)
-        self.init_V = np.eye(L)
+        self.mu_0 = np.ones(L)
+        self.V_0 = np.eye(L)
     def set_A(A):
         self.A = A
     def set_state_Sigma(state_Sigma):
         self.state_Sigma = state_Sigma
-    def set_init_mu(init_mu):
-        self.init_mu = init_mu
-    def set_init_V(init_V):
-        self.init_V = init_V
+    def set_mu_0(mu_0):
+        self.mu_0 = mu_0
+    def set_V_0(V_0):
+        self.V_0 = V_0
 
 '''
 LDS model class
@@ -63,8 +64,8 @@ class LDS_Model():
         self.obs_Sigma = obs_params.obs_Sigma
         
         # states parameters
-        self.mu_0 = state_params.init_mu
-        self.V_0 = state_params.init_V
+        self.mu_0 = state_params.mu_0
+        self.V_0 = state_params.V_0
         self.A = state_params.A
         self.state_Sigma = state_params.state_Sigma
 
@@ -83,24 +84,7 @@ class LDS_Model():
         self.E_z = np.zeros((self.N, self.T, self.L))
         self.E_z_zT = np.zeros((self.N, self.T, self.L, self.L))
         self.E_z_z1T = np.zeros((self.N, self.T-1, self.L, self.L))
-
-
-    #     self.mu_predict = np.zeros((self.N, self.T, self.L))
-    #     self.Sigma_predict = np.zeros((self.N, self.T, self.L, self.L))
-    #     self.initialize_states_prior()
-
-    # '''
-    # Initialize mu and v
-    # '''   
-    # def initialize_states_prior(self):
-    #     for n in range(self.N):
-    #         # set first time point using prior
-    #         self.mu_predict[n,0] = self.mu_0
-    #         self.Sigma_predict[n,0] = self.V_0
-    #         # set remaining time points
-    #         for t in range(1, self.T):
-    #             self.mu_predict[n,t] = np.matmul(self.A, self.mu_predict[n,t-1])
-    #             self.Sigma_predict[n,t] = self.state_Sigma
+        self.E_z1_zT = np.zeros((self.N, self.T-1, self.L, self.L))
 
     '''
     Run EM algo for given number of iterations
@@ -116,7 +100,6 @@ class LDS_Model():
     def run_EM_iteration(self):
         self.E_step()
         self._expectations()
-        input(self.E_z_z1T)
         self.M_step()
         self.sample_states()
         self.log_likelihood()
@@ -130,18 +113,6 @@ class LDS_Model():
         # backward path estimate the smoothing parameters
         self._backward_path()
         
-    '''
-    M step: Update the parameters by maximizing the complete data 
-        log likelihood with resprect to the posterior distribution
-    '''
-    def M_step(self):
-       # run M_step tp update the kalman parameters
-        self._update_W()
-        self._update_obs_Sigma()
-        self._update_A()
-        self._update_state_Sigma()
-        self._update_initials()
-
     '''
     E_step helper: Get filtered posterior: filtered_mu and filtered_V
     '''      
@@ -202,15 +173,73 @@ class LDS_Model():
             self.E_z_zT[n] = [self.smoothed_V[n,t] + np.matmul(self.smoothed_mu[n,t], 
                             self.smoothed_mu[n,t].T) for t in range(self.T)]
             self.E_z_z1T[n] = [np.matmul(self.backward_Kalman[n,t-1], self.smoothed_V[n,t]) +\
-                            np.matmul(self.smoothed_mu[n,t], self.smoothed_mu[n,t-1].T) \
-                            for t in range(1, self.T)]
+                            np.matmul(np.expand_dims(self.smoothed_mu[n,t], 1), 
+                            np.expand_dims(self.smoothed_mu[n,t-1],1).T) for t in range(1, self.T)]
+            self.E_z1_zT[n] = [np.matmul(self.backward_Kalman[n,t], self.smoothed_V[n,t-1]) +\
+                            np.matmul(np.expand_dims(self.smoothed_mu[n,t-1], 1),\
+                            np.expand_dims(self.smoothed_mu[n,t], 1).T) for t in range(1, self.T)]
 
     '''
-    Sample observation using states and observation statistics
+    M step: Update the parameters by maximizing the complete data 
+        log likelihood with resprect to the posterior distribution
     '''
-    def sample_observation(self):
-        # TODO
-        pass
+    def M_step(self):
+       # run M_step tp update the kalman parameters
+        self._update_initial_params()
+        self._update_state_params()
+        self._update_obs_params()
+
+    '''
+    M_step helper: update inital mu and v
+    '''   
+    def _update_initial_params(self):
+        # eq:new_mu Bishop 13.110
+        self.mu_0 = np.sum(self.smoothed_mu[:,0,:],axis=0)/self.N
+        # eq:new_V Bishop 13.111
+        self.V_0 = np.sum([self.E_z_zT[n,0] - np.matmul(self.E_z[n,0], self.E_z[n,0].T) \
+                    for n in range(self.N)], axis=0)/self.N
+
+    '''
+    M_step helper: update transition matrix and latent Sigma
+    '''
+    def _update_state_params(self):
+        # eq:new_A Bishop 13.113
+        self.A = np.sum([np.matmul(np.sum(self.E_z_z1T[n,:,:], axis=0), inv(np.sum(self.E_z_zT[n,:-1,:], \
+                    axis=0))) for n in range(self.N)], axis=0)/self.N
+        # eq:new_sigmaz Bishop 13.114
+        temp = []
+        for n in range(self.N):
+            summ = np.zeros((self.L, self.L))
+            for t in range(self.T-1):
+                summ += self.E_z_zT[n,t,:] - np.matmul(self.A, self.E_z1_zT[n,t,:]) -\
+                        np.matmul(self.E_z_z1T[n,t,:], self.A) +\
+                        np.matmul(self.A, np.matmul(self.E_z_zT[n,t-1,:], self.A.T))
+            temp.append(summ/(self.T-1))
+        self.state_Sigma = np.sum(temp, axis=0)/self.N
+
+    '''
+    M_step helper: update observation matrix and observation Sigma
+    '''
+    def _update_obs_params(self):
+        # eq:new_W Bishop 13.115
+        temp = []
+        for n in range(self.N):
+            temp.append(np.matmul(sum([np.matmul(np.expand_dims(self.X[n,t], 1), \
+                np.expand_dims(self.E_z[n,t], 1).T) for t in range(self.T)]), inv(sum(self.E_z_zT[n]))))
+        self.W = np.sum(temp, axis=0)/self.N
+        # eq:new_sigmax Bishop 13.116
+        temp = []
+        for n in range(self.N):
+            x_xT = sum([np.matmul(np.expand_dims(self.X[n,t], 1), np.expand_dims(self.X[n,t], 1).T) \
+                    for t in range(self.T)])
+            W_E_z_x = sum([np.matmul(self.W, np.matmul(np.expand_dims(self.E_z[n,t], 1), \
+                        np.expand_dims(self.X[n,t], 1).T)) for t in range(self.T)])
+            x_E_zt_W = sum([np.matmul(np.matmul(np.expand_dims(self.X[n,t], 1), \
+                        np.expand_dims(self.E_z[n,t], 1).T), self.W.T) for t in range(self.T)])
+            W_E_z_zt_Wt = sum([np.matmul(np.matmul(self.W, self.E_z_zT[n,t]), self.W.T) 
+                        for t in range(self.T)])
+            temp.append((x_xT - W_E_z_x - x_E_zt_W + W_E_z_zt_Wt)/self.T)
+        self.obs_Sigma = np.sum(temp, axis=0)/self.N
 
     '''
     Sample latent states using statistics
@@ -218,7 +247,7 @@ class LDS_Model():
     def sample_states(self):
         self.z = [0] * self.T
         for t in range(self.T):
-            self.z[t] = np.random.multivariate_normal(self.mu_predict[t], self.Sigma_predict[t])
+            self.z[t] = np.random.multivariate_normal(self.smoothed_mu[t], self.smoothed_V[t])
 
     '''
     Calculate complete data log likelihood
@@ -242,44 +271,10 @@ class LDS_Model():
         self.ll = ll_prior + ll_state + ll_obs
 
     '''
-    M_step helper: update observation matrix
+    Sample observation using states and observation statistics
     '''
-    def _update_W(self):
+    def sample_observation(self):
         # TODO
-        # self.W = 
         pass
 
-    '''
-    M_step helper: update observation Sigma
-    '''
-    def _update_obs_Sigma(self):
-        # TODO
-        # self.obs_Sigma = 
-        pass
-
-    '''
-    M_step helper: update transition matrix
-    '''
-    def _update_A(self):
-        # TODO
-        # self.A = 
-        pass
-
-    '''
-    M_step helper: update latent Sigma
-    '''
-    def _update_state_Sigma(self):
-        # TODO
-        # self.state_Sigma
-        pass
-    
-    '''
-    M_step helper: update inital mu and v
-    '''   
-    def _update_initials(self):
-        # TODO
-        # self.mu_0 = 
-        # self.V_0 = 
-        pass
-    
 
