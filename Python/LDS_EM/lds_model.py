@@ -42,7 +42,7 @@ class LDS_Model():
         self.smoothed_mu = np.zeros((self.N, self.T, self.L))
         self.smoothed_V = np.zeros((self.N, self.T, self.L, self.L))
         self.backward_Kalman = np.zeros((self.N, self.T, self.L, self.L))
-        self.initialize_states_prior()
+        # self.initialize_states_prior()
         
         # M-step expectations initialize
         self.E_z = np.zeros((self.N, self.T, self.L))
@@ -51,13 +51,17 @@ class LDS_Model():
         self.E_z1_zT = np.zeros((self.N, self.T-1, self.L, self.L))
         
 
-    def initialize_states_prior(self):
-        for n in range(self.N):
-            self.filtered_mu[n,0] = self.mu_0
-            self.filtered_V[n,0] = self.V_0
-            for t in range(1, self.T):
-                self.filtered_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
-                self.filtered_V[n,t] = self.state_Sigma
+    # def initialize_states_prior(self):
+    #     for n in range(self.N):
+    #         # self.filtered_mu[n,0] = self.mu_0
+    #         self.filtered_mu[n,0] = np.matmul(self.A, self.mu_0)
+    #         self.filtered_V[n,0] = np.matmul(np.matmul(self.A, self.V_0), self.A.T) + self.state_Sigma
+    #         for t in range(1, self.T):
+    #             self.filtered_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
+    #             self.filtered_V[n,t] = np.matmul(np.matmul(self.A, self.filtered_V[n,t-1]), self.A.T) + self.state_Sigma
+
+    def set_observation_data(self, data):
+        self.x = data
 
     '''
     Run EM algo for given number of iterations
@@ -83,48 +87,56 @@ class LDS_Model():
     '''
     def E_step(self):
         # forward path is estimating prediction parameters
-        self._forward_path()
+        self._forward_filter()
         # backward path estimate the smoothing parameters
-        self._backward_path()
-        
+        self._backward_smoothing()
+
     '''
     E_step helper: Get filtered posterior: filtered_mu and filtered_V
     '''      
-    def _forward_path(self):
+    def _forward_filter(self):
         Kalman_gain = np.zeros((self.N, self.T, self.L, self.P))
         for n in range(self.N):
             # Initialize for first time point
-            Kalman_gain[n,0] = np.matmul(np.matmul(self.filtered_V[n,0], self.W.T), \
-                                inv(np.matmul(np.matmul(self.W, self.filtered_V[n,0]), self.W.T) \
+            Kalman_gain[n,0] = np.matmul(np.matmul(self.V_0, self.W.T), \
+                                inv(np.matmul(np.matmul(self.W, self.V_0), self.W.T) \
                                 + self.obs_Sigma))
             self.filtered_mu[n,0] = self.mu_0 + np.matmul(Kalman_gain[n,0], self.x[n,0]-np.matmul(self.W, self.mu_0))
-            self.filtered_V[n,0] = np.matmul(np.eye(self.L)-np.matmul(Kalman_gain[n,0], self.W), self.filtered_V[n,0])
+            self.filtered_V[n,0] = np.matmul(np.eye(self.L)-np.matmul(Kalman_gain[n,0], self.W), self.V_0)
+            predicted_mu = np.zeros((self.N, self.T, self.L))
+            predicted_V = np.zeros((self.N, self.T, self.L, self.L))
             # Forward
             for t in range(1, self.T):
                 ## Prediction Step
                 # eq:invariant_filteringMut-1 Bishop 13.89 Murphy 18.27
-                self.predicted_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
+                predicted_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
                 # eq:invariant_filteringVt-1 Bishop 13.88, Murphy 18.28
-                self.predicted_V[n,t] = (np.matmul(np.matmul(self.A, self.filtered_V[n, t-1]), self.A.T) 
+                predicted_V[n,t] = (np.matmul(np.matmul(self.A, self.filtered_V[n, t-1]), self.A.T) 
                                         + self.state_Sigma)
                 ## Measurement step
                 # eq:invariant_kalman_gain2 Bishop 13.92 Murphy 18.39
-                Kalman_gain[n,t] = np.matmul(np.matmul(self.predicted_V[n,t], self.W.T), 
-                                    inv(np.matmul(np.matmul(self.W, self.predicted_V[n,t]), self.W.T) 
+                Kalman_gain[n,t] = np.matmul(np.matmul(predicted_V[n,t], self.W.T), 
+                                    inv(np.matmul(np.matmul(self.W, predicted_V[n,t]), self.W.T) 
                                     + self.obs_Sigma))
                 # eq:invariant_residual Murphy 18.33
-                residual = self.x[n,t] - np.matmul(self.W, self.predicted_mu[n,t])
+                residual = self.x[n,t] - np.matmul(self.W, predicted_mu[n,t])
                 # eq:invariant_filteringMu Bishop 13.89 Murphy 18.31
-                self.filtered_mu[n,t] = self.predicted_mu[n,t] + np.matmul(Kalman_gain[n,t], residual)
+                self.filtered_mu[n,t] = predicted_mu[n,t] + np.matmul(Kalman_gain[n,t], residual)
                 # eq:invariant_filteringV  Bishop 13.90 Murphy 18.32
                 self.filtered_V[n,t] = np.matmul(np.eye(self.L) - np.matmul(Kalman_gain[n,t], self.W), 
-                                    self.predicted_V[n,t])
+                                    predicted_V[n,t])
+            # Adress shift
+            self.predicted_mu[n,:-1] = predicted_mu[n,1:]
+            self.predicted_V[n,:-1] = predicted_V[n,1:]
+            self.predicted_mu[n,-1] = np.matmul(self.A, self.filtered_mu[n,-1])
+            self.predicted_V[n,-1] = (np.matmul(np.matmul(self.A, self.filtered_V[n,-1]), self.A.T) 
+                                        + self.state_Sigma)
 
 
     '''
     E_step helper: Get smoothed posterior
     '''
-    def _backward_path(self):
+    def _backward_smoothing(self):
         for n in range(self.N):
             # initialize 
             self.smoothed_mu[n,-1] = self.filtered_mu[n,-1]
