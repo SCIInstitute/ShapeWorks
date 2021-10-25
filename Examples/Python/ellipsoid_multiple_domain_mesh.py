@@ -98,6 +98,11 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, mesh_files, parameter_dictionary)
 
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/ellipsoid_multiple_domain_mesh_analyze.xml"
+    domains_per_shape = 2
+    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files, domains_per_shape)
+
     # If tiny test or verify, check results and exit
     if args.tiny_test or args.verify:
         if not AnalyzeUtils.verify(args, world_point_files):
@@ -113,6 +118,4 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    domains_per_shape = 2
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, mesh_files, local_point_files, world_point_files,domains_per_shape)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

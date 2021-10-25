@@ -441,6 +441,10 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, input_files, parameter_dictionary)
 
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/left_atrium_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
+
     # If tiny test or verify, check results and exit
     if args.tiny_test or args.verify:
         if not AnalyzeUtils.verify(args, world_point_files):
@@ -457,5 +461,4 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, input_files, local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

@@ -10,19 +10,18 @@ import OptimizeUtils
 import shapeworks as sw
 
 
-def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
+def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles, domains_per_shape=1):
     worldPointFiles = sorted(worldPointFiles)
     dtFiles = sorted(dtFiles)
     localPointFiles = sorted(localPointFiles)
 
-
     root = ET.Element('sample')
 
-    domains_per_shape_elem = ET.SubElement(root,'domains_per_shape')
+    domains_per_shape_elem = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape_elem.text = "\n" + str(domains_per_shape) + "\n"
 
     input_points = ET.SubElement(root, 'point_files')
-    input_points.text = "\n"    
+    input_points.text = "\n"
     for i in range(len(worldPointFiles)):
         t1 = input_points.text
         t1 = t1 + worldPointFiles[i] + '\n'
@@ -48,20 +47,20 @@ def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,do
         t1 = local_point.text
         t1 = t1 + localPointFiles[i] + '\n'
         local_point.text = t1
-          
+
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
     file.write(data)
-
-def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
-    xmlfilename = parentDir + '/analyze.xml'
-    create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape)
+    file.close()
     OptimizeUtils.create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = ["ShapeWorksStudio" , xmlfilename ]
-    subprocess.check_call(execCommand )
+
+
+def launch_shapeworks_studio(filename):
+    command = ["ShapeWorksStudio", filename]
+    subprocess.check_call(command)
     print("\n\nTo re-run ShapeWorksStudio, run:\n")
     print(f" cd {os.getcwd()}")
-    print(f" {' '.join(execCommand)}\n\n")
+    print(f" {' '.join(command)}\n\n")
 
 
 def verify(args, world_point_files):
@@ -93,11 +92,10 @@ def verify(args, world_point_files):
         if not os.path.exists(file):
             print(f"Error: baseline file {file} does not exist")
             return False
-        
+
     ps2 = sw.ParticleSystem(baseline)
 
     if not ps1.EvaluationCompare(ps2):
         print("Error: particle system did not match ground truth")
         return False
     return True
-

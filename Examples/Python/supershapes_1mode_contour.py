@@ -55,6 +55,10 @@ def Run_Pipeline(args):
     """
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
 
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/supershapes_1mode_contour_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, [], local_point_files, world_point_files)
+
     # If tiny test or verify, check results and exit
     if args.tiny_test or args.verify:
         if not AnalyzeUtils.verify(args, world_point_files):
@@ -63,9 +67,7 @@ def Run_Pipeline(args):
         exit()
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-
-
-    AnalyzeUtils.launchShapeWorksStudio(point_dir, [], local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
 
 def generate_supershapes(out_dir):
     m = 6
