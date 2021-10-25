@@ -68,7 +68,7 @@ Section "ShapeWorks (required)"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
-  File /r "Python"
+  File /r /x Studio /x Lib "Python"
   File /r "Documentation"
   File /r "Installation"
 
