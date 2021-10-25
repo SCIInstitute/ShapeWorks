@@ -5,74 +5,36 @@ from numpy.linalg import det as det
 np.random.seed(0)
 
 '''
-Observation parameters class
-    Input: P - dimension of observation space, L - dimension of latent space
-    - W: is the PxL loading/observation-system matrix
-    - obs_Sigma: is the PxP observation covariance matrix
-'''
-class Obs_params():
-    def __init__(self, P, L):
-        # Defaults
-        self.W = np.ones((P, L))
-        self.obs_Sigma = 0.1*np.eye(P)
-    def set_W(W):
-        self.W = W
-    def set_obs_Sigma(obs_Sigma):
-        self.obs_Sigma = obs_Sigma
-
-'''
-State parameters class
-    Input: L - dimension of latent space
-    - trans_matrix: is the LxL transition matrix
-    - state_Sigma: is the LxL latent covariance matrix
-    - mu_0: is the L latent prior mean
-    - init_Sigma: is the LxL latent prior variance
-'''
-class State_params():
-    def __init__(self,L):
-        # defaults
-        self.A = 0.99*utils.random_rotation(L)
-        self.state_Sigma = 0.1*np.eye(L)
-        self.mu_0 = np.ones(L)
-        self.V_0 = np.eye(L)
-    def set_A(A):
-        self.A = A
-    def set_state_Sigma(state_Sigma):
-        self.state_Sigma = state_Sigma
-    def set_mu_0(mu_0):
-        self.mu_0 = mu_0
-    def set_V_0(V_0):
-        self.V_0 = V_0
-
-'''
 LDS model class
 TODO: update to handle data with shape (N,T,P)
 Input:
     - data: with shape (N, T, P) where N is the number of samples,
         T is the number of time points, and P is the dimension of the data
-    - obs_params: class of observation params
-    - state_params: class of state params
+    - A: is the LxL transition matrix
+    - state_Sigma: is the LxL latent covariance matrix
+    - mu_0: is the L latent prior mean
+    - init_Sigma: is the LxL latent prior variance
+    - W: is the PxL loading/observation-system matrix
+    - obs_Sigma: is the PxP observation covariance matrix
 '''
 class LDS_Model():
-    def __init__(self, data, obs_params=None, state_params=None):
-        # observation data
-        self.X = data
-        self.N, self.T, self.P = data.shape
+    def __init__(self, data_dim, latent_dim, num_time, num_samples=1):
+        self.P = data_dim
+        self.L = latent_dim
+        self.T = num_time
+        self.N = num_samples
         
-        # observation parameters
-        self.W = obs_params.W
-        self.obs_Sigma = obs_params.obs_Sigma
+        # default observation parameters
+        self.W = np.ones((self.P, self.L))
+        self.obs_Sigma = 0.1*np.eye(self.P)
         
-        # states parameters
-        self.mu_0 = state_params.mu_0
-        self.V_0 = state_params.V_0
-        self.A = state_params.A
-        self.state_Sigma = state_params.state_Sigma
+        # default states parameters
+        self.A = np.ones(self.L)
+        self.state_Sigma = 0.1*np.eye(self.L)
+        self.mu_0 = np.zeros(self.L)
+        self.V_0 = np.eye(self.L)
 
-        # dimensions
-        self.L = self.A.shape[0]        
-
-        # E step initialize
+        # E-step initialize
         self.predicted_mu = np.zeros((self.N, self.T, self.L))
         self.predicted_V = np.zeros((self.N, self.T, self.L, self.L))
         self.filtered_mu = np.zeros((self.N, self.T, self.L))
@@ -80,19 +42,31 @@ class LDS_Model():
         self.smoothed_mu = np.zeros((self.N, self.T, self.L))
         self.smoothed_V = np.zeros((self.N, self.T, self.L, self.L))
         self.backward_Kalman = np.zeros((self.N, self.T, self.L, self.L))
-        # Expectations initialize
+        self.initialize_states_prior()
+        
+        # M-step expectations initialize
         self.E_z = np.zeros((self.N, self.T, self.L))
         self.E_z_zT = np.zeros((self.N, self.T, self.L, self.L))
         self.E_z_z1T = np.zeros((self.N, self.T-1, self.L, self.L))
         self.E_z1_zT = np.zeros((self.N, self.T-1, self.L, self.L))
+        
+
+    def initialize_states_prior(self):
+        for n in range(self.N):
+            self.filtered_mu[n,0] = self.mu_0
+            self.filtered_V[n,0] = self.V_0
+            for t in range(1, self.T):
+                self.filtered_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
+                self.filtered_V[n,t] = self.state_Sigma
 
     '''
     Run EM algo for given number of iterations
     '''
-    def run_EM(self, iterations):
+    def run_EM(self, data, iterations):
+        self.x = data
         for iteration in range(iterations):
-            state_params, obs_params, ll = self.run_EM_iteration()
-            print(ll)
+            self.run_EM_iteration()
+            print(self.ll)
 
     '''
     Full pass of EM algo
@@ -119,9 +93,12 @@ class LDS_Model():
     def _forward_path(self):
         Kalman_gain = np.zeros((self.N, self.T, self.L, self.P))
         for n in range(self.N):
-            # Initialize
-            self.filtered_mu[n,0] = self.mu_0
-            self.filtered_V[n,0] = self.V_0
+            # Initialize for first time point
+            Kalman_gain[n,0] = np.matmul(np.matmul(self.filtered_V[n,0], self.W.T), \
+                                inv(np.matmul(np.matmul(self.W, self.filtered_V[n,0]), self.W.T) \
+                                + self.obs_Sigma))
+            self.filtered_mu[n,0] = self.mu_0 + np.matmul(Kalman_gain[n,0], self.x[n,0]-np.matmul(self.W, self.mu_0))
+            self.filtered_V[n,0] = np.matmul(np.eye(self.L)-np.matmul(Kalman_gain[n,0], self.W), self.filtered_V[n,0])
             # Forward
             for t in range(1, self.T):
                 ## Prediction Step
@@ -136,12 +113,13 @@ class LDS_Model():
                                     inv(np.matmul(np.matmul(self.W, self.predicted_V[n,t]), self.W.T) 
                                     + self.obs_Sigma))
                 # eq:invariant_residual Murphy 18.33
-                residual = self.X[n,t] - np.matmul(self.W, self.predicted_mu[n,t])
+                residual = self.x[n,t] - np.matmul(self.W, self.predicted_mu[n,t])
                 # eq:invariant_filteringMu Bishop 13.89 Murphy 18.31
                 self.filtered_mu[n,t] = self.predicted_mu[n,t] + np.matmul(Kalman_gain[n,t], residual)
                 # eq:invariant_filteringV  Bishop 13.90 Murphy 18.32
                 self.filtered_V[n,t] = np.matmul(np.eye(self.L) - np.matmul(Kalman_gain[n,t], self.W), 
                                     self.predicted_V[n,t])
+
 
     '''
     E_step helper: Get smoothed posterior
@@ -216,6 +194,7 @@ class LDS_Model():
                         np.matmul(self.A, np.matmul(self.E_z_zT[n,t-1,:], self.A.T))
             temp.append(summ/(self.T-1))
         self.state_Sigma = np.sum(temp, axis=0)/self.N
+        self.state_Sigma = self.state_Sigma + 0.00001 * np.eye(self.L) # TODO
 
     '''
     M_step helper: update observation matrix and observation Sigma
@@ -224,57 +203,69 @@ class LDS_Model():
         # eq:new_W Bishop 13.115
         temp = []
         for n in range(self.N):
-            temp.append(np.matmul(sum([np.matmul(np.expand_dims(self.X[n,t], 1), \
+            temp.append(np.matmul(sum([np.matmul(np.expand_dims(self.x[n,t], 1), \
                 np.expand_dims(self.E_z[n,t], 1).T) for t in range(self.T)]), inv(sum(self.E_z_zT[n]))))
         self.W = np.sum(temp, axis=0)/self.N
         # eq:new_sigmax Bishop 13.116
         temp = []
         for n in range(self.N):
-            x_xT = sum([np.matmul(np.expand_dims(self.X[n,t], 1), np.expand_dims(self.X[n,t], 1).T) \
+            x_xT = sum([np.matmul(np.expand_dims(self.x[n,t], 1), np.expand_dims(self.x[n,t], 1).T) \
                     for t in range(self.T)])
             W_E_z_x = sum([np.matmul(self.W, np.matmul(np.expand_dims(self.E_z[n,t], 1), \
-                        np.expand_dims(self.X[n,t], 1).T)) for t in range(self.T)])
-            x_E_zt_W = sum([np.matmul(np.matmul(np.expand_dims(self.X[n,t], 1), \
+                        np.expand_dims(self.x[n,t], 1).T)) for t in range(self.T)])
+            x_E_zt_W = sum([np.matmul(np.matmul(np.expand_dims(self.x[n,t], 1), \
                         np.expand_dims(self.E_z[n,t], 1).T), self.W.T) for t in range(self.T)])
             W_E_z_zt_Wt = sum([np.matmul(np.matmul(self.W, self.E_z_zT[n,t]), self.W.T) 
                         for t in range(self.T)])
             temp.append((x_xT - W_E_z_x - x_E_zt_W + W_E_z_zt_Wt)/self.T)
         self.obs_Sigma = np.sum(temp, axis=0)/self.N
+        self.obs_Sigma = self.obs_Sigma + 0.00001 * np.eye(self.P) # TODO
 
     '''
     Sample latent states using statistics
     '''
     def sample_states(self):
-        self.z = [0] * self.T
-        for t in range(self.T):
-            self.z[t] = np.random.multivariate_normal(self.smoothed_mu[t], self.smoothed_V[t])
+        self.z = np.zeros((self.N, self.T, self.L))
+        for n in range(self.N):
+            for t in range(self.T):
+                self.z[n,t] = np.random.multivariate_normal(self.smoothed_mu[n,t], self.smoothed_V[n,t])
 
     '''
     Calculate complete data log likelihood
     '''
     def log_likelihood(self):
-        # eq:LLprior
-        ll_prior = -self.L/2*np.log(2*np.pi) - 0.5*np.log(det(self.V_0)) - \
-                   0.5*np.matmul(np.expand_dims(self.z[0]-self.mu_0, 1).T,
-                   np.matmul(inv(self.V_0), np.expand_dims(self.z[0]-self.mu_0, 1)))
-        # eq:LLobs         
-        ll_obs = -((self.T-1)*self.L)/2  - (self.T/2)*np.log(det(self.obs_Sigma)) -\
-                sum([0.5*np.matmul(np.expand_dims(self.z[t]-np.matmul(self.W, self.z[t]), 1).T,
-                np.matmul(inv(self.obs_Sigma),np.expand_dims(self.z[t]-np.matmul(self.W,self.z[t]), 1)))
-                for t in range(self.T)])
-        # eq:LLstate
-        ll_state = -(self.T*self.P)/2 - ((self.T-1)/2)*np.log(det(self.state_Sigma)) -\
-                    sum([0.5*np.matmul(np.expand_dims(self.z[t]-np.matmul(self.A, self.z[t-1]), 1).T,
-                    np.matmul(inv(self.state_Sigma), np.expand_dims(self.z[t]-np.matmul(self.A, self.z[t-1]), 1)))
-                    for t in range(1, self.T)])
-        # eq:completeLL
-        self.ll = ll_prior + ll_state + ll_obs
+        total_sum = 0
+        for n in range(self.N):
+            # eq:LLprior
+            ll_prior = -self.L/2*np.log(2*np.pi) - 0.5*np.log(det(self.V_0)) \
+                       - 0.5*np.matmul(np.expand_dims(self.z[n,0]-self.mu_0, 1).T, \
+                       np.matmul(inv(self.V_0), np.expand_dims(self.z[n,0]-self.mu_0, 1)))
+            # eq:LLstate
+            ll_state = -((self.T-1)*self.L)/2*np.log(2*np.pi) - ((self.T-1)/2)*np.log(det(self.state_Sigma)) \
+                    - 0.5*sum([np.matmul(np.expand_dims(self.z[n,t] - np.matmul(self.A, self.z[n,t-1]), 1).T, \
+                    np.matmul(inv(self.state_Sigma), np.expand_dims(self.z[n,t] \
+                    - np.matmul(self.A, self.z[n,t-1]), 1))) for t in range(1, self.T)])
+           # eq:LLobs         
+            ll_obs = -(self.T*self.P)/2*np.log(2*np.pi) - (self.T/2)*np.log(det(self.obs_Sigma)) \
+                    - 0.5*sum([np.matmul(np.expand_dims(self.x[n,t] - np.matmul(self.W, self.z[n,t]), 1).T, \
+                    - np.matmul(inv(self.obs_Sigma),np.expand_dims(self.x[n,t] \
+                    - np.matmul(self.W,self.z[n,t]), 1))) for t in range(self.T)])
+            # eq:completeLL
+            total_sum += ll_prior + ll_state + ll_obs
+        # eq:EM
+        total_sum = np.squeeze(total_sum)
+        self.ll = total_sum/self.N
 
-    '''
-    Sample observation using states and observation statistics
-    '''
-    def sample_observation(self):
-        # TODO
-        pass
-
-
+    def data_log_prob(self,data):
+        self.x = data
+        self.E_step()
+        log_probs = []
+        for n in range(self.N):
+            n_log_prob = -(self.T*self.P)/2*np.log(2*np.pi) - 0.5*sum([ \
+                        np.log(det(np.matmul(self.W, np.matmul(self.predicted_V[n,t], self.W.T)) + self.obs_Sigma)) \
+                        + np.matmul(np.expand_dims(self.x[n,t] - np.matmul(self.W, self.predicted_mu[n,t]), 1).T, \
+                        np.matmul(inv(np.matmul(self.W, np.matmul(self.predicted_V[n,t], self.W.T)) + self.obs_Sigma),\
+                        np.expand_dims(self.x[n,t] - np.matmul(self.W,self.predicted_mu[n,t]), 1))) \
+                        for t in range(self.T)])
+            log_probs.append(n_log_prob[0][0])
+        return np.array(log_probs)
