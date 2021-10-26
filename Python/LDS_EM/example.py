@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-np.random.seed(0)
+np.random.seed(1)
 
 import lds_model
 
@@ -63,7 +63,7 @@ if __name__=="__main__":
     T = 25   # number of time points
 
     # Generate data
-    X = generate_ellipse_data(N,T)
+    X = generate_ellipse_data(N,T, True)
 
     # Initialize LDS params to defaults
     lds = lds_model.LDS_Model(data_dim=P, latent_dim=L, num_time=T, num_samples=3)
@@ -71,7 +71,7 @@ if __name__=="__main__":
     # Run EM
     print("Running EM")
     print("Joint expected log likelihood:")
-    num_iterations = 3
+    num_iterations = 20
     lds.run_EM(X, num_iterations)
 
     # Log prob

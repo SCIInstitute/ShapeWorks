@@ -2,7 +2,7 @@ import utils
 import numpy as np
 from numpy.linalg import inv as inv
 from numpy.linalg import det as det
-np.random.seed(0)
+np.random.seed(1)
 
 '''
 LDS model class
@@ -26,11 +26,11 @@ class LDS_Model():
         
         # default observation parameters
         self.W = np.ones((self.P, self.L))
-        self.obs_Sigma = 0.1*np.eye(self.P)
+        self.obs_Sigma = np.eye(self.P)
         
         # default states parameters
         self.A = np.ones(self.L)
-        self.state_Sigma = 0.1*np.eye(self.L)
+        self.state_Sigma = np.eye(self.L)
         self.mu_0 = np.zeros(self.L)
         self.V_0 = np.eye(self.L)
 
@@ -42,7 +42,6 @@ class LDS_Model():
         self.smoothed_mu = np.zeros((self.N, self.T, self.L))
         self.smoothed_V = np.zeros((self.N, self.T, self.L, self.L))
         self.backward_Kalman = np.zeros((self.N, self.T, self.L, self.L))
-        # self.initialize_states_prior()
         
         # M-step expectations initialize
         self.E_z = np.zeros((self.N, self.T, self.L))
@@ -50,16 +49,6 @@ class LDS_Model():
         self.E_z_z1T = np.zeros((self.N, self.T-1, self.L, self.L))
         self.E_z1_zT = np.zeros((self.N, self.T-1, self.L, self.L))
         
-
-    # def initialize_states_prior(self):
-    #     for n in range(self.N):
-    #         # self.filtered_mu[n,0] = self.mu_0
-    #         self.filtered_mu[n,0] = np.matmul(self.A, self.mu_0)
-    #         self.filtered_V[n,0] = np.matmul(np.matmul(self.A, self.V_0), self.A.T) + self.state_Sigma
-    #         for t in range(1, self.T):
-    #             self.filtered_mu[n,t] = np.matmul(self.A, self.filtered_mu[n,t-1])
-    #             self.filtered_V[n,t] = np.matmul(np.matmul(self.A, self.filtered_V[n,t-1]), self.A.T) + self.state_Sigma
-
     def set_observation_data(self, data):
         self.x = data
 
@@ -89,7 +78,7 @@ class LDS_Model():
         # forward path is estimating prediction parameters
         self._forward_filter()
         # backward path estimate the smoothing parameters
-        self._backward_smoothing()
+        self._backward_smooth()
 
     '''
     E_step helper: Get filtered posterior: filtered_mu and filtered_V
@@ -136,7 +125,7 @@ class LDS_Model():
     '''
     E_step helper: Get smoothed posterior
     '''
-    def _backward_smoothing(self):
+    def _backward_smooth(self):
         for n in range(self.N):
             # initialize 
             self.smoothed_mu[n,-1] = self.filtered_mu[n,-1]

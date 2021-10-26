@@ -55,8 +55,20 @@ if __name__=="__main__":
     my_model.set_observation_data(X)
     my_model._forward_filter()
     # Equivalency
+
     print("\nChecking forward filter equivalency... ")
     print("Filtered means: " + str(np.allclose(tf_filtered_means.numpy(), my_model.filtered_mu, rtol=1e-4)))
     print("Filtered covs: " + str(np.allclose(tf_filtered_covs.numpy(), my_model.filtered_V, rtol=1e-4)))
     print("Predicted means: " + str(np.allclose(tf_predicted_means.numpy(), my_model.predicted_mu, rtol=1e-4)))
     print("Predicted covs: " + str(np.allclose(tf_predicted_covs.numpy(), my_model.predicted_V[0], rtol=1e-3)))
+    print(tf_predicted_means.numpy())
+
+    ### Backward smoothing comparison
+    # TF backward
+    tf_posterior_means, tf_posteriors_covs = tf_model.backward_smoothing_pass(tf_filtered_means, \
+        tf_filtered_covs, tf_predicted_means, tf_predicted_covs)
+    # My backward
+    my_model._backward_smooth()
+    print("\nChecking backward smoothing equivalency... ")
+    print("Smoothed means: " + str(np.allclose(tf_posterior_means.numpy(), my_model.smoothed_mu, rtol=1e-4)))
+    print("Smoothed covs: " + str(np.allclose(tf_posterior_covs.numpy(), my_model.smoothed_V[0], rtol=1e-4)))
