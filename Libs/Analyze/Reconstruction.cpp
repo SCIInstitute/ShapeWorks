@@ -1378,7 +1378,7 @@ ComputeMedianShape(std::vector<vnl_matrix<double> > & shapeList)
 
             vnl_matrix<double> shape_jj = shapeList[jj];
 
-            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
+            for(size_t kk =0 ; kk < shape_ii.rows(); kk++)
                 sum += (fabs(shape_ii[kk][0] - shape_jj[kk][0]) + fabs(shape_ii[kk][1] - shape_jj[kk][1]) + fabs(shape_ii[kk][2] - shape_jj[kk][2]));
 
         }
