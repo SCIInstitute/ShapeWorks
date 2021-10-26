@@ -717,79 +717,61 @@ void Optimize::Initialize()
 
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
-
-  // Debuggg
-  //std::cout << "Before adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
   this->AddSinglePoint();
 
-  // Debuggg
-  //std::cout << "After adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
   m_sampler->GetParticleSystem()->SynchronizePositions();
-
-  // Debuggg
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
-
-  /*Old vector randomization
+  // Computes random vector for any splitting operation.
   vnl_vector_fixed<double, 3> random;
 
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
-  random = random.normalize() * this->m_spacing;
-  */
+  random = random.normalize();
 
-  double epsilon = this->m_spacing;
+  // Gets surface area
+  std::vector<double> areas = m_sampler->GetAreas();
+  std::vector<double> epsilons;
+
+  double epsilon = this->m_spacing / 5;
   bool flag_split = false;
 
+  // Compute epsilons
   for (int i = 0; i < n; i++) {
-    int d = i % m_domains_per_shape;
-    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-      flag_split = true;
-      break;
-    }
+     int d = i % m_domains_per_shape;
+     if(m_adaptive_splitting){
+         epsilons.push_back(ComputeSideLength(areas[i], m_number_of_particles[d]));
+     }
+     else{
+         epsilons.push_back(epsilon);
+     }
   }
 
-  while (flag_split) {
-      /*Old vector randomization
-    for (int i = 0; i < 3; i++) {
-      random[i] = static_cast <double> (this->m_rand());
-    }
+  for (int i = 0; i < n; i++) {
+     int d = i % m_domains_per_shape;
+     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+       flag_split = true;
+       break;
+     }
+   }
 
-    // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
-    random = random.normalize() * this->m_spacing / 5.0;
-    */
-
-    //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
-    this->OptimizerStop();
-
-    /*Old vector randomization
-    for (int i = 0; i < n; i++) {
-      int d = i % m_domains_per_shape;
-      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
+  while (flag_split) {;
+      //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
+      this->OptimizerStop();
+      for (size_t i = 0; i < n; i++) {
+        size_t d = i % m_domains_per_shape;
+        if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+          std::cout << "epsilon " << i << " = " << epsilons[i] << " areas " << areas[i] << std::endl;
+          epsilon = epsilons[i];
+          vnl_vector_fixed<double, 3> random_scaled = random * (epsilon*5);
+          m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random_scaled, epsilon, i);
+        }
       }
-    }
-    */
 
-    // Splits particles
-    // Strategy: For each domain (for all samples), we make very corresponding particle
-    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
-    //      in each domain are tested so that no particle will violate any inequality constraints
-    //      after its split.
-    for (int i = 0; i < m_domains_per_shape; i++) {
-      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
-        m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
-      }
-    }
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -902,6 +884,15 @@ void Optimize::Initialize()
   if (m_verbosity_level > 0) {
     std::cout << "Finished initialization!!!" << std::endl;
   }
+}
+
+double Optimize::ComputeSideLength(size_t particleCount, double area){
+    if(particleCount < 20){
+        return 0.8773826753 * sqrt(particleCount*area);
+    }
+    else{
+        return sqrt(area/(20.6457288071+0.19245008973*(particleCount-20)));
+    }
 }
 
 //---------------------------------------------------------------------------

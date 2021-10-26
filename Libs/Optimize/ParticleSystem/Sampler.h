@@ -447,6 +447,9 @@ public:
 
   }
 
+  /// Returns areas vector
+  std::vector<double> GetAreas(){return m_areas;}
+
 protected:
 
   void GenerateData();
@@ -539,6 +542,7 @@ private:
   std::vector<std::vector<SphereType>> m_Spheres;
   std::vector<std::vector<FFCType>>  m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
+  std::vector<double> m_areas;
 
   unsigned int m_verbosity;
 };

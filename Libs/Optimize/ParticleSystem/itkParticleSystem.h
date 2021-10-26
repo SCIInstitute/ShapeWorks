@@ -170,10 +170,7 @@ public:
 
   void SplitAllParticles(double epsilon, int threadId=0);
   void SplitParticle(double epsilon, unsigned int idx,  unsigned int d=0, int threadId=0);
-  void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
-  // Debug function
-  void PrintParticleSystem();
-  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d=0, int threadId=0);
+  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, double epsilon, size_t domain, int threadId=0);
   
   /** Set/Get the neighborhood object associated with domain k. */
   void SetNeighborhood(unsigned int,  NeighborhoodType *, int threadId=0);

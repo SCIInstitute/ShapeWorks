@@ -91,6 +91,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    m_areas.push_back(1.);
     // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
@@ -136,7 +137,8 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       }
 
       double SurfaceArea = surfaceAreaMesh->getSurfaceArea();
-      std::cout << "Surface Area = " << SurfaceArea << std::endl;
+
+      m_areas[i] = SurfaceArea;
 
       //surfaceAreaMesh->write("dev/mesh_CP_Clipped_" + std::to_string(i) + ".vtk");
 
