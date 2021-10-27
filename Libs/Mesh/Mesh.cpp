@@ -794,8 +794,7 @@ Mesh& Mesh::setField(std::string name, Array array)
   if (name.empty())
     throw std::invalid_argument("Provide name for the new field");
 
-  int numVertices = numPoints();
-  if (array->GetNumberOfTuples() != numVertices) {
+  if (array->GetNumberOfTuples() != numPoints()) {
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
 
@@ -814,8 +813,9 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
     throw std::invalid_argument("Provide name for the new field");
 
   if (array->GetNumberOfTuples() != numFaces()) {
-    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+    std::cerr << "WARNING: Added a mesh field with a different number of elements than faces\n";
   }
+
   if (array->GetNumberOfComponents() != 1) {
     std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
