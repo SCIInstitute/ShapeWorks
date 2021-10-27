@@ -681,7 +681,7 @@ double Session::update_auto_glyph_size()
       return this->auto_glyph_size_;
     }
     num_particles = points.size() / 3;
-    double max_x = std::numeric_limits<double>::min();
+    double max_x = std::numeric_limits<double>::lowest();
     double min_x = std::numeric_limits<double>::max();
     double max_y = max_x;
     double min_y = min_x;
