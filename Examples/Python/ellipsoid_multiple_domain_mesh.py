@@ -77,7 +77,7 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 1,
         "domains_per_shape" : 2,
         "domain_type" : 'mesh',
-        "relative_weighting" : 1, #10, # 1 for segmentation images
+        "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
