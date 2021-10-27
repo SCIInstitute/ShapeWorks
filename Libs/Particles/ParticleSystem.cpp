@@ -67,6 +67,8 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
   auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
   if (compactness1.size() != compactness2.size()) {
+    std::cout << "Shape models have a different number of modes: " << compactness1.size() << " and "
+              << compactness2.size() << "\n";
     return false;
   }
 

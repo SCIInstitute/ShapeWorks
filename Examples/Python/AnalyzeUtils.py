@@ -104,6 +104,7 @@ def verify(args, world_point_files):
 def check_results(args, world_point_files):
     # If tiny test or verify, check results and exit
     if args.tiny_test or args.verify:
+        print("Verifying shape model")
         if not verify(args, world_point_files):
             exit(-1)
         print("Done with test, verification succeeded.")
