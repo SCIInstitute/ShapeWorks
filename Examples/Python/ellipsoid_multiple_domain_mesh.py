@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     print("You can change the dataset name and output directory name to try out this use case with other datasets")
 
 
-    dataset_name = "ellipsoid_joint_size"
+    dataset_name = "ellipsoid_joint_size_aligned"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -70,15 +70,15 @@ def Run_Pipeline(args):
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles" : [512,512],
-        "use_normals": [0,0],
-        "normal_weight": [1.0,1.0],
+        "use_normals": [1,1],
+        "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 500,
         "optimization_iterations" : 500,
-        "starting_regularization" :100,
-        "ending_regularization" : 0.5,
-        "recompute_regularization_interval" : 2,
+        "starting_regularization" :3000,
+        "ending_regularization" : 1,
+        "recompute_regularization_interval" : 1,
         "domains_per_shape" : 2,
         "domain_type" : 'mesh',
         "relative_weighting" : 1, #10, # 1 for segmentation images
