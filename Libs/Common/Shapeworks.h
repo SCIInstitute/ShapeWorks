@@ -247,6 +247,12 @@ P& operator/=(P &p, const double x)
   return p;
 }
 
+template<typename T>
+bool epsEqual(T a, T b, T epsilon)
+{
+  return std::abs(a-b) < epsilon;
+}
+
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
