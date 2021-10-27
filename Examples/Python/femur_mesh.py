@@ -99,11 +99,7 @@ def Run_Pipeline(args):
     AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
 
     # If tiny test or verify, check results and exit
-    if args.tiny_test or args.verify:
-        if not AnalyzeUtils.verify(args, world_point_files):
-            exit(-1)
-        print("Done with test, verification succeeded.")
-        exit()
+    AnalyzeUtils.check_results(args, world_point_files)
 
     print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """

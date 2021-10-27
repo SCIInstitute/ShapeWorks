@@ -99,3 +99,12 @@ def verify(args, world_point_files):
         print("Error: particle system did not match ground truth")
         return False
     return True
+
+
+def check_results(args, world_point_files):
+    # If tiny test or verify, check results and exit
+    if args.tiny_test or args.verify:
+        if not verify(args, world_point_files):
+            exit(-1)
+        print("Done with test, verification succeeded.")
+        exit()
