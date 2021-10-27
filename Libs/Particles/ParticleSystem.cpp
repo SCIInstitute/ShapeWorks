@@ -53,7 +53,7 @@ bool ParticleSystem::ExactCompare(const ParticleSystem &other) const
   bool same = true;
   for (int r=0; r<P.rows(); r++) {
     for (int c=0; c<P.cols(); c++) {
-      if (!equalNSigDigits(P(r,c),other.P(r,c),4)) {
+      if (!epsEqual(P(r,c),other.P(r,c),0.001)) {
         std::cerr << "("<<r<<","<<c<<"): " << P(r,c) << " vs " << other.P(r,c) << "\n";
         same = false;
       }
