@@ -90,15 +90,13 @@ def Run_Pipeline(args):
         if not os.path.exists(groom_dir):
             os.makedirs(groom_dir)
 
-        # set name specific variables
-        img_suffix = "1x_hip"
-        ref_side = "R" 
+        # Set reference side
+        ref_side = "R" # selected so there are less to reflect
         if args.tiny_test:
-            ref_side = "L" # so reflection happens
+            ref_side = "L" # selected so reflection happens in tiny test
         # Set cutting plane
         cutting_plane_points = np.array(
-            [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
-        cp_prefix = 'm03_L'
+            [[-1.0, -1.0, -36.0], [1.0, -1.0, -36.0], [-1.0, 1.0, -36.0]])
 
         # BEGIN GROOMING WITH IMAGES
         if args.groom_images and image_files:
@@ -216,9 +214,10 @@ def Run_Pipeline(args):
                 Grooming Step 6: Centering
                 """
                 print('Centering segmentation: ' + name)
-                seg.center()
+                old_center = seg.center()
+                seg.recenter()
                 print('Centering image: ' + name)
-                image.center()
+                image.translate(-old_center)
 
                 seg_list.append(seg)
 
@@ -400,7 +399,7 @@ def Run_Pipeline(args):
                 Grooming Step 5: Centering
                 """
                 print('Centering segmentation: ' + name)
-                seg.center()
+                seg.recenter()
 
                 seg_list.append(seg)
 
