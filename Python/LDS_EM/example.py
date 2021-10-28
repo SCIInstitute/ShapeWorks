@@ -63,10 +63,10 @@ if __name__=="__main__":
     T = 25   # number of time points
 
     # Generate data
-    X = generate_ellipse_data(N,T, True)
+    X = generate_ellipse_data(N,T, False)
 
     # Initialize LDS params to defaults
-    lds = lds_model.LDS_Model(data_dim=P, latent_dim=L, num_time=T, num_samples=3)
+    lds = lds_model.LDS_Model(data_dim=P, latent_dim=L, num_time=T, num_samples=N)
 
     # Run EM
     print("Running EM")

@@ -3,10 +3,10 @@ import numpy as np
 from numpy.linalg import inv as inv
 from numpy.linalg import det as det
 np.random.seed(1)
+epsilon = 1e-6
 
 '''
 LDS model class
-TODO: update to handle data with shape (N,T,P)
 Input:
     - data: with shape (N, T, P) where N is the number of samples,
         T is the number of time points, and P is the dimension of the data
@@ -29,7 +29,7 @@ class LDS_Model():
         self.obs_Sigma = np.eye(self.P)
         
         # default states parameters
-        self.A = np.ones(self.L)
+        self.A = 0.99*utils.random_rotation(self.L, theta=45)
         self.state_Sigma = np.eye(self.L)
         self.mu_0 = np.zeros(self.L)
         self.V_0 = np.eye(self.L)
@@ -57,9 +57,12 @@ class LDS_Model():
     '''
     def run_EM(self, data, iterations):
         self.x = data
+        lls = []
         for iteration in range(iterations):
             self.run_EM_iteration()
-            print(self.ll)
+            lls.append(self.ll)
+            print(str(iteration) + ': '+ str(self.ll))
+        return lls
 
     '''
     Full pass of EM algo
@@ -121,7 +124,6 @@ class LDS_Model():
             self.predicted_V[n,-1] = (np.matmul(np.matmul(self.A, self.filtered_V[n,-1]), self.A.T) 
                                         + self.state_Sigma)
 
-
     '''
     E_step helper: Get smoothed posterior
     '''
@@ -130,13 +132,14 @@ class LDS_Model():
             # initialize 
             self.smoothed_mu[n,-1] = self.filtered_mu[n,-1]
             self.smoothed_V[n,-1] = self.filtered_V[n,-1]
+            self.backward_Kalman[n,-1] = np.matmul(np.matmul(self.smoothed_V[n,-1], self.A.T), inv(self.predicted_V[n,-1]))
             # backward
             for t in range(self.T-2, -1, -1): #-2 because indexing starts at 0
                 self.backward_Kalman[n,t] = np.matmul(np.matmul(self.smoothed_V[n,t], self.A.T),
                                             inv(self.predicted_V[n,t+1]))
                 # eq:invariant_smoothedMu Bishop 13.100 Murphy 18.57
                 self.smoothed_mu[n,t] = self.filtered_mu[n,t] + np.matmul(self.backward_Kalman[n,t], 
-                                        self.smoothed_mu[n,t+1] - self.predicted_mu[n,t+1])
+                                        (self.smoothed_mu[n,t+1] - self.predicted_mu[n,t+1]))
                 # eq:invariant_smoothedV Bishop 13.101 Murphy 15.58
                 self.smoothed_V[n,t] = self.filtered_V[n,t] + np.matmul(self.backward_Kalman[n,t], 
                                     np.matmul((self.smoothed_V[n,t+1] - self.predicted_V[n,t+1]), 
@@ -195,7 +198,7 @@ class LDS_Model():
                         np.matmul(self.A, np.matmul(self.E_z_zT[n,t-1,:], self.A.T))
             temp.append(summ/(self.T-1))
         self.state_Sigma = np.sum(temp, axis=0)/self.N
-        self.state_Sigma = self.state_Sigma + 0.00001 * np.eye(self.L) # TODO
+        self.state_Sigma = self.state_Sigma + 0.001 * np.eye(self.L) # TODO
 
     '''
     M_step helper: update observation matrix and observation Sigma
@@ -220,7 +223,7 @@ class LDS_Model():
                         for t in range(self.T)])
             temp.append((x_xT - W_E_z_x - x_E_zt_W + W_E_z_zt_Wt)/self.T)
         self.obs_Sigma = np.sum(temp, axis=0)/self.N
-        self.obs_Sigma = self.obs_Sigma + 0.00001 * np.eye(self.P) # TODO
+        self.obs_Sigma = self.obs_Sigma + 0.001 * np.eye(self.P) # TODO
 
     '''
     Sample latent states using statistics
@@ -238,16 +241,16 @@ class LDS_Model():
         total_sum = 0
         for n in range(self.N):
             # eq:LLprior
-            ll_prior = -self.L/2*np.log(2*np.pi) - 0.5*np.log(det(self.V_0)) \
+            ll_prior = -self.L/2*np.log(2*np.pi) - 0.5*np.log(det(self.V_0)+epsilon) \
                        - 0.5*np.matmul(np.expand_dims(self.z[n,0]-self.mu_0, 1).T, \
                        np.matmul(inv(self.V_0), np.expand_dims(self.z[n,0]-self.mu_0, 1)))
             # eq:LLstate
-            ll_state = -((self.T-1)*self.L)/2*np.log(2*np.pi) - ((self.T-1)/2)*np.log(det(self.state_Sigma)) \
+            ll_state = -((self.T-1)*self.L)/2*np.log(2*np.pi) - ((self.T-1)/2)*np.log(det(self.state_Sigma)+epsilon) \
                     - 0.5*sum([np.matmul(np.expand_dims(self.z[n,t] - np.matmul(self.A, self.z[n,t-1]), 1).T, \
                     np.matmul(inv(self.state_Sigma), np.expand_dims(self.z[n,t] \
                     - np.matmul(self.A, self.z[n,t-1]), 1))) for t in range(1, self.T)])
            # eq:LLobs         
-            ll_obs = -(self.T*self.P)/2*np.log(2*np.pi) - (self.T/2)*np.log(det(self.obs_Sigma)) \
+            ll_obs = -(self.T*self.P)/2*np.log(2*np.pi) - (self.T/2)*np.log(det(self.obs_Sigma)+epsilon) \
                     - 0.5*sum([np.matmul(np.expand_dims(self.x[n,t] - np.matmul(self.W, self.z[n,t]), 1).T, \
                     - np.matmul(inv(self.obs_Sigma),np.expand_dims(self.x[n,t] \
                     - np.matmul(self.W,self.z[n,t]), 1))) for t in range(self.T)])
@@ -256,10 +259,11 @@ class LDS_Model():
         # eq:EM
         total_sum = np.squeeze(total_sum)
         self.ll = total_sum/self.N
+        return total_sum/self.N
 
-    def data_log_prob(self,data):
+    def data_log_prob(self, data):
         self.x = data
-        self.E_step()
+        self._forward_filter()
         log_probs = []
         for n in range(self.N):
             n_log_prob = -(self.T*self.P)/2*np.log(2*np.pi) - 0.5*sum([ \
@@ -270,3 +274,13 @@ class LDS_Model():
                         for t in range(self.T)])
             log_probs.append(n_log_prob[0][0])
         return np.array(log_probs)
+
+    def sample(self, num_samples):
+        z = np.zeros((num_samples, self.T+1, self.L))
+        x = np.zeros((num_samples, self.T+1, self.P))
+        for n in range(num_samples):
+            z[n,0] = np.random.multivariate_normal(self.mu_0, self.V_0)
+            for t in range(1, self.T+1):
+                z[n,t] = np.random.multivariate_normal(np.matmul(self.A, z[n,t-1]), self.state_Sigma)
+                x[n,t] = np.random.multivariate_normal(np.matmul(self.W, z[n,t]), self.obs_Sigma)
+        return x[:,1:,:], z[:,1:,:]
