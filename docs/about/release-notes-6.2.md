@@ -51,23 +51,14 @@ Shireen: add links to where more details can be found in the documentation.
 
 * **Shape cohort generation:** Added segmentation and image generation for 2D contour supershapes. See this [Jupyter Notebook] (http://sciinstitute.github.io/ShapeWorks/notebooks/getting-started-with-data-augmentation.html) for more details.
 
-* **Analyzing the group differences:** A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the Femur: SSM from Meshes use case. Separate statistical tests for differences in correspondence positions are applied to every correspondence index. We use Hotelling $T^2$ metric(nonparametric permutation test) with false discovery rate correction (FDR) for multiple comparisons. This method helps identify and visualize localized regions of significant shape differences.   
-
-Shireen:
-    (a) add links to where more details can be found in the documentation.
-    (b) The first statement is the right level of detail for release notes, the rest of the text should move to the documentation and here just link to it.    
-    (c) "Femur: SSM from Meshes" should this be linked to the documentation?
+* **Analyzing the group differences:** A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. See [Femur: Group Difference Statistics in Python] (http://sciinstitute.github.io/ShapeWorks/use-cases/stats-based/femur-pvalues.html) for more details.   
 
 * **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
 
 ### Improvements
 
 #### ShapeWorks Back-end
-* **Image API:** Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using pyvista is now transparent and copy-free (note: copying is still supported if necessary). Example jupyter notebook can be found in Examples/Python/notebooks/array passing without copying which demonstrates Image initialization and passing.
-
-Shireen:  
-    (a) should we use `Image` rather than Image here?  
-    (b) please link to the jupyter notebook in the documention here (DONE)
+* **`Image` API:** Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using pyvista is now transparent and copy-free (note: copying is still supported if necessary). A [Jupyter Notebook] (https://github.com/SCIInstitute/ShapeWorks/blob/master/Examples/Python/notebooks/array%20passing%20without%20copying.ipynb) was added to demonstrate Image initialization and passing.
 
 * **Mesh API:** Copy-free bidirectional passing of mesh fields
 
@@ -85,19 +76,13 @@ Shireen: same here.
 
 #### User's Support
 
-* **Use cases:** Added `--mesh_mode` option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions.
-
-Shireen: add links to where more details can be found in the documentation. 
+* **Use cases:** Added `--mesh_mode` option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See [Use Case Documentation] (http://sciinstitute.github.io/ShapeWorks/use-cases/use-cases.html) for more details.
 
 * **Documentation:** Improved use case documentation and explanation of modes of variation.
 
 Shireen: add links to where more details can be found in the documentation. 
 
-* **Restructured `ellipsoid_evaluate` use case:** The computation time for calculating specificity, compactness, and generalization metrics has been reduced. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrates these functionalities.
-
-Shireen:     
-    (a) add links to where more details can be found in the documentation.     
-    (b) can we add time savings/speedups here? (a rough estimate should work)
+* **Restructured `ellipsoid_evaluate` use case:** The computation time for calculating specificity, compactness, and generalization metrics has been reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrates these functionalities. See [Ellipsoid: Shape Evaluation in Python] (http://sciinstitute.github.io/ShapeWorks/use-cases/stats-based/ellipsoid-evaluate.html) for more details.
 
 ### Fixes
 
