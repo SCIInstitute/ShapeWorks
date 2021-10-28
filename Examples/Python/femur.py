@@ -146,7 +146,7 @@ def Run_Pipeline(args):
                     img_out = image_dir + \
                         corresponding_image_file.split(
                             os.sep)[-1].split('_')[0] + '_R_femur.nrrd'
-                    img1.reflect(sw.X).write(img_out, compressed=0)
+                    img1.reflect(sw.X).write(img_out)
                     image_list.append(img1)
                     # Reflect mesh
                     mesh.reflect(sw.X, center)
@@ -155,7 +155,7 @@ def Run_Pipeline(args):
                         corresponding_image_file.split(
                             os.sep)[-1].split('_')[0] + '_L_femur.nrrd'
                     img = sw.Image(corresponding_image_file)
-                    img.write(img_out, compressed=0)
+                    img.write(img_out)
                     image_list.append(img)
 
             seg_list = []
@@ -230,7 +230,7 @@ def Run_Pipeline(args):
             ref_index = sw.find_reference_image_index(seg_list)
             # Make a copy of the reference segmentation
             ref_seg = seg_list[ref_index].write(
-                groom_dir + 'reference.nrrd', compressed=0)
+                groom_dir + 'reference.nrrd')
             ref_name = names[ref_index]
             print("Reference found: " + ref_name)
 
@@ -303,8 +303,8 @@ def Run_Pipeline(args):
                 print('Cropping & padding segmentation: ' + name)
                 seg.crop(seg_bounding_box).pad(10, 0)
 
-                seg.write(seg_dir + name + '.nrrd', compressed=0)
-                image.write(image_dir + name + '.nrrd', compressed=0)
+                seg.write(seg_dir + name + '.nrrd')
+                image.write(image_dir + name + '.nrrd')
 
             """
             Grooming Step 12: Converting segmentations to smooth signed distance transforms.
@@ -329,7 +329,7 @@ def Run_Pipeline(args):
                     iso_value).gaussianBlur(sigma)
             # Save distance transforms
             dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
-                                            names, extension='nrrd', compressed=False, verbose=True)
+                                            names, extension='nrrd', compressed=True, verbose=True)
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -412,7 +412,7 @@ def Run_Pipeline(args):
             ref_index = sw.find_reference_image_index(seg_list)
             # Make a copy of the reference segmentation
             ref_seg = seg_list[ref_index].write(
-                groom_dir + 'reference.nrrd', compressed=0)
+                groom_dir + 'reference.nrrd')
             ref_name = names[ref_index]
             print("Reference found: " + ref_name)
 
@@ -482,7 +482,7 @@ def Run_Pipeline(args):
                 print('Cropping & padding segmentation: ' + name)
                 seg.crop(seg_bounding_box).pad(10, 0)
 
-                seg.write(seg_dir + name + '.nrrd', compressed=0)
+                seg.write(seg_dir + name + '.nrrd')
 
             """
             Grooming Step 11: Converting segmentations to smooth signed distance transforms.
@@ -507,7 +507,7 @@ def Run_Pipeline(args):
                     iso_value).gaussianBlur(sigma)
             # Save distance transforms
             dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
-                                            names, extension='nrrd', compressed=False, verbose=True)
+                                            names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
