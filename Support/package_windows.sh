@@ -36,10 +36,11 @@ ROOT=`pwd`
 
 BUILD="/c/build"
 CONDA_LOC="/c/Miniconda3/envs/shapeworks"
-cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/Release
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/bin/Release
 
 
 cp -r $BUILD/bin/Release bin
+rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
 # Run auto-documentation

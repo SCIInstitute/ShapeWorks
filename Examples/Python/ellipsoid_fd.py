@@ -100,7 +100,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
@@ -141,9 +141,12 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize_FixedDomains(
         point_dir, dt_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/ellipsoid_fd_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, dt_files, local_point_files, world_point_files)
+
+    # If tiny test or verify, check results and exit
+    AnalyzeUtils.check_results(args, world_point_files)
 
     """
     Step 4: ANALYZE - Shape Analysis and Visualization
@@ -153,5 +156,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

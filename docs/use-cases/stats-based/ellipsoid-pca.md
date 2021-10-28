@@ -37,6 +37,6 @@ Using `shape_statistics` object, you can now extract the following entities:
 * Variance explained by each mode: `percentVarByMode()`
 
 
-Example of plots that will be generated when the use case is run.
+When the use case is run, plots similar to those below will be generated.
 ![PCA Loading Violin Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/pca_loadings_violin_plot.png)
 ![PCA Variance Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/variance_plot.png)
