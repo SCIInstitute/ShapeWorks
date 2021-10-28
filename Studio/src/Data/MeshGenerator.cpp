@@ -55,6 +55,13 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
   auto& surface_reconstructors = this->reconstructors_->surface_reconstructors_;
   auto& mesh_warpers = this->reconstructors_->mesh_warpers_;
 
+  // temporary support for contours
+  if (mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
+    auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+    mesh->set_poly_data(poly_data);
+    return mesh;
+  }
+
   bool distance_transform_available =
     surface_reconstructors.size() > domain &&
     surface_reconstructors[domain] &&
