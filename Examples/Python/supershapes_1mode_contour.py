@@ -57,7 +57,7 @@ def Run_Pipeline(args):
 
     # Prepare analysis XML
     analyze_xml = point_dir + "/supershapes_1mode_contour_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, [], local_point_files, world_point_files)
+    AnalyzeUtils.create_analyze_xml(analyze_xml, contour_files, local_point_files, world_point_files)
 
     # If tiny test or verify, check results and exit
     AnalyzeUtils.check_results(args, world_point_files)
