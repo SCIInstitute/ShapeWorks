@@ -1,7 +1,7 @@
 # Getting Started with Use Cases
 
 ## What is a Use Case?
-Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/) and downloads automatically when the use case runs.
+Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/) and downloads automatically when the use case runs.
 
 Most use cases demomstrates the [Shape Modeling Workflow](../getting-started/workflow.md):
 
@@ -26,7 +26,7 @@ $ python RunUseCase.py --help
 
 !!! note "Using **bash** on Windows"
     Windows also has several Unix shells such as **git-bash** available. These also work with `conda activate shapeworks` in the same way. However, there is one crucial issue: running Python scripts requires prefixing with `winpty`. For example, `winpty python RunUseCase.py ...`.
-When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/).
 
 !!! danger
     Do not use the same password as for your bank account or email.
