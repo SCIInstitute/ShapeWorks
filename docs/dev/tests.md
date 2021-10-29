@@ -39,7 +39,7 @@ Python scripts should be added to Testing/PythonTests
 ```
 TEST(pythonTests, nameoftestTest)
 {
-  ASSERT_FALSE(system("python script.py"));
+  run_use_case("script.py");
 }
 ```
 
@@ -49,7 +49,7 @@ Shell scripts should be added to Testing/shapeworksTests
 ```
 TEST(shapeworksTests, nameoftestTest)
 {
-  ASSERT_FALSE(system("bash script.sh"));
+  run_use_case("script.sh");
 }
 ```
 

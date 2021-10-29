@@ -187,6 +187,8 @@ def test(name, failure=False):
             if name():
                 print(name.__name__ + " failed")
                 return False
+            else:
+                return True
         except Exception as e:
             print(name.__name__ + " unexpected failure (exception): " + str(e))
             return False

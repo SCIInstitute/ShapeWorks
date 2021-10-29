@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def decimateTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.decimate(0.0, 0.0, False)
@@ -10,7 +12,7 @@ def decimateTest1():
 
   return mesh == compareMesh
 
-utils.test(decimateTest1)
+success &= utils.test(decimateTest1)
 
 def decimateTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -20,7 +22,7 @@ def decimateTest2():
 
   return mesh == compareMesh
 
-utils.test(decimateTest2)
+success &= utils.test(decimateTest2)
 
 def decimateTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -30,7 +32,7 @@ def decimateTest3():
 
   return mesh == compareMesh
 
-utils.test(decimateTest3)
+success &= utils.test(decimateTest3)
 
 def decimateTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -40,7 +42,7 @@ def decimateTest4():
 
   return mesh == compareMesh
 
-utils.test(decimateTest4)
+success &= utils.test(decimateTest4)
 
 def decimateTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -50,7 +52,7 @@ def decimateTest5():
 
   return mesh == compareMesh
 
-utils.test(decimateTest5)
+success &= utils.test(decimateTest5)
 
 def decimateTest6():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
@@ -61,7 +63,7 @@ def decimateTest6():
 
   return mesh == compareMesh
 
-utils.test(decimateTest6)
+success &= utils.test(decimateTest6)
 
 def decimateTest7():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
@@ -72,4 +74,6 @@ def decimateTest7():
 
   return mesh == compareMesh
 
-utils.test(decimateTest7)
+success &= utils.test(decimateTest7)
+
+sys.exit(not success)

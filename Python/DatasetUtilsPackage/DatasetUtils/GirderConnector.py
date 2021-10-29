@@ -12,7 +12,7 @@ _CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.ut
 _VERSION = 'v2'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
-serverAddress = 'http://cibc1.sci.utah.edu:8080/'
+serverAddress = 'https://girder.shapeworks-cloud.org/'
 
 
 def printDataPortalWelcome():
@@ -48,7 +48,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-
+    print(f"Using Server: {serverAddress}")
     accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once

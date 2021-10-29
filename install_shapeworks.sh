@@ -17,7 +17,7 @@ CONDAENV=shapeworks
 if [[ "$#" -eq 1 ]]; then
    CONDAENV=$1
 fi
-echo "creating new conda environment for ShapeWorks called $CONDAENV..."
+echo "Creating new conda environment for ShapeWorks called $CONDAENV..."
 
 # PyTorch installation
 function install_pytorch() {
@@ -47,7 +47,7 @@ function install_pytorch() {
 
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
-    echo "installing anaconda..."
+    echo "Installing Miniconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
       curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
       bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
@@ -74,10 +74,6 @@ function install_conda() {
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
-  # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=20.2.3; then return 1; fi
-  if ! python -m pip install --upgrade pip; then return 1; fi
-
   # install shapeworks deps
   if ! conda install --yes \
     cmake=3.18.2 \
@@ -125,6 +121,9 @@ function install_conda() {
     then return 1; fi
   fi
 
+  # pip is needed in sub-environments or the base env's pip will silently install to base
+  if ! conda install --yes pip=21.2.4; then return 1; fi
+  
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
@@ -154,13 +153,16 @@ function install_conda() {
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
-      echo "Running under GitHub Action"
+    if [[ "$(uname)" == "Linux" ]]; then
+
+      echo "Running under GitHub Action, creating libffi link"
       pushd $HOME/miniconda3/envs/shapeworks/lib
       ls libffi*
       if [ ! -f libffi.6.dylib ]; then
 	  ln -s libffi.7.dylib libffi.6.dylib
       fi
       popd
+    fi
   fi
 
   
@@ -172,7 +174,8 @@ function install_conda() {
   if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
-  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
+
+  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
   conda install --yes jupyter_contrib_nbextensions
@@ -186,16 +189,6 @@ function install_conda() {
     nbstripout --install --attributes .gitattributes
   fi
 
-  # install any additional Linux dependencies
-  if [[ "$(uname)" == "Linux" ]]; then
-    echo "nothing additional to install for Linux"
-  fi
-
-  conda info
-
-  echo "Installed packages:"
-  conda list
-
   # Set the python path for studio
   mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   
@@ -204,7 +197,18 @@ function install_conda() {
 
 if install_conda; then
   install_pytorch
+
+  echo "Conda info:"
+  conda info
+
+  echo "Conda installed packages:"
+  conda list
+
+  echo "Pip installed packages:"
+  pip list
+
   echo "$CONDAENV environment successfully created/updated!"
+  
   conda activate $CONDAENV
 else
   echo "Problem encountered creating/updating $CONDAENV conda environment."

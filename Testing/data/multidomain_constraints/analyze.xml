@@ -1,0 +1,14 @@
+<domains_per_shape>
+2
+</domains_per_shape>
+
+<point_files>
+output/sphere10_DT_world.particles
+output/sphere10_O_DT_world.particles
+output/sphere20_DT_world.particles
+output/sphere20_O_DT_world.particles
+output/sphere30_DT_world.particles
+output/sphere30_O_DT_world.particles
+output/sphere40_DT_world.particles
+output/sphere40_O_DT_world.particles
+</point_files>

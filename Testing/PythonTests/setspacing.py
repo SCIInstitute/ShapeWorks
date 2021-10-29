@@ -3,6 +3,8 @@ import sys
 import numpy as np
 from shapeworks import *
 
+success = True
+
 def setspacingTest1():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
   img.setSpacing([2,2,2])
@@ -11,7 +13,7 @@ def setspacingTest1():
 
   return np.array_equal(img.spacing(), [2.0, 2.0, 2.0]) and img.compare(compareImg)
 
-utils.test(setspacingTest1)
+success &= utils.test(setspacingTest1)
 
 def setspacingTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -23,7 +25,7 @@ def setspacingTest2():
 
   return np.array_equal(img.spacing(), [1.0, 1.0, 1.0]) and img.compare(compareImg)
 
-utils.test(setspacingTest2)
+success &= utils.test(setspacingTest2)
 
 def setspacingfailTest():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -33,4 +35,6 @@ def setspacingfailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(setspacingfailTest, ValueError)
+success &= utils.expectException(setspacingfailTest, ValueError)
+
+sys.exit(not success)

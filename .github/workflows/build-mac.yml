@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - particle_check
     tags:
     - '*'
   pull_request:
@@ -12,7 +13,7 @@ on:
 env:
   CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: RelWithDebInfo
+  BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
   
 jobs:
@@ -85,7 +86,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
         
     - name: Build dependencies
       shell: bash -l {0}
@@ -94,7 +95,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
       shell: bash -l {0}

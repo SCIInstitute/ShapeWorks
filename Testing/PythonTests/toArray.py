@@ -3,13 +3,15 @@ import sys
 import numpy as np
 from shapeworks import *
 
+success = True
+
 # check for an exception
 def toArrayTest1():
   arr = Image(os.environ["DATA"] + "/femurImage.nrrd").toArray()
 
   return isinstance(arr, np.ndarray)
 
-utils.test(toArrayTest1)
+success &= utils.test(toArrayTest1)
 
 # verify data type
 def toArrayTest2():
@@ -17,7 +19,7 @@ def toArrayTest2():
 
   return arr.dtype == np.float32
 
-utils.test(toArrayTest2)
+success &= utils.test(toArrayTest2)
 
 # verify constructed data
 def toArrayTest3():
@@ -30,7 +32,7 @@ def toArrayTest3():
 
   return (arr==img_arr).all()
 
-utils.test(toArrayTest3)
+success &= utils.test(toArrayTest3)
 
 # verify loaded data
 def toArrayTest4():
@@ -45,7 +47,7 @@ def toArrayTest4():
 
   return (arr==img_arr).all()
 
-utils.test(toArrayTest4)
+success &= utils.test(toArrayTest4)
 
 def imageToArrayTest2a():
     img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -55,7 +57,7 @@ def imageToArrayTest2a():
     img += 100
     return abs(img.mean() - arr.mean()) <= 1e-4
 
-utils.test(imageToArrayTest2a)
+success &= utils.test(imageToArrayTest2a)
 
 def imageToArrayTest2b():
     img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -65,7 +67,7 @@ def imageToArrayTest2b():
     arr *= 42
     return abs(img.mean() - arr.mean()) <= 1e-4
 
-utils.test(imageToArrayTest2b)
+success &= utils.test(imageToArrayTest2b)
 
 def imageToArrayTest3():
     arr = np.copy(Image(os.environ["DATA"] + "/1x2x2.nrrd").toArray(copy=True))
@@ -74,7 +76,7 @@ def imageToArrayTest3():
     img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
     return np.array_equal(arr, img.toArray())
     
-utils.test(imageToArrayTest3)
+success &= utils.test(imageToArrayTest3)
 
 def imageToArrayTest4():
     # when Image is an rvalue that goes out of scope, toArray must provide a copy
@@ -83,7 +85,7 @@ def imageToArrayTest4():
     
     return arrcopy.flags['OWNDATA'] == True and np.array_equal(arrcopy, img.toArray())
 
-utils.test(imageToArrayTest4)
+success &= utils.test(imageToArrayTest4)
 
 def imageToArrayTest5():
     img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -92,7 +94,7 @@ def imageToArrayTest5():
     # for viewing, the array must be in fortran order to avoid being copied
     return arr.flags['F_CONTIGUOUS'] == True and arr.flags['C_CONTIGUOUS'] == False 
 
-utils.test(imageToArrayTest5)
+success &= utils.test(imageToArrayTest5)
 
 def imageToArrayTest6():
     img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -101,4 +103,6 @@ def imageToArrayTest6():
     # for viewing, the array must be in fortran order to avoid being copied
     return arr.flags['C_CONTIGUOUS'] == True and arr.flags['F_CONTIGUOUS'] == False 
 
-utils.test(imageToArrayTest6)
+success &= utils.test(imageToArrayTest6)
+
+sys.exit(not success)

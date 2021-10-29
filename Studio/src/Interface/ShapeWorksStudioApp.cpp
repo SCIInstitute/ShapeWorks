@@ -1144,8 +1144,10 @@ void ShapeWorksStudioApp::handle_points_changed()
   }
 
   if (update) {
-    double old_size = this->session_->get_auto_glyph_size();
-    if (fabs(old_size - this->session_->update_auto_glyph_size()) > 0.5) {
+    double cur_size = this->visualizer_->get_current_glyph_size();
+    double new_size = this->session_->update_auto_glyph_size();
+    double percent_diff = cur_size / new_size * 100.0;
+    if (percent_diff < 90 || percent_diff > 110) {
       this->handle_glyph_changed();
     }
 
@@ -1245,6 +1247,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
+  this->visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
