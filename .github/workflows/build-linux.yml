@@ -6,6 +6,7 @@ on:
       - master
       - release_v*
       - particle_check
+      - studio_groom
     tags:
     - '*'
   pull_request:
