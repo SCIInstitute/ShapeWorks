@@ -400,7 +400,7 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
     else:
         min_dims = min_dims[-1]+1
 
-    print("\nNumber of modes covering 99% varaince - ", min_dims)
+    print("\nNumber of modes covering 99% variance - ", min_dims)
     min_dims = 10 if min_dims>15 else min_dims
     loadings = loadings[:,:min_dims]
     dims = []
