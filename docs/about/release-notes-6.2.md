@@ -4,14 +4,12 @@
 
 * **New `Mesh` grooming tools:** 
     `curvature`: computes curvature (types include principal, gaussian or mean) of given mesh and returns a field
-    `fixElement`: fixes element winding of mesh
-    `geodesicDistance`: computes geodesic distance between 2 points on mesh
-    `geodesicDistance`: computes geodesic distance between all points on mesh to another point (landmark)
-    `geodesicDistance`: computes geodesic distance between all points on mesh and set of points (curve)
+    `fixElement`: fixes element winding of mesh which helps in its quality control
+    `geodesicDistance`: computation of geodesic distances enable feature-based correspondences. Read this [paper] (https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf) for more details.
+        `geodesicDistance(pointA, pointB)`: computes geodesic distance between 2 points on mesh
+        `geodesicDistance(landmark`: computes geodesic distance between all points on mesh to another point (landmark)
+        `geodesicDistance(curve)`: computes geodesic distance between all points on mesh and set of points (curve)
     `computeMeanNormals`: computes average normals for each point in given set of meshes and returns a field
-
-Shireen:     
-    (d) I would comment on how these tools can enable further use cases whenever applicable, e.g., geodesic functions can enable feature-based correspondences where you can cite Datar's paper that I shared earlier.   
 
 * **New `Mesh` query/operator tools:**
     `operator+=`: appends two meshes
@@ -34,10 +32,6 @@ Shireen:
 * **New analysis features in Studio:** Shape evaluation charts for compactness, specificty and generealization have been added. See for [Metrics Panel] (http://sciinstitute.github.io/ShapeWorks/studio/getting-started-with-studio.html#metrics-panel) more details.
 
 * **Usability features in Studio:** New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See [New in ShapeWorks Studio 6.2] (http://sciinstitute.github.io/ShapeWorks/new/new-studio.html) for more details.
-
-* **Optimizer exports alignment transforms:** Write individual procrustes transforms. The ShapeWorks Optimizer can now export individual procrustes transform files if requested. Use the xml tag `<write_transform_files> 1 </write_transform_files>` to enable it. Additinally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet.   
-
-Shireen: add links to where more details can be found in the documentation. 
 
 #### User's Support
 
@@ -68,6 +62,8 @@ Shireen: add links to where more details can be found in the documentation.
 
 * **Restructured `ellipsoid_evaluate` use case:** The computation time for calculating specificity, compactness, and generalization metrics has been reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrates these functionalities. See [Ellipsoid: Shape Evaluation in Python] (http://sciinstitute.github.io/ShapeWorks/use-cases/stats-based/ellipsoid-evaluate.html) for more details.
 
+* **Optimizer exports alignment transforms:** Write individual procrustes transforms. The ShapeWorks Optimizer can now export individual procrustes transform files if requested. Use the xml tag `<write_transform_files> 1 </write_transform_files>` to enable it. Additinally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See [Optimize] (http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html) for more details.
+
 ### Fixes
 
 #### ShapeWorks Back-end
@@ -76,6 +72,4 @@ Shireen: add links to where more details can be found in the documentation.
 
 #### ShapeWorks Front-end
 
-* **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset were fully compatibile with all tools.
-
-Shireen: add links to where more details can be found in the documentation. Also, add which orientations were supported previously.
+* **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) were fully compatibile with all tools.
