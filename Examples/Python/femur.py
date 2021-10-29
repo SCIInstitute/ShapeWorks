@@ -90,15 +90,13 @@ def Run_Pipeline(args):
         if not os.path.exists(groom_dir):
             os.makedirs(groom_dir)
 
-        # set name specific variables
-        img_suffix = "1x_hip"
-        ref_side = "R" 
+        # Set reference side
+        ref_side = "R" # selected so there are less to reflect
         if args.tiny_test:
-            ref_side = "L" # so reflection happens
+            ref_side = "L" # selected so reflection happens in tiny test
         # Set cutting plane
         cutting_plane_points = np.array(
-            [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
-        cp_prefix = 'm03_L'
+            [[-1.0, -1.0, -36.0], [1.0, -1.0, -36.0], [-1.0, 1.0, -36.0]])
 
         # BEGIN GROOMING WITH IMAGES
         if args.groom_images and image_files:
@@ -127,7 +125,7 @@ def Run_Pipeline(args):
             image_list = []
             for mesh, name in zip(mesh_list, names):
                 """
-                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
+                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the non-reference side
                 meshes so that all of the femurs can be aligned.
                 """
                 prefix = name.split("_")[0]
@@ -137,25 +135,18 @@ def Run_Pipeline(args):
                         break
                 if ref_side in name:
                     print("Reflecting " + name)
-                    # Reflect corresponding image and find mesh reflection point
+                    # Get corresponding image and reflect
                     img1 = sw.Image(corresponding_image_file)
                     img2 = sw.Image(corresponding_image_file)
                     img2.recenter()
                     center = img2.origin() - img1.origin()
-                    center = [center[0], center[1], center[2]]
-                    img_out = image_dir + \
-                        corresponding_image_file.split(
-                            os.sep)[-1].split('_')[0] + '_R_femur.nrrd'
-                    img1.reflect(sw.X).write(img_out)
+                    img1.reflect(sw.X)
                     image_list.append(img1)
                     # Reflect mesh
                     mesh.reflect(sw.X, center)
                 else:
-                    img_out = image_dir + \
-                        corresponding_image_file.split(
-                            os.sep)[-1].split('_')[0] + '_L_femur.nrrd'
+                    # Get image
                     img = sw.Image(corresponding_image_file)
-                    img.write(img_out)
                     image_list.append(img)
 
             seg_list = []
@@ -216,9 +207,10 @@ def Run_Pipeline(args):
                 Grooming Step 6: Centering
                 """
                 print('Centering segmentation: ' + name)
-                seg.center()
+                old_center = seg.center()
+                seg.recenter()
                 print('Centering image: ' + name)
-                image.center()
+                image.setOrigin(image.origin()-old_center)
 
                 seg_list.append(seg)
 
@@ -300,8 +292,9 @@ def Run_Pipeline(args):
             """
             # loop over segs to apply cropping and padding
             for seg, image, name in zip(seg_list, image_list, names):
-                print('Cropping & padding segmentation: ' + name)
+                print('Cropping & padding: ' + name)
                 seg.crop(seg_bounding_box).pad(10, 0)
+                image.crop(seg_bounding_box).pad(10, 0)
 
                 seg.write(seg_dir + name + '.nrrd')
                 image.write(image_dir + name + '.nrrd')
@@ -400,7 +393,7 @@ def Run_Pipeline(args):
                 Grooming Step 5: Centering
                 """
                 print('Centering segmentation: ' + name)
-                seg.center()
+                seg.recenter()
 
                 seg_list.append(seg)
 
@@ -540,8 +533,8 @@ def Run_Pipeline(args):
         "domain_type" : 'image',
         "relative_weighting" : 10,
         "initial_relative_weighting" : 1,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
+        "procrustes_interval" : 1,
+        "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "verbosity" : 2,
         "use_statistics_in_init" : 0
