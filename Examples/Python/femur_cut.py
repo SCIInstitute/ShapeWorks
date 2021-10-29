@@ -125,7 +125,7 @@ def Run_Pipeline(args):
             image_list = []
             for mesh, name in zip(mesh_list, names):
                 """
-                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
+                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the non-reference side
                 meshes so that all of the femurs can be aligned.
                 """
                 prefix = name.split("_")[0]
@@ -135,25 +135,18 @@ def Run_Pipeline(args):
                         break
                 if ref_side in name:
                     print("Reflecting " + name)
-                    # Reflect corresponding image and find mesh reflection point
+                    # Get corresponding image and reflect
                     img1 = sw.Image(corresponding_image_file)
                     img2 = sw.Image(corresponding_image_file)
                     img2.recenter()
                     center = img2.origin() - img1.origin()
-                    center = [center[0], center[1], center[2]]
-                    img_out = image_dir + \
-                        corresponding_image_file.split(
-                            os.sep)[-1].split('_')[0] + '_R_femur.nrrd'
-                    img1.reflect(sw.X).write(img_out)
+                    img1.reflect(sw.X)
                     image_list.append(img1)
                     # Reflect mesh
                     mesh.reflect(sw.X, center)
                 else:
-                    img_out = image_dir + \
-                        corresponding_image_file.split(
-                            os.sep)[-1].split('_')[0] + '_L_femur.nrrd'
+                    # Get image
                     img = sw.Image(corresponding_image_file)
-                    img.write(img_out)
                     image_list.append(img)
 
             seg_list = []
@@ -217,7 +210,7 @@ def Run_Pipeline(args):
                 old_center = seg.center()
                 seg.recenter()
                 print('Centering image: ' + name)
-                image.translate(-old_center)
+                image.setOrigin(image.origin()-old_center)
 
                 seg_list.append(seg)
 
@@ -292,8 +285,9 @@ def Run_Pipeline(args):
             """
             # loop over segs to apply cropping and padding
             for seg, image, name in zip(seg_list, image_list, names):
-                print('Cropping & padding segmentation: ' + name)
+                print('Cropping & padding: ' + name)
                 seg.crop(seg_bounding_box).pad(10, 0)
+                image.crop(seg_bounding_box).pad(10, 0)
 
                 seg.write(seg_dir + name + '.nrrd')
                 image.write(image_dir + name + '.nrrd')
