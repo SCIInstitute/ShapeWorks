@@ -75,7 +75,7 @@ def run_command(subprocess_args):
 
 
 def run_case(use_case):
-    command = f"python RunUseCase.py {use_case}"
+    command = f"python -u RunUseCase.py {use_case}"
     print(f"\n----------------------------------------------------------------")
     print(f"* Running : {command}")
     print(f"----------------------------------------------------------------")

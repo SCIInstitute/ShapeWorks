@@ -273,7 +273,7 @@ def Run_Pipeline(args):
                 iso_value).gaussianBlur(sigma)
         # Save distance transforms
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_names, extension='nrrd', compressed=False, verbose=True)
+                                        shape_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
