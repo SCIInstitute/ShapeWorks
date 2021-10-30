@@ -57,7 +57,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
     # Create a dictionary for all the parameters required by optimization
@@ -67,7 +67,7 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 150,
+        "iterations_per_split": 300,
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
@@ -94,9 +94,12 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, mesh_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/thin_cavity_bean_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
+
+    # If tiny test or verify, check results and exit
+    AnalyzeUtils.check_results(args, world_point_files)
 
     print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
@@ -106,5 +109,4 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, mesh_files, local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

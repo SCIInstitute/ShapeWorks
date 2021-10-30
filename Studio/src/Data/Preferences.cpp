@@ -231,15 +231,19 @@ void Preferences::add_recent_file(QString file, QString path)
     paths << "";
   }
 
-  files.removeAll(file);
+  // remove entry if it already exists
+  while (files.indexOf(file) >= 0) {
+    int idx = files.indexOf(file);
+    files.removeAt(idx);
+    paths.removeAt(idx);
+  }
   files.prepend(file);
+  paths.prepend(path);
   while (files.size() > Preferences::MAX_RECENT_FILES) {
     files.removeLast();
   }
   this->settings_.setValue("Main/recentFileListNew", files);
 
-  paths.removeAll(path);
-  paths.prepend(path);
   while (paths.size() > Preferences::MAX_RECENT_FILES) {
     paths.removeLast();
   }

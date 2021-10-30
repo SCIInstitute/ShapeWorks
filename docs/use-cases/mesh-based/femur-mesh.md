@@ -20,12 +20,12 @@ Below are the default optimization parameters when running this use case.
 
 ```python
 {
-        "number_of_particles": 128,
+        "number_of_particles": 512,
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
+        "iterations_per_split": 1000,
         "optimization_iterations": 500,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
@@ -38,7 +38,7 @@ Below are the default optimization parameters when running this use case.
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 1,
-        "use_shape_statistics_after":32
+        "use_shape_statistics_after":256
 }
 ```
 Note `domain_type` is 'mesh'.

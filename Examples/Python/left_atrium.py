@@ -363,7 +363,7 @@ def Run_Pipeline(args):
         if args.groom_images:
             print('\nSaving groomed images\n')
             sw.utils.save_images(groom_dir + 'images', shape_img_list,
-                                 shape_img_names, extension='nrrd', compressed=False, verbose=True)
+                                 shape_img_names, extension='nrrd', compressed=True, verbose=True)
         """
         Grooming Step 9: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
@@ -387,7 +387,7 @@ def Run_Pipeline(args):
                 iso_value).gaussianBlur(sigma)
         # Save distance transforms
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_seg_names, extension='nrrd', compressed=False, verbose=True)
+                                        shape_seg_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -400,7 +400,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
     # Create a dictionary for all the parameters required by optimization
@@ -441,9 +441,12 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, input_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/left_atrium_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
+
+    # If tiny test or verify, check results and exit
+    AnalyzeUtils.check_results(args, world_point_files)
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
@@ -454,5 +457,4 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, input_files, local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
