@@ -19,7 +19,7 @@ The use case pipeline includes [data augmentation](../../deep-learning/data-augm
 
 ### Step 1: Getting the original data
 
-The femur data is downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/). This use case uses the original unsegmented images and the corresponding `.particles` files in the `shape_models` folder downloaded with the femur dataset. Of the 50 examples in the femur dataset, 40 are used to create training and validation sets, while the remaining 10 are saved for a test set (i.e., held out data).
+The femur data is downloaded from the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org). This use case uses the original unsegmented images and the corresponding `.particles` files in the `shape_models` folder downloaded with the femur dataset. Of the 50 examples in the femur dataset, 40 are used to create training and validation sets, while the remaining 10 are saved for a test set (i.e., held out data).
 
 ### Step 2: Running data augmentation
 Data augmentation is run using the images and particle files allocated for training and validation. 4960 augmented samples are created so that DeepSSM can be trained on 5000 total examples. The data is embedded to 6 dimensions using PCA, preserving 95% of the population variation. A kernel density estimate (KDE) distribution is then fit to the embedded data and used in sampling new shape samples for data augmentation. The real and augmented results are then visualized in a matrix of scatterplots.

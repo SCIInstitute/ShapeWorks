@@ -330,10 +330,10 @@
             <div class="section">
               
                 <h1 id="how-to-add-new-datasets">How to Add New Datasets?</h1>
-<p><a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a></p>
+<p><a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a></p>
 <h2 id="dataset-requirements">Dataset Requirements</h2>
 <p>Each dataset must have a <strong>License.txt</strong>, which describes the terms of use and citation requirements for the data.<br />
-You can see an example in the Left Atrium dataset <a href="http://cibc1.sci.utah.edu:8080/#item/5e5600298886bab730d72cf5">License</a>.</p>
+You can see an example in the Left Atrium dataset <a href="https://girder.shapeworks-cloud.org/#item/5e5600298886bab730d72cf5">License</a>.</p>
 <p>Data should be organized into appropriately named directories: <strong>images</strong>, <strong>segmentations</strong>, <strong>meshes</strong>, <strong>landmarks</strong>, <strong>distance_transforms</strong>, <strong>shape_models</strong>.  </p>
 <p><em>Note that each dataset will likely only have a subset of these directories. For example, the ellipsoid dataset only has a segmentations directory.</em>  </p>
 <h3 id="images">images/</h3>
@@ -366,8 +366,8 @@ For example:<br />
 <p>Uploaded datasets are only restricted to ShapeWorks developers.</p>
 </div>
 <ol>
-<li>Create an account on the <a href="http://cibc1.sci.utah.edu:8080/#?dialog=register">ShapeWorks Data Portal</a></li>
-<li>Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)</li>
+<li>Create an account on the <a href="https://girder.shapeworks-cloud.org/#?dialog=register">ShapeWorks Data Portal</a></li>
+<li>Ask Alan to add you to the list of developers. (amorris@sci.utah.edu)</li>
 <li>Prepare dataset directory with License.txt</li>
 <li>Use <code>DatasetUtils.uploadNewDataset(datasetName, datasetPath)</code> to upload.</li>
 <li>Name the dataset all lowercase with underscores separating words. For example: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'</li>
