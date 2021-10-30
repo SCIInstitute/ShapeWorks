@@ -471,6 +471,7 @@ build_all()
   echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
   echo "  LIBIGL_DIR: ${LIBIGL_DIR}"
   echo "  GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}"
+  echo "  ACVD_DIR: ${ACVD_DIR}"
   echo ""
   
   show_shapeworks_build

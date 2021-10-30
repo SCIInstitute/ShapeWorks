@@ -146,6 +146,9 @@ ENDIF()
 find_package (XLNT REQUIRED)
 add_definitions(-DXLNT_STATIC=1)
 
+### ACVD
+find_package (ACVD REQUIRED)
+
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
