@@ -229,7 +229,11 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params)
     v[0] = spacing[0];
     v[1] = spacing[1];
     v[2] = spacing[2];
-    image.resample(v, Image::InterpolationType::Linear);
+    if (v[0] == 0 || v[1] == 0 || v[2] == 0) {
+      // skip resample
+    } else {
+      image.resample(v, Image::InterpolationType::Linear);
+    }
   }
   if (this->abort_) { return false; }
 
