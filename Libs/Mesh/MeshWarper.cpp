@@ -68,6 +68,11 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   this->needs_warp_ = true;
 
   this->warp_available_ = true;
+
+  // TODO This is temporary for detecting if contour until the contour type is fully supported
+  if (reference_mesh->GetCell(0)->GetNumberOfPoints() == 2) {
+    this->is_contour_ = true;
+  }
 }
 
 //---------------------------------------------------------------------------

@@ -27,6 +27,9 @@ public:
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
+  //! Return if set as a contour
+  bool is_contour() { return this->is_contour_; }
+
 protected:
 
   //! For overriding to handle progress updates
@@ -85,5 +88,7 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
+  //! Whether the reference is a contour
+  bool is_contour_ = false;
 };
 }

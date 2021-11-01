@@ -24,7 +24,7 @@ def Run_Pipeline(args):
     sw.data.download_and_unzip_dataset(dataset_name, output_directory)
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
 
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
@@ -55,14 +55,15 @@ def Run_Pipeline(args):
     """
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/supershapes_1mode_contour_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, contour_files, local_point_files, world_point_files)
+
+    # If tiny test or verify, check results and exit
+    AnalyzeUtils.check_results(args, world_point_files)
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-
-
-    AnalyzeUtils.launchShapeWorksStudio(point_dir, [], local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
 
 def generate_supershapes(out_dir):
     m = 6

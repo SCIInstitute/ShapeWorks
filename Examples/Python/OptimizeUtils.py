@@ -212,13 +212,10 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     file.write(data)
 
 def runShapeWorksOptimize(parentDir, inDataFiles, parameterDictionary):
-    numP = parameterDictionary['number_of_particles']
-    numP = str(numP)
-    numP = numP.replace('[',"").replace(']',"").replace(",","").replace(" ","_")
-    outDir = parentDir + '/' + str(numP) + '/'
+    outDir = parentDir
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    parameterFile = parentDir + "correspondence_" + str(numP) + ".xml"
+    parameterFile = parentDir + "/correspondence.xml"
     create_SWRun_xml(parameterFile, inDataFiles, parameterDictionary, outDir)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
@@ -233,7 +230,7 @@ def _convertFilenamesToPointFilenames(files, outDir):
     outPointsLocal = []
     for i in range(len(files)):
         inname = files[i].replace('\\','/')
-        inpath = os.path.dirname(files[i]) + '/'
+        inpath = os.path.dirname(files[i])
         outname = inname.replace(inpath, outDir)
         filename, fileextension = os.path.splitext(outname)
         wrdname = filename + '_world.particles'
@@ -262,7 +259,7 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
     numFD = parameterDictionary['number_fixed_domains']
     shapeModelDir = parameterDictionary['fixed_domain_model_dir']
     meanShapePath = parameterDictionary['mean_shape_path']
-    outDir = parentDir + '/' + str(numP) + '/'
+    outDir = parentDir
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     inparts = []
@@ -278,7 +275,7 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
             lclname = meanShapePath
             inparts.append(lclname)
 
-    parameterFile = parentDir + "correspondence_" + str(numP) + ".xml"
+    parameterFile = parentDir + "/correspondence_" + str(numP) + ".xml"
     create_SWRun_fixed_domains(parameterFile, inDataFiles, parameterDictionary, outDir, numFD, inparts)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
