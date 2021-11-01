@@ -91,6 +91,9 @@ def run_case(use_case):
 
 
 def main():
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
     # parse arguments
     parser = argparse.ArgumentParser(description='Verify Example ShapeWorks Pipelines')
     parser.add_argument("--tiny_test", help="Run only the tiny tests", action="store_true")
