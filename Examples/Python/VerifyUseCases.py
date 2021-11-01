@@ -59,9 +59,7 @@ async def run_command(args):
             ),
             read_stream(
                 proc.stderr,
-                lambda x: print(
-                    "STDERR: {}".format(x.decode("UTF8"))
-                ),
+                lambda x: sys.stdout.write(x.decode("UTF8")),
             ),
         ]
     )
