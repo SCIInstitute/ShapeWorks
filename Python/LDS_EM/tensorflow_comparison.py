@@ -17,7 +17,7 @@ if __name__=="__main__":
     M = 9    # number of correspondence points
     L = 2    # dimension of latent space
     P = d*M  # dimension of observation space 
-    T = 2    # number of time points
+    T = 3    # number of time points
 
     # Generate data
     X = example.generate_ellipse_data(N,T,False)
@@ -56,10 +56,10 @@ if __name__=="__main__":
     log_likelihood = my_model.data_log_prob(X)
     # Equivalency
     print("\nChecking forward filter equivalency... ")
+    print("Predicted means: " + str(np.allclose(tf_predicted_means.numpy(), my_model.predicted_mu, rtol=1e-4)))
+    print("Predicted covs: " + str(np.allclose(tf_predicted_covs.numpy(), my_model.predicted_V, rtol=1e-3)))
     print("Filtered means: " + str(np.allclose(tf_filtered_means.numpy(), my_model.filtered_mu, rtol=1e-4)))
     print("Filtered covs: " + str(np.allclose(tf_filtered_covs.numpy(), my_model.filtered_V, rtol=1e-4)))
-    print("Predicted means: " + str(np.allclose(tf_predicted_means.numpy(), my_model.predicted_mu, rtol=1e-4)))
-    print("Predicted covs: " + str(np.allclose(tf_predicted_covs.numpy(), my_model.predicted_V[0], rtol=1e-3)))
     print("Log likelihood: " + str(np.allclose(np.sum(tf_log_likelihoods.numpy(),axis=1), log_likelihood, rtol=.1e-1)))
 
     # TF backward
@@ -69,4 +69,4 @@ if __name__=="__main__":
     my_model._backward_smooth()
     print("\nChecking backward smoothing equivalency... ")
     print("Smoothed means: " + str(np.allclose(tf_posterior_means.numpy(), my_model.smoothed_mu, rtol=1e-1)))
-    print("Smoothed covs: " + str(np.allclose(tf_posterior_covs.numpy(), my_model.smoothed_V[0], rtol=1e-2)))
+    print("Smoothed covs: " + str(np.allclose(tf_posterior_covs.numpy(), my_model.smoothed_V, rtol=1e-2)))
