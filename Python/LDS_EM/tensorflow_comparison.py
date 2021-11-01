@@ -70,3 +70,12 @@ if __name__=="__main__":
     print("\nChecking backward smoothing equivalency... ")
     print("Smoothed means: " + str(np.allclose(tf_posterior_means.numpy(), my_model.smoothed_mu, rtol=1e-1)))
     print("Smoothed covs: " + str(np.allclose(tf_posterior_covs.numpy(), my_model.smoothed_V, rtol=1e-2)))
+
+    print("\nAmount off")
+    print("Predicted means: " + str(np.sum(np.abs(tf_predicted_means.numpy()- my_model.predicted_mu))))
+    print("Predicted covs: " + str(np.sum(np.abs(tf_predicted_covs.numpy()- my_model.predicted_V))))
+    print("Filtered means: " + str(np.sum(np.abs(tf_filtered_means.numpy()- my_model.filtered_mu))))
+    print("Filtered covs: " + str(np.sum(np.abs(tf_filtered_covs.numpy()- my_model.filtered_V))))
+    print("Log likelihood: " + str(np.sum(np.abs(np.sum(tf_log_likelihoods.numpy(),axis=1)- log_likelihood))))
+    print("Smoothed means: " + str(np.sum(np.abs(tf_posterior_means.numpy()- my_model.smoothed_mu))))
+    print("Smoothed covs: " + str(np.sum(np.abs(tf_posterior_covs.numpy()- my_model.smoothed_V))))

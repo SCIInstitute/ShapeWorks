@@ -34,21 +34,9 @@ class LDS_Model():
         self.mu_0 = np.zeros(self.L)
         self.V_0 = np.eye(self.L)
 
-        # E-step initialize
-        # self.predicted_mu = np.zeros((self.N, self.T, self.L))
-        # self.predicted_V = np.zeros((self.T, self.L, self.L))
-        # self.filtered_mu = np.zeros((self.N, self.T, self.L))
-        # self.filtered_V = np.zeros((self.T, self.L, self.L))
-        # self.smoothed_mu = np.zeros((self.N, self.T, self.L))
-        # self.smoothed_V = np.zeros((self.T, self.L, self.L))
-        # self.backward_Kalman = np.zeros((self.T, self.L, self.L))
-        
-        # M-step expectations initialize
-        # self.E_z = np.zeros((self.N, self.T, self.L))
-        # self.E_z_zT = np.zeros((self.N, self.T, self.L, self.L))
-        # self.E_z_z1T = np.zeros((self.N, self.T-1, self.L, self.L))
-        # self.E_z1_zT = np.zeros((self.N, self.T-1, self.L, self.L))
-        
+    '''
+    Set observed data - unneccesary if running EM
+    '''
     def set_observation_data(self, data):
         self.x = data
 
@@ -94,7 +82,7 @@ class LDS_Model():
         self.filtered_V = np.zeros((self.T, self.L, self.L))
         # Initialize for first time point
         Kalman_gain[0] = np.matmul(np.matmul(self.V_0, self.W.T), \
-                            inv(np.matmul(np.matmul(self.W, self.V_0), self.W.T) + self.obs_Sigma))
+                            np.linalg.pinv(np.matmul(np.matmul(self.W, self.V_0), self.W.T) + self.obs_Sigma))
         self.filtered_V[0] = np.matmul(np.eye(self.L)-np.matmul(Kalman_gain[0], self.W), self.V_0)
         for t in range(1, self.T):
             # Prediction Step: eq:invariant_filteringVt-1 Bishop 13.88, Murphy 18.28
@@ -102,13 +90,13 @@ class LDS_Model():
             ## Measurement step
             # eq:invariant_kalman_gain2 Bishop 13.92 Murphy 18.39
             Kalman_gain[t] = np.matmul(np.matmul(predicted_V[t], self.W.T), 
-                                inv(np.matmul(np.matmul(self.W, predicted_V[t]), self.W.T) + self.obs_Sigma))
+                                np.linalg.pinv(np.matmul(np.matmul(self.W, predicted_V[t]), \
+                                self.W.T) + self.obs_Sigma))
             # eq:invariant_filteringV  Bishop 13.90 Murphy 18.32
             self.filtered_V[t] = np.matmul(np.eye(self.L) - np.matmul(Kalman_gain[t], self.W), predicted_V[t])
-        # Adress time shift
-        predicted_V[-1] = (np.matmul(np.matmul(self.A, self.filtered_V[-1]), self.A.T) + self.state_Sigma)
-        self.predicted_V = predicted_V[1:]
-        
+        # Address time shift
+        predicted_V[-1] = np.matmul(np.matmul(self.A, self.filtered_V[-1]), self.A.T) + self.state_Sigma
+        self.predicted_V = predicted_V[1:]       
         ### Means
         # Initialize
         self.filtered_mu = np.zeros((self.N, self.T, self.L))
@@ -138,12 +126,15 @@ class LDS_Model():
         self.backward_Kalman = np.zeros((self.T, self.L, self.L))
         ## Backward Kalman and covariance
         self.smoothed_V[-1] = self.filtered_V[-1]
-        self.backward_Kalman[-1] = np.matmul(np.matmul(self.smoothed_V[-1], self.A.T), inv(self.predicted_V[-1]))
+        self.backward_Kalman[-1] = np.matmul(np.matmul(self.smoothed_V[-1], self.A.T), \
+                                    np.linalg.pinv(self.predicted_V[-1]))
         for t in range(self.T-2, -1, -1): #-2 because indexing starts at 0
-            self.backward_Kalman[t] = np.matmul(np.matmul(self.smoothed_V[t], self.A.T), inv(self.predicted_V[t+1]))
+            self.backward_Kalman[t] = np.matmul(np.matmul(self.filtered_V[t], self.A.T), \
+                                    np.linalg.pinv(self.predicted_V[t+1]))
             # eq:invariant_smoothedV Bishop 13.101 Murphy 15.58
             self.smoothed_V[t] = self.filtered_V[t] + np.matmul(self.backward_Kalman[t], np.matmul((self.smoothed_V[t+1] \
                                 - self.predicted_V[t+1]), self.backward_Kalman[t].T))
+            self.smoothed_V[t] = utils.fix_covariance(self.smoothed_V[t])
         ## Means
         for n in range(self.N):
             self.smoothed_mu[n,-1] = self.filtered_mu[n,-1]
@@ -192,13 +183,14 @@ class LDS_Model():
         # eq:new_V Bishop 13.111
         self.V_0 = np.sum([self.E_z_zT[n,0] - np.matmul(self.E_z[n,0], self.E_z[n,0].T) \
                     for n in range(self.N)], axis=0)/self.N
+        self.V_0 = utils.fix_covariance(self.V_0)
 
     '''
     M_step helper: update transition matrix and latent Sigma
     '''
     def _update_state_params(self):
         # eq:new_A Bishop 13.113
-        self.A = np.sum([np.matmul(np.sum(self.E_z_z1T[n,:,:], axis=0), inv(np.sum(self.E_z_zT[n,:-1,:], \
+        self.A = np.sum([np.matmul(np.sum(self.E_z_z1T[n,:,:], axis=0), np.linalg.pinv(np.sum(self.E_z_zT[n,:-1,:], \
                     axis=0))) for n in range(self.N)], axis=0)/self.N
         # eq:new_sigmaz Bishop 13.114
         temp = []
@@ -210,7 +202,7 @@ class LDS_Model():
                         np.matmul(self.A, np.matmul(self.E_z_zT[n,t-1,:], self.A.T))
             temp.append(summ/(self.T-1))
         self.state_Sigma = np.sum(temp, axis=0)/self.N
-        self.state_Sigma = self.state_Sigma + 0.001 * np.eye(self.L) # TODO
+        self.state_Sigma = utils.fix_covariance(self.state_Sigma)
 
     '''
     M_step helper: update observation matrix and observation Sigma
@@ -220,7 +212,7 @@ class LDS_Model():
         temp = []
         for n in range(self.N):
             temp.append(np.matmul(sum([np.matmul(np.expand_dims(self.x[n,t], 1), \
-                np.expand_dims(self.E_z[n,t], 1).T) for t in range(self.T)]), inv(sum(self.E_z_zT[n]))))
+                np.expand_dims(self.E_z[n,t], 1).T) for t in range(self.T)]), np.linalg.pinv(sum(self.E_z_zT[n]))))
         self.W = np.sum(temp, axis=0)/self.N
         # eq:new_sigmax Bishop 13.116
         temp = []
@@ -235,7 +227,7 @@ class LDS_Model():
                         for t in range(self.T)])
             temp.append((x_xT - W_E_z_x - x_E_zt_W + W_E_z_zt_Wt)/self.T)
         self.obs_Sigma = np.sum(temp, axis=0)/self.N
-        self.obs_Sigma = self.obs_Sigma + 0.001 * np.eye(self.P) # TODO
+        self.obs_Sigma = utils.fix_covariance(self.obs_Sigma)
 
     '''
     Sample latent states using statistics
@@ -255,16 +247,16 @@ class LDS_Model():
             # eq:LLprior
             ll_prior = -self.L/2*np.log(2*np.pi) - 0.5*np.log(det(self.V_0)+epsilon) \
                        - 0.5*np.matmul(np.expand_dims(self.z[n,0]-self.mu_0, 1).T, \
-                       np.matmul(inv(self.V_0), np.expand_dims(self.z[n,0]-self.mu_0, 1)))
+                       np.matmul(np.linalg.pinv(self.V_0), np.expand_dims(self.z[n,0]-self.mu_0, 1)))
             # eq:LLstate
             ll_state = -((self.T-1)*self.L)/2*np.log(2*np.pi) - ((self.T-1)/2)*np.log(det(self.state_Sigma)+epsilon) \
                     - 0.5*sum([np.matmul(np.expand_dims(self.z[n,t] - np.matmul(self.A, self.z[n,t-1]), 1).T, \
-                    np.matmul(inv(self.state_Sigma), np.expand_dims(self.z[n,t] \
+                    np.matmul(np.linalg.pinv(self.state_Sigma), np.expand_dims(self.z[n,t] \
                     - np.matmul(self.A, self.z[n,t-1]), 1))) for t in range(1, self.T)])
            # eq:LLobs         
             ll_obs = -(self.T*self.P)/2*np.log(2*np.pi) - (self.T/2)*np.log(det(self.obs_Sigma)+epsilon) \
                     - 0.5*sum([np.matmul(np.expand_dims(self.x[n,t] - np.matmul(self.W, self.z[n,t]), 1).T, \
-                    - np.matmul(inv(self.obs_Sigma),np.expand_dims(self.x[n,t] \
+                    - np.matmul(np.linalg.pinv(self.obs_Sigma),np.expand_dims(self.x[n,t] \
                     - np.matmul(self.W,self.z[n,t]), 1))) for t in range(self.T)])
             # eq:completeLL
             total_sum += ll_prior + ll_state + ll_obs
@@ -273,6 +265,10 @@ class LDS_Model():
         self.ll = total_sum/self.N
         return total_sum/self.N
 
+    '''
+    TODO: check this
+    Get log prob of data
+    '''
     def data_log_prob(self, data):
         self.x = data
         self._forward_filter()
@@ -281,12 +277,15 @@ class LDS_Model():
             n_log_prob = -(self.T*self.P)/2*np.log(2*np.pi) - 0.5*sum([ \
                         np.log(det(np.matmul(self.W, np.matmul(self.predicted_V[t], self.W.T)) + self.obs_Sigma)) \
                         + np.matmul(np.expand_dims(self.x[n,t] - np.matmul(self.W, self.predicted_mu[n,t]), 1).T, \
-                        np.matmul(inv(np.matmul(self.W, np.matmul(self.predicted_V[t], self.W.T)) + self.obs_Sigma),\
+                        np.matmul(np.linalg.pinv(np.matmul(self.W, np.matmul(self.predicted_V[t], self.W.T)) + self.obs_Sigma),\
                         np.expand_dims(self.x[n,t] - np.matmul(self.W,self.predicted_mu[n,t]), 1))) \
                         for t in range(self.T)])
             log_probs.append(n_log_prob[0][0])
         return np.array(log_probs)
 
+    '''
+    Sample observations and latent from model
+    '''
     def sample(self, num_samples):
         z = np.zeros((num_samples, self.T+1, self.L))
         x = np.zeros((num_samples, self.T+1, self.P))
