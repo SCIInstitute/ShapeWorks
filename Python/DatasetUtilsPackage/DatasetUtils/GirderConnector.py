@@ -75,7 +75,7 @@ def _promptLogin():
             quit()
     else:
         print('New ShapeWorks Portal users: Register an account at ' + serverAddress + '#?dialog=register')
-        print('Returning ShapeWorks Portal users: Enter your username and password')
+        print('\nReturning ShapeWorks Portal users: Enter your username and password:')
         basicAuthToken = None
         while basicAuthToken is None:
             print('')

@@ -48,7 +48,7 @@ async def read_stream(stream, callback):
 
 async def run_command(args):
     proc = await asyncio.subprocess.create_subprocess_exec(
-        *args, stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE
+        *args, stdout=asyncio.subprocess.PIPE
     )
 
     await asyncio.wait(
