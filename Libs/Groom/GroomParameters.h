@@ -109,6 +109,9 @@ public:
   std::vector<double> get_spacing();
   void set_spacing(std::vector<double> spacing);
 
+  bool get_remesh();
+  void set_remesh(bool remesh);
+
   void restore_defaults();
 
   // constants

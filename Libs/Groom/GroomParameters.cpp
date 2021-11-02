@@ -42,6 +42,7 @@ constexpr const char* MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND = "mesh_smoothin
 constexpr const char* ALIGNMENT_METHOD = "alignment_method";
 constexpr const char* ALIGNMENT_ENABLED = "alignment_enabled";
 constexpr const char* GROOM_OUTPUT_PREFIX = "groom_output_prefix";
+constexpr const char* REMESH = "remesh";
 }
 
 namespace Defaults {
@@ -72,6 +73,7 @@ const int mesh_smoothing_vtk_windowed_sinc_iterations = 10;
 const double mesh_smoothing_vtk_windowed_sinc_passband = 0.05;
 const std::string alignment_method = GroomParameters::GROOM_ALIGNMENT_ICP_C;
 const bool alignment_enabled = true;
+const bool remesh = true;
 }
 
 //---------------------------------------------------------------------------
@@ -470,5 +472,17 @@ std::vector<double> GroomParameters::get_spacing()
 void GroomParameters::set_spacing(std::vector<double> spacing)
 {
   this->params_.set(Keys::SPACING, spacing);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_remesh()
+{
+  return this->params_.get(Keys::REMESH, Defaults::remesh);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_remesh(bool remesh)
+{
+  this->params_.set(Keys::REMESH, remesh);
 }
 }
