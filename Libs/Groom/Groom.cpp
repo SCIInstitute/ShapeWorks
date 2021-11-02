@@ -322,6 +322,10 @@ bool Groom::run_mesh_pipeline(Mesh &mesh, GroomParameters params)
     this->increment_progress();
   }
 
+  if (params.get_remesh()) {
+    mesh.remesh();
+  }
+
   if (params.get_mesh_smooth()) {
     if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
       mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
