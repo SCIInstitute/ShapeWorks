@@ -35,6 +35,7 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "Project.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
@@ -1318,5 +1319,70 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("GetParticleSystem",
        &optimize_get_particle_system)
   ;
+
+
+  // Project 
+  py::class_<Project>(m, "Project")
+
+  .def(py::init<>())
+
+  .def("load",
+      &Project::load,
+      "Load from XLSX file",
+      "filename"_a)
+
+  .def("save",
+      &Project::save,
+      "Save to XLSX file",
+      "filename"_a)
+
+  .def("get_filename",
+      &Project::get_filename,
+      "Return the filename")
+
+  .def("set_filename",
+      &Project::set_filename,
+      "Set project filename",
+      "filename"_a)
+
+  .def("get_headers",
+      &Project::get_headers,
+      "Return the headers of the subject sheet")
+
+  .def("get_string_column",
+      &Project::get_string_column,
+      "Return a column by name",
+      "name"_a)
+
+  .def("get_number_of_subjects",
+      &Project::get_number_of_subjects,
+      "Return the number of subjects in the project")
+
+  .def("get_number_of_domains_per_subject",
+      &Project::get_number_of_domains_per_subject,
+      "Return the number of domains")
+
+  .def("get_domain_names",
+      &Project::get_domain_names,
+      "Return the domain names (e.g. femur, pelvis, etc)")
+
+  .def("get_subjects",
+      &Project::get_subjects,
+      "Return the list of Subjects")
+
+  .def("get_segmentations_present",
+      &Project::get_segmentations_present,
+      "Return if segmentations are present")
+
+  .def("get_groomed_present",
+      &Project::get_groomed_present,
+      "Return if groomed files are present")
+
+  .def("get_particles_present",
+      &Project::get_particles_present,
+      "Return if particle files are present")
+  // .def("")
+
+  ; // Project
 
 } // PYBIND11_MODULE(shapeworks_py)
