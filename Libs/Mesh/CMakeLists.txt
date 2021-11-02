@@ -50,6 +50,7 @@ target_link_libraries(
   TBB::tbb
   geometry-central
   Boost::filesystem
+  ${ACVD_LIBRARIES}
   )
 
 # Install
