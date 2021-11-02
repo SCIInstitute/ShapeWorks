@@ -1,7 +1,7 @@
 #include <Eigen/Eigen>
 
 #include <Libs/Optimize/Optimize.h>
-
+#include <Libs/Project/Project.h>
 Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 {
   shapeworks::MatrixContainer container = opt->GetParticleSystem();
@@ -35,7 +35,7 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
-#include "Project.h"
+// #include "Project.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
