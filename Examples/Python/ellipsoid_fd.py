@@ -131,7 +131,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2,
+        "verbosity": 0,
         "number_fixed_domains": len(file_list_dts),
         "fixed_domain_model_dir": shape_model_dir,
         "mean_shape_path": mean_shape_path,
