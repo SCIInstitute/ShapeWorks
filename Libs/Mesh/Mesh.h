@@ -49,6 +49,9 @@ public:
   /// applies cvd (centroidal voronoi diagram) decimation filter
   Mesh& cvdDecimate(double percentage = 0.5);
 
+  /// remesh using ACVD
+  Mesh& remesh();
+
   /// handle flipping normals
   Mesh& invertNormals();
 
@@ -220,6 +223,8 @@ public:
 
   /// Formats mesh into an IGL format
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+
 
 private:
   friend struct SharedCommandData;

@@ -62,6 +62,9 @@
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/heat_method_distance.h>
 
+// ACVD
+#include "vtkIsotropicDiscreteRemeshing.h"
+
 namespace shapeworks {
 
 Mesh::MeshType Mesh::read(const std::string &pathname)
@@ -268,6 +271,38 @@ Mesh &Mesh::cvdDecimate(double percentage)
 
   FEVTKExport vtkOut;
   this->mesh = vtkOut.ExportToVTK(*meshFE);
+
+  return *this;
+}
+
+Mesh& Mesh::remesh()
+{
+  vtkSurface *surf = vtkSurface::New();
+  vtkQIsotropicDiscreteRemeshing *remesh = vtkQIsotropicDiscreteRemeshing::New();
+  surf->CreateFromPolyData(this->mesh);
+  surf->GetCellData()->Initialize();
+  surf->GetPointData()->Initialize();
+  surf->DisplayMeshProperties();
+  int numberOfSamples = 500;
+  double gradation = 0;			// gamma parameter for simplification (if gamma=0: uniform)
+  // other appropriates values range between 0 and 2
+  int subsamplingThreshold = 10;	// subsampling threshold
+
+  remesh->SetForceManifold(true);
+  remesh->SetInput( surf );
+  remesh->SetFileLoadSaveOption( 0 );
+  remesh->SetConsoleOutput( 2 );
+  remesh->SetSubsamplingThreshold( subsamplingThreshold );
+  remesh->GetMetric()->SetGradation( gradation );
+  remesh->SetDisplay( false );
+  remesh->SetUnconstrainedInitialization( 1 );
+  remesh->SetNumberOfClusters( numberOfSamples );
+  remesh->Remesh();
+
+  this->mesh = remesh->GetOutput();
+
+  // must regenerate normals after smoothing
+  computeNormals();
 
   return *this;
 }
