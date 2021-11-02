@@ -41,7 +41,7 @@ NOTE:The list of `<inputs>` (surface mesh ) should be ordered consistently for e
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3
+        "verbosity" : 0
 
 }
 ```
