@@ -2,19 +2,19 @@
 
 #### ShapeWorks Back-end
 
-[Shireen: general, for APIs below, can we link to the documentation that details these apis? do we have such documentation?].  
+[Shireen: general, for APIs below, can we link to the documentation that details these apis? do we have such documentation? Archana: We can maybe link to this: http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html but it contains only command line versions of them].  
 
-* **New `Mesh` grooming tools:**    
-    - `curvature`: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field [Shireen: do you mean by field a scalar value for each mesh vertex (i.e. a scalar field over the mesh)? please edit to make it more clear.] 
+* **New `Mesh` grooming tools:**  
+    - `curvature`: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field which contains a scalar value for each mesh vertex.
     - `fixElement`: fixes element winding of a given triangular mesh as a quality control step for preparing meshes for shape modeling  
     - `geodesicDistance`: the computation of geodesic distances enable feature-based correspondences. Read this [paper] (https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf) for more details. Below are exemplar usage scenarios.    
         - `geodesicDistance (pointA, pointB)`: computes geodesic distance between 2 points on a triangular mesh   
         - `geodesicDistance (landmark)`: computes geodesic distance between all points on a triangular mesh to a given point (landmark)   
         - `geodesicDistance (curve)`: computes geodesic distance between all points on mesh and set of points (curve)   
-    - `computeMeanNormals`: computes the average surface normal for each mesh vertex in given set of triangular meshes with vertex-wise correspondences and returns a normal vector for each mesh vertex.  [Shireen: i edited the description, please review to correctness. Also, does it return a normal field on the mean mesh? which mesh is used for the output?]
+    - `computeMeanNormals`: computes the average surface normal for each mesh vertex in given set of triangular meshes with vertex-wise correspondences and returns a field which contains normal vector for each mesh vertex.  [Shireen: i edited the description, please review to correctness. Also, does it return a normal field on the mean mesh? which mesh is used for the output? Archana: it returns a field which contains normal vector for each mesh vertex.]
 
 * **New `Mesh` query/operator tools:**   
-    - `operator+=`: appends two meshes  [Shireen: does this mean that if saved to a vtk file, we will have two separate meshes in the same file? do we keep a separate vertex and face list for each mesh or a single vertex list and a single face list? do we keep a label on each mesh that is being added? for instance, after appending some meshes, can a user query which vertices and faces belong to a specific mesh? -- this can be useful in multi-domain modeling. If this functionality doesnot exist, that is ok, you can add issues to 6.3.] 
+    - `operator+=`: appends two meshes  [Shireen: does this mean that if saved to a vtk file, we will have two separate meshes in the same file? Yes do we keep a separate vertex and face list for each mesh or a single vertex list and a single face list? The output file has a single vertex and face list do we keep a label on each mesh that is being added? for instance, after appending some meshes, can a user query which vertices and faces belong to a specific mesh? Nope -- this can be useful in multi-domain modeling. If this functionality does not exist, that is ok, you can add issues to 6.3. Archana: I have responded after each question. I'll add the issue accordingly]
     - `closestPoint`: returns closest point on a face in the mesh to a given point in space    
     - `closestPointId`: returns closest point id in the mesh to a given point in space   
     - `points`: returns matrix with number of points with (x,y,z) coordinates of each point   
@@ -33,7 +33,7 @@
 
 * **New analysis features in Studio:** Shape evaluation charts for compactness, specificty and generealization have been added. See for [Metrics Panel] (http://sciinstitute.github.io/ShapeWorks/studio/getting-started-with-studio.html#metrics-panel) more details.
 
-* **Usability features in Studio:** New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See [New in ShapeWorks Studio 6.2] (http://sciinstitute.github.io/ShapeWorks/new/new-studio.html) for more details. [Shireen: shouldn't we link to the exact subsection in the page?]
+* **Usability features in Studio:** New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See [New in ShapeWorks Studio 6.2] (http://sciinstitute.github.io/ShapeWorks/new/new-studio.html#usability-features) for more details.
 
 #### User's Support
 
@@ -47,11 +47,11 @@
 
 #### ShapeWorks Back-end
 
-* **Safe construction of `Image` instances in Python:** Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using `pyvista` is now transparent and copy-free (note: copying is still supported if necessary). A [Jupyter Notebook] (https://github.com/SCIInstitute/ShapeWorks/blob/master/Examples/Python/notebooks/Demo%20-%20Array%20passing%20without%20copying.ipynb) was added to demonstrate `Image` initialization and passing. [Shireen: this notebook should be added to the documntation, and link here to the documentation rather than the master branch. also avoid spaces in the notebook file name and use hyphens instead.]
+* **Safe construction of `Image` instances in Python:** Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using `pyvista` is now transparent and copy-free (note: copying is still supported if necessary). A [Jupyter Notebook] (http://sciinstitute.github.io/ShapeWorks/notebooks/array-passing-without-copying.html) was added to demonstrate `Image` initialization and passing.
 
-* **Efficient data sharing between Python and C++:** Added efficient sharing of large data between Python and C++ (for both `Mesh` fields and `Image` data) that enables Python tools which access `Mesh` fields or `Image` data for visualization and analysis, or wish to create an Image or add fields from numpy to a `Mesh`, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. [Shireen: any documentation to link here?]
+* **Efficient data sharing between Python and C++:** Added efficient sharing of large data between Python and C++ (for both `Mesh` fields and `Image` data) that enables Python tools which access `Mesh` fields or `Image` data for visualization and analysis, or wish to create an Image or add fields from numpy to a `Mesh`, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. [Shireen: any documentation to link here? Archana: Nope]
 
-* **Improved Python APIs:** `Coordsys` of images in Python can now be set using 'setCoordsys`. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks `Mesh` in Python to vtk mesh by creating a `PolyData` instead of performing IO operations. [Shireen: any documentation to link here?]
+* **Improved Python APIs:** `Coordsys` of images in Python can now be set using `setCoordsys`. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks `Mesh` in Python to vtk mesh by creating a `PolyData` instead of performing IO operations. [Shireen: any documentation to link here? Archana: Nope. These are important but minor changes so no documentation]
 
 * **Improved testing:** More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. [Shireen: I think we need to add here automated use cases testing and vertification that Alan did (see his PR, add a summary and link to documentation)]
 
@@ -59,7 +59,7 @@
 
 #### User's Support
 
-* **Use cases:** Added `--mesh_mode` option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See [Use Case Documentation] (http://sciinstitute.github.io/ShapeWorks/use-cases/use-cases.html) for more details. [Shireen: is there a specific section in this page to link to?]
+* **Use cases:** Added `--mesh_mode` option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See [Use Case Documentation] (http://sciinstitute.github.io/ShapeWorks/use-cases/use-cases.html#use-cases-arguments) for more details. [Shireen: is there a specific section in this page to link to? Archana: --mesh_mode is a subsection of use-cases-arguments and I'm able to link only to use-cases-arguments]
 
 * **Improved use cases documentation:** Restructured use cases documentation [Shireen: add more details on what has been done, check with Jadie and Kritika to provide a summary and motivation.] See [Getting Started with Use Cases] (http://sciinstitute.github.io/ShapeWorks/use-cases/use-cases.html) for information on running use cases and [Examples] (http://sciinstitute.github.io/ShapeWorks/getting-started/examples.html) for an overview of released use cases. More explanation of interpreting modes of variation in [Shapes. What & From Where?] (http://sciinstitute.github.io/ShapeWorks/getting-started/shapes.html).
 
@@ -75,4 +75,6 @@
 
 #### ShapeWorks Front-end
 
-* **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) were fully compatibile with all tools. [Shireen: any documentation to link here?]
+* **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) were fully compatibile with all tools. 
+
+[Shireen: any documentation to link here? Archana: Nope. I checked with Alan.]
