@@ -450,6 +450,11 @@ public:
   /// Returns areas vector
   std::vector<double> GetAreas(){return m_areas;}
 
+  /// Returns predicted particle spacing for each domain
+  std::vector<double> GetSides(){return m_sides;}
+
+  void SetMaxNumParticles(std::vector<int> part) {m_max_num_particles = part;}
+
 protected:
 
   void GenerateData();
@@ -523,6 +528,9 @@ protected:
 
   std::shared_ptr<Mesh> initialize_ffcs(size_t dom);
 
+  /// Computes the expected spacing between particles given area and total particle count
+  double ComputeSideLength(size_t particleCount, double area);
+
 private:
   Sampler(const Sampler&); //purposely not implemented
   void operator=(const Sampler&); //purposely not implemented
@@ -543,6 +551,8 @@ private:
   std::vector<std::vector<FFCType>>  m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   std::vector<double> m_areas;
+  std::vector<int> m_max_num_particles;
+  std::vector<double> m_sides;
 
   unsigned int m_verbosity;
 };

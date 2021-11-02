@@ -734,7 +734,9 @@ void Optimize::Initialize()
   random = random.normalize();
 
   // Gets surface area
+  std::cout << "Getting areas" << std::endl;
   std::vector<double> areas = m_sampler->GetAreas();
+  std::vector<double> sides = m_sampler->GetSides();
   std::vector<double> epsilons;
 
   double epsilon = this->m_spacing / 5;
@@ -744,7 +746,7 @@ void Optimize::Initialize()
   for (int i = 0; i < n; i++) {
      int d = i % m_domains_per_shape;
      if(m_adaptive_splitting){
-         epsilons.push_back(ComputeSideLength(areas[i], m_number_of_particles[d]));
+         epsilons.push_back(sides[i]/5);
      }
      else{
          epsilons.push_back(epsilon);
@@ -765,7 +767,7 @@ void Optimize::Initialize()
       for (size_t i = 0; i < n; i++) {
         size_t d = i % m_domains_per_shape;
         if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-          std::cout << "epsilon " << i << " = " << epsilons[i] << " areas " << areas[i] << std::endl;
+          std::cout << "epsilon " << i << " = " << epsilons[i] << " areas " << areas[i] << " particle count " << m_number_of_particles[d] << std::endl;
           epsilon = epsilons[i];
           vnl_vector_fixed<double, 3> random_scaled = random * (epsilon*5);
           m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random_scaled, epsilon, i);
@@ -884,15 +886,6 @@ void Optimize::Initialize()
   if (m_verbosity_level > 0) {
     std::cout << "Finished initialization!!!" << std::endl;
   }
-}
-
-double Optimize::ComputeSideLength(size_t particleCount, double area){
-    if(particleCount < 20){
-        return 0.8773826753 * sqrt(particleCount*area);
-    }
-    else{
-        return sqrt(area/(20.6457288071+0.19245008973*(particleCount-20)));
-    }
 }
 
 //---------------------------------------------------------------------------

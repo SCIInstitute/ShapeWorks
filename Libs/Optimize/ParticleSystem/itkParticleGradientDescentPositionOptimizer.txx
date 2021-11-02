@@ -151,6 +151,7 @@ namespace itk
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed;
             VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+            //std::cout << maximumUpdateAllowed << std::endl;
 
             PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
