@@ -22,7 +22,7 @@ class Session;
 class ShapeWorksStudioApp;
 
 class GroomTool : public QWidget {
-  Q_OBJECT;
+Q_OBJECT;
 public:
 
   GroomTool(Preferences& prefs);

@@ -61,7 +61,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
   connect(ui_->isotropic_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
-  connect(ui_->reflect_checkbox, &QCheckBox::stateChanged, this, &GroomTool::reflect_checkbox_changed);
+  connect(ui_->reflect_checkbox, &QCheckBox::stateChanged, this,
+          &GroomTool::reflect_checkbox_changed);
 
   connect(ui_->reflect_column, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &GroomTool::reflect_column_changed);
@@ -71,6 +72,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   connect(ui_->reflect_axis, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &GroomTool::reflect_axis_changed);
+
+  connect(ui_->remesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -198,7 +201,7 @@ void GroomTool::update_reflect_choices()
     list << QString::fromStdString(rows[row]);
   }
   list.removeDuplicates();
-  for (auto item : list) {
+  for (auto item: list) {
     ui_->reflect_choice->addItem(item);
   }
 }
@@ -291,7 +294,8 @@ void GroomTool::set_ui_from_params(GroomParameters params)
               // load the image
               Image image(path);
               auto spacing = image.spacing();
-              auto min_spacing = std::min<double>(std::min<double>(spacing[0], spacing[1]), spacing[2]);
+              auto min_spacing = std::min<double>(std::min<double>(spacing[0], spacing[1]),
+                                                  spacing[2]);
               params.set_iso_spacing(min_spacing);
               params.set_spacing({spacing[0], spacing[1], spacing[2]});
             }
@@ -307,6 +311,8 @@ void GroomTool::set_ui_from_params(GroomParameters params)
     ui_->spacing_x->setText(QString::number(spacing[0]));
     ui_->spacing_y->setText(QString::number(spacing[1]));
     ui_->spacing_z->setText(QString::number(spacing[2]));
+
+    ui_->remesh_checkbox->setChecked(params.get_remesh());
   }
 }
 
@@ -350,10 +356,11 @@ void GroomTool::store_params()
   params.set_spacing({ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(),
                       ui_->spacing_z->text().toDouble()});
 
+  params.set_remesh(ui_->remesh_checkbox->isChecked());
   params.save_to_project();
 
   // global settings
-  for (auto domain_name : session_->get_project()->get_domain_names()) {
+  for (auto domain_name: session_->get_project()->get_domain_names()) {
     params = GroomParameters(session_->get_project(), domain_name);
     params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
     params.save_to_project();
@@ -436,7 +443,7 @@ void GroomTool::handle_thread_complete()
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
-  for (auto shape : session_->get_shapes()) {
+  for (auto shape: session_->get_shapes()) {
     shape->reset_groomed_mesh();
   }
 
@@ -499,7 +506,7 @@ void GroomTool::activate()
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();
-    for (auto&& item : domain_names) {
+    for (auto&& item: domain_names) {
       ui_->domain_box->addItem(QString::fromStdString(item));
     }
   }
@@ -595,6 +602,9 @@ void GroomTool::update_ui()
   ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
   ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
+
+  ui_->remesh_box->setVisible(ui_->remesh_checkbox->isChecked());
 }
+
 //---------------------------------------------------------------------------
 }
