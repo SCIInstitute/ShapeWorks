@@ -1,13 +1,13 @@
 # Femur with Cutting Planes
 
 ## What is the Use Case?
-The `femur_cut` use case demonstrates an alternative approach to the [femur use case](femur.md) by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the [femur use case](femur.md) with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the [femur use case](femur.md).
+The `femur_cut` use case demonstrates an alternative approach to the [femur use case](../mesh-based/femur.md) by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the [femur use case](../mesh-based/femur.md) with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the [femur use case](../mesh-based/femur.md).
 
 !!! important 
     Minimum of 32GB of RAM required to run the full use case.
 
 ## Grooming Steps
-The grooming steps are the same as the [femur use case](femur.md), except clipping is not performed. Please refer back to the [femur grooming steps](femur.md#grooming-steps) for a full explanation of grooming.
+The grooming steps are the same as the [femur use case](../mesh-based/femur.md), except clipping is not performed. Please refer back to the [femur grooming steps](../mesh-based/femur.md#grooming-steps) for a full explanation of grooming.
 
 Note because the clipping step is skipped, the groomed femurs vary in shaft length:
 ![Groomed femur_cut input](../../img/use-cases/femur_cut_groomed.png)
