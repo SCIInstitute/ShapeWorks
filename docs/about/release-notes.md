@@ -9,6 +9,7 @@
 #### ShapeWorks Back-end
 
 * **New `Mesh` grooming tools:**  
+The following grooming tools are supported from all three different interfaces - command line, C++ and Python:  
     - `curvature`: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field that contains a scalar value for each mesh vertex. See [mesh-curvature] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#mesh-curvature) to know about function parameters. 
     - `fixElement`: fixes element winding of a given triangular mesh as a quality control step for preparing meshes for shape modeling. See [fix-element] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#fix-element) to know about function parameters.  
     - `geodesicDistance`: the computation of geodesic distances enables feature-based correspondences. Read this [paper] (https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf) for more details. Below are exemplar usage scenarios.    
@@ -17,7 +18,8 @@
         - `geodesicDistance (curve)`: computes geodesic distances between all points on mesh and set of points (curve)   
     `computeMeanNormals`: computes the average surface normal for each mesh vertex in a given set of triangular meshes with vertex-wise correspondences and returns a field containing a normal vector for each mesh vertex. See [mean-normals] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#mean-normals) to know about function parameters. 
 
-* **New `Mesh` query/operator tools:**   
+* **New `Mesh` query/operator tools:** 
+The following tools are supported from all three different interfaces - command line, C++ and Python:    
     - `operator+=`: appends a mesh to an existing mesh. The result of this operator is a single mesh with a single vertex and face lists.
     - `closestPoint`: returns the closest point on a face in the mesh to a given point in space. See [closest-point] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#closest-point) to know about function parameters. 
     - `closestPointId`: returns closest point id in the mesh to a given point in space   

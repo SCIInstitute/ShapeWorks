@@ -34,8 +34,8 @@ def multifieldvalueTest():
   a = mesh.getMultiFieldValue("Normals", 1024)
   c = mesh.getMultiFieldValue("Normals", 768)
 
-  return (np.allclose(a, np.array([ 0.21653531, 0.34913558, -0.91171086 ])) and
-          np.allclose(c, np.array([ 0., 0., -1. ])))
+  return (np.allclose(a, np.array([ 0.21653531,  0.34913558, -0.91171086])) and
+          np.allclose(c, np.array([ 0.,  0., -1. ])))
 
 success &= utils.test(multifieldvalueTest)
 

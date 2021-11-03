@@ -798,24 +798,13 @@ TEST(MeshTests, findReferenceMeshTest)
   ASSERT_EQ(ref, 2);
 }
 
-TEST(MeshTests, appendTest1)
+TEST(MeshTests, addMesh)
 {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
   mesh1 += mesh2;
-
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
-}
 
-TEST(MeshTests, addTest2)
-{
-  Mesh mesh1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
-  Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
-  mesh1 += mesh2;
-
-  Mesh baseline(std::string(TEST_DATA_DIR) + "/different_add.ply");
-
-  ASSERT_TRUE(mesh1 == baseline);
 }
