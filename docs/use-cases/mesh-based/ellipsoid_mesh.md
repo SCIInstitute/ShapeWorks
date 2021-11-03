@@ -1,7 +1,7 @@
 # Ellipsoid Mesh: Basic Example
 
 ## What is the Use Case? 
-This use case uses the same dataset as the `ellipsoid` use case, but optimization is done on meshes rather than distance transforms. The dataset comprises of axis-aligned ellipsoids with varying radii along the x-axis. The `ellipsoid_mesh` use case represents the standard use version of a shape modeling workflow from meshes using ShapeWorks. 
+The `ellipsoid_mesh` use case uses the same dataset as the `ellipsoid` use case, but optimization is done on meshes rather than distance transforms. The dataset comprises of axis-aligned ellipsoids with varying radii along the x-axis. The `ellipsoid_mesh` use case represents the standard use version of a shape modeling workflow from meshes using ShapeWorks. 
 
 ## Grooming Steps
 This use case starts with pre-aligned meshes and does not require grooming.  
@@ -17,7 +17,8 @@ This use case starts with pre-aligned meshes and does not require grooming.
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 
-```
+```python
+{        
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -35,7 +36,8 @@ Below are the default optimization parameters for this use case.
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
+}
 ```
 
 ## Analyzing Shape Model
