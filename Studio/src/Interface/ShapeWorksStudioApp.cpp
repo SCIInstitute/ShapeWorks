@@ -448,7 +448,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
       // On first load, we can check if there was an active scalar on loaded meshes
       this->set_feature_map(this->session_->get_default_feature_map());
     }
-  } catch (std::runtime_error e) {
+  } catch (std::runtime_error& e) {
     this->handle_error(e.what());
   }
   this->handle_message("Files loaded");
@@ -1428,11 +1428,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
       return;
     }
   } catch (std::exception &e) {
-    this->handle_error(e.what());
-    this->handle_error("Project failed to load");
-    this->handle_progress(100);
-    return;
-  } catch (std::runtime_error &e) {
     this->handle_error(e.what());
     this->handle_error("Project failed to load");
     this->handle_progress(100);

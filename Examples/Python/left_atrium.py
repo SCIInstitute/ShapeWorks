@@ -363,7 +363,7 @@ def Run_Pipeline(args):
         if args.groom_images:
             print('\nSaving groomed images\n')
             sw.utils.save_images(groom_dir + 'images', shape_img_list,
-                                 shape_img_names, extension='nrrd', compressed=False, verbose=True)
+                                 shape_img_names, extension='nrrd', compressed=True, verbose=True)
         """
         Grooming Step 9: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
@@ -387,7 +387,7 @@ def Run_Pipeline(args):
                 iso_value).gaussianBlur(sigma)
         # Save distance transforms
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_seg_names, extension='nrrd', compressed=False, verbose=True)
+                                        shape_seg_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """

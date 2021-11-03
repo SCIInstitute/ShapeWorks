@@ -67,7 +67,7 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 150,
+        "iterations_per_split": 300,
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
