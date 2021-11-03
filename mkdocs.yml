@@ -91,6 +91,7 @@ nav:
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
    - API Reference:
+      - Modules: api/index_modules.md
       - Classes: api/index_classes.md
       - Namespaces: api/index_namespaces.md
       - Files: api/index_files.md

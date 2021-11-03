@@ -15,6 +15,13 @@ namespace shapeworks {
 
 class Mesh;
 
+/**
+ * \class Image
+ * \ingroup Group-Image
+ *
+ * This class represents a 3D image volume and operations that can be performed on images.
+ *
+ */
 class Image
 {
 public:
