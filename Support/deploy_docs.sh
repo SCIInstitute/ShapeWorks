@@ -29,6 +29,15 @@ else
     exit 1
 fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-osx-amd64-v1.4.0.zip"
+    unzip doxybook2-osx-amd64-v1.4.0.zip
+    PATH=$PATH:doxybook2-osx-amd64-v1.4.0/bin
+else
+    wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-linux-amd64-v1.4.0.zip"
+    unzip doxybook2-linux-amd64-v1.4.0.zip
+    PATH=$PATH:doxybook2-linux-amd64-v1.4.0/bin
+fi
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -46,6 +55,7 @@ git checkout --track origin/gh-pages
 git pull --rebase
 git checkout master
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
 
       

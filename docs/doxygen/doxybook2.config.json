@@ -1,0 +1,7 @@
+{
+  "baseUrl": "/",
+  "indexInFolders": false,
+  "linkSuffix": "/",
+  "mainPageInRoot": true,
+  "mainPageName": "index"
+}
