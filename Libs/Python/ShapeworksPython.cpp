@@ -36,6 +36,7 @@ using namespace pybind11::literals;
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "Project.h"
+#include "Subject.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
@@ -1381,8 +1382,134 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("get_particles_present",
       &Project::get_particles_present,
       "Return if particle files are present")
-  
 
+  .def("get_images_present",
+      &Project::get_images_present)
+
+  .def("get_feature_names",
+      &Project::get_feature_names)
+
+  .def("get_group_names",
+      &Project::get_group_names)
+
+  .def("get_group_values",
+      &Project::get_group_names,
+      "group_names"_a)
+
+  .def("get_parameters",
+      &Project::get_parameters,
+      "name"_a,"domain_name"_a="")
+
+  .def("set_parameters",
+      &Project::set_parameters,
+      "name"_a,"params"_a,"domain_name"_a="")
+
+  .def("clear_parameters",
+      &Project::clear_parameters,
+      "name"_a)
+
+  .def("store_subjects",
+      &Project::store_subjects)
+
+  .def("get_supported_version",
+      &Project::get_supported_version)
+
+  .def("get_version",
+      &Project::get_version)
   ; // Project
+
+  // Subject 
+  py::class_<Project>(m, "Subject")
+
+  .def(py::init<>())
+
+  .def("set_segmentation_filenames",
+      &Subject::set_segmentation_filenames,
+      "filenames"_a)
+
+  .def("get_segmentations_filenames",
+      &Subject::get_segmentation_filenames)
+
+  .def("get_domain_types",
+      &Subject::get_domain_types)
+
+  .def("set_groomed_filenames",
+      &Subject::set_groomed_filenames,
+      "filenames"_a)
+
+  .def("get_groomed_filenames",
+      &Subject::get_groomed_filenames)
+
+  .def("set_local_particle_filenames",
+      &Subject::set_local_particle_filenames,
+      "filenames"_a)
+
+  .def("get_local_particle_filenames",
+      &Subject::get_local_particle_filenames)
+
+  .def("set_world_particle_filenames",
+      &Subject::set_world_particle_filenames,
+      "filenames"_a)
+
+  .def("get_world_particle_filenames",
+     &Subject::get_world_particle_filenames)
+
+  .def("set_landmarks_filenames",
+      &Subject::set_landmarks_filenames,
+      "filenames"_a)
+
+  .def("get_landmarks_filenames",
+      &Subject::get_landmarks_filenames)
+
+  .def("set_number_of_domains",
+      &Subject::set_number_of_domains,
+      "number_of_domains"_a)
+
+  .def("get_number_of_domains",
+      &Subject::get_number_of_domains)
+
+  .def("set_image_filenames",
+      &Subject::set_image_filenames,
+      "filenames"_a)
+
+  .def("get_image_filenames",
+      &Subject::get_image_filenames)
+
+  .def("get_feature_filenames",
+      &Subject::get_feature_filenames)
+
+  .def("set_feature_filenames",
+      &Subject::set_feature_filenames,
+      "filenames"_a)
+
+  .def("get_groomed_transforms",
+      &Subject::get_groomed_transforms)
+
+  .def("set_groomed_transforms",
+      &Subject::set_groomed_transforms,
+      "transforms"_a)
+
+  .def("get_procrustes_transforms",
+      &Subject::get_procrustes_transforms)
+
+  .def("set_procrustes_transforms",
+      &Subject::set_procrustes_transforms,
+      "transforms"_a)
+
+  .def("get_group_values",
+      &Subject::get_group_names,
+      "group_name"_a)
+
+  .def("set_group_values",
+      &Subject:set_group_names,
+      "extra_values"_a)
+
+  .def("get_display_name",
+      &Subject::get_display_name)
+
+  .def("set_display_name",
+      &Subject::set_display_name,
+      "display_name"_a)
+
 
 } // PYBIND11_MODULE(shapeworks_py)
