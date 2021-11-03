@@ -18,7 +18,7 @@ The following grooming tools are supported from all three different interfaces -
         - `geodesicDistance (curve)`: computes geodesic distances between all points on mesh and set of points (curve)   
     `computeMeanNormals`: computes the average surface normal for each mesh vertex in a given set of triangular meshes with vertex-wise correspondences and returns a field containing a normal vector for each mesh vertex. See [mean-normals] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#mean-normals) to know about function parameters. 
 
-* **New `Mesh` query/operator tools:** 
+* **New `Mesh` query/operator tools:**  
 The following tools are supported from all three different interfaces - command line, C++ and Python:    
     - `operator+=`: appends a mesh to an existing mesh. The result of this operator is a single mesh with a single vertex and face lists.
     - `closestPoint`: returns the closest point on a face in the mesh to a given point in space. See [closest-point] (https://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html#closest-point) to know about function parameters. 
