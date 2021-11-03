@@ -27,8 +27,6 @@
 
 #### ShapeWorks Front-end
 
-* **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio] (http://sciinstitute.github.io/ShapeWorks/studio/deepssm-in-studio.html) for more details.
-
 * **Multiple domains in Studio:** Support for multiple alignment strategies is now present in Studio. It allows analysis with and without articulation with a choice of reference domain, or global alignment. See [Multiple Domain Alignments] (http://sciinstitute.github.io/ShapeWorks/studio/multiple-domains.html#multiple-domain-alignments)
 
 * **New analysis features in Studio:** Shape evaluation charts for compactness, specificty and generealization have been added. See for [Metrics Panel] (http://sciinstitute.github.io/ShapeWorks/studio/getting-started-with-studio.html#metrics-panel) more details.
@@ -43,6 +41,10 @@
 
 * **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
 
+#### Deep Learning
+
+* **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio] (http://sciinstitute.github.io/ShapeWorks/studio/deepssm-in-studio.html) for more details.
+
 ### Improvements
 
 #### ShapeWorks Back-end
@@ -55,7 +57,6 @@
 
 * **Improved testing:** More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. [Shireen: I think we need to add here automated use cases testing and vertification that Alan did (see his PR, add a summary and link to documentation)]
 
-#### ShapeWorks Front-end
 
 #### User's Support
 
