@@ -27,8 +27,6 @@
 
 #### ShapeWorks Front-end
 
-* **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio] (http://sciinstitute.github.io/ShapeWorks/studio/deepssm-in-studio.html) for more details.
-
 * **Multiple domains in Studio:** Support for multiple alignment strategies is now present in Studio. It allows analysis with and without articulation with a choice of reference domain, or global alignment. See [Multiple Domain Alignments] (http://sciinstitute.github.io/ShapeWorks/studio/multiple-domains.html#multiple-domain-alignments)
 
 * **New analysis features in Studio:** Shape evaluation charts for compactness, specificty and generealization have been added. See for [Metrics Panel] (http://sciinstitute.github.io/ShapeWorks/studio/getting-started-with-studio.html#metrics-panel) more details.
@@ -42,6 +40,10 @@
 * **Analyzing the group differences:** A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. See [Femur: Group Difference Statistics in Python] (http://sciinstitute.github.io/ShapeWorks/use-cases/stats-based/femur-pvalues.html) for more details.   
 
 * **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
+
+#### Deep Learning
+
+* **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio] (http://sciinstitute.github.io/ShapeWorks/studio/deepssm-in-studio.html) for more details.
 
 ### Improvements
 
@@ -57,7 +59,6 @@
 
 [Shireen: I think we need to add here automated use cases testing and vertification that Alan did (see his PR, add a summary and link to documentation) Archana: I have added a summary. There is no documentation.]
 
-#### ShapeWorks Front-end
 
 #### User's Support
 
