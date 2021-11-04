@@ -236,7 +236,7 @@ build_xlnt()
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
 
   # fix rpath
-  sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' CMakeLists.txt
+  sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' source/CMakeLists.txt
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
