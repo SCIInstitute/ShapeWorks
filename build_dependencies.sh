@@ -236,7 +236,7 @@ build_xlnt()
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
 
   # fix rpath
-  sed -i 's/INSTALL_NAME_DIR "${XLNT_LIB_DEST_DIR}"//' source/CMakeLists.txt
+  sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' CMakeLists.txt
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -266,6 +266,7 @@ build_jkqtplotter()
   # fix compile on windows
   sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
 
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
