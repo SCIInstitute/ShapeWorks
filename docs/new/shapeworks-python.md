@@ -27,30 +27,30 @@ A growing list of fully-documented and self-contained notebooks demonstrate vari
 To actually try the following notebooks out, open a terminal, `conda activate shapeworks`, change to the `Examples\Python\notebooks\tutorials` directory and run `jupyter notebook` to start the notebook server. 
 
 
-### [Getting Started with Juypter Notebooks](../notebooks/getting-started-with-notebooks.html)  
+### [Getting Started with Juypter Notebooks](../notebooks/getting-started-with-notebooks.ipynb)  
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/jupyter-run-cell.mp4" autoplay muted loop controls style="width:100%"></p>
  
-### [Getting Started with Segmentations](../notebooks/getting-started-with-segmentations.html)   
+### [Getting Started with Segmentations](../notebooks/getting-started-with-segmentations.ipynb)   
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-vol-slices-label.mp4" autoplay muted loop controls style="width:100%"></p>
 
-### [Getting Started with Meshes](../notebooks/getting-started-with-meshes.html) 
+### [Getting Started with Meshes](../notebooks/getting-started-with-meshes.ipynb) 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw-2surfs-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
 
-### [Getting Started with Segmentations](../notebooks/getting-started-with-segmentations.html)   
+### [Getting Started with Segmentations](../notebooks/getting-started-with-segmentations.ipynb)   
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
 
-### [Getting Started with Exploring Segmentations](../notebooks/getting-started-with-exploring-segmentations.html)   
+### [Getting Started with Exploring Segmentations](../notebooks/getting-started-with-exploring-segmentations.ipynb)   
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-explore-iso-align-pv.mp4" autoplay muted loop controls style="width:100%"></p>
 
-### [Getting Started with Shape Cohort Generation](../notebooks/getting-started-with-shape-cohort-generation.html)   
+### [Getting Started with Shape Cohort Generation](../notebooks/getting-started-with-shape-cohort-generation.ipynb)   
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
 
-### [Getting Started with Data Augmentation](../notebooks/getting-started-with-data-augmentation.html)   
+### [Getting Started with Data Augmentation](../notebooks/getting-started-with-data-augmentation.ipynb)   
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
