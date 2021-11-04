@@ -422,7 +422,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 1,
         "procrustes_scaling": 1,
         "save_init_splits": 0,
-        "verbosity": 3
+        "verbosity": 0
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:

@@ -142,7 +142,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2,
+        "verbosity": 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,
         "cutting_planes": cutting_planes
