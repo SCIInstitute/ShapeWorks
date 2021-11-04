@@ -37,7 +37,7 @@ Below are the default optimization parameters when running this use case.
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1,
+        "verbosity": 0,
         "use_shape_statistics_after":256
 }
 ```

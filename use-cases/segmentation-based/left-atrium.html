@@ -354,24 +354,26 @@
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionory in Python</a> for more details. 
 Below are the default optimization parameters when running this use case.
-<div class="highlight"><pre><span></span><code>    &quot;number_of_particles&quot; : 512, 
-    &quot;use_normals&quot;: 0,
-    &quot;normal_weight&quot;: 10.0,
-    &quot;checkpointing_interval&quot; : 200,
-    &quot;keep_checkpoints&quot; : 0,
-    &quot;iterations_per_split&quot; : 4000,
-    &quot;optimization_iterations&quot; : 4000,
-    &quot;starting_regularization&quot; : 1000,
-    &quot;ending_regularization&quot; : 10,
-    &quot;recompute_regularization_interval&quot; : 2,
-    &quot;domains_per_shape&quot; : 1,
-    &quot;relative_weighting&quot; : 10,
-    &quot;initial_relative_weighting&quot; : 0.1,
-    &quot;procrustes_interval&quot; : 1,
-    &quot;procrustes_scaling&quot; : 1,
-    &quot;save_init_splits&quot; : 0,
-    &quot;verbosity&quot; : 3,
-    &quot;use_shape_statistics_after&quot;: 128
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">512</span><span class="p">,</span> 
+    <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+    <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+    <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;use_shape_statistics_after&quot;</span><span class="p">:</span> <span class="mi">128</span>
+<span class="p">}</span>
 </code></pre></div></p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>Once the python code runs the optimization, the files are saved in the <code>Output</code> folder after which ShapeWorks Studio is launched from the python code to analyze the model. </p>

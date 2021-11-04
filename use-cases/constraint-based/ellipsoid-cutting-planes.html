@@ -332,27 +332,27 @@
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. 
 Below are the default optimization parameters for this use case.</p>
-<div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot;: 32,
-        &quot;use_normals&quot;: 1,
-        &quot;normal_weight&quot;: 15.0,
-        &quot;checkpointing_interval&quot;: 200,
-        &quot;keep_checkpoints&quot;: 0,
-        &quot;iterations_per_split&quot;: 3000,
-        &quot;optimization_iterations&quot;: 3000,
-        &quot;starting_regularization&quot;: 100,
-        &quot;ending_regularization&quot;: 10,
-        &quot;recompute_regularization_interval&quot;: 2,
-        &quot;domains_per_shape&quot;: 1,
-        &quot;domain_type&quot;: &#39;image&#39;,
-        &quot;relative_weighting&quot;: 15,
-        &quot;initial_relative_weighting&quot;: 0.05,
-        &quot;procrustes_interval&quot;: 0,
-        &quot;procrustes_scaling&quot;: 0,
-        &quot;save_init_splits&quot;: 0,
-        &quot;verbosity&quot;: 2,
-        &quot;adaptivity_mode&quot;: 0,
-        &quot;cutting_plane_counts&quot;: cutting_plane_counts,
-        &quot;cutting_planes&quot;: cutting_planes
+<div class="highlight"><pre><span></span><code>        <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span>
+        <span class="s2">&quot;checkpointing_interval&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s2">&quot;keep_checkpoints&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">3000</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">3000</span><span class="p">,</span>
+        <span class="s2">&quot;starting_regularization&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;ending_regularization&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;recompute_regularization_interval&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;domains_per_shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;domain_type&quot;</span><span class="p">:</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;relative_weighting&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s2">&quot;initial_relative_weighting&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_interval&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_scaling&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;save_init_splits&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;adaptivity_mode&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;cutting_plane_counts&quot;</span><span class="p">:</span> <span class="n">cutting_plane_counts</span><span class="p">,</span>
+        <span class="s2">&quot;cutting_planes&quot;</span><span class="p">:</span> <span class="n">cutting_planes</span>
 </code></pre></div>
 <p>Here <code>cutting_plane_counts</code> is two for every ellipsoid and there are 15 ellipsoids so it is a list of twos of length 15.
 The <code>cutting_planes</code> parameter is a list of the two cutting plane points of length 15.</p>

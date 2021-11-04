@@ -2,7 +2,7 @@
 
 ## What is the Use Case?
 
-This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints, to capture inter-domains correlations and interactions.
+The `ellipsoid_multiple_domain` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints, to capture inter-domains correlations and interactions.
 There are three datasets available for this use case:
 
 * ellipsoid_joint_rotation - two stacked ellipsoids with the same radii, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
@@ -58,7 +58,7 @@ Below are the default optimization parameters for this use case.
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3
+        "verbosity" : 0
 
       }
 ```
