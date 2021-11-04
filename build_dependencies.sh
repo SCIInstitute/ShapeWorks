@@ -235,6 +235,9 @@ build_xlnt()
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
 
+  # fix rpath
+  sed -i 's/INSTALL_NAME_DIR "${XLNT_LIB_DEST_DIR}"//' source/CMakeLists.txt
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -243,7 +246,7 @@ build_xlnt()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -304,7 +307,7 @@ build_openvdb()
       make -j${NUM_PROCS} install || exit 1
   fi
 
-  OpenVDB_DIR=${INSTALL_DIR}/lib64/cmake/OpenVDB/
+  OpenVDB_DIR=${INSTALL_DIR}/lib/cmake/OpenVDB/
 }
 
 build_igl()
