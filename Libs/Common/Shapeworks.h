@@ -8,6 +8,7 @@
 #include <itkIndex.h>
 #include <itkAffineTransform.h>
 #include <itkIdentityTransform.h>
+#include <itkThinPlateSplineKernelTransform.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
@@ -36,14 +37,14 @@ using Field         = Array;
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
 
-/// Type of transform used for Images or Meshes
-typedef enum XFormType { CenterOfMass, IterativeClosestPoint } XFormType;
-
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
+
+/// thin plate spline (TSP) transform
+using TPSTransform = itk::ThinPlateSplineKernelTransform<double, 3>;
 
 /// Make a plane
 Plane makePlane(const Point &p, const Vector3 &n);

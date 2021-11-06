@@ -76,11 +76,12 @@ PYBIND11_MODULE(shapeworks_py, m)
         "convert to axis",
         "str"_a);
 
-  // TransformType
-  py::enum_<XFormType>(m, "TransformType")
-  .value("CenterOfMass", XFormType::CenterOfMass)
-  .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
-  .export_values();
+  // Transform
+  py::class_<TPSTransform::Pointer>(m, "WarpTransform")
+    .def("__repr__",
+         [](const TPSTransform::Pointer &transform) {
+           return "itkThinPlateSplineKernelTransform";
+         });
 
   // Image::InterpolationType (even though this is part of Image, it could be
   // used elsewhere so we keep it global in the module)
@@ -267,11 +268,20 @@ PYBIND11_MODULE(shapeworks_py, m)
        "angle"_a, "axis"_a)
 
   .def("applyTransform",
-       [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat, Image::InterpolationType interp) {
+       [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
+          Image::InterpolationType interp) -> decltype(auto){
          auto itk_xform = eigen44ToItkTransform(eigen_mat);
          return image.applyTransform(itk_xform, interp);
        },
        "applies the given transformation to the image by using the specified resampling filter (Linear or NearestNeighbor)",
+       "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("applyTransform",
+       [](Image &image, TPSTransform::Pointer transform,
+          Image::InterpolationType interp) -> decltype(auto) {
+         return image.applyTransform(transform, interp);
+       },
+       "applies the given warp transformation to the image using the specified resampling filter (Linear or NearestNeighbor)",
        "transform"_a, "interp"_a=Image::InterpolationType::Linear)
 
   .def("applyTransform",
@@ -558,19 +568,18 @@ PYBIND11_MODULE(shapeworks_py, m)
        "returns raw array of image data, directly sharing data by default, copying if specified.\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; use for_viewing argument to get array in column-major ('F') order ('sw2vtkImage' already does this).",
        "copy"_a=false, "for_viewing"_a=false)
 
-  .def("createTransform",
-       [](Image &image, XFormType type) {
-         return itkTransformToEigen(image.createTransform(type));
+  .def("createCenterOfMassTransform",
+       [](Image &image) -> decltype(auto) {
+         return itkTransformToEigen(image.createCenterOfMassTransform());
        },
-       "creates a transform based on transform type (CenterOfMass or IterativeClosestPoint)",
-       "type"_a=XFormType::CenterOfMass)
+       "creates a transform that translates center of mass to center of image")
 
-  .def("createTransform",
-       [](Image &image, const Image& other, XFormType type, float isovalue, unsigned iterations) {
-         return itkTransformToEigen(image.createTransform(other, type, isovalue, iterations));
+  .def("createRigidRegistrationTransform",
+       [](Image &image, const Image& other, float isovalue, unsigned iterations) {
+         return itkTransformToEigen(image.createRigidRegistrationTransform(other, isovalue, iterations));
        },
-       "creates a transform based on transform type (CenterOfMass or IterativeClosestPoint) using specified isoValue and number of iterations",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+       "creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations",
+       "target"_a, "isoValue"_a=0.0, "iterations"_a=20)
 
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
@@ -815,15 +824,8 @@ PYBIND11_MODULE(shapeworks_py, m)
               "images"_a, "isoValue"_a=1.0)
 
   .def_static("createWarpTransform",
-              [](const std::string &source_landmarks,
-                 const std::string &target_landmarks,
-                 const int stride) -> decltype(auto) {
-                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
-                                                                 target_landmarks,
-                                                                 stride);
-                return itkTransformToEigen(xform_ptr);
-              },
-              "computes a warp transform from the source to the target landmarks",
+              &ImageUtils::createWarpTransform,
+              "computes a warp transform from the source to the target landmarks (in the given files) using every stride points",
               "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
@@ -913,9 +915,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("createTransform",
        &Mesh::createTransform,
-       "creates a transform based on transform type (currently only IterativeClosestPoint), using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint,
-       "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+       "creates a transform using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations",
+       "target"_a, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
 
   .def("applyTransform",
        &Mesh::applyTransform,

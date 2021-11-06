@@ -6,7 +6,7 @@ success = True
 
 def centerofmassTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  xform = img.createTransform()
+  xform = img.createCenterOfMassTransform()
   img.applyTransform(xform)
 
   compareImg = Image(os.environ["DATA"] + "/centerofmass1.nrrd")
@@ -17,7 +17,7 @@ success &= utils.test(centerofmassTest1)
 
 def centerofmassTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
-  xform = img.createTransform()
+  xform = img.createCenterOfMassTransform()
   img.applyTransform(xform)
 
   compareImg = Image(os.environ["DATA"] + "/centerofmass2.nrrd")
@@ -29,8 +29,8 @@ success &= utils.test(centerofmassTest2)
 def centerofmassTest3():
   img1 = Image("/Users/cam/data/sw/femur1_seg.nrrd")
   img2 = Image("/Users/cam/data/sw/femur2_seg.nrrd")
-  xform1 = img1.createTransform(CenterOfMass)
-  xform2 = img2.createTransform(CenterOfMass)
+  xform1 = img1.createCenterOfMassTransform()
+  xform2 = img2.createCenterOfMassTransform()
   img1.applyTransform(xform1, Linear)
   img2.applyTransform(xform2, Linear)
 
@@ -44,8 +44,8 @@ success &= utils.test(centerofmassTest3)
 def centerofmassTest4():
   img1 = Image("/Users/cam/data/sw/femur1_seg.nrrd")
   img2 = Image("/Users/cam/data/sw/femur2_seg.nrrd")
-  xform1 = img1.createTransform(NearestNeighbor)
-  xform2 = img2.createTransform(NearestNeighbor)
+  xform1 = img1.createCenterOfMassTransform()
+  xform2 = img2.createCenterOfMassTransform()
   img1.applyTransform(xform1, Linear)
   img2.applyTransform(xform2, Linear)
 

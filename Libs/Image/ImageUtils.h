@@ -17,11 +17,12 @@ public:
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Image>>& images,
                                     Image::PixelType isoValue = 1.0);
 
-  /// computes a warp transform from the source to the target landmarks using every stride points
-  static TransformPtr createWarpTransform(const std::string& source_landmarks,
-                                          const std::string& target_landmarks,
-                                          const int stride = 1);
+  /// computes a warp transform from the source to the target landmarks (in the given files) using every stride points
+  static TPSTransform::Pointer createWarpTransform(const std::string& source_landmarks_file,
+                                                   const std::string& target_landmarks_file,
+                                                   const int stride = 1);
 
 };
 
 } // shapeworks
+

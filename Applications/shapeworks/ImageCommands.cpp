@@ -357,7 +357,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerOfMass)
   {
-    sharedData.image.applyTransform(sharedData.image.createTransform(XFormType::CenterOfMass));
+    sharedData.image.applyTransform(sharedData.image.createCenterOfMassTransform());
     return true;
   }
   else
@@ -798,7 +798,6 @@ void ICPRigid::buildParser()
   parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
   parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Isovalue of distance maps used to create ICPtransform [default: %default].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: %default].");
-  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Use center of mass rather than ICP [default: false].");
 
   Command::buildParser();
 }
@@ -822,11 +821,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   }
   else
   {
-    auto type = static_cast<bool>(options.get("centerofmass")) ?
-                                  XFormType::CenterOfMass : XFormType::IterativeClosestPoint;
-
     Image target(targetDT);
-    auto xform = sharedData.image.createTransform(target, type, isoValue, iterations);
+    auto xform = sharedData.image.createRigidRegistrationTransform(target, isoValue, iterations);
     TransformPtr transform(xform);
     sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;

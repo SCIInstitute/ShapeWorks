@@ -570,43 +570,6 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-TransformPtr Image::createTransform(XFormType type)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      transform = createRigidRegistrationTransform(*this, 0.0, 20);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
-TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform(); // fixme: remove this
-      break;
-    case IterativeClosestPoint:
-      if (!target.image) { throw std::invalid_argument("Invalid target image"); }
-      transform = createRigidRegistrationTransform(target, isoValue, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
   return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
@@ -1002,6 +965,10 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
+  if (!target_dt.image) {
+    throw std::invalid_argument("Invalid target. Expected distance transform image");
+  }
+
   Mesh sourceContour = toMesh(isoValue);
   Mesh targetContour = target_dt.toMesh(isoValue);
 

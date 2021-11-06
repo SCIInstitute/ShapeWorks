@@ -372,7 +372,6 @@ void TransformMesh::buildParser()
   std::list<std::string> aligns{"rigid", "similarity", "affine"};
   parser.add_option("--type").action("store").type("choice").choices(aligns.begin(), aligns.end()).set_default("similarity").help("Alignment type to use [default: %default].");
   std::list<std::string> methods{"icp"};
-  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("icp").help("Method used to compute transform [default: %default].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run [default: %default].");
 
   Command::buildParser();
@@ -401,13 +400,6 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  std::string methodopt(options.get("method"));
-  XFormType method{IterativeClosestPoint};
-  if (methodopt != "icp") {
-    std::cerr << "no such transform type: " << methodopt << std::endl;
-    return false;
-  }
-
   if (targetMesh == "")
   {
     std::cerr << "Must specify a target mesh\n";
@@ -416,7 +408,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
   else
   {
     Mesh target(targetMesh);
-    MeshTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
+    MeshTransform transform(sharedData.mesh->createTransform(target, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }
