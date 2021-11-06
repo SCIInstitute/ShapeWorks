@@ -154,14 +154,10 @@ $ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksComma
 
 To generate C++ Doxygen API output into mkdocs, configure ShapeWorks with BUILD_DOCUMENTATION=ON.
 
-Then download a binary build of doxybook2 for your platform:
-
-[https://github.com/matusnovak/doxybook2](https://github.com/matusnovak/doxybook2)
-
-And run (from the root source directory):
+After building, run (from the root source directory):
 
 ```shell
-$ doxybook2 -i ${BUILD_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
+$ ./Support/build_docs.sh ${BUILD_DIR}/Documentation/Doxygen/xml
 ```
 
 
