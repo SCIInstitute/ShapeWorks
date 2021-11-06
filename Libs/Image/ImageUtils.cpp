@@ -48,9 +48,9 @@ PhysicalRegion ImageUtils::boundingBox(const std::vector<std::reference_wrapper<
   return bbox;
 }
 
-TPSTransform::Pointer ImageUtils::createWarpTransform(const std::string& source_landmarks_file,
-                                                      const std::string& target_landmarks_file,
-                                                      const int stride)
+ImageUtils::TPSTransform::Pointer ImageUtils::createWarpTransform(const std::string& source_landmarks_file,
+                                                                  const std::string& target_landmarks_file,
+                                                                  const int stride)
 { 
   typedef TPSTransform::PointSetType PointSet;
 

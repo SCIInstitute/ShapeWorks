@@ -8,7 +8,6 @@
 #include <itkIndex.h>
 #include <itkAffineTransform.h>
 #include <itkIdentityTransform.h>
-#include <itkThinPlateSplineKernelTransform.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
@@ -42,9 +41,6 @@ using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
-
-/// thin plate spline (TSP) transform
-using TPSTransform = itk::ThinPlateSplineKernelTransform<double, 3>;
 
 /// Make a plane
 Plane makePlane(const Point &p, const Vector3 &n);

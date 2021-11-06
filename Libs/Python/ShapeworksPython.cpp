@@ -77,9 +77,9 @@ PYBIND11_MODULE(shapeworks_py, m)
         "str"_a);
 
   // Transform
-  py::class_<TPSTransform::Pointer>(m, "WarpTransform")
+  py::class_<ImageUtils::TPSTransform::Pointer>(m, "WarpTransform")
     .def("__repr__",
-         [](const TPSTransform::Pointer &transform) {
+         [](const ImageUtils::TPSTransform::Pointer &transform) {
            return "itkThinPlateSplineKernelTransform";
          });
 
@@ -277,7 +277,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        "transform"_a, "interp"_a=Image::InterpolationType::Linear)
 
   .def("applyTransform",
-       [](Image &image, TPSTransform::Pointer transform,
+       [](Image &image, ImageUtils::TPSTransform::Pointer transform,
           Image::InterpolationType interp) -> decltype(auto) {
          return image.applyTransform(transform, interp);
        },

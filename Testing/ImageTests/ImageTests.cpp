@@ -634,16 +634,16 @@ TEST(ImageTests, warpTest2)
 
 TEST(ImageTests, warpTest3)
 {
-  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   std::string src_filename(std::string(TEST_DATA_DIR) + "/bogus_src.pts");
   std::string dst_filename(std::string(TEST_DATA_DIR) + "/bogus_dst.pts");
 
-  // empty files should just produce identity transform
-  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
-  image.applyTransform(transform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  try {
+    // nonexistent files should throw exception
+    ImageUtils::createWarpTransform(src_filename, dst_filename);
+  } catch(std::invalid_argument) { return; }
 
-  ASSERT_TRUE(image == ground_truth);
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
 }
 
 TEST(ImageTests, warpTest4)
