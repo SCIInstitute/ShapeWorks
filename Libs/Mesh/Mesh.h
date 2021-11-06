@@ -64,7 +64,7 @@ public:
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
-  /// samples data values at specified point locations
+  /// samples image data values at point locations specified by image
   Mesh& probeVolume(const Image &image);
 
   /// clips a mesh using a cutting plane

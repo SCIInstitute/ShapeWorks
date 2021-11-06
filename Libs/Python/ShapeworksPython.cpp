@@ -575,7 +575,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        "creates a transform that translates center of mass to center of image")
 
   .def("createRigidRegistrationTransform",
-       [](Image &image, const Image& other, float isovalue, unsigned iterations) {
+       [](Image &image, const Image& other, float isovalue, unsigned iterations) -> decltype(auto) {
          return itkTransformToEigen(image.createRigidRegistrationTransform(other, isovalue, iterations));
        },
        "creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations",
@@ -914,12 +914,17 @@ PYBIND11_MODULE(shapeworks_py, m)
        "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
 
   .def("createTransform",
-       &Mesh::createTransform,
-       "creates a transform using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations",
+       [](Mesh &mesh, const Mesh& other, Mesh::AlignmentType type, unsigned iterations) -> decltype(auto) {
+         return vtkTransformToEigen(mesh.createTransform(other, type, iterations));
+       },
+       "creates a transform using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations (default alignment: Similarity, default iterations: 10)",
        "target"_a, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
 
   .def("applyTransform",
-       &Mesh::applyTransform,
+       [](Mesh &mesh, Eigen::Matrix<double, 4, 4> &eigen_mat) -> decltype(auto){
+         auto vtk_xform = eigen44ToVtkTransform(eigen_mat);
+         return mesh.applyTransform(vtk_xform);
+       },
        "applies the given transformation to the mesh",
        "transform"_a)
 
@@ -929,7 +934,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("probeVolume",
        &Mesh::probeVolume,
-       "samples data values at specified point locations",
+       "samples image data values at point locations specified by image",
        "image"_a)
 
   .def("clip",

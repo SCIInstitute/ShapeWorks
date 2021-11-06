@@ -12,6 +12,12 @@ Eigen::MatrixXd itkTransformToEigen(TransformPtr itk_xform);
 // Returns a 3x4 itk::AffineTransform from the given (col-major) 4x4 Eigen::Matrix
 TransformPtr eigen44ToItkTransform(const Eigen::Matrix<double, 4, 4> &eigen_mat);
 
+// Returns a 4x4 Eigen (row-major) from the given vtkTransform4x4.
+Eigen::Matrix<double, 4, 4, Eigen::RowMajor> vtkTransformToEigen(MeshTransform vtk_xform);
+
+// Returns a 4x4 vtkMatrix4x4 from the given (row-major) 4x4 Eigen::Matrix
+MeshTransform eigen44ToVtkTransform(const Eigen::Matrix<double, 4, 4, Eigen::RowMajor> &eigen_mat);
+
 template<typename T>
 using VnlMatrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 

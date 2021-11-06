@@ -38,4 +38,20 @@ TransformPtr eigen44ToItkTransform(const Eigen::Matrix<double, 4, 4> &eigen_mat)
   return itk_xform;
 }
 
+using EigenMatrix = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
+
+EigenMatrix vtkTransformToEigen(MeshTransform vtk_xform) {
+  EigenMatrix eigen = EigenMatrix::Identity(4, 4);
+  eigen.block<4,4>(0,0) = Eigen::Map<EigenMatrix>(vtk_xform->GetMatrix()->GetData());
+  return eigen;
+}
+
+MeshTransform eigen44ToVtkTransform(const EigenMatrix &eigen_mat) {
+  vtkSmartPointer<vtkMatrix4x4> vtk_mat = vtkMatrix4x4::New();
+  vtk_mat->DeepCopy(&eigen_mat(0,0));
+  MeshTransform xform = MeshTransform::New();
+  xform->SetMatrix(vtk_mat);
+  return xform;
+}
+
 } // shapeworks
