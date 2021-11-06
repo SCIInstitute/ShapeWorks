@@ -29,15 +29,8 @@ else
     exit 1
 fi
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-osx-amd64-v1.4.0.zip"
-    unzip doxybook2-osx-amd64-v1.4.0.zip
-    PATH=$PATH:doxybook2-osx-amd64-v1.4.0/bin
-else
-    wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-linux-amd64-v1.4.0.zip"
-    unzip doxybook2-linux-amd64-v1.4.0.zip
-    PATH=$PATH:doxybook2-linux-amd64-v1.4.0/bin
-fi
+# install doxybook2
+${GITHUB_WORKSPACE}/Support/build_docs.sh $INSTALL_DIR
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
