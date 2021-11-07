@@ -39,7 +39,8 @@ Here are the resulting groomed ditsance transforms.The left atriums are now cent
 ## Optimization Parameters
 The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters when running this use case.
-```
+```python
+{
     "number_of_particles" : 512, 
     "use_normals": 0,
     "normal_weight": 10.0,
@@ -56,8 +57,9 @@ Below are the default optimization parameters when running this use case.
     "procrustes_interval" : 1,
     "procrustes_scaling" : 1,
     "save_init_splits" : 0,
-    "verbosity" : 3,
+    "verbosity" : 0,
     "use_shape_statistics_after": 128
+}
 ```
 ## Analyzing Shape Model
 Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 

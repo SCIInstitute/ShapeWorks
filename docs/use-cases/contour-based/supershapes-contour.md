@@ -2,7 +2,7 @@
 
 ## What is the Use Case?
 
-This use case demonstrates using ShapeWorks tools to perform optimization for N-dimensional contours.
+The `supershapes_1mode_contour` use case demonstrates using ShapeWorks tools to perform optimization for N-dimensional contours.
 Contours are represented as a series of lines, that may be a closed loop. We consider 2D shapes generated from [the supershape equation](http://paulbourke.net/geometry/supershape/), with a single parameter sampled from a chi-squared distribution.
 Here is an example of the data:
 ![Supershapes contour](../../img/use-cases/supershapes_contour.png)
@@ -40,7 +40,7 @@ Below are the default optimization parameters for this use case.
         "procrustes_interval" : 2,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3,
+        "verbosity" : 0,
         "use_shape_statistics_after": 4,
 }
 ```

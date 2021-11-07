@@ -13,7 +13,7 @@ Similar to the `ellipsoid` and `supershapes` generator, the joint generator has 
 - `generate_images()` for image generation based on segmentations (general function shared by all generator types)
 
 Please refer to this notebook for all the options for generating the cohorts. 
-### [Getting Started with Shape Cohort Generator](../notebooks/getting-started-with-shape-cohort-generation.html) 
+### [Getting Started with Shape Cohort Generator](../notebooks/getting-started-with-shape-cohort-generation.ipynb) 
 
 Arguments specific to ellipsoid joint generation are:
 
@@ -22,4 +22,4 @@ Arguments specific to ellipsoid joint generation are:
 - `separation`: distance between the two anatomies of the joint
 
 
-The [notebook](../notebooks/getting-started-with-shape-cohort-generation.html) will soon be updated with examples of ellipsoid joint generation
+The [notebook](../notebooks/getting-started-with-shape-cohort-generation.ipynb) will soon be updated with examples of ellipsoid joint generation
