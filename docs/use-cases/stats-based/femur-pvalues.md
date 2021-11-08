@@ -2,7 +2,7 @@
 
 ## What and Where is the Use Case? 
 
-This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](femur.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement. 
+The `femur_pvalues` use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement. 
 
 Here are femur samples with their optimized correspondences.
 ![Femur Samples](../../img/use-cases/femur_samples.png)

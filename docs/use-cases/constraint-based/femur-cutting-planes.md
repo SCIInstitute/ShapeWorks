@@ -1,13 +1,13 @@
 # Femur with Cutting Planes
 
 ## What is the Use Case?
-The `femur_cut` use case demonstrates an alternative approach to the [femur use case](femur.md) by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the [femur use case](femur.md) with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the [femur use case](femur.md).
+The `femur_cut` use case demonstrates an alternative approach to the [femur use case](../mesh-based/femur.md) by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the [femur use case](../mesh-based/femur.md) with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the [femur use case](../mesh-based/femur.md).
 
 !!! important 
     Minimum of 32GB of RAM required to run the full use case.
 
 ## Grooming Steps
-The grooming steps are the same as the [femur use case](femur.md), except clipping is not performed. Please refer back to the [femur grooming steps](femur.md#grooming-steps) for a full explanation of grooming.
+The grooming steps are the same as the [femur use case](../mesh-based/femur.md), except clipping is not performed. Please refer back to the [femur grooming steps](../mesh-based/femur.md#grooming-steps) for a full explanation of grooming.
 
 Note because the clipping step is skipped, the groomed femurs vary in shaft length:
 ![Groomed femur_cut input](../../img/use-cases/femur_cut_groomed.png)
@@ -24,7 +24,7 @@ Note because the clipping step is skipped, the groomed femurs vary in shaft leng
 ## Optimization Parameters
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
-```        
+```python        
         "number_of_particles" : 1024,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -43,7 +43,7 @@ Below are the default optimization parameters for this use case.
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "debug_projection" : 0,
-        "verbosity" : 2,
+        "verbosity" : 0,
         "use_statistics_in_init" : 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,

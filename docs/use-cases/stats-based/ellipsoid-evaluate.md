@@ -2,7 +2,7 @@
 
 ## What is the Use Case?
 
-This use case demonstrates the functionality of shape evaluation tools of ShapeWorks python API. These API's include calculation of quantitative evaluation metrics such as specificity, generalization, and compactness.For detailed explaination of the evaluation metrics, refer to [Shape Model Evaluation.](../../new/ssm-eval.md) 
+The `ellipsoid_evaluate` use case demonstrates the functionality of shape evaluation tools of ShapeWorks python API. These API's include calculation of quantitative evaluation metrics such as specificity, generalization, and compactness.For detailed explaination of the evaluation metrics, refer to [Shape Model Evaluation.](../../new/ssm-eval.md) 
 This use case reads the correspondence model of the ellipsoid segmentation images use case.
 
 ![Ellipsoid Samples](../../img/use-cases/ellipsoids_samples.png)

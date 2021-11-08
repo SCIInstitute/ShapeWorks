@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
+
 import time
-import subprocess
 import argparse
 import sys
-from subprocess import PIPE, run
-from subprocess import Popen, PIPE, STDOUT
-import io
-import selectors
-import subprocess
-import sys
+import asyncio
 
 passed = []
 failed = []
@@ -36,41 +31,41 @@ class Logger(object):
 sys.stdout = Logger()
 
 
-# adapted from:
-# https://gist.github.com/nawatts/e2cdca610463200c12eac2a14efc0bfb#file-capture-and-print-subprocess-output-py
-def run_command(subprocess_args):
-    # Start subprocess
-    # bufsize = 1 means output is line buffered
-    # universal_newlines = True is required for line buffering
-    process = subprocess.Popen(subprocess_args,
-                               bufsize=1,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT,
-                               universal_newlines=True)
+# code adapted from:
+# https://stackoverflow.com/questions/803265/getting-realtime-output-using-subprocess
 
-    def handle_output(stream):
-        # Because the process' output is line buffered, there's only ever one
-        # line to read when this function is called
-        line = stream.readline()
-        sys.stdout.write(line)
+async def read_stream(stream, callback):
+    try:
+        while True:
+            line = await stream.readline()
+            if line:
+                callback(line)
+            else:
+                break
+    except AttributeError:
+        pass
 
-    # Register callback for an "available for read" event from subprocess' stdout stream
-    selector = selectors.DefaultSelector()
-    selector.register(process.stdout, selectors.EVENT_READ, handle_output)
 
-    # Loop until subprocess is terminated
-    while process.poll() is None:
-        # Wait for events and handle them with their registered callbacks
-        events = selector.select()
-        for key, mask in events:
-            callback = key.data
-            callback(key.fileobj)
+async def run_command(args):
+    proc = await asyncio.subprocess.create_subprocess_exec(
+        *args, stdout=asyncio.subprocess.PIPE
+    )
 
-    # Get process return code
-    return_code = process.wait()
-    selector.close()
+    await asyncio.wait(
+        [
+            read_stream(
+                proc.stdout,
+                lambda x: sys.stdout.write(x.decode("UTF8")),
+            ),
+            read_stream(
+                proc.stderr,
+                lambda x: sys.stdout.write(x.decode("UTF8")),
+            ),
+        ]
+    )
 
-    success = (return_code == 0)
+    await proc.wait()
+    success = (proc.returncode == 0)
     return success
 
 
@@ -81,7 +76,7 @@ def run_case(use_case):
     print(f"----------------------------------------------------------------")
     start = time.time()
 
-    success = run_command(command.split())
+    success = asyncio.run(run_command(command.split()))
 
     end = time.time()
     duration = f"{end - start:6.0f} seconds"
@@ -94,6 +89,9 @@ def run_case(use_case):
 
 
 def main():
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
     # parse arguments
     parser = argparse.ArgumentParser(description='Verify Example ShapeWorks Pipelines')
     parser.add_argument("--tiny_test", help="Run only the tiny tests", action="store_true")
