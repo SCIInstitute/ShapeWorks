@@ -365,7 +365,7 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 void TransformMesh::buildParser()
 {
   const std::string prog = "transform-mesh";
-  const std::string desc = "transform mesh to target mesh using specified method (default: iterative closest point (ICP) 3D rigid registration)";
+  const std::string desc = "transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
