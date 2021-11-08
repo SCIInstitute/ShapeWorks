@@ -128,6 +128,12 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  /// Set Adaptive Splitting
+  void setAdaptiveSplitting(bool as){m_adaptive_splitting = as;}
+
+  /// Set Epsilons
+  void SetPredictedParticleSpacing(std::vector<double> pps){m_predicted_particle_spacing = pps;}
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -149,6 +155,8 @@ private:
   double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
+  bool m_adaptive_splitting;
+  std::vector<double> m_predicted_particle_spacing;
 
   void ResetTimeStepVectors();
 };

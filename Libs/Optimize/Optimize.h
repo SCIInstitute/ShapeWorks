@@ -338,6 +338,9 @@ protected:
 
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
+  /// Computes the expected spacing between particles given area and total particle count
+  double ComputeSideLength(size_t particleCount, double area);
+
   virtual void UpdateExportablePoints();
 
   // return a checkpoint dir for the current iteration

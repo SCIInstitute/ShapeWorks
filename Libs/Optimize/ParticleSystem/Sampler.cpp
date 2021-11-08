@@ -92,7 +92,6 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
     m_areas.push_back(1.);
-    m_sides.push_back(1.);
     // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
@@ -139,15 +138,9 @@ void Sampler::AllocateDomainsAndNeighborhoods()
 
       double SurfaceArea = surfaceAreaMesh->getSurfaceArea();
 
-      std::cout << "Computing areas" << std::endl;
       m_areas[i] = SurfaceArea;
 
-      m_sides[i] = ComputeSideLength(m_max_num_particles[i], SurfaceArea);
-      std::cout << "After Computing areas" << std::endl;
-
       //surfaceAreaMesh->write("dev/mesh_CP_Clipped_" + std::to_string(i) + ".vtk");
-
-      //***********************************************Add results to particle systems
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -195,16 +188,6 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
   }
 }
-
-double Sampler::ComputeSideLength(size_t particleCount, double area){
-    if(particleCount < 20){
-        return 0.8773826753 * sqrt(area/static_cast<double>(particleCount));
-    }
-    else{
-        return sqrt(area/(20.6457288071 + (0.19245008973*(static_cast<double>(particleCount)-20))/2 ));
-    }
-}
-
 
 void Sampler::ReadPointsFiles()
 {
@@ -298,6 +281,10 @@ void Sampler::Execute()
   }
 
   if (this->GetInitializing() == true) return;
+
+  // Sets up for adaptive splitting
+  this->GetOptimizer()->setAdaptiveSplitting(m_adaptive_splitting);
+  this->GetOptimizer()->SetPredictedParticleSpacing(m_predicted_particle_spacing);
 
   //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   this->GetOptimizer()->StartOptimization();

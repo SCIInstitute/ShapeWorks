@@ -151,14 +151,20 @@ namespace itk
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed;
             VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
-            //std::cout << maximumUpdateAllowed << std::endl;
+            if(m_adaptive_splitting){
+                maximumUpdateAllowed = m_predicted_particle_spacing[dom];
+            }
 
             PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
             // Step 1 Project the gradient vector onto the tangent plane
             VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt, k);
 
+            original_gradient_projectedOntoTangentSpace = original_gradient_projectedOntoTangentSpace * original_gradient.magnitude() / original_gradient_projectedOntoTangentSpace.magnitude();
+
             double newenergy, gradmag;
+            double gmag = original_gradient.magnitude();
+            double gmag2 = original_gradient_projectedOntoTangentSpace.magnitude();
             while (true) {
               // Step A scale the projected gradient by the current time step
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
@@ -208,6 +214,7 @@ namespace itk
                 }
               }
             } // end while(true)
+            std::cout << gmag << "->" << gmag2 << "->" << gradmag << std::endl;
           } // for each particle
         }// for each domain
       });

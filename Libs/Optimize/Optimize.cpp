@@ -734,9 +734,7 @@ void Optimize::Initialize()
   random = random.normalize();
 
   // Gets surface area
-  std::cout << "Getting areas" << std::endl;
   std::vector<double> areas = m_sampler->GetAreas();
-  std::vector<double> sides = m_sampler->GetSides();
   std::vector<double> epsilons;
 
   double epsilon = this->m_spacing / 5;
@@ -746,12 +744,13 @@ void Optimize::Initialize()
   for (int i = 0; i < n; i++) {
      int d = i % m_domains_per_shape;
      if(m_adaptive_splitting){
-         epsilons.push_back(sides[i]/5);
+         epsilons.push_back(ComputeSideLength(m_number_of_particles[d], areas[i])/5);
      }
      else{
          epsilons.push_back(epsilon);
      }
   }
+  m_sampler->SetPredictedParticleSpacing(epsilons);
 
   for (int i = 0; i < n; i++) {
      int d = i % m_domains_per_shape;
@@ -841,6 +840,7 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    m_sampler->SetAdaptiveSplitting(m_adaptive_splitting);
     m_sampler->Execute();
 
     if (m_save_init_splits == true) {
@@ -888,6 +888,15 @@ void Optimize::Initialize()
   }
 }
 
+double Optimize::ComputeSideLength(size_t particleCount, double area){
+    if(particleCount < 20){
+        return 0.8773826753 * sqrt(area/static_cast<double>(particleCount));
+    }
+    else{
+        return sqrt(area/(20.6457288071 + (0.19245008973*(static_cast<double>(particleCount)-20))/2 ));
+    }
+}
+
 //---------------------------------------------------------------------------
 void Optimize::AddAdaptivity()
 {
@@ -917,6 +926,7 @@ void Optimize::AddAdaptivity()
   m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+  m_sampler->SetAdaptiveSplitting(m_adaptive_splitting);
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -1040,6 +1050,7 @@ void Optimize::RunOptimize()
   m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->SetAdaptiveSplitting(m_adaptive_splitting);
   m_sampler->Execute();
 
   this->WritePointFiles();
