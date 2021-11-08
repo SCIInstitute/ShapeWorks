@@ -1423,19 +1423,19 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
-  .def("set_segmentation_filenames",
-      &Subject::set_segmentation_filenames,
-      "filenames"_a)
+  // .def("set_segmentation_filenames",
+  //     &Subject::set_segmentation_filenames,
+  //     "filenames"_a)
 
-  .def("get_segmentations_filenames",
-      &Subject::get_segmentation_filenames)
+  // .def("get_segmentations_filenames",
+  //     &Subject::get_segmentation_filenames)
 
   .def("get_domain_types",
       &Subject::get_domain_types)
 
-  .def("set_groomed_filenames",
-      &Subject::set_groomed_filenames,
-      "filenames"_a)
+  // .def("set_groomed_filenames",
+  //     &Subject::set_groomed_filenames,
+  //     "filenames"_a)
 
   .def("get_groomed_filenames",
       &Subject::get_groomed_filenames)
@@ -1497,11 +1497,11 @@ PYBIND11_MODULE(shapeworks_py, m)
       "transforms"_a)
 
   .def("get_group_values",
-      &Subject::get_group_names,
+      &Subject::get_group_values,
       "group_name"_a)
 
   .def("set_group_values",
-      &Subject:set_group_names,
+      &Subject::set_group_values,
       "extra_values"_a)
 
   .def("get_display_name",
@@ -1510,6 +1510,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("set_display_name",
       &Subject::set_display_name,
       "display_name"_a)
-
+  ;//Subject
 
 } // PYBIND11_MODULE(shapeworks_py)
