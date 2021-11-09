@@ -92,10 +92,10 @@ nav:
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
 
 - API Reference:
-   - Groups:     'api/index_groups.md'
-   - Classes:    'api/index_classes.md'
-   - Namespaces: 'api/index_namespaces.md'
-   - Files:      'api/index_files.md'
+   - Groups:     'api/Modules/index_groups.md'
+   - Classes:    'api/Classes/index_classes.md'
+   - Namespaces: 'api/Namespaces/index_namespaces.md'
+   - Files:      'api/Files/index_files.md'
 
 - ShapeWorks Tools:
    - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'

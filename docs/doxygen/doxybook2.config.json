@@ -1,7 +1,7 @@
 {
-  "baseUrl": "/api/",
-  "indexInFolders": false,
-  "linkSuffix": ".html",
+  "baseUrl": "../",
+  "indexInFolders": true,
+  "linkSuffix": ".md",
   "mainPageInRoot": true,
   "mainPageName": "index"
 }
