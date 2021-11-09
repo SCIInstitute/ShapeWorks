@@ -94,7 +94,6 @@ nav:
 - API Reference:
    - Groups:     'api/Modules/index_groups.md'
    - Classes:    'api/Classes/index_classes.md'
-   - Namespaces: 'api/Namespaces/index_namespaces.md'
    - Files:      'api/Files/index_files.md'
 
 - ShapeWorks Tools:
