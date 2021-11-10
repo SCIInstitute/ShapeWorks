@@ -74,6 +74,9 @@ function install_conda() {
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
+  # install conda into the shell
+  conda init
+
   # install shapeworks deps
   if ! conda install --yes \
     cmake=3.18.2 \
@@ -140,8 +143,6 @@ function install_conda() {
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
-  if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
-  if ! pip install markdown-it-py==1.1.0;               then return 1; fi # for mkdocs
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
@@ -175,7 +176,6 @@ function install_conda() {
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
 
-  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
   conda install --yes jupyter_contrib_nbextensions
@@ -184,6 +184,10 @@ function install_conda() {
   jupyter nbextension enable toc2/main
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
+    if ! pip install mkdocs-jupyter;                      then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
+    if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
+    if ! pip install markdown-it-py==1.1.0;               then return 1; fi # for mkdocs
+
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes

@@ -1,7 +1,6 @@
 #include "ImageUtils.h"
 
 #include <itkPointSet.h>
-#include <itkThinPlateSplineKernelTransform.h>
 
 namespace shapeworks {
 
@@ -49,11 +48,10 @@ PhysicalRegion ImageUtils::boundingBox(const std::vector<std::reference_wrapper<
   return bbox;
 }
 
-TransformPtr ImageUtils::createWarpTransform(const std::string& source_landmarks,
-                                             const std::string& target_landmarks,
-                                             const int stride)
+ImageUtils::TPSTransform::Pointer ImageUtils::createWarpTransform(const std::string& source_landmarks_file,
+                                                                  const std::string& target_landmarks_file,
+                                                                  const int stride)
 { 
-  typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
   typedef TPSTransform::PointSetType PointSet;
 
   // Read the source and target sets of landmark points
@@ -64,9 +62,11 @@ TransformPtr ImageUtils::createWarpTransform(const std::string& source_landmarks
 
   std::ifstream insourcefile;
   std::ifstream intargetfile;
-  insourcefile.open(source_landmarks);
-  intargetfile.open(target_landmarks);
-  if (!insourcefile.is_open() || !intargetfile.is_open()) return AffineTransform::New();
+  insourcefile.open(source_landmarks_file);
+  intargetfile.open(target_landmarks_file);
+  if (!insourcefile.is_open() || !intargetfile.is_open())  {
+    throw std::invalid_argument("Error: unable to open landmark files. Check paths.");
+  }
 
   PointSet::PointIdentifier id{itk::NumericTraits<PointSet::PointIdentifier>::Zero};
   Point3 src, tgt;

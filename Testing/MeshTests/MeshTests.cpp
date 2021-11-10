@@ -679,13 +679,35 @@ TEST(MeshTests, fieldTest3)
 
 //TODO: add tests for independent fields and fields on cells once #935 complete
 
-TEST(MeshTests, icpTest)
+TEST(MeshTests, icpTestRigid)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Rigid);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpRigid.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestSimilarity)
 {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target);
   source.applyTransform(transform);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpSimilarity.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestAffine)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Affine);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpAffine.ply");
 
   ASSERT_TRUE(source == ground_truth);
 }
@@ -798,7 +820,7 @@ TEST(MeshTests, findReferenceMeshTest)
   ASSERT_EQ(ref, 2);
 }
 
-TEST(MeshTests,addMesh)
+TEST(MeshTests, addMesh)
 {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
@@ -806,5 +828,5 @@ TEST(MeshTests,addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
-  
+
 }

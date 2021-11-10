@@ -18,7 +18,8 @@ Below are the pre-existing (first fifteen) and new (last five) groomed distance 
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case. Note the `number_fixed_domains` and `fixed_domain_model_dir` parameters.
 
-```
+```python
+{
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 15.0,
@@ -36,10 +37,11 @@ Below are the default optimization parameters for this use case. Note the `numbe
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2,
+        "verbosity": 0,
         "number_fixed_domains": len(file_list_dts),
         "fixed_domain_model_dir": shape_model_dir,
         "mean_shape_path": mean_shape_path
+}
 ```
 
 In `ellipsoid_fd.py`, the following is defined.
