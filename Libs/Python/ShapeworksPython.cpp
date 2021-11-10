@@ -1426,89 +1426,128 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("set_segmentation_filenames",
       &Subject::set_segmentation_filenames,
+      "Set segmentatation filenames (one per domain)",
       "filenames"_a)
 
   .def("get_segmentations_filenames",
-      &Subject::get_segmentation_filenames)
+      &Subject::get_segmentation_filenames,
+      "Get segmentation filenames")
 
   .def("get_domain_types",
-      &Subject::get_domain_types)
+      &Subject::get_domain_types,
+      "Return the domain types")
 
   .def("set_groomed_filenames",
       &Subject::set_groomed_filenames,
+      "Set groomed filenames",
       "filenames"_a)
 
   .def("get_groomed_filenames",
-      &Subject::get_groomed_filenames)
+      &Subject::get_groomed_filenames,
+      "Get groomed filenames")
 
   .def("set_local_particle_filenames",
       &Subject::set_local_particle_filenames,
+      "Set local particle filenames (one per domain)",
       "filenames"_a)
 
   .def("get_local_particle_filenames",
-      &Subject::get_local_particle_filenames)
+      &Subject::get_local_particle_filenames,
+      "Get local particle filenames")
 
   .def("set_world_particle_filenames",
       &Subject::set_world_particle_filenames,
+      "Set the world particle filenames",
       "filenames"_a)
 
   .def("get_world_particle_filenames",
-     &Subject::get_world_particle_filenames)
+     &Subject::get_world_particle_filenames,
+     "Get the world particle filenames")
 
   .def("set_landmarks_filenames",
       &Subject::set_landmarks_filenames,
+      "Set the landmarks filenames (one per domain)",
       "filenames"_a)
 
   .def("get_landmarks_filenames",
-      &Subject::get_landmarks_filenames)
+      &Subject::get_landmarks_filenames,
+      "Get the landmarks filenames (one per domain)")
 
   .def("set_number_of_domains",
       &Subject::set_number_of_domains,
+      "Set the number of domains",
       "number_of_domains"_a)
 
   .def("get_number_of_domains",
-      &Subject::get_number_of_domains)
+      &Subject::get_number_of_domains,
+      "Get the number of domains")
 
   .def("set_image_filenames",
       &Subject::set_image_filenames,
+      "Set image filenames",
       "filenames"_a)
 
   .def("get_image_filenames",
-      &Subject::get_image_filenames)
+      &Subject::get_image_filenames,
+      "Get image filenames")
 
   .def("get_feature_filenames",
-      &Subject::get_feature_filenames)
+      &Subject::get_feature_filenames,
+      "Get the feature map filenames")
 
   .def("set_feature_filenames",
       &Subject::set_feature_filenames,
+      "Set the feature map filenames",
       "filenames"_a)
 
   .def("get_groomed_transforms",
-      &Subject::get_groomed_transforms)
+      &Subject::get_groomed_transforms,
+      "Get the groomed transforms (one vector per domain)")
 
   .def("set_groomed_transforms",
       &Subject::set_groomed_transforms,
+      "Set the groomed transforms (one vector per domain)",
       "transforms"_a)
 
   .def("get_procrustes_transforms",
-      &Subject::get_procrustes_transforms)
+      &Subject::get_procrustes_transforms,
+      "Get the procrustes transforms (one vector per domain)")
 
   .def("set_procrustes_transforms",
       &Subject::set_procrustes_transforms,
+      "Set the procrustes transforms (one vector per domain)",
       "transforms"_a)
 
   .def("get_group_values",
-      &Subject::get_group_values)
+      &Subject::get_group_values,
+      "Get the group values")
+
+  .def("get_group_value",
+      &Subject::get_group_value,
+      "Get a specific group value",
+      "group_name"_a)
 
   .def("set_group_values",
       &Subject::set_group_values,
+      "Set a specific group value"
+      "group_values"_a)
+
+  .def("get_extra_values",
+      &Subject::get_extra_values,
+      "Get extra values (extra columns we don't interpret)")
+
+  .def("set_extra_values",
+      &Subject::set_extra_values,
+      "Set extra values",
       "extra_values"_a)
 
   .def("get_display_name",
-      &Subject::get_display_name)
+      &Subject::get_display_name,
+      "Get the display name")
 
   .def("set_display_name",
       &Subject::set_display_name,
+      "Set the display name",
       "display_name"_a)
   ;//Subject
 
@@ -1519,21 +1558,26 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("get",
       &Parameters::get,
+      "get a parameter based on a key, return default if it doesn't exist",
       "key"_a,"Variant"_a)
 
   .def("key_exists",
       &Parameters::key_exists,
+      "return if a key exists or not",
       "key"_a)
 
   .def("set",
       &Parameters::set,
+      "set a parameter based on a key",
       "key"_a,"Variant"_a)
 
   .def("remove_entry",
       &Parameters::remove_entry,
+      "remove an entry",
       "key"_a)
 
   .def("reset_parameters",
-      &Parameters::reset_parameters)
+      &Parameters::reset_parameters,
+      "reset parameters to blank")
   ;//Parameters
 } // PYBIND11_MODULE(shapeworks_py)
