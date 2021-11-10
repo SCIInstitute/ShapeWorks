@@ -298,19 +298,9 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormals().applyTransform(transform);
 }
 
-MeshTransform Mesh::createTransform(const Mesh &target, XFormType type, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
-  MeshTransform transform;
-
-  switch (type) {
-    case IterativeClosestPoint:
-      transform = createRegistrationTransform(target, align, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Mesh::TranformType");
-  }
-
-  return transform;
+  return createRegistrationTransform(target, align, iterations);
 }
 
 Mesh &Mesh::applyTransform(const MeshTransform transform)

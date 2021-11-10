@@ -570,43 +570,6 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-TransformPtr Image::createTransform(XFormType type)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      transform = createRigidRegistrationTransform(*this, 0.0, 20);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
-TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      if (!target.image) { throw std::invalid_argument("Invalid target image"); }
-      transform = createRigidRegistrationTransform(target, isoValue, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
   return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
@@ -1002,10 +965,27 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
+  if (!target_dt.image) {
+    throw std::invalid_argument("Invalid target. Expected distance transform image");
+  }
+
   Mesh sourceContour = toMesh(isoValue);
   Mesh targetContour = target_dt.toMesh(isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
-  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+
+  try {
+    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
+    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  }
+  catch (std::invalid_argument) {
+    std::cerr << "failed to create ICP transform.\n";
+    if (sourceContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for source\n";
+    }
+    if (targetContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for target\n";
+    }
+  }
+  return AffineTransform::New();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)
