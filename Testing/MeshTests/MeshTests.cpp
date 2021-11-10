@@ -480,7 +480,7 @@ TEST(MeshTests, boundingBoxTest1)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqual(region.min, min, 4) && epsEqual(region.max, max, 4) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, boundingBoxTest2)
@@ -498,7 +498,7 @@ TEST(MeshTests, boundingBoxTest2)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqual(region.min, min, 4) && epsEqual(region.max, max, 4) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, antialiasTest3)

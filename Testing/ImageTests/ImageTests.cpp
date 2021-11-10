@@ -1200,7 +1200,7 @@ TEST(ImageTests, statsTest)
   ASSERT_TRUE(epsEqual(min, 0.0, 1e-6) &&
               epsEqual(max, 1.0, 1e-6) &&
               epsEqual(mean, 0.004166, 1e-6) &&
-              epsEqual (std, 0.062299, 1e-6));
+              epsEqual(std, 0.062299, 1e-6));
 }
 
 TEST(ImageTests, orientationTest1)
