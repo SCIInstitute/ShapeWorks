@@ -1910,7 +1910,7 @@ shapeworks  transform-mesh [args]...
 ```  
 
 
-**Description:** transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)  
+**Description:** point (ICP) 3D rigid registration)  
 
 
 **Options:**
@@ -1920,6 +1920,8 @@ shapeworks  transform-mesh [args]...
 **--target=STRING:** Filename of target mesh.
 
 **--type=CHOICE:** Alignment type to use [default: similarity]. (choose from 'rigid', 'similarity', 'affine')
+
+**--method=CHOICE:** Method used to compute transform [default: icp]. (choose from 'icp')
 
 **--iterations=UNSIGNED:**  Number of iterations run [default: 10].  
   
