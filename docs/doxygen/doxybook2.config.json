@@ -3,5 +3,6 @@
   "indexInFolders": true,
   "linkSuffix": ".md",
   "mainPageInRoot": true,
-  "mainPageName": "index"
+  "mainPageName": "index",
+  "foldersToGenerate" : ["modules", "classes", "files", "namespaces"]
 }
