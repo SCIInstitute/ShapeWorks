@@ -47,6 +47,8 @@ The following tools are supported from all three different interfaces - command 
 
 * **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
 
+* **API reference in Documentation:** Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out [Groups](../api/Modules/index_groups.md), [Classes](../api/Modules/index_classes.md), [Namespaces](), [Files](../api/Modules/index_files.md) for more details.
+
 #### Deep Learning
 
 * **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio](../studio/deepssm-in-studio.md) for more details.
@@ -59,7 +61,9 @@ The following tools are supported from all three different interfaces - command 
 
 * **Efficient data sharing between Python and C++:** Added efficient sharing of large data between Python and C++ (for both `Mesh` fields and `Image` data) that enables Python tools which access `Mesh` fields or `Image` data for visualization and analysis, or wish to create an Image or add fields from NumPy to a `Mesh`, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. 
 
-* **Improved Python APIs:** `Coordsys` of images in Python can now be set using `setCoordsys`. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks `Mesh` in Python to vtk mesh by creating a `PolyData` instead of performing IO operations. 
+* **Improved Python APIs:** `Coordsys` of images in Python can now be set using `setCoordsys`. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks `Mesh` in Python to vtk mesh by creating a `PolyData` instead of performing IO operations.
+
+* **Transforms in `Image` and `Mesh` API:** Creating and applying transforms for both images and meshes have been updated to create and accept numpy arrays instead of using proprietary transform type in the Python API. A jupyter notebook was to demonstrate this for [images](../notebooks/create-and-apply-image-transforms.ipynb) and [meshes](../notebooks/create-and-apply-mesh-transforms.ipynb). 
 
 * **Improved testing:** More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (`verify.log`) is written that contains the use case outputs and summary.
 
