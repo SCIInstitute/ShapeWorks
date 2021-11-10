@@ -11,7 +11,8 @@ import DataAugmentationUtils
 import DeepSSMUtils
 import json
 import platform
-
+import torch
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 def Run_Pipeline(args):
     if args.tiny_test:

@@ -18,7 +18,8 @@ Here are some examples of the meshes:
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 
-```
+```python
+{        
         "number_of_particles": 512,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -37,6 +38,7 @@ Below are the default optimization parameters for this use case.
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 1
+}
 ```
 
 ## Analyzing Shape Model         

@@ -63,12 +63,12 @@ def Run_Pipeline(args):
         os.makedirs(point_dir)
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
-        "number_of_particles": 128,
+        "number_of_particles": 512,
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
+        "iterations_per_split": 1000,
         "optimization_iterations": 500,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
@@ -80,7 +80,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -89,7 +89,7 @@ def Run_Pipeline(args):
         parameter_dictionary["iterations_per_split"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
+        parameter_dictionary["use_shape_statistics_after"] = 256
     # Execute the optimization function
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, mesh_files, parameter_dictionary)

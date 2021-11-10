@@ -58,8 +58,8 @@ public:
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
-  /// creates a transform based on transform type
-  MeshTransform createTransform(const Mesh &target, XFormType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
+  /// creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations
+  MeshTransform createTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
@@ -67,7 +67,7 @@ public:
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
-  /// samples data values at specified point locations
+  /// samples image data values at point locations specified by image
   Mesh& probeVolume(const Image &image);
 
   /// clips a mesh using a cutting plane

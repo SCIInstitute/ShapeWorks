@@ -67,7 +67,7 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 150,
+        "iterations_per_split": 300,
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
@@ -79,7 +79,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 3,
+        "verbosity": 0,
         "geodesics_enabled": 1,
     }
     # If running a tiny test, reduce some parameters

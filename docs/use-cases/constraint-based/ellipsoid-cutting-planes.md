@@ -22,7 +22,7 @@ This use case starts with pre-aligned segmentations. The only grooming step is [
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 
-``` 
+```python
         "number_of_particles": 32,
         "use_normals": 1,
         "normal_weight": 15.0,
@@ -40,7 +40,7 @@ Below are the default optimization parameters for this use case.
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2,
+        "verbosity": 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,
         "cutting_planes": cutting_planes

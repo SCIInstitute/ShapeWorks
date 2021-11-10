@@ -177,8 +177,8 @@ def Run_Pipeline(args):
             print('Aligning ' + shape_name + ' to ' + ref_name)
             # compute rigid transformation
             shape_seg.antialias(antialias_iterations)
-            rigidTransform = shape_seg.createTransform(
-                ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+            rigidTransform = shape_seg.createRigidRegistrationTransform(
+                ref_seg, iso_value, icp_iterations)
             # second we apply the computed transformation, note that shape_seg has
             # already been antialiased, so we can directly apply the transformation
             shape_seg.applyTransform(rigidTransform,
@@ -239,7 +239,7 @@ def Run_Pipeline(args):
                 iso_value).gaussianBlur(sigma)
         # Save distance transforms
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_names, extension='nrrd', compressed=False, verbose=True)
+                                        shape_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -275,7 +275,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:

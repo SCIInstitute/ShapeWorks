@@ -4,7 +4,7 @@
 
 The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along all the x-axis. This example is a stepping stone for the user to get familiar with the workflow of ShapeWorks. 
 
-The `ellipsoid.py` use case represents the standard use version of a shape modeling workflow using ShapeWorks. 
+The `ellipsoid` use case represents the standard use version of a shape modeling workflow using ShapeWorks. 
 
 
 ## Grooming Steps
@@ -34,7 +34,8 @@ Distance transform obtained after grooming.The ellipsoids are now centred and al
 The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 
-```
+```python
+{
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -52,7 +53,8 @@ Below are the default optimization parameters for this use case.
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
+}
 ```
 
 ## Analyzing Shape Model
