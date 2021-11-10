@@ -96,6 +96,7 @@ nav:
 
 - API Reference:
    - Groups:     'api/Modules/index_groups.md'
+   - Namespaces: 'api/Namespaces/index_namespaces.md'
    - Classes:    'api/Classes/index_classes.md'
    - Files:      'api/Files/index_files.md'
 
