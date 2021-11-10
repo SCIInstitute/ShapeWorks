@@ -1393,7 +1393,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_group_names)
 
   .def("get_group_values",
-      &Project::get_group_names,
+      &Project::get_group_values,
       "group_names"_a)
 
   .def("get_parameters",
@@ -1419,7 +1419,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   ; // Project
 
   // Subject 
-  py::class_<Project>(m, "Subject")
+  py::class_<Subject>(m, "Subject")
 
   .def(py::init<>())
 
@@ -1497,8 +1497,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       "transforms"_a)
 
   .def("get_group_values",
-      &Subject::get_group_values,
-      "group_name"_a)
+      &Subject::get_group_values)
 
   .def("set_group_values",
       &Subject::set_group_values,
