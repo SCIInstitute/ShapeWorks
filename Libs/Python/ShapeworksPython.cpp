@@ -1423,19 +1423,19 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
-  // .def("set_segmentation_filenames",
-  //     &Subject::set_segmentation_filenames,
-  //     "filenames"_a)
+  .def("set_segmentation_filenames",
+      &Subject::set_segmentation_filenames,
+      "filenames"_a)
 
-  // .def("get_segmentations_filenames",
-  //     &Subject::get_segmentation_filenames)
+  .def("get_segmentations_filenames",
+      &Subject::get_segmentation_filenames)
 
   .def("get_domain_types",
       &Subject::get_domain_types)
 
-  // .def("set_groomed_filenames",
-  //     &Subject::set_groomed_filenames,
-  //     "filenames"_a)
+  .def("set_groomed_filenames",
+      &Subject::set_groomed_filenames,
+      "filenames"_a)
 
   .def("get_groomed_filenames",
       &Subject::get_groomed_filenames)
