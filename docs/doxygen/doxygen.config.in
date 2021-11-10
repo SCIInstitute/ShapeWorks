@@ -736,7 +736,9 @@ WARN_LOGFILE           =
 
 INPUT                  = "@ShapeWorks_SOURCE_DIR@/Documentation/Doxygen" \
                          "@ShapeWorks_BINARY_DIR@/Documentation/Doxygen" \
-                         "@ShapeWorks_SOURCE_DIR@"
+                         "@ShapeWorks_SOURCE_DIR@/Applications" \
+                         "@ShapeWorks_SOURCE_DIR@/Libs" \
+                         "@ShapeWorks_SOURCE_DIR@/Studio"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
