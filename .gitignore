@@ -64,10 +64,3 @@ site/
 # data and output dirs
 Examples/Python/Data/
 Output/
-
-# doxygen placeholders
-docs/api/Classes/index_classes.md
-docs/api/Files/index_files.md
-docs/api/Modules/index_groups.md
-docs/api/Namespaces/index_namespaces.md
-
