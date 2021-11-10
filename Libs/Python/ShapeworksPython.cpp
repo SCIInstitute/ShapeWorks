@@ -37,6 +37,7 @@ using namespace pybind11::literals;
 #include "ParticleShapeStatistics.h"
 #include "Project.h"
 #include "Subject.h"
+#include "Parameters.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
@@ -1511,4 +1512,28 @@ PYBIND11_MODULE(shapeworks_py, m)
       "display_name"_a)
   ;//Subject
 
+  // Parameters 
+  py::class_<Parameters>(m, "Parameters")
+
+  .def(py::init<>())
+
+  .def("get",
+      &Parameters::get,
+      "key"_a,"Variant"_a)
+
+  .def("key_exists",
+      &Parameters::key_exists,
+      "key"_a)
+
+  .def("set",
+      &Parameters::set,
+      "key"_a,"Variant"_a)
+
+  .def("remove_entry",
+      &Parameters::remove_entry,
+      "key"_a)
+
+  .def("reset_parameters",
+      &Parameters::reset_parameters)
+  ;//Parameters
 } // PYBIND11_MODULE(shapeworks_py)
