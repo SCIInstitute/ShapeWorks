@@ -958,7 +958,7 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
-    if (!epsEqual(p1, p2, 1e-2)) {
+    if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
 
