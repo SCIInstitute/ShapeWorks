@@ -40,5 +40,8 @@ if [ ! -f $INSTALL_DIR/bin/doxybook2 ] ; then
 fi
 
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+# clean out old api docs as mkdocs will just find whatever is there.
+rm -rf docs/api
+mkdir docs/api
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
       
