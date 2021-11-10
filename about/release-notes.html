@@ -114,6 +114,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
@@ -136,6 +141,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -241,18 +248,13 @@
                     <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
                     </li>
                 </ul>
-                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
-                    </li>
-                </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
                 <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="team.html">Meet ShapeWorkers!</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="release-notes.html">Release Notes</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</a>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-62-2021-11-05">ShapeWorks 6.2 - 2021-11-05</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-is-new">What is new?</a>
         <ul>
@@ -262,15 +264,13 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#users-support">User's Support</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#deep-learning">Deep Learning</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#improvements">Improvements</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_1">ShapeWorks Back-end</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-front-end_1">ShapeWorks Front-end</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#deep-learning-shape-modeling">Deep Learning &amp; Shape Modeling</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#users-support_1">User's Support</a>
     </li>
@@ -280,7 +280,41 @@
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_2">ShapeWorks Back-end</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-front-end_1">ShapeWorks Front-end</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-new_1">What is new?</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_3">ShapeWorks Back-end</a>
+    </li>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-front-end_2">ShapeWorks Front-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_2">User's Support</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_1">Improvements</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_4">ShapeWorks Back-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-front-end_3">ShapeWorks Front-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#deep-learning-shape-modeling">Deep Learning &amp; Shape Modeling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_3">User's Support</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_1">Fixes</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_5">ShapeWorks Back-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-front-end_4">ShapeWorks Front-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#deep-learning-shape-modeling_1">Deep Learning &amp; Shape Modeling</a>
     </li>
@@ -292,9 +326,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whats-new">What's New</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#users-support_2">User's Support</a>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_4">User's Support</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_3">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_6">ShapeWorks Back-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end">All-in-one Studio Front-end</a>
     </li>
@@ -302,11 +336,11 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#improvements_1">Improvements</a>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_2">Improvements</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#users-support_3">User's Support</a>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_5">User's Support</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_4">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_7">ShapeWorks Back-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end_1">All-in-one Studio Front-end</a>
     </li>
@@ -314,9 +348,9 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_1">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_2">Fixes</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_5">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_8">ShapeWorks Back-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end_2">All-in-one Studio Front-end</a>
     </li>
@@ -328,9 +362,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whats-new_1">What's New</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#users-support_4">User's Support</a>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_6">User's Support</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_6">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_9">ShapeWorks Back-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end_3">All-in-one Studio Front-end</a>
     </li>
@@ -338,19 +372,19 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#improvements_2">Improvements</a>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_3">Improvements</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#users-support_5">User's Support</a>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_7">User's Support</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_7">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_10">ShapeWorks Back-end</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end_4">All-in-one Studio Front-end</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_2">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_3">Fixes</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_8">ShapeWorks Back-end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_11">ShapeWorks Back-end</a>
     </li>
         </ul>
     </li>
@@ -358,7 +392,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_3">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_4">Fixes</a>
     </li>
         </ul>
     </li>
@@ -366,9 +400,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whats-new_2">What's New</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#improvements_3">Improvements</a>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_4">Improvements</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_4">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_5">Fixes</a>
     </li>
         </ul>
     </li>
@@ -376,19 +410,19 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whats-new_3">What's New</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#improvements_4">Improvements</a>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_5">Improvements</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_5">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_6">Fixes</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_6">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_7">Fixes</a>
     </li>
         </ul>
     </li>
@@ -396,9 +430,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whats-new_4">What's New</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#improvements_5">Improvements</a>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_6">Improvements</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_7">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_8">Fixes</a>
     </li>
         </ul>
     </li>
@@ -450,17 +484,124 @@
             <div class="section">
               
                 <h1 id="release-notes">Release Notes</h1>
-<h2 id="shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</h2>
-<p><img alt="" src="../img/about/release6.1.png" /></p>
+<h2 id="shapeworks-62-2021-11-05">ShapeWorks 6.2 - 2021-11-05</h2>
+<p><img alt="" src="../img/about/release6.2.png" /></p>
 <h3 id="what-is-new">What is new?</h3>
 <h4 id="shapeworks-back-end">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>New <code>Mesh</code> grooming tools:</strong><br />
+The following grooming tools are supported from all three different interfaces - command line, C++ and Python:  </p>
+<ul>
+<li><code>curvature</code>: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field that contains a scalar value for each mesh vertex. See <a href="../tools/ShapeWorksCommands.html#mesh-curvature">mesh-curvature</a> to know about function parameters. </li>
+<li><code>fixElement</code>: fixes element winding of a given triangular mesh as a quality control step for preparing meshes for shape modeling. See <a href="../tools/ShapeWorksCommands.html#fix-element">fix-element</a> to know about function parameters.  </li>
+<li><code>geodesicDistance</code>: the computation of geodesic distances enables feature-based correspondences. Read this <a href="https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf">paper</a> for more details. Below are exemplar usage scenarios.    <ul>
+<li><code>geodesicDistance (pointA, pointB)</code>: computes geodesic distance between 2 points on a triangular mesh. See <a href="../tools/ShapeWorksCommands.html#geodesic-distance">geodesic-distance</a> to know about function parameters.  </li>
+<li><code>geodesicDistance (landmark)</code>: computes geodesic distances between all points on a triangular mesh to a given point (landmark). See <a href="../tools/ShapeWorksCommands.html#geodesic-distance-landmark">geodesic-distance-landmark</a> to know about function parameters.   </li>
+<li><code>geodesicDistance (curve)</code>: computes geodesic distances between all points on mesh and set of points (curve) <br />
+<code>computeMeanNormals</code>: computes the average surface normal for each mesh vertex in a given set of triangular meshes with vertex-wise correspondences and returns a field containing a normal vector for each mesh vertex. See <a href="../tools/ShapeWorksCommands.html#mean-normals">mean-normals</a> to know about function parameters. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>New <code>Mesh</code> query/operator tools:</strong><br />
+The following tools are supported from all three different interfaces - command line, C++ and Python:    </p>
+<ul>
+<li><code>operator+=</code>: appends a mesh to an existing mesh. The result of this operator is a single mesh with a single vertex and face lists.</li>
+<li><code>closestPoint</code>: returns the closest point on a face in the mesh to a given point in space. See <a href="../tools/ShapeWorksCommands.html#closest-point">closest-point</a> to know about function parameters. </li>
+<li><code>closestPointId</code>: returns closest point id in the mesh to a given point in space   </li>
+<li><code>points</code>: returns matrix with number of points with (x,y,z) coordinates of each point   </li>
+<li><code>faces</code>: returns matrix with number of faces with indices of the three points from which each face is composed   </li>
+<li><code>getFace</code>: return indices of the three points with which the face at the given index is composed   </li>
+</ul>
+</li>
+<li>
+<p><strong><code>Mesh</code> fields:</strong> Added support for passing multi-valued fields in addition to scalar fields. Previously field operations such as <code>getField</code>, <code>setField</code> supported only single-value components. Now, these operations can be used for multi-valued components as well. This is useful for associated surface meshes with positional (i.e., spatially varying) features, e.g., application-specific features such as cortical thickness and bone density, and computationally driven features such as geodesics to anatomical landmarks, curvatures, and surface normals.   </p>
+</li>
+<li>
+<p><strong>Free-form constraints (FFCs):</strong> FFCs support has been added. Added a unit test for FFCs, a typical sphere unit test with a constraint that cuts the sphere like a tennis ball grove. Also added a unit test with two domains, both spheres in different locations. The first sphere has one cutting plane and 25 sphere constraints, and the second sphere has one cutting plane and one free form constraint. See <a href="../new/free-form-constraints.html">Free-Form Constraints</a> for more details.</p>
+</li>
+</ul>
+<h4 id="shapeworks-front-end">ShapeWorks Front-end</h4>
+<ul>
+<li>
+<p><strong>Multiple domains in Studio:</strong> Support for multiple alignment strategies is now present in Studio. It allows analysis with and without articulation with a choice of reference domain or global alignment. See <a href="../studio/multiple-domains.html#multiple-domain-alignments">Multiple Domain Alignments</a></p>
+</li>
+<li>
+<p><strong>New analysis features in Studio:</strong> Shape evaluation charts for compactness, specificity, and generalization have been added. See for <a href="../studio/getting-started-with-studio.html#metrics-panel">Metrics Panel</a> more details.</p>
+</li>
+<li>
+<p><strong>Usability features in Studio:</strong> New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See <a href="../new/new-studio.html#usability-features">New in ShapeWorks Studio 6.2</a> for more details.</p>
+</li>
+</ul>
+<h4 id="users-support">User's Support</h4>
+<ul>
+<li>
+<p><strong>Shape cohort generation:</strong> Added segmentation and image generation for 2D contour supershapes. See this <a href="../notebooks/getting-started-with-data-augmentation.html">Jupyter Notebook</a> for more details.</p>
+</li>
+<li>
+<p><strong>Analyzing the group differences:</strong> A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. See <a href="../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a> for more details.   </p>
+</li>
+<li>
+<p><strong>Sub-sampling for multiple domains:</strong> We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.</p>
+</li>
+</ul>
+<h4 id="deep-learning">Deep Learning</h4>
+<ul>
+<li><strong>DeepSSM in Studio:</strong> The ability to run DeepSSM has been added to Studio. See <a href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a> for more details.</li>
+</ul>
+<h3 id="improvements">Improvements</h3>
+<h4 id="shapeworks-back-end_1">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>Safe construction of <code>Image</code> instances in Python:</strong> Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using <code>pyvista</code> is now transparent and copy-free (note: copying is still supported if necessary). A <a href="../notebooks/array-passing-without-copying.html">Jupyter Notebook</a> was added to demonstrate <code>Image</code> initialization and passing.</p>
+</li>
+<li>
+<p><strong>Efficient data sharing between Python and C++:</strong> Added efficient sharing of large data between Python and C++ (for both <code>Mesh</code> fields and <code>Image</code> data) that enables Python tools which access <code>Mesh</code> fields or <code>Image</code> data for visualization and analysis, or wish to create an Image or add fields from NumPy to a <code>Mesh</code>, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. </p>
+</li>
+<li>
+<p><strong>Improved Python APIs:</strong> <code>Coordsys</code> of images in Python can now be set using <code>setCoordsys</code>. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks <code>Mesh</code> in Python to vtk mesh by creating a <code>PolyData</code> instead of performing IO operations. </p>
+</li>
+<li>
+<p><strong>Improved testing:</strong> More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (<code>verify.log</code>) is written that contains the use case outputs and summary.</p>
+</li>
+</ul>
+<h4 id="users-support_1">User's Support</h4>
+<ul>
+<li>
+<p><strong>Use cases:</strong> Added <code>--mesh_mode</code> option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes, and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See <a href="../use-cases/use-cases.html#use-cases-arguments">Use Case Documentation</a> for more details. </p>
+</li>
+<li>
+<p><strong>Improved use cases documentation:</strong> Restructured use cases documentation to reduce repetition and better highlight the focus and differences of each demonstration. Added relevant documentation links for every step and parameter in use case descriptions. Reorganized use case documentation based on category (i.e., mesh-based, constraint-based, etc.). See <a href="../use-cases/use-cases.html">Getting Started with Use Cases</a> for information on running use cases and <a href="../getting-started/examples.html">Examples</a> for an overview of released use cases. More explanation of interpreting modes of variation in <a href="../getting-started/shapes.html">Shapes. What &amp; From Where?</a>.</p>
+</li>
+<li>
+<p><strong>Restructured <code>ellipsoid_evaluate</code> use case:</strong> The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See <a href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a> for more details.</p>
+</li>
+<li>
+<p><strong>Optimizer exports alignment transforms:</strong> Write individual procrustes transforms. The ShapeWorks <code>Optimizer</code> can now export individual procrustes transform files if requested. Use the xml tag <code>&lt;write_transform_files&gt; 1 &lt;/write_transform_files&gt;</code> to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See <a href="../workflow/optimize.html">Optimize</a> for more details.</p>
+</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<h4 id="shapeworks-back-end_2">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Memory leak:</strong> Fixed memory leak issues in <code>FEMesh</code> operations</li>
+</ul>
+<h4 id="shapeworks-front-end_1">ShapeWorks Front-end</h4>
+<ul>
+<li><strong>Fix processing of all orientation images:</strong> We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) was fully compatible with all tools. </li>
+</ul>
+<h2 id="shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</h2>
+<p><img alt="" src="../img/about/release6.1.png" /></p>
+<h3 id="what-is-new_1">What is new?</h3>
+<h4 id="shapeworks-back-end_3">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Improved shape models for convoluted structures:</strong> Geodesic distance-based repulsion is now supported for mesh domains. This improves results on structures with thin and/or convoluted features at the cost of increased memory and runtime. Refer to the <code>thin_cavity_bean</code> use case for an example.</li>
 <li><strong>Optimizing shape models on contours:</strong> N-dimensional contour domains are now supported in ShapeWorks. Refer to the <code>supershapes_1mode_contour</code> use case for an example.</li>
 <li><strong>Robust and scalable primitive-based constrained surface sampling:</strong> Constraints are now implemented by turning the problem into an unconstrained optimization using the augmented lagrangian inequality formulation. The new implementation supports both cutting planes and spheres. It also supports multiple constraints per domain/shape with different types.</li>
 <li><strong>Consolidated library for shape statistics:</strong> The <code>shapeworks</code> computational library is updated to include refactored code for shape statistics, including functions to read particle files and compute eigenvectors, eigenvalues, and PCA loadings. </li>
 </ul>
-<h4 id="shapeworks-front-end">ShapeWorks Front-end</h4>
+<h4 id="shapeworks-front-end_2">ShapeWorks Front-end</h4>
 <ul>
 <li><strong>Grooming support for meshes in Studio:</strong> Multiple grooming features for mesh domains are added to Studio, including two methods for mesh smoothing, hole filling, mesh centering, and iterative closest point for rigid pre-alignment with automated reference shape selection.</li>
 <li><strong>Multiple domains support in Studio:</strong> Multiple domains are added to Studio where shape models are optimized in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for an arbitrary number of domains as long as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).</li>
@@ -468,7 +609,7 @@
 </ul>
 <!--#### Deep Learning & Shape Modeling-->
 
-<h4 id="users-support">User's Support</h4>
+<h4 id="users-support_2">User's Support</h4>
 <ul>
 <li>
 <p><strong>Multi-domain shape cohort generation:</strong> Ellipsoid joint generation is added to ShapeWorks' cohort generator python module. Shape cohorts with multiple domains can be generated with options to control the distance separating the domains and modes of variations (size/rotation). These cohorts can be used for troubleshooting multiple domain shape modeling workflows.</p>
@@ -477,8 +618,8 @@
 <p><strong>New use cases:</strong> A new use case (<code>ellipsoid_pca</code>) demonstrating the usage of the new PCA tools is added. The <code>thin_cavity_bean</code> use case is added to demonstrate geodesic distance-based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted structures. The <code>supershapes_1mode_contour</code> use case is added to demonstrate shape modeling using contour domains. Another two new use cases, <code>ellipsoid_multiple_domain</code> and <code>ellipsoid_multiple_domain_mesh</code>, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.</p>
 </li>
 </ul>
-<h3 id="improvements">Improvements</h3>
-<h4 id="shapeworks-back-end_1">ShapeWorks Back-end</h4>
+<h3 id="improvements_1">Improvements</h3>
+<h4 id="shapeworks-back-end_4">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Particle splitting is agnostic to constraints:</strong> Particle splitting and constraints will no longer require that no particle violates constraints. It will work even if a particle violates a constraint. Multiple unit tests are added.</li>
 <li><strong>Mesh reconstruction for multiple meshes:</strong> The warp-mesh command is extended to work with multiple meshes at the same time with the same reference mesh and points.</li>
@@ -486,7 +627,7 @@
 <li>Better error detection and handling.</li>
 <li>More robust automated testing to ensure improvements do not break existing functionality.</li>
 </ul>
-<h4 id="shapeworks-front-end_1">ShapeWorks Front-end</h4>
+<h4 id="shapeworks-front-end_3">ShapeWorks Front-end</h4>
 <ul>
 <li><strong>Multiple domain support:</strong> <code>OptimizeUtils</code> and <code>AnalyzeUtils</code> are updated to handle multiple domain datasets.</li>
 <li><strong>Restructured use cases:</strong> Depreciated <code>GroomUtils</code>, <code>CommonUtils</code>, and <code>EvaluationUtils</code>. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. </li>
@@ -502,7 +643,7 @@
 <li><strong>Improved DeepSSM evaluation:</strong> DeepSSM evaluation has been adapted to use ShapeWorks mesh warp function and Python binding mesh distance function.</li>
 <li><strong>DeepSSM on both GPU and CPU:</strong> The DeepSSM use case has been adapted to run on both GPU and CPU. It is considerably faster on GPU but no longer exits when running on CPU.</li>
 </ul>
-<h4 id="users-support_1">User's Support</h4>
+<h4 id="users-support_3">User's Support</h4>
 <ul>
 <li><strong>Improved documentation:</strong> More clear documentation both from Python, the command line, and online are added.</li>
 <li><strong>Improved notebooks:</strong> Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. </li>
@@ -510,12 +651,12 @@
 <li><strong>New shapeworks environments can now be created using <code>install_shapeworks [name]</code>:</strong> This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.</li>
 <li><strong>Clean installation for ShapeWorks Python module:</strong> ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. </li>
 </ul>
-<h3 id="fixes">Fixes</h3>
-<h4 id="shapeworks-back-end_2">ShapeWorks Back-end</h4>
+<h3 id="fixes_1">Fixes</h3>
+<h4 id="shapeworks-back-end_5">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Image to Array:</strong> ShapeWorks image functionality is fixed such that an image can be successfully converted to a numpy array and back to a ShapeWorks image. </li>
 </ul>
-<h4 id="shapeworks-front-end_2">ShapeWorks Front-end</h4>
+<h4 id="shapeworks-front-end_4">ShapeWorks Front-end</h4>
 <ul>
 <li><strong>Notebook visualization:</strong> Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks are now updated to no longer use ITK Widgets for visualization and instead use the more robust and stable PyVista library. </li>
 <li><strong>Use case file writing:</strong> RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. </li>
@@ -527,7 +668,7 @@
 <h2 id="shapeworks-60-2020-03-30">ShapeWorks 6.0 - 2020-03-30</h2>
 <p><img alt="" src="../img/about/release6.0.png" /></p>
 <h3 id="whats-new">What's New</h3>
-<h4 id="users-support_2">User's Support</h4>
+<h4 id="users-support_4">User's Support</h4>
 <ul>
 <li><strong>New discussion forum:</strong> We started an online discussion forum (<a href="https://shapeworks.discourse.group/">shapeworks.discourse.group</a>). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. </li>
 <li><strong>Tiny tests for use cases:</strong> All use cases now have a tiny test that can be run using the <code>--tiny_test</code> option. When the tiny test is run, only the data necessary for the test is downloaded rather than all of the data.</li>
@@ -537,7 +678,7 @@
 </ul>
 <!--* **Interactive Jupyter notebooks:** We developed a set of Jupyter notebooks to interactively demonstrate the usage of ShapeWorks Python APIs. These notebooks enable users to explore their data before just throwing it all in a huge batch job. We also added notebooks that reflect the thought process to learn about shapeworks classes/functions. See [ShapeWorks in Python](http://sciinstitute.github.io/ShapeWorks/new/shapeworks-python) for more details. -->
 
-<h4 id="shapeworks-back-end_3">ShapeWorks Back-end</h4>
+<h4 id="shapeworks-back-end_6">ShapeWorks Back-end</h4>
 <ul>
 <li>
 <p><strong>Support for use_normals with meshes:</strong> Added support for surface normals when optimizing directly on meshes. This results in improved shape models on thin domains. See <a href="http://sciinstitute.github.io/ShapeWorks/new/sw-meshes">ShapeWorks Directly on Meshes</a> for more details.</p>
@@ -565,12 +706,12 @@
 <li><strong>Visualizing data augmentation:</strong> Parallel violin plots are used to compare the distribution of real and augmented data visually.</li>
 <li><strong>Demonstrating data augmentation:</strong> A <a href="http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-data-augmentation.ipynb">Jupyter notebook</a> that demonstrates the data augmentation process has been added. In this notebook, parallel violin plots are used to compare the distribution of real and augmented data visually.</li>
 </ul>
-<h3 id="improvements_1">Improvements</h3>
-<h4 id="users-support_3">User's Support</h4>
+<h3 id="improvements_2">Improvements</h3>
+<h4 id="users-support_5">User's Support</h4>
 <ul>
 <li><strong>Improved Python grooming utils:</strong> GroomUtils.py now uses Python binding rather than calling command-line tools.</li>
 </ul>
-<h4 id="shapeworks-back-end_4">ShapeWorks Back-end</h4>
+<h4 id="shapeworks-back-end_7">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Enable multi-threading on Mac platforms:</strong> Switched from OpenMP to TBB (thread building blocks), allowing multithreading on Mac. Performance improvements include a ~4x speedup on Mac laptop and same speed or better on Linux/Windows.</li>
 <li><strong>Performance improvements in <code>shapeworks optimize</code>:</strong> ~20% faster optimization in mesh and image domains by replacing specific data structures (that were initially in place to allow interactive removal of particles during the optimization). ~50% faster optimization in mesh domain by caching nearest-triangle lookups.</li>
@@ -586,11 +727,11 @@
 <ul>
 <li><strong>More control on data augmentation:</strong> In data augmentation, the user can now either specify how many PCA components to retain in embedding OR what percentage of population variability to retain. For example, suppose the user specifies that 95% of population variability should be kept. In that case, the number of components will be automatically selected such that less than 5% of shape variation is lost in embedding.</li>
 </ul>
-<h3 id="fixes_1">Fixes</h3>
+<h3 id="fixes_2">Fixes</h3>
 <!--#### User's Support
 -->
 
-<h4 id="shapeworks-back-end_5">ShapeWorks Back-end</h4>
+<h4 id="shapeworks-back-end_8">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Replaced mesh library:</strong> Replaced backend mesh library to fix bugs that caused optimizer crashing when optimizing particles directly on meshes.</li>
 <li><strong>Gradient of normals for image domain:</strong> Corrected a long-standing bug where we used the hessian in place of the gradient of the normal. If you have an existing use case with use_normals enabled, the normal weighting may have to be adjusted.</li>
@@ -608,7 +749,7 @@
 <h2 id="shapeworks-550-2020-10-15">ShapeWorks 5.5.0 - 2020-10-15</h2>
 <p><img alt="" src="../img/about/release5.5.png" /></p>
 <h3 id="whats-new_1">What's New</h3>
-<h4 id="users-support_4">User's Support</h4>
+<h4 id="users-support_6">User's Support</h4>
 <ul>
 <li>
 <p><strong>Revamped documentation:</strong> <a href="http://sciinstitute.github.io/ShapeWorks">New documentation</a> to support both end-users and open-source developer community in one easily navigable place. This documentation includes background information about statistical shape modeling, the scientific premise of ShapeWorks, and how to get started. It also demonstrates the latest software features, exemplar use cases, and instructions to build/install ShapeWorks.</p>
@@ -617,7 +758,7 @@
 <p><strong>Optimized shape models for use cases:</strong> All datasets on the <a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a> now have the shape model output from running the use cases with a corresponding <code>analyze.xml</code> for launching Studio. Users can <code>cd</code> to where the data is extracted and call <code>ShapeWorksStudio analyze.xml</code> to visualize these shape models.</p>
 </li>
 </ul>
-<h4 id="shapeworks-back-end_6">ShapeWorks Back-end</h4>
+<h4 id="shapeworks-back-end_9">ShapeWorks Back-end</h4>
 <ul>
 <li>
 <p><strong>ShapeWorks directly on meshes:</strong> ShapeWorks now supports particle optimization directly on triangular surface meshes. This mesh support also enables working with open meshes without additional user inputs. See <a href="http://sciinstitute.github.io/ShapeWorks/new/sw-meshes">ShapeWorks Directly on Meshes</a> for more details. For exemplar use cases, see <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-mesh">Femur Mesh: SSM directly from meshes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/lumps">Lumps: SSM directly from meshes</a> to learn how to get started. <em>This mesh support allows for significant memory savings (9.2GB to 53MB in the femur use case)</em>.</p>
@@ -650,8 +791,8 @@
 <p><strong>New DeepSSM use case:</strong> We added a new use case called <code>deep_ssm</code> that demonstrates data augmentation and deep learning on the femur data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/deep-ssm-femur">Femur SSM Directly from Images</a> for more details. </p>
 </li>
 </ul>
-<h3 id="improvements_2">Improvements</h3>
-<h4 id="users-support_5">User's Support</h4>
+<h3 id="improvements_3">Improvements</h3>
+<h4 id="users-support_7">User's Support</h4>
 <ul>
 <li>
 <p><strong>Improved data/output organization for use cases:</strong> Use case organization has been updated such that downloaded data goes into one folder (<code>ShapeWorks/Examples/Python/Data/</code>) and use case output goes into another (<code>ShapeWorks/Examples/Python/Output/</code>). This organization will avoid re-downloading use case datasets if the user deleted the output folder. </p>
@@ -660,7 +801,7 @@
 <p><strong>Enable only-shape data for the femur use case:</strong> Femur use case demonstrates the processing workflow starting from surface meshes and can now be run without grooming images (in case they are not available). To groom with images, use the <code>--start_with_image_and_segmentation_data</code> tag. If this tag is not included, images will not be used in grooming.</p>
 </li>
 </ul>
-<h4 id="shapeworks-back-end_7">ShapeWorks Back-end</h4>
+<h4 id="shapeworks-back-end_10">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Improved constrained particle optimization:</strong> An improved implementation for cutting planes that support single and multiple cutting planes per sample has been added. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-cutting-planes">Femur with Cutting Planes</a> for exemplar use cases.</li>
 </ul>
@@ -668,8 +809,8 @@
 <ul>
 <li><strong>Improved interface design for Studio:</strong> User interface improvements to Studio have been added. These improvements include collapsable analysis panels to improve screen usability, a cleaner file menu, an about box that shows website information and software version, and a splash screen that enables the opening of new/recent projects.</li>
 </ul>
-<h3 id="fixes_2">Fixes</h3>
-<h4 id="shapeworks-back-end_8">ShapeWorks Back-end</h4>
+<h3 id="fixes_3">Fixes</h3>
+<h4 id="shapeworks-back-end_11">ShapeWorks Back-end</h4>
 <ul>
 <li>
 <p><strong>Constraint-aware particles initialization and optimization:</strong> The initialization and optimization steps now respect the user-defined constraints when using signed distance transforms. Hence, at no point, particles will violate the constraints, allowing for arbitrarily defined cutting planes. </p>
@@ -683,7 +824,7 @@
 </ul>
 <hr />
 <h2 id="shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</h2>
-<h3 id="fixes_3">Fixes</h3>
+<h3 id="fixes_4">Fixes</h3>
 <ul>
 <li><strong>ShapeWorks Studio:</strong> Fixed crash when importing data on a new/blank project.    </li>
 </ul>
@@ -697,7 +838,7 @@
 <li><strong>Lower memory footprint and faster optimization:</strong> ShapeWorks is now using <a href="https://www.openvdb.org/">OpenVDB</a>, a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses <em>85% less memory</em> (from 57.09GB to 9.67GB in one use case). Additionally, the particle optimizer is now <em>2X faster</em>.</li>
 <li><strong>Automated development builds:</strong> We now offer up-to-date development binary builds that track the master branch, available <a href="https://github.com/SCIInstitute/ShapeWorks/releases">here</a>. Please understand that these are in-progress development builds, not official releases.</li>
 </ul>
-<h3 id="improvements_3">Improvements</h3>
+<h3 id="improvements_4">Improvements</h3>
 <ul>
 <li><strong>Improved scalability for Studio:</strong> Files now loaded on-demand as necessary.</li>
 <li><strong>Restructured datasets portal:</strong> Better and more consistent directory structure for use cases datasets. See <a href="../dev/datasets.html">datasets guidelines</a> for more details. Visit our <a href="https://girder.shapeworks-cloud.org">ShapeWorks Portal</a> to register and download datasets to run <a href="../use-cases/use-cases.html">use cases</a>.</li>
@@ -706,7 +847,7 @@
 <li><strong>Documentation for running existing shape models:</strong> Added <a href="../use-cases/use-cases.html#running-subsequent-analysis">instructions</a> on how to load a pre-trained shape model without running the full pipeline.</li>
 <li><strong>Consistent cross-platform splitting direction:</strong> Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.</li>
 </ul>
-<h3 id="fixes_4">Fixes</h3>
+<h3 id="fixes_5">Fixes</h3>
 <ul>
 <li><strong>Mesh export in Studio:</strong> Changed exported meshes to be compatible with CloudCompare</li>
 </ul>
@@ -720,14 +861,14 @@
 <li>New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.</li>
 <li>New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)</li>
 </ul>
-<h3 id="improvements_4">Improvements</h3>
+<h3 id="improvements_5">Improvements</h3>
 <ul>
 <li>Use cases: Updated femur use case with an interactive cutting plane selection</li>
 <li>Studio: Replaced bar chart with explained variance chart</li>
 </ul>
 <hr />
 <h2 id="shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</h2>
-<h3 id="fixes_5">Fixes</h3>
+<h3 id="fixes_6">Fixes</h3>
 <ul>
 <li>Returned to superbuild.sh build process</li>
 <li>Fixed non-Qt build</li>
@@ -737,7 +878,7 @@
 </ul>
 <hr />
 <h2 id="shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</h2>
-<h3 id="fixes_6">Fixes</h3>
+<h3 id="fixes_7">Fixes</h3>
 <ul>
 <li>Fix examples, binaries</li>
 </ul>
@@ -753,13 +894,13 @@
 <li>Windows installer and binary releases for Mac and Linux</li>
 <li>CMake-based superbuild with all dependencies built automatically</li>
 </ul>
-<h3 id="improvements_5">Improvements</h3>
+<h3 id="improvements_6">Improvements</h3>
 <ul>
 <li>Studio: Added support for reading View2 parameter files</li>
 <li>Studio: Added legacy (View2) surface reconstructor</li>
 <li>Studio: Replaced optimization library with same used by ShapeWorksRun</li>
 </ul>
-<h3 id="fixes_7">Fixes</h3>
+<h3 id="fixes_8">Fixes</h3>
 <ul>
 <li>Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)</li>
 </ul>

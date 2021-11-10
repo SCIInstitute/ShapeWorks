@@ -107,21 +107,25 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shape-evaluation-charts">Shape Evaluation Charts</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#group-p-value-display">Group p-value Display</a>
+    <li class="toctree-l2"><a class="reference internal" href="#usability-features">Usability Features</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#group-p-value-display">Group p-value Display</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#scalar-range-controls">Scalar range controls</a>
+    <li class="toctree-l3"><a class="reference internal" href="#scalar-range-controls">Scalar range controls</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#surface-opacity-controls">Surface opacity controls</a>
+    <li class="toctree-l3"><a class="reference internal" href="#surface-opacity-controls">Surface opacity controls</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#added-narrow-band-optimization-parameter">Added narrow band optimization parameter</a>
+    <li class="toctree-l3"><a class="reference internal" href="#added-narrow-band-optimization-parameter">Added narrow band optimization parameter</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#new-message-history-window">New message history window</a>
+    <li class="toctree-l3"><a class="reference internal" href="#new-message-history-window">New message history window</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#new-suppressible-error-dialog">New suppressible error dialog</a>
+    <li class="toctree-l3"><a class="reference internal" href="#new-suppressible-error-dialog">New suppressible error dialog</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#allow-initial-landmark-points">Allow initial landmark points</a>
+    <li class="toctree-l3"><a class="reference internal" href="#allow-initial-landmark-points">Allow initial landmark points</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#mesh-warping-improvements">Mesh warping improvements</a>
     </li>
@@ -138,6 +142,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="shapeworks-python.html">ShapeWorks in Python</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
@@ -162,6 +171,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -267,11 +278,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
                     </li>
                 </ul>
-                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
-                    </li>
-                </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
@@ -337,29 +343,30 @@
 <p>New in ShapeWorks 6.2, we have added new shape evaluation charts.  Charts for Compactness, Specificity and Generalizaion are provided.</p>
 <p>See <a href="../studio/getting-started-with-studio.html#metrics-panel">Studio Metrics Panel</a> for more information.</p>
 <p><img alt="Studio DeepSSM - Shape Evaluation" src="../img/studio/studio_shape_evaluation.png" width="600" /></p>
-<h2 id="group-p-value-display">Group p-value Display</h2>
+<h2 id="usability-features">Usability Features</h2>
+<h3 id="group-p-value-display">Group p-value Display</h3>
 <p>New in ShapeWorks 6.2, Studio has the ability to view group-wise p-values for surface differences.</p>
 <p><img alt="Studio DeepSSM - Group p-value" src="../img/studio/studio_group_pvalue.png" width="600" /></p>
-<h2 id="scalar-range-controls">Scalar range controls</h2>
+<h3 id="scalar-range-controls">Scalar range controls</h3>
 <p>New in ShapeWorks 6.2, Studio feature maps, p-value displays, deepssm surface error displays allow for manual control over scalar colormap values.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_scale.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<h2 id="surface-opacity-controls">Surface opacity controls</h2>
+<h3 id="surface-opacity-controls">Surface opacity controls</h3>
 <p>Shape surface opacity can now be controlled on a per domain basis.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_opacity_controls.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<h2 id="added-narrow-band-optimization-parameter">Added narrow band optimization parameter</h2>
+<h3 id="added-narrow-band-optimization-parameter">Added narrow band optimization parameter</h3>
 <p>The narrow band optimization parameter has been added to Studio's Optimize parameter dialog.  This allows the user to modifiy the narrow band from the default of 4 in the rare event that it needs modification.</p>
-<h2 id="new-message-history-window">New message history window</h2>
+<h3 id="new-message-history-window">New message history window</h3>
 <p>A new button in the lower corner has been added that brings up the message history from the status bar.</p>
 <p><img alt="Studio Message History" src="../img/studio/studio_message_history.png" width="600" /></p>
-<h2 id="new-suppressible-error-dialog">New suppressible error dialog</h2>
+<h3 id="new-suppressible-error-dialog">New suppressible error dialog</h3>
 <p>The error dialog has been replaced with a new dialog containing a checkbox to suppress further messages</p>
 <p><img alt="Studio Error Message" src="../img/studio/studio_error_message.png" width="400" /></p>
-<h2 id="multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</h2>
+<h3 id="multiple-domain-export-options-combined-separate">Multiple domain export options (combined + separate)</h3>
 <p>When exporting data in the presences of multiple anatomies/domains, you may now export a combined file, or one for each domain.</p>
 <p><img alt="Studio Multiple Domain Question" src="../img/studio/studio_multiple_domain_question.png" width="400" /></p>
-<h2 id="allow-initial-landmark-points">Allow initial landmark points</h2>
+<h3 id="allow-initial-landmark-points">Allow initial landmark points</h3>
 <p>Initial particle positions can be specified in a Project Spreadsheet using the column prefix <code>landmarks_file_&lt;name&gt;</code> where <code>&lt;name&gt;</code> is the name of each shape domain.  For example:</p>
 <p><img alt="Studio Initial Landmarks" src="../img/studio/studio_initial_landmarks.png" width="400" /></p>
 <p>These landmarks will be used as the initial positions of particles during optimization.  They are not yet visualized within Studio before optimization.</p>

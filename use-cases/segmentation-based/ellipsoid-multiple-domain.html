@@ -114,6 +114,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
@@ -136,6 +141,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -253,11 +260,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
                     </li>
                 </ul>
-                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
-                    </li>
-                </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
@@ -351,17 +353,17 @@ Below are the default optimization parameters for this use case.
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
         <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">512</span><span class="p">,</span><span class="mi">512</span><span class="p">],</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span>
+        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">],</span>
         <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
         <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span><span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span><span class="mi">1000</span><span class="p">,</span>
         <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
         <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
         <span class="s2">&quot;domain_type&quot;</span> <span class="p">:</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span> 
         <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>

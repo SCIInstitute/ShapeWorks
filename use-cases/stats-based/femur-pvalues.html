@@ -114,6 +114,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
@@ -136,6 +141,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -249,11 +256,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
                     </li>
                 </ul>
-                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
-                    </li>
-                </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
@@ -311,7 +313,8 @@
               
                 <h1 id="femur-group-difference-statistics-in-python">Femur: Group Difference Statistics in Python</h1>
 <h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
-<p>The <code>femur_pvalues</code> use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the <a href="../mesh-based/femur.html">Femur: SSM from Meshes</a> use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement. </p>
+<p>This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the <a href="femur.md">Femur: SSM from Meshes</a> use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement.
+This use case analyzes the femur shape model obtained from running the <a href="../mesh-based/femur.html">Femur: SSM from Meshes</a> use case. Separate statistical tests for differences in correspondence positions are applied to every correspondence index. We use Hotelling <span class="arithmatex">\(T^2\)</span> metric(nonparametric permutation test) with false discovery rate correction (FDR) for multiple comparisons. This method helps identify and visualize localized regions of significant shape differences.</p>
 <p>Here are femur samples with their optimized correspondences.
 <img alt="Femur Samples" src="../../img/use-cases/femur_samples.png" /></p>
 <h2 id="relevant-arguments">Relevant Arguments</h2>

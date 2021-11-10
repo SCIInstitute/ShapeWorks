@@ -114,6 +114,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
@@ -136,6 +141,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -262,7 +269,7 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#building">Building</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#before-running-examplespython-scripts">Before running Examples/Python scripts</a>
+    <li class="toctree-l4"><a class="reference internal" href="#before-running-examplespython-scripts-and-examplespythonnotebooks">Before running Examples/Python scripts and Examples/Python/notebooks</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
     </li>
@@ -303,11 +310,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="markdown.html">Getting Started with Markdown</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="paths.html">Adding to PATH Environment Variable</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
@@ -498,9 +500,10 @@ Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.</p>
 </li>
 <li><strong>XCode project:</strong> <code>open ShapeWorks.xcodeproj</code> and build from there.  </li>
 </ul>
-<h4 id="before-running-examplespython-scripts">Before running Examples/Python scripts</h4>
-<p>Add the ShapeWorks and dependency binaries to the path:<br />
-<code>$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH</code>  </p>
+<h4 id="before-running-examplespython-scripts-and-examplespythonnotebooks">Before running Examples/Python scripts and Examples/Python/notebooks</h4>
+<p>Developer environment should be set by using the <code>devenv.sh</code> script by running this:</p>
+<div class="highlight"><pre><span></span><code>$ source devenv.sh [build_directory]
+</code></pre></div>
 <h4 id="examples">Examples</h4>
 <p><em>OSX</em> example that builds dependencies separately, then generates an XCode project for ShapeWorks:  </p>
 <div class="highlight"><pre><span></span><code>$ ./build_dependencies.sh
