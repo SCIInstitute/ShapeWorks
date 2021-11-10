@@ -1576,6 +1576,15 @@ PYBIND11_MODULE(shapeworks_py, m)
       "remove an entry",
       "key"_a)
 
+  .def("set_map",
+      &Parameters::set_map,
+      "set underlying map",
+      "map"_a)
+
+  .def("get_map",
+      &Parameters::get_map,
+      "get underlying map")
+
   .def("reset_parameters",
       &Parameters::reset_parameters,
       "reset parameters to blank")
