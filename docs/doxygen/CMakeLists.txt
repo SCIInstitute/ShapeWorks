@@ -5,6 +5,6 @@ configure_file(Module.dox ${ShapeWorks_BINARY_DIR}/Documentation/Doxygen/Module.
 # then leave out the 'ALL' keyword from the above command.
 add_custom_target(Documentation ALL
   COMMAND ${DOXYGEN_EXECUTABLE} ${ShapeWorks_BINARY_DIR}/Documentation/Doxygen/doxygen.config
-  MAIN_DEPENDENCY ${ShapeWorks_BINARY_DIR}/Documentation/Doxygen/oxygen.config
+  MAIN_DEPENDENCY ${ShapeWorks_BINARY_DIR}/Documentation/Doxygen/doxygen.config
   WORKING_DIRECTORY ${ShapeWorks_BINARY_DIR}/Documentation/Doxygen
 )

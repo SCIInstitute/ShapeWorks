@@ -6,8 +6,10 @@
 
 
 `shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.
-!!! note "Activate shapeworks environment"
+!!! danger "Activate shapeworks environment"
 	 Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal. 
+!!! danger "Add shapeworks to your path"
+	 Please make sure that `shapeworks` is in your path. See [Adding to PATH Environment Variable](../dev/paths.md). 
 
 ## shapeworks
 
@@ -29,54 +31,33 @@
 **--version:** show program's version number and exit
 
 **-q, --quiet:** don't print status messages  
-
-Here are some examples on the command line usage of shapeworks:
-
-Let's read an image, pad it and save it:
-```
-shapeworks readimage --name $DATA/1x2x2.nrrd pad --padding 10.0 writeimage --name $DATA/padded.nrrd
-```
-
-Let's try another image tool, crop! We need to set a region to crop the image with so let's read an image, set a region, crop and save it:
-```
-shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop writeimage --name $DATA/cropped.nrrd
-```
-
-We could find the bounding box of the image and use it to set the region and then crop too:
-```
-shapeworks readimage --name $DATA/1x2x2.nrrd imageinfo
-```
-```
-image dimensions:      [100, 50, 50]
-physical spacing:      [1, 2, 2]
-size (spacing * dims): [100, 100, 100]
-physical origin:       [0, 0.5, 0.5]
-center:                [50, 50.5, 50.5]
-center of mass (0,1]:  [49.9917, 49.8699, 49.8699]
-physical bounding box: {
-	min: [0, 0.5, 0.5],
-	max: [99, 98.5, 98.5]
-}
-logical bounding box:  {
-	min: [0, 0, 0],
-	max: [99, 49, 49]
-}
-direction (coordsys):
-1 0 0
-0 1 0
-0 0 1
-```
-```
-shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 0 --xmax 99 --ymin 0.5 --ymax 98.5 --zmin 0.5 --zmax 98.5 crop writeimage --name $DATA/boundingBoxCrop.nrrd
-```
-
-What if we want to use more than one grooming tool? We can just chain it like this:
-```
-shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop pad --padding 10.0 writeimage --name $DATA/croppedAndPadded.nrrd
-```
   
 <a href="#top">Back to Top</a>
 
+## Groom Commands
+
+### groom
+
+
+**Usage:**
+
+```
+shapeworks  groom [args]...
+```  
+
+
+**Description:** groom a shapeworks project  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Path to parameter file.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Groom Commands](#groom-commands)
 ## Image Commands
 
 ### add
@@ -96,7 +77,7 @@ shapeworks  add [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:**  Value to add to each pixel.
+**-x DOUBLE, --value=DOUBLE:**  Value to add to each pixel [default: 0.0].
 
 **--name=STRING:** Name of image to add pixelwise.  
   
@@ -120,9 +101,9 @@ shapeworks  antialias [args]...
 
 **-h, --help:** show this help message and exit
 
-**--maxrmserror=DOUBLE:** Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].
-
 **--iterations=INT:** Maximum number of iterations [default: 50].
+
+**--maxrmserror=DOUBLE:** Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].
 
 **--layers=INT:** Number of layers around a 3d pixel to use for this computation [default: 3].  
   
@@ -150,7 +131,7 @@ shapeworks  binarize [args]...
 
 **--max=DOUBLE:** Upper threshold level [default: inf ].
 
-**--value=DOUBLE:** Value to set region [default: 1.0].  
+**--value=DOUBLE:** Value to set region [default: 1].  
   
 <a href="#top">Back to Top</a>
   
@@ -172,44 +153,42 @@ shapeworks  blur [args]...
 
 **-h, --help:** show this help message and exit
 
-**--sigma=DOUBLE:** Value of sigma [default: 0.0].  
+**--sigma=DOUBLE:** Value of sigma [default: 0].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### bounding-box
+### bounding-box-image
 
 
 **Usage:**
 
 ```
-shapeworks  bounding-box [args]...
+shapeworks  bounding-box-image [args]...
 ```  
 
 
-**Description:** compute largest bounding box surrounding the specified isovalue of the specified set of images  
+**Description:** compute largest physical bounding box surrounding the specified isovalue of the specified set of images  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--names <list of strings>:**  Paths to images (must be followed by `--`), ex: "bounding-box --names *.nrrd -- --isovalue 1.5")
+**--names <list of strings>:**  Paths to images (must be followed by `--`), ex: "bounding-box-image --names *.nrrd -- --isovalue 1.5")
 
-**--padding=INT:** Number of extra voxels in each direction to pad the largest bounding box [default: 0].
-
-**--isovalue=DOUBLE:** Threshold value [default: 1.0].  
+**--isovalue=DOUBLE:** Threshold value [default: 1].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### clip
+### clip-image
 
 
 **Usage:**
 
 ```
-shapeworks  clip [args]...
+shapeworks  clip-image [args]...
 ```  
 
 
@@ -220,25 +199,25 @@ shapeworks  clip [args]...
 
 **-h, --help:** show this help message and exit
 
-**--x1=DOUBLE:** Value of x1 for cutting plane [default: 0.0].
+**--x1=DOUBLE:** Value of x1 for cutting plane [default: 0].
 
-**--y1=DOUBLE:** Value of y1 for cutting plane [default: 0.0].
+**--y1=DOUBLE:** Value of y1 for cutting plane [default: 0].
 
-**--z1=DOUBLE:** Value of z1 for cutting plane [default: 0.0].
+**--z1=DOUBLE:** Value of z1 for cutting plane [default: 0].
 
-**--x2=DOUBLE:** Value of x2 for cutting plane [default: 0.0].
+**--x2=DOUBLE:** Value of x2 for cutting plane [default: 0].
 
-**--y2=DOUBLE:** Value of y2 for cutting plane [default: 0.0].
+**--y2=DOUBLE:** Value of y2 for cutting plane [default: 0].
 
-**--z2=DOUBLE:** Value of z2 for cutting plane [default: 0.0].
+**--z2=DOUBLE:** Value of z2 for cutting plane [default: 0].
 
-**--x3=DOUBLE:** Value of x3 for cutting plane [default: 0.0].
+**--x3=DOUBLE:** Value of x3 for cutting plane [default: 0].
 
-**--y3=DOUBLE:** Value of y3 for cutting plane [default: 0.0].
+**--y3=DOUBLE:** Value of y3 for cutting plane [default: 0].
 
-**--z3=DOUBLE:** Value of z3 for cutting plane [default: 0.0].
+**--z3=DOUBLE:** Value of z3 for cutting plane [default: 0].
 
-**--value=DOUBLE:** Value of clipped pixels [default: 0.0].  
+**--value=DOUBLE:** Value of clipped pixels [default: 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -260,18 +239,18 @@ shapeworks  close-holes [args]...
 
 **-h, --help:** show this help message and exit
 
-**--value=DOUBLE:** Largest value not in volume [default: 0.0].  
+**--value=DOUBLE:** Largest value not in volume [default: 0].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### compare
+### compare-image
 
 
 **Usage:**
 
 ```
-shapeworks  compare [args]...
+shapeworks  compare-image [args]...
 ```  
 
 
@@ -286,9 +265,9 @@ shapeworks  compare [args]...
 
 **--verifyall=BOOL:** Also verify origin, spacing, and direction matches [default: true].
 
-**--tolerance=DOUBLE:** Allowed percentage of pixel differences [default: 0.0].
+**--tolerance=DOUBLE:** Allowed percentage of pixel differences [default: 0].
 
-**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 0.0].  
+**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 1e-12].  
   
 <a href="#top">Back to Top</a>
   
@@ -310,7 +289,7 @@ shapeworks  compute-dt [args]...
 
 **-h, --help:** show this help message and exit
 
-**--isovalue=DOUBLE:** Level set value that defines the interface between foreground and background [default: 0.0].  
+**--isovalue=DOUBLE:** Level set value that defines the interface between foreground and background [default: 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -325,24 +304,12 @@ shapeworks  crop [args]...
 ```  
 
 
-**Description:** crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]  
+**Description:** crop image down to the current region of physical space (from bounding-box or set-region commands)  
 
 
 **Options:**
 
-**-h, --help:** show this help message and exit
-
-**--xmin=UNSIGNED:** Minimum X.
-
-**--xmax=UNSIGNED:** Maximum X.
-
-**--ymin=UNSIGNED:** Minimum Y.
-
-**--ymax=UNSIGNED:** Maximum Y.
-
-**--zmin=UNSIGNED:** Minimum Z.
-
-**--zmax=UNSIGNED:** Maximum Z.  
+**-h, --help:** show this help message and exit  
   
 <a href="#top">Back to Top</a>
   
@@ -386,7 +353,7 @@ shapeworks  divide [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:**  Value with which to divide.  
+**-x DOUBLE, --value=DOUBLE:**  Value with which to divide [default: 0.0].  
   
 <a href="#top">Back to Top</a>
   
@@ -408,7 +375,7 @@ shapeworks  extract-label [args]...
 
 **-h, --help:** show this help message and exit
 
-**--label=DOUBLE:** Label value to be extracted [default: 1.0].  
+**--label=DOUBLE:** Label value to be extracted [default: 1].  
   
 <a href="#top">Back to Top</a>
   
@@ -433,30 +400,86 @@ shapeworks  gradient [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### icp
+### icp-image
 
 
 **Usage:**
 
 ```
-shapeworks  icp [args]...
+shapeworks  icp-image [args]...
 ```  
 
 
-**Description:** transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps  
+**Description:** transform current image using iterative closest point (ICP) 3D rigid registration computed from current distance map to target distance map  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--source=STRING:** Distance map of source image.
-
 **--target=STRING:** Distance map of target image.
 
-**--isovalue=DOUBLE:** Isovalue of distance maps used to create ICPtransform [default: 0.0].
+**--isovalue=DOUBLE:** Isovalue of distance maps used to create ICPtransform [default: 0].
 
 **--iterations=UNSIGNED:**  Number of iterations run ICP registration [default: 20].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### image-bounds
+
+
+**Usage:**
+
+```
+shapeworks  image-bounds [args]...
+```  
+
+
+**Description:** return bounds of image, optionally with an isovalue to restrict region  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--isovalue=DOUBLE:** Isovalue [default: entire image].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### image-info
+
+
+**Usage:**
+
+```
+shapeworks  image-info [args]...
+```  
+
+
+**Description:** prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--dims:** Whether to display image dimensions [default: true].
+
+**--spacing:** Whether to display physical spacing [default: true].
+
+**--size:** Whether to display size [default: true].
+
+**--origin:** Whether to display physical origin [default: true].
+
+**--direction:** Whether to display direction [default: true].
+
+**--center:** Whether to display center. [default: true]
+
+**--centerofmass:** Whether to display center of mass. [default: true]
+
+**--boundingbox:** Whether to display bounding box. [default: true]  
   
 <a href="#top">Back to Top</a>
   
@@ -478,43 +501,31 @@ shapeworks  image-to-mesh [args]...
 
 **-h, --help:** show this help message and exit
 
-**-v DOUBLE, --isovalue=DOUBLE:**  Isovalue to determine mesh boundary [default: 1.0].  
+**-v DOUBLE, --isovalue=DOUBLE:**  Isovalue to determine mesh boundary [default: 1].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### info
+### intensity
 
 
 **Usage:**
 
 ```
-shapeworks  info [args]...
+shapeworks  intensity [args]...
 ```  
 
 
-**Description:** prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]  
+**Description:** applies intensity windowing image filter  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--dims:** Whether to display image dimensions
+**--min=DOUBLE:** Minimum value of window [default: 0].
 
-**--spacing:** Whether to display physical spacing
-
-**--size:** Whether to display size
-
-**--origin:** Whether to display physical origin
-
-**--direction:** Whether to display direction
-
-**--center:** Whether to display center
-
-**--centerofmass:** Whether to display center of mass
-
-**--boundingbox:** Whether to display bounding box  
+**--max=DOUBLE:** Maximum value of window [default: 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -536,7 +547,7 @@ shapeworks  multiply [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:**  Value with which to multiply.  
+**-x DOUBLE, --value=DOUBLE:**  Value with which to multiply [default: 1.0]  
   
 <a href="#top">Back to Top</a>
   
@@ -586,7 +597,7 @@ shapeworks  pad [args]...
 
 **-z INT, --padz=INT:** Pad this many voxels in the z-direction [default: 0].
 
-**--value=DOUBLE:** Value used to fill padded voxels [default: 0.0].  
+**--value=DOUBLE:** Value used to fill padded voxels [default: 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -608,7 +619,7 @@ shapeworks  read-image [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of file to read  
+**--name=STRING:** Name of file to read.  
   
 <a href="#top">Back to Top</a>
   
@@ -633,13 +644,13 @@ shapeworks  recenter [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### reflect
+### reflect-image
 
 
 **Usage:**
 
 ```
-shapeworks  reflect [args]...
+shapeworks  reflect-image [args]...
 ```  
 
 
@@ -740,26 +751,26 @@ shapeworks  rotate [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --rx=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
+**-x DOUBLE, --rx=DOUBLE:**  Physical axis around which to rotate [default: z-axis].
 
-**-y DOUBLE, --ry=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
+**-y DOUBLE, --ry=DOUBLE:**  Physical axis around which to rotate [default: z-axis].
 
-**-z DOUBLE, --rz=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
+**-z DOUBLE, --rz=DOUBLE:**  Physical axis around which to rotate [default: z-axis].
 
-**--radians=DOUBLE:** Angle in radians
+**--radians=DOUBLE:** Angle in radians.
 
-**--degrees=DOUBLE:** Angle in degrees  
+**--degrees=DOUBLE:** Angle in degrees.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### scale
+### scale-image
 
 
 **Usage:**
 
 ```
-shapeworks  scale [args]...
+shapeworks  scale-image [args]...
 ```  
 
 
@@ -770,11 +781,11 @@ shapeworks  scale [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --sx=DOUBLE:**  X scale
+**-x DOUBLE, --sx=DOUBLE:**  X scale.
 
-**-y DOUBLE, --sy=DOUBLE:**  Y scale
+**-y DOUBLE, --sy=DOUBLE:**  Y scale.
 
-**-z DOUBLE, --sz=DOUBLE:**  Z scale  
+**-z DOUBLE, --sz=DOUBLE:**  Z scale.  
   
 <a href="#top">Back to Top</a>
   
@@ -796,11 +807,69 @@ shapeworks  set-origin [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --x=DOUBLE:**  x value of origin [default: 0.0].
+**-x DOUBLE, --x=DOUBLE:**  X value of origin [default: 0].
 
-**-y DOUBLE, --y=DOUBLE:**  y value of origin [default: 0.0].
+**-y DOUBLE, --y=DOUBLE:**  Y value of origin [default: 0].
 
-**-z DOUBLE, --z=DOUBLE:**  z value of origin [default: 0.0].  
+**-z DOUBLE, --z=DOUBLE:**  Z value of origin [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### set-region
+
+
+**Usage:**
+
+```
+shapeworks  set-region [args]...
+```  
+
+
+**Description:** set the current (physical) region to the specified min/max in each direction, for use with downstreams commands such as crop (note: could instead use the image-bounds command with an isovalue)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--xmin=DOUBLE:** Minimum X.
+
+**--xmax=DOUBLE:** Maximum X.
+
+**--ymin=DOUBLE:** Minimum Y.
+
+**--ymax=DOUBLE:** Maximum Y.
+
+**--zmin=DOUBLE:** Minimum Z.
+
+**--zmax=DOUBLE:** Maximum Z.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### set-spacing
+
+
+**Usage:**
+
+```
+shapeworks  set-spacing [args]...
+```  
+
+
+**Description:** set spacing  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --x=DOUBLE:**  x value of spacing [default: 1].
+
+**-y DOUBLE, --y=DOUBLE:**  y value of spacing [default: 1].
+
+**-z DOUBLE, --z=DOUBLE:**  z value of spacing [default: 1].  
   
 <a href="#top">Back to Top</a>
   
@@ -822,9 +891,9 @@ shapeworks  sigmoid [args]...
 
 **-h, --help:** show this help message and exit
 
-**--alpha=DOUBLE:** Value of alpha [default: 10.0].
+**--alpha=DOUBLE:** Value of alpha [default: 10].
 
-**--beta=DOUBLE:** Value of beta [default: 10.0].  
+**--beta=DOUBLE:** Value of beta [default: 10].  
   
 <a href="#top">Back to Top</a>
   
@@ -846,7 +915,7 @@ shapeworks  subtract [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:**  Value to subtract from each pixel.
+**-x DOUBLE, --value=DOUBLE:**  Value to subtract from each pixel [default: 0.0].
 
 **--name=STRING:** Name of image to subtract pixelwise.  
   
@@ -863,18 +932,18 @@ shapeworks  topo-preserving-smooth [args]...
 ```  
 
 
-**Description:** Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this  
+**Description:** helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--scaling=DOUBLE:** Scale for TPLevelSet level set filter [default: 20.0].
+**--scaling=DOUBLE:** Scale for TPLevelSet level set filter [default: 20].
 
-**--alpha=DOUBLE:** Value of alpha for sigmoid fitler [default: 10.0].
+**--alpha=DOUBLE:** Value of alpha for sigmoid fitler [default: 10].
 
-**--beta=DOUBLE:** Value of beta for sigmoid fitler [default: 10.0.0].  
+**--beta=DOUBLE:** Value of beta for sigmoid fitler [default: 10].  
   
 <a href="#top">Back to Top</a>
   
@@ -898,18 +967,18 @@ shapeworks  tp-levelset [args]...
 
 **--featureimage=STRING:**  Path of feature image for filter
 
-**--scaling=DOUBLE:** Value of scale [default: 20.0].  
+**--scaling=DOUBLE:** Value of scale [default: 20].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-### translate
+### translate-image
 
 
 **Usage:**
 
 ```
-shapeworks  translate [args]...
+shapeworks  translate-image [args]...
 ```  
 
 
@@ -922,11 +991,11 @@ shapeworks  translate [args]...
 
 **--centerofmass:** Use center of mass [default: false].
 
-**-x DOUBLE, --tx=DOUBLE:**  X distance
+**-x DOUBLE, --tx=DOUBLE:**  X distance.
 
-**-y DOUBLE, --ty=DOUBLE:**  Y distance
+**-y DOUBLE, --ty=DOUBLE:**  Y distance.
 
-**-z DOUBLE, --tz=DOUBLE:**  Z distance  
+**-z DOUBLE, --tz=DOUBLE:**  Z distance.  
   
 <a href="#top">Back to Top</a>
   
@@ -974,15 +1043,171 @@ shapeworks  write-image [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of file to write
+**--name=STRING:** Name of file to write.
 
-**--compressed=BOOL:** Whether to compress file [default: true]  
+**--compressed=BOOL:** Whether to compress file [default: true].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
 ## Mesh Commands
 
+### bounding-box-mesh
+
+
+**Usage:**
+
+```
+shapeworks  bounding-box-mesh [args]...
+```  
+
+
+**Description:** compute bounding box of mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--names <list of strings>:**  Paths to meshes (must be followed by `--`), ex: "bounding-box-mesh --names *.vtk -- --center 1")  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### clip-closed-surface
+
+
+**Usage:**
+
+```
+shapeworks  clip-closed-surface [args]...
+```  
+
+
+**Description:** clips mesh resulting in a closed surface  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--px=DOUBLE:** Value of point.x for cutting plane [default: 0].
+
+**--py=DOUBLE:** Value of point.y for cutting plane [default: 0].
+
+**--pz=DOUBLE:** Value of point.z for cutting plane [default: 0].
+
+**--nx=DOUBLE:** Value of normal.x for cutting plane [default: 0].
+
+**--ny=DOUBLE:** Value of normal.y for cutting plane [default: 0].
+
+**--nz=DOUBLE:** Value of normal.z for cutting plane [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### clip-mesh
+
+
+**Usage:**
+
+```
+shapeworks  clip-mesh [args]...
+```  
+
+
+**Description:** clips mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--px=DOUBLE:** Value of point.x for cutting plane [default: 0].
+
+**--py=DOUBLE:** Value of point.y for cutting plane [default: 0].
+
+**--pz=DOUBLE:** Value of point.z for cutting plane [default: 0].
+
+**--nx=DOUBLE:** Value of normal.x for cutting plane [default: 0].
+
+**--ny=DOUBLE:** Value of normal.y for cutting plane [default: 0].
+
+**--nz=DOUBLE:** Value of normal.z for cutting plane [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### closest-point
+
+
+**Usage:**
+
+```
+shapeworks  closest-point [args]...
+```  
+
+
+**Description:** returns closest point to given point on mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--x=DOUBLE:** Value of x for point.
+
+**--y=DOUBLE:** Value of y for point.
+
+**--z=DOUBLE:** Value of z for point.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### compare-mesh
+
+
+**Usage:**
+
+```
+shapeworks  compare-mesh [args]...
+```  
+
+
+**Description:** compare two meshes  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Compare this mesh with another.
+
+**--epsilon=DOUBLE:** Epsilon [default: -1].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### compute-normals
+
+
+**Usage:**
+
+```
+shapeworks  compute-normals [args]...
+```  
+
+
+**Description:** computes and adds oriented point and cell normals  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
 ### coverage
 
 
@@ -1000,7 +1225,505 @@ shapeworks  coverage [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to other mesh with which to create coverage.  
+**--name=STRING:** Path to other mesh with which to create coverage.
+
+**--allowbackintersections=BOOL:**  Allow back-intersections in coverage calculation [default: true].
+
+**--anglethreshold=DOUBLE:**  This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: 0].
+
+**--backsearchradius=DOUBLE:**  Max distance of a back-intersection [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### cvd-decimate
+
+
+**Usage:**
+
+```
+shapeworks  cvd-decimate [args]...
+```  
+
+
+**Description:** applies cvd (centroidal voronoi diagram) decimation filter  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--percentage=DOUBLE:** Percentage of target number of clusters/vertices [default: 0.5].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### decimate
+
+
+**Usage:**
+
+```
+shapeworks  decimate [args]...
+```  
+
+
+**Description:** applies filter to reduce number of triangles in mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--reduction=DOUBLE:** Percent reduction of total number of polygons [default: 0.5].
+
+**--angle=DOUBLE:** Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: 15].
+
+**--preservetopology=BOOL:**  Whether to preserve topology [default: true].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### distance
+
+
+**Usage:**
+
+```
+shapeworks  distance [args]...
+```  
+
+
+**Description:** computes the distance between two meshes, printing the largest distance between any point from source to target, target to source, and the Hausdorff distance (the largest of these two)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Filename of other mesh.
+
+**--method=CHOICE:** Method used to compute distance [default: point-to-point]. (choose from 'point-to-point', 'point-to-cell')
+
+**--summary=BOOL:** Print largest distance of any point in mesh to target [default: true].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### field-mean
+
+
+**Usage:**
+
+```
+shapeworks  field-mean [args]...
+```  
+
+
+**Description:** prints the mean of the given field  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### field-names
+
+
+**Usage:**
+
+```
+shapeworks  field-names [args]...
+```  
+
+
+**Description:** prints all the field names present in mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### field-range
+
+
+**Usage:**
+
+```
+shapeworks  field-range [args]...
+```  
+
+
+**Description:** prints the range of the given field  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### field-std
+
+
+**Usage:**
+
+```
+shapeworks  field-std [args]...
+```  
+
+
+**Description:** prints the standard deviation of the given field  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### fill-holes
+
+
+**Usage:**
+
+```
+shapeworks  fill-holes [args]...
+```  
+
+
+**Description:** finds holes in a mesh and closes them  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### fix-element
+
+
+**Usage:**
+
+```
+shapeworks  fix-element [args]...
+```  
+
+
+**Description:** fix element winding of mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### geodesic-distance
+
+
+**Usage:**
+
+```
+shapeworks  geodesic-distance [args]...
+```  
+
+
+**Description:** computes geodesic distance between two vertices on mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--v1=INT:** Index of first point in mesh.
+
+**--v2=INT:** Index of second point in mesh.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### geodesic-distance-landmark
+
+
+**Usage:**
+
+```
+shapeworks  geodesic-distance-landmark [args]...
+```  
+
+
+**Description:** computes geodesic distance between a point (landmark) and each vertex on mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--x=DOUBLE:** Value of x for landmark point.
+
+**--y=DOUBLE:** Value of y for landmark point.
+
+**--z=DOUBLE:** Value of z for landmark point.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### get-field
+
+
+**Usage:**
+
+```
+shapeworks  get-field [args]...
+```  
+
+
+**Description:** gets field of mesh with given name  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### get-field-value
+
+
+**Usage:**
+
+```
+shapeworks  get-field-value [args]...
+```  
+
+
+**Description:** prints value of element at index in given field of mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.
+
+**-i INT, --index=INT:** index of value to return [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### invert-normal
+
+
+**Usage:**
+
+```
+shapeworks  invert-normal [args]...
+```  
+
+
+**Description:** flips the normal  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mean-normals
+
+
+**Usage:**
+
+```
+shapeworks  mean-normals [args]...
+```  
+
+
+**Description:** computes average normals for each point in given set of meshes  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--names <list of strings>:**  Paths to meshes (must be followed by `--`), ex: "mean-normals --names *.vtk --")
+
+**--generatenormals=BOOL:**  Auto generate normals if the mesh does not have normals [default: true].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mesh-bounds
+
+
+**Usage:**
+
+```
+shapeworks  mesh-bounds [args]...
+```  
+
+
+**Description:** return physical bounds of mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mesh-curvature
+
+
+**Usage:**
+
+```
+shapeworks  mesh-curvature [args]...
+```  
+
+
+**Description:** computes and adds curvature  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--type=CHOICE:** Curvature type to use [default: principal]. (choose from 'principal', 'gaussian', 'mean')  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mesh-info
+
+
+**Usage:**
+
+```
+shapeworks  mesh-info [args]...
+```  
+
+
+**Description:** prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: prints everything]  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--vertices:** Whether to display number of vertices [default: true].
+
+**--faces:** Whether to display number of faces [default: true].
+
+**--center:** Whether to display center [default: true].
+
+**--centerofmass:** Whether to display center of mass [default: true].
+
+**--boundingbox:** Whether to display bounding box [default: true].
+
+**--fieldnames:** Whether to display field names [default: true].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mesh-to-dt
+
+
+**Usage:**
+
+```
+shapeworks  mesh-to-dt [args]...
+```  
+
+
+**Description:** converts mesh to a distance transform, using unit spacing by default  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--sx=DOUBLE:** Spacing of output image in x-direction [default: unit spacing].
+
+**--sy=DOUBLE:** Spacing of output image in y-direction [default: unit spacing].
+
+**--sz=DOUBLE:** Spacing of output image in z-direction [default: unit spacing].
+
+**--pad=DOUBLE:** Pad the region to extract [default: 0.0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### mesh-to-image
+
+
+**Usage:**
+
+```
+shapeworks  mesh-to-image [args]...
+```  
+
+
+**Description:** converts mesh to a binary segmentation image, using unit spacing by default  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--sx=DOUBLE:** Spacing of output image in x-direction [default: unit spacing].
+
+**--sy=DOUBLE:** Spacing of output image in y-direction [default: unit spacing].
+
+**--sz=DOUBLE:** Spacing of output image in z-direction [default: unit spacing].
+
+**--pad=DOUBLE:** Pad the region to extract [default: 0.0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### probe-volume
+
+
+**Usage:**
+
+```
+shapeworks  probe-volume [args]...
+```  
+
+
+**Description:** probe feature volumes at each mesh vertex and output vtk meshes with scalar field defined based on such probing process  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--image=STRING:** Path of image.  
   
 <a href="#top">Back to Top</a>
   
@@ -1022,7 +1745,237 @@ shapeworks  read-mesh [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** name of file to read  
+**--name=STRING:** Name of file to read.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### reflect-mesh
+
+
+**Usage:**
+
+```
+shapeworks  reflect-mesh [args]...
+```  
+
+
+**Description:** reflect meshes with respect to a specified center and specific axis  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--axis=STRING:** Axis along which to reflect (X, Y, or Z).
+
+**-x DOUBLE, --originx=DOUBLE:**  Origin about which reflection occurs in x-direction [default: 0].
+
+**-y DOUBLE, --originy=DOUBLE:**  Origin about which reflection occurs in y-direction [default: 0].
+
+**-z DOUBLE, --originz=DOUBLE:**  Origin about which reflection occurs in z-direction [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### scale-mesh
+
+
+**Usage:**
+
+```
+shapeworks  scale-mesh [args]...
+```  
+
+
+**Description:** scales mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --sx=DOUBLE:**  X scale.
+
+**-y DOUBLE, --sy=DOUBLE:**  Y scale.
+
+**-z DOUBLE, --sz=DOUBLE:**  Z scale.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### set-field
+
+
+**Usage:**
+
+```
+shapeworks  set-field [args]...
+```  
+
+
+**Description:** adds the current field to the current mesh with the given name.  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### set-field-value
+
+
+**Usage:**
+
+```
+shapeworks  set-field-value [args]...
+```  
+
+
+**Description:** sets value of element at index in given field of mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of scalar field.
+
+**-i INT, --index=INT:** index of value to return [default: 0].
+
+**--value=DOUBLE:** value to be set [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### smooth
+
+
+**Usage:**
+
+```
+shapeworks  smooth [args]...
+```  
+
+
+**Description:** applies laplacian smoothing  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--iterations=INT:** Number of iterations [default: 0].
+
+**--relaxation=DOUBLE:** Amount of displacement for a vertex to move in each iteration [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### smooth-sinc
+
+
+**Usage:**
+
+```
+shapeworks  smooth-sinc [args]...
+```  
+
+
+**Description:** applies windowed sinc smoothing  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--iterations=INT:** Number of iterations [default: 0].
+
+**--passband=DOUBLE:** Set the passband value for the windowed sinc filter [default: 0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### transform-mesh
+
+
+**Usage:**
+
+```
+shapeworks  transform-mesh [args]...
+```  
+
+
+**Description:** transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--target=STRING:** Filename of target mesh.
+
+**--type=CHOICE:** Alignment type to use [default: similarity]. (choose from 'rigid', 'similarity', 'affine')
+
+**--iterations=UNSIGNED:**  Number of iterations run [default: 10].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### translate-mesh
+
+
+**Usage:**
+
+```
+shapeworks  translate-mesh [args]...
+```  
+
+
+**Description:** translates mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --tx=DOUBLE:**  X distance.
+
+**-y DOUBLE, --ty=DOUBLE:**  Y distance.
+
+**-z DOUBLE, --tz=DOUBLE:**  Z distance.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### warp-mesh
+
+
+**Usage:**
+
+```
+shapeworks  warp-mesh [args]...
+```  
+
+
+**Description:** warps a mesh given reference and target particles  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--reference_mesh=STRING:**  Name of reference mesh.
+
+**--reference_points=STRING:**  Name of reference points.
+
+**--target_points <list of strings>:**  Names of target points (must be followed by `--`), ex: "... --target_points *.particles -- ...
+
+**--save_dir=STRING:** Optional: Path to the directory where the mesh files will be saved  
   
 <a href="#top">Back to Top</a>
   
@@ -1037,18 +1990,42 @@ shapeworks  write-mesh [args]...
 ```  
 
 
-**Description:** writes the current mesh (determines type by its extension)  
+**Description:** writes the current mesh  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** name of file to write  
+**--name=STRING:** Name of file to write.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
+## Optimize Commands
+
+### optimize
+
+
+**Usage:**
+
+```
+shapeworks  optimize [args]...
+```  
+
+
+**Description:** generate a particle system  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Path to parameter file.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Optimize Commands](#optimize-commands)
 ## ParticleSystem Commands
 
 ### compactness
@@ -1068,9 +2045,9 @@ shapeworks  compactness [args]...
 
 **-h, --help:** show this help message and exit
 
-**--nmodes=INT:** Number of modes to use
+**--nmodes=INT:** Number of modes to use [default: 1].
 
-**--saveto=STRING:** Save the scree plots for all modes to a file  
+**--saveto=STRING:** Save the scree plots for all modes to a file.  
   
 <a href="#top">Back to Top</a>
   
@@ -1092,9 +2069,9 @@ shapeworks  generalization [args]...
 
 **-h, --help:** show this help message and exit
 
-**--nmodes=INT:** Number of modes to use
+**--nmodes=INT:** Number of modes to use [default: 1].
 
-**--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape  
+**--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape.  
   
 <a href="#top">Back to Top</a>
   
@@ -1116,7 +2093,7 @@ shapeworks  read-particle-system [args]...
 
 **-h, --help:** show this help message and exit
 
-**--names <list of strings>:**  paths to .particle files (must be followed by `--`), ex: "--names *.particle -- next-command...")  
+**--names <list of strings>:**  Paths to .particle files (must be followed by `--`), ex: "--names *.particle -- next-command...")  
   
 <a href="#top">Back to Top</a>
   
@@ -1138,10 +2115,34 @@ shapeworks  specificity [args]...
 
 **-h, --help:** show this help message and exit
 
-**--nmodes=INT:** Number of modes to use
+**--nmodes=INT:** Number of modes to use [default: 1].
 
-**--saveto=STRING:** Save the reconstructions sorted by specificity along with the mapping to the original shape  
+**--saveto=STRING:** Save the reconstructions sorted by specificity along with the mapping to the original shape.  
   
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
+## Shapeworks Commands
+
+### seed
+
+
+**Usage:**
+
+```
+shapeworks  seed [args]...
+```  
+
+
+**Description:** sets the seed for random number generation (useful for debugging)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--value=INT:** Value of seed.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Shapeworks Commands](#shapeworks-commands)
