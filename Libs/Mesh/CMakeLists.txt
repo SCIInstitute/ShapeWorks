@@ -28,11 +28,13 @@ add_library(Mesh STATIC
  ${PreviewMeshQC_headers}
  )
 
+string (REPLACE ";" " " ACVD_INCLUDES "${ACVD_INCLUDE_DIRS}")
+
 target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
  $<INSTALL_INTERFACE:include>
- ${ACVD_INCLUDE_DIRS}
+ ${ACVD_INCLUDES}
  )
 
 target_link_libraries(
