@@ -42,7 +42,12 @@ constexpr const char* MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND = "mesh_smoothin
 constexpr const char* ALIGNMENT_METHOD = "alignment_method";
 constexpr const char* ALIGNMENT_ENABLED = "alignment_enabled";
 constexpr const char* GROOM_OUTPUT_PREFIX = "groom_output_prefix";
-constexpr const char* REMESH = "remesh";
+const char* REMESH = "remesh";
+constexpr const char* REMESH_PERCENT_MODE = "remesh_percent_mode";
+constexpr const char* REMESH_PERCENT = "remesh_percent";
+constexpr const char* REMESH_NUM_VERTICES = "remesh_num_vertices";
+constexpr const char* REMESH_GRADATION = "remesh_gradation";
+
 }
 
 namespace Defaults {
@@ -74,6 +79,12 @@ const double mesh_smoothing_vtk_windowed_sinc_passband = 0.05;
 const std::string alignment_method = GroomParameters::GROOM_ALIGNMENT_ICP_C;
 const bool alignment_enabled = true;
 const bool remesh = true;
+
+const bool remesh_percent_mode = true;
+const double remesh_percent = 0.75;
+const int remesh_num_vertices = -1;
+const double remesh_gradation = 1.0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -485,4 +496,54 @@ void GroomParameters::set_remesh(bool remesh)
 {
   this->params_.set(Keys::REMESH, remesh);
 }
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_remesh_percent_mode()
+{
+  return this->params_.get(Keys::REMESH_PERCENT_MODE, Defaults::remesh_percent_mode);
 }
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_remesh_percent_mode(bool mode)
+{
+  this->params_.set(Keys::REMESH_PERCENT_MODE, mode);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_remesh_percent()
+{
+  return this->params_.get(Keys::REMESH_PERCENT, Defaults::remesh_percent);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_remesh_percent(double percent)
+{
+  this->params_.set(Keys::REMESH_PERCENT, percent);
+}
+
+//---------------------------------------------------------------------------
+int GroomParameters::get_remesh_num_vertices()
+{
+  return this->params_.get(Keys::REMESH_NUM_VERTICES, Defaults::remesh_num_vertices);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_remesh_num_vertices(int num_vertices)
+{
+  this->params_.set(Keys::REMESH_NUM_VERTICES, num_vertices);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_remesh_gradation()
+{
+  return this->params_.get(Keys::REMESH_GRADATION, Defaults::remesh_gradation);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_remesh_gradation(double gradation)
+{
+  this->params_.set(Keys::REMESH_GRADATION, gradation);
+
+}
+}
+//---------------------------------------------------------------------------

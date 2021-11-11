@@ -112,6 +112,19 @@ public:
   bool get_remesh();
   void set_remesh(bool remesh);
 
+  bool get_remesh_percent_mode();
+  void set_remesh_percent_mode(bool mode);
+
+  double get_remesh_percent();
+  void set_remesh_percent(double percent);
+
+  int get_remesh_num_vertices();
+  void set_remesh_num_vertices(int num_vertices);
+
+  double get_remesh_gradation();
+  void set_remesh_gradation(double gradation);
+
+
   void restore_defaults();
 
   // constants

@@ -323,7 +323,12 @@ bool Groom::run_mesh_pipeline(Mesh &mesh, GroomParameters params)
   }
 
   if (params.get_remesh()) {
-    mesh.remesh();
+    int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
+    int num_vertices = params.get_remesh_num_vertices();
+    if (params.get_remesh_percent_mode()) {
+      num_vertices = total_vertices * params.get_remesh_percent();
+    }
+    mesh.remesh(num_vertices, params.get_remesh_gradation());
   }
 
   if (params.get_mesh_smooth()) {

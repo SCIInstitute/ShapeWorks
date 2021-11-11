@@ -275,28 +275,29 @@ Mesh &Mesh::cvdDecimate(double percentage)
   return *this;
 }
 
-Mesh& Mesh::remesh()
+Mesh& Mesh::remesh(int numVertices, double gradation)
 {
-  vtkSurface *surf = vtkSurface::New();
-  vtkQIsotropicDiscreteRemeshing *remesh = vtkQIsotropicDiscreteRemeshing::New();
+  vtkSurface* surf = vtkSurface::New();
+  vtkQIsotropicDiscreteRemeshing* remesh = vtkQIsotropicDiscreteRemeshing::New();
   surf->CreateFromPolyData(this->mesh);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
   surf->DisplayMeshProperties();
-  int numberOfSamples = 500;
-  double gradation = 0;			// gamma parameter for simplification (if gamma=0: uniform)
-  // other appropriates values range between 0 and 2
-  int subsamplingThreshold = 10;	// subsampling threshold
+  int subsamplingThreshold = 10;  // subsampling threshold
+
+  int total = mesh->GetNumberOfPoints();
+  numVertices = std::max<int>(numVertices, 1);
+  numVertices = std::min<int>(numVertices, total);
 
   remesh->SetForceManifold(true);
-  remesh->SetInput( surf );
-  remesh->SetFileLoadSaveOption( 0 );
-  remesh->SetConsoleOutput( 2 );
-  remesh->SetSubsamplingThreshold( subsamplingThreshold );
-  remesh->GetMetric()->SetGradation( gradation );
-  remesh->SetDisplay( false );
-  remesh->SetUnconstrainedInitialization( 1 );
-  remesh->SetNumberOfClusters( numberOfSamples );
+  remesh->SetInput(surf);
+  remesh->SetFileLoadSaveOption(0);
+  remesh->SetConsoleOutput(2);
+  remesh->SetSubsamplingThreshold(subsamplingThreshold);
+  remesh->GetMetric()->SetGradation(gradation);
+  remesh->SetDisplay(false);
+  remesh->SetUnconstrainedInitialization(1);
+  remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
 
   this->mesh = remesh->GetOutput();

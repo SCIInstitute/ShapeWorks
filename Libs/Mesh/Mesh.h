@@ -50,7 +50,7 @@ public:
   Mesh& cvdDecimate(double percentage = 0.5);
 
   /// remesh using ACVD
-  Mesh& remesh();
+  Mesh& remesh(int numVertices, double gradation);
 
   /// handle flipping normals
   Mesh& invertNormals();
