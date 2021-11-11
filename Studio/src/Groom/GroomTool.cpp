@@ -41,15 +41,26 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->blur_sigma->setToolTip("Gaussian blur sigma");
   ui_->fastmarching_checkbox->setToolTip("Create distance transform");
 
-  //ui_->mesh_center->setToolTip("Center meshes based on center of mass");
-  //ui_->mesh_qc->setToolTip("Perform mesh quality control steps");
-  //ui_->mesh_qc->hide();
   ui_->mesh_smooth->setToolTip("Perform mesh smoothing");
   ui_->mesh_smooth_method->setToolTip("Mesh smoothing type");
   ui_->laplacian_iterations->setToolTip("Number of iterations");
   ui_->laplacian_relaxation->setToolTip("Laplacian relaxation factor");
   ui_->sinc_passband->setToolTip("Windowed sinc pass band");
   ui_->sinc_iterations->setToolTip("Windowed sinc iterations.  Minimum number of iterations is 2");
+
+  // connect percent controls
+  connect(ui_->remesh_percent_slider, &QSlider::valueChanged,
+          [=](int value) { ui_->remesh_percent_spinbox->setValue(value); });
+  connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          [=](double value) { ui_->remesh_percent_slider->setValue(static_cast<int>(value)); });
+
+  // connect gradation controls
+  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged,
+          [=](int value) { ui_->remesh_gradation_spinbox->setValue(value / 50.0); });
+  connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          [=](double value) {
+            ui_->remesh_gradation_slider->setValue(static_cast<int>(value * 50.0));
+          });
 
   connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &GroomTool::domain_changed);
@@ -278,6 +289,14 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->resample_checkbox->setChecked(params.get_resample());
   ui_->isotropic_checkbox->setChecked(params.get_isotropic());
 
+  ui_->remesh_checkbox->setChecked(params.get_remesh());
+  ui_->remesh_percent_checkbox->setChecked(params.get_remesh_percent_mode());
+  ui_->remesh_percent_slider->setValue(params.get_remesh_percent());
+  ui_->remesh_percent_spinbox->setValue(params.get_remesh_percent());
+  ui_->remesh_num_vertices->setText(QString::number(params.get_remesh_num_vertices()));
+  ui_->remesh_gradation_slider->setValue(params.get_remesh_gradation() * 50.0);
+  ui_->remesh_gradation_spinbox->setValue(params.get_remesh_gradation());
+
   auto subjects = session_->get_project()->get_subjects();
   int domain_id = std::max<int>(ui_->domain_box->currentIndex(), 0);
 
@@ -312,7 +331,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
     ui_->spacing_y->setText(QString::number(spacing[1]));
     ui_->spacing_z->setText(QString::number(spacing[2]));
 
-    ui_->remesh_checkbox->setChecked(params.get_remesh());
   }
 }
 
@@ -357,6 +375,12 @@ void GroomTool::store_params()
                       ui_->spacing_z->text().toDouble()});
 
   params.set_remesh(ui_->remesh_checkbox->isChecked());
+
+  params.set_remesh_percent_mode(ui_->remesh_percent_checkbox->isChecked());
+  params.set_remesh_percent(ui_->remesh_percent_slider->value());
+  params.set_remesh_num_vertices(ui_->remesh_num_vertices->text().toInt());
+  params.set_remesh_gradation(ui_->remesh_gradation_spinbox->value());
+
   params.save_to_project();
 
   // global settings
@@ -604,6 +628,16 @@ void GroomTool::update_ui()
   ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
 
   ui_->remesh_box->setVisible(ui_->remesh_checkbox->isChecked());
+
+  bool percent_mode = ui_->remesh_percent_checkbox->isChecked();
+  ui_->remesh_percent_label->setVisible(percent_mode);
+  ui_->remesh_percent_slider->setVisible(percent_mode);
+  ui_->remesh_percent_spinbox->setVisible(percent_mode);
+
+  ui_->remesh_num_vertices_label->setVisible(!percent_mode);
+  ui_->remesh_num_vertices->setVisible(!percent_mode);
+  ui_->remesh_vertices_labels->setVisible(!percent_mode);
+
 }
 
 //---------------------------------------------------------------------------

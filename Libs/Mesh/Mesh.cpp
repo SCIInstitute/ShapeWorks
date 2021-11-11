@@ -63,7 +63,7 @@
 #include <geometrycentral/surface/heat_method_distance.h>
 
 // ACVD
-#include "vtkIsotropicDiscreteRemeshing.h"
+#include <vtkIsotropicDiscreteRemeshing.h>
 
 namespace shapeworks {
 

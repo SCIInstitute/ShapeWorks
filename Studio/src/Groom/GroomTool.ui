@@ -1045,7 +1045,7 @@ background: rgb(12, 255, 127)
                 <number>6</number>
                </property>
                <item row="0" column="0">
-                <widget class="QCheckBox" name="reflect_checkbox_2">
+                <widget class="QCheckBox" name="remesh_percent_checkbox">
                  <property name="text">
                   <string>Percentage</string>
                  </property>
@@ -1055,9 +1055,12 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="1" column="2">
-                <widget class="QDoubleSpinBox" name="decimation_spinbox">
+                <widget class="QDoubleSpinBox" name="remesh_percent_spinbox">
                  <property name="suffix">
                   <string>%</string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
                  </property>
                  <property name="maximum">
                   <double>100.000000000000000</double>
@@ -1068,7 +1071,7 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="3" column="2">
-                <widget class="QDoubleSpinBox" name="gradation_spinbox">
+                <widget class="QDoubleSpinBox" name="remesh_gradation_spinbox">
                  <property name="suffix">
                   <string/>
                  </property>
@@ -1084,7 +1087,7 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QSlider" name="decimation_slider_2">
+                <widget class="QSlider" name="remesh_gradation_slider">
                  <property name="maximum">
                   <number>100</number>
                  </property>
@@ -1097,7 +1100,7 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QSlider" name="decimation_slider">
+                <widget class="QSlider" name="remesh_percent_slider">
                  <property name="maximum">
                   <number>100</number>
                  </property>
@@ -1110,31 +1113,31 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="QLabel" name="decimation_label">
+                <widget class="QLabel" name="remesh_percent_label">
                  <property name="text">
                   <string>Decimation</string>
                  </property>
                 </widget>
                </item>
                <item row="3" column="0">
-                <widget class="QLabel" name="decimation_label_2">
+                <widget class="QLabel" name="gradation_label">
                  <property name="text">
                   <string>Gradation</string>
                  </property>
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="decimation_label_3">
+                <widget class="QLabel" name="remesh_num_vertices_label">
                  <property name="text">
                   <string>Decimation</string>
                  </property>
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEdit"/>
+                <widget class="QLineEdit" name="remesh_num_vertices"/>
                </item>
                <item row="2" column="2">
-                <widget class="QLabel" name="label_3">
+                <widget class="QLabel" name="remesh_vertices_labels">
                  <property name="text">
                   <string>Vertices</string>
                  </property>
