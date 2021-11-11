@@ -133,6 +133,12 @@ std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 }
 
 //---------------------------------------------------------------------------
+void Project::set_subjects(std::vector<std::shared_ptr<Subject>> subjects)
+{
+  this->subjects_ = subjects;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(const std::string& prefix)
 {
   std::vector<std::string> prefixes;
@@ -830,6 +836,7 @@ std::string Project::get_column_identifier(std::string name)
   }
   return name;
 }
+
 
 
 

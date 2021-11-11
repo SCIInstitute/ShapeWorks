@@ -58,8 +58,11 @@ public:
   //! Return the domain names (e.g. femur, pelvis, etc)
   std::vector<std::string> get_domain_names();
 
-  //! Return the list of Subjects
+  //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
+
+  //! Set the Subjects
+  void set_subjects(std::vector<std::shared_ptr<Subject>> subjects);
 
   //! Return if segmentations are present
   bool get_segmentations_present() const;
