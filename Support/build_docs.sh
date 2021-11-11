@@ -30,11 +30,9 @@ if [ ! -f $INSTALL_DIR/bin/doxybook2 ] ; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
 	wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-osx-amd64-v1.4.0.zip"
 	unzip doxybook2-osx-amd64-v1.4.0.zip bin/doxybook2 -d $INSTALL_DIR
-	PATH=$PATH:doxybook2-osx-amd64-v1.4.0/bin
     else
 	wget "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-linux-amd64-v1.4.0.zip"
-	unzip doxybook2-linux-amd64-v1.4.0.zip
-	PATH=$PATH:doxybook2-linux-amd64-v1.4.0/bin bin/doxybook2 -d $INSTALL_DIR
+	unzip doxybook2-linux-amd64-v1.4.0.zip bin/doxybook2 -d $INSTALL_DIR
     fi
     rm -f doxybook*.zip
 fi
