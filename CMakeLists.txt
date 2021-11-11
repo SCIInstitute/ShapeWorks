@@ -149,7 +149,7 @@ add_definitions(-DXLNT_STATIC=1)
 ### ACVD
 find_package (ACVD REQUIRED)
 MESSAGE(STATUS "ACVD_DIR: ${ACVD_DIR}")
-include_directories("${ACVD_INCLUDE_DIRS}")
+MESSAGE(STATUS "ACVD_INCLUDE_DIRS: ${ACVD_INCLUDE_DIRS}")
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
