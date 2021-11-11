@@ -255,6 +255,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#auto-generating-shapeworks-commands-documentation">Auto-generating ShapeWorks Commands Documentation</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#auto-generating-c-doxygen-api-documentation">Auto-generating C++ Doxygen API Documentation</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#see-also">See Also</a>
     </li>
     </ul>
@@ -264,6 +266,17 @@
                     <li class="toctree-l1"><a class="reference internal" href="markdown.html">Getting Started with Markdown</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../api/Modules/index_groups.md">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../api/Namespaces/index_namespaces.md">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../api/Classes/index_classes.md">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../api/Files/index_files.md">Files</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
@@ -331,14 +344,6 @@
 <li>Open and review <code>path/to/edited-or-added-md-files</code></li>
 </ul>
 </div>
-<p>See the below discussion:</p>
-<p>how can I look at the compiled version of these docs? (you might simply direct me to the place where this is explained in the docs)
-You can find this link in the main readme.</p>
-<p>Please visit ShapeWorks website for more information.</p>
-<p>I can open the individual .md files, but can't really give a final review until I've seen it in action.
-I think the only way you can see it in action is to checkout the branch and run mkdocs serve. These changes won't be reflected in the compiled version (i.e., gh-pages branch) till it is merged to master. @akenmorris ?
-I think it's completely reasonable to check out the branch and run mkdocs serve then browse to localhost:8000.
-I recommend explaining this right at the top of the pull request so people don't have to dig through the developer docs to remember the command every time they want to thoroughly review the updates.</p>
 <h2 id="naming-and-organization">Naming and Organization</h2>
 <div class="admonition note">
 <p class="admonition-title">Where are the documentation files?</p>
@@ -406,29 +411,10 @@ I recommend explaining this right at the top of the pull request so people don't
 <h2 id="deploying-on-github-pages">Deploying on GitHub Pages</h2>
 <p>As ShapeWorks is hosted on <a href="https://github.com/SCIInstitute/ShapeWorks">GitHub</a>, we use GitHub Pages to host the documentation for ShapeWorks. </p>
 <p>We use Project Pages sites for documentation deployment. The site files are deployed to the <code>gh-pages</code> branch within the ShapeWorks repository.</p>
-<p>To generate static HTML files for the markdown files, <a href="build.html#clone-source">checkout</a> the branch where source documentation (<code>mkdocs.yml</code>) is maintained and run the following command:</p>
-<div class="highlight"><pre><span></span><code>mkdocs gh-deploy
-</code></pre></div>
-<p>Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. <em>All behind the scenes ...</em></p>
-<div class="admonition danger">
-<p class="admonition-title">Danger</p>
-<p>Running <code>mkdocs gh-deploy</code> will update the documentation seen by everyone on <a href="https://github.com/SCIInstitute/ShapeWorks">GitHub</a>. It is recommented that deployed documentation on <a href="https://github.com/SCIInstitute/ShapeWorks">GitHub</a> should be synced with documentation in the <code>master</code> branch.</p>
-</div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>To deploy the documentation associated with software releases, please use the following command.</p>
-<div class="highlight"><pre><span></span><code>mkdocs gh-deploy -m &quot;Release Number&quot;
-</code></pre></div>
-</div>
-<p>Use <code>mkdocs gh-deploy --clean</code> to start a fresh deployment.   </p>
-<p>Use <code>mkdocs gh-deploy --help</code> for a full list of options available for the gh-deploy command.</p>
-<div class="admonition danger">
-<p class="admonition-title">Take care when you deploy</p>
-<p>You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use <code>mkdocs build</code> or <code>mkdocs serve</code>.  </p>
-</div>
+<p>Deployment is taken care of automatically by GitHub Actions using the script <code>Support/deploy_docs.sh</code></p>
 <div class="admonition danger">
 <p class="admonition-title">Do not edit gh-pages</p>
-<p>Never manually edit files on the <code>gh-pages</code> branch because you will lose your work the next time you run the <code>gh-deploy</code> command.</p>
+<p>Never manually edit files on the <code>gh-pages</code> branch because you will lose your work the next time the docs are deployed.</p>
 </div>
 <h2 id="contributing-to-documentation">Contributing to Documentation</h2>
 <div class="admonition important">
@@ -445,7 +431,7 @@ I recommend explaining this right at the top of the pull request so people don't
 </div>
 <h2 id="auto-generating-shapeworks-commands-documentation">Auto-generating ShapeWorks Commands Documentation</h2>
 <p>The <code>DocumentationUtils</code> package in <code>Python</code> has APIs for auto-documenting command-line tools and <em>to-come-soon</em> python APIs. We use the <code>docs</code> folder to save the generated documentation.</p>
-<p>To generate documentation for the <code>shapeworks</code> commands, first be sure to run <code>conda_install.sh</code> as described in <a href="build.html">How to Build ShapeWorks from Source?</a> to install <code>DocumentationUtils</code>.</p>
+<p>To generate documentation for the <code>shapeworks</code> commands, first be sure to run <code>install_shapeworks.sh</code> as described in <a href="build.html">How to Build ShapeWorks from Source?</a> to install <code>DocumentationUtils</code>.</p>
 <p>Then, make sure that the <code>shapeworks</code> command is in your path (<code>set PATH=/path/to/shapeworks:$PATH</code>), then use Python to run the following command:</p>
 <div class="highlight"><pre><span></span><code>$ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 </code></pre></div>
@@ -453,6 +439,11 @@ I recommend explaining this right at the top of the pull request so people don't
 <ul>
 <li><code>md_filename</code> is the markdown file name for the documentation file to be generated</li>
 </ul>
+<h2 id="auto-generating-c-doxygen-api-documentation">Auto-generating C++ Doxygen API Documentation</h2>
+<p>To generate C++ Doxygen API output into mkdocs, configure ShapeWorks with BUILD_DOCUMENTATION=ON.</p>
+<p>After building, run (from the root source directory):</p>
+<div class="highlight"><pre><span></span><code>$ ./Support/build_docs.sh <span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span>/Documentation/Doxygen/xml
+</code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="https://mkdocs.readthedocs.io/en/stable/">MkDocs documentation</a></li>
