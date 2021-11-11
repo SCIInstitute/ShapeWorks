@@ -101,11 +101,12 @@ public:
   /// computes and adds oriented point and cell normals
   Mesh& computeNormals();
 
-  /// returns closest point on a face in the mesh to the given point in space
-  /// - outside will be set to indicate if point is outside the mesh
-  /// - face_id is the face on which this point is found
-  /// non-const b/c determining if outside potentially requires computing cell normals
-  Point3 closestPoint(const Point3 point, bool& outside, vtkIdType& face_id);
+  /// Returns closest point on this mesh to the given point in space.
+  /// In addition, returns by reference:
+  /// - whether the point in space is outside the mesh or not
+  /// - the distance of the point in space from this mesh
+  /// - the face_id containing the closest point
+  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
 
   /// returns closest point id in this mesh to the given point in space
   int closestPointId(const Point3 point) const;

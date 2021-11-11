@@ -579,8 +579,7 @@ void Mesh::updateCellLocator() const
   }
 }
 
-// TODO: add distance (I just don't want to change Mesh.h and all the tests right now)
-Point3 Mesh::closestPoint(const Point3 point, bool& outside, /*double& distance,*/ vtkIdType& face_id)
+Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const
 {
   this->updateCellLocator();
 
@@ -589,31 +588,26 @@ Point3 Mesh::closestPoint(const Point3 point, bool& outside, /*double& distance,
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
   int subId;
 
-  cellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(), cell, face_id, subId, dist2);
+  cellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(),
+                                cell, face_id, subId, dist2);
 
-  auto cellNormals = mesh->GetCellData()->GetNormals();
-  if (!cellNormals) {
-    this->computeNormals();
-    cellNormals = mesh->GetCellData()->GetNormals();
-    if (!cellNormals || cellNormals->GetNumberOfTuples() < face_id) {
-      throw std::runtime_error("unable to compute cell normals");
-    }
-  }
+  // distance from point to closest point
+  distance = sqrt(dist2);
 
-  if (cellNormals->GetNumberOfTuples() < face_id) {
-    throw std::runtime_error(std::string("face id (") + std::to_string(face_id)
-                             + ") is greater than number of cell normals ("
-                             + std::to_string(cellNormals->GetNumberOfTuples()));
-  }
+  // compute face normal: (p2-p1) x (p0-p1)
+  double pt0[3], pt1[3], pt2[0];
+  cell->GetPoints()->GetPoint(0, pt0);
+  cell->GetPoints()->GetPoint(1, pt1);
+  cell->GetPoints()->GetPoint(2, pt2);
+  vtkVector3d v0(pt2[0] - pt1[0], pt2[1] - pt1[1], pt2[2] - pt1[2]);
+  vtkVector3d v1(pt0[0] - pt1[0], pt0[1] - pt1[1], pt0[2] - pt1[2]);
+  auto norm = v0.Cross(v1);
 
-  // vec = p1 - p0 the vtk way
+  // use dot product to determine whether point is outside mesh
   vtkVector3d pvec(point[0] - closestPoint[0],
                    point[1] - closestPoint[1],
                    point[2] - closestPoint[2]);
-  vtkVector3d norm(cellNormals->GetTuple3(face_id));
   outside = pvec.Dot(norm) > 0.0;
-
-  auto distance = sqrt(dist2); // TODO: remove auto when argument is added
 
   return closestPoint;
 }

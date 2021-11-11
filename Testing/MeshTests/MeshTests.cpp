@@ -621,10 +621,11 @@ TEST(MeshTests, closestpointTest1)
   auto p = ellipsoid.getPoint(42);
   auto pNew = p + v;
   bool outside = false;
+  double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6) && outside == true && face_id == 90);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == true && epsEqual(distance, 1.0, 1e-5) && face_id == 90);
 }
 
 TEST(MeshTests, closestpointTest2)
@@ -637,10 +638,11 @@ TEST(MeshTests, closestpointTest2)
   auto p = ellipsoid.getPoint(42);
   auto pNew = p - v * 1.1;
   bool outside = false;
+  double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6) && outside == false && face_id == 9);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == false && epsEqual(distance, 1.1, 1e-5) && face_id == 9);
 }
 
 TEST(MeshTests, closestpointIdTest)
