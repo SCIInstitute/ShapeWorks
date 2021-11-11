@@ -28,10 +28,10 @@ fi
 
 if [ ! -f $INSTALL_DIR/bin/doxybook2 ] ; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
-	curl -o doxybook2-osx-amd64-v1.4.0.zip "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-osx-amd64-v1.4.0.zip"
+	curl -L -o doxybook2-osx-amd64-v1.4.0.zip "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-osx-amd64-v1.4.0.zip"
 	unzip doxybook2-osx-amd64-v1.4.0.zip bin/doxybook2 -d $INSTALL_DIR
     else
-	curl -o doxybook2-linux-amd64-v1.4.0.zip "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-linux-amd64-v1.4.0.zip"
+	curl -L -o doxybook2-linux-amd64-v1.4.0.zip "https://github.com/matusnovak/doxybook2/releases/download/v1.4.0/doxybook2-linux-amd64-v1.4.0.zip"
 	unzip doxybook2-linux-amd64-v1.4.0.zip bin/doxybook2 -d $INSTALL_DIR
     fi
     rm -f doxybook*.zip
