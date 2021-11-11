@@ -29,7 +29,7 @@ find_library(ACVD_SURFACE_LIBRARY
   )
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ACVD DEFAULT_MSG ACVD_LIBRARY ACVD_INCLUDE_DIR)
+find_package_handle_standard_args(ACVD DEFAULT_MSG ACVD_DISCRETE_LIBRARY ACVD_INCLUDE_DIR)
 
 if(ACVD_FOUND)
   message("-- Found ACVD under ${ACVD_INCLUDE_DIR}")

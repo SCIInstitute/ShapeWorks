@@ -1,6 +1,6 @@
 
 set(XLNT_DIR "$ENV{XLNT_DIR}" CACHE PATH "XLNT root directory.")
-message("Looking for XLNT in ${XLNT_DIR}")
+message(STATUS "Looking for XLNT in ${XLNT_DIR}")
 
 find_path(XLNT_INCLUDE_DIR
   NAMES xlnt/xlnt.hpp 
