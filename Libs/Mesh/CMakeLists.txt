@@ -28,19 +28,11 @@ add_library(Mesh STATIC
  ${PreviewMeshQC_headers}
  )
 
-string (REPLACE ";" " " ACVD_INCLUDES "${ACVD_INCLUDE_DIRS}")
-message(STATUS "ACVD_INCLUDES = ${ACVD_INCLUDES}")
-
 target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
  $<INSTALL_INTERFACE:include>
- "${ACVD_INCLUDE_DIRS}"
  )
-
-get_target_property(THESE_INCLUDES Mesh INCLUDE_DIRECTORIES)
-message(STATUS "THESE_INCLUDES = ${THESE_INCLUDES}")
-
 
 target_link_libraries(
   Mesh
@@ -58,7 +50,7 @@ target_link_libraries(
   TBB::tbb
   geometry-central
   Boost::filesystem
-  ${ACVD_LIBRARIES}
+  acvd::acvd
   )
 
 # Install
