@@ -262,23 +262,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
   return std::abs(a[0]-b[0]) < eps && std::abs(a[1]-b[1]) < eps && std::abs(a[2]-b[2]) < eps;
 }
 
-// https://stackoverflow.com/a/17382806/207044
-template<typename P>
-bool equalNSigDigits(P a, P b, int n = 4)
-{
-  return std::abs(a - b) <= pow(0.1, n) * std::max(std::abs(a), std::abs(b));
-}
-
-template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
-                                                 std::is_same<Coord, P>::value ||
-                                                 std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
-                                                 std::is_same<Point, P>::value ||
-                                                 std::is_same<IPoint3, P>::value ||
-                                                 std::is_same<FPoint3, P>::value> >
-bool epsEqualN(const P &a, const P &b, int n = 4)
-{
-  return equalNSigDigits(a[0], b[0], n) && equalNSigDigits(a[1], b[1], n) && equalNSigDigits(a[2], b[2], n);
-}
-
 } // shapeworks
