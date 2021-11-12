@@ -58,7 +58,7 @@ jobs:
     
     - name: Conda Installs
       shell: bash -l {0}
-      run: .github/workflows/linux_conda_installs.sh
+      run: .github/workflows/gha_conda.sh
       
     - name: Cache dependencies
       id: cache-dependencies
@@ -116,3 +116,8 @@ jobs:
         title: "Development Build for Linux"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+
+    - name: Store ccache
+      shell: bash -l {0}
+      run: .github/workflows/store_cache.sh
+            
