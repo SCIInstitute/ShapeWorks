@@ -52,6 +52,10 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: Restore Caches
+      shell: bash -l {0}
+      run: .github/workflows/restore_caches.sh
+    
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/linux_conda_installs.sh
