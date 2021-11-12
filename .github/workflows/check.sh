@@ -22,6 +22,11 @@ else
     cd $GITHUB_WORKSPACE
     ls
     source ./install_shapeworks.sh
+
+    echo "Create and store cache"
+    tar --use-compress-program=pigz -cf ${file} /opt/conda/envs/shapeworks
+    scp ${file} runner@${CACHE_HOST}:github
+    rm ${file}
 fi
 
 
