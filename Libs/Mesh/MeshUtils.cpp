@@ -34,6 +34,10 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
                                                                   const unsigned iterations,
                                                                   bool meshTransform)
 {
+  if (source.numPoints() == 0 || target.numPoints() == 0) {
+    throw std::invalid_argument("empty mesh passed to MeshUtils::createICPTransform");
+  }  
+
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source.getVTKMesh());
   icp->SetTarget(target.getVTKMesh());

@@ -2,7 +2,8 @@
 
 ## What and Where is the Use Case? 
 
-The `femur_pvalues` use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement. 
+This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement.
+This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. Separate statistical tests for differences in correspondence positions are applied to every correspondence index. We use Hotelling $T^2$ metric(nonparametric permutation test) with false discovery rate correction (FDR) for multiple comparisons. This method helps identify and visualize localized regions of significant shape differences.
 
 Here are femur samples with their optimized correspondences.
 ![Femur Samples](../../img/use-cases/femur_samples.png)

@@ -188,7 +188,7 @@ TEST(ImageTests, translateTest3)
 TEST(ImageTests, comTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  TransformPtr xform = image.createTransform(CenterOfMass);
+  TransformPtr xform = image.createCenterOfMassTransform();
   image.applyTransform(xform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
@@ -207,7 +207,7 @@ TEST(ImageTests, comTest2)
 TEST(ImageTests, comTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
-  TransformPtr xform = image.createTransform(CenterOfMass);
+  TransformPtr xform = image.createCenterOfMassTransform();
   image.applyTransform(xform, Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
@@ -437,8 +437,9 @@ TEST(ImageTests, boundingBoxSingleTest1)
   auto pbox = img.physicalBoundingBox();
   auto ground_truth = PhysicalRegion(Point({46.4821, -192.471, -737.593}),
                                      Point({134.482, -129.471, -609.593}));
-  ASSERT_TRUE(epsEqualN(pbox.min, ground_truth.min) &&
-              epsEqualN(pbox.max, ground_truth.max));
+
+  ASSERT_TRUE(epsEqual(pbox.min, ground_truth.min, 0.001) &&
+              epsEqual(pbox.max, ground_truth.max, 0.001));
 }
 
 TEST(ImageTests, boundingBoxSingleTest2)
@@ -498,7 +499,7 @@ TEST(ImageTests, icpTest)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   Image target(std::string(TEST_DATA_DIR) + "/target.nrrd");
   Image source(std::string(TEST_DATA_DIR) + "/source.nrrd");
-  TransformPtr transform(target.createTransform(source));
+  TransformPtr transform(target.createRigidRegistrationTransform(source));
   image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
   Image ground_truth(std::string(TEST_DATA_DIR) + "/icp_baseline.nrrd");
 
@@ -634,16 +635,16 @@ TEST(ImageTests, warpTest2)
 
 TEST(ImageTests, warpTest3)
 {
-  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   std::string src_filename(std::string(TEST_DATA_DIR) + "/bogus_src.pts");
   std::string dst_filename(std::string(TEST_DATA_DIR) + "/bogus_dst.pts");
 
-  // empty files should just produce identity transform
-  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
-  image.applyTransform(transform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  try {
+    // nonexistent files should throw exception
+    ImageUtils::createWarpTransform(src_filename, dst_filename);
+  } catch(std::invalid_argument) { return; }
 
-  ASSERT_TRUE(image == ground_truth);
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
 }
 
 TEST(ImageTests, warpTest4)
@@ -1181,11 +1182,11 @@ TEST(ImageTests, vectorImageTest1)
   Vector v4 = interpolator.evaluate(pt4); v4.Normalize();
   Vector v5 = interpolator.evaluate(pt5);
 
-  ASSERT_TRUE(epsEqualN(v1, makeVector({0.966473, 0.309422, 0.0527124})) &&
-              epsEqualN(v2, makeVector({-0.549147, -0.504978, -0.732781})) &&
-              epsEqualN(v3, makeVector({-0.826156, 0.605647, -0.1373})) &&
-              epsEqualN(v4, makeVector({0.644471, 0.556214, 0.524674})) &&
-              epsEqualN(v5, makeVector({0.354269, -0.294689, 0.470524})));
+  ASSERT_TRUE(epsEqual(v1, makeVector({0.966473, 0.309422, 0.0527124}), 1e-6) &&
+              epsEqual(v2, makeVector({-0.549147, -0.504978, -0.732781}), 1e-6) &&
+              epsEqual(v3, makeVector({-0.826156, 0.605647, -0.1373}), 1e-6) &&
+              epsEqual(v4, makeVector({0.644471, 0.556214, 0.524674}), 1e-6) &&
+              epsEqual(v5, makeVector({0.354269, -0.294689, 0.470524}), 1e-6));
 }
 
 TEST(ImageTests, statsTest)
@@ -1196,10 +1197,10 @@ TEST(ImageTests, statsTest)
   double mean = image.mean();
   double std = image.std();
 
-  ASSERT_TRUE(equalNSigDigits(min, 0.0) &&
-              equalNSigDigits(max, 1.0) &&
-              equalNSigDigits(mean, 0.004166) &&
-              equalNSigDigits(std, 0.062299));
+  ASSERT_TRUE(epsEqual(min, 0.0, 1e-6) &&
+              epsEqual(max, 1.0, 1e-6) &&
+              epsEqual(mean, 0.004166, 1e-6) &&
+              epsEqual(std, 0.062299, 1e-6));
 }
 
 TEST(ImageTests, orientationTest1)
