@@ -57,17 +57,17 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/check.sh
       
-    - name: conda installs
-      shell: bash -l {0}
-      run: source ./install_shapeworks.sh
+    # - name: conda installs
+    #   shell: bash -l {0}
+    #   run: source ./install_shapeworks.sh
 
-    - name: cache conda installs
-      shell: bash -l {0}
-      run: |
-        FILE=conda-linux-${{ hashFiles('**/install_shapeworks.sh') }}.tar.gz
-        tar --use-compress-program=pigz -cf $FILE /opt/conda/envs/shapeworks
-        scp $FILE runner@${{ secrets.SSH_HOST }}:github
-        rm $FILE
+    # - name: cache conda installs
+    #   shell: bash -l {0}
+    #   run: |
+    #     FILE=conda-linux-${{ hashFiles('**/install_shapeworks.sh') }}.tar.gz
+    #     tar --use-compress-program=pigz -cf $FILE /opt/conda/envs/shapeworks
+    #     scp $FILE runner@${{ secrets.SSH_HOST }}:github
+    #     rm $FILE
       
     - name: install ccache
       shell: bash -l {0}

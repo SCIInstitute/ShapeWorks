@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash +x
 
 echo "#############################"
 echo "pwd = `pwd`"
@@ -8,7 +8,7 @@ echo "#############################"
 
 ls ShapeWorks
 
-hash=($(hash install_shapeworks.sh))
+hash=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
 echo "hash = ${hash}"
 file=conda-linux-${hash}.tar.gz
 
