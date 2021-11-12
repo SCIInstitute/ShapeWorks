@@ -1056,6 +1056,12 @@ background: rgb(12, 255, 127)
                </item>
                <item row="1" column="2">
                 <widget class="QDoubleSpinBox" name="remesh_percent_spinbox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="suffix">
                   <string>%</string>
                  </property>
@@ -1134,10 +1140,23 @@ background: rgb(12, 255, 127)
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QLineEdit" name="remesh_num_vertices"/>
+                <widget class="QLineEdit" name="remesh_num_vertices">
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="2">
                 <widget class="QLabel" name="remesh_vertices_labels">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Vertices</string>
                  </property>

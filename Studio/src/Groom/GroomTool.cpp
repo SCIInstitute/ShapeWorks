@@ -62,6 +62,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
             ui_->remesh_gradation_slider->setValue(static_cast<int>(value * 50.0));
           });
 
+
+  connect(ui_->remesh_percent_checkbox, &QCheckBox::toggled, this, &GroomTool::update_ui);
   connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &GroomTool::domain_changed);
 
