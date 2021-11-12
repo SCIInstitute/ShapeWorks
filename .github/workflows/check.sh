@@ -1,12 +1,9 @@
-#!/bin/bash +x
+#!/bin/bash -x
 
 echo "#############################"
 echo "pwd = `pwd`"
 env
 echo "#############################"
-
-
-ls ShapeWorks
 
 hash=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
 echo "hash = ${hash}"
@@ -14,6 +11,7 @@ file=conda-linux-${hash}.tar.gz
 
 cd /
 scp runner@${CACHE_HOST}:github/${file} .
+
 if [ -f ${file} ] ; then
     echo "Cache file was found"
     tar --use-compress-program=pigz -xf $file

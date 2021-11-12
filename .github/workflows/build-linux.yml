@@ -11,7 +11,6 @@ on:
   pull_request:
 
 env:
-  CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
@@ -53,26 +52,10 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: run script
+    - name: Conda Installs
       shell: bash -l {0}
-      run: .github/workflows/check.sh
+      run: .github/workflows/linux_conda_installs.sh
       
-    # - name: conda installs
-    #   shell: bash -l {0}
-    #   run: source ./install_shapeworks.sh
-
-    # - name: cache conda installs
-    #   shell: bash -l {0}
-    #   run: |
-    #     FILE=conda-linux-${{ hashFiles('**/install_shapeworks.sh') }}.tar.gz
-    #     tar --use-compress-program=pigz -cf $FILE /opt/conda/envs/shapeworks
-    #     scp $FILE runner@${{ secrets.SSH_HOST }}:github
-    #     rm $FILE
-      
-    - name: install ccache
-      shell: bash -l {0}
-      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
-
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
@@ -112,10 +95,6 @@ jobs:
   
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
-
-    - name: ccache statistics
-      shell: bash -l {0}
-      run: conda activate shapeworks && ccache -s
 
     - uses: actions/upload-artifact@v1
       with:
