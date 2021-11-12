@@ -1,22 +1,21 @@
 #!/bin/bash -x
 
 echo "#############################"
-echo "pwd = `pwd`"
-env
+echo "# Install conda packages    #"
 echo "#############################"
 
 hash=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
 echo "hash = ${hash}"
-file=conda-linux-${hash}.tar.gz
+file="conda-linux-${hash}.tar.gz"
 
 cd /
 scp runner@${CACHE_HOST}:github/${file} .
 
 if [ -f ${file} ] ; then
-    echo "Cache file was found"
+    echo "Conda Cache file was found"
     tar --use-compress-program=pigz -xf $file
 else
-    echo "Cache file was not found"
+    echo "Conda Cache file was not found"
     cd $GITHUB_WORKSPACE
     ls
     source ./install_shapeworks.sh
