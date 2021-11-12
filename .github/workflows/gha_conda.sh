@@ -20,3 +20,5 @@ else
     scp ${CONDA_FILE} runner@${CACHE_HOST}:github
     rm ${CONDA_FILE}
 fi
+
+conda init bash
