@@ -58,17 +58,6 @@ jobs:
       run: |
         .github/workflows/check.sh
       
-    - name: restore conda installs cache
-      shell: bash -l {0}
-      run: |
-        cd /
-        FILE=conda-linux-${{ hashFiles('**/install_shapeworks.sh') }}.tar.gz
-        scp runner@${{ secrets.SSH_HOST }}:github/$FILE .
-        if -f [ $FILE ] ; then
-          tar --use-compress-program=pigz -xf $FILE
-        fi
-        rm $FILE
-      
     - name: conda installs
       shell: bash -l {0}
       run: source ./install_shapeworks.sh
