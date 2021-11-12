@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Files/FEElement_8h.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Libs/Mesh/PreviewMeshQC/FEElement.h - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Libs/Mesh/PreviewMeshQC/FEElement.h";
+    var mkdocs_page_input_path = "api/Files/FEElement_8h.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Files/FEElement_8h.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Classes/index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Libs/Mesh/PreviewMeshQC/FEElement.h</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/FEElement_8h.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="libsmeshpreviewmeshqcfeelementh">Libs/Mesh/PreviewMeshQC/FEElement.h</h1>
+<h2 id="classes">Classes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFEItem.html">FEItem</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFENode.html">FENode</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFEEdge.html">FEEdge</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFEFace.html">FEFace</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFEElement__.html">FEElement_</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFETri3.html">FETri3</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classFEElement.html">FEElement</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="defines">Defines</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-visible">FE_VISIBLE</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-selected">FE_SELECTED</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-hex8">FE_HEX8</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-tet4">FE_TET4</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-penta6">FE_PENTA6</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-quad4">FE_QUAD4</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-tri3">FE_TRI3</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-beam2">FE_BEAM2</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-hex20">FE_HEX20</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-quad8">FE_QUAD8</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-beam3">FE_BEAM3</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-tet10">FE_TET10</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-tri6">FE_TRI6</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-tet15">FE_TET15</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-fe-hex27">FE_HEX27</a></strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="FEElement_8h.html#define-max-elem">MAX_ELEM</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="macros-documentation">Macros Documentation</h2>
+<h3 id="define-fe_visible">define FE_VISIBLE</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_VISIBLE 0x01</span>
+</code></pre></div>
+<h3 id="define-fe_selected">define FE_SELECTED</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_SELECTED 0x02</span>
+</code></pre></div>
+<h3 id="define-fe_hex8">define FE_HEX8</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_HEX8 1</span>
+</code></pre></div>
+<h3 id="define-fe_tet4">define FE_TET4</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_TET4 2</span>
+</code></pre></div>
+<h3 id="define-fe_penta6">define FE_PENTA6</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_PENTA6 3</span>
+</code></pre></div>
+<h3 id="define-fe_quad4">define FE_QUAD4</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_QUAD4 4</span>
+</code></pre></div>
+<h3 id="define-fe_tri3">define FE_TRI3</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_TRI3 5</span>
+</code></pre></div>
+<h3 id="define-fe_beam2">define FE_BEAM2</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_BEAM2 6</span>
+</code></pre></div>
+<h3 id="define-fe_hex20">define FE_HEX20</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_HEX20 7</span>
+</code></pre></div>
+<h3 id="define-fe_quad8">define FE_QUAD8</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_QUAD8 8</span>
+</code></pre></div>
+<h3 id="define-fe_beam3">define FE_BEAM3</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_BEAM3 9</span>
+</code></pre></div>
+<h3 id="define-fe_tet10">define FE_TET10</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_TET10 10</span>
+</code></pre></div>
+<h3 id="define-fe_tri6">define FE_TRI6</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_TRI6 11</span>
+</code></pre></div>
+<h3 id="define-fe_tet15">define FE_TET15</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_TET15 12</span>
+</code></pre></div>
+<h3 id="define-fe_hex27">define FE_HEX27</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_HEX27 13</span>
+</code></pre></div>
+<h3 id="define-max_elem">define MAX_ELEM</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define MAX_ELEM 13</span>
+</code></pre></div>
+<h2 id="source-code">Source code</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">// FEElement.h: interface for the FEElement class.</span>
+<span class="c1">//</span>
+
+<span class="cp">#if !defined(AFX_FEELEMENT_H__4A869671_045F_4EDD_AC13_25C849922373__INCLUDED_)</span>
+<span class="cp">#define AFX_FEELEMENT_H__4A869671_045F_4EDD_AC13_25C849922373__INCLUDED_</span>
+
+<span class="cp">#if _MSC_VER &gt; 1000</span>
+<span class="cp">#pragma once</span>
+<span class="cp">#endif </span><span class="c1">// _MSC_VER &gt; 1000</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span><span class="cp"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// FE State Flags</span>
+<span class="cp">#define FE_VISIBLE  0x01</span>
+<span class="cp">#define FE_SELECTED 0x02</span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// The FEItem class is the base class for all FEMesh items. It stores the </span>
+<span class="c1">// common attributes such as the state flags and the group ID.</span>
+<span class="c1">//</span>
+<span class="k">class</span> <span class="nc">FEItem</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEItem</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w"> </span><span class="n">m_gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsVisible</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSelected</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Select</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">UnSelect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Show</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Hide</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetFEState</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFEState</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ntag</span><span class="p">;</span><span class="w"> </span><span class="c1">// tag of item</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_gid</span><span class="p">;</span><span class="w">  </span><span class="c1">// group id</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nid</span><span class="p">;</span><span class="w">  </span><span class="c1">// item id (used e.g. in export).</span>
+<span class="w">    </span><span class="c1">//double    m_ndata;        //scalar data associated with a node</span>
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span><span class="w">   </span><span class="c1">// the state flag of the mesh(-item)</span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// The FENode class stores the nodal data.</span>
+<span class="c1">//</span>
+<span class="k">class</span> <span class="nc">FENode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FENode</span><span class="p">(){</span><span class="w"> </span><span class="n">m_bext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r</span><span class="p">;</span><span class="w">              </span><span class="c1">// nodal position</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w">    </span><span class="n">m_bext</span><span class="p">;</span><span class="w">         </span><span class="c1">// exterior node or not?</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_ndata</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// The FEEdge class stores the edge data.</span>
+<span class="c1">// An edge can be either linear or quadratic. In the linear case, only the</span>
+<span class="c1">// first two nodes are used, the third one is set to -1. In the latter case,</span>
+<span class="c1">// all three nodes are used, with the first two being the outside nodes and</span>
+<span class="c1">// the third one being the inside node.</span>
+<span class="c1">//</span>
+<span class="c1">//   1         3          2</span>
+<span class="c1">//   +---------o----------+</span>
+<span class="c1">//</span>
+<span class="k">class</span> <span class="nc">FEEdge</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">enum</span> <span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEEdge</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEEdge</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="o">?</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">;</span><span class="w">         </span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">       </span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// FEFace class stores face data. </span>
+<span class="c1">// A face can either have 3, 4, 6, 8 or 9 nodes. It is a triangle if it has 3 nodes and</span>
+<span class="c1">// a quad if it has 4. If it has 6 it is a quadratic triangle. The first three are the</span>
+<span class="c1">// cornder nodes, the other three are the midpoints of the edges. If it has 8 or 9 it is </span>
+<span class="c1">// a quadratic quad. The first four nodes are the corner nodes, the next four the </span>
+<span class="c1">// interior edge nodes and in the case of a 9-node quad, the last node is in the center.</span>
+<span class="c1">//</span>
+<span class="c1">//   4       7       3      3</span>
+<span class="c1">//   +-------o-------+      +</span>
+<span class="c1">//   |               |      |\</span>
+<span class="c1">//   |               |      | \</span>
+<span class="c1">//  8o       x9      o6    6o  o5</span>
+<span class="c1">//   |               |      |   \</span>
+<span class="c1">//   |               |      |    \</span>
+<span class="c1">//   +-------o-------+      +--o--+</span>
+<span class="c1">//   1       5       2      1  4  2</span>
+<span class="c1">//</span>
+<span class="k">class</span> <span class="nc">FEFace</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">enum</span> <span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span><span class="p">};</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEFace</span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">GetEdgeNodes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExternal</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w">        </span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nbr</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span><span class="w">   </span>
+
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">m_fn</span><span class="p">;</span><span class="w">               </span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">m_nn</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">    </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_sid</span><span class="p">;</span><span class="w">              </span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">  </span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// element types</span>
+<span class="c1">// NOTE: do not change the order or values of these macros.</span>
+<span class="cp">#define FE_HEX8     1</span>
+<span class="cp">#define FE_TET4     2</span>
+<span class="cp">#define FE_PENTA6   3</span>
+<span class="cp">#define FE_QUAD4    4</span>
+<span class="cp">#define FE_TRI3     5</span>
+<span class="cp">#define FE_BEAM2    6</span>
+<span class="cp">#define FE_HEX20    7</span>
+<span class="cp">#define FE_QUAD8    8</span>
+<span class="cp">#define FE_BEAM3    9</span>
+<span class="cp">#define FE_TET10    10</span>
+<span class="cp">#define FE_TRI6     11</span>
+<span class="cp">#define FE_TET15    12</span>
+<span class="cp">#define FE_HEX27    13</span>
+
+<span class="cp">#define MAX_ELEM    13</span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// The FEElement_ class defines the data interface to the element data. </span>
+<span class="c1">// Specialized element classes are then defined by deriving from this base class.</span>
+<span class="k">class</span> <span class="nc">FEElement_</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement_</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// comparison operator</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_equal</span><span class="p">(</span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nedges</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetShellFace</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FEEdge</span><span class="w"> </span><span class="nf">GetEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExterior</span><span class="p">();</span><span class="w"></span>
+
+<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// help class for copy-ing element data</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Check the element class</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSolid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX8</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX20</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX27</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_PENTA6</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET10</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET15</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsShell</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI3</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_QUAD4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI6</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsBeam</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_BEAM2</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_node</span><span class="p">;</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_nbr</span><span class="p">;</span><span class="w">      </span>
+<span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_face</span><span class="p">;</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">double</span><span class="o">*</span><span class="w">     </span><span class="n">m_h</span><span class="p">;</span><span class="w">        </span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">m_fiber</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="n">mat3d</span><span class="w">   </span><span class="n">m_Q</span><span class="p">;</span><span class="w">        </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w">    </span><span class="n">m_Qactive</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_a0</span><span class="p">;</span><span class="w">       </span>
+
+<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_ntype</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nodes</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nedges</span><span class="p">;</span><span class="w">   </span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// Class for 3-node triangular elements</span>
+<span class="k">class</span> <span class="nc">FETri3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FETri3</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FETri3</span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_node</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_nbr</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_face</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">_h</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="c1">// The FEElement class can be used to represent a general purpose element. </span>
+<span class="c1">// This class can represent an element of all different types. </span>
+<span class="k">class</span> <span class="nc">FEElement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">enum</span> <span class="p">{</span><span class="w"> </span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">27</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FEElement</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_node</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_nbr</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w">            </span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_face</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w">           </span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">_h</span><span class="p">[</span><span class="mi">9</span><span class="p">];</span><span class="w">              </span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="cp">#endif </span><span class="c1">// !defined(AFX_FEELEMENT_H__4A869671_045F_4EDD_AC13_25C849922373__INCLUDED_)</span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:45 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

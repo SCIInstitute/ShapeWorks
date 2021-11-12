@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/index_classes.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Classes - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Classes";
+    var mkdocs_page_input_path = "api/Classes/index_classes.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/index_classes.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="index_classes.html">Classes</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>API Reference &raquo;</li>
+        
+      
+    
+    <li>Classes</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/index_classes.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="classes">Classes</h1>
+<ul>
+<li><strong>class <a href="classBarGraph.html">BarGraph</a></strong> </li>
+<li><strong>class <a href="classColorScheme.html">ColorScheme</a></strong> <ul>
+<li><strong>struct <a href="structColorScheme_1_1rgb.html">rgb</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classColorSchemes.html">ColorSchemes</a></strong> </li>
+<li><strong>class <a href="classCustomSurfaceReconstructionFilter.html">CustomSurfaceReconstructionFilter</a></strong> </li>
+<li><strong>class <a href="classFEAreaCoverage.html">FEAreaCoverage</a></strong> <ul>
+<li><strong>class <a href="classFEAreaCoverage_1_1Surface.html">Surface</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classFEAutoMesher.html">FEAutoMesher</a></strong> </li>
+<li><strong>class <a href="classFECVDDecimationModifier.html">FECVDDecimationModifier</a></strong> <ul>
+<li><strong>class <a href="classFECVDDecimationModifier_1_1Cluster.html">Cluster</a></strong> </li>
+<li><strong>struct <a href="structFECVDDecimationModifier_1_1EDGE.html">EDGE</a></strong> </li>
+<li><strong>class <a href="classFECVDDecimationModifier_1_1NODE.html">NODE</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classFECoreMesh.html">FECoreMesh</a></strong> </li>
+<li><strong>class <a href="classFEEdge.html">FEEdge</a></strong> </li>
+<li><strong>class <a href="classFEElement.html">FEElement</a></strong> </li>
+<li><strong>class <a href="classFEElementData.html">FEElementData</a></strong> </li>
+<li><strong>class <a href="classFEElement__.html">FEElement_</a></strong> </li>
+<li><strong>class <a href="classFEFace.html">FEFace</a></strong> </li>
+<li><strong>class <a href="classFEFillHole.html">FEFillHole</a></strong> <ul>
+<li><strong>class <a href="classFEFillHole_1_1EdgeRing.html">EdgeRing</a></strong> </li>
+<li><strong>struct <a href="structFEFillHole_1_1FACE.html">FACE</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classFEFixMesh.html">FEFixMesh</a></strong> </li>
+<li><strong>class <a href="classFEItem.html">FEItem</a></strong> </li>
+<li><strong>class <a href="classFEMesh.html">FEMesh</a></strong> </li>
+<li><strong>class <a href="classFEMeshSmoothingModifier.html">FEMeshSmoothingModifier</a></strong> </li>
+<li><strong>class <a href="classFENode.html">FENode</a></strong> </li>
+<li><strong>class <a href="classFENodeElementList.html">FENodeElementList</a></strong> </li>
+<li><strong>class <a href="classFENodeFaceList.html">FENodeFaceList</a></strong> </li>
+<li><strong>class <a href="classFENodeNodeList.html">FENodeNodeList</a></strong> </li>
+<li><strong>class <a href="classFETri3.html">FETri3</a></strong> </li>
+<li><strong>class <a href="classFEVTKExport.html">FEVTKExport</a></strong> </li>
+<li><strong>class <a href="classFEVTKimport.html">FEVTKimport</a></strong> </li>
+<li><strong>class <a href="classGLCOLOR.html">GLCOLOR</a></strong> </li>
+<li><strong>class <a href="classInputParams.html">InputParams</a></strong> </li>
+<li><strong>struct <a href="structIntersection.html">Intersection</a></strong> </li>
+<li><strong>class <a href="classLegacyMeshGenerator.html">LegacyMeshGenerator</a></strong> </li>
+<li><strong>class <a href="classMeshSettings.html">MeshSettings</a></strong> <br>Settings for creating a mesh. </li>
+<li><strong>class <a href="classOptimizeParameterFile.html">OptimizeParameterFile</a></strong> </li>
+<li><strong>class <a href="classParticleEvent_1_1_01Parent.html">ParticleEvent:: Parent</a></strong> </li>
+<li><strong>class <a href="classParticleShapeStatistics.html">ParticleShapeStatistics</a></strong> </li>
+<li><strong>class <a href="classPreferences.html">Preferences</a></strong> <br>Application preferences. </li>
+<li><strong>class <a href="classPreferencesWindow.html">PreferencesWindow</a></strong> <br>Qt UI dialog to control preferences. </li>
+<li><strong>class <a href="classProcrustes3D.html">Procrustes3D</a></strong> </li>
+<li><strong>struct <a href="structQuad.html">Quad</a></strong> </li>
+<li><strong>struct <a href="structRay.html">Ray</a></strong> </li>
+<li><strong>class <a href="classReconstruction.html">Reconstruction</a></strong> </li>
+<li><strong>struct <a href="structSimilarityTransform3D.html">SimilarityTransform3D</a></strong> </li>
+<li><strong>class <a href="classSurfaceReconstructor.html">SurfaceReconstructor</a></strong> </li>
+<li><strong>struct <a href="structTriangle.html">Triangle</a></strong> </li>
+<li><strong>class <a href="classUtils.html">Utils</a></strong> </li>
+<li><strong>struct <a href="structVTKEXPORT.html">VTKEXPORT</a></strong> </li>
+<li><strong>class <a href="classVis.html">Vis</a></strong> </li>
+<li><strong>namespace <a href="../Namespaces/namespaceitk.html">itk</a></strong> <ul>
+<li><strong>class <a href="classitk_1_1AdvancedTransform.html">AdvancedTransform</a></strong> <br>Transform maps points, vectors and covariant vectors from an input space to an output space. </li>
+<li><strong>class <a href="classitk_1_1BSplineInterpolateImageFunctionWithDoubleCoefficents.html">BSplineInterpolateImageFunctionWithDoubleCoefficents</a></strong> </li>
+<li><strong>class <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html">CompactlySupportedRBFSparseKernelTransform</a></strong> </li>
+<li><strong>class <a href="classitk_1_1Constraint.html">Constraint</a></strong> </li>
+<li><strong>class <a href="classitk_1_1Constraints.html">Constraints</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ContourDomain.html">ContourDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1FreeFormConstraint.html">FreeFormConstraint</a></strong> </li>
+<li><strong>namespace <a href="../Namespaces/namespaceitk_1_1Functor.html">Functor</a></strong> <ul>
+<li><strong>class <a href="classitk_1_1Functor_1_1MultiplyByConstant.html">MultiplyByConstant</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classitk_1_1ImageToVTKImageFilter.html">ImageToVTKImageFilter</a></strong> <br>Converts an ITK image into a VTK image and plugs a itk data pipeline to a VTK datapipeline. </li>
+<li><strong>class <a href="classitk_1_1KernelTransform2.html">KernelTransform2</a></strong> </li>
+<li><strong>class <a href="classitk_1_1MeshDomain.html">MeshDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1MultiplyByConstantImageFilter.html">MultiplyByConstantImageFilter</a></strong> <br>Multiply input pixels by a constant. </li>
+<li><strong>class <a href="classitk_1_1ParticleAttribute.html">ParticleAttribute</a></strong> <ul>
+<li><strong>struct <a href="structitk_1_1ParticleAttribute_1_1DefinedCallbacksStruct.html">DefinedCallbacksStruct</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html">ParticleConstrainedModifiedCotangentEntropyGradientFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleContainer.html">ParticleContainer</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleContainerArrayAttribute.html">ParticleContainerArrayAttribute</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html">ParticleCurvatureEntropyGradientFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleDomain.html">ParticleDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleDualVectorFunction.html">ParticleDualVectorFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleEnsembleEntropyFunction.html">ParticleEnsembleEntropyFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleEntropyGradientFunction.html">ParticleEntropyGradientFunction</a></strong> <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. </li>
+<li><strong>class <a href="classitk_1_1ParticleEvent.html">ParticleEvent</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleEventWithIndex.html">ParticleEventWithIndex</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleGaussianModeWriter.html">ParticleGaussianModeWriter</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleGeneralShapeGradientMatrix.html">ParticleGeneralShapeGradientMatrix</a></strong> <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </li>
+<li><strong>class <a href="classitk_1_1ParticleGeneralShapeMatrix.html">ParticleGeneralShapeMatrix</a></strong> <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </li>
+<li><strong>class <a href="classitk_1_1ParticleGoodBadAssessment.html">ParticleGoodBadAssessment</a></strong> <ul>
+<li><strong>struct <a href="structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.html">IdxCompare</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html">ParticleGradientDescentPositionOptimizer</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleImageDomain.html">ParticleImageDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleImageDomainWithCurvature.html">ParticleImageDomainWithCurvature</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleImageDomainWithGradN.html">ParticleImageDomainWithGradN</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleImageDomainWithGradients.html">ParticleImageDomainWithGradients</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleImplicitSurfaceDomain.html">ParticleImplicitSurfaceDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleMeanCurvatureAttribute.html">ParticleMeanCurvatureAttribute</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html">ParticleMeshBasedGeneralEntropyGradientFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html">ParticleModifiedCotangentEntropyGradientFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleNeighborhood.html">ParticleNeighborhood</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleOmegaGradientFunction.html">ParticleOmegaGradientFunction</a></strong> </li>
+<li><strong>struct <a href="structitk_1_1ParticlePointIndexPair.html">ParticlePointIndexPair</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticlePositionReader.html">ParticlePositionReader</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticlePositionWriter.html">ParticlePositionWriter</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleProcrustesRegistration.html">ParticleProcrustesRegistration</a></strong> <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017. </li>
+<li><strong>class <a href="classitk_1_1ParticleRegionDomain.html">ParticleRegionDomain</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleRegionNeighborhood.html">ParticleRegionNeighborhood</a></strong> <ul>
+<li><strong>struct <a href="structitk_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.html">IteratorNodePair</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html">ParticleShapeLinearRegressionMatrixAttribute</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleShapeMatrixAttribute.html">ParticleShapeMatrixAttribute</a></strong> <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </li>
+<li><strong>class <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html">ParticleShapeMixedEffectsMatrixAttribute</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleSurfaceNeighborhood.html">ParticleSurfaceNeighborhood</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ParticleSystem.html">ParticleSystem</a></strong> <br>A facade class managing interactions with a particle system. </li>
+<li><strong>class <a href="classitk_1_1ParticleVectorFunction.html">ParticleVectorFunction</a></strong> </li>
+<li><strong>class <a href="classitk_1_1PlaneConstraint.html">PlaneConstraint</a></strong> </li>
+<li><strong>class <a href="classitk_1_1PowerOfTwoPointTree.html">PowerOfTwoPointTree</a></strong> </li>
+<li><strong>class <a href="classitk_1_1PowerOfTwoPointTreeNode.html">PowerOfTwoPointTreeNode</a></strong> </li>
+<li><strong>class <a href="classitk_1_1SparseKernelTransform.html">SparseKernelTransform</a></strong> </li>
+<li><strong>class <a href="classitk_1_1SphereConstraint.html">SphereConstraint</a></strong> </li>
+<li><strong>class <a href="classitk_1_1TPGACLevelSetImageFilter.html">TPGACLevelSetImageFilter</a></strong> </li>
+<li><strong>class <a href="classitk_1_1ThinPlateSplineKernelTransform2.html">ThinPlateSplineKernelTransform2</a></strong> </li>
+<li><strong>struct <a href="structitk_1_1powstruct.html">powstruct</a></strong> </li>
+<li><strong>struct <a href="structitk_1_1powstruct_3_01a_00_010_01_4.html">powstruct&lt; a, 0 &gt;</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classmat3d.html">mat3d</a></strong> </li>
+<li><strong>class <a href="classmatrix.html">matrix</a></strong> </li>
+<li><strong>class <a href="classmeshFIM.html">meshFIM</a></strong> </li>
+<li><strong>class <a href="classobject__reader.html">object_reader</a></strong> </li>
+<li><strong>class <a href="classobject__writer.html">object_writer</a></strong> </li>
+<li><strong>class <a href="classquatd.html">quatd</a></strong> </li>
+<li><strong>namespace <a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <ul>
+<li><strong>class <a href="classshapeworks_1_1AnalysisTool.html">AnalysisTool</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Command.html">Command</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1DeepSSMJob.html">DeepSSMJob</a></strong> <br>Qt Wrapper for DeepSSM. </li>
+<li><strong>class <a href="classshapeworks_1_1DeepSSMParameters.html">DeepSSMParameters</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1DeepSSMTool.html">DeepSSMTool</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Executable.html">Executable</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Groom.html">Groom</a></strong> <br>High level groom API. </li>
+<li><strong>class <a href="classshapeworks_1_1GroomCommandGroup.html">GroomCommandGroup</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1GroomParameters.html">GroomParameters</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1GroomTool.html">GroomTool</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1GroupPvalueJob.html">GroupPvalueJob</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Image.html">Image</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ImageCommand.html">ImageCommand</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ImageUtils.html">ImageUtils</a></strong> <br>Helper functions for image. </li>
+<li><strong>class <a href="classshapeworks_1_1IndexRegion.html">IndexRegion</a></strong> <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) </li>
+<li><strong>class <a href="classshapeworks_1_1Job.html">Job</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1KeyboardShortcuts.html">KeyboardShortcuts</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Lightbox.html">Lightbox</a></strong> <br>Display multiple Viewers in a tiled display. </li>
+<li><strong>class <a href="classshapeworks_1_1LogWindow.html">LogWindow</a></strong> <br>Log Window. </li>
+<li><strong>class <a href="classshapeworks_1_1MatrixContainer.html">MatrixContainer</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Mesh.html">Mesh</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshCache.html">MeshCache</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshCommand.html">MeshCommand</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshGenerator.html">MeshGenerator</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1MeshGeoEntry.html">MeshGeoEntry</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></strong> <br>Representation of a group of meshes. </li>
+<li><strong>class <a href="classshapeworks_1_1MeshManager.html">MeshManager</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshReconstructors.html">MeshReconstructors</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshUtils.html">MeshUtils</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWarper.html">MeshWarper</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWorkQueue.html">MeshWorkQueue</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWorker.html">MeshWorker</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1MultiVariateNormalRandom.html">MultiVariateNormalRandom</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1OptimizationVisualizer.html">OptimizationVisualizer</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Optimize.html">Optimize</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1OptimizeCommandGroup.html">OptimizeCommandGroup</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1OptimizeParameterFile.html">OptimizeParameterFile</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1OptimizeParameters.html">OptimizeParameters</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1OptimizeTool.html">OptimizeTool</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Parameters.html">Parameters</a></strong> <br>Parameter settings. </li>
+<li><strong>class <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ParticleSystemCommand.html">ParticleSystemCommand</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></strong> <br>physical bounds of a 3d region of space </li>
+<li><strong>class <a href="classshapeworks_1_1Project.html">Project</a></strong> <br>Representation of a project. </li>
+<li><strong>class <a href="classshapeworks_1_1PythonWorker.html">PythonWorker</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1QGroom.html">QGroom</a></strong> <br>Qt Wrapper for <a href="classshapeworks_1_1Groom.html">Groom</a>. </li>
+<li><strong>class <a href="classshapeworks_1_1QMeshWarper.html">QMeshWarper</a></strong> <br>Wraps <a href="classshapeworks_1_1MeshWarper.html">MeshWarper</a> as a QObject. </li>
+<li><strong>class <a href="classshapeworks_1_1QOptimize.html">QOptimize</a></strong> <br>Wraps <a href="classshapeworks_1_1Optimize.html">Optimize</a> as a QObject. </li>
+<li><strong>struct <a href="structshapeworks_1_1Reconstruction.html">Reconstruction</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Sampler.html">Sampler</a></strong> <ul>
+<li><strong>struct <a href="structshapeworks_1_1Sampler_1_1CuttingPlaneType.html">CuttingPlaneType</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1Sampler_1_1FFCType.html">FFCType</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1Sampler_1_1SphereType.html">SphereType</a></strong> </li>
+</ul>
+</li>
+<li><strong>class <a href="classshapeworks_1_1Session.html">Session</a></strong> <br>Representation of a session. </li>
+<li><strong>class <a href="classshapeworks_1_1Shape.html">Shape</a></strong> <br>Representation of a single shape/patient/subject. <ul>
+<li><strong>class <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a></strong> <br>TODO: replace this wherever it is used. </li>
+</ul>
+</li>
+<li><strong>class <a href="classshapeworks_1_1ShapeEvaluation.html">ShapeEvaluation</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeEvaluationJob.html">ShapeEvaluationJob</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeWorksStudioApp.html">ShapeWorksStudioApp</a></strong> <br>Main ShapeWorksStudio window. </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeworksCommand.html">ShapeworksCommand</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeworksUtils.html">ShapeworksUtils</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeworksWorker.html">ShapeworksWorker</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1SharedCommandData.html">SharedCommandData</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1SplashScreen.html">SplashScreen</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1StatusBarWidget.html">StatusBarWidget</a></strong> <br><a href="">StatusBarWidget</a>. </li>
+<li><strong>class <a href="classshapeworks_1_1StringUtils.html">StringUtils</a></strong> <br>String utility functions. </li>
+<li><strong>class <a href="classshapeworks_1_1StudioInteractorStyle.html">StudioInteractorStyle</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1StudioLog.html">StudioLog</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1StudioMesh.html">StudioMesh</a></strong> <br>Representation of a single mesh. </li>
+<li><strong>class <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></strong> <br>Representation of correspondence points for a shape including multiple domains. </li>
+<li><strong>class <a href="classshapeworks_1_1StudioUtils.html">StudioUtils</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1StudioVtkOutputWindow.html">StudioVtkOutputWindow</a></strong> <br>Implementation of vtkOutputWindow to capture and display VTK error messages. </li>
+<li><strong>class <a href="classshapeworks_1_1Style.html">Style</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Subject.html">Subject</a></strong> <br>Representation of a single subject. </li>
+<li><strong>class <a href="classshapeworks_1_1TriMeshWrapper.html">TriMeshWrapper</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Variant.html">Variant</a></strong> <br><a href="">Variant</a> class to represent multiple types. </li>
+<li><strong>class <a href="classshapeworks_1_1VectorImage.html">VectorImage</a></strong> <br><a href="classshapeworks_1_1Image.html">Image</a> composed of vectors instead of just scalars. </li>
+<li><strong>class <a href="classshapeworks_1_1Viewer.html">Viewer</a></strong> <br>3D <a href="">Viewer</a></li>
+<li><strong>class <a href="classshapeworks_1_1Visualizer.html">Visualizer</a></strong> <br>Controls display of objects in viewers. </li>
+<li><strong>class <a href="classshapeworks_1_1VtkMeshWrapper.html">VtkMeshWrapper</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1WheelEventForwarder.html">WheelEventForwarder</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Worker.html">Worker</a></strong> </li>
+</ul>
+</li>
+<li><strong>namespace <a href="../Namespaces/namespacestd.html">std</a></strong> </li>
+<li><strong>namespace <a href="../Namespaces/namespaceutils.html">utils</a></strong> </li>
+<li><strong>class <a href="classvec2d.html">vec2d</a></strong> </li>
+<li><strong>class <a href="classvec3d.html">vec3d</a></strong> </li>
+<li><strong>class <a href="classvec6d.html">vec6d</a></strong> </li>
+<li><strong>class <a href="classvtkPolyDataToImageData.html">vtkPolyDataToImageData</a></strong> </li>
+<li><strong>namespace <a href="../Namespaces/namespacexlnt.html">xlnt</a></strong> </li>
+</ul>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:45 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Files/index_files.html" class="btn btn-neutral float-right" title="Files">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Namespaces/index_namespaces.html" class="btn btn-neutral" title="Namespaces"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Namespaces/index_namespaces.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Files/index_files.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classitk_1_1ParticleEntropyGradientFunction.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>itk::ParticleEntropyGradientFunction - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "itk::ParticleEntropyGradientFunction";
+    var mkdocs_page_input_path = "api/Classes/classitk_1_1ParticleEntropyGradientFunction.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classitk_1_1ParticleEntropyGradientFunction.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>itk::ParticleEntropyGradientFunction</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1ParticleEntropyGradientFunction.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="itkparticleentropygradientfunction">itk::ParticleEntropyGradientFunction</h1>
+<p>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;itkParticleEntropyGradientFunction.h&gt;</code></p>
+<p>Inherits from <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction&lt; VDimension &gt;</a>, LightObject</p>
+<p>Inherited by <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction&lt; TGradientNumericType, VDimension &gt;</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html">itk::ParticleCurvatureEntropyGradientFunction&lt; TGradientNumericType, VDimension &gt;</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html">itk::ParticleModifiedCotangentEntropyGradientFunction&lt; TGradientNumericType, VDimension &gt;</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html">itk::ParticleOmegaGradientFunction&lt; TGradientNumericType, VDimension &gt;</a></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleEntropyGradientFunction.html">ParticleEntropyGradientFunction</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-self">Self</a></strong></td>
+</tr>
+<tr>
+<td>typedef SmartPointer&lt; <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-self">Self</a> &gt;</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-pointer">Pointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef SmartPointer&lt; const <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-self">Self</a> &gt;</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-constpointer">ConstPointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleVectorFunction.html">ParticleVectorFunction</a>&lt; VDimension &gt;</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-superclass">Superclass</a></strong></td>
+</tr>
+<tr>
+<td>typedef TGradientNumericType</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-gradientnumerictype">GradientNumericType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleVectorFunction.html#typedef-particlesystemtype">Superclass::ParticleSystemType</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-particlesystemtype">ParticleSystemType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleContainerArrayAttribute.html">ParticleContainerArrayAttribute</a>&lt; double, VDimension &gt;</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-sigmacachetype">SigmaCacheType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleVectorFunction.html#typedef-vectortype">Superclass::VectorType</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-vectortype">VectorType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleSystem.html#typedef-pointtype">ParticleSystemType::PointType</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-pointtype">PointType</a></strong></td>
+</tr>
+<tr>
+<td>typedef vnl_vector_fixed&lt; TGradientNumericType, VDimension &gt;</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-gradientvectortype">GradientVectorType</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-itktypemacro">itkTypeMacro</a></strong>(<a href="classitk_1_1ParticleEntropyGradientFunction.html">ParticleEntropyGradientFunction</a> , <a href="classitk_1_1ParticleVectorFunction.html">ParticleVectorFunction</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-itknewmacro">itkNewMacro</a></strong>(<a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-self">Self</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-itkstaticconstmacro">itkStaticConstMacro</a></strong>(Dimension , unsigned int , VDimension )</td>
+</tr>
+<tr>
+<td>virtual <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-vectortype">VectorType</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">Evaluate</a></strong>(unsigned int , unsigned int , const <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-particlesystemtype">ParticleSystemType</a> * , double &amp; ) const</td>
+</tr>
+<tr>
+<td>virtual <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-vectortype">VectorType</a></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">Evaluate</a></strong>(unsigned int , unsigned int , const <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-particlesystemtype">ParticleSystemType</a> * , double &amp; , double &amp; ) const</td>
+</tr>
+<tr>
+<td>virtual double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-energy">Energy</a></strong>(unsigned int , unsigned int , const <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-particlesystemtype">ParticleSystemType</a> * ) const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-resetbuffers">ResetBuffers</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-estimatesigma">EstimateSigma</a></strong>(unsigned int idx, const typename ParticleSystemType::PointVectorType &amp; neighborhood, const <a href="classitk_1_1ParticleDomain.html">ParticleDomain</a> * domain, const std::vector&lt; double &gt; &amp; weights, const PointType &amp; pos, double initial_sigma, double precision, int &amp; err) const</td>
+</tr>
+<tr>
+<td>TGradientNumericType</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-anglecoefficient">AngleCoefficient</a></strong>(const GradientVectorType &amp; , const GradientVectorType &amp; ) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-setminimumneighborhoodradius">SetMinimumNeighborhoodRadius</a></strong>(double s)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getminimumneighborhoodradius">GetMinimumNeighborhoodRadius</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-setmaximumneighborhoodradius">SetMaximumNeighborhoodRadius</a></strong>(double s)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getmaximumneighborhoodradius">GetMaximumNeighborhoodRadius</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-setflatcutoff">SetFlatCutoff</a></strong>(double s)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getflatcutoff">GetFlatCutoff</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-setneighborhoodtosigmaratio">SetNeighborhoodToSigmaRatio</a></strong>(double s)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getneighborhoodtosigmaratio">GetNeighborhoodToSigmaRatio</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-setspatialsigmacache">SetSpatialSigmaCache</a></strong>(<a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-sigmacachetype">SigmaCacheType</a> * s)</td>
+</tr>
+<tr>
+<td><a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-sigmacachetype">SigmaCacheType</a> *</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getspatialsigmacache">GetSpatialSigmaCache</a></strong>()</td>
+</tr>
+<tr>
+<td>const <a href="classitk_1_1ParticleEntropyGradientFunction.html#typedef-sigmacachetype">SigmaCacheType</a> *</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-getspatialsigmacache">GetSpatialSigmaCache</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-computeangularweights">ComputeAngularWeights</a></strong>(const PointType &amp; , int , const typename ParticleSystemType::PointVectorType &amp; , const <a href="classitk_1_1ParticleDomain.html">ParticleDomain</a> * , std::vector&lt; double &gt; &amp; ) const</td>
+</tr>
+<tr>
+<td>virtual <a href="classitk_1_1ParticleVectorFunction.html">ParticleVectorFunction</a>&lt; VDimension &gt;::Pointer</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-clone">Clone</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-particleentropygradientfunction">ParticleEntropyGradientFunction</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-~particleentropygradientfunction">~ParticleEntropyGradientFunction</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-operator=">operator=</a></strong>(const <a href="classitk_1_1ParticleEntropyGradientFunction.html">ParticleEntropyGradientFunction</a> &amp; )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-particleentropygradientfunction">ParticleEntropyGradientFunction</a></strong>(const <a href="classitk_1_1ParticleEntropyGradientFunction.html">ParticleEntropyGradientFunction</a> &amp; )</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-attributes">Protected Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#variable-m-minimumneighborhoodradius">m_MinimumNeighborhoodRadius</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#variable-m-maximumneighborhoodradius">m_MaximumNeighborhoodRadius</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#variable-m-flatcutoff">m_FlatCutoff</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#variable-m-neighborhoodtosigmaratio">m_NeighborhoodToSigmaRatio</a></strong></td>
+</tr>
+<tr>
+<td>SigmaCacheType::Pointer</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#variable-m-spatialsigmacache">m_SpatialSigmaCache</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-inherited-members">Additional inherited members</h2>
+<p><strong>Public Functions inherited from <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction&lt; VDimension &gt;</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-afteriteration">AfterIteration</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-beforeiteration">BeforeIteration</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-beforeevaluate">BeforeEvaluate</a></strong>(unsigned int , unsigned int , const <a href="classitk_1_1ParticleVectorFunction.html#typedef-particlesystemtype">ParticleSystemType</a> * )</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-setparticlesystem">SetParticleSystem</a></strong>(<a href="classitk_1_1ParticleVectorFunction.html#typedef-particlesystemtype">ParticleSystemType</a> * p)</td>
+</tr>
+<tr>
+<td>virtual <a href="classitk_1_1ParticleVectorFunction.html#typedef-particlesystemtype">ParticleSystemType</a> *</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-getparticlesystem">GetParticleSystem</a></strong>() const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-setdomainnumber">SetDomainNumber</a></strong>(unsigned int i)</td>
+</tr>
+<tr>
+<td>virtual int</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-getdomainnumber">GetDomainNumber</a></strong>() const</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Functions inherited from <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction&lt; VDimension &gt;</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-particlevectorfunction">ParticleVectorFunction</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-~particlevectorfunction">~ParticleVectorFunction</a></strong>()</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#function-particlevectorfunction">ParticleVectorFunction</a></strong>(const <a href="classitk_1_1ParticleVectorFunction.html">ParticleVectorFunction</a> &amp; )</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Attributes inherited from <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction&lt; VDimension &gt;</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="classitk_1_1ParticleVectorFunction.html#typedef-particlesystemtype">ParticleSystemType</a> *</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#variable-m-particlesystem">m_ParticleSystem</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classitk_1_1ParticleVectorFunction.html#variable-m-domainnumber">m_DomainNumber</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TGradientNumericType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. </p>
+<p>The following description is an excerpt from</p>
+<p>J Cates, P T Fletcher, M Styner, M Shenton, R Whitaker. Shape Modeling and Analysis with Entropy-Based Particle Systems. Information Processing in Medical Imaging IPMI 2007, LNCS 4584, pp. 333�345, 2007.</p>
+<p>We treat a surface as a subset of <span class="arithmatex">\(\Re^d\)</span>, where <span class="arithmatex">\(d=2\)</span> or <span class="arithmatex">\(d=3\)</span> depending whether we are processing curves in the plane or surfaces in a volume, refspectively. The method we describe here deals with smooth, closed manifolds of codimension one, and we will refer to such manifolds as {<em>surfaces}</em>. We sample a surface <span class="arithmatex">\({\cal S} \subset \Re^d\)</span> using a discrete set of <span class="arithmatex">\(N\)</span> points that are considered random variables <span class="arithmatex">\(Z = (X_1, X_2, \ldots, X_N)\)</span> drawn from a probability density function (PDF), <span class="arithmatex">\(p(X)\)</span>. We denote a realization of this PDF with lower case, and thus we have <span class="arithmatex">\(z = (x_1, x_2,\ldots, x_N)\)</span>, where <span class="arithmatex">\(z \in {\cal S}^N\)</span>. The probability of a realization <span class="arithmatex">\(x\)</span> is <span class="arithmatex">\(p(X = x)\)</span>, which we denote simply as <span class="arithmatex">\(p(x)\)</span>.</p>
+<p>The amount of information contained in such a random sampling is, in the limit, the differential entropy of the PDF, which is <span class="arithmatex">\(H[X] = -\int_S p(x) \log p(x) dx = -E\{\log p(X)\}\)</span>, where <span class="arithmatex">\(E\{ \cdot \}\)</span> is the expectation. When we have a sufficient number of points sampled from <span class="arithmatex">\(p\)</span>, we can approximate the expectation by the sample mean, which gives <span class="arithmatex">\(H[X] \approx - (1/N)\sum_{i} \log p(x_i)\)</span>. We must also estimate <span class="arithmatex">\(p(x_i)\)</span>. Density functions on surfaces can be quite complex, and so we use a nonparametric, Parzen windowing estimation of this density using the particles themselves. Thus we have <script type="math/tex; mode=display"> p(x_i) \approx \frac{1}{N(N-1)} \sum^N_{j=1, j \neq i} G(x_i - x_j, \sigma_i), </script> where <span class="arithmatex">\(G(x_i - x_j, \sigma_i)\)</span> is a <span class="arithmatex">\(d\)</span>-dimensional, isotropic Gaussian with standard deviation <span class="arithmatex">\(\sigma_i\)</span>. The cost function <span class="arithmatex">\(C\)</span>, is therefore an approximation of (negative) entropy: <script type="math/tex; mode=display"> -H[X] \approx C(x_1, \dots, x_N) = \sum_{i} \log \frac{1}{N(N-1)} \sum_{j \neq i} G(x_i - x_j, \sigma_i). </script>
+</p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="typedef-self">typedef Self</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Standard class typedefs. </p>
+<h3 id="typedef-pointer">typedef Pointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-constpointer">typedef ConstPointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-superclass">typedef Superclass</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-gradientnumerictype">typedef GradientNumericType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientNumericType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Data type representing individual gradient components. </p>
+<h3 id="typedef-particlesystemtype">typedef ParticleSystemType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Type of particle system. </p>
+<h3 id="typedef-sigmacachetype">typedef SigmaCacheType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainerArrayAttribute</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SigmaCacheType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Cache type for the sigma values. </p>
+<h3 id="typedef-vectortype">typedef VectorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Vector &amp; Point types. </p>
+<h3 id="typedef-pointtype">typedef PointType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-gradientvectortype">typedef GradientVectorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientVectorType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-itktypemacro">function itkTypeMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">ParticleEntropyGradientFunction</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-itknewmacro">function itkNewMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Method for creation through the object factory. </p>
+<h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">VDimension</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Dimensionality of the domain of the particle system. </p>
+<h3 id="function-evaluate">function Evaluate</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-evaluate">itk::ParticleVectorFunction::Evaluate</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a></p>
+<p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
+<h3 id="function-evaluate_1">function Evaluate</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-evaluate">itk::ParticleVectorFunction::Evaluate</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-evaluate">itk::ParticleCurvatureEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a></p>
+<h3 id="function-energy">function Energy</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-energy">itk::ParticleVectorFunction::Energy</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-energy">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-energy">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-energy">itk::ParticleCurvatureEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-energy">itk::ParticleCurvatureEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-energy">itk::ParticleCurvatureEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-energy">itk::ParticleCurvatureEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-energy">itk::ParticleModifiedCotangentEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-energy">itk::ParticleModifiedCotangentEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-energy">itk::ParticleOmegaGradientFunction::Energy</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-energy">itk::ParticleOmegaGradientFunction::Energy</a></p>
+<h3 id="function-resetbuffers">function ResetBuffers</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetBuffers</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-resetbuffers">itk::ParticleVectorFunction::ResetBuffers</a></p>
+<p>May be called by the solver class. </p>
+<h3 id="function-estimatesigma">function EstimateSigma</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EstimateSigma</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">neighborhood</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">weights</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">initial_sigma</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">err</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Estimate the best sigma for Parzen windowing in a given neighborhood. The best sigma is the sigma that maximizes probability at the given point </p>
+<h3 id="function-anglecoefficient">function AngleCoefficient</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TGradientNumericType</span><span class="w"> </span><span class="n">AngleCoefficient</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">GradientVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">GradientVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Returns a weighting coefficient based on the angle between two vectors. Weights smoothly approach zero as the angle between two normals approaches 90 degrees. </p>
+<h3 id="function-setminimumneighborhoodradius">function SetMinimumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMinimumNeighborhoodRadius</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Minimum radius of the neighborhood of points that are considered in the calculation. The neighborhood is a spherical radius in 3D space. The actual radius used in a calculation may exceed this value, but will not exceed the MaximumNeighborhoodRadius. </p>
+<h3 id="function-getminimumneighborhoodradius">function GetMinimumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMinimumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setmaximumneighborhoodradius">function SetMaximumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMaximumNeighborhoodRadius</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Maximum radius of the neighborhood of points that are considered in the calculation. The neighborhood is a spherical radius in 3D space. </p>
+<h3 id="function-getmaximumneighborhoodradius">function GetMaximumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMaximumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setflatcutoff">function SetFlatCutoff</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFlatCutoff</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Numerical parameters </p>
+<h3 id="function-getflatcutoff">function GetFlatCutoff</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetFlatCutoff</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setneighborhoodtosigmaratio">function SetNeighborhoodToSigmaRatio</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhoodToSigmaRatio</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getneighborhoodtosigmaratio">function GetNeighborhoodToSigmaRatio</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetNeighborhoodToSigmaRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setspatialsigmacache">function SetSpatialSigmaCache</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSpatialSigmaCache</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Access the cache of sigma values for each particle position. This cache is populated by registering this object as an observer of the correct particle system (see SetParticleSystem). </p>
+<h3 id="function-getspatialsigmacache">function GetSpatialSigmaCache</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSpatialSigmaCache</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getspatialsigmacache_1">function GetSpatialSigmaCache</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSpatialSigmaCache</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computeangularweights">function ComputeAngularWeights</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeAngularWeights</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute a set of weights based on the difference in the normals of a central point and each of its neighbors. Difference of &gt; 90 degrees results in a weight of 0. </p>
+<h3 id="function-clone">function Clone</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-clone">itk::ParticleVectorFunction::Clone</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-clone">itk::ParticleCurvatureEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-clone">itk::ParticleCurvatureEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-clone">itk::ParticleOmegaGradientFunction::Clone</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-clone">itk::ParticleOmegaGradientFunction::Clone</a></p>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-particleentropygradientfunction">function ParticleEntropyGradientFunction</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-particleentropygradientfunction_1">function ~ParticleEntropyGradientFunction</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleEntropyGradientFunction</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator">function operator=</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-particleentropygradientfunction_2">function ParticleEntropyGradientFunction</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleEntropyGradientFunction</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
+<h3 id="variable-m_minimumneighborhoodradius">variable m_MinimumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumNeighborhoodRadius</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_maximumneighborhoodradius">variable m_MaximumNeighborhoodRadius</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_MaximumNeighborhoodRadius</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_flatcutoff">variable m_FlatCutoff</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_FlatCutoff</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_neighborhoodtosigmaratio">variable m_NeighborhoodToSigmaRatio</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_NeighborhoodToSigmaRatio</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_spatialsigmacache">variable m_SpatialSigmaCache</h3>
+<div class="highlight"><pre><span></span><code><span class="n">SigmaCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:43 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

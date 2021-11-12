@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1QOptimize.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>shapeworks::QOptimize - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "shapeworks::QOptimize";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1QOptimize.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1QOptimize.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>shapeworks::QOptimize</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1QOptimize.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="shapeworksqoptimize">shapeworks::QOptimize</h1>
+<p>Wraps <a href="classshapeworks_1_1Optimize.html">Optimize</a> as a QObject. </p>
+<p><code>#include &lt;QOptimize.h&gt;</code></p>
+<p>Inherits from QObject, <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></p>
+<h2 id="public-signals">Public Signals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#signal-progress">progress</a></strong>(int , QString )</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-qoptimize">QOptimize</a></strong>(QObject * parent =nullptr)</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-~qoptimize">~QOptimize</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-getlocalpoints">GetLocalPoints</a></strong>() override<br>Return the local points.</td>
+</tr>
+<tr>
+<td>virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-getglobalpoints">GetGlobalPoints</a></strong>() override<br>Return the global points.</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-getparticles">GetParticles</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-getprocrustestransforms">GetProcrustesTransforms</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-updateexportablepoints">UpdateExportablePoints</a></strong>() override</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-setiterationcallback">SetIterationCallback</a></strong>() override<br>Set the iteration callback. Derived classes should override to set their own callback.</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-iteratecallback">IterateCallback</a></strong>(itk::Object * caller, const itk::EventObject &amp; ) override</td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-inherited-members">Additional inherited members</h2>
+<p><strong>Public Types inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using itk::Image&lt; float, 3 &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#using-imagetype">ImageType</a></strong></td>
+</tr>
+<tr>
+<td>using <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction</a>&lt; 3 &gt;::VectorType</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#using-vectortype">VectorType</a></strong></td>
+</tr>
+<tr>
+<td>using Eigen::MatrixXd</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#using-matrixtype">MatrixType</a></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Public Functions inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimize">Optimize</a></strong>()<br>Constructor.</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-~optimize">~Optimize</a></strong>()<br>Destructor.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-run">Run</a></strong>()<br>Run the optimization.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-loadparameterfile">LoadParameterFile</a></strong>(std::string filename)<br>Load a parameter file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationcallbackfunction">SetIterationCallbackFunction</a></strong>(const std::function&lt; void(void)&gt; &amp; f)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-abortoptimization">AbortOptimization</a></strong>()<br>Abort optimization.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getaborted">GetAborted</a></strong>()<br>Return if the optimization was aborted.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcutplanes">SetCutPlanes</a></strong>(std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt;&gt; cut_planes)<br>Set cutting planes.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setverbosity">SetVerbosity</a></strong>(int verbosity_level)<br>Set the verbosity level (0-5)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomainspershape">SetDomainsPerShape</a></strong>(int domains_per_shape)<br>Set the number of domains per shape.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomainspershape">GetDomainsPerShape</a></strong>()<br>Return the number of domains per shape.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomaintype">SetDomainType</a></strong>(shapeworks::DomainType type)</td>
+</tr>
+<tr>
+<td>shapeworks::DomainType</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomaintype">GetDomainType</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setnumberofparticles">SetNumberOfParticles</a></strong>(std::vector&lt; int &gt; number_of_particles)<br>Set the numbers of particles (vector of numbers, one for each domain)</td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumberofparticles">GetNumberOfParticles</a></strong>()<br>Return the numbers of particles per domain.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-settransformfile">SetTransformFile</a></strong>(std::string filename)<br>Set the transform file.</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-gettransformfile">GetTransformFile</a></strong>()<br>Get the transform file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprefixtransformfile">SetPrefixTransformFile</a></strong>(std::string prefix_transform_file)<br>Set the prefix transform file (TODO: details)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getprefixtransformfile">GetPrefixTransformFile</a></strong>()<br>Get the prefix transform file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoutputdir">SetOutputDir</a></strong>(std::string output_dir)<br>Set the output directory.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoutputtransformfile">SetOutputTransformFile</a></strong>(std::string output_transform_file)<br>Set the output transform file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoutputindividualtransformfiles">SetOutputIndividualTransformFiles</a></strong>(bool value)<br>Set whether individual transforms should be written.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusemeshbasedattributes">SetUseMeshBasedAttributes</a></strong>(bool use_mesh_based_attributes)<br>Set if mesh based attributes should be used.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getusemeshbasedattributes">GetUseMeshBasedAttributes</a></strong>()<br>Get if mesh based attributes are being used.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusexyz">SetUseXYZ</a></strong>(std::vector&lt; bool &gt; use_xyz)<br>Set if XYZ is used, one value per domain.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusenormals">SetUseNormals</a></strong>(std::vector&lt; bool &gt; use_normals)<br>Set if Normals are being used, one value per domain.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setattributesperdomain">SetAttributesPerDomain</a></strong>(std::vector&lt; int &gt; attributes_per_domain)<br>Set the attributes per domain.</td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getattributesperdomain">GetAttributesPerDomain</a></strong>()<br>Get attributes per domain.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdistributiondomainid">SetDistributionDomainID</a></strong>(int distribution_domain_id)<br>Set the distribution domain ID (TODO: details)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdistributiondomainid">GetDistributionDomainID</a></strong>()<br>Get the distribution domain ID.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoutputcuttingplanefile">SetOutputCuttingPlaneFile</a></strong>(std::string output_cutting_plane_file)<br>Set the output cutting plane file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusecuttingplanes">SetUseCuttingPlanes</a></strong>(bool use_cutting_planes)<br>Set if using cutting planes.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcuttingplane">SetCuttingPlane</a></strong>(unsigned int i, const vnl_vector_fixed&lt; double, 3 &gt; &amp; va, const vnl_vector_fixed&lt; double, 3 &gt; &amp; vb, const vnl_vector_fixed&lt; double, 3 &gt; &amp; vc)<br>Set a given cutting plane for a shape.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocessingmode">SetProcessingMode</a></strong>(int mode)<br>Set processing mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitystrength">SetAdaptivityStrength</a></strong>(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setpairwisepotentialtype">SetPairwisePotentialType</a></strong>(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-settimeptspersubject">SetTimePtsPerSubject</a></strong>(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-gettimeptspersubject">GetTimePtsPerSubject</a></strong>()<br>Get the number of time points per subject (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoptimizationiterations">SetOptimizationIterations</a></strong>(int optimization_iterations)<br>Set the number of optimization iterations.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoptimizationiterationscompleted">SetOptimizationIterationsCompleted</a></strong>(int optimization_iterations_completed)<br>Set the number of optimization iterations already completed (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationspersplit">SetIterationsPerSplit</a></strong>(int iterations_per_split)<br>Set the number of iterations per split.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitializationcriterion">SetInitializationCriterion</a></strong>(double init_criterion)<br>Set the init criterion (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoptimizationcriterion">SetOptimizationCriterion</a></strong>(double opt_criterion)<br>Set the optimization criterion (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setuseshapestatisticsininit">SetUseShapeStatisticsInInit</a></strong>(bool use_shape_statistics_in_init)<br>Set if shape statistics should be used in initialization.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocrustesinterval">SetProcrustesInterval</a></strong>(int procrustes_interval)<br>Set the interval for running procrustes (0 to disable)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocrustesscaling">SetProcrustesScaling</a></strong>(int procrustes_scaling)<br>Set if procrustes scaling should be used (0=disabled, 1=enabled)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setrelativeweighting">SetRelativeWeighting</a></strong>(double relative_weighting)<br>Set the relative weighting (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialrelativeweighting">SetInitialRelativeWeighting</a></strong>(double initial_relative_weighting)<br>Set the initial relative weigting (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setstartingregularization">SetStartingRegularization</a></strong>(double starting_regularization)<br>Set the starting regularization (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setendingregularization">SetEndingRegularization</a></strong>(double ending_regularization)<br>Set the ending regularization (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setrecomputeregularizationinterval">SetRecomputeRegularizationInterval</a></strong>(int recompute_regularization_interval)<br>Set the interval for recomputing regularization (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setsaveinitsplits">SetSaveInitSplits</a></strong>(bool save_init_splits)<br>Set if initialization splits should be saved or not.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcheckpointinginterval">SetCheckpointingInterval</a></strong>(int checkpointing_interval)<br>Set the checkpointing interval.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setkeepcheckpoints">SetKeepCheckpoints</a></strong>(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcotansigmafactor">SetCotanSigmaFactor</a></strong>(double cotan_sigma_factor)<br>Set the cotan sigma factor (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setuseregression">SetUseRegression</a></strong>(bool use_regression)<br>Set if regression should be used (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusemixedeffects">SetUseMixedEffects</a></strong>(bool use_mixed_effects)<br>Set if mixed effects should be used (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setnormalangle">SetNormalAngle</a></strong>(double normal_angle)<br>For good/bad analysis, set the normal angle to use (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setperformgoodbad">SetPerformGoodBad</a></strong>(bool perform_good_bad)<br>Set if good/bad analysis should be done (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setlogenergy">SetLogEnergy</a></strong>(bool log_energy)<br>Set the log energy (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addimage">AddImage</a></strong>(ImageType::Pointer image, std::string name ="")<br>Set the shape input images.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addmesh">AddMesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addcontour">AddContour</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfilenames">SetFilenames</a></strong>(const std::vector&lt; std::string &gt; &amp; filenames)<br>Set the shape filenames (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setpointfiles">SetPointFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; point_files)<br>Set starting point files (TODO: details)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshfiles">SetMeshFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; mesh_files)<br>Set the mesh files (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setattributescales">SetAttributeScales</a></strong>(const std::vector&lt; double &gt; &amp; scales)<br>Set attribute scales (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfeafiles">SetFeaFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FEA files (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfeagradfiles">SetFeaGradFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FEA grad files (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfidsfiles">SetFidsFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FIDS files (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setparticleflags">SetParticleFlags</a></strong>(std::vector&lt; int &gt; flags)<br>Set Particle Flags (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomainflags">SetDomainFlags</a></strong>(std::vector&lt; int &gt; flags)<br>Set Domain Flags (TODO: details)</td>
+</tr>
+<tr>
+<td>const std::vector&lt; int &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomainflags">GetDomainFlags</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfileoutputenabled">SetFileOutputEnabled</a></strong>(bool enabled)<br>Set if file output is enabled.</td>
+</tr>
+<tr>
+<td>std::vector&lt; bool &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getusexyz">GetUseXYZ</a></strong>()<br>Return if XYZ is used, per shape.</td>
+</tr>
+<tr>
+<td>std::vector&lt; bool &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getusenormals">GetUseNormals</a></strong>()<br>Return if Normals are used, per shape.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setnarrowband">SetNarrowBand</a></strong>(double v)<br>Set the narrow band used to be +/- the given value as a multiple of the spacing.</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnarrowband">GetNarrowBand</a></strong>()<br>Return the narrow band to be used.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setuseshapestatisticsafter">SetUseShapeStatisticsAfter</a></strong>(int num_particles)<br>Set the number of particles when correspondence based multiscale takes over.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getuseshapestatisticsafter">GetUseShapeStatisticsAfter</a></strong>()<br>Return the number of particles when correspondence based multiscale takes over.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-printparaminfo">PrintParamInfo</a></strong>()<br>Print parameter info to stdout.</td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Sampler.html">Sampler</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getsampler">GetSampler</a></strong>()<br>Return the <a href="">Sampler</a>.</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1MatrixContainer.html">MatrixContainer</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getparticlesystem">GetParticleSystem</a></strong>()<br>Return the particle system as a matrix.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setpythonfile">SetPythonFile</a></strong>(std::string filename)<br>Set the python file to run at startup.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicsenabled">SetGeodesicsEnabled</a></strong>(bool is_enabled)<br>Set whether or not geodesics are enabled.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getvisualizer">GetVisualizer</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setshowvisualizer">SetShowVisualizer</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getshowvisualizer">GetShowVisualizer</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-runprocrustes">RunProcrustes</a></strong>()<br>Run an iteration of procrustes.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimizestart">OptimizeStart</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimizerstop">OptimizerStop</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-readtransformfile">ReadTransformFile</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-readprefixtransformfile">ReadPrefixTransformFile</a></strong>(const std::string &amp; s)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-initializesampler">InitializeSampler</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getminneighborhoodradius">GetMinNeighborhoodRadius</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addsinglepoint">AddSinglePoint</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-initialize">Initialize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addadaptivity">AddAdaptivity</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-runoptimize">RunOptimize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialcorrespondencemode">SetInitialCorrespondenceMode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-computeenergyafteriteration">ComputeEnergyAfterIteration</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcotansigma">SetCotanSigma</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writetransformfile">WriteTransformFile</a></strong>(int iter =-1) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writetransformfile">WriteTransformFile</a></strong>(std::string iter_prefix) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writetransformfiles">WriteTransformFiles</a></strong>(int iter =-1) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writetransformfiles">WriteTransformFiles</a></strong>(std::string iter_prefix) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writepointfiles">WritePointFiles</a></strong>(int iter =-1)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writepointfiles">WritePointFiles</a></strong>(std::string iter_prefix)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writepointfileswithfeatures">WritePointFilesWithFeatures</a></strong>(int iter =-1)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writepointfileswithfeatures">WritePointFilesWithFeatures</a></strong>(std::string iter_prefix)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writeenergyfiles">WriteEnergyFiles</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writecuttingplanepoints">WriteCuttingPlanePoints</a></strong>(int iter =-1)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writeparameters">WriteParameters</a></strong>(std::string output_dir ="")</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-reportbadparticles">ReportBadParticles</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setparameters">SetParameters</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-writemodes">WriteModes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-printstartmessage">PrintStartMessage</a></strong>(std::string str, unsigned int vlevel =0) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-printdonemessage">PrintDoneMessage</a></strong>(unsigned int vlevel =0) const</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getcheckpointdir">GetCheckpointDir</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Attributes inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Sampler.html">Sampler</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampler">m_sampler</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1ParticleProcrustesRegistration.html">itk::ParticleProcrustesRegistration</a>&lt; 3 &gt;::Pointer</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1ParticleGoodBadAssessment.html">itk::ParticleGoodBadAssessment</a>&lt; float, 3 &gt;::Pointer</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-good-bad">m_good_bad</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-verbosity-level">m_verbosity_level</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-local-points">m_local_points</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-global-points">m_global_points</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-checkpoint-counter">m_checkpoint_counter</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-counter">m_procrustes_counter</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-saturation-counter">m_saturation_counter</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-disable-procrustes">m_disable_procrustes</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-cutting-planes">m_use_cutting_planes</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimizing">m_optimizing</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-regression">m_use_regression</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-mixed-effects">m_use_mixed_effects</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domains-per-shape">m_domains_per_shape</a></strong></td>
+</tr>
+<tr>
+<td>shapeworks::DomainType</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domain-type">m_domain_type</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-number-of-particles">m_number_of_particles</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-transform-file">m_transform_file</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-prefix-transform-file">m_prefix_transform_file</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-dir">m_output_dir</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-transform-file">m_output_transform_file</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-transform-files">m_output_transform_files</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mesh-based-attributes">m_mesh_based_attributes</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; bool &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-xyz">m_use_xyz</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; bool &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-normals">m_use_normals</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-attributes-per-domain">m_attributes_per_domain</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-distribution-domain-id">m_distribution_domain_id</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-cutting-plane-file">m_output_cutting_plane_file</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-processing-mode">m_processing_mode</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-mode">m_adaptivity_mode</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-pairwise-potential-type">m_pairwise_potential_type</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-timepts-per-subject">m_timepts_per_subject</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimization-iterations">m_optimization_iterations</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimization-iterations-completed">m_optimization_iterations_completed</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iterations-per-split">m_iterations_per_split</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-initialization-criterion">m_initialization_criterion</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimization-criterion">m_optimization_criterion</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-shape-statistics-in-init">m_use_shape_statistics_in_init</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-interval">m_procrustes_interval</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-scaling">m_procrustes_scaling</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-relative-weighting">m_relative_weighting</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-initial-relative-weighting">m_initial_relative_weighting</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-starting-regularization">m_starting_regularization</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-ending-regularization">m_ending_regularization</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-recompute-regularization-interval">m_recompute_regularization_interval</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-save-init-splits">m_save_init_splits</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-checkpointing-interval">m_checkpointing_interval</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-keep-checkpoints">m_keep_checkpoints</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-cotan-sigma-factor">m_cotan_sigma_factor</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-particle-flags">m_particle_flags</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domain-flags">m_domain_flags</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-narrow-band">m_narrow_band</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-narrow-band-set">m_narrow_band_set</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-fixed-domains-present">m_fixed_domains_present</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-shape-statistics-after">m_use_shape_statistics_after</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-python-filename">m_python_filename</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesics-enabled">m_geodesics_enabled</a></strong></td>
+</tr>
+<tr>
+<td>size_t</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-cache-size-multiplier">m_geodesic_cache_size_multiplier</a></strong></td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mode">m_mode</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-spacing">m_spacing</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-filenames">m_filenames</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-num-shapes">m_num_shapes</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-energy-a">m_energy_a</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-energy-b">m_energy_b</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-total-energy">m_total_energy</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-log-energy">m_log_energy</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-str-energy">m_str_energy</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; int &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-bad-ids">m_bad_ids</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-normal-angle">m_normal_angle</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-perform-good-bad">m_perform_good_bad</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-cutting-planes-per-input">m_cutting_planes_per_input</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-spheres-per-input">m_spheres_per_input</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-file-output-enabled">m_file_output_enabled</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-aborted">m_aborted</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-cut-planes">m_cut_planes</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-total-iterations">m_total_iterations</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iteration-count">m_iteration_count</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-split-number">m_split_number</a></strong></td>
+</tr>
+<tr>
+<td>std::mt19937</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-rand">m_rand</a></strong></td>
+</tr>
+<tr>
+<td>std::function&lt; void(void)&gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iter-callback">m_iter_callback</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer">show_visualizer</a></strong></td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer">visualizer</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-progress">signal progress</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-qoptimize">function QOptimize</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QOptimize</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-qoptimize_1">function ~QOptimize</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">QOptimize</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getlocalpoints">function GetLocalPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetLocalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+</code></pre></div>
+<p>Return the local points. </p>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getlocalpoints">shapeworks::Optimize::GetLocalPoints</a></p>
+<h3 id="function-getglobalpoints">function GetGlobalPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetGlobalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+</code></pre></div>
+<p>Return the global points. </p>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getglobalpoints">shapeworks::Optimize::GetGlobalPoints</a></p>
+<h3 id="function-getparticles">function GetParticles</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetParticles</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updateexportablepoints">function UpdateExportablePoints</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateExportablePoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-updateexportablepoints">shapeworks::Optimize::UpdateExportablePoints</a></p>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-setiterationcallback">function SetIterationCallback</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+</code></pre></div>
+<p>Set the iteration callback. Derived classes should override to set their own callback. </p>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-setiterationcallback">shapeworks::Optimize::SetIterationCallback</a></p>
+<h3 id="function-iteratecallback">function IterateCallback</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">IterateCallback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:44 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

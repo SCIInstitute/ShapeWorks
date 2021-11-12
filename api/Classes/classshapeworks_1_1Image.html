@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1Image.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>shapeworks::Image - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "shapeworks::Image";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1Image.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1Image.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>shapeworks::Image</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1Image.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="shapeworksimage">shapeworks::Image</h1>
+<p><strong>Module:</strong> <strong><a href="../Modules/group__Group-Image.html">Image Classes</a></strong></p>
+<p><a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;Image.h&gt;</code></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum</td>
+<td Linear_="Linear," NearestNeighbor="NearestNeighbor"><strong><a href="classshapeworks_1_1Image.html#enum-interpolationtype">InterpolationType</a></strong></td>
+</tr>
+<tr>
+<td>using float</td>
+<td><strong><a href="classshapeworks_1_1Image.html#using-pixeltype">PixelType</a></strong></td>
+</tr>
+<tr>
+<td>using itk::Image&lt; PixelType, 3 &gt;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#using-imagetype">ImageType</a></strong></td>
+</tr>
+<tr>
+<td>using itk::StatisticsImageFilter&lt; ImageType &gt;::Pointer</td>
+<td><strong><a href="classshapeworks_1_1Image.html#using-statsptr">StatsPtr</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(const std::string &amp; pathname)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(ImageType::Pointer imagePtr)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(const vtkSmartPointer&lt; vtkImageData &gt; vtkImage)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp;&amp; img)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; img)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator=">operator=</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; img)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator=">operator=</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp;&amp; img)<br>lvalue assignment operator</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-imagetypepointer">operator ImageType::Pointer</a></strong>()<br>rvalue assignment operator</td>
+</tr>
+<tr>
+<td>ImageType::Pointer</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-getitkimage">getITKImage</a></strong>() const</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkImageData &gt;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-getvtkimage">getVTKImage</a></strong>() const<br>creates a VTK filter for the given image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-">operator-</a></strong>()<br>negation operator</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator+">operator+</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other) const<br>plus operator to add two images</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator+=">operator+=</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-">operator-</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other) const<br>minus operator to add two images</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-=">operator-=</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator*">operator*</a></strong>(const PixelType x) const<br>multiply operator to scale contents of an image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator*=">operator*=</a></strong>(const PixelType x)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator/">operator/</a></strong>(const PixelType x) const<br>divide operator to scale contents of an image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator/=">operator/=</a></strong>(const PixelType x)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator+">operator+</a></strong>(const PixelType x) const<br>plus operator to shift contents of an image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator+=">operator+=</a></strong>(const PixelType x)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-">operator-</a></strong>(const PixelType x) const<br>minus operator to shift contents of an image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator-=">operator-=</a></strong>(const PixelType x)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-antialias">antialias</a></strong>(unsigned iterations =50, double maxRMSErr =0.01f, int layers =3)<br>antialiases image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-recenter">recenter</a></strong>()<br>helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resample">resample</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resample">resample</a></strong>(const Vector &amp; physicalSpacing, InterpolationType interp =Linear)<br>resamples image using new physical spacing, updating logical dims to keep all image data for this spacing</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resample">resample</a></strong>(double isoSpacing =1.0, InterpolationType interp =Linear)<br>resamples image using isotropic physical spacing</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resize">resize</a></strong>(Dims logicalDims, InterpolationType interp =Linear)<br>changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-pad">pad</a></strong>(int padding, PixelType value =0.0)<br>pads an image by same number of voxels in all directions with constant value</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-pad">pad</a></strong>(int padx, int pady, int padz, PixelType value =0.0)<br>pads an image by desired number of voxels in each direction with constant value</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-pad">pad</a></strong>(<a href="classshapeworks_1_1IndexRegion.html">IndexRegion</a> &amp; region, PixelType value =0.0)<br>pads an image to include the given region with constant value</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-translate">translate</a></strong>(const Vector3 &amp; v)<br>helper to simply translate image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-scale">scale</a></strong>(const Vector3 &amp; v)<br>helper to simply scale image around center (not origin)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-rotate">rotate</a></strong>(const double angle, const Vector3 &amp; axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-rotate">rotate</a></strong>(const double angle, Axis axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)</td>
+</tr>
+<tr>
+<td>TransformPtr</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-createcenterofmasstransform">createCenterOfMassTransform</a></strong>()<br>creates a transform that translates center of mass to center of image</td>
+</tr>
+<tr>
+<td>TransformPtr</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-createrigidregistrationtransform">createRigidRegistrationTransform</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; target_dt, float isoValue =0.0, unsigned iterations =20)<br>creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applytransform">applyTransform</a></strong>(const TransformPtr transform, InterpolationType interp =Linear)<br>applies the given transformation to the image by using resampling filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applytransform">applyTransform</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-extractlabel">extractLabel</a></strong>(const PixelType label =1.0)<br>extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-closeholes">closeHoles</a></strong>(const PixelType foreground =0.0)<br>closes holes in a given volume, default foreground value assumes a binary volume</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-binarize">binarize</a></strong>(PixelType minVal =0.0, PixelType maxVal =std::numeric_limits&lt; PixelType &gt;::<a href="classshapeworks_1_1Image.html#function-max">max</a>(), PixelType innerVal =1.0, PixelType outerVal =0.0)<br>threholds image into binary label based on upper and lower intensity bounds given by user</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-computedt">computeDT</a></strong>(PixelType isoValue =0.0)<br>computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applycurvaturefilter">applyCurvatureFilter</a></strong>(unsigned iterations =10)<br>denoises an image using curvature driven flow using curvature flow image filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applygradientfilter">applyGradientFilter</a></strong>()<br>computes gradient magnitude at each pixel using gradient magnitude filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applysigmoidfilter">applySigmoidFilter</a></strong>(double alpha =10.0, double beta =10.0)<br>computes sigmoid function pixel-wise using sigmoid image filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applytplevelsetfilter">applyTPLevelSetFilter</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; featureImage, double scaling =20.0)<br>segements structures in images using topology preserving geodesic active contour level set filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-topologypreservingsmooth">topologyPreservingSmooth</a></strong>(float scaling =20.0, float sigmoidAlpha =10.5, float sigmoidBeta =10.0)<br>creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applyintensityfilter">applyIntensityFilter</a></strong>(double minVal, double maxVal)<br>applies intensity windowing image filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-gaussianblur">gaussianBlur</a></strong>(double sigma =0.0)<br>applies gaussian blur with given sigma</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-crop">crop</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region, const int padding =0)<br>crops the image down to the given region, with optional padding added</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-clip">clip</a></strong>(const Plane plane, const PixelType val =0.0)<br>clips an image using a cutting plane</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-reflect">reflect</a></strong>(const Axis &amp; axis)<br>reflect image around the plane specified by the logical center and the given normal (ex: &lt;1,0,0&gt; reflects across YZ-plane).</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-setorigin">setOrigin</a></strong>(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-setspacing">setSpacing</a></strong>(Vector3 spacing)<br>sets the image spacing to the given value</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-setcoordsys">setCoordsys</a></strong>(ImageType::DirectionType coordsys)<br>sets the coordinate system in which this image lives in physical space</td>
+</tr>
+<tr>
+<td>Dims</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-dims">dims</a></strong>() const<br>logical dimensions of the image</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-size">size</a></strong>() const<br>physical dimensions of the image (dims * spacing)</td>
+</tr>
+<tr>
+<td>Vector</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-spacing">spacing</a></strong>() const<br>physical spacing of the image</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-origin">origin</a></strong>() const<br>physical coordinates of image origin</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-center">center</a></strong>() const<br>physical coordinates of center of this image</td>
+</tr>
+<tr>
+<td>ImageType::DirectionType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-coordsys">coordsys</a></strong>() const<br>return coordinate system in which this image lives in physical space</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-centerofmass">centerOfMass</a></strong>(PixelType minVal =0.0, PixelType maxVal =1.0) const<br>returns average physical coordinate of pixels in range (minval, maxval]</td>
+</tr>
+<tr>
+<td>PixelType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-min">min</a></strong>()<br>minimum of image</td>
+</tr>
+<tr>
+<td>PixelType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-max">max</a></strong>()<br>maximum of image</td>
+</tr>
+<tr>
+<td>PixelType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-mean">mean</a></strong>()<br>mean of image</td>
+</tr>
+<tr>
+<td>PixelType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-std">std</a></strong>()<br>standard deviation of image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1IndexRegion.html">IndexRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-logicalboundingbox">logicalBoundingBox</a></strong>() const<br>bounding box of complete image in logical (index) space</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-physicalboundingbox">physicalBoundingBox</a></strong>() const<br>bounding box of complete image in physical space</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-physicalboundingbox">physicalBoundingBox</a></strong>(PixelType isovalue) const<br>bounding box of largest region of data &gt;= the given isoValue in physical space</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-logicaltophysical">logicalToPhysical</a></strong>(<a href="classshapeworks_1_1IndexRegion.html">IndexRegion</a> region) const<br>converts a bounding box in logical (index) space to this image's index coordinates</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1IndexRegion.html">IndexRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-physicaltological">physicalToLogical</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region) const<br>converts a bounding box in physical space to this image's logical (index) coordinates</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-logicaltophysical">logicalToPhysical</a></strong>(const Coord &amp; c) const<br>converts from pixel coordinates to physical space</td>
+</tr>
+<tr>
+<td>Coord</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-physicaltological">physicalToLogical</a></strong>(const Point3 &amp; p) const<br>converts from a physical coordinate to a logical coordinate</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-compare">compare</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-operator==">operator==</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other) const<br>compares this with another image using the region of interest filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-write">write</a></strong>(const std::string &amp; filename, bool compressed =true)<br>writes image, format specified by filename extension</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-tomesh">toMesh</a></strong>(PixelType isovalue) const<br>converts image to mesh</td>
+</tr>
+</tbody>
+</table>
+<h2 id="friends">Friends</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>struct</td>
+<td><strong><a href="classshapeworks_1_1Image.html#friend-sharedcommanddata">SharedCommandData</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>This class represents a 3D image volume and operations that can be performed on images. </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="enum-interpolationtype">enum InterpolationType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NearestNeighbor</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-pixeltype">using PixelType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-imagetype">using ImageType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-statsptr">using StatsPtr</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">StatsPtr</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">StatisticsImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-image">function Image</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-image_1">function Image</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">imagePtr</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-image_2">function Image</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtkImage</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-image_3">function Image</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-image_4">function Image</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator">function operator=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_1">function operator=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>lvalue assignment operator </p>
+<h3 id="function-operator-imagetypepointer">function operator ImageType::Pointer</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>rvalue assignment operator </p>
+<p>return this as an ITK image </p>
+<h3 id="function-getitkimage">function getITKImage</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">getITKImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getvtkimage">function getVTKImage</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>creates a VTK filter for the given image </p>
+<h3 id="function-operator-">function operator-</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>negation operator </p>
+<h3 id="function-operator_2">function operator+</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>plus operator to add two images </p>
+<h3 id="function-operator_3">function operator+=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator-_1">function operator-</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>minus operator to add two images </p>
+<h3 id="function-operator-_2">function operator-=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_4">function operator*</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>multiply operator to scale contents of an image </p>
+<h3 id="function-operator_5">function operator*=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_6">function operator/</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>divide operator to scale contents of an image </p>
+<h3 id="function-operator_7">function operator/=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_8">function operator+</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>plus operator to shift contents of an image </p>
+<h3 id="function-operator_9">function operator+=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator-_3">function operator-</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>minus operator to shift contents of an image </p>
+<h3 id="function-operator-_4">function operator-=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-antialias">function antialias</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">antialias</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxRMSErr</span><span class="w"> </span><span class="o">=</span><span class="mf">0.01f</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">layers</span><span class="w"> </span><span class="o">=</span><span class="mi">3</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>antialiases image </p>
+<h3 id="function-recenter">function recenter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">recenter</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image </p>
+<h3 id="function-resample">function resample</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">resample</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">NearestNeighbor</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator </p>
+<h3 id="function-resample_1">function resample</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">resample</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">physicalSpacing</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">Linear</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>resamples image using new physical spacing, updating logical dims to keep all image data for this spacing </p>
+<h3 id="function-resample_2">function resample</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">resample</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">isoSpacing</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">Linear</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>resamples image using isotropic physical spacing </p>
+<h3 id="function-resize">function resize</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">resize</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Dims</span><span class="w"> </span><span class="n">logicalDims</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">Linear</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same) </p>
+<h3 id="function-pad">function pad</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>pads an image by same number of voxels in all directions with constant value </p>
+<h3 id="function-pad_1">function pad</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">padx</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pady</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">padz</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>pads an image by desired number of voxels in each direction with constant value </p>
+<h3 id="function-pad_2">function pad</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">region</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>pads an image to include the given region with constant value </p>
+<h3 id="function-translate">function translate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">translate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to simply translate image </p>
+<h3 id="function-scale">function scale</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">scale</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to simply scale image around center (not origin) </p>
+<h3 id="function-rotate">function rotate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rotate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to simply rotate around axis through center (not origin) by given angle (in radians) </p>
+<h3 id="function-rotate_1">function rotate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rotate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to simply rotate around axis through center (not origin) by given angle (in radians) </p>
+<h3 id="function-createcenterofmasstransform">function createCenterOfMassTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TransformPtr</span><span class="w"> </span><span class="n">createCenterOfMassTransform</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>creates a transform that translates center of mass to center of image </p>
+<h3 id="function-createrigidregistrationtransform">function createRigidRegistrationTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TransformPtr</span><span class="w"> </span><span class="n">createRigidRegistrationTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target_dt</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">20</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations </p>
+<h3 id="function-applytransform">function applyTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">Linear</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies the given transformation to the image by using resampling filter </p>
+<h3 id="function-applytransform_1">function applyTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="n">NearestNeighbor</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values </p>
+<h3 id="function-extractlabel">function extractLabel</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">extractLabel</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image </p>
+<h3 id="function-closeholes">function closeHoles</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">closeHoles</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">foreground</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>closes holes in a given volume, default foreground value assumes a binary volume </p>
+<h3 id="function-binarize">function binarize</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">binarize</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">minVal</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">maxVal</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">max</span><span class="p">(),</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">innerVal</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">outerVal</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>threholds image into binary label based on upper and lower intensity bounds given by user </p>
+<h3 id="function-computedt">function computeDT</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeDT</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue </p>
+<h3 id="function-applycurvaturefilter">function applyCurvatureFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyCurvatureFilter</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">10</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>denoises an image using curvature driven flow using curvature flow image filter </p>
+<h3 id="function-applygradientfilter">function applyGradientFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyGradientFilter</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>computes gradient magnitude at each pixel using gradient magnitude filter </p>
+<h3 id="function-applysigmoidfilter">function applySigmoidFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applySigmoidFilter</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="mf">10.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes sigmoid function pixel-wise using sigmoid image filter </p>
+<h3 id="function-applytplevelsetfilter">function applyTPLevelSetFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyTPLevelSetFilter</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">featureImage</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">scaling</span><span class="w"> </span><span class="o">=</span><span class="mf">20.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>segements structures in images using topology preserving geodesic active contour level set filter </p>
+<h3 id="function-topologypreservingsmooth">function topologyPreservingSmooth</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">topologyPreservingSmooth</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">scaling</span><span class="w"> </span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">sigmoidAlpha</span><span class="w"> </span><span class="o">=</span><span class="mf">10.5</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">sigmoidBeta</span><span class="w"> </span><span class="o">=</span><span class="mf">10.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter] </p>
+<h3 id="function-applyintensityfilter">function applyIntensityFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyIntensityFilter</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">minVal</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxVal</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies intensity windowing image filter </p>
+<h3 id="function-gaussianblur">function gaussianBlur</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">gaussianBlur</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies gaussian blur with given sigma </p>
+<h3 id="function-crop">function crop</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">crop</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>crops the image down to the given region, with optional padding added </p>
+<h3 id="function-clip">function clip</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clip</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>clips an image using a cutting plane </p>
+<h3 id="function-reflect">function reflect</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">reflect</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>reflect image around the plane specified by the logical center and the given normal (ex: &lt;1,0,0&gt; reflects across YZ-plane). </p>
+<h3 id="function-setorigin">function setOrigin</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setOrigin</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="n">Point3</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">})</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the image origin in physical space to the given value </p>
+<h3 id="function-setspacing">function setSpacing</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setSpacing</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the image spacing to the given value </p>
+<h3 id="function-setcoordsys">function setCoordsys</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setCoordsys</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">coordsys</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the coordinate system in which this image lives in physical space </p>
+<h3 id="function-dims">function dims</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>logical dimensions of the image </p>
+<h3 id="function-size">function size</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>physical dimensions of the image (dims * spacing) </p>
+<h3 id="function-spacing">function spacing</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="n">spacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>physical spacing of the image </p>
+<h3 id="function-origin">function origin</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>physical coordinates of image origin </p>
+<h3 id="function-center">function center</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>physical coordinates of center of this image </p>
+<h3 id="function-coordsys">function coordsys</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">coordsys</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>return coordinate system in which this image lives in physical space </p>
+<h3 id="function-centerofmass">function centerOfMass</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">centerOfMass</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">minVal</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">maxVal</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>returns average physical coordinate of pixels in range (minval, maxval] </p>
+<h3 id="function-min">function min</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PixelType</span><span class="w"> </span><span class="n">min</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>minimum of image </p>
+<h3 id="function-max">function max</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PixelType</span><span class="w"> </span><span class="n">max</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>maximum of image </p>
+<h3 id="function-mean">function mean</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PixelType</span><span class="w"> </span><span class="n">mean</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>mean of image </p>
+<h3 id="function-std">function std</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PixelType</span><span class="w"> </span><span class="n">std</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>standard deviation of image </p>
+<h3 id="function-logicalboundingbox">function logicalBoundingBox</h3>
+<div class="highlight"><pre><span></span><code><span class="n">IndexRegion</span><span class="w"> </span><span class="n">logicalBoundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>bounding box of complete image in logical (index) space </p>
+<h3 id="function-physicalboundingbox">function physicalBoundingBox</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">physicalBoundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>bounding box of complete image in physical space </p>
+<h3 id="function-physicalboundingbox_1">function physicalBoundingBox</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">physicalBoundingBox</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">isovalue</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>bounding box of largest region of data &gt;= the given isoValue in physical space </p>
+<h3 id="function-logicaltophysical">function logicalToPhysical</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">logicalToPhysical</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">IndexRegion</span><span class="w"> </span><span class="n">region</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts a bounding box in logical (index) space to this image's index coordinates </p>
+<h3 id="function-physicaltological">function physicalToLogical</h3>
+<div class="highlight"><pre><span></span><code><span class="n">IndexRegion</span><span class="w"> </span><span class="n">physicalToLogical</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts a bounding box in physical space to this image's logical (index) coordinates </p>
+<h3 id="function-logicaltophysical_1">function logicalToPhysical</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">logicalToPhysical</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts from pixel coordinates to physical space </p>
+<h3 id="function-physicaltological_1">function physicalToLogical</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Coord</span><span class="w"> </span><span class="n">physicalToLogical</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts from a physical coordinate to a logical coordinate </p>
+<h3 id="function-compare">function compare</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">verifyall</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="mf">1e-12</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compares this with another image using the region of interest filter </p>
+<h3 id="function-operator_10">function operator==</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compares this with another image using the region of interest filter </p>
+<h3 id="function-write">function write</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">write</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">compressed</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>writes image, format specified by filename extension </p>
+<h3 id="function-tomesh">function toMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="n">toMesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">isovalue</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts image to mesh </p>
+<h2 id="friends_1">Friends</h2>
+<h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
+<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:45 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

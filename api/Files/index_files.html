@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Files/index_files.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Files - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Files";
+    var mkdocs_page_input_path = "api/Files/index_files.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Files/index_files.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Classes/index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="index_files.html">Files</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>API Reference &raquo;</li>
+        
+      
+    
+    <li>Files</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/index_files.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="files">Files</h1>
+<ul>
+<li><strong>dir <a href="dir_8c1195e4829fa17630c4278c41da729a.html#dir-applications">Applications</a></strong> <ul>
+<li><strong>dir <a href="dir_486a45e6ebc11931a27093b877e14af3.html#dir-applications/shapeworks">Applications/shapeworks</a></strong> <ul>
+<li><strong>file <a href="Command_8h.html#file-command.h">Applications/shapeworks/Command.h</a></strong> </li>
+<li><strong>file <a href="Commands_8h.html#file-commands.h">Applications/shapeworks/Commands.h</a></strong> </li>
+<li><strong>file <a href="Executable_8h.html#file-executable.h">Applications/shapeworks/Executable.h</a></strong> </li>
+<li><strong>file <a href="SharedCommandData_8h.html#file-sharedcommanddata.h">Applications/shapeworks/SharedCommandData.h</a></strong> </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_cb8980ab440f994989990a6313097edf.html#dir-documentation">Documentation</a></strong> <ul>
+<li><strong>dir <a href="dir_b61e4180fa497c41c4b364a945b36efe.html#dir-documentation/doxygen">Documentation/Doxygen</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_6e6cb9563333489fde7459b1f95e59a5.html#dir-libs">Libs</a></strong> <ul>
+<li><strong>dir <a href="dir_c8a30dba58b805ee2d567ab327483fca.html#dir-libs/alignment">Libs/Alignment</a></strong> <ul>
+<li><strong>dir <a href="dir_3c387d8f52af5a1c9b80596228515621.html#dir-libs/alignment/transforms">Libs/Alignment/Transforms</a></strong> <ul>
+<li><strong>file <a href="itkAdvancedTransform_8h.html#file-itkadvancedtransform.h">Libs/Alignment/Transforms/itkAdvancedTransform.h</a></strong> </li>
+<li><strong>file <a href="itkCompactlySupportedRBFSparseKernelTransform_8h.html#file-itkcompactlysupportedrbfsparsekerneltransform.h">Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h</a></strong> </li>
+<li><strong>file <a href="itkKernelTransform2_8h.html#file-itkkerneltransform2.h">Libs/Alignment/Transforms/itkKernelTransform2.h</a></strong> </li>
+<li><strong>file <a href="itkSparseKernelTransform_8h.html#file-itksparsekerneltransform.h">Libs/Alignment/Transforms/itkSparseKernelTransform.h</a></strong> </li>
+<li><strong>file <a href="itkThinPlateSplineKernelTransform2_8h.html#file-itkthinplatesplinekerneltransform2.h">Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>file <a href="Procrustes3D_8h.html#file-procrustes3d.h">Libs/Alignment/Procrustes3D.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_d77cc112773b74d11448b7fad9142c8e.html#dir-libs/analyze">Libs/Analyze</a></strong> <ul>
+<li><strong>file <a href="MeshFromDT__InputParams_8h.html#file-meshfromdt-inputparams.h">Libs/Analyze/MeshFromDT_InputParams.h</a></strong> </li>
+<li><strong>file <a href="Reconstruction_8h.html#file-reconstruction.h">Libs/Analyze/Reconstruction.h</a></strong> </li>
+<li><strong>file <a href="Vis_8h.html#file-vis.h">Libs/Analyze/Vis.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_c13ed27a749775eeb2d59234813cae48.html#dir-libs/common">Libs/Common</a></strong> <ul>
+<li><strong>file <a href="Region_8h.html#file-region.h">Libs/Common/Region.h</a></strong> </li>
+<li><strong>file <a href="Shapeworks_8h.html#file-shapeworks.h">Libs/Common/Shapeworks.h</a></strong> </li>
+<li><strong>file <a href="ShapeworksUtils_8h.html#file-shapeworksutils.h">Libs/Common/ShapeworksUtils.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_c8ce71b7fc76205395f44c2291e69b75.html#dir-libs/groom">Libs/Groom</a></strong> <ul>
+<li><strong>file <a href="Groom_8h.html#file-groom.h">Libs/Groom/Groom.h</a></strong> </li>
+<li><strong>file <a href="GroomParameters_8h.html#file-groomparameters.h">Libs/Groom/GroomParameters.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_9e4ba78685e6608cfdea07960abd189c.html#dir-libs/image">Libs/Image</a></strong> <ul>
+<li><strong>file <a href="Image_8h.html#file-image.h">Libs/Image/Image.h</a></strong> </li>
+<li><strong>file <a href="ImageUtils_8h.html#file-imageutils.h">Libs/Image/ImageUtils.h</a></strong> </li>
+<li><strong>file <a href="VectorImage_8h.html#file-vectorimage.h">Libs/Image/VectorImage.h</a></strong> </li>
+<li><strong>file <a href="itkTPGACLevelSetImageFilter_8h.html#file-itktpgaclevelsetimagefilter.h">Libs/Image/itkTPGACLevelSetImageFilter.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_36d0ece48b2c599ca7cdf3fcf70a4111.html#dir-libs/mesh">Libs/Mesh</a></strong> <ul>
+<li><strong>dir <a href="dir_409787ee32d93aa6a212981d92e6dc9a.html#dir-libs/mesh/previewmeshqc">Libs/Mesh/PreviewMeshQC</a></strong> <ul>
+<li><strong>file <a href="FEAreaCoverage_8h.html#file-feareacoverage.h">Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h</a></strong> </li>
+<li><strong>file <a href="FEAutoMesher_8h.html#file-feautomesher.h">Libs/Mesh/PreviewMeshQC/FEAutoMesher.h</a></strong> </li>
+<li><strong>file <a href="FECVDDecimationModifier_8h.html#file-fecvddecimationmodifier.h">Libs/Mesh/PreviewMeshQC/FECVDDecimationModifier.h</a></strong> </li>
+<li><strong>file <a href="FECoreMesh_8h.html#file-fecoremesh.h">Libs/Mesh/PreviewMeshQC/FECoreMesh.h</a></strong> </li>
+<li><strong>file <a href="FEElement_8h.html#file-feelement.h">Libs/Mesh/PreviewMeshQC/FEElement.h</a></strong> </li>
+<li><strong>file <a href="FEFillHole_8h.html#file-fefillhole.h">Libs/Mesh/PreviewMeshQC/FEFillHole.h</a></strong> </li>
+<li><strong>file <a href="FEFixMesh_8h.html#file-fefixmesh.h">Libs/Mesh/PreviewMeshQC/FEFixMesh.h</a></strong> </li>
+<li><strong>file <a href="FEMesh_8h.html#file-femesh.h">Libs/Mesh/PreviewMeshQC/FEMesh.h</a></strong> </li>
+<li><strong>file <a href="FEMeshSmoothingModifier_8h.html#file-femeshsmoothingmodifier.h">Libs/Mesh/PreviewMeshQC/FEMeshSmoothingModifier.h</a></strong> </li>
+<li><strong>file <a href="FENodeElementList_8h.html#file-fenodeelementlist.h">Libs/Mesh/PreviewMeshQC/FENodeElementList.h</a></strong> </li>
+<li><strong>file <a href="FENodeFaceList_8h.html#file-fenodefacelist.h">Libs/Mesh/PreviewMeshQC/FENodeFaceList.h</a></strong> </li>
+<li><strong>file <a href="FENodeNodeList_8h.html#file-fenodenodelist.h">Libs/Mesh/PreviewMeshQC/FENodeNodeList.h</a></strong> </li>
+<li><strong>file <a href="FEVTKExport_8h.html#file-fevtkexport.h">Libs/Mesh/PreviewMeshQC/FEVTKExport.h</a></strong> </li>
+<li><strong>file <a href="FEVTKImport_8h.html#file-fevtkimport.h">Libs/Mesh/PreviewMeshQC/FEVTKImport.h</a></strong> </li>
+<li><strong>file <a href="Intersect_8h.html#file-intersect.h">Libs/Mesh/PreviewMeshQC/Intersect.h</a></strong> </li>
+<li><strong>file <a href="math3d_8h.html#file-math3d.h">Libs/Mesh/PreviewMeshQC/math3d.h</a></strong> </li>
+<li><strong>file <a href="stdafx_8h.html#file-stdafx.h">Libs/Mesh/PreviewMeshQC/stdafx.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>file <a href="Mesh_8h.html#file-mesh.h">Libs/Mesh/Mesh.h</a></strong> </li>
+<li><strong>file <a href="MeshUtils_8h.html#file-meshutils.h">Libs/Mesh/MeshUtils.h</a></strong> </li>
+<li><strong>file <a href="MeshWarper_8h.html#file-meshwarper.h">Libs/Mesh/MeshWarper.h</a></strong> <br>Mesh warping capability. </li>
+<li><strong>file <a href="ParticleBasedSurfaceReconstruction__InputParams_8h.html#file-particlebasedsurfacereconstruction-inputparams.h">Libs/Mesh/ParticleBasedSurfaceReconstruction_InputParams.h</a></strong> </li>
+<li><strong>file <a href="itkMultiplyByConstantImageFilter_8h.html#file-itkmultiplybyconstantimagefilter.h">Libs/Mesh/itkMultiplyByConstantImageFilter.h</a></strong> </li>
+<li><strong>file <a href="meshFIM_8h.html#file-meshfim.h">Libs/Mesh/meshFIM.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_f02d5d8e81e1edd3722111e50e18938d.html#dir-libs/optimize">Libs/Optimize</a></strong> <ul>
+<li><strong>dir <a href="dir_8f268951dfa1af237c8fb7830f5f1164.html#dir-libs/optimize/particlesystem">Libs/Optimize/ParticleSystem</a></strong> <ul>
+<li><strong>file <a href="Constraint_8h.html#file-constraint.h">Libs/Optimize/ParticleSystem/Constraint.h</a></strong> </li>
+<li><strong>file <a href="ConstraintType_8h.html#file-constrainttype.h">Libs/Optimize/ParticleSystem/ConstraintType.h</a></strong> </li>
+<li><strong>file <a href="Constraints_8h.html#file-constraints.h">Libs/Optimize/ParticleSystem/Constraints.h</a></strong> </li>
+<li><strong>file <a href="ContourDomain_8h.html#file-contourdomain.h">Libs/Optimize/ParticleSystem/ContourDomain.h</a></strong> </li>
+<li><strong>file <a href="CorrespondenceMode_8h.html#file-correspondencemode.h">Libs/Optimize/ParticleSystem/CorrespondenceMode.h</a></strong> </li>
+<li><strong>file <a href="DomainType_8h.html#file-domaintype.h">Libs/Optimize/ParticleSystem/DomainType.h</a></strong> </li>
+<li><strong>file <a href="FreeFormConstraint_8h.html#file-freeformconstraint.h">Libs/Optimize/ParticleSystem/FreeFormConstraint.h</a></strong> </li>
+<li><strong>file <a href="MemoryUsage_8h.html#file-memoryusage.h">Libs/Optimize/ParticleSystem/MemoryUsage.h</a></strong> </li>
+<li><strong>file <a href="MeshDomain_8h.html#file-meshdomain.h">Libs/Optimize/ParticleSystem/MeshDomain.h</a></strong> </li>
+<li><strong>file <a href="MeshGeoEntry_8h.html#file-meshgeoentry.h">Libs/Optimize/ParticleSystem/MeshGeoEntry.h</a></strong> </li>
+<li><strong>file <a href="MeshWrapper_8h.html#file-meshwrapper.h">Libs/Optimize/ParticleSystem/MeshWrapper.h</a></strong> </li>
+<li><strong>file <a href="OptimizationVisualizer_8h.html#file-optimizationvisualizer.h">Libs/Optimize/ParticleSystem/OptimizationVisualizer.h</a></strong> </li>
+<li><strong>file <a href="PlaneConstraint_8h.html#file-planeconstraint.h">Libs/Optimize/ParticleSystem/PlaneConstraint.h</a></strong> </li>
+<li><strong>file <a href="Sampler_8h.html#file-sampler.h">Libs/Optimize/ParticleSystem/Sampler.h</a></strong> </li>
+<li><strong>file <a href="SphereConstraint_8h.html#file-sphereconstraint.h">Libs/Optimize/ParticleSystem/SphereConstraint.h</a></strong> </li>
+<li><strong>file <a href="TriMeshWrapper_8h.html#file-trimeshwrapper.h">Libs/Optimize/ParticleSystem/TriMeshWrapper.h</a></strong> </li>
+<li><strong>file <a href="VtkMeshWrapper_8h.html#file-vtkmeshwrapper.h">Libs/Optimize/ParticleSystem/VtkMeshWrapper.h</a></strong> </li>
+<li><strong>file <a href="Optimize_2ParticleSystem_2itkImageToVTKImageFilter_8h.html#file-itkimagetovtkimagefilter.h">Libs/Optimize/ParticleSystem/itkImageToVTKImageFilter.h</a></strong> </li>
+<li><strong>file <a href="itkParticleAttribute_8h.html#file-itkparticleattribute.h">Libs/Optimize/ParticleSystem/itkParticleAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleConstrainedModifiedCotangentEntropyGradientFunction_8h.html#file-itkparticleconstrainedmodifiedcotangententropygradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleContainer_8h.html#file-itkparticlecontainer.h">Libs/Optimize/ParticleSystem/itkParticleContainer.h</a></strong> </li>
+<li><strong>file <a href="itkParticleContainerArrayAttribute_8h.html#file-itkparticlecontainerarrayattribute.h">Libs/Optimize/ParticleSystem/itkParticleContainerArrayAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleCurvatureEntropyGradientFunction_8h.html#file-itkparticlecurvatureentropygradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleCurvatureEntropyGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleCurvatureEntropyPlanarConstraint_8h.html#file-itkparticlecurvatureentropyplanarconstraint.h">Libs/Optimize/ParticleSystem/itkParticleCurvatureEntropyPlanarConstraint.h</a></strong> </li>
+<li><strong>file <a href="itkParticleDomain_8h.html#file-itkparticledomain.h">Libs/Optimize/ParticleSystem/itkParticleDomain.h</a></strong> </li>
+<li><strong>file <a href="itkParticleDualVectorFunction_8h.html#file-itkparticledualvectorfunction.h">Libs/Optimize/ParticleSystem/itkParticleDualVectorFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleEnsembleEntropyFunction_8h.html#file-itkparticleensembleentropyfunction.h">Libs/Optimize/ParticleSystem/itkParticleEnsembleEntropyFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleEntropyGradientFunction_8h.html#file-itkparticleentropygradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleEntropyGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleEvents_8h.html#file-itkparticleevents.h">Libs/Optimize/ParticleSystem/itkParticleEvents.h</a></strong> </li>
+<li><strong>file <a href="itkParticleGaussianModeWriter_8h.html#file-itkparticlegaussianmodewriter.h">Libs/Optimize/ParticleSystem/itkParticleGaussianModeWriter.h</a></strong> </li>
+<li><strong>file <a href="itkParticleGeneralShapeGradientMatrix_8h.html#file-itkparticlegeneralshapegradientmatrix.h">Libs/Optimize/ParticleSystem/itkParticleGeneralShapeGradientMatrix.h</a></strong> </li>
+<li><strong>file <a href="itkParticleGeneralShapeMatrix_8h.html#file-itkparticlegeneralshapematrix.h">Libs/Optimize/ParticleSystem/itkParticleGeneralShapeMatrix.h</a></strong> </li>
+<li><strong>file <a href="itkParticleGoodBadAssessment_8h.html#file-itkparticlegoodbadassessment.h">Libs/Optimize/ParticleSystem/itkParticleGoodBadAssessment.h</a></strong> </li>
+<li><strong>file <a href="itkParticleGradientDescentPositionOptimizer_8h.html#file-itkparticlegradientdescentpositionoptimizer.h">Libs/Optimize/ParticleSystem/itkParticleGradientDescentPositionOptimizer.h</a></strong> </li>
+<li><strong>file <a href="itkParticleImageDomain_8h.html#file-itkparticleimagedomain.h">Libs/Optimize/ParticleSystem/itkParticleImageDomain.h</a></strong> </li>
+<li><strong>file <a href="itkParticleImageDomainWithCurvature_8h.html#file-itkparticleimagedomainwithcurvature.h">Libs/Optimize/ParticleSystem/itkParticleImageDomainWithCurvature.h</a></strong> </li>
+<li><strong>file <a href="itkParticleImageDomainWithGradN_8h.html#file-itkparticleimagedomainwithgradn.h">Libs/Optimize/ParticleSystem/itkParticleImageDomainWithGradN.h</a></strong> </li>
+<li><strong>file <a href="itkParticleImageDomainWithGradients_8h.html#file-itkparticleimagedomainwithgradients.h">Libs/Optimize/ParticleSystem/itkParticleImageDomainWithGradients.h</a></strong> </li>
+<li><strong>file <a href="itkParticleImplicitSurfaceDomain_8h.html#file-itkparticleimplicitsurfacedomain.h">Libs/Optimize/ParticleSystem/itkParticleImplicitSurfaceDomain.h</a></strong> </li>
+<li><strong>file <a href="itkParticleMeanCurvatureAttribute_8h.html#file-itkparticlemeancurvatureattribute.h">Libs/Optimize/ParticleSystem/itkParticleMeanCurvatureAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleMeshBasedGeneralEntropyGradientFunction_8h.html#file-itkparticlemeshbasedgeneralentropygradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleMeshBasedGeneralEntropyGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleModifiedCotangentEntropyGradientFunction_8h.html#file-itkparticlemodifiedcotangententropygradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleModifiedCotangentEntropyGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticleNeighborhood_8h.html#file-itkparticleneighborhood.h">Libs/Optimize/ParticleSystem/itkParticleNeighborhood.h</a></strong> </li>
+<li><strong>file <a href="itkParticleOmegaGradientFunction_8h.html#file-itkparticleomegagradientfunction.h">Libs/Optimize/ParticleSystem/itkParticleOmegaGradientFunction.h</a></strong> </li>
+<li><strong>file <a href="itkParticlePointIndexPair_8h.html#file-itkparticlepointindexpair.h">Libs/Optimize/ParticleSystem/itkParticlePointIndexPair.h</a></strong> </li>
+<li><strong>file <a href="itkParticleProcrustesRegistration_8h.html#file-itkparticleprocrustesregistration.h">Libs/Optimize/ParticleSystem/itkParticleProcrustesRegistration.h</a></strong> </li>
+<li><strong>file <a href="itkParticleRegionDomain_8h.html#file-itkparticleregiondomain.h">Libs/Optimize/ParticleSystem/itkParticleRegionDomain.h</a></strong> </li>
+<li><strong>file <a href="itkParticleRegionNeighborhood_8h.html#file-itkparticleregionneighborhood.h">Libs/Optimize/ParticleSystem/itkParticleRegionNeighborhood.h</a></strong> </li>
+<li><strong>file <a href="itkParticleShapeLinearRegressionMatrixAttribute_8h.html#file-itkparticleshapelinearregressionmatrixattribute.h">Libs/Optimize/ParticleSystem/itkParticleShapeLinearRegressionMatrixAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleShapeMatrixAttribute_8h.html#file-itkparticleshapematrixattribute.h">Libs/Optimize/ParticleSystem/itkParticleShapeMatrixAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleShapeMixedEffectsMatrixAttribute_8h.html#file-itkparticleshapemixedeffectsmatrixattribute.h">Libs/Optimize/ParticleSystem/itkParticleShapeMixedEffectsMatrixAttribute.h</a></strong> </li>
+<li><strong>file <a href="itkParticleSurfaceNeighborhood_8h.html#file-itkparticlesurfaceneighborhood.h">Libs/Optimize/ParticleSystem/itkParticleSurfaceNeighborhood.h</a></strong> </li>
+<li><strong>file <a href="itkParticleSystem_8h.html#file-itkparticlesystem.h">Libs/Optimize/ParticleSystem/itkParticleSystem.h</a></strong> </li>
+<li><strong>file <a href="itkParticleVectorFunction_8h.html#file-itkparticlevectorfunction.h">Libs/Optimize/ParticleSystem/itkParticleVectorFunction.h</a></strong> </li>
+<li><strong>file <a href="itkPowerOfTwoPointTree_8h.html#file-itkpoweroftwopointtree.h">Libs/Optimize/ParticleSystem/itkPowerOfTwoPointTree.h</a></strong> </li>
+<li><strong>file <a href="object__reader_8h.html#file-object-reader.h">Libs/Optimize/ParticleSystem/object_reader.h</a></strong> </li>
+<li><strong>file <a href="object__writer_8h.html#file-object-writer.h">Libs/Optimize/ParticleSystem/object_writer.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>file <a href="Optimize_8h.html#file-optimize.h">Libs/Optimize/Optimize.h</a></strong> </li>
+<li><strong>file <a href="OptimizeParameterFile_8h.html#file-optimizeparameterfile.h">Libs/Optimize/OptimizeParameterFile.h</a></strong> </li>
+<li><strong>file <a href="OptimizeParameters_8h.html#file-optimizeparameters.h">Libs/Optimize/OptimizeParameters.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_f6c26397dfcef1d1f5f1786f8168e7dd.html#dir-libs/particles">Libs/Particles</a></strong> <ul>
+<li><strong>file <a href="EvaluationUtil_8h.html#file-evaluationutil.h">Libs/Particles/EvaluationUtil.h</a></strong> </li>
+<li><strong>file <a href="ParticleShapeStatistics_8h.html#file-particleshapestatistics.h">Libs/Particles/ParticleShapeStatistics.h</a></strong> </li>
+<li><strong>file <a href="ParticleSystem_8h.html#file-particlesystem.h">Libs/Particles/ParticleSystem.h</a></strong> </li>
+<li><strong>file <a href="ShapeEvaluation_8h.html#file-shapeevaluation.h">Libs/Particles/ShapeEvaluation.h</a></strong> </li>
+<li><strong>file <a href="itkParticlePositionReader_8h.html#file-itkparticlepositionreader.h">Libs/Particles/itkParticlePositionReader.h</a></strong> </li>
+<li><strong>file <a href="itkParticlePositionWriter_8h.html#file-itkparticlepositionwriter.h">Libs/Particles/itkParticlePositionWriter.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_4ea27a77bf632cd63100af8008b8abf4.html#dir-libs/project">Libs/Project</a></strong> <ul>
+<li><strong>file <a href="Parameters_8h.html#file-parameters.h">Libs/Project/Parameters.h</a></strong> </li>
+<li><strong>file <a href="Project_8h.html#file-project.h">Libs/Project/Project.h</a></strong> </li>
+<li><strong>file <a href="Subject_8h.html#file-subject.h">Libs/Project/Subject.h</a></strong> </li>
+<li><strong>file <a href="Variant_8h.html#file-variant.h">Libs/Project/Variant.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_6cd87311705ab44b460cce19838a0cf5.html#dir-libs/python">Libs/Python</a></strong> <ul>
+<li><strong>file <a href="pybind__utils_8h.html#file-pybind-utils.h">Libs/Python/pybind_utils.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_73a09fceee206218e6d903b3c5deb969.html#dir-libs/utils">Libs/Utils</a></strong> <ul>
+<li><strong>file <a href="EigenUtils_8h.html#file-eigenutils.h">Libs/Utils/EigenUtils.h</a></strong> </li>
+<li><strong>file <a href="StringUtils_8h.html#file-stringutils.h">Libs/Utils/StringUtils.h</a></strong> </li>
+<li><strong>file <a href="Utils_8h.html#file-utils.h">Libs/Utils/Utils.h</a></strong> </li>
+<li><strong>file <a href="Utils_2itkImageToVTKImageFilter_8h.html#file-itkimagetovtkimagefilter.h">Libs/Utils/itkImageToVTKImageFilter.h</a></strong> </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>file <a href="Module_8dox.html#file-module.dox">Module.dox</a></strong> </li>
+<li><strong>dir <a href="dir_baf8d66207f3fc39faf866e67ca98ce2.html#dir-studio">Studio</a></strong> <ul>
+<li><strong>dir <a href="dir_15d8e205eb0e69868bf0703ef3760a37.html#dir-studio/src">Studio/src</a></strong> <ul>
+<li><strong>dir <a href="dir_85be493154e47884a39224bf31e366f0.html#dir-studio/src/analysis">Studio/src/Analysis</a></strong> <ul>
+<li><strong>file <a href="AnalysisTool_8h.html#file-analysistool.h">Studio/src/Analysis/AnalysisTool.h</a></strong> </li>
+<li><strong>file <a href="ShapeEvaluationJob_8h.html#file-shapeevaluationjob.h">Studio/src/Analysis/ShapeEvaluationJob.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_217db32785bc9a56b002739d3e5efbb6.html#dir-studio/src/data">Studio/src/Data</a></strong> <ul>
+<li><strong>file <a href="CustomSurfaceReconstructionFilter_8h.html#file-customsurfacereconstructionfilter.h">Studio/src/Data/CustomSurfaceReconstructionFilter.h</a></strong> </li>
+<li><strong>file <a href="ItkToVtk_8h.html#file-itktovtk.h">Studio/src/Data/ItkToVtk.h</a></strong> </li>
+<li><strong>file <a href="LegacyMeshGenerator_8h.html#file-legacymeshgenerator.h">Studio/src/Data/LegacyMeshGenerator.h</a></strong> <br>Mesh generation. </li>
+<li><strong>file <a href="MeshCache_8h.html#file-meshcache.h">Studio/src/Data/MeshCache.h</a></strong> <br>Thread safe cache for meshes index by shape. </li>
+<li><strong>file <a href="MeshGenerator_8h.html#file-meshgenerator.h">Studio/src/Data/MeshGenerator.h</a></strong> <br>Mesh generation. </li>
+<li><strong>file <a href="MeshGroup_8h.html#file-meshgroup.h">Studio/src/Data/MeshGroup.h</a></strong> </li>
+<li><strong>file <a href="MeshManager_8h.html#file-meshmanager.h">Studio/src/Data/MeshManager.h</a></strong> <br>Class to manage meshes. </li>
+<li><strong>file <a href="MeshSettings_8h.html#file-meshsettings.h">Studio/src/Data/MeshSettings.h</a></strong> </li>
+<li><strong>file <a href="MeshWorkQueue_8h.html#file-meshworkqueue.h">Studio/src/Data/MeshWorkQueue.h</a></strong> <br>Provides concurrent access to a list of shapes to work needing reconstruction. </li>
+<li><strong>file <a href="MeshWorker_8h.html#file-meshworker.h">Studio/src/Data/MeshWorker.h</a></strong> <br>Worker class for parallel mesh reconstruction. </li>
+<li><strong>file <a href="Preferences_8h.html#file-preferences.h">Studio/src/Data/Preferences.h</a></strong> </li>
+<li><strong>file <a href="PreferencesWindow_8h.html#file-preferenceswindow.h">Studio/src/Data/PreferencesWindow.h</a></strong> </li>
+<li><strong>file <a href="QMeshWarper_8h.html#file-qmeshwarper.h">Studio/src/Data/QMeshWarper.h</a></strong> </li>
+<li><strong>file <a href="Session_8h.html#file-session.h">Studio/src/Data/Session.h</a></strong> </li>
+<li><strong>file <a href="Shape_8h.html#file-shape.h">Studio/src/Data/Shape.h</a></strong> </li>
+<li><strong>file <a href="ShapeWorksWorker_8h.html#file-shapeworksworker.h">Studio/src/Data/ShapeWorksWorker.h</a></strong> </li>
+<li><strong>file <a href="StudioLog_8h.html#file-studiolog.h">Studio/src/Data/StudioLog.h</a></strong> </li>
+<li><strong>file <a href="StudioMesh_8h.html#file-studiomesh.h">Studio/src/Data/StudioMesh.h</a></strong> </li>
+<li><strong>file <a href="StudioParticles_8h.html#file-studioparticles.h">Studio/src/Data/StudioParticles.h</a></strong> </li>
+<li><strong>file <a href="SurfaceReconstructor_8h.html#file-surfacereconstructor.h">Studio/src/Data/SurfaceReconstructor.h</a></strong> <br>Surface <a href="../Classes/classReconstruction.html">Reconstruction</a> Layer. </li>
+<li><strong>file <a href="Worker_8h.html#file-worker.h">Studio/src/Data/Worker.h</a></strong> </li>
+<li><strong>file <a href="vtkPolyDataToImageData_8h.html#file-vtkpolydatatoimagedata.h">Studio/src/Data/vtkPolyDataToImageData.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_dec1a63a19e4f4a11987b8b8502ff5c9.html#dir-studio/src/deepssm">Studio/src/DeepSSM</a></strong> <ul>
+<li><strong>file <a href="DeepSSMJob_8h.html#file-deepssmjob.h">Studio/src/DeepSSM/DeepSSMJob.h</a></strong> </li>
+<li><strong>file <a href="DeepSSMParameters_8h.html#file-deepssmparameters.h">Studio/src/DeepSSM/DeepSSMParameters.h</a></strong> </li>
+<li><strong>file <a href="DeepSSMTool_8h.html#file-deepssmtool.h">Studio/src/DeepSSM/DeepSSMTool.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_8c7b8cb8b689625715d68fff39675b66.html#dir-studio/src/groom">Studio/src/Groom</a></strong> <ul>
+<li><strong>file <a href="GroomTool_8h.html#file-groomtool.h">Studio/src/Groom/GroomTool.h</a></strong> </li>
+<li><strong>file <a href="QGroom_8h.html#file-qgroom.h">Studio/src/Groom/QGroom.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_efdc2f3bb304c468939ff6eb3a94c2bf.html#dir-studio/src/interface">Studio/src/Interface</a></strong> <ul>
+<li><strong>file <a href="KeyboardShortcuts_8h.html#file-keyboardshortcuts.h">Studio/src/Interface/KeyboardShortcuts.h</a></strong> </li>
+<li><strong>file <a href="LogWindow_8h.html#file-logwindow.h">Studio/src/Interface/LogWindow.h</a></strong> </li>
+<li><strong>file <a href="ShapeWorksStudioApp_8h.html#file-shapeworksstudioapp.h">Studio/src/Interface/ShapeWorksStudioApp.h</a></strong> </li>
+<li><strong>file <a href="SplashScreen_8h.html#file-splashscreen.h">Studio/src/Interface/SplashScreen.h</a></strong> </li>
+<li><strong>file <a href="StatusBarWidget_8h.html#file-statusbarwidget.h">Studio/src/Interface/StatusBarWidget.h</a></strong> </li>
+<li><strong>file <a href="Style_8h.html#file-style.h">Studio/src/Interface/Style.h</a></strong> </li>
+<li><strong>file <a href="WheelEventForwarder_8h.html#file-wheeleventforwarder.h">Studio/src/Interface/WheelEventForwarder.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_3e441cbfff25a2e63cb70556b317072d.html#dir-studio/src/job">Studio/src/Job</a></strong> <ul>
+<li><strong>file <a href="GroupPvalueJob_8h.html#file-grouppvaluejob.h">Studio/src/Job/GroupPvalueJob.h</a></strong> </li>
+<li><strong>file <a href="Job_8h.html#file-job.h">Studio/src/Job/Job.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_502f02e7679d4b0b85423ea2b48b81cb.html#dir-studio/src/optimize">Studio/src/Optimize</a></strong> <ul>
+<li><strong>file <a href="OptimizeTool_8h.html#file-optimizetool.h">Studio/src/Optimize/OptimizeTool.h</a></strong> </li>
+<li><strong>file <a href="QOptimize_8h.html#file-qoptimize.h">Studio/src/Optimize/QOptimize.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_55e6ce8615c819fee18162671e1bdfe2.html#dir-studio/src/python">Studio/src/Python</a></strong> <ul>
+<li><strong>file <a href="PythonWorker_8h.html#file-pythonworker.h">Studio/src/Python/PythonWorker.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_f61e18dd1eaf83b576d05cfa79718e5e.html#dir-studio/src/resources">Studio/src/Resources</a></strong> <ul>
+<li><strong>file <a href="resource_8h.html#file-resource.h">Studio/src/Resources/resource.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_6dabbda62b442fabee487c4141c09499.html#dir-studio/src/utils">Studio/src/Utils</a></strong> <ul>
+<li><strong>file <a href="StackWalker_8h.html#file-stackwalker.h">Studio/src/Utils/StackWalker.h</a></strong> </li>
+<li><strong>file <a href="StudioUtils_8h.html#file-studioutils.h">Studio/src/Utils/StudioUtils.h</a></strong> </li>
+<li><strong>file <a href="WindowsCrashHandler_8h.html#file-windowscrashhandler.h">Studio/src/Utils/WindowsCrashHandler.h</a></strong> </li>
+</ul>
+</li>
+<li><strong>dir <a href="dir_637230a14b7eb9dd0045894e3626aeed.html#dir-studio/src/visualization">Studio/src/Visualization</a></strong> <ul>
+<li><strong>file <a href="BarGraph_8h.html#file-bargraph.h">Studio/src/Visualization/BarGraph.h</a></strong> </li>
+<li><strong>file <a href="ColorSchemes_8h.html#file-colorschemes.h">Studio/src/Visualization/ColorSchemes.h</a></strong> </li>
+<li><strong>file <a href="Lightbox_8h.html#file-lightbox.h">Studio/src/Visualization/Lightbox.h</a></strong> </li>
+<li><strong>file <a href="StudioInteractorStyle_8h.html#file-studiointeractorstyle.h">Studio/src/Visualization/StudioInteractorStyle.h</a></strong> </li>
+<li><strong>file <a href="StudioVtkOutputWindow_8h.html#file-studiovtkoutputwindow.h">Studio/src/Visualization/StudioVtkOutputWindow.h</a></strong> </li>
+<li><strong>file <a href="Viewer_8h.html#file-viewer.h">Studio/src/Visualization/Viewer.h</a></strong> </li>
+<li><strong>file <a href="Visualizer_8h.html#file-visualizer.h">Studio/src/Visualization/Visualizer.h</a></strong> </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:45 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../about/team.html" class="btn btn-neutral float-right" title="Meet ShapeWorkers!">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Classes/index_classes.html" class="btn btn-neutral" title="Classes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Classes/index_classes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../about/team.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

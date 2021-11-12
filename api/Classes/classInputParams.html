@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classInputParams.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>InputParams - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "InputParams";
+    var mkdocs_page_input_path = "api/Classes/classInputParams.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classInputParams.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>InputParams</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classInputParams.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="inputparams">InputParams</h1>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classInputParams.html#function-inputparams">InputParams</a></strong>()</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#function-readparams">readParams</a></strong>(char * infilename)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classInputParams.html#function-inputparams">InputParams</a></strong>()</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#function-readparams">readParams</a></strong>(char * infilename, int mode)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-attributes">Public Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-qcfixwinding">qcFixWinding</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-qcdolaplaciansmoothingbeforedecimation">qcDoLaplacianSmoothingBeforeDecimation</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-qcdolaplaciansmoothingafterdecimation">qcDoLaplacianSmoothingAfterDecimation</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-qcsmoothinglambda">qcSmoothingLambda</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-qcsmoothingiterations">qcSmoothingIterations</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-qcdecimationpercentage">qcDecimationPercentage</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-k">K</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-out-prefix">out_prefix</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-levelsetvalue">levelsetValue</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-targetreduction">targetReduction</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-featureangle">featureAngle</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-lssmootheriterations">lsSmootherIterations</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-meshsmootheriterations">meshSmootherIterations</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-preservetopology">preserveTopology</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-subdivision">subdivision</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-butterfly-subdivision">butterfly_subdivision</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-distancetransformfilenames">distanceTransformFilenames</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-meshfilenames">meshFilenames</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-number-of-particles">number_of_particles</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-do-procrustes">do_procrustes</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-do-procrustes-scaling">do_procrustes_scaling</a></strong></td>
+</tr>
+<tr>
+<td>const float</td>
+<td><strong><a href="classInputParams.html#variable-pi">pi</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-out-path">out_path</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-mean-prefix">mean_prefix</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-mean-path">mean_path</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-template-dense-mesh">template_dense_mesh</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-template-sparse-points">template_sparse_points</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-template-good-indices">template_good_indices</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-use-template-mesh">use_template_mesh</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-number-of-correspondences-in-warp">number_of_correspondences_in_warp</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-number-of-attributes">number_of_attributes</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classInputParams.html#variable-attributes-prefix">attributes_prefix</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-attribute-labels">attribute_labels</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-display">display</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-glyph-radius">glyph_radius</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-maximum-variance-captured">maximum_variance_captured</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-mode-index">mode_index</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-number-of-modes">number_of_modes</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-maximum-std-dev">maximum_std_dev</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classInputParams.html#variable-number-of-samples-per-mode">number_of_samples_per_mode</a></strong></td>
+</tr>
+<tr>
+<td>float</td>
+<td><strong><a href="classInputParams.html#variable-normalangle">normalAngle</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-usepairwisenormalsdifferencesforgoodbad">usePairwiseNormalsDifferencesForGoodBad</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-use-tps-transform">use_tps_transform</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classInputParams.html#variable-use-bspline-interpolation">use_bspline_interpolation</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-localpointsfilenames">localPointsFilenames</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-worldpointsfilenames">worldPointsFilenames</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classInputParams.html#variable-attributefilenames">attributeFilenames</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-inputparams">function InputParams</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">InputParams</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-readparams">function readParams</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">readParams</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-inputparams_1">function InputParams</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">InputParams</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-readparams_1">function readParams</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">readParams</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-qcfixwinding">variable qcFixWinding</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">qcFixWinding</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-qcdolaplaciansmoothingbeforedecimation">variable qcDoLaplacianSmoothingBeforeDecimation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">qcDoLaplacianSmoothingBeforeDecimation</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-qcdolaplaciansmoothingafterdecimation">variable qcDoLaplacianSmoothingAfterDecimation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">qcDoLaplacianSmoothingAfterDecimation</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-qcsmoothinglambda">variable qcSmoothingLambda</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">qcSmoothingLambda</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-qcsmoothingiterations">variable qcSmoothingIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">qcSmoothingIterations</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-qcdecimationpercentage">variable qcDecimationPercentage</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">qcDecimationPercentage</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-k">variable K</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">K</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-out_prefix">variable out_prefix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-levelsetvalue">variable levelsetValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">levelsetValue</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-targetreduction">variable targetReduction</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">targetReduction</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-featureangle">variable featureAngle</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">featureAngle</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-lssmootheriterations">variable lsSmootherIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">lsSmootherIterations</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-meshsmootheriterations">variable meshSmootherIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">meshSmootherIterations</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-preservetopology">variable preserveTopology</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">preserveTopology</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-subdivision">variable subdivision</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">subdivision</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-butterfly_subdivision">variable butterfly_subdivision</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">butterfly_subdivision</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-distancetransformfilenames">variable distanceTransformFilenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransformFilenames</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-meshfilenames">variable meshFilenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshFilenames</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-number_of_particles">variable number_of_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number_of_particles</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-do_procrustes">variable do_procrustes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-do_procrustes_scaling">variable do_procrustes_scaling</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes_scaling</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-pi">variable pi</h3>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">acos</span><span class="p">(</span><span class="mf">-1.0</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-out_path">variable out_path</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_path</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-mean_prefix">variable mean_prefix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mean_prefix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-mean_path">variable mean_path</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mean_path</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-template_dense_mesh">variable template_dense_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">template_dense_mesh</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-template_sparse_points">variable template_sparse_points</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">template_sparse_points</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-template_good_indices">variable template_good_indices</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">template_good_indices</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-use_template_mesh">variable use_template_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">use_template_mesh</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-number_of_correspondences_in_warp">variable number_of_correspondences_in_warp</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number_of_correspondences_in_warp</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-number_of_attributes">variable number_of_attributes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number_of_attributes</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-attributes_prefix">variable attributes_prefix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">attributes_prefix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-attribute_labels">variable attribute_labels</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">attribute_labels</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-display">variable display</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">display</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-glyph_radius">variable glyph_radius</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">glyph_radius</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-maximum_variance_captured">variable maximum_variance_captured</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">maximum_variance_captured</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-mode_index">variable mode_index</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">mode_index</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-number_of_modes">variable number_of_modes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number_of_modes</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-maximum_std_dev">variable maximum_std_dev</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">maximum_std_dev</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-number_of_samples_per_mode">variable number_of_samples_per_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number_of_samples_per_mode</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-normalangle">variable normalAngle</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">normalAngle</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-usepairwisenormalsdifferencesforgoodbad">variable usePairwiseNormalsDifferencesForGoodBad</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">usePairwiseNormalsDifferencesForGoodBad</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-use_tps_transform">variable use_tps_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">use_tps_transform</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-use_bspline_interpolation">variable use_bspline_interpolation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">use_bspline_interpolation</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-localpointsfilenames">variable localPointsFilenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFilenames</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-worldpointsfilenames">variable worldPointsFilenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFilenames</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-attributefilenames">variable attributeFilenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">attributeFilenames</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:44 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

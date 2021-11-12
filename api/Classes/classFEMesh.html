@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classFEMesh.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>FEMesh - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "FEMesh";
+    var mkdocs_page_input_path = "api/Classes/classFEMesh.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classFEMesh.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>FEMesh</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classFEMesh.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="femesh">FEMesh</h1>
+<p>Inherits from <a href="classFECoreMesh.html">FECoreMesh</a></p>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classFEMesh.html#function-femesh">FEMesh</a></strong>()</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classFEMesh.html#function-femesh">FEMesh</a></strong>(<a href="classFEMesh.html">FEMesh</a> &amp; m)</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classFEMesh.html#function-~femesh">~FEMesh</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classFEMesh.html#function-create">Create</a></strong>(int nodes, int elems, int faces =0, int edges =0)<br>allocate space for mesh</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-shallowcopy">ShallowCopy</a></strong>(<a href="classFEMesh.html">FEMesh</a> * pm)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-clear">Clear</a></strong>()<br>&mdash; C L E A N U P &mdash;</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deleteedges">DeleteEdges</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual int</td>
+<td><strong><a href="classFEMesh.html#function-elements">Elements</a></strong>() const<br>return number of elements</td>
+</tr>
+<tr>
+<td><a href="classFEElement.html">FEElement</a> &amp;</td>
+<td><strong><a href="classFEMesh.html#function-element">Element</a></strong>(int n)<br>return element</td>
+</tr>
+<tr>
+<td>virtual <a href="classFEElement__.html">FEElement_</a> &amp;</td>
+<td><strong><a href="classFEMesh.html#function-elementref">ElementRef</a></strong>(int n)<br>return reference to element</td>
+</tr>
+<tr>
+<td>virtual <a href="classFEElement.html">FEElement</a> *</td>
+<td><strong><a href="classFEMesh.html#function-elementptr">ElementPtr</a></strong>(int n =0)<br>return pointer to element</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classFEMesh.html#function-findface">FindFace</a></strong>(<a href="classFEElement.html">FEElement</a> * pe, <a href="classFEFace.html">FEFace</a> &amp; f, <a href="classFEFace.html">FEFace</a> &amp; fe)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-findnodesfrompart">FindNodesFromPart</a></strong>(int gid, vector&lt; int &gt; &amp; node)</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classFENode.html">FENode</a> &gt; &amp;</td>
+<td><strong><a href="classFEMesh.html#function-nodearray">NodeArray</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classFEFace.html">FEFace</a> &gt; &amp;</td>
+<td><strong><a href="classFEMesh.html#function-facearray">FaceArray</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classFEElement.html">FEElement</a> &gt; &amp;</td>
+<td><strong><a href="classFEMesh.html#function-elementarray">ElementArray</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classFEMesh.html#function-getelementvalue">GetElementValue</a></strong>(int n)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-setelementvalue">SetElementValue</a></strong>(int n, double v)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updatevaluerange">UpdateValueRange</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-getvaluerange">GetValueRange</a></strong>(double &amp; vmin, double &amp; vmax)</td>
+</tr>
+<tr>
+<td><a href="classvec3d.html">vec3d</a></td>
+<td><strong><a href="classFEMesh.html#function-projecttosurface">ProjectToSurface</a></strong>(<a href="classvec3d.html">vec3d</a> r, <a href="classvec3d.html">vec3d</a> t)</td>
+</tr>
+<tr>
+<td><a href="classvec3d.html">vec3d</a></td>
+<td><strong><a href="classFEMesh.html#function-projecttoface">ProjectToFace</a></strong>(<a href="classvec3d.html">vec3d</a> p, <a href="classFEFace.html">FEFace</a> &amp; f, double &amp; r, double &amp; s)</td>
+</tr>
+<tr>
+<td><a href="classvec3d.html">vec3d</a></td>
+<td><strong><a href="classFEMesh.html#function-projecttoedge">ProjectToEdge</a></strong>(<a href="classvec3d.html">vec3d</a> e1, <a href="classvec3d.html">vec3d</a> e2, <a href="classvec3d.html">vec3d</a> p, double &amp; r)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classFEMesh.html#function-findintersection">FindIntersection</a></strong>(<a href="classFEFace.html">FEFace</a> &amp; f, <a href="classvec3d.html">vec3d</a> x, <a href="classvec3d.html">vec3d</a> n, <a href="classvec3d.html">vec3d</a> &amp; q, double &amp; g)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-update">Update</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updateelementneighbors">UpdateElementNeighbors</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updatefaces">UpdateFaces</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updateedges">UpdateEdges</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updatenodes">UpdateNodes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-autosmooth">AutoSmooth</a></strong>(double w)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-updatenormals">UpdateNormals</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-partitionselection">PartitionSelection</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-removeisolatednodes">RemoveIsolatedNodes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-addnode">AddNode</a></strong>(<a href="classFENode.html">FENode</a> &amp; n)</td>
+</tr>
+<tr>
+<td><a href="classFEMesh.html">FEMesh</a> *</td>
+<td><strong><a href="classFEMesh.html#function-detachselectedmesh">DetachSelectedMesh</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-detachselectedpart">DetachSelectedPart</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classFEMesh.html">FEMesh</a> *</td>
+<td><strong><a href="classFEMesh.html#function-extractselectedfaces">ExtractSelectedFaces</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deletetaggedelements">DeleteTaggedElements</a></strong>(int tag)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deletetaggedfaces">DeleteTaggedFaces</a></strong>(int tag)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deletetaggededges">DeleteTaggedEdges</a></strong>(int tag)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-findduplicatefaces">FindDuplicateFaces</a></strong>(vector&lt; int &gt; &amp; l)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-findduplicateedges">FindDuplicateEdges</a></strong>(vector&lt; int &gt; &amp; l)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deleteselectedelements">DeleteSelectedElements</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deleteselectedfaces">DeleteSelectedFaces</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-deleteselectednodes">DeleteSelectedNodes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-inverttaggedelements">InvertTaggedElements</a></strong>(int ntag)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-invertselectedelements">InvertSelectedElements</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classFEMesh.html#function-shelljacobian">ShellJacobian</a></strong>(<a href="classFEElement.html">FEElement</a> &amp; el)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-removeduplicateelements">RemoveDuplicateElements</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-fixinvertedelements">FixinvertedElements</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-fixreferencesurface">FixReferenceSurface</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-interpolateshellthickness">InterpolateShellThickness</a></strong>(double )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-removenonmanifoldelements">RemoveNonManifoldElements</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-fixelementwinding">FixElementWinding</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-fixelementwinding2">FixElementWinding2</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-tagallelements">TagAllElements</a></strong>(int ntag)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classFEMesh.html#function-datafields">DataFields</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classFEElementData.html">FEElementData</a> *</td>
+<td><strong><a href="classFEMesh.html#function-adddatafield">AddDataField</a></strong>(const char * szname, double v =0.0)</td>
+</tr>
+<tr>
+<td><a href="classFEElementData.html">FEElementData</a> &amp;</td>
+<td><strong><a href="classFEMesh.html#function-getdatafield">GetDataField</a></strong>(int i)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classFEMesh.html#function-shortestedge">ShortestEdge</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildnodeelementtable">BuildNodeElementTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; NET)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildnodefacetable">BuildNodeFaceTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; NFT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildnodeedgetable">BuildNodeEdgeTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; NET)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildedgetable">BuildEdgeTable</a></strong>(vector&lt; pair&lt; int, int &gt; &gt; &amp; ET)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildnodenodetable">BuildNodeNodeTable</a></strong>(vector&lt; set&lt; int &gt; &gt; &amp; NNT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildsurfacenodenodetable">BuildSurfaceNodeNodeTable</a></strong>(vector&lt; set&lt; int &gt; &gt; &amp; NNT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildelementedgetable">BuildElementEdgeTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; EET, vector&lt; pair&lt; int, int &gt; &gt; &amp; ET)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildfacetable">BuildFaceTable</a></strong>(vector&lt; <a href="classFEFace.html">FEFace</a> &gt; &amp; FT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildelementfacetable">BuildElementFaceTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; EFT, vector&lt; <a href="classFEFace.html">FEFace</a> &gt; &amp; FT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildfaceedgetable">BuildFaceEdgeTable</a></strong>(vector&lt; vector&lt; int &gt; &gt; &amp; FET, vector&lt; pair&lt; int, int &gt; &gt; &amp; ET)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildfacefacetable">BuildFaceFaceTable</a></strong>(vector&lt; int &gt; &amp; FFT, vector&lt; <a href="classFEFace.html">FEFace</a> &gt; &amp; FT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classFEMesh.html#function-buildedgeedgetable">BuildEdgeEdgeTable</a></strong>(vector&lt; int &gt; &amp; EET, vector&lt; pair&lt; int, int &gt; &gt; &amp; ET)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bool</td>
+<td><strong><a href="classFEMesh.html#function-intersecttri">IntersectTri</a></strong>(<a href="classvec3d.html">vec3d</a> * y, <a href="classvec3d.html">vec3d</a> x, <a href="classvec3d.html">vec3d</a> n, <a href="classvec3d.html">vec3d</a> &amp; q, double &amp; g)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classFEMesh.html#function-intersectquad">IntersectQuad</a></strong>(<a href="classvec3d.html">vec3d</a> * y, <a href="classvec3d.html">vec3d</a> x, <a href="classvec3d.html">vec3d</a> n, <a href="classvec3d.html">vec3d</a> &amp; q, double &amp; g)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-attributes">Protected Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>std::vector&lt; <a href="classFEElement.html">FEElement</a> &gt;</td>
+<td><strong><a href="classFEMesh.html#variable-m-elem">m_Elem</a></strong> <br>FE elements.</td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classFEMesh.html#variable-m-data">m_data</a></strong> <br>element values</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classFEMesh.html#variable-m-min">m_min</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classFEMesh.html#variable-m-max">m_max</a></strong> <br>value range of element data</td>
+</tr>
+<tr>
+<td>vector&lt; <a href="classFEElementData.html">FEElementData</a> &gt;</td>
+<td><strong><a href="classFEMesh.html#variable-m-map">m_map</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-inherited-members">Additional inherited members</h2>
+<p><strong>Public Functions inherited from <a href="classFECoreMesh.html">FECoreMesh</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classFECoreMesh.html#function-fecoremesh">FECoreMesh</a></strong>()<br>constructor</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classFECoreMesh.html#function-~fecoremesh">~FECoreMesh</a></strong>()<br>destructor</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classFECoreMesh.html#function-istype">IsType</a></strong>(int ntype)<br>check the type of the mesh</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classFECoreMesh.html#function-nodes">Nodes</a></strong>() const</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classFECoreMesh.html#function-edges">Edges</a></strong>() const</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classFECoreMesh.html#function-faces">Faces</a></strong>() const</td>
+</tr>
+<tr>
+<td><a href="classFENode.html">FENode</a> &amp;</td>
+<td><strong><a href="classFECoreMesh.html#function-node">Node</a></strong>(int n)</td>
+</tr>
+<tr>
+<td><a href="classFEEdge.html">FEEdge</a> &amp;</td>
+<td><strong><a href="classFECoreMesh.html#function-edge">Edge</a></strong>(int n)</td>
+</tr>
+<tr>
+<td><a href="classFEFace.html">FEFace</a> &amp;</td>
+<td><strong><a href="classFECoreMesh.html#function-face">Face</a></strong>(int n)</td>
+</tr>
+<tr>
+<td><a href="classFENode.html">FENode</a> *</td>
+<td><strong><a href="classFECoreMesh.html#function-nodeptr">NodePtr</a></strong>(int n =0)</td>
+</tr>
+<tr>
+<td><a href="classFEEdge.html">FEEdge</a> *</td>
+<td><strong><a href="classFECoreMesh.html#function-edgeptr">EdgePtr</a></strong>(int n =0)</td>
+</tr>
+<tr>
+<td><a href="classFEFace.html">FEFace</a> *</td>
+<td><strong><a href="classFECoreMesh.html#function-faceptr">FacePtr</a></strong>(int n =0)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Attributes inherited from <a href="classFECoreMesh.html">FECoreMesh</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>std::vector&lt; <a href="classFENode.html">FENode</a> &gt;</td>
+<td><strong><a href="classFECoreMesh.html#variable-m-node">m_Node</a></strong> <br>FE nodes.</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classFEEdge.html">FEEdge</a> &gt;</td>
+<td><strong><a href="classFECoreMesh.html#variable-m-edge">m_Edge</a></strong> <br>FE edges.</td>
+</tr>
+<tr>
+<td>std::vector&lt; <a href="classFEFace.html">FEFace</a> &gt;</td>
+<td><strong><a href="classFECoreMesh.html#variable-m-face">m_Face</a></strong> <br>FE faces.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-femesh">function FEMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-femesh_1">function FEMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-femesh_2">function ~FEMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">FEMesh</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-create">function Create</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">elems</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">faces</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>allocate space for mesh </p>
+<p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-create">FECoreMesh::Create</a></p>
+<h3 id="function-shallowcopy">function ShallowCopy</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ShallowCopy</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-clear">function Clear</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Clear</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>&mdash; C L E A N U P &mdash;</p>
+<h3 id="function-deleteedges">function DeleteEdges</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteEdges</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-elements">function Elements</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Elements</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>return number of elements </p>
+<p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elements">FECoreMesh::Elements</a></p>
+<h3 id="function-element">function Element</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Element</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>return element </p>
+<h3 id="function-elementref">function ElementRef</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementRef</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>return reference to element </p>
+<p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elementref">FECoreMesh::ElementRef</a></p>
+<h3 id="function-elementptr">function ElementPtr</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ElementPtr</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>return pointer to element </p>
+<p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elementptr">FECoreMesh::ElementPtr</a></p>
+<h3 id="function-findface">function FindFace</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindFace</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fe</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-findnodesfrompart">function FindNodesFromPart</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindNodesFromPart</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">gid</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-nodearray">function NodeArray</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NodeArray</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Todo</strong>: Maybe I should delete these </p>
+<p>Get the node array </p>
+<h3 id="function-facearray">function FaceArray</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FaceArray</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-elementarray">function ElementArray</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementArray</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getelementvalue">function GetElementValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetElementValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setelementvalue">function SetElementValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetElementValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updatevaluerange">function UpdateValueRange</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateValueRange</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getvaluerange">function GetValueRange</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetValueRange</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmin</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmax</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-projecttosurface">function ProjectToSurface</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToSurface</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">t</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-projecttoface">function ProjectToFace</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToFace</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-projecttoedge">function ProjectToEdge</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToEdge</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e2</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-findintersection">function FindIntersection</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">FindIntersection</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update">function Update</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Update</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updateelementneighbors">function UpdateElementNeighbors</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateElementNeighbors</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updatefaces">function UpdateFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateFaces</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updateedges">function UpdateEdges</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateEdges</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updatenodes">function UpdateNodes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNodes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-autosmooth">function AutoSmooth</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AutoSmooth</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-updatenormals">function UpdateNormals</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNormals</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-partitionselection">function PartitionSelection</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PartitionSelection</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-removeisolatednodes">function RemoveIsolatedNodes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveIsolatedNodes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-addnode">function AddNode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AddNode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FENode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-detachselectedmesh">function DetachSelectedMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DetachSelectedMesh</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-detachselectedpart">function DetachSelectedPart</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DetachSelectedPart</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-extractselectedfaces">function ExtractSelectedFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ExtractSelectedFaces</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deletetaggedelements">function DeleteTaggedElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedElements</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deletetaggedfaces">function DeleteTaggedFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedFaces</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deletetaggededges">function DeleteTaggedEdges</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedEdges</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-findduplicatefaces">function FindDuplicateFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateFaces</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-findduplicateedges">function FindDuplicateEdges</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateEdges</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deleteselectedelements">function DeleteSelectedElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedElements</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deleteselectedfaces">function DeleteSelectedFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedFaces</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-deleteselectednodes">function DeleteSelectedNodes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedNodes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-inverttaggedelements">function InvertTaggedElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertTaggedElements</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-invertselectedelements">function InvertSelectedElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertSelectedElements</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-shelljacobian">function ShellJacobian</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShellJacobian</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-removeduplicateelements">function RemoveDuplicateElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveDuplicateElements</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-fixinvertedelements">function FixinvertedElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixinvertedElements</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-fixreferencesurface">function FixReferenceSurface</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixReferenceSurface</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-interpolateshellthickness">function InterpolateShellThickness</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InterpolateShellThickness</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-removenonmanifoldelements">function RemoveNonManifoldElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveNonManifoldElements</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-fixelementwinding">function FixElementWinding</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-fixelementwinding2">function FixElementWinding2</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding2</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-tagallelements">function TagAllElements</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TagAllElements</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-datafields">function DataFields</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">DataFields</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-adddatafield">function AddDataField</h3>
+<div class="highlight"><pre><span></span><code><span class="n">FEElementData</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">AddDataField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">szname</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getdatafield">function GetDataField</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDataField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-shortestedge">function ShortestEdge</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShortestEdge</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildnodeelementtable">function BuildNodeElementTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeElementTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildnodefacetable">function BuildNodeFaceTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeFaceTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NFT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildnodeedgetable">function BuildNodeEdgeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeEdgeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildedgetable">function BuildEdgeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildnodenodetable">function BuildNodeNodeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeNodeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildsurfacenodenodetable">function BuildSurfaceNodeNodeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildSurfaceNodeNodeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildelementedgetable">function BuildElementEdgeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementEdgeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildfacetable">function BuildFaceTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildelementfacetable">function BuildElementFaceTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementFaceTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EFT</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildfaceedgetable">function BuildFaceEdgeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceEdgeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FET</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildfacefacetable">function BuildFaceFaceTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceFaceTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FFT</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-buildedgeedgetable">function BuildEdgeEdgeTable</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeEdgeTable</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-intersecttri">function IntersectTri</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectTri</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-intersectquad">function IntersectQuad</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectQuad</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
+<h3 id="variable-m_elem">variable m_Elem</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Elem</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>FE elements. </p>
+<h3 id="variable-m_data">variable m_data</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_data</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>element values </p>
+<h3 id="variable-m_min">variable m_min</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_min</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_max">variable m_max</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_max</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>value range of element data </p>
+<h3 id="variable-m_map">variable m_map</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_map</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:44 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

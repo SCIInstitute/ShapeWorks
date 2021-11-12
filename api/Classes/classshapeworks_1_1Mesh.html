@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1Mesh.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>shapeworks::Mesh - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "shapeworks::Mesh";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1Mesh.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1Mesh.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>shapeworks::Mesh</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1Mesh.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="shapeworksmesh">shapeworks::Mesh</h1>
+<p><strong>Module:</strong> <strong><a href="../Modules/group__Group-Mesh.html">Mesh Classes</a></strong></p>
+<p><a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;Mesh.h&gt;</code></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum</td>
+<td Affine="Affine" Rigid_="Rigid," Similarity_="Similarity,"><strong><a href="classshapeworks_1_1Mesh.html#enum-alignmenttype">AlignmentType</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td PointToCell="PointToCell" PointToPoint_="PointToPoint,"><strong><a href="classshapeworks_1_1Mesh.html#enum-distancemethod">DistanceMethod</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td Gaussian_="Gaussian," Mean="Mean" Principal_="Principal,"><strong><a href="classshapeworks_1_1Mesh.html#enum-curvaturetype">CurvatureType</a></strong></td>
+</tr>
+<tr>
+<td>using vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#using-meshtype">MeshType</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(const std::string &amp; pathname)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(MeshType meshPtr)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; orig)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(<a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;&amp; orig)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-operator=">operator=</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; orig)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-operator=">operator=</a></strong>(<a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;&amp; orig)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-operator+=">operator+=</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; otherMesh)<br>append two meshes</td>
+</tr>
+<tr>
+<td>MeshType</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getvtkmesh">getVTKMesh</a></strong>() const<br>return the current mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-write">write</a></strong>(const std::string &amp; pathname)<br>writes mesh, format specified by filename extension</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-coverage">coverage</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; otherMesh, bool allowBackIntersections =true, double angleThreshold =0, double backSearchRadius =0)<br>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-smooth">smooth</a></strong>(int iterations =0, double relaxation =0.0)<br>applies laplacian smoothing</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-smoothsinc">smoothSinc</a></strong>(int iterations =0, double passband =0.0)<br>applies vtk windowed sinc smoothing</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-decimate">decimate</a></strong>(double reduction =0.5, double angle =15.0, bool preserveTopology =true)<br>applies filter to reduce number of triangles in mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-cvddecimate">cvdDecimate</a></strong>(double percentage =0.5)<br>applies cvd (centroidal voronoi diagram) decimation filter</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-invertnormals">invertNormals</a></strong>()<br>handle flipping normals</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-reflect">reflect</a></strong>(const Axis &amp; axis, const Vector3 &amp; origin =makeVector({ 0.0, 0.0, 0.0 }))<br>reflect meshes with respect to a specified center and specific axis</td>
+</tr>
+<tr>
+<td>MeshTransform</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-createtransform">createTransform</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, AlignmentType align =Similarity, unsigned iterations =10)<br>creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-applytransform">applyTransform</a></strong>(const MeshTransform transform)<br>applies the given transformation to the mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-fillholes">fillHoles</a></strong>()<br>finds holes in a mesh and closes them</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-probevolume">probeVolume</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; image)<br>samples image data values at point locations specified by image</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-clip">clip</a></strong>(const Plane plane)<br>clips a mesh using a cutting plane</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-translate">translate</a></strong>(const Vector3 &amp; v)<br>helper to translate mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-scale">scale</a></strong>(const Vector3 &amp; v)<br>helper to scale mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-boundingbox">boundingBox</a></strong>() const<br>computes bounding box of current mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-fixelement">fixElement</a></strong>()<br>fix element winding of mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-distance">distance</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, const DistanceMethod method =PointToPoint)<br>computes surface to surface distance, compute method: PointToPoint (default) or PointToCell</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-clipclosedsurface">clipClosedSurface</a></strong>(const Plane plane)<br>clips a mesh using a cutting plane resulting in a closed surface</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computenormals">computeNormals</a></strong>()<br>computes and adds oriented point and cell normals</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point)<br>returns closest point on a face in the mesh to the given point in space</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpointid">closestPointId</a></strong>(const Point3 point)<br>returns closest point id in this mesh to the given point in space</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(int source, int target)<br>computes geodesic distance between two vertices (specified by their indices) on mesh</td>
+</tr>
+<tr>
+<td>Field</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const Point3 landmark)<br>computes geodesic distance between a point (landmark) and each vertex on mesh</td>
+</tr>
+<tr>
+<td>Field</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const std::vector&lt; Point3 &gt; curve)<br>computes geodesic distance between a set of points (curve) and each vertex on mesh</td>
+</tr>
+<tr>
+<td>Field</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-curvature">curvature</a></strong>(const CurvatureType type =Principal)<br>computes and adds curvature (principal (default) or gaussian or mean)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-toimage">toImage</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), Point spacing =Point({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-todistancetransform">toDistanceTransform</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), Point spacing =Point({1., 1., 1.})) const<br>converts specified region to distance transform image (default: unit spacing)</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-center">center</a></strong>() const<br>center of mesh</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-centerofmass">centerOfMass</a></strong>() const<br>center of mass of mesh</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-numpoints">numPoints</a></strong>() const<br>number of points</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-numfaces">numFaces</a></strong>() const<br>number of faces</td>
+</tr>
+<tr>
+<td>Eigen::MatrixXd</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-points">points</a></strong>() const<br>matrix with number of points with (x,y,z) coordinates of each point</td>
+</tr>
+<tr>
+<td>Eigen::MatrixXi</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-faces">faces</a></strong>() const<br>matrix with number of faces with indices of the three points from which each face is composed</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getpoint">getPoint</a></strong>(int id) const<br>(x,y,z) coordinates of vertex at given index</td>
+</tr>
+<tr>
+<td>IPoint3</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getface">getFace</a></strong>(int id) const<br>return indices of the three points with which the face at the given index is composed</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldnames">getFieldNames</a></strong>() const<br>print all field names in mesh</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfield">setField</a></strong>(std::string name, Array array)<br>sets the given field for points with array (*does not copy array's values)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfieldforfaces">setFieldForFaces</a></strong>(std::string name, Array array)<br>sets the given field for faces with array (*does not copy array's values)</td>
+</tr>
+<tr>
+<td>template &lt;typename T > <br>vtkSmartPointer&lt; T &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfield">getField</a></strong>(const std::string &amp; name) const<br>gets a pointer to the requested field, null if field doesn't exist</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfieldvalue">setFieldValue</a></strong>(const std::string &amp; name, int idx, double value)<br>sets the given index of field to value</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldvalue">getFieldValue</a></strong>(const std::string &amp; name, int idx) const<br>gets the value at the given index of field (NOTE: returns first component of vector fields)</td>
+</tr>
+<tr>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getmultifieldvalue">getMultiFieldValue</a></strong>(const std::string &amp; name, int idx) const<br>gets the multi value at the given index of field</td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldrange">getFieldRange</a></strong>(const std::string &amp; name) const<br>returns the range of the given field (NOTE: returns range of first component of vector fields)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldmean">getFieldMean</a></strong>(const std::string &amp; name) const<br>returns the mean the given field</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldstd">getFieldStd</a></strong>(const std::string &amp; name) const<br>returns the standard deviation of the given field</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-compareallpoints">compareAllPoints</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other_mesh) const<br>compare if values of the points in two (corresponding) meshes are (eps)equal</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-compareallfaces">compareAllFaces</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other_mesh) const<br>compare if face indices in two (corresponding) meshes are equal</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-compareallfields">compareAllFields</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other_mesh, const double eps =-1.0) const<br>compare if all fields in two meshes are (eps)equal</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-comparefield">compareField</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other_mesh, const std::string &amp; name1, const std::string &amp; name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-compare">compare</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other_mesh, const double eps =-1.0) const<br>compare meshes</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-operator==">operator==</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other) const<br>compare meshes</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-splitmesh">splitMesh</a></strong>(std::vector&lt; std::vector&lt; Eigen::Vector3d &gt; &gt; boundaries, Eigen::Vector3d query, size_t dom, size_t num)<br>Splits the mesh for FFCs by setting scalar and vector fields.</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcvalue">getFFCValue</a></strong>(Eigen::Vector3d query)<br>Gets values and gradients for FFCs.</td>
+</tr>
+<tr>
+<td>Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcgradient">getFFCGradient</a></strong>(Eigen::Vector3d query)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPoints &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getiglmesh">getIGLMesh</a></strong>(Eigen::MatrixXd &amp; V, Eigen::MatrixXi &amp; F) const<br>Formats mesh into an IGL format.</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>getSupportedTypes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="friends">Friends</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>struct</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#friend-sharedcommanddata">SharedCommandData</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>This class encapsulates a <a href="classshapeworks_1_1Mesh.html">Mesh</a> and operations that can be performed on meshes </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="enum-alignmenttype">enum AlignmentType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rigid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Similarity</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Affine</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-distancemethod">enum DistanceMethod</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PointToPoint</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PointToCell</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-curvaturetype">enum CurvatureType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Principal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gaussian</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mean</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-meshtype">using MeshType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-mesh">function Mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-mesh_1">function Mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">MeshType</span><span class="w"> </span><span class="n">meshPtr</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-mesh_2">function Mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-mesh_3">function Mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator">function operator=</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_1">function operator=</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-operator_2">function operator+=</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>append two meshes </p>
+<h3 id="function-getvtkmesh">function getVTKMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeshType</span><span class="w"> </span><span class="n">getVTKMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>return the current mesh </p>
+<h3 id="function-write">function write</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">write</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>writes mesh, format specified by filename extension </p>
+<h3 id="function-coverage">function coverage</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">coverage</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">allowBackIntersections</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angleThreshold</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">backSearchRadius</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head) </p>
+<h3 id="function-smooth">function smooth</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">smooth</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">relaxation</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies laplacian smoothing </p>
+<h3 id="function-smoothsinc">function smoothSinc</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">smoothSinc</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">passband</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies vtk windowed sinc smoothing </p>
+<h3 id="function-decimate">function decimate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">decimate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">reduction</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">preserveTopology</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies filter to reduce number of triangles in mesh </p>
+<h3 id="function-cvddecimate">function cvdDecimate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">cvdDecimate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies cvd (centroidal voronoi diagram) decimation filter </p>
+<h3 id="function-invertnormals">function invertNormals</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">invertNormals</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>handle flipping normals </p>
+<h3 id="function-reflect">function reflect</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">reflect</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="n">makeVector</span><span class="p">({</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>reflect meshes with respect to a specified center and specific axis </p>
+<h3 id="function-createtransform">function createTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">MeshTransform</span><span class="w"> </span><span class="n">createTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">align</span><span class="w"> </span><span class="o">=</span><span class="n">Similarity</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">10</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations </p>
+<h3 id="function-applytransform">function applyTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshTransform</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies the given transformation to the mesh </p>
+<h3 id="function-fillholes">function fillHoles</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>finds holes in a mesh and closes them </p>
+<h3 id="function-probevolume">function probeVolume</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">probeVolume</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>samples image data values at point locations specified by image </p>
+<h3 id="function-clip">function clip</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clip</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>clips a mesh using a cutting plane </p>
+<h3 id="function-translate">function translate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">translate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to translate mesh </p>
+<h3 id="function-scale">function scale</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">scale</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>helper to scale mesh </p>
+<h3 id="function-boundingbox">function boundingBox</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>computes bounding box of current mesh </p>
+<h3 id="function-fixelement">function fixElement</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixElement</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>fix element winding of mesh </p>
+<h3 id="function-distance">function distance</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="n">PointToPoint</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes surface to surface distance, compute method: PointToPoint (default) or PointToCell </p>
+<h3 id="function-clipclosedsurface">function clipClosedSurface</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clipClosedSurface</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>clips a mesh using a cutting plane resulting in a closed surface </p>
+<h3 id="function-computenormals">function computeNormals</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeNormals</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>computes and adds oriented point and cell normals </p>
+<h3 id="function-closestpoint">function closestPoint</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">closestPoint</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>returns closest point on a face in the mesh to the given point in space </p>
+<h3 id="function-closestpointid">function closestPointId</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">closestPointId</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>returns closest point id in this mesh to the given point in space </p>
+<h3 id="function-geodesicdistance">function geodesicDistance</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes geodesic distance between two vertices (specified by their indices) on mesh </p>
+<h3 id="function-geodesicdistance_1">function geodesicDistance</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">landmark</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes geodesic distance between a point (landmark) and each vertex on mesh </p>
+<h3 id="function-geodesicdistance_2">function geodesicDistance</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">curve</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes geodesic distance between a set of points (curve) and each vertex on mesh </p>
+<h3 id="function-curvature">function curvature</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">curvature</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">CurvatureType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Principal</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>computes and adds curvature (principal (default) or gaussian or mean) </p>
+<h3 id="function-toimage">function toImage</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>rasterizes specified region to create binary image of desired dims (default: unit spacing) </p>
+<h3 id="function-todistancetransform">function toDistanceTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toDistanceTransform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>converts specified region to distance transform image (default: unit spacing) </p>
+<h3 id="function-center">function center</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>center of mesh </p>
+<h3 id="function-centerofmass">function centerOfMass</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">centerOfMass</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>center of mass of mesh </p>
+<h3 id="function-numpoints">function numPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numPoints</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>number of points </p>
+<h3 id="function-numfaces">function numFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numFaces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>number of faces </p>
+<h3 id="function-points">function points</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">points</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>matrix with number of points with (x,y,z) coordinates of each point </p>
+<h3 id="function-faces">function faces</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>matrix with number of faces with indices of the three points from which each face is composed </p>
+<h3 id="function-getpoint">function getPoint</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">getPoint</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>(x,y,z) coordinates of vertex at given index </p>
+<h3 id="function-getface">function getFace</h3>
+<div class="highlight"><pre><span></span><code><span class="n">IPoint3</span><span class="w"> </span><span class="n">getFace</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>return indices of the three points with which the face at the given index is composed </p>
+<h3 id="function-getfieldnames">function getFieldNames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getFieldNames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>print all field names in mesh </p>
+<h3 id="function-setfield">function setField</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the given field for points with array (*does not copy array's values) </p>
+<h3 id="function-setfieldforfaces">function setFieldForFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setFieldForFaces</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the given field for faces with array (*does not copy array's values) </p>
+<h3 id="function-getfield">function getField</h3>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>gets a pointer to the requested field, null if field doesn't exist </p>
+<h3 id="function-setfieldvalue">function setFieldValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setFieldValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>sets the given index of field to value </p>
+<h3 id="function-getfieldvalue">function getFieldValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>gets the value at the given index of field (NOTE: returns first component of vector fields) </p>
+<h3 id="function-getmultifieldvalue">function getMultiFieldValue</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">getMultiFieldValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>gets the multi value at the given index of field </p>
+<h3 id="function-getfieldrange">function getFieldRange</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getFieldRange</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>returns the range of the given field (NOTE: returns range of first component of vector fields) </p>
+<h3 id="function-getfieldmean">function getFieldMean</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldMean</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>returns the mean the given field </p>
+<h3 id="function-getfieldstd">function getFieldStd</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldStd</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>returns the standard deviation of the given field </p>
+<h3 id="function-compareallpoints">function compareAllPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllPoints</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare if values of the points in two (corresponding) meshes are (eps)equal </p>
+<h3 id="function-compareallfaces">function compareAllFaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllFaces</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare if face indices in two (corresponding) meshes are equal </p>
+<h3 id="function-compareallfields">function compareAllFields</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllFields</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">-1.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare if all fields in two meshes are (eps)equal </p>
+<h3 id="function-comparefield">function compareField</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name2</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">-1.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare field of meshes to be (eps)equal (same field for both if only one specified) </p>
+<h3 id="function-compare">function compare</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">-1.0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare meshes </p>
+<h3 id="function-operator_3">function operator==</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>compare meshes </p>
+<h3 id="function-splitmesh">function splitMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">splitMesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">boundaries</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">num</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Splits the mesh for FFCs by setting scalar and vector fields. </p>
+<h3 id="function-getffcvalue">function getFFCValue</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Gets values and gradients for FFCs. </p>
+<h3 id="function-getffcgradient">function getFFCGradient</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getFFCGradient</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getiglmesh">function getIGLMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Formats mesh into an IGL format. </p>
+<h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>getSupportedTypes </p>
+<h2 id="friends_1">Friends</h2>
+<h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
+<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:45 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

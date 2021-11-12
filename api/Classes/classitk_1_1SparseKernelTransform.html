@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classitk_1_1SparseKernelTransform.html">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>itk::SparseKernelTransform - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="../../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "itk::SparseKernelTransform";
+    var mkdocs_page_input_path = "api/Classes/classitk_1_1SparseKernelTransform.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classitk_1_1SparseKernelTransform.html";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/new-studio.html">New in ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/multiple-domains.html">Multiple Domains SSM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/new-notebook.html">How to Add New Notebooks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">API Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../Modules/index_groups.html">Groups</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Namespaces/index_namespaces.html">Namespaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="index_classes.html">Classes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../Files/index_files.html">Files</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>itk::SparseKernelTransform</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1SparseKernelTransform.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="itksparsekerneltransform">itk::SparseKernelTransform</h1>
+<p><a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;itkSparseKernelTransform.h&gt;</code></p>
+<p>Inherits from Transform&lt; TScalarType, NDimensions, NDimensions &gt;</p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>typedef <a href="classitk_1_1SparseKernelTransform.html">SparseKernelTransform</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-self">Self</a></strong></td>
+</tr>
+<tr>
+<td>typedef Transform&lt; TScalarType, NDimensions, NDimensions &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-superclass">Superclass</a></strong></td>
+</tr>
+<tr>
+<td>typedef SmartPointer&lt; <a href="classitk_1_1SparseKernelTransform.html#typedef-self">Self</a> &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointer">Pointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef SmartPointer&lt; const <a href="classitk_1_1SparseKernelTransform.html#typedef-self">Self</a> &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-constpointer">ConstPointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::ScalarType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-scalartype">ScalarType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::ParametersType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-parameterstype">ParametersType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::JacobianType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-jacobiantype">JacobianType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::InputPointType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-inputpointtype">InputPointType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::OutputPointType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-outputpointtype">OutputPointType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::InputVectorType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-inputvectortype">InputVectorType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Superclass::OutputVectorType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-outputvectortype">OutputVectorType</a></strong></td>
+</tr>
+<tr>
+<td>typedef DefaultStaticMeshTraits&lt; TScalarType, NDimensions, NDimensions, TScalarType, TScalarType &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointsettraitstype">PointSetTraitsType</a></strong></td>
+</tr>
+<tr>
+<td>typedef PointSet&lt; <a href="classitk_1_1SparseKernelTransform.html#typedef-inputpointtype">InputPointType</a>, NDimensions, <a href="classitk_1_1SparseKernelTransform.html#typedef-pointsettraitstype">PointSetTraitsType</a> &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointsettype">PointSetType</a></strong></td>
+</tr>
+<tr>
+<td>typedef PointSetType::Pointer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointsetpointer">PointSetPointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef PointSetType::PointsContainer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointscontainer">PointsContainer</a></strong></td>
+</tr>
+<tr>
+<td>typedef PointSetType::PointsContainerIterator</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointsiterator">PointsIterator</a></strong></td>
+</tr>
+<tr>
+<td>typedef PointSetType::PointsContainerConstIterator</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pointsconstiterator">PointsConstIterator</a></strong></td>
+</tr>
+<tr>
+<td>typedef itk::VectorContainer&lt; unsigned long, <a href="classitk_1_1SparseKernelTransform.html#typedef-inputvectortype">InputVectorType</a> &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-vectorsettype">VectorSetType</a></strong></td>
+</tr>
+<tr>
+<td>typedef VectorSetType::Pointer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-vectorsetpointer">VectorSetPointer</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, NDimensions, NDimensions &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-imatrixtype">IMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Triplet&lt; TScalarType &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-triplettype">TripletType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, NDimensions, NDimensions &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-gmatrixtype">GMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::SparseMatrix&lt; TScalarType &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-lmatrixtype">LMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::SparseMatrix&lt; TScalarType &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-kmatrixtype">KMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::SparseMatrix&lt; TScalarType &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-pmatrixtype">PMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, Eigen::Dynamic, Eigen::Dynamic &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-ymatrixtype">YMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, Eigen::Dynamic, Eigen::Dynamic &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-wmatrixtype">WMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, Eigen::Dynamic, Eigen::Dynamic &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-dmatrixtype">DMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, NDimensions, NDimensions &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-amatrixtype">AMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, NDimensions, 1 &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-bmatrixtype">BMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, 1, NDimensions &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-rowmatrixtype">RowMatrixType</a></strong></td>
+</tr>
+<tr>
+<td>typedef Eigen::Matrix&lt; TScalarType, NDimensions, 1 &gt;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#typedef-columnmatrixtype">ColumnMatrixType</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itktypemacro">itkTypeMacro</a></strong>(<a href="classitk_1_1SparseKernelTransform.html">SparseKernelTransform</a> , Transform )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itknewmacro">itkNewMacro</a></strong>(<a href="classitk_1_1SparseKernelTransform.html#typedef-self">Self</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itkstaticconstmacro">itkStaticConstMacro</a></strong>(SpaceDimension , unsigned int , NDimensions )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itkgetobjectmacro">itkGetObjectMacro</a></strong>(SourceLandmarks , PointSetType )</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-setsourcelandmarks">SetSourceLandmarks</a></strong>(PointSetType * )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itkgetobjectmacro">itkGetObjectMacro</a></strong>(TargetLandmarks , PointSetType )</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-settargetlandmarks">SetTargetLandmarks</a></strong>(PointSetType * )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itkgetobjectmacro">itkGetObjectMacro</a></strong>(Displacements , <a href="classitk_1_1SparseKernelTransform.html#typedef-vectorsettype">VectorSetType</a> )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computewmatrix">ComputeWMatrix</a></strong>(void ) const</td>
+</tr>
+<tr>
+<td>virtual OutputPointType</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-transformpoint">TransformPoint</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-inputpointtype">InputPointType</a> &amp; thisPoint) const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-setidentity">SetIdentity</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-setparameters">SetParameters</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-parameterstype">ParametersType</a> &amp; )</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-setfixedparameters">SetFixedParameters</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-parameterstype">ParametersType</a> &amp; )</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-updateparameters">UpdateParameters</a></strong>(void ) const</td>
+</tr>
+<tr>
+<td>virtual const <a href="classitk_1_1SparseKernelTransform.html#typedef-parameterstype">ParametersType</a> &amp;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-getparameters">GetParameters</a></strong>(void ) const</td>
+</tr>
+<tr>
+<td>virtual const <a href="classitk_1_1SparseKernelTransform.html#typedef-parameterstype">ParametersType</a> &amp;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-getfixedparameters">GetFixedParameters</a></strong>(void ) const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computejacobianwithrespecttoparameters">ComputeJacobianWithRespectToParameters</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-inputpointtype">InputPointType</a> &amp; in, <a href="classitk_1_1SparseKernelTransform.html#typedef-jacobiantype">JacobianType</a> &amp; jacobian) const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-setstiffness">SetStiffness</a></strong>(double stiffness)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-itkgetmacro">itkGetMacro</a></strong>(Stiffness , double )</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-sparsekerneltransform">SparseKernelTransform</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-~sparsekerneltransform">~SparseKernelTransform</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-printself">PrintSelf</a></strong>(std::ostream &amp; os, Indent indent) const</td>
+</tr>
+<tr>
+<td>virtual const <a href="classitk_1_1SparseKernelTransform.html#typedef-gmatrixtype">GMatrixType</a> &amp;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computeg">ComputeG</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-inputvectortype">InputVectorType</a> &amp; landmarkVector) const</td>
+</tr>
+<tr>
+<td>virtual const <a href="classitk_1_1SparseKernelTransform.html#typedef-gmatrixtype">GMatrixType</a> &amp;</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computereflexiveg">ComputeReflexiveG</a></strong>(PointsIterator ) const</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computedeformationcontribution">ComputeDeformationContribution</a></strong>(const <a href="classitk_1_1SparseKernelTransform.html#typedef-inputpointtype">InputPointType</a> &amp; inputPoint, OutputPointType &amp; result) const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computek">ComputeK</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computel">ComputeL</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computep">ComputeP</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computey">ComputeY</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-computed">ComputeD</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#function-reorganizew">ReorganizeW</a></strong>(void ) const</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-attributes">Public Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PointSetPointer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-sourcelandmarks">m_SourceLandmarks</a></strong></td>
+</tr>
+<tr>
+<td>PointSetPointer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-targetlandmarks">m_TargetLandmarks</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-attributes">Protected Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>double</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-stiffness">m_Stiffness</a></strong></td>
+</tr>
+<tr>
+<td>VectorSetPointer</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-displacements">m_Displacements</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-lmatrixtype">LMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-lmatrix">m_LMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-lmatrixtype">LMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-lmatrixinverse">m_LMatrixInverse</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-kmatrixtype">KMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-kmatrix">m_KMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-pmatrixtype">PMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-pmatrix">m_PMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-ymatrixtype">YMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-ymatrix">m_YMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-wmatrixtype">WMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-wmatrix">m_WMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-dmatrixtype">DMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-dmatrix">m_DMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-amatrixtype">AMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-amatrix">m_AMatrix</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-bmatrixtype">BMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-bvector">m_BVector</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-gmatrixtype">GMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-gmatrix">m_GMatrix</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-wmatrixcomputed">m_WMatrixComputed</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-lmatrixcomputed">m_LMatrixComputed</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-linversecomputed">m_LInverseComputed</a></strong></td>
+</tr>
+<tr>
+<td><a href="classitk_1_1SparseKernelTransform.html#typedef-imatrixtype">IMatrixType</a></td>
+<td><strong><a href="classitk_1_1SparseKernelTransform.html#variable-m-i">m_I</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TScalarType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Intended to be a base class for elastic body spline and thin plate spline. This is implemented in as straightforward a manner as possible from the IEEE TMI paper by Davis, Khotanzad, Flamig, and Harms, Vol. 16, No. 3 June 1997. Notation closely follows their paper, so if you have it in front of you, this code will make a lot more sense.</p>
+<p><a href="classitk_1_1SparseKernelTransform.html">SparseKernelTransform</a>: Provides support for defining source and target landmarks Defines a number of data types used in the computations Defines the mathematical framework used to compute all splines, so that subclasses need only provide a kernel specific to that spline</p>
+<p>This formulation allows the stiffness of the spline to be adjusted, allowing the spline to vary from interpolating the landmarks to approximating the landmarks. This part of the formulation is based on the short paper by R. Sprengel, K. Rohr, H. Stiehl. "Thin-Plate Spline Approximation for Image
+Registration". In 18th International Conference of the IEEE Engineering in Medicine and Biology Society. 1996.</p>
+<p>This class was modified to support its use in the ITK registration framework by Rupert Brooks, McGill Centre for Intelligent Machines, Montreal, Canada March 2007. See the Insight Journal Paper by Brooks, R., Arbel, T. "Improvements to the itk::KernelTransform and its subclasses." </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="typedef-self">typedef Self</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Standard class typedefs. </p>
+<h3 id="typedef-superclass">typedef Superclass</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Transform</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointer">typedef Pointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-constpointer">typedef ConstPointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-scalartype">typedef ScalarType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ScalarType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Scalar type. </p>
+<h3 id="typedef-parameterstype">typedef ParametersType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParametersType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Parameters type. </p>
+<h3 id="typedef-jacobiantype">typedef JacobianType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Jacobian type. </p>
+<h3 id="typedef-inputpointtype">typedef InputPointType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputPointType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Standard coordinate point type for this class. </p>
+<h3 id="typedef-outputpointtype">typedef OutputPointType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputPointType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-inputvectortype">typedef InputVectorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputVectorType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Standard vector type for this class. </p>
+<h3 id="typedef-outputvectortype">typedef OutputVectorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputVectorType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointsettraitstype">typedef PointSetTraitsType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DefaultStaticMeshTraits</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetTraitsType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>PointList typedef. This type is used for maintaining lists of points, specifically, the source and target landmark lists. </p>
+<h3 id="typedef-pointsettype">typedef PointSetType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSet</span><span class="o">&lt;</span><span class="n">InputPointType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointsetpointer">typedef PointSetPointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetPointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointscontainer">typedef PointsContainer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsContainer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointsiterator">typedef PointsIterator</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsIterator</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-pointsconstiterator">typedef PointsConstIterator</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerConstIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsConstIterator</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-vectorsettype">typedef VectorSetType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorContainer</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">,</span><span class="n">InputVectorType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>VectorSet typedef. </p>
+<h3 id="typedef-vectorsetpointer">typedef VectorSetPointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetPointer</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-imatrixtype">typedef IMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'I' (identity) matrix typedef. </p>
+<h3 id="typedef-triplettype">typedef TripletType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">TripletType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>triplets used to fill sparse matrices. </p>
+<h3 id="typedef-gmatrixtype">typedef GMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'G' matrix typedef. </p>
+<h3 id="typedef-lmatrixtype">typedef LMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">LMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'L' matrix typedef. </p>
+<h3 id="typedef-kmatrixtype">typedef KMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">KMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'K' matrix typedef. </p>
+<h3 id="typedef-pmatrixtype">typedef PMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'P' matrix typedef. </p>
+<h3 id="typedef-ymatrixtype">typedef YMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">YMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'Y' matrix typedef. </p>
+<h3 id="typedef-wmatrixtype">typedef WMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">WMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'W' matrix typedef. </p>
+<h3 id="typedef-dmatrixtype">typedef DMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'D' matrix typedef. Deformation component </p>
+<h3 id="typedef-amatrixtype">typedef AMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">AMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'A' matrix typedef. Rotational part of the Affine component </p>
+<h3 id="typedef-bmatrixtype">typedef BMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="n">NDimensions</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">BMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>'B' matrix typedef. Translational part of the Affine component </p>
+<h3 id="typedef-rowmatrixtype">typedef RowMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">RowMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Row matrix typedef. </p>
+<h3 id="typedef-columnmatrixtype">typedef ColumnMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="n">NDimensions</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ColumnMatrixType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Column matrix typedef. </p>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-itktypemacro">function itkTypeMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Transform</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Run-time type information (and related methods). </p>
+<h3 id="function-itknewmacro">function itkNewMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>New macro for creation of through a Smart Pointer </p>
+<h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">SpaceDimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">NDimensions</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Dimension of the domain space. </p>
+<h3 id="function-itkgetobjectmacro">function itkGetObjectMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">SourceLandmarks</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Get the source landmarks list, which we will denote <span class="arithmatex">\( p \)</span>. </p>
+<h3 id="function-setsourcelandmarks">function SetSourceLandmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSourceLandmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the source landmarks list. </p>
+<h3 id="function-itkgetobjectmacro_1">function itkGetObjectMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">TargetLandmarks</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Get the target landmarks list, which we will denote <span class="arithmatex">\( q \)</span>. </p>
+<h3 id="function-settargetlandmarks">function SetTargetLandmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTargetLandmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the target landmarks list. </p>
+<h3 id="function-itkgetobjectmacro_2">function itkGetObjectMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Displacements</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">VectorSetType</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Get the displacements list, which we will denote <span class="arithmatex">\( d \)</span>, where <span class="arithmatex">\( d_i = q_i - p_i \)</span>. </p>
+<h3 id="function-computewmatrix">function ComputeWMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeWMatrix</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute W matrix. </p>
+<h3 id="function-transformpoint">function TransformPoint</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">thisPoint</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute L matrix inverse. Compute the position of point in the new space </p>
+<h3 id="function-setidentity">function SetIdentity</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIdentity</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Compute the Jacobian Matrix of the transformation at one point Set the Transformation Parameters to be an identity transform </p>
+<h3 id="function-setparameters">function SetParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the Transformation Parameters and update the internal transformation. The parameters represent the source landmarks. Each landmark point is represented by NDimensions doubles. All the landmarks are concatenated to form one flat Array<double>. </p>
+<h3 id="function-setfixedparameters">function SetFixedParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set Transform Fixed Parameters: To support the transform file writer this function was added to set the target landmarks similar to the SetParameters function setting the source landmarks </p>
+<h3 id="function-updateparameters">function UpdateParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Update the Parameters array from the landmarks corrdinates. </p>
+<h3 id="function-getparameters">function GetParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Get the Transformation Parameters - Gets the Source Landmarks </p>
+<h3 id="function-getfixedparameters">function GetFixedParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetFixedParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Get Transform Fixed Parameters - Gets the Target Landmarks </p>
+<h3 id="function-computejacobianwithrespecttoparameters">function ComputeJacobianWithRespectToParameters</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeJacobianWithRespectToParameters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">JacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jacobian</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html#function-computejacobianwithrespecttoparameters">itk::CompactlySupportedRBFSparseKernelTransform::ComputeJacobianWithRespectToParameters</a></p>
+<h3 id="function-setstiffness">function SetStiffness</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetStiffness</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">stiffness</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Stiffness of the spline. A stiffness of zero results in the standard interpolating spline. A non-zero stiffness allows the spline to approximate rather than interpolate the landmarks. Stiffness values are usually rather small, typically in the range of 0.001 to 0.1. The approximating spline formulation is based on the short paper by R. Sprengel, K. Rohr, H. Stiehl. "Thin-Plate
+Spline Approximation for Image Registration". In 18th International Conference of the IEEE Engineering in Medicine and Biology Society. 1996. </p>
+<h3 id="function-itkgetmacro">function itkGetMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetMacro</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Stiffness</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-sparsekerneltransform">function SparseKernelTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">SparseKernelTransform</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-sparsekerneltransform_1">function ~SparseKernelTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">SparseKernelTransform</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-printself">function PrintSelf</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computeg">function ComputeG</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ComputeG</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarkVector</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html#function-computeg">itk::CompactlySupportedRBFSparseKernelTransform::ComputeG</a></p>
+<p>Compute G(x) This is essentially the kernel of the transform. By overriding this method, we can obtain (among others): Elastic body spline Thin plate spline Volume spline </p>
+<h3 id="function-computereflexiveg">function ComputeReflexiveG</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ComputeReflexiveG</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointsIterator</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute a G(x) for a point to itself (i.e. for the block diagonal elements of the matrix K. Parameter indicates for which landmark the reflexive G is to be computed. The default implementation for the reflexive contribution is a diagonal matrix where the diagonal elements are the stiffness of the spline. </p>
+<h3 id="function-computedeformationcontribution">function ComputeDeformationContribution</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeDeformationContribution</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Reimplemented by</strong>: <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html#function-computedeformationcontribution">itk::CompactlySupportedRBFSparseKernelTransform::ComputeDeformationContribution</a></p>
+<p>Compute the contribution of the landmarks weighted by the kernel funcion to the global deformation of the space </p>
+<h3 id="function-computek">function ComputeK</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeK</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute K matrix. </p>
+<h3 id="function-computel">function ComputeL</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeL</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute L matrix. </p>
+<h3 id="function-computep">function ComputeP</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeP</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute P matrix. </p>
+<h3 id="function-computey">function ComputeY</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeY</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute Y matrix. </p>
+<h3 id="function-computed">function ComputeD</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeD</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p>Compute displacements <span class="arithmatex">\( q_i - p_i \)</span>. </p>
+<h3 id="function-reorganizew">function ReorganizeW</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReorganizeW</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<p><strong>Warning</strong>: This method release the memory of the W Matrix </p>
+<p>Reorganize the components of W into D (deformable), A (rotation part of affine) and B (translational part of affine ) components. </p>
+<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-m_sourcelandmarks">variable m_SourceLandmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_SourceLandmarks</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The list of source landmarks, denoted 'p'. </p>
+<h3 id="variable-m_targetlandmarks">variable m_TargetLandmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_TargetLandmarks</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The list of target landmarks, denoted 'q'. </p>
+<h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
+<h3 id="variable-m_stiffness">variable m_Stiffness</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_Stiffness</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Stiffness parameter </p>
+<h3 id="variable-m_displacements">variable m_Displacements</h3>
+<div class="highlight"><pre><span></span><code><span class="n">VectorSetPointer</span><span class="w"> </span><span class="n">m_Displacements</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The list of displacements. d[i] = q[i] - p[i]; </p>
+<h3 id="variable-m_lmatrix">variable m_LMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The L matrix. </p>
+<h3 id="variable-m_lmatrixinverse">variable m_LMatrixInverse</h3>
+<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrixInverse</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The inverse of L, which we also cache. </p>
+<h3 id="variable-m_kmatrix">variable m_KMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">KMatrixType</span><span class="w"> </span><span class="n">m_KMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The K matrix. </p>
+<h3 id="variable-m_pmatrix">variable m_PMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PMatrixType</span><span class="w"> </span><span class="n">m_PMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The P matrix. </p>
+<h3 id="variable-m_ymatrix">variable m_YMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">YMatrixType</span><span class="w"> </span><span class="n">m_YMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The Y matrix. </p>
+<h3 id="variable-m_wmatrix">variable m_WMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">WMatrixType</span><span class="w"> </span><span class="n">m_WMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The W matrix. </p>
+<h3 id="variable-m_dmatrix">variable m_DMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">DMatrixType</span><span class="w"> </span><span class="n">m_DMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The Deformation matrix. This is an auxiliary matrix that will hold the Deformation (non-affine) part of the transform. Those are the coefficients that will multiply the Kernel function </p>
+<h3 id="variable-m_amatrix">variable m_AMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">AMatrixType</span><span class="w"> </span><span class="n">m_AMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Rotatinoal/Shearing part of the Affine component of the Transformation </p>
+<h3 id="variable-m_bvector">variable m_BVector</h3>
+<div class="highlight"><pre><span></span><code><span class="n">BMatrixType</span><span class="w"> </span><span class="n">m_BVector</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Translational part of the Affine component of the Transformation </p>
+<h3 id="variable-m_gmatrix">variable m_GMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="n">GMatrixType</span><span class="w"> </span><span class="n">m_GMatrix</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>The G matrix. It is made mutable because m_GMatrix was made an ivar only to avoid copying the matrix at return time </p>
+<h3 id="variable-m_wmatrixcomputed">variable m_WMatrixComputed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_WMatrixComputed</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Has the W matrix been computed? </p>
+<h3 id="variable-m_lmatrixcomputed">variable m_LMatrixComputed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixComputed</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Has the L matrix been computed? </p>
+<h3 id="variable-m_linversecomputed">variable m_LInverseComputed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LInverseComputed</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Has the L inverse matrix been computed? </p>
+<h3 id="variable-m_i">variable m_I</h3>
+<div class="highlight"><pre><span></span><code><span class="n">IMatrixType</span><span class="w"> </span><span class="n">m_I</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Identity matrix. </p>
+<hr />
+<p>Updated on 2021-11-12 at 04:35:44 +0000</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
