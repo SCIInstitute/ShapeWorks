@@ -1,5 +1,7 @@
 PLATFORM=linux
 
+source ~/.bashrc
+
 CONDA_HASH=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
 echo "CONDA_HASH = ${CONDA_HASH}"
 CONDA_FILE="conda-${PLATFORM}-${CONDA_HASH}.tar.gz"
