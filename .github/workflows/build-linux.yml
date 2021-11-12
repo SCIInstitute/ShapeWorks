@@ -58,8 +58,9 @@ jobs:
     - name: cache conda installs
       shell: bash -l {0}
       run: |
-        tar -cjvf ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.bz2 /opt/conda/envs/shapeworks
-        scp ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.bz2  runner@${{ secrets.SSH_HOST }}:github
+        tar -czvf ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.gz /opt/conda/envs/shapeworks
+        scp ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.gz  runner@${{ secrets.SSH_HOST }}:github
+        rm ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.gz
       
     - name: install ccache
       shell: bash -l {0}
