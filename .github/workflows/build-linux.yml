@@ -39,7 +39,8 @@ jobs:
       run: |
         scp runner@${{ secrets.SSH_HOST }}:github/file .
         cat file
-        
+
+
     - name: Conda info
       run: conda info
 
@@ -51,6 +52,11 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: run script
+      shell: bash -l {0}
+      run: |
+        .github/workflows/check.sh
+      
     - name: restore conda installs cache
       shell: bash -l {0}
       run: |
