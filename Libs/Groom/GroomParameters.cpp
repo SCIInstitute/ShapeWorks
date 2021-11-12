@@ -82,7 +82,7 @@ const bool remesh = true;
 
 const bool remesh_percent_mode = true;
 const double remesh_percent = 75;
-const int remesh_num_vertices = -1;
+const int remesh_num_vertices = 3000;
 const double remesh_gradation = 1.0;
 
 }
@@ -488,7 +488,6 @@ void GroomParameters::set_spacing(std::vector<double> spacing)
 //---------------------------------------------------------------------------
 bool GroomParameters::get_remesh()
 {
-  std::cerr << "get_remesh returning: " << (bool)this->params_.get(Keys::REMESH, Defaults::remesh) << "\n";
   return this->params_.get(Keys::REMESH, Defaults::remesh);
 }
 
