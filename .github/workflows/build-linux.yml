@@ -99,9 +99,6 @@ jobs:
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
 
-    - name: Conda Installs
-      shell: bash -l {0}
-
     - name: Store ccache
       shell: bash -l {0}
       run: .github/workflows/store_ccache.sh
