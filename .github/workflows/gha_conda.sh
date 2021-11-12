@@ -4,22 +4,19 @@ echo "#############################"
 echo "# Install conda packages    #"
 echo "#############################"
 
-PLATFORM=linux
+. ${GITHUB_WORKSPACE}/.github/workflows/common.sh
 
-conda_hash=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
-echo "conda_hash = ${conda_hash}"
-file="conda-${PLATFORM}-${conda_hash}.tar.gz"
-
-if [ -d /opt/conda/envs/shapeworks ] ; then
+if [ -d ${CONDA_PATH} ] ; then
     echo "Using cached conda installs"
 else
     echo "Conda Cache file was not found"
-    cd $GITHUB_WORKSPACE
-    ls
+    cd ${GITHUB_WORKSPACE}
+
+    # run install
     source ./install_shapeworks.sh
 
     echo "Create and store cache"
-    tar --use-compress-program=pigz -cf ${file} /opt/conda/envs/shapeworks
-    scp ${file} runner@${CACHE_HOST}:github
-    rm ${file}
+    tar --use-compress-program=pigz -cf ${CONDA_FILE} ${CONDA_PATH}
+    scp ${CONDA_FILE} runner@${CACHE_HOST}:github
+    rm ${CONDA_FILE}
 fi

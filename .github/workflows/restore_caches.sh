@@ -4,25 +4,32 @@ echo "#############################"
 echo "# Restore Caches            #"
 echo "#############################"
 
-PLATFORM=linux
+. $GITHUB_WORKSPACE/.github/workflows/common.sh
 
-conda_hash=`sha1sum install_shapeworks.sh | awk '{ print $1 }'`
-echo "conda_hash = ${conda_hash}"
-file="conda-${PLATFORM}-${conda_hash}.tar.gz"
-
+# based on root folder
 cd /
+
+# Restore ccache
 scp runner@${CACHE_HOST}:github/${PLATFORM}-ccache.tar.gz .
 if [ -f ${PLATFORM}-ccache.tar.gz ] ; then
-    tar --use-compress-program=pigz -xf ${PLATFORM}-ccache.tar.gz
+    echo "ccache file was found"
+    tar --use-compress-program=pigz -xf ${CCACHE_FILE}
+    rm $CCACHE_FILE
 fi
 
-cd /
-scp runner@${CACHE_HOST}:github/${file} .
-
-
-if [ -f ${file} ] ; then
+# Restore conda installs
+scp runner@${CACHE_HOST}:github/${CONDA_FILE} .
+if [ -f ${CONDA_FILE} ] ; then
     echo "Conda Cache file was found"
-    tar --use-compress-program=pigz -xf $file
+    tar --use-compress-program=pigz -xf $CONDA_FILE
+    rm $CONDA_FILE
 fi
 
+# Restore dependencies
+scp runner@${CACHE_HOST}:github/${DEP_FILE} .
+if [ -f ${DEP_FILE} ] ; then
+    echo "Dependency Cache file was found"
+    tar --use-compress-program=pigz -xf $DEP_FILE
+    rm $DEP_FILE
+fi
 

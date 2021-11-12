@@ -31,16 +31,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-    - name: try ssh
-      run: |
-        ssh runner@${{ secrets.SSH_HOST }} ls
-
-    - name: try scp
-      run: |
-        scp runner@${{ secrets.SSH_HOST }}:github/file .
-        cat file
-
-
     - name: Conda info
       run: conda info
 
@@ -59,18 +49,10 @@ jobs:
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
-      
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/install
-        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
 
-    - name: Build dependencies
+    - name: Build Dependencies
       shell: bash -l {0}
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE && rm -rf $HOME/build
+      run: .github/workflows/gha_deps.sh
 
     - name: cmake
       shell: bash -l {0}
