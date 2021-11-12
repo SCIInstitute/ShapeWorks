@@ -35,18 +35,20 @@ target_include_directories(Mesh PUBLIC
  )
 
 target_link_libraries(
-  Mesh 
+  Mesh
   Image
   Common
+  Optimize
   Utils
-  trimesh2 
-  vgl 
-  vgl_algo 
+  trimesh2
+  vgl
+  vgl_algo
   ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
   Particles
   TBB::tbb
+  geometry-central
   Boost::filesystem
   )
 
@@ -62,18 +64,10 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
-#ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
-#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeGeodesicDistanceToCurve RUNTIME DESTINATION bin)
-
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFiles GenerateFidsFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
-
-#ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
-#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)

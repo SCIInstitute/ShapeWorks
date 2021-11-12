@@ -31,6 +31,8 @@ public:
 
   vnl_vector<double> get_local_particles(int domain);
   vnl_vector<double> get_world_particles(int domain);
+  //! Get untransformed original world particles from optimizer
+  vnl_vector<double> get_raw_world_particles(int domain);
 
   vnl_vector<double> get_combined_local_particles();
   vnl_vector<double> get_combined_global_particles();

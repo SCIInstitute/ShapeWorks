@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def fixelementTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.fixElement()
@@ -10,4 +12,6 @@ def fixelementTest():
 
   return mesh == compareMesh
 
-utils.test(fixelementTest)
+success &= utils.test(fixelementTest)
+
+sys.exit(not success)

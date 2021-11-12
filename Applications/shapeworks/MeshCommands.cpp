@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
@@ -364,14 +365,13 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 void TransformMesh::buildParser()
 {
   const std::string prog = "transform-mesh";
-  const std::string desc = "transform mesh to target mesh using specified method (default: iterative closest point (ICP) 3D rigid registration)";
+  const std::string desc = "transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
   std::list<std::string> aligns{"rigid", "similarity", "affine"};
   parser.add_option("--type").action("store").type("choice").choices(aligns.begin(), aligns.end()).set_default("similarity").help("Alignment type to use [default: %default].");
   std::list<std::string> methods{"icp"};
-  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("icp").help("Method used to compute transform [default: %default].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run [default: %default].");
 
   Command::buildParser();
@@ -400,13 +400,6 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  std::string methodopt(options.get("method"));
-  XFormType method{IterativeClosestPoint};
-  if (methodopt != "icp") {
-    std::cerr << "no such transform type: " << methodopt << std::endl;
-    return false;
-  }
-
   if (targetMesh == "")
   {
     std::cerr << "Must specify a target mesh\n";
@@ -415,7 +408,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
   else
   {
     Mesh target(targetMesh);
-    MeshTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
+    MeshTransform transform(sharedData.mesh->createTransform(target, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }
@@ -664,9 +657,9 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   bool summary = static_cast<bool>(options.get("summary"));
 
   std::string methodopt(options.get("method"));
-  auto method{Mesh::POINT_TO_POINT};
-  if (methodopt == "point-to-point") method = Mesh::POINT_TO_POINT;
-  else if (methodopt == "point-to-cell") method = Mesh::POINT_TO_CELL;
+  auto method{Mesh::PointToPoint};
+  if (methodopt == "point-to-point") method = Mesh::PointToPoint;
+  else if (methodopt == "point-to-cell") method = Mesh::PointToCell;
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
@@ -820,12 +813,8 @@ void GeodesicDistance::buildParser()
   const std::string desc = "computes geodesic distance between two vertices on mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x for source point.");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y for source point.");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z for source point.");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x for target point.");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y for target point.");
-  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z for target point.");
+  parser.add_option("--v1").action("store").type("int").set_default(-1).help("Index of first point in mesh.");
+  parser.add_option("--v2").action("store").type("int").set_default(-1).help("Index of second point in mesh.");
 
   Command::buildParser();
 }
@@ -838,16 +827,43 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
     return false;
   }
 
-  Point source({static_cast<double>(options.get("x1")),
-                static_cast<double>(options.get("y1")),
-                static_cast<double>(options.get("z1"))});
+  int v1 = static_cast<int>(options.get("v1"));
+  int v2 = static_cast<int>(options.get("v2"));
 
-  Point target({static_cast<double>(options.get("x2")),
-                static_cast<double>(options.get("y2")),
-                static_cast<double>(options.get("z2"))});
+  std::cout << "Geodesic Distance between two points: "
+            << sharedData.mesh->geodesicDistance(v1, v2) << std::endl;
+  return sharedData.validMesh();
+}
 
-  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(sharedData.mesh->closestPointId(source),
-                                                           sharedData.mesh->closestPointId(target)) << "\n";
+///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistanceToLandmark
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistanceToLandmark::buildParser()
+{
+  const std::string prog = "geodesic-distance-landmark";
+  const std::string desc = "computes geodesic distance between a point (landmark) and each vertex on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for landmark point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for landmark point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for landmark point.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point landmark({static_cast<double>(options.get("x")),
+                  static_cast<double>(options.get("y")),
+                  static_cast<double>(options.get("z"))});
+
+  sharedData.field = sharedData.mesh->geodesicDistance(landmark);
   return sharedData.validMesh();
 }
 

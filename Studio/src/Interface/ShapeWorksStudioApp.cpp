@@ -86,6 +86,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->update_recent_files();
 
   this->py_worker_ = QSharedPointer<PythonWorker>::create();
+  this->py_worker_->set_vtk_output_window(this->studio_vtk_output_window_);
   connect(this->py_worker_.data(), &PythonWorker::error_message,
           this, &ShapeWorksStudioApp::handle_error);
 
@@ -105,7 +106,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   this->create_glyph_submenu();
-  this->create_iso_submenu();
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
@@ -212,6 +212,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
           SLOT(handle_slider_update()));
 
+  connect(this->ui_->alignment_combo, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &ShapeWorksStudioApp::handle_alignment_changed);
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
      this->analysis_tool_->set_project( this->session_ );
@@ -289,24 +291,6 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   }
 
   this->new_session();
-
-  this->update_table();
-  this->update_from_preferences();
-
-  this->lightbox_->clear_renderers();
-  this->analysis_tool_->reset_stats();
-  this->ui_->action_import_mode->setChecked(true);
-  this->ui_->action_groom_mode->setChecked(false);
-  this->ui_->action_optimize_mode->setChecked(false);
-  this->ui_->action_analysis_mode->setChecked(false);
-  this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
-  this->ui_->controlsDock->setWindowTitle("Data");
-  this->preferences_.set_saved();
-  this->enable_possible_actions();
-  this->update_display(true);
-  this->visualizer_->update_viewer_properties();
-
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------
@@ -464,7 +448,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
       // On first load, we can check if there was an active scalar on loaded meshes
       this->set_feature_map(this->session_->get_default_feature_map());
     }
-  } catch (std::runtime_error e) {
+  } catch (std::runtime_error& e) {
     this->handle_error(e.what());
   }
   this->handle_message("Files loaded");
@@ -580,6 +564,13 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_center_checked());
+
+  if (this->session_) {
+    this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
+    this->ui_->feature_auto_scale->setChecked(this->session_->get_feature_auto_scale());
+    this->ui_->feature_min->setValue(this->session_->get_feature_range_min());
+    this->ui_->feature_max->setValue(this->session_->get_feature_range_max());
+  }
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
@@ -681,8 +672,6 @@ void ShapeWorksStudioApp::update_table()
   }
   this->ui_->features->setCurrentText(current_feature);
   this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
-
-  this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
 }
 
 //---------------------------------------------------------------------------
@@ -930,6 +919,25 @@ void ShapeWorksStudioApp::new_session()
   this->optimize_tool_->set_session(this->session_);
   this->deepssm_tool_->set_session(this->session_);
   this->create_iso_submenu();
+
+  this->update_table();
+  this->update_alignment_options();
+  this->update_from_preferences();
+
+  this->lightbox_->clear_renderers();
+  this->analysis_tool_->reset_stats();
+  this->ui_->action_import_mode->setChecked(true);
+  this->ui_->action_groom_mode->setChecked(false);
+  this->ui_->action_optimize_mode->setChecked(false);
+  this->ui_->action_analysis_mode->setChecked(false);
+  this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
+  this->ui_->controlsDock->setWindowTitle("Data");
+  this->preferences_.set_saved();
+  this->enable_possible_actions();
+  this->update_display(true);
+  this->visualizer_->update_viewer_properties();
+
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------
@@ -971,7 +979,6 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::DEEPSSM_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->deepssm_tool_.data());
-    //this->deepssm_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("DeepSSM");
     this->update_display();
     this->ui_->action_deepssm_mode->setChecked(true);
@@ -991,6 +998,13 @@ void ShapeWorksStudioApp::update_tool_mode()
 }
 
 //---------------------------------------------------------------------------
+std::string ShapeWorksStudioApp::get_tool_state()
+{
+  std::string tool_state = this->session_->parameters().get("tool_state", Session::DATA_C);
+  return tool_state;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode()
 {
   auto view_mode = this->get_view_mode();
@@ -1000,12 +1014,39 @@ void ShapeWorksStudioApp::update_view_mode()
   this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
   if (this->visualizer_) {
-    //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     if (feature_map == "-none-") { feature_map = ""; }
     this->analysis_tool_->set_feature_map(feature_map);
+
+    std::string feature_map_override = "";
+    if (this->get_tool_state() == Session::DEEPSSM_C) {
+      if (this->deepssm_tool_->get_display_feature() != "") {
+        feature_map_override = this->deepssm_tool_->get_display_feature();
+      }
+    }
+    else if (this->get_tool_state() == Session::ANALYSIS_C) {
+      if (this->analysis_tool_->get_display_feature_map() != feature_map) {
+        feature_map_override = this->analysis_tool_->get_display_feature_map();
+      }
+    }
+
+    if (feature_map_override != "") {
+      this->ui_->features->hide();
+      this->ui_->feature_line->setText(QString::fromStdString(feature_map_override));
+      this->ui_->feature_line->setVisible(true);
+      feature_map = feature_map_override;
+    }
+    else {
+      this->ui_->features->show();
+      this->ui_->feature_line->hide();
+    }
+
+    auto feature_maps = this->session_->get_project()->get_feature_names();
+    this->ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "");
+
     this->visualizer_->set_feature_map(feature_map);
     this->visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
+    this->update_feature_map_scale();
     this->update_display(true);
   }
 }
@@ -1103,8 +1144,10 @@ void ShapeWorksStudioApp::handle_points_changed()
   }
 
   if (update) {
-    double old_size = this->session_->get_auto_glyph_size();
-    if (fabs(old_size - this->session_->update_auto_glyph_size()) > 0.5) {
+    double cur_size = this->visualizer_->get_current_glyph_size();
+    double new_size = this->session_->update_auto_glyph_size();
+    double percent_diff = cur_size / new_size * 100.0;
+    if (percent_diff < 90 || percent_diff > 110) {
       this->handle_glyph_changed();
     }
 
@@ -1204,6 +1247,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
+  this->visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
@@ -1217,6 +1261,14 @@ void ShapeWorksStudioApp::handle_opacity_changed()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_alignment_changed()
+{
+  this->visualizer_->set_alignment_domain(this->ui_->alignment_combo->currentIndex() - 1);
+  this->update_display(true);
+  this->visualizer_->reset_camera();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
@@ -1227,7 +1279,6 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display(bool force)
 {
-  //if (!this->visualizer_ || this->session_->get_num_shapes() <= 0) {
   if (!this->visualizer_) {
     return;
   }
@@ -1250,11 +1301,7 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   if (!this->session_->groomed_present() && this->session_->particles_present()) {
     // legacy will be used
-    //std::cerr << "reconstruct ready\n";
     reconstruct_ready = true;
-  }
-  else {
-    //std::cerr << "reconstruct not ready\n";
   }
 
   if (this->session_->particles_present()) {
@@ -1263,7 +1310,13 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  if (this->ui_->action_analysis_mode->isChecked()) {
+  bool analysis_mode = this->ui_->action_analysis_mode->isChecked();
+
+  int num_domains = this->session_->get_domains_per_shape();
+  this->ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
+  this->ui_->center_checkbox->setVisible(!analysis_mode);
+
+  if (analysis_mode) {
     mode = this->analysis_tool_->get_analysis_mode();
   }
 
@@ -1280,24 +1333,15 @@ void ShapeWorksStudioApp::update_display(bool force)
   std::string tool_state =
     this->session_->parameters().get("tool_state", Session::DATA_C);
 
+  this->update_view_mode();
+
   if (tool_state == Session::DEEPSSM_C) {
-    auto deep_ssm_feature = this->deepssm_tool_->get_display_feature();
-    if (deep_ssm_feature == "") {
-      this->set_feature_map("");
-    }
-    else {
-      this->set_feature_map("");
-      this->set_feature_map(deep_ssm_feature);
-    }
     this->visualizer_->display_shapes(this->deepssm_tool_->get_shapes());
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   }
   else {
-    if (this->get_feature_map() == "deepssm_error") {
-      this->set_feature_map("");
-    }
     this->current_display_mode_ = mode;
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
@@ -1388,11 +1432,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->handle_error("Project failed to load");
     this->handle_progress(100);
     return;
-  } catch (std::runtime_error &e) {
-    this->handle_error(e.what());
-    this->handle_error("Project failed to load");
-    this->handle_progress(100);
-    return;
   }
 
   auto project = this->session_->get_project();
@@ -1427,6 +1466,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->reset_camera();
 
   this->update_table();
+  this->update_alignment_options();
 
   this->update_view_mode();
 
@@ -1762,6 +1802,19 @@ void ShapeWorksStudioApp::update_recent_files()
 
   for (int j = num_recent_files; j < 8; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_alignment_options()
+{
+  int num_domains = this->session_->get_domains_per_shape();
+  this->ui_->alignment_combo->setVisible(num_domains > 1);
+  this->ui_->alignment_combo->clear();
+  this->ui_->alignment_combo->addItem("Global");
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  for (auto name : domain_names) {
+    this->ui_->alignment_combo->addItem(QString::fromStdString(name));
   }
 }
 

@@ -1,7 +1,7 @@
 # Shape Model Evaluation
 
 
-ShapeWorks support quantitative evaluation of shape models, which can be used for algorithmic parameter tuning. Quantitative metrics are generalizability, specificity, and compactness. In `Examples/Python/`, run `python RunUseCase.py -use_case ellipsoid_evaluate` to see an example of how to compute these metrics.
+ShapeWorks support quantitative evaluation of shape models, which can be used for algorithmic parameter tuning. Quantitative metrics are generalizability, specificity, and compactness. In `Examples/Python/`, run `python RunUseCase.py ellipsoid_evaluate` to see an example of how to compute these metrics.
 
 ![Evaluation metrics](../img/new/eval_metrics.png)
 
@@ -45,11 +45,11 @@ shapeworks.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data, nMod
 shapeworks.ShapeEvaluation.ComputeGeneralization(particleSystem=particle_data, nModes=1, saveTo=save_dir)
 shapeworks.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=1, saveTo=save_dir)
 ```
-See the `ellipsoid_evaluate` use case for detailed examples. 
+
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
 ## Model Evaluation in Studio
 
-![Under construction, coming soon!](../img/misc/under-construction.png)
+Model evaluation is performed in Studio automatically under the metrics panel. See [Studio - Metrics Panel](../studio/getting-started-with-studio.md#metrics-panel) for more information.

@@ -28,7 +28,7 @@ public:
 
   Preferences();
 
-  enum { MAX_RECENT_FILES = 32 };
+  enum { MAX_RECENT_FILES = 64 };
 
   void restore_defaults();
 

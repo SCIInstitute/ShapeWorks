@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def computedtTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.computeDT()
@@ -10,7 +12,7 @@ def computedtTest1():
 
   return img.compare(compareImg)
 
-utils.test(computedtTest1)
+success &= utils.test(computedtTest1)
 
 def computedtTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -20,7 +22,7 @@ def computedtTest2():
 
   return img.compare(compareImg)
 
-utils.test(computedtTest2)
+success &= utils.test(computedtTest2)
 
 def computedtTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -30,4 +32,6 @@ def computedtTest3():
 
   return img.compare(compareImg)
 
-utils.test(computedtTest3)
+success &= utils.test(computedtTest3)
+
+sys.exit(not success)

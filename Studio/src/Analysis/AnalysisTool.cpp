@@ -252,6 +252,9 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
   this->ui_->difference_button->setChecked(false);
+  this->ui_->group_p_values_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
 }
 
 //---------------------------------------------------------------------------
@@ -357,6 +360,7 @@ void AnalysisTool::on_group1_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group1_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -369,6 +373,7 @@ void AnalysisTool::on_group2_button_clicked()
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
   this->ui_->group2_button->setChecked(true);
+  this->ui_->group_p_values_button->setChecked(false);
   emit update_view();
 }
 
@@ -400,6 +405,11 @@ void AnalysisTool::group_p_values_clicked()
     this->handle_group_pvalues_complete();
   }
   else {
+
+    if (this->group1_list_.size() < 3 || this->group2_list_.size() < 3) {
+      emit error("Unable to compute p-values with less than 3 shapes per group");
+      return;
+    }
     this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
@@ -966,6 +976,16 @@ void AnalysisTool::set_feature_map(const std::string& feature_map)
 }
 
 //---------------------------------------------------------------------------
+std::string AnalysisTool::get_display_feature_map()
+{
+  if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
+      this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
+    return "p_values";
+  }
+  return this->feature_map_;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_group_boxes()
 {
   // populate the group sets
@@ -1239,6 +1259,7 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
 
   this->evals_ready_ = false;
   this->group_changed();
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1324,16 +1345,12 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
       }
       this->reconstruction_transforms_[domain] = transform;
     }
-
-    for (int s = 0; s < shapes.size(); s++) {
-      shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
-    }
   }
   else {
     this->reconstruction_transforms_.clear();
-    for (int s = 0; s < shapes.size(); s++) {
-      shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
-    }
+  }
+  for (int s = 0; s < shapes.size(); s++) {
+    shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
   }
 }
 

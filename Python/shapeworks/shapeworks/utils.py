@@ -30,7 +30,7 @@ def save_images(outDir,        # path to the directory where we want to save the
                 swImageList,   # list of shapeworks images to be saved
                 swImageNames,  # list of image names to be used as filenames
                 extension        = 'nrrd',
-                compressed       = False, # use false to load in paraview
+                compressed       = True, # use false to load in paraview
                 verbose          = True):
 
     if (len(swImageList) != len(swImageNames)):
@@ -58,7 +58,7 @@ def save_meshes(outDir,        # path to the directory where we want to save the
                 swMeshList,   # list of shapeworks images to be saved
                 swMeshNames,  # list of image names to be used as filenames
                 extension        = 'ply',
-                compressed       = False, # use false to load in paraview
+                compressed       = True,
                 verbose          = True):
 
     if (len(swMeshList) != len(swMeshNames)):
@@ -91,12 +91,20 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
-def find_reference_image_index(inDataList):
+def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
         mesh = img.toMesh(0.5)
         mesh_list.append(mesh)
-    return sw.MeshUtils.findReferenceMesh(mesh_list)
+    if(domains_per_shape==1):
+        return sw.MeshUtils.findReferenceMesh(mesh_list)
+
+    else:
+        combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh)
+       
+        return index,combined_mesh
+
 
 def save_contour_as_vtp(points, lines, filename):
     """
@@ -179,6 +187,8 @@ def test(name, failure=False):
             if name():
                 print(name.__name__ + " failed")
                 return False
+            else:
+                return True
         except Exception as e:
             print(name.__name__ + " unexpected failure (exception): " + str(e))
             return False

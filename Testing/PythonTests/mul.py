@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def mulTest():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img *= 3.14
@@ -10,4 +12,6 @@ def mulTest():
 
   return img.compare(compareImg)
 
-utils.test(mulTest)
+success &= utils.test(mulTest)
+
+sys.exit(not success)

@@ -1,0 +1,9 @@
+namespace shapeworks {
+
+/** \mainpage notitle
+
+This is the API documentation for ShapeWorks.
+
+*/
+
+}

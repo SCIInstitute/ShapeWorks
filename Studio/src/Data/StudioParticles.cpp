@@ -97,12 +97,19 @@ vnl_vector<double> StudioParticles::get_world_particles(int domain)
 }
 
 //---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::get_raw_world_particles(int domain)
+{
+  return this->global_particles_[domain];
+}
+
+//---------------------------------------------------------------------------
 void StudioParticles::set_local_particles(int domain, vnl_vector<double> particles)
 {
   if (domain >= local_particles_.size()) {
     local_particles_.resize(domain + 1);
   }
   local_particles_[domain] = particles;
+  this->transform_global_particles();
 }
 
 //---------------------------------------------------------------------------
@@ -177,9 +184,11 @@ void StudioParticles::transform_global_particles()
 {
   this->transformed_global_particles_.clear();
   if (!this->transform_) {
+    //std::cerr << "no transform, just using global\n";
     this->transformed_global_particles_ = this->global_particles_;
   }
   else {
+    //std::cerr << "we do have a transform\n";
     for (int d = 0; d < this->local_particles_.size(); d++) {
       vnl_vector<double> vnl = this->local_particles_[d];
 

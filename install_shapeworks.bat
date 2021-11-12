@@ -10,10 +10,6 @@ REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
-call conda activate base
-call conda update --yes -n base -c defaults conda
-call conda update --yes --all
-
 call conda create --yes --name %CONDAENV% python=3.7
 call conda activate %CONDAENV%
 
@@ -25,14 +21,15 @@ call conda install --yes numpy=1.17.4
 call conda install --yes scikit-learn=0.22.1
 call conda install --yes trimesh
 call conda install --yes gtest=1.10.0 cmake-3.15.5
-call conda install --yes pytorch torchvision cpuonly -c pytorch
 call conda install --yes notebook=6.1.5
 
 REM reactivate shapeworks environment
 call conda activate base
 call conda activate %CONDAENV%
 
-call pip install --upgrade pip
+call conda install --yes pip=21.2.4
+
+call pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
 call pip install hotelling==0.5.0

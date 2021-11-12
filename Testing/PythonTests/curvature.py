@@ -3,6 +3,8 @@ import sys
 from typing import Type
 from shapeworks import *
 
+success = True
+
 def curvatureTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applyCurvatureFilter()
@@ -11,7 +13,7 @@ def curvatureTest1():
 
   return img.compare(compareImg)
 
-utils.test(curvatureTest1)
+success &= utils.test(curvatureTest1)
 
 def curvatureTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -21,7 +23,7 @@ def curvatureTest2():
 
   return img.compare(compareImg)
 
-utils.test(curvatureTest2)
+success &= utils.test(curvatureTest2)
 
 def curvaturefailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -31,4 +33,6 @@ def curvaturefailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(curvaturefailTest, TypeError)
+success &= utils.expectException(curvaturefailTest, TypeError)
+
+sys.exit(not success)

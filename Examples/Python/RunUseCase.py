@@ -61,7 +61,22 @@ if __name__ == '__main__':
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
     parser.add_argument("--mesh_mode", help="Run optimization on meshes rather than distance transforms.",action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
+    parser.add_argument("--verify", help="Run as a full test", action="store_true")
     args = parser.parse_args()
+
+
+    type = ""
+    if args.tiny_test:
+        type = "tiny_test_"
+    scale = "multiscale"
+    if args.use_single_scale:
+        scale = "singlescale"
+    mode = ""
+    if args.mesh_mode:
+        mode = "_mesh_mode"
+    if args.groom_images:
+        mode = f"{mode}_groom_images"
+    args.option_set = f"{type}{scale}{mode}"
 
     if args.use_subsample:
         dataExists = sw.data.dataset_exists_check(args.use_case)

@@ -22,6 +22,7 @@ using namespace pybind11::literals;
 
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
 
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -35,141 +36,15 @@ using namespace pybind11::literals;
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "EigenUtils.h"
+#include "pybind_utils.h"
 
 using namespace shapeworks;
-
-// helper function for Image.init and Image.assign
-Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
-  // get input array info
-  auto info = np_array.request();
-
-#if 0
-  /*
-    struct buffer_info {
-    void *ptr;
-    py::ssize_t itemsize;
-    std::string format;
-    py::ssize_t ndim;
-    std::vector<py::ssize_t> shape;
-    std::vector<py::ssize_t> strides;
-    };
-  */
-
-  std::cout << "buffer info: \n"
-            << "\tinfo.ptr: " << info.ptr << std::endl
-            << "\tinfo.itemsize: " << info.itemsize << std::endl
-            << "\tinfo.format: " << info.format << std::endl
-            << "\tinfo.ndim: " << info.ndim << std::endl;
-  std::cout << "\tinfo.shape (zyx): [ ";
-  for (int i = 0; i < info.ndim; i++) {
-    std::cout << info.shape[i] << " ";
-  }
-  std::cout << "]\n\tinfo.strides (zyx): [ ";
-  for (int i = 0; i < info.ndim; i++) {
-    std::cout << info.strides[i] << " ";
-  }
-  std::cout << "]\n";
-  std::cout << "writeable: " << np_array.writeable() << std::endl
-            << "owns data: " << np_array.owndata() << std::endl;
-#endif
-
-  // verify it's 3d
-  if (info.ndim != 3) {
-    throw std::invalid_argument(std::string("array must be 3d, but ndim = ") + std::to_string(info.ndim));
-  }
-
-  // verify it's C order, not Fortran order
-  auto c_order = pybind11::detail::array_proxy(np_array.ptr())->flags & pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
-  if (!c_order) {
-    throw std::invalid_argument(std::string("array must be C_CONTIGUOUS; use numpy.transpose() to reorder"));
-  }
-
-  // verify data is densely packed by checking strides is same as shape
-  std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*info.itemsize,
-    info.shape[2]*info.itemsize,
-    info.itemsize};
-  for (int i = 0; i < info.ndim; i++) {
-    if (info.strides[i] != strides[i]) {
-      std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-      throw std::invalid_argument("array must be densely packed");
-    }
-  }
-
-  // array must be dtype.float32 and own its data to transfer it to Image
-  if (info.format != py::format_descriptor<Image::PixelType>::format()) {
-    // inform the user how to create correct type array rather than copy
-    throw std::invalid_argument("array must be same dtype as Image; convert using `np.array(arr, dtype=np.float32)`");
-  }
-  if (!np_array.owndata()) {
-    throw std::invalid_argument("error: numpy array does not own data (see `arr.flags()`) to be transferred to Image");
-  }
-
-  // Pass ownership of the array to Image to prevent Python from
-  // deallocating (the image will dealloate when it's time).
-  std::bitset<32> disown_data_flag(pybind11::detail::npy_api::NPY_ARRAY_OWNDATA_);
-  disown_data_flag = ~disown_data_flag;
-  int disown_data_flag_int = static_cast<int>(disown_data_flag.to_ulong());
-
-  // modify np_array's OWNDATA flag and ensure ownership transfered
-  pybind11::detail::array_proxy(np_array.ptr())->flags &= disown_data_flag_int;
-  if (np_array.owndata()) {
-    throw std::runtime_error("error transferring data ownership to Image");
-  }
-
-  // import data, passing ownership of memory to ensure there will be no leak
-  using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
-  auto importer = ImportType::New();
-
-  ImportType::SizeType size; // i.e., Dims (remember numpy orders zyx)
-  size[0] = np_array.shape()[2];
-  size[1] = np_array.shape()[1];
-  size[2] = np_array.shape()[0];
-
-  assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
-  importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
-                             size[0]*size[1]*size[2]*sizeof(Image::PixelType),
-                             true /*importer take_ownership*/);
-  ImportType::IndexType start({0,0,0}); // i.e., Coord
-  ImportType::RegionType region;
-  region.SetIndex(start);
-  region.SetSize(size);
-  importer->SetRegion(region);
-  importer->Update();
-  return importer->GetOutput();
-}
 
 PYBIND11_MODULE(shapeworks_py, m)
 {
   m.doc() = "ShapeWorks Python API";
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
-
-  // Transform
-  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "Transform")
-  .def("__repr__",
-       [](const TransformPtr &transform) {
-         std::stringstream stream;
-         itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
-         int r = 0;
-         for (int i=0; i<4; i++)
-         {
-           for (int j=0; j<3; j++)
-           {
-             stream << p[r] << " ";
-             r++;
-           }
-         }
-         return stream.str();
-       });
-
-  // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
-  m.def("createTransform",
-        [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
-          Matrix33 mat33 = eigenToItk<double, 3, 3>(mat);
-          return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
-        },
-        "creates transform from 3x3 matrix and translation vector",
-        "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
   m.def("seed",
         &ShapeworksUtils::setRngSeed,
@@ -201,13 +76,15 @@ PYBIND11_MODULE(shapeworks_py, m)
         "convert to axis",
         "str"_a);
 
-  // TransformType
-  py::enum_<XFormType>(m, "TransformType")
-  .value("CenterOfMass", XFormType::CenterOfMass)
-  .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
-  .export_values();
+  // Transform
+  py::class_<ImageUtils::TPSTransform::Pointer>(m, "WarpTransform")
+    .def("__repr__",
+         [](const ImageUtils::TPSTransform::Pointer &transform) {
+           return "itkThinPlateSplineKernelTransform";
+         });
 
-  // Image::InterpolationType (even though this is part of Image, it feels cleaner to keep it global in the module)
+  // Image::InterpolationType (even though this is part of Image, it could be
+  // used elsewhere so we keep it global in the module)
   py::enum_<Image::InterpolationType>(m, "InterpolationType")
   .value("Linear", Image::InterpolationType::Linear)
   .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
@@ -302,13 +179,14 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("resample",
        [](Image& image,
-          const TransformPtr transform,
+          Eigen::Matrix<double, 4, 4> &eigen_mat,
           const std::vector<double>& p,
           const std::vector<unsigned>& d,
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp) -> decltype(auto) {
-         return image.resample(transform,
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.resample(itk_xform,
                                Point({p[0], p[1], p[2]}),
                                Dims({d[0], d[1], d[2]}),
                                makeVector({v[0], v[1], v[2]}),
@@ -390,25 +268,39 @@ PYBIND11_MODULE(shapeworks_py, m)
        "angle"_a, "axis"_a)
 
   .def("applyTransform",
-       py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform),
-       "applies the given transformation to the image by using resampling filter",
+       [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
+          Image::InterpolationType interp) -> decltype(auto){
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.applyTransform(itk_xform, interp);
+       },
+       "applies the given transformation to the image by using the specified resampling filter (Linear or NearestNeighbor)",
        "transform"_a, "interp"_a=Image::InterpolationType::Linear)
 
   .def("applyTransform",
-       [](Image& image, const TransformPtr transform,
+       [](Image &image, ImageUtils::TPSTransform::Pointer transform,
+          Image::InterpolationType interp) -> decltype(auto) {
+         return image.applyTransform(transform, interp);
+       },
+       "applies the given warp transformation to the image using the specified resampling filter (Linear or NearestNeighbor)",
+       "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("applyTransform",
+       [](Image& image,
+          Eigen::Matrix<double, 4, 4> &eigen_mat,
           const std::vector<double>& p,
           const std::vector<unsigned>& d,
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp) {
-         return image.applyTransform(transform,
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.applyTransform(itk_xform,
                                      Point({p[0], p[1], p[2]}),
                                      Dims({d[0], d[1], d[2]}),
                                      makeVector({v[0], v[1], v[2]}),
                                      eigenToItk(direction),
                                      interp);
        },
-       "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
+       "applies the given transformation to the image by using resampling filter with new origin, dims, spacing, and sampling along given direction axes (a 3x3 row-major matrix) using the specified interpolation method (Linear or NearestNeighbor)",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
        "interp"_a=Image::InterpolationType::NearestNeighbor)
 
@@ -676,15 +568,18 @@ PYBIND11_MODULE(shapeworks_py, m)
        "returns raw array of image data, directly sharing data by default, copying if specified.\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; use for_viewing argument to get array in column-major ('F') order ('sw2vtkImage' already does this).",
        "copy"_a=false, "for_viewing"_a=false)
 
-  .def("createTransform",
-       py::overload_cast<XFormType>(&Image::createTransform),
-       "creates a transform based on transform type",
-       "type"_a=XFormType::CenterOfMass)
+  .def("createCenterOfMassTransform",
+       [](Image &image) -> decltype(auto) {
+         return itkTransformToEigen(image.createCenterOfMassTransform());
+       },
+       "creates a transform that translates center of mass to center of image")
 
-  .def("createTransform",
-       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform),
-       "creates a transform based on transform type",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createRigidRegistrationTransform",
+       [](Image &image, const Image& other, float isovalue, unsigned iterations) -> decltype(auto) {
+         return itkTransformToEigen(image.createRigidRegistrationTransform(other, isovalue, iterations));
+       },
+       "creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations",
+       "target"_a, "isoValue"_a=0.0, "iterations"_a=20)
 
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
@@ -929,15 +824,8 @@ PYBIND11_MODULE(shapeworks_py, m)
               "images"_a, "isoValue"_a=1.0)
 
   .def_static("createWarpTransform",
-              [](const std::string &source_landmarks,
-                 const std::string &target_landmarks,
-                 const int stride) -> decltype(auto) {
-                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
-                                                                 target_landmarks,
-                                                                 stride);
-                return xform_ptr;
-              },
-              "computes a warp transform from the source to the target landmarks",
+              &ImageUtils::createWarpTransform,
+              "computes a warp transform from the source to the target landmarks (in the given files) using every stride points",
               "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
@@ -954,8 +842,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   // Mesh::DistanceMethod
   py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
-  .value("POINT_TO_POINT", Mesh::DistanceMethod::POINT_TO_POINT)
-  .value("POINT_TO_CELL", Mesh::DistanceMethod::POINT_TO_CELL)
+  .value("PointToPoint", Mesh::DistanceMethod::PointToPoint)
+  .value("PointToCell", Mesh::DistanceMethod::PointToCell)
   .export_values();
   ;
 
@@ -1026,13 +914,17 @@ PYBIND11_MODULE(shapeworks_py, m)
        "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
 
   .def("createTransform",
-       &Mesh::createTransform,
-       "creates a transform based on transform type",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint,
-       "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+       [](Mesh &mesh, const Mesh& other, Mesh::AlignmentType type, unsigned iterations) -> decltype(auto) {
+         return vtkTransformToEigen(mesh.createTransform(other, type, iterations));
+       },
+       "creates a transform using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations (default alignment: Similarity, default iterations: 10)",
+       "target"_a, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
 
   .def("applyTransform",
-       &Mesh::applyTransform,
+       [](Mesh &mesh, Eigen::Matrix<double, 4, 4> &eigen_mat) -> decltype(auto){
+         auto vtk_xform = eigen44ToVtkTransform(eigen_mat);
+         return mesh.applyTransform(vtk_xform);
+       },
        "applies the given transformation to the mesh",
        "transform"_a)
 
@@ -1042,7 +934,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("probeVolume",
        &Mesh::probeVolume,
-       "samples data values at specified point locations",
+       "samples image data values at point locations specified by image",
        "image"_a)
 
   .def("clip",
@@ -1086,8 +978,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("distance",
        &Mesh::distance,
-       "computes surface to surface distance",
-       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+       "computes surface to surface distance using the specified method (PointToPoint or PointToCell)",
+       "target"_a, "method"_a=Mesh::DistanceMethod::PointToPoint)
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
@@ -1116,26 +1008,35 @@ PYBIND11_MODULE(shapeworks_py, m)
        "point"_a)
 
   .def("geodesicDistance",
-       &Mesh::geodesicDistance,
+       py::overload_cast<int, int>(&Mesh::geodesicDistance),
        "computes geodesic distance between two vertices (specified by their indices) on mesh",
        "source"_a, "target"_a)
+
+  .def("geodesicDistance",
+       [](Mesh &mesh, const std::vector<double> p) -> decltype(auto) {
+          auto array = mesh.geodesicDistance(Point({p[0], p[1], p[2]}));
+          return arrToPy(array, MOVE_ARRAY);
+       },
+       "computes geodesic distance between a point (landmark) and each vertex on mesh",
+       "landmark"_a)
+
+  .def("geodesicDistance",
+       [](Mesh &mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
+          std::vector<Point> points;
+          for (int i=0; i<p.size(); i++)
+          {
+            points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
+          }
+          auto array = mesh.geodesicDistance(points);
+          return arrToPy(array, MOVE_ARRAY);
+       },
+       "computes geodesic distance between a set of points (curve) and all vertices on mesh",
+       "curve"_a)
 
   .def("curvature",
        [](Mesh &mesh, const Mesh::CurvatureType type) -> decltype(auto) {
           auto array = mesh.curvature(type);
-          const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                 static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                 1};
-          auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-          vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-          // LOTS of copying going on here, see github #903
-          array->GetData(0, array->GetNumberOfTuples()-1,
-                         0, array->GetNumberOfComponents()-1,
-                         vtkarr);                               // copy1
-          return py::array(py::dtype::of<double>(),
-                         shape,
-                         vtkarr->GetVoidPointer(0));          // copy2
+          return arrToPy(array, MOVE_ARRAY);
      },
      "computes and adds curvature (principal (default) or gaussian or mean)",
      "type"_a=Mesh::CurvatureType::Principal)
@@ -1202,49 +1103,21 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldNames,
        "print all field names in mesh")
 
-  //TODO: See github issue #966
   .def("setField",
-       [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
-         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
-         arr->SetNumberOfValues(v.size());
-         for (int i=0; i<v.size(); i++) {
-           arr->SetTuple1(i, v[i]);
-         }
-         return mesh.setField(name, arr);
+       [](Mesh &mesh, const std::string& name, py::array& array) -> decltype(auto) {
+         auto vtkarr = pyToArr(array);
+         return mesh.setField(name, vtkarr);
        },
        "sets the given field for points with array",
-       "array"_a, "name"_a)
-
-  //TODO: See github issue #966
-  .def("setField",
-       [](Mesh &mesh, std::vector<std::vector<double>>& v, std::string name) -> decltype(auto) {
-         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
-         arr->SetNumberOfComponents(3);
-         arr->SetNumberOfTuples(v.size());
-         for (int i=0; i<v.size(); i++) {
-           arr->SetTuple3(i, v[i][0], v[i][1], v[i][2]);
-          }
-         return mesh.setField(name, arr);
-       },
-       "sets the given field for points with array",
-       "array"_a, "name"_a)
+       "name"_a, "array"_a)
 
   .def("getField",
        [](const Mesh &mesh, std::string name) -> decltype(auto) {
          auto array = mesh.getField<vtkDataArray>(name);
-         const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                1};
-         auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-         vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-         // LOTS of copying going on here, see github #903
-         array->GetData(0, array->GetNumberOfTuples()-1,
-                        0, array->GetNumberOfComponents()-1,
-                        vtkarr);                               // copy1
-         return py::array(py::dtype::of<double>(),
-                          shape,
-                          vtkarr->GetVoidPointer(0));          // copy2
+         if (!array) {
+           throw std::invalid_argument("field '" + name + "' does not exist");
+         }
+         return arrToPy(array, SHARE_ARRAY);
        },
        "gets the field",
        "name"_a)
@@ -1258,6 +1131,11 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::getFieldValue,
        "gets the value at the given index of field",
        "idx"_a, "name"_a)
+
+    .def("getMultiFieldValue",
+         &Mesh::getMultiFieldValue,
+         "gets the vector value at the given index of field",
+         "idx"_a, "name"_a)
 
   .def("getFieldRange",
        &Mesh::getFieldRange,
@@ -1306,19 +1184,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::string>& filenames, bool autoGenerateNormals) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(filenames, autoGenerateNormals);
-                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                         1};
-                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-                  // LOTS of copying going on here, see github #903
-                  array->GetData(0, array->GetNumberOfTuples()-1,
-                                 0, array->GetNumberOfComponents()-1,
-                                 vtkarr);                               // copy1
-                  return py::array(py::dtype::of<double>(),
-                                   shape,
-                                   vtkarr->GetVoidPointer(0));          // copy2
+                  return arrToPy(array, MOVE_ARRAY);
                },
                "computes average normals for each point in given set of meshes",
                "filenames"_a, "autoGenerateNormals"_a=true)
@@ -1326,19 +1192,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("computeMeanNormals",
                [](const std::vector<std::reference_wrapper<const Mesh>>& meshes) -> decltype(auto) {
                   auto array = MeshUtils::computeMeanNormals(meshes);
-                  const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
-                                                         static_cast<unsigned long>(array->GetNumberOfComponents()),
-                                                         1};
-                  auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-                  vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-
-                  // LOTS of copying going on here, see github #903
-                  array->GetData(0, array->GetNumberOfTuples()-1,
-                                 0, array->GetNumberOfComponents()-1,
-                                 vtkarr);                               // copy1
-                  return py::array(py::dtype::of<double>(),
-                                   shape,
-                                   vtkarr->GetVoidPointer(0));          // copy2
+                  return arrToPy(array, MOVE_ARRAY);
                },
                "computes average normals for each point in given set of meshes",
                "meshes"_a)
@@ -1360,6 +1214,12 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("D",
        &ParticleSystem::D)
+
+  .def("ExactCompare",
+       &ParticleSystem::ExactCompare)
+
+  .def("EvaluationCompare",
+       &ParticleSystem::EvaluationCompare)
   ;
 
   // ShapeEvaluation

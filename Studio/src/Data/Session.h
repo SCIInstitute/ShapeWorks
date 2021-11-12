@@ -10,6 +10,7 @@
 
 #include <itkMatrixOffsetTransformBase.h>
 
+#include <Shapeworks.h>
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
