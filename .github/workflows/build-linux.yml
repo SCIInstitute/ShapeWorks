@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - remote_cache
     tags:
     - '*'
   pull_request:
@@ -24,6 +25,21 @@ jobs:
     
     steps:
 
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - name: try ssh
+      run: |
+        ssh runner@${{ secrets.SSH_HOST }} ls
+
+    - name: try scp
+      run: |
+        scp runner@${{ secrets.SSH_HOST }}:github/file .
+        cat file
+        
     - name: Conda info
       run: conda info
 
@@ -39,6 +55,12 @@ jobs:
       shell: bash -l {0}
       run: source ./install_shapeworks.sh
 
+    - name: cache conda installs
+      shell: bash -l {0}
+      run: |
+        tar -cjvf ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.bz2 /opt/conda/envs/shapeworks
+        scp ${{ hashFiles('**/build_dependencies.sh') }}-conda-linux.tar.bz2  runner@${{ secrets.SSH_HOST }}:github
+      
     - name: install ccache
       shell: bash -l {0}
       run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
