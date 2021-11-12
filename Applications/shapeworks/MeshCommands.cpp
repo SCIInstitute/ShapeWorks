@@ -641,7 +641,8 @@ void Distance::buildParser()
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
-  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
+  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-cell").help("Method used to compute distance (point-to-point or point-to-cell) [default: %default].");
+  parser.add_option("--ids").action("store").type("bool").set_default(false).help("Set shared field to the ids of the closest points/cells instead of the distances [default: false].");
   parser.add_option("--summary").action("store").type("bool").set_default(true).help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
@@ -656,6 +657,7 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   bool summary = static_cast<bool>(options.get("summary"));
+  bool ids = static_cast<bool>(options.get("ids"));
 
   std::string methodopt(options.get("method"));
 
@@ -669,17 +671,17 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   Mesh other(otherMesh);
 
   if (methodopt == "point-to-point") {
-    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToPoint);
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToPoint)[ids];
   }
   else if (methodopt == "point-to-cell") {
-    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToCell);
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToCell)[ids];
   }
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
   }
 
-  if (summary)
+  if (summary && !ids)
   {
     auto distRange = range(sharedData.field);
     auto dist = std::max(distRange[0], distRange[1]);

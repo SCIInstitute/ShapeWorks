@@ -1022,18 +1022,18 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("vertexDistance",
        [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
-          auto array = mesh.distance(target, Mesh::DistanceMethod::PointToPoint);
-          return arrToPy(array, MOVE_ARRAY);
+          auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToPoint);
+          return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
        },
-       "computes distance from vertices of this mesh to closest vertices of target mesh",
+       "computes closest distance from vertices of this mesh target mesh, returning indices of vertices in target mesh nearest to closest points",
        "target"_a)
 
   .def("distance",
        [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
-          auto array = mesh.distance(target);
-          return arrToPy(array, MOVE_ARRAY);
+         auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToCell);
+         return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
        },
-       "computes distance from vertices of this mesh to closest point on faces of target mesh",
+       "computes closest distance from vertices of this mesh target mesh, returning indices of faces in target mesh that contain closest points",
        "target"_a)
 
   .def("clipClosedSurface",

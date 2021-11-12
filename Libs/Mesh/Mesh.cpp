@@ -460,16 +460,20 @@ Mesh& Mesh::fixElement()
   return *this;
 }
 
-Field Mesh::distance(const Mesh &target, const DistanceMethod method) const
+std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod method) const
 {
   if (target.numPoints() == 0 || numPoints() == 0)
     throw std::invalid_argument("meshes must have points");
 
-  // allocate Array to store distances from each point to target
+  // allocate Arrays to store distances and cell ids from each point to target
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("distance");
+  vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetNumberOfTuples(numPoints());
+  ids->SetName("ids");
 
   // Find the nearest neighbors to each point and compute distance between them
   Point currentPoint, closestPoint;
@@ -487,6 +491,7 @@ Field Mesh::distance(const Mesh &target, const DistanceMethod method) const
         mesh->GetPoint(i, currentPoint.GetDataPointer());
         vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint.GetDataPointer());
         target.mesh->GetPoint(closestPointId, closestPoint.GetDataPointer());
+        ids->SetValue(i, closestPointId);
         distance->SetValue(i, length(currentPoint - closestPoint));
       }
     }
@@ -506,8 +511,8 @@ Field Mesh::distance(const Mesh &target, const DistanceMethod method) const
       for (int i = 0; i < numPoints(); i++)
       {
         mesh->GetPoint(i, currentPoint.GetDataPointer());
-        // TODO: create and return a field of the cellIds as well as the distances
         targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
+        ids->SetValue(i, cellId);
         distance->SetValue(i, std::sqrt(dist2));
       }
     }
@@ -517,10 +522,11 @@ Field Mesh::distance(const Mesh &target, const DistanceMethod method) const
       throw std::invalid_argument("invalid distance method");
   }
 
-  // TODO: return the two fields as a vector of Fields (since Fields are vtkSmartPointers this is cheap, no std::reference_wrappers needed).
-  // TODO^2: do the same thing for the other couple functions below that set a field and return the other field (they shouldn't be setting a field)
-  return distance;
+  return std::vector<Field>{ distance, ids };
 }
+
+// TODO^2: do the same thing for the other couple functions below that set a field and return the other field (they shouldn't be setting a field)
+  
 
 Mesh& Mesh::clipClosedSurface(const Plane plane)
 {

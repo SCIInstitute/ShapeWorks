@@ -543,11 +543,15 @@ TEST(MeshTests, distanceTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  femur.setField("distance", femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint));
-  pelvis.setField("distance", pelvis.distance(femur, Mesh::DistanceMethod::PointToPoint));
+  auto f2p_distances = femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint);
+  auto p2f_distances = pelvis.distance(femur, Mesh::DistanceMethod::PointToPoint);
+  femur.setField("distance", f2p_distances[0]);
+  pelvis.setField("distance", p2f_distances[0]);
+  femur.setField("closestPoints", f2p_distances[1]);
+  pelvis.setField("closestPoints", p2f_distances[1]);
 
-  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
-  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
+  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance_point_fwd.vtk");
+  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance_point_rev.vtk");
   ASSERT_TRUE(femur == f2p);
   ASSERT_TRUE(pelvis == p2f);
 }
@@ -556,11 +560,15 @@ TEST(MeshTests, distanceTest2)
 {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  femur1.setField("distance", femur1.distance(femur2, Mesh::DistanceMethod::PointToCell));
-  femur2.setField("distance", femur2.distance(femur1, Mesh::DistanceMethod::PointToPoint));
+  auto fwd_distances = femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
+  auto rev_distances = femur2.distance(femur1, Mesh::DistanceMethod::PointToCell);
+  femur1.setField("distance", fwd_distances[0]);
+  femur2.setField("distance", rev_distances[0]);
+  femur1.setField("closestCells", fwd_distances[1]);
+  femur2.setField("closestCells", rev_distances[1]);
 
-  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
-  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
+  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
+  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
   ASSERT_TRUE(femur1 == fwd);
   ASSERT_TRUE(femur2 == rev);
 }

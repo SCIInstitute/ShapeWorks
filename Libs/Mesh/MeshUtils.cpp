@@ -148,7 +148,8 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
         transformed.applyTransform(transform);
 
         // compute distance
-        double distance = mean(transformed.distance(meshes[pair.second]));
+        auto distances = transformed.distance(meshes[pair.second])[0];
+        double distance = mean(distances);
         {
           // lock and store results
           tbb::mutex::scoped_lock lock(mutex);

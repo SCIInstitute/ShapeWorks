@@ -91,9 +91,10 @@ public:
   /// fix element winding of mesh
   Mesh& fixElement();
 
-  /// computes distance from each vertex in this mesh to the closest location
-  /// (PointToCell, the default) or closest vertex (PointToPoint) in target mesh
-  Field distance(const Mesh &target, const DistanceMethod method = PointToCell) const;
+  /// Computes distance from each vertex to closest cell or point in target
+  /// mesh, specified as PointToCell (default) or PointToPoint. Returns Fields
+  /// containing distance to target and ids of the associated cells or points.
+  std::vector<Field> distance(const Mesh &target, const DistanceMethod method = PointToCell) const;
 
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
