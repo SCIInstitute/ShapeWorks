@@ -55,8 +55,7 @@ jobs:
 
     - name: run script
       shell: bash -l {0}
-      run: |
-        .github/workflows/check.sh
+      run: .github/workflows/check.sh
       
     - name: conda installs
       shell: bash -l {0}

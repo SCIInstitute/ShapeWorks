@@ -1,6 +1,11 @@
 #!/bin/bash
 
+echo "pwd = `pwd`"
+
 env
+
+ls ShapeWorks
+
 hash=($(hash install_shapeworks.sh))
 file=conda-linux-${hash}.tar.gz
 
