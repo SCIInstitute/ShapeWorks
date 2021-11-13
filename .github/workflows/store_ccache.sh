@@ -4,13 +4,12 @@ echo "#############################"
 echo "# Store CCache              #"
 echo "#############################"
 
-PLATFORM=linux
+. $GITHUB_WORKSPACE/.github/workflows/common.sh
 
-FILE="${PLATFORM}-ccache.tar.gz"
-
+ccache -r
 ccache -s
 cd /
-tar --use-compress-program=pigz -cf ${FILE} /root/.ccache
+tar --use-compress-program=pigz -cf ${CCACHE_FILE} $HOME/.ccache
 
-scp ${FILE} runner@${CACHE_HOST}:github
-rm ${FILE}
+scp ${CCACHE_FILE} runner@${CACHE_HOST}:github
+rm ${CCACHE_FILE}
