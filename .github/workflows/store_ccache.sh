@@ -8,6 +8,7 @@ echo "#############################"
 
 ccache -r
 ccache -s
+ccache -s
 cd /
 tar --use-compress-program=pigz -cf ${CCACHE_FILE} $HOME/.ccache
 
