@@ -33,3 +33,4 @@ if [ -f ${DEP_FILE} ] ; then
     rm $DEP_FILE
 fi
 
+ccache -s
