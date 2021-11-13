@@ -33,7 +33,7 @@ call pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f h
 call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
 call pip install hotelling==0.5.0
-call pip install statsmodels
+call pip install statsmodels==0.13.0
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
