@@ -47,7 +47,7 @@ The following tools are supported from all three different interfaces - command 
 
 * **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
 
-* **API reference in Documentation:** Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out [Groups](../api/Modules/index_groups.md), [Classes](../api/Modules/index_classes.md), [Namespaces](), [Files](../api/Modules/index_files.md) for more details.
+* **API reference in Documentation:** Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out [Groups](http://sciinstitute.github.io/ShapeWorks/api/Modules/index_groups.html), [Classes](http://sciinstitute.github.io/ShapeWorks/api/Classes/index_classes.html), [Namespaces](http://sciinstitute.github.io/ShapeWorks/api/Namespaces/index_namespaces.html), [Files](http://sciinstitute.github.io/ShapeWorks/api/Files/index_files.html) for more details.
 
 #### Deep Learning
 
