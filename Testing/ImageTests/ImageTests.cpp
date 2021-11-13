@@ -437,8 +437,9 @@ TEST(ImageTests, boundingBoxSingleTest1)
   auto pbox = img.physicalBoundingBox();
   auto ground_truth = PhysicalRegion(Point({46.4821, -192.471, -737.593}),
                                      Point({134.482, -129.471, -609.593}));
-  ASSERT_TRUE(epsEqualN(pbox.min, ground_truth.min) &&
-              epsEqualN(pbox.max, ground_truth.max));
+
+  ASSERT_TRUE(epsEqual(pbox.min, ground_truth.min, 0.001) &&
+              epsEqual(pbox.max, ground_truth.max, 0.001));
 }
 
 TEST(ImageTests, boundingBoxSingleTest2)
@@ -1181,11 +1182,11 @@ TEST(ImageTests, vectorImageTest1)
   Vector v4 = interpolator.evaluate(pt4); v4.Normalize();
   Vector v5 = interpolator.evaluate(pt5);
 
-  ASSERT_TRUE(epsEqualN(v1, makeVector({0.966473, 0.309422, 0.0527124})) &&
-              epsEqualN(v2, makeVector({-0.549147, -0.504978, -0.732781})) &&
-              epsEqualN(v3, makeVector({-0.826156, 0.605647, -0.1373})) &&
-              epsEqualN(v4, makeVector({0.644471, 0.556214, 0.524674})) &&
-              epsEqualN(v5, makeVector({0.354269, -0.294689, 0.470524})));
+  ASSERT_TRUE(epsEqual(v1, makeVector({0.966473, 0.309422, 0.0527124}), 1e-6) &&
+              epsEqual(v2, makeVector({-0.549147, -0.504978, -0.732781}), 1e-6) &&
+              epsEqual(v3, makeVector({-0.826156, 0.605647, -0.1373}), 1e-6) &&
+              epsEqual(v4, makeVector({0.644471, 0.556214, 0.524674}), 1e-6) &&
+              epsEqual(v5, makeVector({0.354269, -0.294689, 0.470524}), 1e-6));
 }
 
 TEST(ImageTests, statsTest)
@@ -1196,10 +1197,10 @@ TEST(ImageTests, statsTest)
   double mean = image.mean();
   double std = image.std();
 
-  ASSERT_TRUE(equalNSigDigits(min, 0.0) &&
-              equalNSigDigits(max, 1.0) &&
-              equalNSigDigits(mean, 0.004166) &&
-              equalNSigDigits(std, 0.062299));
+  ASSERT_TRUE(epsEqual(min, 0.0, 1e-6) &&
+              epsEqual(max, 1.0, 1e-6) &&
+              epsEqual(mean, 0.004166, 1e-6) &&
+              epsEqual(std, 0.062299, 1e-6));
 }
 
 TEST(ImageTests, orientationTest1)

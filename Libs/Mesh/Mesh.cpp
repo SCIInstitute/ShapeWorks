@@ -948,7 +948,7 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
-    if (!epsEqualN(p1, p2, 5)) {
+    if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
 
@@ -1071,7 +1071,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
         }
       }
       else {
-        if (!equalNSigDigits(v1, v2, 5)) {
+        if (!epsEqual(v1, v2, 1e-5)) {
           printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
           return false;
         }
@@ -1084,13 +1084,13 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
 
 bool Mesh::compare(const Mesh& other, const double eps) const
 {
-  if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
-  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
-  if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
-  if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
-  if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
-  if (!compareAllFaces(other))                             { std::cerr << "faces differ\n"; return false; }
-  if (!compareAllFields(other, eps))                            { std::cerr << "fields differ\n"; return false; }
+  if (!epsEqual(center(), other.center(), 1e-2))             { std::cerr << "centers differ!\n"; return false; }
+  if (!epsEqual(centerOfMass(), other.centerOfMass(), 1e-3)) { std::cerr << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                      { std::cerr << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                        { std::cerr << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                              { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFaces(other))                               { std::cerr << "faces differ\n"; return false; }
+  if (!compareAllFields(other, eps))                         { std::cerr << "fields differ\n"; return false; }
 
   return true;
 }

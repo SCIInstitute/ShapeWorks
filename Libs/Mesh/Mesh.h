@@ -8,6 +8,13 @@ class vtkCellLocator;
 
 namespace shapeworks {
 
+/**
+ * \class Mesh
+ * \ingroup Group-Mesh
+ *
+ * This class encapsulates a Mesh and operations that can be performed on meshes
+ *
+ */
 class Mesh
 {
 public:

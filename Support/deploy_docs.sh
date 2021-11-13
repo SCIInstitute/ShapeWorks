@@ -29,6 +29,8 @@ else
     exit 1
 fi
 
+# install doxybook2
+${GITHUB_WORKSPACE}/Support/build_docs.sh $INSTALL_DIR
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -46,6 +48,7 @@ git checkout --track origin/gh-pages
 git pull --rebase
 git checkout master
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
 
       

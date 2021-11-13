@@ -96,6 +96,12 @@ nav:
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
 
+- API Reference:
+   - Groups:     'api/Modules/index_groups.md'
+   - Namespaces: 'api/Namespaces/index_namespaces.md'
+   - Classes:    'api/Classes/index_classes.md'
+   - Files:      'api/Files/index_files.md'
+
 - About:
    - 'Meet ShapeWorkers!':  'about/team.md'
    - 'Release Notes':      'about/release-notes.md'
