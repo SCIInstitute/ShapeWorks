@@ -11,7 +11,7 @@ cd /
 
 # Restore ccache
 mkdir $HOME/.ccache
-scp runner@${CACHE_HOST}:github/${CCACHE_FILE}.tar.gz .
+scp runner@${CACHE_HOST}:github/${CCACHE_FILE} .
 if [ -f ${CCACHE_FILE} ] ; then
     echo "ccache file was found"
     tar --use-compress-program=pigz -xf ${CCACHE_FILE}
@@ -35,5 +35,6 @@ if [ -f ${DEP_FILE} ] ; then
     rm $DEP_FILE
 fi
 
+which ccache
 ccache -p
 ccache -s

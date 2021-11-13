@@ -6,7 +6,8 @@ echo "#############################"
 
 . $GITHUB_WORKSPACE/.github/workflows/common.sh
 
-ccache -r
+which ccache
+ccache -p
 ccache -s
 ccache -s
 cd /
