@@ -19,7 +19,7 @@ call conda install --yes requests=2.22.0
 call conda install --yes openblas=0.3.3
 call conda install --yes numpy=1.17.4
 call conda install --yes scikit-learn=0.22.1
-call conda install --yes trimesh
+call conda install --yes trimesh=3.9.35
 call conda install --yes gtest=1.10.0 cmake-3.15.5
 call conda install --yes notebook=6.1.5
 
@@ -37,8 +37,8 @@ call pip install statsmodels==0.13.0
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
-call pip install shapely
-call pip install seaborn
+call pip install shapely==1.8.0
+call pip install seaborn==0.11.2
 call pip install mdutils
 call pip install mkdocs
 call pip install python-markdown-math
@@ -57,12 +57,12 @@ call .\Installation\install_python_module.bat
 call .\Installation\conda_env_setup.bat
 
 REM installs for jupyter notebooks
-call pip install nbstripout
+call pip install nbstripout==0.5.0
 call pip install pyvista==0.30.1
-call pip install ipyvtklink
-call pip install ipyvtk_simple
-call pip install ipywidgets
-call pip install itkwidgets
+call pip install ipyvtklink==0.2.1
+call pip install ipyvtk_simple==0.1.4
+call pip install ipywidgets==7.6.5
+call pip install itkwidgets==0.32.1
 call pip install mkdocs-jupyter
 
 REM for spell check markdown cells in jupyter notebooks and table of content

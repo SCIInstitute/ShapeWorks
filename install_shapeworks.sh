@@ -127,17 +127,17 @@ function install_conda() {
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi
   
-  if ! pip install trimesh;                             then return 1; fi
+  if ! pip install trimesh==3.9.28;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install hotelling==0.5.0;                    then return 1; fi
-  if ! pip install statsmodels==0.13.0;                         then return 1; fi
-  if ! pip install shapely;                             then return 1; fi
+  if ! pip install statsmodels==0.13.0;                 then return 1; fi
+  if ! pip install shapely==1.7.1;                      then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.0.1;                          then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
-  if ! pip install seaborn; then return 1; fi
+  if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
@@ -169,12 +169,12 @@ function install_conda() {
   
   # installs for jupyter notebooks
 
-  if ! pip install nbstripout;         then return 1; fi # to stripout notebooks output before committing  
-  if ! pip install pyvista==0.30.1;    then return 1; fi # for visualizations on notebooks
-  if ! pip install ipyvtklink;         then return 1; fi # for visualizations on notebooks
-  if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
-  if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
-  if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
+  if ! pip install nbstripout==0.5.0;    then return 1; fi # to stripout notebooks output before committing  
+  if ! pip install pyvista==0.30.1;      then return 1; fi # for visualizations on notebooks
+  if ! pip install ipyvtklink==0.2.1;    then return 1; fi # for visualizations on notebooks
+  if ! pip install ipyvtk_simple==0.1.4; then return 1; fi # for visualizations on notebooks
+  if ! pip install ipywidgets==7.6.3;    then return 1; fi # for visualizations on notebooks
+  if ! pip install itkwidgets==0.32.0;   then return 1; fi # for visualizations on notebooks
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
