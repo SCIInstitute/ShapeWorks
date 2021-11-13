@@ -14,8 +14,8 @@ else
 
     # build dependencies
     conda activate shapeworks
-    INSTALL_DIR=$HOME/install
-    BUILD_DIR=$HOME/build
+    export INSTALL_DIR=$HOME/install
+    export BUILD_DIR=$HOME/build
     ./build_dependencies.sh --build-type=$BUILD_TYPE
     rm -rf $HOME/build
 
