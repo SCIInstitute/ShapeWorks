@@ -65,6 +65,8 @@ The following tools are supported from all three different interfaces - command 
 
 * **Transforms in `Image` and `Mesh` API:** Separate transforms such as center of mass, rigid registration and thin plate spiline can be created. They are passed efficiently and transparently between Python and C++. These transform functions create and accept numpy arrays instead of using proprietary transform type in the Python API. A jupyter notebook was to demonstrate this for [images](../notebooks/create-and-apply-image-transforms.ipynb) and [meshes](../notebooks/create-and-apply-mesh-transforms.ipynb). 
 
+* **Optimizer exports alignment transforms:** Write individual procrustes transforms. The ShapeWorks `Optimizer` can now export individual procrustes transform files if requested. Use the xml tag `<write_transform_files> 1 </write_transform_files>` to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See [Optimize](../workflow/optimize.md) for more details.
+
 * **Improved testing:** More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (`verify.log`) is written that contains the use case outputs and summary.
 
 #### User's Support
@@ -75,7 +77,6 @@ The following tools are supported from all three different interfaces - command 
 
 * **Restructured `ellipsoid_evaluate` use case:** The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See [Ellipsoid: Shape Evaluation in Python](../use-cases/stats-based/ellipsoid-evaluate.md) for more details.
 
-* **Optimizer exports alignment transforms:** Write individual procrustes transforms. The ShapeWorks `Optimizer` can now export individual procrustes transform files if requested. Use the xml tag `<write_transform_files> 1 </write_transform_files>` to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See [Optimize](../workflow/optimize.md) for more details.
 
 ### Fixes
 
