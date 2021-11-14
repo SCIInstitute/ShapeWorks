@@ -104,8 +104,8 @@ function install_conda() {
   # linux (only) deps
   if [[ "$(uname)" == "Linux" ]]; then
     if ! conda install --yes \
-      zlib \
-      patchelf                              # required by install_python_module.sh
+      zlib=1.2.11 \
+      patchelf=0.13                          # required by install_python_module.sh
     then return 1; fi
   fi
 
@@ -134,7 +134,7 @@ function install_conda() {
   if ! pip install statsmodels==0.13.0;                 then return 1; fi
   if ! pip install shapely==1.7.1;                      then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
-  if ! pip install itk==5.0.1;                          then return 1; fi
+  if ! pip install itk==5.2.1.post1;                    then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi

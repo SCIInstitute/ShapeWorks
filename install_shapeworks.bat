@@ -34,16 +34,16 @@ call pip install termcolor==1.1.0
 call pip install matplotlib==3.1.2
 call pip install hotelling==0.5.0
 call pip install statsmodels==0.13.0
-call pip install itk==5.0.1
+call pip install itk==5.2.1.post1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
 call pip install shapely==1.8.0
 call pip install seaborn==0.11.2
-call pip install mdutils
-call pip install mkdocs
-call pip install python-markdown-math
-call pip install fontawesome-markdown
-call pip install pymdown-extensions
+call pip install mdutils==1.3.0
+call pip install mkdocs==1.1.2
+call pip install python-markdown-math==0.8
+call pip install fontawesome-markdown==0.2.6
+call pip install pymdown-extensions==8.0.1
 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
