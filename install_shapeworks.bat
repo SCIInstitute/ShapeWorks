@@ -63,10 +63,10 @@ call pip install ipyvtklink==0.2.1
 call pip install ipyvtk_simple==0.1.4
 call pip install ipywidgets==7.6.5
 call pip install itkwidgets==0.32.1
-call pip install mkdocs-jupyter
+call pip install mkdocs-jupyter=0.17.3
 
 REM for spell check markdown cells in jupyter notebooks and table of content
-call conda install --yes jupyter_contrib_nbextensions
+call conda install --yes jupyter_contrib_nbextensions=0.5.1
 call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main

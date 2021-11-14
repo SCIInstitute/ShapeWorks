@@ -178,13 +178,13 @@ function install_conda() {
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install --yes jupyter_contrib_nbextensions
+  conda install --yes jupyter_contrib_nbextensions=0.5.1
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
-    if ! pip install mkdocs-jupyter;                      then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
+    if ! pip install mkdocs-jupyter==0.17.3;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
     if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==1.1.0;               then return 1; fi # for mkdocs
 
