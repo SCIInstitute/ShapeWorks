@@ -144,6 +144,10 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../notebooks/array-passing-without-copying.html">Array passing without copying</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/create-and-apply-image-transforms.html">Transforms can be used to center image data or to align two images</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/create-and-apply-mesh-transforms.html">Transforms can also be used to align two meshes</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
                 <ul>
@@ -557,6 +561,9 @@ The following tools are supported from all three different interfaces - command 
 <li>
 <p><strong>Sub-sampling for multiple domains:</strong> We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.</p>
 </li>
+<li>
+<p><strong>API reference in Documentation:</strong> Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out <a href="http://sciinstitute.github.io/ShapeWorks/api/Modules/index_groups.html">Groups</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Classes/index_classes.html">Classes</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Namespaces/index_namespaces.html">Namespaces</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Files/index_files.html">Files</a> for more details.</p>
+</li>
 </ul>
 <h4 id="deep-learning">Deep Learning</h4>
 <ul>
@@ -572,7 +579,13 @@ The following tools are supported from all three different interfaces - command 
 <p><strong>Efficient data sharing between Python and C++:</strong> Added efficient sharing of large data between Python and C++ (for both <code>Mesh</code> fields and <code>Image</code> data) that enables Python tools which access <code>Mesh</code> fields or <code>Image</code> data for visualization and analysis, or wish to create an Image or add fields from NumPy to a <code>Mesh</code>, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. </p>
 </li>
 <li>
-<p><strong>Improved Python APIs:</strong> <code>Coordsys</code> of images in Python can now be set using <code>setCoordsys</code>. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks <code>Mesh</code> in Python to vtk mesh by creating a <code>PolyData</code> instead of performing IO operations. </p>
+<p><strong>Improved Python APIs:</strong> <code>Coordsys</code> of images in Python can now be set using <code>setCoordsys</code>. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks <code>Mesh</code> in Python to vtk mesh by creating a <code>PolyData</code> instead of performing IO operations.</p>
+</li>
+<li>
+<p><strong>Transforms in <code>Image</code> and <code>Mesh</code> API:</strong> Separate transforms such as center of mass, rigid registration and thin plate spiline can be created. They are passed efficiently and transparently between Python and C++. These transform functions create and accept numpy arrays instead of using proprietary transform type in the Python API. A jupyter notebook was to demonstrate this for <a href="../notebooks/create-and-apply-image-transforms.html">images</a> and <a href="../notebooks/create-and-apply-mesh-transforms.html">meshes</a>. </p>
+</li>
+<li>
+<p><strong>Optimizer exports alignment transforms:</strong> Write individual procrustes transforms. The ShapeWorks <code>Optimizer</code> can now export individual procrustes transform files if requested. Use the xml tag <code>&lt;write_transform_files&gt; 1 &lt;/write_transform_files&gt;</code> to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See <a href="../workflow/optimize.html">Optimize</a> for more details.</p>
 </li>
 <li>
 <p><strong>Improved testing:</strong> More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (<code>verify.log</code>) is written that contains the use case outputs and summary.</p>
@@ -588,9 +601,6 @@ The following tools are supported from all three different interfaces - command 
 </li>
 <li>
 <p><strong>Restructured <code>ellipsoid_evaluate</code> use case:</strong> The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See <a href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a> for more details.</p>
-</li>
-<li>
-<p><strong>Optimizer exports alignment transforms:</strong> Write individual procrustes transforms. The ShapeWorks <code>Optimizer</code> can now export individual procrustes transform files if requested. Use the xml tag <code>&lt;write_transform_files&gt; 1 &lt;/write_transform_files&gt;</code> to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See <a href="../workflow/optimize.html">Optimize</a> for more details.</p>
 </li>
 </ul>
 <h3 id="fixes">Fixes</h3>
