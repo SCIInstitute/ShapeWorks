@@ -204,8 +204,8 @@ def Run_Pipeline(args):
 
             # compute rigid transformation using the domain 1 segmentations
             shape_seg_list[i*domains_per_shape].antialias(antialias_iterations)
-            rigidTransform = shape_seg_list[i*domains_per_shape].createTransform(
-                reference, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+            rigidTransform = shape_seg_list[i*domains_per_shape].createRigidRegistrationTransform(
+                reference, iso_value, icp_iterations)
 
             # apply the transformation to each domain(each subject)
             for d in range(domains_per_shape):
@@ -305,12 +305,12 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 2,
         "domain_type" : 'image',
-        "relative_weighting" : 1, #10 mesh, # 1 for segmentation images
-        "initial_relative_weighting" : 0.05,
+        "relative_weighting" : 100, 
+        "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3
+        "verbosity" : 0
 
       }
 

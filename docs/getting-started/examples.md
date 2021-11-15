@@ -60,7 +60,7 @@ This use case demonstrates the functionality of shape statistics tools to perfor
 This use case demonstrates the functionality of shape statistics tools of ShapeWorks python API. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. This use case reads the correspondence model of the [Ellipsoid: Basic Example](../use-cases/segmentation-based/ellipsoid.md) use case. 
 
 ### [Ellipsoid: Shape Evaluation in Python](../use-cases/stats-based/ellipsoid-evaluate.md)
-This use case demonstrates the functionality of shape evaluation tools of ShapeWorks python API. These API's include calculation of quantitative evaluation metrics such as specificity, generalization, and compactness.For detailed explaination of the evaluation metrics, refer to [Shape Model Evaluation.](../../new/ssm-eval.md) 
+This use case demonstrates the functionality of shape evaluation tools of ShapeWorks python API. These API's include calculation of quantitative evaluation metrics such as specificity, generalization, and compactness.For detailed explaination of the evaluation metrics, refer to [Shape Model Evaluation.](../new/ssm-eval.md) 
 
 ## Deep Learning Based Use Cases
 ### [Femur Shape Model Directly from Images](../use-cases/deep-learning-based/deep-ssm-femur.md)

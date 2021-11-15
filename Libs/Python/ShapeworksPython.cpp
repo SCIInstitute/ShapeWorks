@@ -49,33 +49,6 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
-  // Transform
-  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "Transform")
-  .def("__repr__",
-       [](const TransformPtr &transform) {
-         std::stringstream stream;
-         itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
-         int r = 0;
-         for (int i=0; i<4; i++)
-         {
-           for (int j=0; j<3; j++)
-           {
-             stream << p[r] << " ";
-             r++;
-           }
-         }
-         return stream.str();
-       });
-
-  // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
-  m.def("createTransform",
-        [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
-          Matrix33 mat33 = eigenToItk<double, 3, 3>(mat);
-          return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
-        },
-        "creates transform from 3x3 matrix and translation vector",
-        "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
-
   m.def("seed",
         &ShapeworksUtils::setRngSeed,
         "sets the seed for random number generation (internal use)",
@@ -106,13 +79,15 @@ PYBIND11_MODULE(shapeworks_py, m)
         "convert to axis",
         "str"_a);
 
-  // TransformType
-  py::enum_<XFormType>(m, "TransformType")
-  .value("CenterOfMass", XFormType::CenterOfMass)
-  .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
-  .export_values();
+  // Transform
+  py::class_<ImageUtils::TPSTransform::Pointer>(m, "WarpTransform")
+    .def("__repr__",
+         [](const ImageUtils::TPSTransform::Pointer &transform) {
+           return "itkThinPlateSplineKernelTransform";
+         });
 
-  // Image::InterpolationType (even though this is part of Image, it feels cleaner to keep it global in the module)
+  // Image::InterpolationType (even though this is part of Image, it could be
+  // used elsewhere so we keep it global in the module)
   py::enum_<Image::InterpolationType>(m, "InterpolationType")
   .value("Linear", Image::InterpolationType::Linear)
   .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
@@ -207,13 +182,14 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("resample",
        [](Image& image,
-          const TransformPtr transform,
+          Eigen::Matrix<double, 4, 4> &eigen_mat,
           const std::vector<double>& p,
           const std::vector<unsigned>& d,
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp) -> decltype(auto) {
-         return image.resample(transform,
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.resample(itk_xform,
                                Point({p[0], p[1], p[2]}),
                                Dims({d[0], d[1], d[2]}),
                                makeVector({v[0], v[1], v[2]}),
@@ -295,25 +271,39 @@ PYBIND11_MODULE(shapeworks_py, m)
        "angle"_a, "axis"_a)
 
   .def("applyTransform",
-       py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform),
-       "applies the given transformation to the image by using resampling filter",
+       [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
+          Image::InterpolationType interp) -> decltype(auto){
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.applyTransform(itk_xform, interp);
+       },
+       "applies the given transformation to the image by using the specified resampling filter (Linear or NearestNeighbor)",
        "transform"_a, "interp"_a=Image::InterpolationType::Linear)
 
   .def("applyTransform",
-       [](Image& image, const TransformPtr transform,
+       [](Image &image, ImageUtils::TPSTransform::Pointer transform,
+          Image::InterpolationType interp) -> decltype(auto) {
+         return image.applyTransform(transform, interp);
+       },
+       "applies the given warp transformation to the image using the specified resampling filter (Linear or NearestNeighbor)",
+       "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("applyTransform",
+       [](Image& image,
+          Eigen::Matrix<double, 4, 4> &eigen_mat,
           const std::vector<double>& p,
           const std::vector<unsigned>& d,
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp) {
-         return image.applyTransform(transform,
+         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+         return image.applyTransform(itk_xform,
                                      Point({p[0], p[1], p[2]}),
                                      Dims({d[0], d[1], d[2]}),
                                      makeVector({v[0], v[1], v[2]}),
                                      eigenToItk(direction),
                                      interp);
        },
-       "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
+       "applies the given transformation to the image by using resampling filter with new origin, dims, spacing, and sampling along given direction axes (a 3x3 row-major matrix) using the specified interpolation method (Linear or NearestNeighbor)",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
        "interp"_a=Image::InterpolationType::NearestNeighbor)
 
@@ -581,15 +571,18 @@ PYBIND11_MODULE(shapeworks_py, m)
        "returns raw array of image data, directly sharing data by default, copying if specified.\nNOTE: many Image operations reallocate image array, so while the array returned from this function is writable, it is best used immediately for Python operations; use for_viewing argument to get array in column-major ('F') order ('sw2vtkImage' already does this).",
        "copy"_a=false, "for_viewing"_a=false)
 
-  .def("createTransform",
-       py::overload_cast<XFormType>(&Image::createTransform),
-       "creates a transform based on transform type",
-       "type"_a=XFormType::CenterOfMass)
+  .def("createCenterOfMassTransform",
+       [](Image &image) -> decltype(auto) {
+         return itkTransformToEigen(image.createCenterOfMassTransform());
+       },
+       "creates a transform that translates center of mass to center of image")
 
-  .def("createTransform",
-       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform),
-       "creates a transform based on transform type",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createRigidRegistrationTransform",
+       [](Image &image, const Image& other, float isovalue, unsigned iterations) -> decltype(auto) {
+         return itkTransformToEigen(image.createRigidRegistrationTransform(other, isovalue, iterations));
+       },
+       "creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations",
+       "target"_a, "isoValue"_a=0.0, "iterations"_a=20)
 
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
@@ -834,15 +827,8 @@ PYBIND11_MODULE(shapeworks_py, m)
               "images"_a, "isoValue"_a=1.0)
 
   .def_static("createWarpTransform",
-              [](const std::string &source_landmarks,
-                 const std::string &target_landmarks,
-                 const int stride) -> decltype(auto) {
-                auto xform_ptr = ImageUtils::createWarpTransform(source_landmarks,
-                                                                 target_landmarks,
-                                                                 stride);
-                return xform_ptr;
-              },
-              "computes a warp transform from the source to the target landmarks",
+              &ImageUtils::createWarpTransform,
+              "computes a warp transform from the source to the target landmarks (in the given files) using every stride points",
               "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
@@ -931,13 +917,17 @@ PYBIND11_MODULE(shapeworks_py, m)
        "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
 
   .def("createTransform",
-       &Mesh::createTransform,
-       "creates a transform based on transform type",
-       "target"_a, "type"_a=XFormType::IterativeClosestPoint,
-       "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+       [](Mesh &mesh, const Mesh& other, Mesh::AlignmentType type, unsigned iterations) -> decltype(auto) {
+         return vtkTransformToEigen(mesh.createTransform(other, type, iterations));
+       },
+       "creates a transform using specified AlignmentType (Mesh.Rigid, Mesh.Similarity, Mesh.Affine) for specified number of iterations (default alignment: Similarity, default iterations: 10)",
+       "target"_a, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
 
   .def("applyTransform",
-       &Mesh::applyTransform,
+       [](Mesh &mesh, Eigen::Matrix<double, 4, 4> &eigen_mat) -> decltype(auto){
+         auto vtk_xform = eigen44ToVtkTransform(eigen_mat);
+         return mesh.applyTransform(vtk_xform);
+       },
        "applies the given transformation to the mesh",
        "transform"_a)
 
@@ -947,7 +937,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("probeVolume",
        &Mesh::probeVolume,
-       "samples data values at specified point locations",
+       "samples image data values at point locations specified by image",
        "image"_a)
 
   .def("clip",

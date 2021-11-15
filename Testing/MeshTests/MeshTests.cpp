@@ -480,7 +480,7 @@ TEST(MeshTests, boundingBoxTest1)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, boundingBoxTest2)
@@ -498,7 +498,7 @@ TEST(MeshTests, boundingBoxTest2)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, antialiasTest3)
@@ -566,8 +566,8 @@ TEST(MeshTests, pointsTest)
   Point3 gn({3.35370102e+01,  1.25301433e+00,  3.71165695e+01});
 
   ASSERT_TRUE(verts.rows() == 14 && verts.cols() == 3);
-  ASSERT_TRUE(epsEqualN(p0, g0));
-  ASSERT_TRUE(epsEqualN(pn, gn));
+  ASSERT_TRUE(epsEqual(p0, g0, 1e-6));
+  ASSERT_TRUE(epsEqual(pn, gn, 1e-6));
 }
 
 TEST(MeshTests, facesTest)
@@ -590,7 +590,7 @@ TEST(MeshTests, getPointTest)
   auto p = ellipsoid.getPoint(7);
   auto closeToP = Point3({44.7543, 2.43769, 12.953});
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-4));
 }
 
 TEST(MeshTests, getFaceTest)
@@ -613,7 +613,7 @@ TEST(MeshTests, closestpointTest1)
   auto pNew = p + v;
   auto closeToP = ellipsoid.closestPoint(pNew);
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
 }
 
 TEST(MeshTests, closestpointTest2)
@@ -627,7 +627,7 @@ TEST(MeshTests, closestpointTest2)
   auto pNew = p - v * 1.1;
   auto closeToP = ellipsoid.closestPoint(pNew);
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
 }
 
 TEST(MeshTests, closestpointIdTest)
@@ -679,13 +679,35 @@ TEST(MeshTests, fieldTest3)
 
 //TODO: add tests for independent fields and fields on cells once #935 complete
 
-TEST(MeshTests, icpTest)
+TEST(MeshTests, icpTestRigid)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Rigid);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpRigid.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestSimilarity)
 {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target);
   source.applyTransform(transform);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpSimilarity.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestAffine)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Affine);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpAffine.ply");
 
   ASSERT_TRUE(source == ground_truth);
 }
@@ -798,7 +820,7 @@ TEST(MeshTests, findReferenceMeshTest)
   ASSERT_EQ(ref, 2);
 }
 
-TEST(MeshTests,addMesh)
+TEST(MeshTests, addMesh)
 {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
@@ -806,5 +828,5 @@ TEST(MeshTests,addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
-  
+
 }

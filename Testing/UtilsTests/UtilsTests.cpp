@@ -73,3 +73,42 @@ TEST(UtilsTests, wrapDataWithItk)
 
   ASSERT_TRUE(itk_mat == ground_truth);
 }
+
+TEST(UtilsTests, itkTransformToEigen)
+{
+  AffineTransformPtr xform(AffineTransform::New());
+  auto p = itk::Array<double>(12);
+  for (size_t i=0; i<p.size(); i++) p[i] = i*0.1;
+  xform->SetParameters(p);
+
+  auto eigen_mat = itkTransformToEigen(xform);
+
+  // the matrix
+  for (size_t i=0; i<3; i++)
+    for (size_t j=0; j<3; j++)
+      ASSERT_TRUE(eigen_mat(i, j) == p[i*3+j]);
+  // the transform
+  for (size_t j=0; j<3; j++)
+    ASSERT_TRUE(eigen_mat(3, j) == p[3*3+j]);
+}
+
+TEST(UtilsTests, eigen44ToItkTransform)
+{
+  Eigen::Matrix<double, 4, 4, Eigen::ColMajor> eigen_mat;
+  eigen_mat <<
+    0, 8, 9, 0,
+    1, 7, 2, 0,
+    0, 4, 5, 0,
+    96.6, 3.14, 42.2, 1;
+
+  auto xform = eigen44ToItkTransform(eigen_mat);
+  auto p = xform->GetParameters();
+  ASSERT_TRUE(p.size() == 12);
+  // the matrix
+  for (size_t i=0; i<3; i++)
+    for (size_t j=0; j<3; j++)
+      ASSERT_TRUE(eigen_mat(i, j) == p[i*3+j]);
+  // the transform
+  for (size_t j=0; j<3; j++)
+    ASSERT_TRUE(eigen_mat(3, j) == p[3*3+j]);
+}

@@ -3,7 +3,7 @@
 ## What is the Use Case?
 
 
-This use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints to capture inter-domains correlations and interactions directly on triangular surface meshes
+The `ellipsoid_multiple_domain_mesh` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints to capture inter-domains correlations and interactions directly on triangular surface meshes
 The dataset used by this use case:
 
 * ellipsoid_joint_size_aligned - two stacked ellipsoids, with the top ellipsoid displaying varying radiis in all 3 directions
@@ -41,7 +41,7 @@ NOTE:The list of `<inputs>` (surface mesh ) should be ordered consistently for e
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3
+        "verbosity" : 0
 
 }
 ```

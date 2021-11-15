@@ -25,50 +25,51 @@ See [Studio Metrics Panel](../studio/getting-started-with-studio.md#metrics-pane
 
 ![Studio DeepSSM - Shape Evaluation](../img/studio/studio_shape_evaluation.png){: width="600" }
 
-## Group p-value Display
+## Usability Features
+### Group p-value Display
 
 New in ShapeWorks 6.2, Studio has the ability to view group-wise p-values for surface differences.
 
 ![Studio DeepSSM - Group p-value](../img/studio/studio_group_pvalue.png){: width="600" }
 
-## Scalar range controls
+### Scalar range controls
 
 New in ShapeWorks 6.2, Studio feature maps, p-value displays, deepssm surface error displays allow for manual control over scalar colormap values.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_scale.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
-## Surface opacity controls
+### Surface opacity controls
 
 Shape surface opacity can now be controlled on a per domain basis.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_opacity_controls.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
-## Added narrow band optimization parameter
+### Added narrow band optimization parameter
 
 The narrow band optimization parameter has been added to Studio's Optimize parameter dialog.  This allows the user to modifiy the narrow band from the default of 4 in the rare event that it needs modification.
 
-## New message history window
+### New message history window
 
 A new button in the lower corner has been added that brings up the message history from the status bar.
 
 ![Studio Message History](../img/studio/studio_message_history.png){: width="600" }
 
 
-## New suppressible error dialog
+### New suppressible error dialog
 
 The error dialog has been replaced with a new dialog containing a checkbox to suppress further messages
 
 ![Studio Error Message](../img/studio/studio_error_message.png){: width="400" }
 
-## Multiple domain export options (combined + separate)
+### Multiple domain export options (combined + separate)
 
 When exporting data in the presences of multiple anatomies/domains, you may now export a combined file, or one for each domain.
 
 ![Studio Multiple Domain Question](../img/studio/studio_multiple_domain_question.png){: width="400" }
 
-## Allow initial landmark points
+### Allow initial landmark points
 
 Initial particle positions can be specified in a Project Spreadsheet using the column prefix `landmarks_file_<name>` where `<name>` is the name of each shape domain.  For example:
 

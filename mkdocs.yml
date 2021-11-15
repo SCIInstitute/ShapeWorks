@@ -34,6 +34,8 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+- ShapeWorks Tools:
+   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
    - 'Multiple Domains SSM': 'studio/multiple-domains.md'
@@ -44,7 +46,10 @@ nav:
    - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
    - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
    - 'Getting Started with Data Augmentation' :       'notebooks/getting-started-with-data-augmentation.ipynb'
-   - 'Getting Started with Shape Cohort Generation' :  'notebooks/getting-started-with-shape-cohort-generation.ipynb'
+   - 'Getting Started with Shape Cohort Generation' : 'notebooks/getting-started-with-shape-cohort-generation.ipynb'
+   - 'Array passing without copying' :                'notebooks/array-passing-without-copying.ipynb'
+   - 'Create and apply Image transforms' :            'notebooks/create-and-apply-image-transforms.ipynb'
+   - 'Create and apply Mesh transforms' :             'notebooks/create-and-apply-mesh-transforms.ipynb'
 - Deep Learning & SSMs:
    - 'PyTorch GPU Support for ShapeWorks':   'deep-learning/pytorch-gpu.md'
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
@@ -90,8 +95,13 @@ nav:
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
-- ShapeWorks Tools:
-   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
+
+- API Reference:
+   - Groups:     'api/Modules/index_groups.md'
+   - Namespaces: 'api/Namespaces/index_namespaces.md'
+   - Classes:    'api/Classes/index_classes.md'
+   - Files:      'api/Files/index_files.md'
+
 - About:
    - 'Meet ShapeWorkers!':  'about/team.md'
    - 'Release Notes':      'about/release-notes.md'

@@ -9,7 +9,13 @@ class vtkActor;
 
 namespace shapeworks {
 
-/// Helper functions for meshes
+/**
+ * \class MeshUtils
+ * \ingroup Group-Mesh
+ *
+ * This class provides helper functions for meshes
+ *
+ */
 class MeshUtils
 {
 public:
