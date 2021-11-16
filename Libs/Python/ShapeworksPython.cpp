@@ -1409,8 +1409,13 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_version)
 
   .def("set_subjects",
-       [](Project &project, std::vector<std::shared_ptr<Subject>> subjects) -> decltype(auto) {
-            return project.set_subjects(subjects);
+       [](Project &project, std::vector<Subject> subjects) -> decltype(auto) {
+            std::vector<std::shared_ptr<Subject>> sharedSubjects;
+            for (auto sub : subjects) {
+               std::shared_ptr<Subject> s = std::make_shared<Subject>(sub);
+               sharedSubjects.push_back(s);
+            }
+            return project.set_subjects(sharedSubjects);
        },
        "subjects"_a)
   ; // Project
