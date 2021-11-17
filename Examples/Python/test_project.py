@@ -17,9 +17,6 @@ import OptimizeUtils
 import AnalyzeUtils
 
 
-
-
-
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -48,8 +45,9 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            inputImages =[sw.Image(filename) for filename in file_list]
-            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
+            inputImages = [sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(
+                inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -246,30 +244,30 @@ def Run_Pipeline(args):
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
                                         shape_names, extension='nrrd', compressed=True, verbose=True)
 
-
-
         subjects = []
         number_domains = 1
         for i in range(len(shape_seg_list)):
-        	print(shape_names[i])
-        	subject = sw.Subject()
-        	subject.set_number_of_domains(number_domains)
-        	subject.set_segmentation_filenames([shape_names[i]])
-        	subject.set_groomed_filenames([groom_dir + 'distance_transforms/'+shape_names[i]])
-            	transform = np.ones((1,3))
-		subject.set_groomed_transforms(transform)
-		print(subject.get_groomed_transforms())
-		subjects.append(subject)
-        	
+            print(shape_names[i])
+            subject = sw.Subject()
+            subject.set_number_of_domains(number_domains)
+            subject.set_segmentation_filenames([shape_names[i]])
+            subject.set_groomed_filenames(
+                [groom_dir + 'distance_transforms/'+shape_names[i]])
+            transform = np.ones((4, 4))
+            transforms = [ transform.flatten() ]
+            subject.set_groomed_transforms(transforms)
+            print(subject.get_groomed_transforms())
+            subjects.append(subject)
+
         project = sw.Project()
         project.set_subjects(subjects)
 #     print("\nStep 3. Optimize - Particle Based Optimization\n")
 #     """
 #     Step 3: OPTIMIZE - Particle Based Optimization
 
-#     Now that we have the distance transform representation of data we create 
+#     Now that we have the distance transform representation of data we create
 #     the parameter files for the shapeworks particle optimization routine.
-#     For more details on the plethora of parameters for shapeworks please refer 
+#     For more details on the plethora of parameters for shapeworks please refer
 #     to docs/workflow/optimze.md
 #     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
 #     """
@@ -310,4 +308,4 @@ def Run_Pipeline(args):
 #     # Get data input (meshes if running in mesh mode, else distance transforms)
 #     parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
 
-#     
+#
