@@ -12,6 +12,7 @@ First import the necessary modules
 import os
 import glob
 import shapeworks as sw
+import numpy as np
 import OptimizeUtils
 import AnalyzeUtils
 
@@ -255,7 +256,11 @@ def Run_Pipeline(args):
         	subject.set_number_of_domains(number_domains)
         	subject.set_segmentation_filenames([shape_names[i]])
         	subject.set_groomed_filenames([groom_dir + 'distance_transforms/'+shape_names[i]])
-        	subjects.append(subject)
+            transform = np.ones((1,3))
+			subject.set_groomed_transforms(transform)
+			print(subject.get_groomed_transforms())
+			subjects.append(subject)
+        	
         project = sw.Project()
         project.set_subjects(subjects)
 #     print("\nStep 3. Optimize - Particle Based Optimization\n")
