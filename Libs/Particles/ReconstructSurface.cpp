@@ -1,47 +1,68 @@
 #include "ReconstructSurface.h"
+#include "StringUtils.h"
+#include "Mesh.h"
 // #include "ParticleBasedSurfaceReconstruction_InputParams.h"
 
 namespace shapeworks {
 
-ReconstructSurface::ReconstructSurface()
+ReconstructSurface::ReconstructSurface(TransformType transform, InterpType interp)
 {
-  // InputParams params;
-  // ReconstructionType reconstructor;
+  // switch (transform) {
+  //   case ThinPlateSplineTransform:
+  //     switch(interp) {
+  //       case LinearInterpolation:
+  //         // default
+  //         break;
+  //       case BSplineInterpolation:
+  //         this->reconstructor_ = Reconstruction <itk::ThinPlateSplineKernelTransform2,
+  //                                                    itk::BSplineInterpolateImageFunctionWithDoubleCoefficents,
+  //                                                    TCoordRep, Image::PixelType, Image::ImageType>();
+  //         break;
+  //     }
+  //     break;
+
+  //   case RBFSSparseTransform:
+  //     switch(interp) {
+  //       case LinearInterpolation:
+  //         using ReconstructionType = Reconstruction <itk::CompactlySupportedRBFSparseKernelTransform,
+  //                                                    itk::LinearInterpolateImageFunction,
+  //                                                    TCoordRep, Image::PixelType, Image::ImageType>;
+  //         break;
+  //       case BSplineInterpolation:
+  //         using ReconstructionType = Reconstruction <itk::CompactlySupportedRBFSparseKernelTransform,
+  //                                                    itk::BSplineInterpolateImageFunctionWithDoubleCoefficents,
+  //                                                    TCoordRep, Image::PixelType, Image::ImageType>;
+  //         break;
+  //     }
+  //     break;
+  // }
 }
 
 void ReconstructSurface::surface()
 {
-  ReconstructionType reconstructor;
-  reconstructor.readMeanInfo(this->denseFile, this->sparseFile, this->goodPointsFile);
+  reconstructor_.readMeanInfo(this->denseFile, this->sparseFile, this->goodPointsFile);
 
   for (unsigned int shapeNo = 0; shapeNo < this->localPointsFile.size(); shapeNo++)
   {
-    std::string basename = shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo]);
-    std::cout << "Processing: " << params.localPointsFilenames[shapeNo].c_str() << std::endl;
+    std::string basename = StringUtils::getFilename(this->localPointsFile[shapeNo]);
+    std::cout << "Processing: " << this->localPointsFile[shapeNo].c_str() << std::endl;
 
     PointArrayType curSparse;
-    Utils::readSparseShape(curSparse, const_cast<char*> (params.localPointsFilenames[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFile[shapeNo].c_str()));
 
-    vtkSmartPointer<vtkPolyData> curDense = reconstructor.getMesh(curSparse);
+    Mesh curDense = reconstructor_.getMesh(curSparse);
 
-    std::string outfilename = params.out_prefix + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.vtk";
+    std::string outfilename = this->out_prefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.vtk";
     std::cout << "Writing: " << outfilename << std::endl;
+    curDense.write(outfilename);
 
-    vtkSmartPointer<vtkPolyDataWriter> writer = vtkPolyDataWriter::New();
-    writer->SetFileName(outfilename.c_str());
-    writer->SetInputData(curDense);
-    writer->Update();
-
-    vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
-    vertices->DeepCopy( curDense->GetPoints() );
-
-    std::string ptsfilename = params.out_prefix + '/'+ shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.particles";
-    Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
+    std::string ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.particles";
+    Utils::writeSparseShape((char*) ptsfilename.c_str(), curDense.getVTKMesh()->GetPoints());
 
     vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
-    Utils::readSparseShape(curSparse_, const_cast<char*> (params.localPointsFilenames[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFile[shapeNo].c_str()));
 
-    ptsfilename = params.out_prefix + '/'+ shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_sparse.particles";
+    ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_sparse.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
   }
 }

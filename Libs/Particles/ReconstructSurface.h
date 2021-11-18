@@ -11,21 +11,30 @@ namespace shapeworks {
 class ReconstructSurface
 {
 public:
-  ReconstructSurface();
+  enum TransformType { ThinPlateSplineTransform, RBFSSparseTransform };
+  enum InterpType { LinearInterpolation, BSplineInterpolation };
+
+  ReconstructSurface(TransformType transform, InterpType);
 
   void surface();
+  void meanSurface();
+  void samplesAlongPCAModes();
 
 private:
-  // template<class TCoordRep, unsigned int> class TransformType;
   float normalAngle = Pi/2.0;
-  // using TransformType = itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;
   std::string denseFile;
   std::string sparseFile;
   std::string goodPointsFile;
   std::vector<std::string> localPointsFile;
-  
-  using ReconstructionType = Reconstruction <Reconstruction::TransformType, itk::LinearInterpolateImageFunction, double, float, Image::ImageType>;
+  std::string out_prefix;
+
   using PointArrayType = std::vector<Point3>;
+  using TCoordRep = double;
+  using ReconstructionType = Reconstruction <itk::ThinPlateSplineKernelTransform2,
+                          itk::LinearInterpolateImageFunction,
+                          TCoordRep, Image::PixelType, Image::ImageType>;
+  
+  ReconstructionType reconstructor_;
 
 };
 
