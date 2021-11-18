@@ -287,7 +287,6 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
 
   int total = mesh->GetNumberOfPoints();
   numVertices = std::max<int>(numVertices, 1);
-  numVertices = std::min<int>(numVertices, total);
 
   remesh->SetForceManifold(true);
   remesh->SetInput(surf);
