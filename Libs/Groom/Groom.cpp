@@ -318,7 +318,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 //---------------------------------------------------------------------------
 bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
 {
-  if (params.get_fill_holes_tool()) {
+  if (params.get_fill_mesh_holes_tool()) {
     mesh.fillHoles();
     this->increment_progress();
   }
