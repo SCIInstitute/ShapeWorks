@@ -11,7 +11,6 @@
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
-#include "FECVDDecimationModifier.h"
 #include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <igl/exact_geodesic.h>
@@ -34,7 +33,6 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
-#include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
 #include <vtkFillHolesFilter.h>
@@ -54,7 +52,6 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkNew.h>
-#include <vtkCellData.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 
@@ -242,50 +239,19 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   return *this;
 }
 
-Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
-{
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
-
-  decimator->SetInputData(this->mesh);
-  decimator->SetTargetReduction(reduction);
-  decimator->SetFeatureAngle(angle);
-  preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
-  decimator->BoundaryVertexDeletionOn();
-  decimator->Update();
-  this->mesh = decimator->GetOutput();
-
-  return *this;
-}
-
-Mesh &Mesh::cvdDecimate(double percentage)
-{
-  FEVTKimport import;
-  std::shared_ptr<FEMesh> meshFE(import.Load(this->mesh));
-
-  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
-
-  FECVDDecimationModifier cvd;
-  cvd.m_pct = percentage;
-  cvd.m_gradient = 1;
-  meshFE = std::shared_ptr<FEMesh>(cvd.Apply(meshFE.get()));
-
-  FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFE);
-
-  return *this;
-}
-
 Mesh& Mesh::remesh(int numVertices, double adaptivity)
 {
-  vtkSurface* surf = vtkSurface::New();
-  vtkQIsotropicDiscreteRemeshing* remesh = vtkQIsotropicDiscreteRemeshing::New();
+  // ACVD is very noisy to std::cout, even with console output set to zero
+  // setting the failbit on std::cout will silence this until it's cleared below
+  std::cout.setstate(std::ios_base::failbit);
+  auto surf = vtkSmartPointer<vtkSurface>::New();
+  auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
   surf->CreateFromPolyData(this->mesh);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
   surf->DisplayMeshProperties();
   int subsamplingThreshold = 10;  // subsampling threshold
 
-  int total = mesh->GetNumberOfPoints();
   numVertices = std::max<int>(numVertices, 1);
 
   remesh->SetForceManifold(true);
@@ -298,6 +264,8 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
   remesh->SetUnconstrainedInitialization(1);
   remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
+  // Restore std::cout
+  std::cout.clear();
 
   this->mesh = remesh->GetOutput();
 
@@ -305,6 +273,12 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
   computeNormals();
 
   return *this;
+}
+
+Mesh& Mesh::remeshPercent(double percentage, double adaptivity)
+{
+  int numVertices = mesh->GetNumberOfPoints() * percentage;
+  return remesh(numVertices, adaptivity);
 }
 
 Mesh &Mesh::invertNormals()
@@ -1564,7 +1538,7 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
   vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
   appendFilter->AddInputData(this->mesh);
   appendFilter->AddInputData(otherMesh.mesh);
-  
+
   // Remove any duplicate points.
   vtkSmartPointer<vtkCleanPolyData> cleanFilter= vtkSmartPointer<vtkCleanPolyData>::New();
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());

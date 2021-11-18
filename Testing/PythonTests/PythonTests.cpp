@@ -224,9 +224,9 @@ TEST(pythonTests, smoothTest)
   run_use_case("smooth.py");
 }
 
-TEST(pythonTests, decimateTest)
+TEST(pythonTests, remeshTest)
 {
-  run_use_case("decimate.py");
+  run_use_case("remesh.py");
 }
 
 TEST(pythonTests, invertnormalsTest)

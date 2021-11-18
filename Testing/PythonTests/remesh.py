@@ -4,76 +4,45 @@ from shapeworks import *
 
 success = True
 
-def decimateTest1():
-  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate(0.0, 0.0, False)
-
-  compareMesh = Mesh(os.environ["DATA"] + "/decimate1.vtk")
-
-  return mesh == compareMesh
-
-success &= utils.test(decimateTest1)
-
-def decimateTest2():
-  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate(0.0, 0.0)
-
-  compareMesh = Mesh(os.environ["DATA"] + "/decimate2.vtk")
-
-  return mesh == compareMesh
-
-success &= utils.test(decimateTest2)
-
-def decimateTest3():
-  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate()
-
-  compareMesh = Mesh(os.environ["DATA"] + "/decimate3.vtk")
-
-  return mesh == compareMesh
-
-success &= utils.test(decimateTest3)
-
-def decimateTest4():
-  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate(0.9, 25.5, False)
-
-  compareMesh = Mesh(os.environ["DATA"] + "/decimate4.vtk")
-
-  return mesh == compareMesh
-
-success &= utils.test(decimateTest4)
-
-def decimateTest5():
-  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate(0.9, 25.5)
-
-  compareMesh = Mesh(os.environ["DATA"] + "/decimate5.vtk")
-
-  return mesh == compareMesh
-
-success &= utils.test(decimateTest5)
-
-def decimateTest6():
+def remeshTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
-  seed(26)
-  mesh.cvdDecimate()
+  mesh.remesh(3000, 1.0)
 
-  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate1.ply")
+  compareMesh = Mesh(os.environ["DATA"] + "/remesh1.vtk")
 
   return mesh == compareMesh
 
-success &= utils.test(decimateTest6)
+success &= utils.test(remeshTest1)
 
-def decimateTest7():
+def remeshTest2():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  seed(42)
-  mesh.cvdDecimate(1.0)
+  mesh.remesh(1000, 2.0)
 
-  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate2.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/remesh2.vtk")
 
   return mesh == compareMesh
 
-success &= utils.test(decimateTest7)
+success &= utils.test(remeshTest2)
+
+def remeshPercentTest1():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.remeshPercent(0.25, 1.0)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/remeshPercent1.vtk")
+
+  return mesh == compareMesh
+
+success &= utils.test(remeshPercentTest1)
+
+def remeshPercentTest2():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.remeshPercent(0.1, 0.5)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/remeshPercent2.vtk")
+
+  return mesh == compareMesh
+
+success &= utils.test(remeshPercentTest2)
+
 
 sys.exit(not success)

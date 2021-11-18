@@ -50,14 +50,11 @@ public:
   /// applies vtk windowed sinc smoothing
   Mesh& smoothSinc(int iterations = 0, double passband = 0.0);
 
-  /// applies filter to reduce number of triangles in mesh
-  Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
+  /// applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity
+  Mesh& remesh(int numVertices, double adaptivity = 1.0);
 
-  /// applies cvd (centroidal voronoi diagram) decimation filter
-  Mesh& cvdDecimate(double percentage = 0.5);
-
-  /// remesh using ACVD
-  Mesh& remesh(int numVertices, double adaptivity);
+  /// applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity
+  Mesh& remeshPercent(double percentage, double adaptivity = 1.0);
 
   /// handle flipping normals
   Mesh& invertNormals();
