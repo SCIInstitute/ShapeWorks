@@ -275,7 +275,7 @@ Mesh &Mesh::cvdDecimate(double percentage)
   return *this;
 }
 
-Mesh& Mesh::remesh(int numVertices, double gradation)
+Mesh& Mesh::remesh(int numVertices, double adaptivity)
 {
   vtkSurface* surf = vtkSurface::New();
   vtkQIsotropicDiscreteRemeshing* remesh = vtkQIsotropicDiscreteRemeshing::New();
@@ -292,9 +292,9 @@ Mesh& Mesh::remesh(int numVertices, double gradation)
   remesh->SetForceManifold(true);
   remesh->SetInput(surf);
   remesh->SetFileLoadSaveOption(0);
-  remesh->SetConsoleOutput(2);
+  remesh->SetConsoleOutput(0);
   remesh->SetSubsamplingThreshold(subsamplingThreshold);
-  remesh->GetMetric()->SetGradation(gradation);
+  remesh->GetMetric()->SetGradation(adaptivity);
   remesh->SetDisplay(false);
   remesh->SetUnconstrainedInitialization(1);
   remesh->SetNumberOfClusters(numVertices);
