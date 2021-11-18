@@ -48,6 +48,14 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->sinc_passband->setToolTip("Windowed sinc pass band");
   ui_->sinc_iterations->setToolTip("Windowed sinc iterations.  Minimum number of iterations is 2");
 
+  ui_->remesh_checkbox->setToolTip("Enable remeshing to create a more uniform adaptive mesh.  Also fixes many mesh problems.");
+  ui_->remesh_percent_checkbox->setToolTip("Check this box to set the number of vertices based on a percentage of the mesh's current number of vertices");
+  ui_->remesh_percent_slider->setToolTip("Set the amount of vertices as a percentage of the current number of vertices.");
+  ui_->remesh_num_vertices->setToolTip("Set the desired number of vertices.");
+  ui_->remesh_gradation_slider->setToolTip("Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
+  ui_->remesh_gradation_spinbox->setToolTip("Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
+
+
   // connect percent controls
   connect(ui_->remesh_percent_slider, &QSlider::valueChanged,
           [=](int value) { ui_->remesh_percent_spinbox->setValue(value); });
