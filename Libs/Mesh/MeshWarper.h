@@ -13,6 +13,13 @@
 
 namespace shapeworks {
 
+/**
+ * \class MeshWarper
+ * \ingroup Group-Mesh
+ *
+ * This class implements mesh warping based on correspondence particles
+ *
+ */
 class MeshWarper {
 
 public:
