@@ -73,6 +73,8 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
+*ShapeWorks 6.2 tour - DeepSSM in Studio, multi-domain alignments, shape evaluation charts, scalar and opacity controls, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.2.mp4" autoplay muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.1 tour - multi-domain support, mesh grooming, improved models for complex anatomies, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" autoplay muted loop controls style="width:100%"></p>
