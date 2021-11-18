@@ -1428,10 +1428,15 @@ background: rgb(12, 255, 127)
   <tabstop>mesh_fill_holes</tabstop>
   <tabstop>mesh_smooth</tabstop>
   <tabstop>mesh_smooth_method</tabstop>
-  <tabstop>sinc_iterations</tabstop>
-  <tabstop>sinc_passband</tabstop>
   <tabstop>laplacian_iterations</tabstop>
   <tabstop>laplacian_relaxation</tabstop>
+  <tabstop>remesh_checkbox</tabstop>
+  <tabstop>remesh_percent_checkbox</tabstop>
+  <tabstop>remesh_percent_slider</tabstop>
+  <tabstop>remesh_percent_spinbox</tabstop>
+  <tabstop>remesh_num_vertices</tabstop>
+  <tabstop>remesh_gradation_slider</tabstop>
+  <tabstop>remesh_gradation_spinbox</tabstop>
   <tabstop>reflect_checkbox</tabstop>
   <tabstop>reflect_column</tabstop>
   <tabstop>reflect_choice</tabstop>
@@ -1441,6 +1446,8 @@ background: rgb(12, 255, 127)
   <tabstop>skip_button</tabstop>
   <tabstop>run_groom_button</tabstop>
   <tabstop>restore_defaults</tabstop>
+  <tabstop>sinc_passband</tabstop>
+  <tabstop>sinc_iterations</tabstop>
  </tabstops>
  <resources/>
  <connections/>
