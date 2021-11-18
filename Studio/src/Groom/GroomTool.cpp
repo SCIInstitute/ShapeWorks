@@ -638,7 +638,6 @@ void GroomTool::update_ui()
 
   ui_->remesh_num_vertices_label->setVisible(!percent_mode);
   ui_->remesh_num_vertices->setVisible(!percent_mode);
-  ui_->remesh_vertices_labels->setVisible(!percent_mode);
 
 }
 
