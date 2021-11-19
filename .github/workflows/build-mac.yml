@@ -14,6 +14,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
   
 jobs:
   build:
