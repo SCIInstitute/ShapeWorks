@@ -644,7 +644,7 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_feature_names()
 {
-  if (!this->feature_names_set_) {
+  if (!this->feature_names_read_done_) {
     // grab feature volumes
     auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
 
@@ -672,12 +672,12 @@ std::vector<std::string> Project::get_feature_names()
           }
         }
       }
+      this->feature_names_read_done_ = true;
     }
 
     // combine
     feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
     this->feature_names_ = feature_names;
-    this->feature_names_set_ = true;
   }
 
   return this->feature_names_;

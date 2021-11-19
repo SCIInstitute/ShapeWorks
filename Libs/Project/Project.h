@@ -172,7 +172,9 @@ private:
   std::vector<std::string> mesh_scalars_;
 
   std::vector<std::string> feature_names_;
-  bool feature_names_set_{false};
+
+  // to avoid re-reading from mesh files each time the list of names is requested
+  bool feature_names_read_done_{false};
 
   std::vector<std::string> input_prefixes_;
 
