@@ -196,13 +196,6 @@ TEST(MeshTests, remeshTest2)
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
   ellipsoid.remesh(1000, 2.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh2.vtk");
-  ellipsoid.write("/tmp/whatever.vtk");
-
-  Mesh reread("/tmp/whatever.vtk");
-  ASSERT_TRUE(ellipsoid == reread);
-
-
-
   ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
