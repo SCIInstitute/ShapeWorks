@@ -34,7 +34,7 @@ jobs:
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
-        brew install ccache
+        brew install ccache md5sha1sum
 
     - name: Acquire 10.13 SDK
       run: |

@@ -22,6 +22,7 @@ else
 fi
 
 if [[ "$USE_CCACHE" == "ON" ]]; then
+    mkdir -p $CCACHE_DIR
     echo "compression = true" > $CCACHE_DIR/ccache.conf
 fi
 
