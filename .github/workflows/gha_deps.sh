@@ -16,6 +16,7 @@ else
     conda activate shapeworks
     export INSTALL_DIR=$HOME/install
     export BUILD_DIR=$HOME/build
+    export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
     ./build_dependencies.sh --build-type=$BUILD_TYPE
     rm -rf $HOME/build
 

@@ -9,15 +9,15 @@ echo "#############################"
 # based on root folder
 cd /
 
-# Restore ccache
-mkdir $HOME/.ccache
-scp runner@${CACHE_HOST}:github/${CCACHE_FILE} .
-if [ -f ${CCACHE_FILE} ] ; then
-    echo "ccache file was found"
-    tar --use-compress-program=pigz -xf ${CCACHE_FILE}
-    rm $CCACHE_FILE
+if [[ "$USE_CCACHE" == "ON" ]]; then
+    # Restore ccache
+    scp runner@${CACHE_HOST}:github/${CCACHE_FILE} .
+    if [ -f ${CCACHE_FILE} ] ; then
+	echo "ccache file was found"
+	tar --use-compress-program=pigz -xf ${CCACHE_FILE}
+	rm $CCACHE_FILE
+    fi
 fi
-cp /root/.ccache/ccache.conf $HOME/.ccache
 
 # Restore conda installs
 scp runner@${CACHE_HOST}:github/${CONDA_FILE} .
