@@ -33,7 +33,7 @@ jobs:
     - name: Get NSIS
       run: |
         curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
-        Expand-Archive -LiteralPath nsis.zip -DestinationPath .
+        Expand-Archive -LiteralPath ${{runner.workspace}}\nsis.zip -DestinationPath .
 
     - name: Restore Caches
       shell: bash -l {0}
