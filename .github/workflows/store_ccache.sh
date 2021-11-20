@@ -12,8 +12,8 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
     ccache -s
     ccache -s
     cd /
-    tar --use-compress-program=pigz -cf ${CCACHE_FILE} $CCACHE_DIR
+    tar --use-compress-program=pigz -cf /tmp/${CCACHE_FILE} $CCACHE_DIR
 
-    scp ${CCACHE_FILE} runner@${CACHE_HOST}:github
-    rm ${CCACHE_FILE}
+    scp /tmp/${CCACHE_FILE} runner@${CACHE_HOST}:github
+    rm /tmp/${CCACHE_FILE}
 fi

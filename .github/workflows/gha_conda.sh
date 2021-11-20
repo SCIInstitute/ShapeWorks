@@ -16,9 +16,10 @@ else
     source ./install_shapeworks.sh
 
     echo "Create and store cache"
-    tar --use-compress-program=pigz -cf ${CONDA_FILE} ${CONDA_PATH}
-    scp ${CONDA_FILE} runner@${CACHE_HOST}:github
-    rm ${CONDA_FILE}
+    cd /
+    tar --use-compress-program=pigz -cf /tmp/${CONDA_FILE} ${CONDA_PATH}
+    scp /tmp/${CONDA_FILE} runner@${CACHE_HOST}:github
+    rm /tmp/${CONDA_FILE}
 fi
 
 conda init bash

@@ -21,7 +21,8 @@ else
     rm -rf $HOME/build
 
     echo "Create and store cache"
-    tar --use-compress-program=pigz -cf ${DEP_FILE} ${DEP_PATH}
-    scp ${DEP_FILE} runner@${CACHE_HOST}:github
-    rm ${DEP_FILE}
+    cd /
+    tar --use-compress-program=pigz -cf /tmp/${DEP_FILE} ${DEP_PATH}
+    scp /tmp/${DEP_FILE} runner@${CACHE_HOST}:github
+    rm /tmp/${DEP_FILE}
 fi
