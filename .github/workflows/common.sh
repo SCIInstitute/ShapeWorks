@@ -6,6 +6,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     DEP_PATH="$HOME/install"
     CCACHE_DIR="/Users/runner/Library/Caches/ccache"
     USE_CCACHE="ON"
+    PATH="$(brew --prefix)/opt/gnu-tar/libexec/gnubin:$PATH"
 elif [[ "$OSTYPE" == "linux"* ]]; then
     source ~/.bashrc
     PLATFORM="linux"
