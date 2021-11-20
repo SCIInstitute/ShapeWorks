@@ -1025,7 +1025,7 @@ PYBIND11_MODULE(shapeworks_py, m)
           auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToPoint);
           return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
        },
-       "computes closest distance from vertices of this mesh target mesh, returning indices of vertices in target mesh nearest to closest points",
+       "computes closest distance from vertices of this mesh to target mesh, returning indices of vertices in target mesh nearest to closest points",
        "target"_a)
 
   .def("distance",
@@ -1033,7 +1033,7 @@ PYBIND11_MODULE(shapeworks_py, m)
          auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToCell);
          return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
        },
-       "computes closest distance from vertices of this mesh target mesh, returning indices of faces in target mesh that contain closest points",
+       "computes closest distance from vertices of this mesh to target mesh, returning indices of faces in target mesh that contain closest points",
        "target"_a)
 
   .def("clipClosedSurface",
@@ -1115,12 +1115,17 @@ PYBIND11_MODULE(shapeworks_py, m)
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toDistanceTransform(region, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region,
+          std::vector<double>& spacing,
+          std::vector<unsigned long>& padding) -> decltype(auto) {
+         return mesh.toDistanceTransform(region,
+                                         Point({spacing[0], spacing[1], spacing[2]}),
+                                         Dims({padding[0], padding[1], padding[2]}));
        },
        "converts specified region to distance transform image (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
+       "padding"_a=std::vector<unsigned long>({1, 1, 1}))
 
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {

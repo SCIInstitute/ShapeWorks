@@ -44,6 +44,16 @@
 
 namespace shapeworks {
 
+Image::Image(const Dims dims) : image(ImageType::New())
+{
+  ImageType::RegionType region;
+  region.SetSize(dims);
+  region.SetIndex(Coord({0,0,0}));
+
+  image->SetRegions(region);
+  image->Allocate();
+}
+
 Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
 {
   // ensure input image data is PixelType (note: it'll either be float or double)

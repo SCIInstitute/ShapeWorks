@@ -45,6 +45,9 @@
 #include <vtkImageStencil.h>
 #include <vtkDoubleArray.h>
 #include <vtkKdTreePointLocator.h>
+#include <vtkPointLocator.h>
+#include <vtkIncrementalOctreePointLocator.h>
+#include <vtkIncrementalPointLocator.h>
 #include <vtkCellLocator.h>
 #include <vtkGenericCell.h>
 #include <vtkPlaneCollection.h>
@@ -465,7 +468,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
   if (target.numPoints() == 0 || numPoints() == 0)
     throw std::invalid_argument("meshes must have points");
 
-  // allocate Arrays to store distances and cell ids from each point to target
+  // allocate Arrays to store distances and ids from each point to target
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
@@ -482,6 +485,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
   {
     case PointToPoint:
     {
+      // build point locator for target mesh
       vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
       targetPointLocator->SetDataSet(target.mesh);
       targetPointLocator->BuildLocator();
@@ -499,6 +503,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
 
     case PointToCell:
     {
+      // build cell locator for target mesh
       vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
       targetCellLocator->SetDataSet(target.mesh);
       targetCellLocator->BuildLocator();
@@ -511,7 +516,9 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
       for (int i = 0; i < numPoints(); i++)
       {
         mesh->GetPoint(i, currentPoint.GetDataPointer());
-        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
+        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(),
+                                            closestPoint.GetDataPointer(),
+                                            cell, cellId, subId, dist2);
         ids->SetValue(i, cellId);
         distance->SetValue(i, std::sqrt(dist2));
       }
@@ -526,7 +533,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
 }
 
 // TODO^2: do the same thing for the other couple functions below that set a field and return the other field (they shouldn't be setting a field)
-  
+// (search for setField and you'll see the 2-3 places it needs to be done)
 
 Mesh& Mesh::clipClosedSurface(const Plane plane)
 {
@@ -809,19 +816,67 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 //More info from #810:
 //1. to evaluate accuracy, given a mesh, compute a distance transform from *vtk[Static]CellLocator* *trimesh2* or *discregrid*, then extract isosurface (image to mesh) and compute surface2surface distance (Mesh::distance). What is the distribution of this error relative to voxel size used in conversion to distance transform?
 //2. it would be nice if we can add field to Image with face ids for each (closest) voxel (just in case we need it for projecting points on meshes or related tasks).
+// -> i.e., create two images; and yes we can if desired; maybe a... just don't want to compute distance twice
 //3.this is important to deprecate fids (which may already have been done)
-Image Mesh::toDistanceTransform(PhysicalRegion region, Point spacing) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, const Dims padding) const
 {
+  // NOTE: distance is positive inside, negative outside, so necessary to know which direction important
+
   // TODO: convert directly to DT (github #810)
   // 1) change signature to specify padding (default >= 1)
   //    check that padding is >= 1 and throw exception if not
   //    compute region
   // 2) creat an empty image of the correct size (no longer using toImage)
   // 3) go through each voxel's location with a loop nearly identical to the one above in Mesh::distance (using the PointToCell method, setting two fields in the image: the distance and the cell id.
+
+#if 0
+  // TODO: try this and produce images to compare
+  Image img(toImage(region, spacing));
+  img.antialias(50, 0.00).computeDT();
+
+#else
+  this->updateCellLocator();
+
+  // if no region, use mesh bounding box
+  if (region == PhysicalRegion()) {
+    region = boundingBox();
+  }
+
+  // compute dims
+  auto dims = toDims(region.size() / spacing) + Dims({padding[0]*2, padding[1]*2, padding[2]*2});
+
+  // allocate output image, setting origin and spacing
+  Image img(dims);
+  img.setSpacing(toVector(spacing));
+  auto origin = region.min - spacing * toPoint(padding);
+  img.setOrigin(origin);
+
+  auto itkimg = img.getITKImage();
+
+  bool outside;
+  double distance;
+  vtkIdType face_id;
+
+  // for each pixel, set value to be its distance to the mesh
+  for (int i = 0; i < dims[0]; i++)
+  {
+    for (int j = 0; j < dims[1]; j++)
+    {
+      for (int k = 0; k < dims[2]; k++)
+      {
+        auto idx = Image::ImageType::IndexType({i,j,k});
+        Point loc = Point({i*spacing[0]/2.0, j*spacing[1]/4.0, k*spacing[2]});
+
+        auto cp = closestPoint(loc, outside, distance, face_id);
+        itkimg->SetPixel(idx, outside ? -distance : distance);
+
+        // TODO: return vector of (pointers to) images, one with distances, one with face ids
+      }
+    }
+  }
+#endif
   
-  Image image(toImage(region, spacing));
-  image.antialias(50, 0.00).computeDT();
-  return image;
+  return img;
 }
 
 Point3 Mesh::center() const
