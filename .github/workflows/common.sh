@@ -26,7 +26,7 @@ else
 fi
 
 compress_file() {
-    if [[ "$OSTYPE" == "windows"* ]]; then
+    if [[ "$PLATFORM" == "windows" ]]; then
 	7z -spf a "$1" "$2"
     else
 	tar --use-compress-program=pigz -cf "$1" "$2"
@@ -34,7 +34,7 @@ compress_file() {
 }
 
 decompress_file() {
-    if [[ "$PLATFORM" == "windows"* ]]; then
+    if [[ "$PLATFORM" == "windows" ]]; then
 	7z -spf x $1
     else
 	tar --use-compress-program=pigz -xf "$1"

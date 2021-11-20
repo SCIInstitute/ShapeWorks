@@ -16,7 +16,7 @@ else
     conda activate shapeworks
     export INSTALL_DIR="$DEP_PATH"
     export BUILD_DIR=$HOME/build
-    if [[ "$OSTYPE" == "windows"* ]]; then
+    if [[ "$PLATFORM" == "windows" ]]; then
 	export INSTALL_DIR="C:\deps"
 	export BUILD_DIR="/c/bdeps"
     fi
