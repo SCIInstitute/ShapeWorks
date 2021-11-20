@@ -848,6 +848,7 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, cons
   // allocate output image, setting origin and spacing
   Image img(dims);
   img.setSpacing(toVector(spacing));
+
   auto origin = region.min - spacing * toPoint(padding);
   img.setOrigin(origin);
 
@@ -858,14 +859,14 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, cons
   vtkIdType face_id;
 
   // for each pixel, set value to be its distance to the mesh
-  for (int i = 0; i < dims[0]; i++)
+  for (int z = 0; z < dims[0]; z++)
   {
-    for (int j = 0; j < dims[1]; j++)
+    for (int y = 0; y < dims[1]; y++)
     {
-      for (int k = 0; k < dims[2]; k++)
+      for (int x = 0; x < dims[2]; x++)
       {
-        auto idx = Image::ImageType::IndexType({i,j,k});
-        Point loc = Point({i*spacing[0]/2.0, j*spacing[1]/4.0, k*spacing[2]});
+        auto idx = Image::ImageType::IndexType({z,y,x}); // itk images are indexed by slice,row,col
+        Point loc = Point({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
 
         auto cp = closestPoint(loc, outside, distance, face_id);
         itkimg->SetPixel(idx, outside ? -distance : distance);

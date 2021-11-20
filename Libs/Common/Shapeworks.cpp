@@ -13,9 +13,12 @@ Coord toCoord(const Dims &d) {
                 static_cast<itk::IndexValueType>(d[1]),
                 static_cast<itk::IndexValueType>(d[2])}); }
 Dims toDims(const Coord &c) {
-  return Dims({static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[0])),
-               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[1])),
-               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[2]))}); }
+  return Dims({
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[0]))),
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[1]))),
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[2])))
+    });
+}
 Dims toDims(const Point &p) {
   return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[0]))),
                static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[1]))),
