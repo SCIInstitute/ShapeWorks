@@ -7,7 +7,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     CCACHE_DIR="/Users/runner/Library/Caches/ccache"
     USE_CCACHE="ON"
     PATH="$(brew --prefix)/opt/gnu-tar/libexec/gnubin:$PATH"
-    SUFFIX=".tar.gz"
+    SUFFIX="tar.gz"
 elif [[ "$OSTYPE" == "linux"* ]]; then
     source ~/.bashrc
     PLATFORM="linux"
@@ -15,14 +15,14 @@ elif [[ "$OSTYPE" == "linux"* ]]; then
     DEP_PATH="$HOME/install"
     CCACHE_DIR="$HOME/.ccache"
     USE_CCACHE="ON"
-    SUFFIX=".tar.gz"
+    SUFFIX="tar.gz"
 else
     source ~/.bashrc
     PLATFORM="windows"
     CONDA_PATH="C:\Miniconda3\envs\shapeworks"
     DEP_PATH="C:\deps"
     USE_CCACHE="OFF"
-    SUFFIX=".7z"
+    SUFFIX="7z"
 fi
 
 compress_file() {
@@ -34,7 +34,7 @@ compress_file() {
 }
 
 decompress_file() {
-    if [[ "$OSTYPE" == "windows"* ]]; then
+    if [[ "$PLATFORM" == "windows"* ]]; then
 	7z -spf x $1
     else
 	tar --use-compress-program=pigz -xf "$1"
