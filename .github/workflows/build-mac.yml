@@ -57,10 +57,6 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
-    - name: install ccache
-      shell: bash -l {0}
-      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
-    
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
