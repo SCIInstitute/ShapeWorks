@@ -17,6 +17,7 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
 	decompress_file "/tmp/${CCACHE_FILE}"
 	rm /tmp/$CCACHE_FILE
     fi
+    ccache -s
 fi
 
 # Restore conda installs
@@ -35,6 +36,3 @@ if [ -f /tmp/${DEP_FILE} ] ; then
     rm /tmp/$DEP_FILE
 fi
 
-which ccache
-ccache -p
-ccache -s

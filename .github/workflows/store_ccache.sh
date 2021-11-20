@@ -10,7 +10,6 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
     which ccache
     ccache -p
     ccache -s
-    ccache -s
     cd /
     compress_file "/tmp/${CCACHE_FILE}" "${CCACHE_DIR}"
 
