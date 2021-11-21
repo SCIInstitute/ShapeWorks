@@ -13,7 +13,7 @@ cd /
 
 if [[ "$USE_CCACHE" == "ON" ]]; then
     # Restore ccache
-    scp runner@${CACHE_HOST}:github/${CCACHE_FILE} /tmp
+    scp runner@${CACHE_HOST}:github/${CCACHE_FILE} /tmp || true
     if [ -f /tmp/${CCACHE_FILE} ] ; then
 	echo "ccache file was found"
 	decompress_file "/tmp/${CCACHE_FILE}"
@@ -23,7 +23,7 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
 fi
 
 # Restore conda installs
-scp runner@${CACHE_HOST}:github/${CONDA_FILE} /tmp
+scp runner@${CACHE_HOST}:github/${CONDA_FILE} /tmp || true
 if [ -f /tmp/${CONDA_FILE} ] ; then
     echo "Conda Cache file was found"
     decompress_file "/tmp/${CONDA_FILE}"
@@ -31,7 +31,7 @@ if [ -f /tmp/${CONDA_FILE} ] ; then
 fi
 
 # Restore dependencies
-scp runner@${CACHE_HOST}:github/${DEP_FILE} /tmp
+scp runner@${CACHE_HOST}:github/${DEP_FILE} /tmp || true
 if [ -f /tmp/${DEP_FILE} ] ; then
     echo "Dependency Cache file was found"
     decompress_file "/tmp/${DEP_FILE}"
