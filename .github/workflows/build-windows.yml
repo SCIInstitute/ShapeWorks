@@ -36,13 +36,7 @@ jobs:
       run: |
         conda info
         conda list
-        command conda -v
-        which conda
     
-    - name: Which conda1
-      shell: bash -l {0}
-      run: which conda
-
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:

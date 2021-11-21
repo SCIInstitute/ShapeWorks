@@ -17,7 +17,7 @@ elif [[ "$OSTYPE" == "linux"* ]]; then
     USE_CCACHE="ON"
     SUFFIX="tar.gz"
 else
-    source ~/.bashrc
+    source /c/Users/runneradmin/.bash_profile
     PLATFORM="windows"
     CONDA_PATH="C:\Miniconda3\envs\shapeworks"
     DEP_PATH="C:\deps"
