@@ -42,16 +42,12 @@ jobs:
         curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath ${{runner.workspace}}\nsis.zip -DestinationPath .
 
-    - name: Which conda1
-      shell: bash -l {0}
-      run: which conda
-        
     - name: Setup Conda
       uses: conda-incubator/setup-miniconda@v2.0.0
       with:
           miniconda-version: 'latest'
 
-    - name: Which conda2
+    - name: Which conda1
       shell: bash -l {0}
       run: which conda
           
