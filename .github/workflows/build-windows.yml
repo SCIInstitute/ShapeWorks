@@ -41,6 +41,11 @@ jobs:
         curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath ${{runner.workspace}}\nsis.zip -DestinationPath .
 
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v2.0.0
+      with:
+          miniconda-version: 'latest'
+                  
     - name: Restore Caches
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
@@ -59,11 +64,6 @@ jobs:
         setup-python: 'false'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-    - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
-      with:
-          miniconda-version: 'latest'
-          
     - name: Conda info
       run: conda info
 
