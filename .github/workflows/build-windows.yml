@@ -36,6 +36,7 @@ jobs:
       run: |
         conda info
         conda list
+        which conda
     
     - name: Which conda1
       shell: bash -l {0}
