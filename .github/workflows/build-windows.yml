@@ -23,6 +23,18 @@ jobs:
     
     steps:
 
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v2.0.0
+      with:
+          miniconda-version: 'latest'
+
+    - name: Conda info
+      run: conda info
+      
+    - name: Which conda1
+      shell: bash -l {0}
+      run: which conda
+
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:
@@ -42,14 +54,6 @@ jobs:
         curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath ${{runner.workspace}}\nsis.zip -DestinationPath .
 
-    - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
-      with:
-          miniconda-version: 'latest'
-
-    - name: Which conda1
-      shell: bash -l {0}
-      run: which conda
           
     - name: Restore Caches
       shell: bash -l {0}
