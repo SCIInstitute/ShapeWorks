@@ -4,6 +4,8 @@ echo "#############################"
 echo "# Restore Caches            #"
 echo "#############################"
 
+set +e
+
 . $GITHUB_WORKSPACE/.github/workflows/common.sh
 
 # based on root folder
