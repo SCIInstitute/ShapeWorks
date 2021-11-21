@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - remote_cache
     tags:
     - '*'
   pull_request:
