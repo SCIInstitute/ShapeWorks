@@ -36,3 +36,4 @@ if [ -f /tmp/${DEP_FILE} ] ; then
     rm /tmp/$DEP_FILE
 fi
 
+echo "caches restored"
