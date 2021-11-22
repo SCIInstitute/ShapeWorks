@@ -9,7 +9,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     PATH="$(brew --prefix)/opt/gnu-tar/libexec/gnubin:$PATH"
     SUFFIX="tar.gz"
 elif [[ "$OSTYPE" == "linux"* ]]; then
-    source ~/.bashrc
+    if [ -f ~/.bashrc ] ; then
+	source ~/.bashrc
+    fi
     PLATFORM="linux"
     CONDA_PATH="/opt/conda/envs/shapeworks"
     DEP_PATH="$HOME/install"
