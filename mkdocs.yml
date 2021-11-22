@@ -48,6 +48,8 @@ nav:
    - 'Getting Started with Data Augmentation' :       'notebooks/getting-started-with-data-augmentation.ipynb'
    - 'Getting Started with Shape Cohort Generation' : 'notebooks/getting-started-with-shape-cohort-generation.ipynb'
    - 'Array passing without copying' :                'notebooks/array-passing-without-copying.ipynb'
+   - 'Create and apply Image transforms' :            'notebooks/create-and-apply-image-transforms.ipynb'
+   - 'Create and apply Mesh transforms' :             'notebooks/create-and-apply-mesh-transforms.ipynb'
 - Deep Learning & SSMs:
    - 'PyTorch GPU Support for ShapeWorks':   'deep-learning/pytorch-gpu.md'
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
