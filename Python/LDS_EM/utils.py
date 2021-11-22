@@ -15,7 +15,7 @@ def random_rotation(n, theta=None):
     q = np.linalg.qr(np.random.randn(n, n))[0]
     return q.dot(out).dot(q.T)
 
-def fix_covariance(A):
+def fix_covariance2(A):
     if isPD(A):
         return A
     else:
@@ -25,11 +25,10 @@ def fix_covariance(A):
         A2 = np.dot(u * s, vh)
         return A2
 
-def fix_covariance2(A):
+def fix_covariance(A):
     if isPD(A):
         return A
     else:
-        print("Fixing " + str(la.det(A)))
         """Find the nearest positive-definite matrix to input
 
         A Python/Numpy port of John D'Errico's `nearestSPD` MATLAB code [1], which
@@ -67,9 +66,9 @@ def fix_covariance2(A):
         k = 1
         while not isPD(A3):
             mineig = np.min(np.real(la.eigvals(A3)))
-            A3 += I * (-mineig * k**2 + spacing)
+            A3 += I * (-mineig * k**2 + np.spacing(la.norm(A)))
             k += 1
-
+            print(k)
     return A3
 
 
@@ -77,10 +76,42 @@ def isPD(B):
     """Returns true when input is positive-definite, via Cholesky"""
     try:
         _ = la.cholesky(B)
-        return True
+        if np.linalg.det(B) > 0:
+            return True
+        else:
+            return False
     except la.LinAlgError:
         return False
 
+def fix_covariance1(A):
+    # # symmetrize A into B
+    B = (A + A.T)/2
+    # # Compute the symmetric polar factor of B. Call it H.
+    # # Clearly H is itself SPD.
+    # if any(isnan(B(:))) || any(isinf(B(:)))
+    #     tt= 0;
+    # end
+    
+    U, sigma, V = la.svd(B)
+    H = np.dot(V, np.dot(np.diag(sigma), V.T))
+
+    # get Ahat in the above formula
+    Ahat = (B+H)/2;
+
+    # ensure symmetry
+    Ahat = (Ahat + Ahat.T)/2
+
+    # test that Ahat is in fact PD. if it is not so, then tweak it just a bit.
+    k = 1
+    while not isPD(Ahat):
+        # Ahat failed the chol test. It must have been just a hair off,
+        # due to floating point trash, so it is simplest now just to
+        # tweak by adding a tiny multiple of an identity matrix.
+        print(k)
+        mineig = np.min(np.real(la.eigvals(Ahat)))
+        Ahat = Ahat + (-mineig*k**2 + np.finfo(mineig).eps)*np.eye(A.shape[0])
+        k = k + 1
+    return Ahat
 
 if __name__ == '__main__':
     import numpy as np

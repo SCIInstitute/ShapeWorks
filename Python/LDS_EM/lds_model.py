@@ -25,12 +25,12 @@ class LDS_Model():
         self.N = num_samples
         
         # default observation parameters
-        self.W = np.ones((self.P, self.L))
-        self.obs_Sigma = np.eye(self.P)
+        self.W = np.random.randn(self.P, self.L)
+        self.obs_Sigma = 0.1*np.eye(self.P)
         
         # default states parameters
-        self.A = 0.99*utils.random_rotation(self.L, theta=45)
-        self.state_Sigma = np.eye(self.L)
+        self.A = 0.99*utils.random_rotation(self.L, theta=45) # Keep eigenvals less than 1
+        self.state_Sigma = 0.1*np.eye(self.L)
         self.mu_0 = np.zeros(self.L)
         self.V_0 = np.eye(self.L)
 
@@ -226,7 +226,7 @@ class LDS_Model():
             W_E_z_zt_Wt = sum([np.matmul(np.matmul(self.W, self.E_z_zT[n,t]), self.W.T) 
                         for t in range(self.T)])
             temp.append((x_xT - W_E_z_x - x_E_zt_W + W_E_z_zt_Wt)/self.T)
-        self.obs_Sigma = np.sum(temp, axis=0)/self.N
+        # self.obs_Sigma = np.sum(temp, axis=0)/self.N * np.eye(self.obs_Sigma.shape[0]) #diagonal
         self.obs_Sigma = utils.fix_covariance(self.obs_Sigma)
 
     '''

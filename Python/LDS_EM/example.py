@@ -24,9 +24,11 @@ def generate_ellipse_data(N, T, plot=False):
         data.append([])
         major_radius = np.random.random()*3 + 1
         x_values = major_radius*np.cos(angles)
+        # x_values = x_values + np.random.normal(0,1,x_values.shape)
         for i in range(T):
             minor_radius = np.sin(i*(np.pi/4)) + 2
             y_values = minor_radius*np.sin(angles)
+            # y_values = y_values + np.random.normal(0,1,y_values.shape)
             data[sample_index].append([x_values,y_values])
             if plot:
                 plt_x[sample_index].append(x_values)
