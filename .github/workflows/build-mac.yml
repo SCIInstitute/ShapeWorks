@@ -95,7 +95,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" -DBUILD_DOCUMENTATION=ON ..
 
     - name: make
       shell: bash -l {0}
@@ -132,3 +132,12 @@ jobs:
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
+
+    - name: Deploy Docs
+      if: github.ref == 'refs/heads/master'
+      shell: bash -l {0}
+      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             

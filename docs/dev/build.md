@@ -167,10 +167,12 @@ Optional:
     - You might need to build using `cmake --build . -j 16` to pass parallel flags to dependent projects (e.g., vtk) 
 - **XCode project:** `open ShapeWorks.xcodeproj` and build from there.  
 
-#### Before running Examples/Python scripts
+#### Before running Examples/Python scripts and Examples/Python/notebooks
+Developer environment should be set by using the `devenv.sh` script by running this:
 
-Add the ShapeWorks and dependency binaries to the path:  
- `$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH`  
+```
+$ source devenv.sh [build_directory]
+```
 
 #### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  

@@ -247,8 +247,8 @@ def Run_Pipeline(args):
                 print('Aligning ' + name + ' to ' + ref_name)
                 # compute rigid transformation
                 seg.antialias(antialias_iterations)
-                rigidTransform = seg.createTransform(
-                    ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+                rigidTransform = seg.createRigidRegistrationTransform(
+                    ref_seg, iso_value, icp_iterations)
                 # second we apply the computed transformation, note that shape_seg has
                 # already been antialiased, so we can directly apply the transformation
                 seg.applyTransform(rigidTransform,
@@ -424,8 +424,8 @@ def Run_Pipeline(args):
                 print('Aligning ' + name + ' to ' + ref_name)
                 # compute rigid transformation
                 seg.antialias(antialias_iterations)
-                rigidTransform = seg.createTransform(
-                    ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+                rigidTransform = seg.createRigidRegistrationTransform(
+                    ref_seg, iso_value, icp_iterations)
                 # second we apply the computed transformation, note that shape_seg has
                 # already been antialiased, so we can directly apply the transformation
                 seg.applyTransform(rigidTransform,
@@ -530,7 +530,7 @@ def Run_Pipeline(args):
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "debug_projection" : 0,
-        "verbosity" : 2,
+        "verbosity" : 0,
         "use_statistics_in_init" : 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,

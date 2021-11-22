@@ -2,7 +2,7 @@
 
 ## What is the Use Case? 
 
-This use case demonstrates the functionality of shape statistics tools of ShapeWorks python API. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. This use case reads the correspondence model of the ellipsoid segmentation images use case.
+The `ellipsoid_pca` use case demonstrates the functionality of shape statistics tools of ShapeWorks python API. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. This use case reads the correspondence model of the ellipsoid segmentation images use case.
 ![Ellipsoid Samples](../../img/use-cases/ellipsoids_samples.png)
 
 ## Relevant Arguments
