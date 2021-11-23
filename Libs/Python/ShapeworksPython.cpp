@@ -37,6 +37,7 @@ using namespace pybind11::literals;
 #include "ParticleShapeStatistics.h"
 #include "Project.h"
 #include "Subject.h"
+#include "Variant.h"
 #include "Parameters.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
@@ -1590,4 +1591,26 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Parameters::reset_parameters,
       "reset parameters to blank")
   ;//Parameters
+
+  py::class_<Variant>(m, "Variant")
+
+  .def(py::init<>())
+
+  .def(py::init< std::vector<int> >())
+
+  .def(py::init< std::vector<double> >())
+
+  .def(py::init< std::vector<bool> > ())
+
+  .def(py::init< const std::string& > ())
+
+  .def(py::init< int> ())
+
+  .def(py::init< double> ())
+
+  .def(py::init< const char*> ())
+
+  .def(py::init< bool> ())
+
+  ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)
