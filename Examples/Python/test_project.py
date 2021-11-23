@@ -15,8 +15,8 @@ import shapeworks as sw
 import numpy as np
 import OptimizeUtils
 import AnalyzeUtils
-
-
+import subprocess
+import shutil
 def Run_Pipeline(args):
 
 	print("\nStep 1. Extract Data\n")
@@ -107,6 +107,7 @@ def Run_Pipeline(args):
 		"""
 		Now we can loop over the segmentations and apply the initial grooming steps to themm
 		"""
+		COM_translations = []
 		for shape_seg, shape_name in zip(shape_seg_list, shape_names):
 
 			"""
@@ -148,7 +149,11 @@ def Run_Pipeline(args):
 			# perform antialias-translate-binarize
 			shape_seg.antialias(antialias_iterations).translate(
 				translationVector).binarize().recenter()
-
+			
+			translation = np.eye(4)
+			translation[0:3,-1] = translationVector
+			
+			COM_translations.append(translation)
 		"""
 		Grooming Step 3: Select a reference
 		This step requires breaking the loop to load all of the segmentations at once so the shape
@@ -176,6 +181,7 @@ def Run_Pipeline(args):
 		# Set the alignment parameters
 		iso_value = 1e-20
 		icp_iterations = 200
+		Rigid_transforms = [] 
 		# Now loop through all the segmentations and apply rigid alignment
 		for shape_seg, shape_name in zip(shape_seg_list, shape_names):
 			print('Aligning ' + shape_name + ' to ' + ref_name)
@@ -185,12 +191,13 @@ def Run_Pipeline(args):
 				ref_seg, iso_value, icp_iterations)
 			# second we apply the computed transformation, note that shape_seg has
 			# already been antialiased, so we can directly apply the transformation
-			shape_seg.applyTransform(rigidTransform,
-									 ref_seg.origin(),  ref_seg.dims(),
-									 ref_seg.spacing(), ref_seg.coordsys(),
-									 sw.InterpolationType.Linear)
-			# then turn antialized-tranformed segmentation to a binary segmentation
-			shape_seg.binarize()
+			# shape_seg.applyTransform(rigidTransform,
+			# 						 ref_seg.origin(),  ref_seg.dims(),
+			# 						 ref_seg.spacing(), ref_seg.coordsys(),
+			# 						 sw.InterpolationType.Linear)
+			# # then turn antialized-tranformed segmentation to a binary segmentation
+			# shape_seg.binarize()
+			Rigid_transforms.append(rigidTransform)
 
 		"""
 		Grooming Step 5: Finding the largest bounding box
@@ -247,14 +254,15 @@ def Run_Pipeline(args):
 
 		subjects = []
 		number_domains = 1
+		seg_dir = "Output/ellipsoid/ellipsoid_1mode/segmentations/"
 		for i in range(len(shape_seg_list)):
 			print(shape_names[i])
 			subject = sw.Subject()
 			subject.set_number_of_domains(number_domains)
-			subject.set_segmentation_filenames([shape_names[i]])
+			subject.set_segmentation_filenames([seg_dir+shape_names[i]+".nrrd"])
 			subject.set_groomed_filenames(
-				[groom_dir + 'distance_transforms/'+shape_names[i]])
-			transform = np.ones((4, 4))
+				[groom_dir + 'distance_transforms/'+shape_names[i]+".nrrd"])
+			transform = Rigid_transforms[i]
 			transforms = [ transform.flatten() ]
 			subject.set_groomed_transforms(transforms)
 			print(subject.get_groomed_transforms())
@@ -263,9 +271,33 @@ def Run_Pipeline(args):
 		project = sw.Project()
 		project.set_subjects(subjects)
 		parameters = sw.Parameters()
-		variant = sw.Variant([1024])
-		parameters.set("number_of_particles",variant)
+
+		parameter_dictionary = {
+		"number_of_particles": 128,
+		"use_normals": 0,
+		"normal_weight": 10.0,
+		"checkpointing_interval": 1000,
+		"keep_checkpoints": 0,
+		"iterations_per_split": 1000,
+		"optimization_iterations": 1000,
+		"starting_regularization": 10,
+		"ending_regularization": 1,
+		"recompute_regularization_interval": 1,
+		"domains_per_shape": 1,
+		
+		"relative_weighting": 1,
+		"initial_relative_weighting": 0.05,
+		"procrustes_interval": 0,
+		"procrustes_scaling": 0,
+		"save_init_splits": 0,
+		"verbosity": 0
+		} 
+
+		for key in parameter_dictionary:
+			parameters.set(key,sw.Variant([parameter_dictionary[key]]))
 		parameters.set("domain_type",sw.Variant('image'))
 		project.set_parameters("optimze",parameters)
 		project.save("test_proj_parm.xlsx")
 
+		optimizeCmd = 'shapeworks optimize --name test_proj_parm.xlsx'.split()
+		subprocess.check_call(optimizeCmd)
