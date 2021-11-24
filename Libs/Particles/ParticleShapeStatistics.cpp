@@ -11,20 +11,6 @@ int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y
 {
   if (x.size() != y.size()) return -1;
 
-  //  std::cout << "y = ";
-  //  for (unsigned int i = 0; i < y.size(); i++)
-  //    {
-  //    std::cout << y[i] << "\t";
-  //    }
-  //  std::cout << std::endl;
-
-  //  std::cout << "x = ";
-  //  for (unsigned int i = 0; i < y.size(); i++)
-  //    {
-  //    std::cout << x[i] << "\t";
-  //    }
-  //  std::cout << std::endl;
-
   double xmean = 0.0;
   double ymean = 0.0;
   double cross = 0.0;
@@ -139,15 +125,15 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   //std::cerr << "m_numSamples1 = " << m_numSamples1 << "\n";
   //std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
   m_pointsMinusMean.fill(0);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
-  m_mean1.set_size(m_numDimensions);
+  m_mean1.resize(m_numDimensions);
   m_mean1.fill(0);
-  m_mean2.set_size(m_numDimensions);
+  m_mean2.resize(m_numDimensions);
   m_mean2.fill(0);
 
   // Compile the "meta shapes"
@@ -285,14 +271,14 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
     }
   };
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
-  m_mean1.set_size(m_numDimensions);
+  m_mean1.resize(m_numDimensions);
   m_mean1.fill(0);
-  m_mean2.set_size(m_numDimensions);
+  m_mean2.resize(m_numDimensions);
   m_mean2.fill(0);
 
   // Compile the "meta shapes"
@@ -359,9 +345,9 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
   m_numSamples = global_pts.size() / m_domainsPerShape;
   m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
   std::cout << "VDimension = " << VDimension << "-------------\n";
@@ -496,11 +482,13 @@ int ParticleShapeStatistics::ReloadPointFiles()
 
 int ParticleShapeStatistics::ComputeModes()
 {
-  vnl_matrix<double> A = m_pointsMinusMean.transpose()
-                         * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
-  vnl_symmetric_eigensystem<double> symEigen(A);
+  Eigen::MatrixXd A = m_pointsMinusMean.transpose()
+                      * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
+  // vnl_symmetric_eigensystem<double> symEigen(A);
+  Eigen::MatrixXd symEigen = A.completeOrthogonalDecomposition();
 
-  m_eigenvectors = m_pointsMinusMean * symEigen.V;
+  // m_eigenvectors = m_pointsMinusMean * symEigen.V;
+  m_eigenvectors = m_pointsMinusMean * symEigen.eigenvalues();
   m_eigenvalues.resize(m_numSamples);
 
   // normalize those eigenvectors
@@ -557,13 +545,13 @@ int ParticleShapeStatistics::PrincipalComponentProjections()
 
 int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 {
-  m_projectedMean1.set_size(numModes);
-  m_projectedMean2.set_size(numModes);
+  m_projectedMean1.resize(numModes);
+  m_projectedMean2.resize(numModes);
   m_projectedMean1.fill(0.0);
   m_projectedMean2.fill(0.0);
 
-  m_projectedPMM1.set_size(numModes, m_numSamples1);
-  m_projectedPMM2.set_size(numModes, m_numSamples2);
+  m_projectedPMM1.resize(numModes, m_numSamples1);
+  m_projectedPMM2.resize(numModes, m_numSamples2);
 
   unsigned int s1 = 0;
   unsigned int s2 = 0;
@@ -606,20 +594,20 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
     }
   }
 
-  vnl_matrix<double> cov1 = (m_projectedPMM1 * m_projectedPMM1.transpose())
+  Eigen::MatrixXd cov1 = (m_projectedPMM1 * m_projectedPMM1.transpose())
                             / ((double) (m_numSamples1) - 1.0);
-  vnl_matrix<double> cov2 = (m_projectedPMM2 * m_projectedPMM2.transpose())
+  Eigen::MatrixXd cov2 = (m_projectedPMM2 * m_projectedPMM2.transpose())
                             / ((double) (m_numSamples2) - 1.0);
 
-  vnl_vector<double> mdiff = m_projectedMean1 - m_projectedMean2;
-  vnl_matrix<double> covsuminv = vnl_matrix_inverse<double>(cov1 + cov2);
+  Eigen::VectorXd mdiff = m_projectedMean1 - m_projectedMean2;
+  Eigen::MatrixXd covsuminv = (cov1 + cov2).inverse();
 
   // w is fishers linear discriminant (normal to the hyperplane)
-  vnl_vector<double> w = covsuminv * mdiff;
+  Eigen::VectorXd w = covsuminv * mdiff;
 
   // Normalize to distance between means
-  double mag = mdiff.magnitude();
-  m_fishersLD = (w * mag) / sqrt(dot_product<double>(w, w));
+  double mag = mdiff.size();
+  m_fishersLD = (w * mag) / w.dot(w);
 
   vnl_vector<double> wext(m_numSamples);
   for (unsigned int i = 0; i < m_numSamples; i++) {

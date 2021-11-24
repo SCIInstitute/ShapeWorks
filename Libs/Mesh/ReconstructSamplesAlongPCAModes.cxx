@@ -133,8 +133,8 @@ int DoIt(InputParams params)
 
     // start sampling along each mode
     std::vector<double> eigenValues  = shapeStats.Eigenvalues();
-    vnl_matrix<double> eigenVectors = shapeStats.Eigenvectors();
-    vnl_vector<double> mean         = shapeStats.Mean();
+    Eigen::MatrixXd eigenVectors = shapeStats.Eigenvectors();
+    Eigen::VectorXd mean         = shapeStats.Mean();
 
     vtkSmartPointer< vtkPoints > meanPts = vtkSmartPointer< vtkPoints >::New();
     for(unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
@@ -185,7 +185,7 @@ int DoIt(InputParams params)
         //double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
         //std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
 
-        vnl_vector<double> curMode = eigenVectors.get_column(TotalNumberOfModes - modeId - 1);
+        Eigen::VectorXd curMode = eigenVectors.get_column(TotalNumberOfModes - modeId - 1);
 
         std::vector<double> std_store;
         std::cout << "std_store: " ;
@@ -221,7 +221,7 @@ int DoIt(InputParams params)
 
             std::cout << "cur_std: " << cur_std << std::endl;
 
-            vnl_vector<double> curSample = mean + cur_std * curMode;
+            Eigen::VectorXd curSample = mean + cur_std * curMode;
 
             // fill-in the vtkpoints structure to perform warping for dense reconstruction of the current sample
             vtkSmartPointer< vtkPoints > curSamplePts = vtkSmartPointer< vtkPoints >::New();
