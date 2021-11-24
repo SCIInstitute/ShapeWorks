@@ -74,6 +74,7 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 
 FILE(GLOB STUDIO_DATA_SRCS
   Data/CustomSurfaceReconstructionFilter.cpp
+  Data/DataTool.cpp
   Data/LegacyMeshGenerator.cpp
   Data/MeshCache.cpp
   Data/MeshGenerator.cpp
@@ -107,6 +108,7 @@ FILE(GLOB STUDIO_JOB_MOC_HDRS
   )
 
 FILE(GLOB STUDIO_DATA_MOC_HDRS
+  Data/DataTool.h
   Data/MeshManager.h
   Data/QMeshWarper.h
   Data/MeshWorker.h
