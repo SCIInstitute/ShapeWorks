@@ -214,7 +214,8 @@ def Run_Pipeline(args):
             print(shape_names[i])
             subject = sw.Subject()
             subject.set_number_of_domains(number_domains)
-            subject.set_segmentation_filenames([groomed_seg_files[i]])
+            # subject.set_segmentation_filenames([groomed_seg_files[i]])
+            subject.set_segmentation_filenames([seg_dir+shape_names[i]+".nrrd"])
             subject.set_groomed_filenames([dt_files[i]])
             transform = Rigid_transforms[i]
             transforms = [ transform.flatten() ]
