@@ -30,7 +30,7 @@ def save_images(outDir,        # path to the directory where we want to save the
                 swImageList,   # list of shapeworks images to be saved
                 swImageNames,  # list of image names to be used as filenames
                 extension        = 'nrrd',
-                compressed       = False, # use false to load in paraview
+                compressed       = True, # use false to load in paraview
                 verbose          = True):
 
     if (len(swImageList) != len(swImageNames)):
@@ -58,7 +58,7 @@ def save_meshes(outDir,        # path to the directory where we want to save the
                 swMeshList,   # list of shapeworks images to be saved
                 swMeshNames,  # list of image names to be used as filenames
                 extension        = 'ply',
-                compressed       = False, # use false to load in paraview
+                compressed       = True,
                 verbose          = True):
 
     if (len(swMeshList) != len(swMeshNames)):

@@ -241,6 +241,7 @@ void Visualizer::update_viewer_properties()
 
     this->lightbox_->redraw();
   }
+  this->current_glyph_size_ = size;
 }
 
 //-----------------------------------------------------------------------------
@@ -513,5 +514,11 @@ void Visualizer::set_opacities(std::vector<float> opacities)
 std::vector<float> Visualizer::get_opacities()
 {
   return this->opacities_;
+}
+
+//-----------------------------------------------------------------------------
+double Visualizer::get_current_glyph_size()
+{
+  return this->current_glyph_size_;
 }
 }

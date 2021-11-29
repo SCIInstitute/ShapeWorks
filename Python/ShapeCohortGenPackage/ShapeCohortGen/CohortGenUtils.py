@@ -103,7 +103,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
         image = mesh.toImage(region=bb, spacing=spacing)
 
         # write the result to disk and move to the next mesh
-        image.write(segFile, 0)
+        image.write(segFile, compressed=True)
         meshIndex += 1
 
     # return list of new image filenames
@@ -220,7 +220,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = np.float32(img_array)
         img = Image(np.float32(img_array))
-        img.write(name)
+        img.write(name,compressed=True)
         index += 1
     return get_files(imgDir)
 

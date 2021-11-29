@@ -448,7 +448,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
       // On first load, we can check if there was an active scalar on loaded meshes
       this->set_feature_map(this->session_->get_default_feature_map());
     }
-  } catch (std::runtime_error e) {
+  } catch (std::runtime_error& e) {
     this->handle_error(e.what());
   }
   this->handle_message("Files loaded");
@@ -1144,8 +1144,10 @@ void ShapeWorksStudioApp::handle_points_changed()
   }
 
   if (update) {
-    double old_size = this->session_->get_auto_glyph_size();
-    if (fabs(old_size - this->session_->update_auto_glyph_size()) > 0.5) {
+    double cur_size = this->visualizer_->get_current_glyph_size();
+    double new_size = this->session_->update_auto_glyph_size();
+    double percent_diff = cur_size / new_size * 100.0;
+    if (percent_diff < 90 || percent_diff > 110) {
       this->handle_glyph_changed();
     }
 
@@ -1245,6 +1247,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
+  this->visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
@@ -1425,11 +1428,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
       return;
     }
   } catch (std::exception &e) {
-    this->handle_error(e.what());
-    this->handle_error("Project failed to load");
-    this->handle_progress(100);
-    return;
-  } catch (std::runtime_error &e) {
     this->handle_error(e.what());
     this->handle_error("Project failed to load");
     this->handle_progress(100);

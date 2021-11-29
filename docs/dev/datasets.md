@@ -1,12 +1,12 @@
 
 # How to Add New Datasets?
 
-[ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/)
+[ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/)
 
 ## Dataset Requirements
 
 Each dataset must have a **License.txt**, which describes the terms of use and citation requirements for the data.  
-You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/#item/5e5600298886bab730d72cf5).
+You can see an example in the Left Atrium dataset [License](https://girder.shapeworks-cloud.org/#item/5e5600298886bab730d72cf5).
 
 Data should be organized into appropriately named directories: **images**, **segmentations**, **meshes**, **landmarks**, **distance_transforms**, **shape_models**.  
 
@@ -48,8 +48,8 @@ For example:
 !!! important
     Uploaded datasets are only restricted to ShapeWorks developers.
 
-1. Create an account on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/#?dialog=register)
-2. Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)
+1. Create an account on the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/#?dialog=register)
+2. Ask Alan to add you to the list of developers. (amorris@sci.utah.edu)
 3. Prepare dataset directory with License.txt
 4. Use `DatasetUtils.uploadNewDataset(datasetName, datasetPath)` to upload.
 5. Name the dataset all lowercase with underscores separating words. For example: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'

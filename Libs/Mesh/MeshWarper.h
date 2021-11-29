@@ -13,6 +13,13 @@
 
 namespace shapeworks {
 
+/**
+ * \class MeshWarper
+ * \ingroup Group-Mesh
+ *
+ * This class implements mesh warping based on correspondence particles
+ *
+ */
 class MeshWarper {
 
 public:
@@ -26,6 +33,9 @@ public:
 
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
+
+  //! Return if set as a contour
+  bool is_contour() { return this->is_contour_; }
 
 protected:
 
@@ -85,5 +95,7 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
+  //! Whether the reference is a contour
+  bool is_contour_ = false;
 };
 }
