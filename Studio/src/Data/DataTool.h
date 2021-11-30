@@ -9,12 +9,8 @@
 #include <QObject>
 
 #include <Data/Preferences.h>
-#include <Groom/QGroom.h>
-#include <Libs/Groom/GroomParameters.h>
 
 class Ui_DataTool;
-
-Q_DECLARE_METATYPE(std::string)
 
 namespace shapeworks {
 
@@ -33,6 +29,14 @@ public:
 
   //! activate this tool
   void activate();
+
+  void update_table();
+
+public Q_SLOTS:
+  void delete_button_clicked();
+
+Q_SIGNALS:
+  void import_button_clicked();
 
 private:
 

@@ -21,6 +21,7 @@
 #include <Libs/Mesh/Mesh.h>
 
 // studio
+#include <Data/DataTool.h>
 #include <Data/Preferences.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
@@ -165,7 +166,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->visualizer_ = QSharedPointer<Visualizer>::create(preferences_);
   this->visualizer_->set_lightbox(this->lightbox_);
 
-  // groom tool initializations
+  // data tool initialization
+  this->data_tool_ = QSharedPointer<DataTool>::create(preferences_);
+
+  // groom tool initialization
   this->groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), &GroomTool::groom_start,
@@ -179,7 +183,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->groom_tool_.data(), &GroomTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
-  // optimize tool initializations
+  // optimize tool initialization
   this->optimize_tool_ = QSharedPointer<OptimizeTool>::create(this->preferences_);
 
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
@@ -630,6 +634,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table()
 {
+  /////////////////////////////////////
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
   auto project = this->session_->get_project();
@@ -659,6 +664,11 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->resizeColumnsToContents();
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+
+  ////////////////////////////////////////
+
+
 
   /// todo: check if the list has changed before changing
   auto current_feature = this->ui_->features->currentText();
@@ -913,6 +923,7 @@ void ShapeWorksStudioApp::new_session()
 
   this->visualizer_->clear_viewers();
 
+  this->data_tool_->set_session(this->session_);
   this->analysis_tool_->set_session(this->session_);
   this->visualizer_->set_session(this->session_);
   this->groom_tool_->set_session(this->session_);

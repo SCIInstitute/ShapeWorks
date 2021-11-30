@@ -27,6 +27,7 @@ class Ui_ShapeWorksStudioApp;
 
 namespace shapeworks {
 class Lightbox;
+class DataTool;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
@@ -213,6 +214,7 @@ private:
   QActionGroup* action_group_;
 
   QSharedPointer<Lightbox> lightbox_;
+  QSharedPointer<DataTool> data_tool_;
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
