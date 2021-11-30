@@ -66,22 +66,7 @@ def Run_Pipeline(args):
     # Else groom the segmentations and get distance transforms for optimization
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
-        """
-        Step 2: GROOMING 
-        
-        The required grooming steps are: 
-        1. Isotropic resampling
-        2. Center of Mass Alignment
-        3. Reference selection
-        4. Rigid Alignment
-        5. Find largest bounding box
-        6. Apply cropping and padding
-        7. Create smooth signed distance transforms
-
-        For more information on grooming see docs/workflow/groom.md
-        http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
-        """
-
+       
         # Create a directory for groomed output
         groom_dir = output_directory + 'groomed/'
         if not os.path.exists(groom_dir):
@@ -107,17 +92,26 @@ def Run_Pipeline(args):
         """
         Now we can loop over the segmentations and apply the initial grooming steps to themm
         """
+        center_transform = []
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
 
-            """
-            Grooming Step 1: Resample segmentations to have isotropic (uniform) spacing
-                - Antialiase the binary segmentation to convert it to a smooth continuous-valued 
-                image for interpolation
-                - Resample the antialiased image using the same voxel spacing for all dimensions
-                - Binarize the resampled images to results in a binary segmentation with an 
-                isotropic voxel spacing
-            """
-            print('Resampling segmentation: ' + shape_name)
+
+            print("Calculating the centering transform")
+            # compute the center of mass of this segmentation
+            shape_center = shape_seg.centerOfMass()
+
+            transform = np.eye(4)
+            transform[0,3] = -1*shape_center[0]
+            transform[1,3] = -1*shape_center[1]
+            transform[2,3] = -1*shape_center[2]
+            center_transform.append(transform)
+
+            # parameters for padding
+            padding_size = 10  # number of voxels to pad for each dimension
+            padding_value = 0  # the constant value used to pad the segmentations
+            # pad the image 
+            shape_seg.pad(padding_size,padding_value)
+
             # antialias for 30 iterations
             antialias_iterations = 30
             shape_seg.antialias(antialias_iterations)
@@ -127,87 +121,43 @@ def Run_Pipeline(args):
             # make segmetnation binary again
             shape_seg.binarize()
 
-            ### PAD
-            print('Padding: ' + shape_name)
-            shape_seg.pad(10)
 
-        # Write segs
-        print("\nWriting groomed segs.")
-        groomed_seg_files = sw.utils.save_images(groom_dir + 'segs/', shape_seg_list,
-                            shape_names, extension='nrrd', compressed=True, verbose=True)
+            # Define distance transform parameters
+            iso_value = 0
+            sigma = 1.3
+            #Converting segmentations to smooth signed distance transforms.
+            shape_seg.antialias(antialias_iterations).computeDT(
+                iso_value).gaussianBlur(sigma)
 
-        """
-        Grooming Step 3: Select a reference
-        This step requires breaking the loop to load all of the segmentations at once so the shape
-        closest to the mean can be found and selected as the reference. 
-        """
+        #Save distance transforms
+        dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
+                                        shape_names, extension='nrrd', compressed=True, verbose=True)
+
+
+        #Select a reference
         ref_index = sw.find_reference_image_index(shape_seg_list)
         # Make a copy of the reference segmentation
         ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
         ref_name = shape_names[ref_index]
         print("Reference found: " + ref_name)
 
-        """
-        Grooming Step 4: Rigid alignment
-        This step rigidly aligns each shape to the selected references. 
-        Rigid alignment involves interpolation, hence we need to convert binary segmentations 
-        to continuous-valued images again. There are two steps:
-            - computing the rigid transformation parameters that would align a segmentation 
-            to the reference shape
-            - applying the rigid transformation to the segmentation
-            - save the aligned images for the next step
-        """
-
-        # First antialias the reference segmentation
-        ref_seg.antialias(antialias_iterations)
         # Set the alignment parameters
         iso_value = 1e-20
         icp_iterations = 200
-        Rigid_transforms = [] 
-        # Now loop through all the segmentations and apply rigid alignment
+        Rigid_transforms = []
+        idx = 0
+        #Now loop through all the segmentations and calculate ICP transform
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
             print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
-            # compute rigid transformation
-            shape_seg.antialias(antialias_iterations)
+            
             rigidTransform = shape_seg.createRigidRegistrationTransform(
                 ref_seg, iso_value, icp_iterations)
-            # second we apply the computed transformation, note that shape_seg has
-            # already been antialiased, so we can directly apply the transformation
-            # shape_seg.applyTransform(rigidTransform,
-            #                          ref_seg.origin(),  ref_seg.dims(),
-            #                          ref_seg.spacing(), ref_seg.coordsys(),
-            #                          sw.InterpolationType.Linear)
-            # # then turn antialized-tranformed segmentation to a binary segmentation
-            # shape_seg.binarize()
+            rigidTransform[:,-1] = center_transform[idx][:,-1]
+            idx+=1
             Rigid_transforms.append(rigidTransform)
+            print(rigidTransform)
 
-        """
-        Grooming Step 7: Converting segmentations to smooth signed distance transforms.
-        The computeDT API needs an iso_value that defines the foreground-background interface, to create 
-        a smoother interface we first antialiasing the segmentation then compute the distance transform 
-        at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
-        of binarization. 
-        So the steps are:
-            - Antialias 
-            - Compute distance transform
-            - Apply smoothing
-            - Save the distance transform
-        """
-
-        # Define distance transform parameters
-        iso_value = 0
-        sigma = 1.3
-        DT_list = []
-        # Loop over segs and compute smooth DT
-        for groomed_seg_file in sorted(groomed_seg_files):
-            DT = sw.Image(groomed_seg_file).antialias(antialias_iterations).computeDT(
-                iso_value).gaussianBlur(sigma)
-            DT_list.append(DT)
-        # Save distance transforms
-        dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', DT_list,
-                                        shape_names, extension='nrrd', compressed=True, verbose=True)
-
-        subjects = []
+       subjects = []
         number_domains = 1
         seg_dir = "Output/ellipsoid/ellipsoid_1mode/segmentations/"
         for i in range(len(shape_seg_list)):
@@ -256,3 +206,202 @@ def Run_Pipeline(args):
 
         optimizeCmd = 'shapeworks optimize --name test_proj_parm.xlsx'.split()
         subprocess.check_call(optimizeCmd)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#             """
+#             Grooming Step 1: Resample segmentations to have isotropic (uniform) spacing
+#                 - Antialiase the binary segmentation to convert it to a smooth continuous-valued 
+#                 image for interpolation
+#                 - Resample the antialiased image using the same voxel spacing for all dimensions
+#                 - Binarize the resampled images to results in a binary segmentation with an 
+#                 isotropic voxel spacing
+#             """
+#             print('Resampling segmentation: ' + shape_name)
+#             # antialias for 30 iterations
+#             antialias_iterations = 30
+#             shape_seg.antialias(antialias_iterations)
+#             # resample to isotropic spacing using linear interpolation
+#             iso_spacing = [1, 1, 1]
+#             shape_seg.resample(iso_spacing, sw.InterpolationType.Linear)
+#             # make segmetnation binary again
+#             shape_seg.binarize()
+
+#             ### PAD
+#             print('Padding: ' + shape_name)
+#             shape_seg.pad(10)
+
+#         # Write segs
+#         print("\nWriting groomed segs.")
+#         groomed_seg_files = sw.utils.save_images(groom_dir + 'segs/', shape_seg_list,
+#                             shape_names, extension='nrrd', compressed=True, verbose=True)
+
+#         """
+#         Grooming Step 3: Select a reference
+#         This step requires breaking the loop to load all of the segmentations at once so the shape
+#         closest to the mean can be found and selected as the reference. 
+#         """
+#         ref_index = sw.find_reference_image_index(shape_seg_list)
+#         # Make a copy of the reference segmentation
+#         ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
+#         ref_name = shape_names[ref_index]
+#         print("Reference found: " + ref_name)
+
+#         """
+#         Grooming Step 4: Rigid alignment
+#         This step rigidly aligns each shape to the selected references. 
+#         Rigid alignment involves interpolation, hence we need to convert binary segmentations 
+#         to continuous-valued images again. There are two steps:
+#             - computing the rigid transformation parameters that would align a segmentation 
+#             to the reference shape
+#             - applying the rigid transformation to the segmentation
+#             - save the aligned images for the next step
+#         """
+
+#         # First antialias the reference segmentation
+#         ref_seg.antialias(antialias_iterations)
+#         # Set the alignment parameters
+#         iso_value = 1e-20
+#         icp_iterations = 200
+#         Rigid_transforms = [] 
+#         # Now loop through all the segmentations and apply rigid alignment
+#         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+#             print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
+#             # compute rigid transformation
+#             shape_seg.antialias(antialias_iterations)
+#             rigidTransform = shape_seg.createRigidRegistrationTransform(
+#                 ref_seg, iso_value, icp_iterations)
+#             # second we apply the computed transformation, note that shape_seg has
+#             # already been antialiased, so we can directly apply the transformation
+#             # shape_seg.applyTransform(rigidTransform,
+#             #                          ref_seg.origin(),  ref_seg.dims(),
+#             #                          ref_seg.spacing(), ref_seg.coordsys(),
+#             #                          sw.InterpolationType.Linear)
+#             # # then turn antialized-tranformed segmentation to a binary segmentation
+#             # shape_seg.binarize()
+#             Rigid_transforms.append(rigidTransform)
+
+#         """
+#         Grooming Step 7: Converting segmentations to smooth signed distance transforms.
+#         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
+#         a smoother interface we first antialiasing the segmentation then compute the distance transform 
+#         at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
+#         of binarization. 
+#         So the steps are:
+#             - Antialias 
+#             - Compute distance transform
+#             - Apply smoothing
+#             - Save the distance transform
+#         """
+
+#         # Define distance transform parameters
+#         iso_value = 0
+#         sigma = 1.3
+#         DT_list = []
+#         # Loop over segs and compute smooth DT
+#         for groomed_seg_file in sorted(groomed_seg_files):
+#             DT = sw.Image(groomed_seg_file).antialias(antialias_iterations).computeDT(
+#                 iso_value).gaussianBlur(sigma)
+#             DT_list.append(DT)
+#         # Save distance transforms
+#         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', DT_list,
+#                                         shape_names, extension='nrrd', compressed=True, verbose=True)
+
+#         subjects = []
+#         number_domains = 1
+#         seg_dir = "Output/ellipsoid/ellipsoid_1mode/segmentations/"
+#         for i in range(len(shape_seg_list)):
+#             print(shape_names[i])
+#             subject = sw.Subject()
+#             subject.set_number_of_domains(number_domains)
+#             # subject.set_segmentation_filenames([groomed_seg_files[i]])
+#             subject.set_segmentation_filenames([seg_dir+shape_names[i]+".nrrd"])
+#             subject.set_groomed_filenames([dt_files[i]])
+#             transform = Rigid_transforms[i]
+#             transforms = [ transform.flatten() ]
+#             subject.set_groomed_transforms(transforms)
+#             print(subject.get_groomed_transforms())
+#             subjects.append(subject)
+
+#         project = sw.Project()
+#         project.set_subjects(subjects)
+#         parameters = sw.Parameters()
+
+#         parameter_dictionary = {
+#         "number_of_particles": 128,
+#         "use_normals": 0,
+#         "normal_weight": 10.0,
+#         "checkpointing_interval": 1000,
+#         "keep_checkpoints": 0,
+#         "iterations_per_split": 1000,
+#         "optimization_iterations": 1000,
+#         "starting_regularization": 10,
+#         "ending_regularization": 1,
+#         "recompute_regularization_interval": 1,
+#         "domains_per_shape": 1,
+        
+#         "relative_weighting": 1,
+#         "initial_relative_weighting": 0.05,
+#         "procrustes_interval": 0,
+#         "procrustes_scaling": 0,
+#         "save_init_splits": 0,
+#         "verbosity": 0
+#         } 
+
+#         for key in parameter_dictionary:
+#             parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+#         parameters.set("domain_type",sw.Variant('image'))
+#         project.set_parameters("optimze",parameters)
+#         project.save("test_proj_parm.xlsx")
+
+#         optimizeCmd = 'shapeworks optimize --name test_proj_parm.xlsx'.split()
+#         subprocess.check_call(optimizeCmd)
+# """
