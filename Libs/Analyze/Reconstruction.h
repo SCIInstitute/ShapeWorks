@@ -23,9 +23,10 @@
 #include "itkImageRegionConstIterator.h"
 #include <itkImageDuplicator.h>
 #include <vtkSmartPointer.h>
-
 #include <itkImageFileWriter.h>
 #include "Procrustes3D.h"
+
+#include "Image.h"
 
 #ifdef assert
 #undef assert
@@ -40,27 +41,30 @@ class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunctionWithDoubleCoefficents
 {};
 }
 
-template < template < typename TCoordRep, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
-           template < typename ImageType, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction,
-           typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>>
+// template < template < typename TCoordRep, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
+//            template < typename ImageType, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction,
+//            typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>>
+
+namespace shapeworks {
 class Reconstruction {
 public:
-    typedef itk::GradientImageFilter<ImageType, PixelType>               GradientFilterType;
-    typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType > GradientMagnitudeFilterType;
-    typedef itk::Image< itk::CovariantVector< PixelType, 3 >, 3 >        GradientImageType;
+    using TCoordRep = double;
+    typedef itk::GradientImageFilter<Image::ImageType, Image::PixelType>               GradientFilterType;
+    typedef itk::GradientMagnitudeImageFilter<Image::ImageType, Image::ImageType > GradientMagnitudeFilterType;
+    typedef itk::Image< itk::CovariantVector< Image::PixelType, 3 >, 3 >        GradientImageType;
     typedef itk::ImageRegionIterator< GradientImageType >            GradientImageIteratorType;
-    typedef itk::ImageRegionIterator< ImageType >                    ImageIteratorType;
+    typedef itk::ImageRegionIterator< Image::ImageType >                    ImageIteratorType;
 
-    typedef itk::ImageFileWriter< ImageType >  WriterType;
+    typedef itk::ImageFileWriter< Image::ImageType >  WriterType;
 
-    typedef itk::ImageToVTKImageFilter<ImageType>                    ITK2VTKConnectorType;
-    typedef itk::AddImageFilter <ImageType, ImageType >              AddImageFilterType;
-    typedef itk::ResampleImageFilter<ImageType, ImageType >          ResampleFilterType;
+    typedef itk::ImageToVTKImageFilter<Image::ImageType>                    ITK2VTKConnectorType;
+    typedef itk::AddImageFilter <Image::ImageType, Image::ImageType >              AddImageFilterType;
+    typedef itk::ResampleImageFilter<Image::ImageType, Image::ImageType >          ResampleFilterType;
 
-    typedef TInterpolatorType < ImageType, TCoordRep >                  InterpolatorType;
-    typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>  MultiplyByConstantImageFilterType;
+    typedef TInterpolatorType < Image::ImageType, TCoordRep >                  InterpolatorType;
+    typedef itk::MultiplyImageFilter <Image::ImageType, Image::ImageType, Image::ImageType>  MultiplyByConstantImageFilterType;
 
-    typedef itk::ImageDuplicator< ImageType >                           DuplicatorType;
+    typedef itk::ImageDuplicator< Image::ImageType >                           DuplicatorType;
     typedef TTransformType < TCoordRep, 3 >                             TransformType;
 
     typedef itk::Point< TCoordRep, 3 >                  PointType;
@@ -123,7 +127,7 @@ public:
                                                      bool do_procrustes = true,
                                                      bool do_procrustes_scaling = false);
 
-    void setOrigin(typename ImageType::PointType origin)
+    void setOrigin(typename Image::ImageType::PointType origin)
     {
         use_origin = true;
         origin_[0] = origin[0];
@@ -132,7 +136,7 @@ public:
     }
 
     void MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision);
-    void MeshFromDT(typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision);
+    void MeshFromDT(typename Image::ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision);
     void EnablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = true;}
     void DisablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = false;}
 
@@ -144,7 +148,7 @@ private:
             std::vector<std::string> distance_transform);
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
-            typename ImageType::Pointer distance_transform);
+            typename Image::ImageType::Pointer distance_transform);
     void generateWarpedMeshes(typename TransformType::Pointer transform,
                               vtkSmartPointer<vtkPolyData>& outputMesh);
     double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points,
@@ -173,7 +177,7 @@ private:
     vtkSmartPointer<vtkPolyData> MeshQC(
             vtkSmartPointer<vtkPolyData> meshIn);
 
-    typename ImageType::Pointer loadImage(std::string filename);
+    typename Image::ImageType::Pointer loadImage(std::string filename);
 
     void performKMeansClustering(
             std::vector< PointArrayType > global_pts,
@@ -200,7 +204,7 @@ private:
     float smoothingLambda_;
     int smoothingIterations_;
 
-    typename ImageType::PointType origin_;
+    typename Image::ImageType::PointType origin_;
     bool use_origin;
 
     std::string out_prefix_; // to save intermediate files in case needed
@@ -210,6 +214,7 @@ private:
     bool mean_before_warp_enabled_ = true;
 };
 
-#include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
+// #include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
 
 #endif // !__RECONSTRUCTION_H__
+}
