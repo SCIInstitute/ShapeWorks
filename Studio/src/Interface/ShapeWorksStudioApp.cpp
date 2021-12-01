@@ -166,6 +166,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   // data tool initialization
   this->data_tool_ = QSharedPointer<DataTool>::create(preferences_);
+  connect(data_tool_.data(), &DataTool::import_button_clicked,
+          this, &ShapeWorksStudioApp::on_action_import_triggered);
   this->ui_->stacked_widget->addWidget(this->data_tool_.data());
 
   // groom tool initialization

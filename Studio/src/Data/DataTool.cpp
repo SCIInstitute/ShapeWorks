@@ -14,6 +14,7 @@
 
 #include <ui_DataTool.h>
 
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -34,6 +35,8 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   ui_->landmarks_open_button->toggle();
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -113,12 +116,6 @@ std::string DataTool::get_notes()
 {
   return this->ui_->notes->toHtml().toStdString();
 }
-
-//---------------------------------------------------------------------------
-//void DataTool::on_table_open_button_toggled()
-//{
-
-//}
 
 //---------------------------------------------------------------------------
 void DataTool::delete_button_clicked()

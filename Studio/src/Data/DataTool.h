@@ -42,8 +42,6 @@ public:
 
 public Q_SLOTS:
 
-  //void on_table_open_button_toggled();
-
   void delete_button_clicked();
 
 Q_SIGNALS:
