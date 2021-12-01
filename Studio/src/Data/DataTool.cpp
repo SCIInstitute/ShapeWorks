@@ -24,6 +24,16 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
 
   connect(ui_->add_button, &QPushButton::clicked, this, &DataTool::import_button_clicked);
   connect(ui_->delete_button, &QPushButton::clicked, this, &DataTool::delete_button_clicked);
+
+  connect(ui_->table_open_button, &QPushButton::toggled, ui_->table_content, &QWidget::setVisible);
+  connect(ui_->landmarks_open_button, &QPushButton::toggled, ui_->landmarks_content, &QWidget::setVisible);
+  connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
+  connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
+
+  // start with these off
+  ui_->landmarks_open_button->toggle();
+  ui_->constraints_open_button->toggle();
+  ui_->notes_open_button->toggle();
 }
 
 //---------------------------------------------------------------------------
@@ -38,8 +48,26 @@ void DataTool::set_session(QSharedPointer<Session> session)
 }
 
 //---------------------------------------------------------------------------
+void DataTool::disable_actions()
+{
+  this->ui_->add_button->setEnabled(false);
+  this->ui_->delete_button->setEnabled(false);
+}
+
+//---------------------------------------------------------------------------
+void DataTool::enable_actions()
+{
+  this->ui_->add_button->setEnabled(true);
+  this->ui_->delete_button->setEnabled(true);
+}
+
+//---------------------------------------------------------------------------
 void DataTool::update_table()
 {
+  if (!this->session_) {
+    return;
+  }
+
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
   auto project = this->session_->get_project();
@@ -74,9 +102,23 @@ void DataTool::update_table()
 //---------------------------------------------------------------------------
 void DataTool::update_notes()
 {
-  this->ui_->notes->setText(QString::fromStdString(
-                              this->session_->parameters().get("notes", "")));
+  if (this->session_) {
+    this->ui_->notes->setText(QString::fromStdString(
+                                this->session_->parameters().get("notes", "")));
+  }
 }
+
+//---------------------------------------------------------------------------
+std::string DataTool::get_notes()
+{
+  return this->ui_->notes->toHtml().toStdString();
+}
+
+//---------------------------------------------------------------------------
+//void DataTool::on_table_open_button_toggled()
+//{
+
+//}
 
 //---------------------------------------------------------------------------
 void DataTool::delete_button_clicked()

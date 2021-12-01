@@ -68,8 +68,6 @@ public Q_SLOTS:
   void on_action_import_triggered();
 
   void on_vertical_scroll_bar_valueChanged();
-  void on_add_button_clicked();
-  void on_delete_button_clicked();
 
   void on_action_import_mode_triggered();
   void on_action_groom_mode_triggered();

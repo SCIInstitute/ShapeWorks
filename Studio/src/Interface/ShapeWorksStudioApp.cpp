@@ -103,8 +103,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
                                    (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
 
-  // set the splitter ratio
-  this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   this->create_glyph_submenu();
   //analysis tool initializations
@@ -168,6 +166,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   // data tool initialization
   this->data_tool_ = QSharedPointer<DataTool>::create(preferences_);
+  this->ui_->stacked_widget->addWidget(this->data_tool_.data());
 
   // groom tool initialization
   this->groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
@@ -495,11 +494,10 @@ void ShapeWorksStudioApp::disable_all_actions()
   this->ui_->action_new_project->setEnabled(false);
   this->ui_->action_open_project->setEnabled(false);
   this->ui_->action_import->setEnabled(false);
-  this->ui_->add_button->setEnabled(false);
-  this->ui_->delete_button->setEnabled(false);
   this->ui_->menuExport->setEnabled(false);
 
   //subtools
+  this->data_tool_->disable_actions();
   this->groom_tool_->disable_actions();
   this->optimize_tool_->disable_actions();
   //recent
@@ -530,8 +528,6 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_new_project->setEnabled(true);
   this->ui_->action_open_project->setEnabled(true);
   this->ui_->action_import->setEnabled(true);
-  this->ui_->add_button->setEnabled(true);
-  this->ui_->delete_button->setEnabled(true);
   this->ui_->menuExport->setEnabled(true);
 
   //available modes
@@ -545,6 +541,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   this->ui_->action_deepssm_mode->setEnabled(reconstructed && this->session_->get_project()->get_images_present());
   //subtools
+  this->data_tool_->enable_actions();
   this->groom_tool_->enable_actions();
   this->optimize_tool_->enable_actions();
   this->analysis_tool_->enable_actions(new_analysis);
@@ -605,69 +602,13 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_add_button_clicked()
-{
-  this->on_action_import_triggered();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_delete_button_clicked()
-{
-  QModelIndexList list = this->ui_->table->selectionModel()->selectedRows();
-
-  QList<int> index_list;
-  for (int i = list.size() - 1; i >= 0; i--) {
-    index_list << list[i].row();
-  }
-
-  this->session_->remove_shapes(index_list);
-  if (this->session_->get_shapes().size() == 0) {
-    this->new_session();
-    this->analysis_tool_->reset_stats();
-    this->lightbox_->clear_renderers();
-  }
-  this->update_table();
-  this->update_display(true);
-  this->enable_possible_actions();
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table()
 {
-  /////////////////////////////////////
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
   auto project = this->session_->get_project();
-  auto headers = project->get_headers();
 
-  QStringList table_headers;
-  for (const std::string& header : headers) {
-    //std::cerr << "header: " << header << "\n";
-    table_headers << QString::fromStdString(header);
-  }
-
-  this->ui_->table->clear();
-  this->ui_->table->setRowCount(shapes.size());
-  this->ui_->table->setColumnCount(table_headers.size());
-
-  this->ui_->table->setHorizontalHeaderLabels(table_headers);
-  this->ui_->table->verticalHeader()->setVisible(true);
-
-  for (int h = 0; h < table_headers.size(); h++) {
-    auto rows = project->get_string_column(table_headers[h].toStdString());
-    for (int row = 0; row < shapes.size() && row < rows.size(); row++) {
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(rows[row]));
-      this->ui_->table->setItem(row, h, new_item);
-    }
-  }
-
-  this->ui_->table->resizeColumnsToContents();
-  this->ui_->table->horizontalHeader()->setStretchLastSection(false);
-  this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-
-  ////////////////////////////////////////
-
+  this->data_tool_->update_table();
 
 
   /// todo: check if the list has changed before changing
@@ -919,7 +860,7 @@ void ShapeWorksStudioApp::new_session()
   connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged),
           this->session_.data(), &Session::set_feature_range_max);
 
-  this->ui_->notes->setText("");
+  this->data_tool_->update_notes();
 
   this->visualizer_->clear_viewers();
 
@@ -941,7 +882,7 @@ void ShapeWorksStudioApp::new_session()
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
   this->ui_->action_analysis_mode->setChecked(false);
-  this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
+  this->ui_->stacked_widget->setCurrentWidget(this->data_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
   this->enable_possible_actions();
@@ -996,7 +937,8 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
   }
   else { // DATA
-    this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
+    this->ui_->stacked_widget->setCurrentWidget(this->data_tool_.data());
+    //this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
     this->ui_->controlsDock->setWindowTitle("Data");
     this->ui_->action_import_mode->setChecked(true);
   }
@@ -1124,6 +1066,13 @@ void ShapeWorksStudioApp::handle_project_changed()
   if (this->is_loading_) {
     return;
   }
+
+  if (this->session_->get_shapes().size() == 0) {
+    this->new_session();
+    this->analysis_tool_->reset_stats();
+    this->lightbox_->clear_renderers();
+  }
+
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -1489,8 +1438,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->ui_->zoom_slider->setValue(zoom_value);
 
-  this->ui_->notes->setText(QString::fromStdString(
-                              this->session_->parameters().get("notes", "")));
+  this->data_tool_->update_notes();
 
   this->block_update_ = false;
   this->update_display(true);
@@ -1835,7 +1783,8 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
                                    std::to_string(this->ui_->zoom_slider->value()));
 
-  this->session_->parameters().set("notes", this->ui_->notes->toHtml().toStdString());
+  this->session_->parameters().set("notes", this->data_tool_->get_notes());
+
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
   this->groom_tool_->store_params();

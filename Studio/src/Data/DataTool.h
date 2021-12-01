@@ -30,9 +30,20 @@ public:
   //! activate this tool
   void activate();
 
+  void disable_actions();
+
+  void enable_actions();
+
   void update_table();
 
+  void update_notes();
+
+  std::string get_notes();
+
 public Q_SLOTS:
+
+  //void on_table_open_button_toggled();
+
   void delete_button_clicked();
 
 Q_SIGNALS:
