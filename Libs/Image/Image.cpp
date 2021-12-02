@@ -973,7 +973,7 @@ TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, flo
   Mesh targetContour = target_dt.toMesh(isoValue);
 
   try {
-    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
+    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations,true);
     return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
   }
   catch (std::invalid_argument) {
