@@ -27,7 +27,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     dataset_name = "ellipsoid_1mode"
-    output_directory = "Output/ellipsoid/"
+    output_directory = "Output/ellipsoid_proj/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -89,22 +89,68 @@ def Run_Pipeline(args):
             # append to the shape list
             shape_seg_list.append(shape_seg)
 
+
+
+
+        #Select a reference
+        ref_index = sw.find_reference_image_index(shape_seg_list)
+        # Make a copy of the reference segmentation
+        ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
+        ref_name = shape_names[ref_index]
+        print("Reference found: " + ref_name)
+
+        # Set the alignment parameters
+        iso_value = 0.5
+        icp_iterations = 100
+        Rigid_transforms = []
+        idx = 0
+        
+        #Now loop through all the segmentations and calculate ICP transform
+        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+            print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
+            
+            
+            rigidTransform = shape_seg.createRigidRegistrationTransform(
+                ref_seg, iso_value, icp_iterations)
+            # rigidTransform[:,-1] = center_transform[idx][:,-1]
+            # idx+=1
+            
+            shape_center = ref_seg.centerOfMass()
+            # input(rigidTransform)
+            transform = np.eye(4)
+            transform[-1,0] = -1*shape_center[0]
+            transform[-1,1] = -1*shape_center[1]
+            transform[-1,2] = -1*shape_center[2]
+            rigidTransform = np.matmul(rigidTransform,transform)
+            # print(shape_center)
+            rigidTransform = rigidTransform.T
+            Rigid_transforms.append(rigidTransform)
+            # input(rigidTransform)
+            print(rigidTransform)
         """
         Now we can loop over the segmentations and apply the initial grooming steps to themm
         """
+        # list of shape segmentations
+        shape_seg_list = []
+        # list of shape names (shape files prefixes) to be used for saving outputs
+        shape_names = []
+        for shape_filename in file_list:
+            print('Loading: ' + shape_filename)
+            # get current shape name
+            shape_names.append(shape_filename.split('/')
+                               [-1].replace('.nrrd', ''))
+            # load segmentation
+            shape_seg = sw.Image(shape_filename)
+            # append to the shape list
+            shape_seg_list.append(shape_seg)
+
         center_transform = []
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
 
 
             print("Calculating the centering transform")
             # compute the center of mass of this segmentation
-            shape_center = shape_seg.centerOfMass()
-
-            transform = np.eye(4)
-            transform[0,3] = -1*shape_center[0]
-            transform[1,3] = -1*shape_center[1]
-            transform[2,3] = -1*shape_center[2]
-            center_transform.append(transform)
+            
 
             # parameters for padding
             padding_size = 10  # number of voxels to pad for each dimension
@@ -134,30 +180,9 @@ def Run_Pipeline(args):
                                         shape_names, extension='nrrd', compressed=True, verbose=True)
 
 
-        #Select a reference
-        ref_index = sw.find_reference_image_index(shape_seg_list)
-        # Make a copy of the reference segmentation
-        ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
-        ref_name = shape_names[ref_index]
-        print("Reference found: " + ref_name)
+       
 
-        # Set the alignment parameters
-        iso_value = 1e-20
-        icp_iterations = 200
-        Rigid_transforms = []
-        idx = 0
-        #Now loop through all the segmentations and calculate ICP transform
-        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-            print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
-            
-            rigidTransform = shape_seg.createRigidRegistrationTransform(
-                ref_seg, iso_value, icp_iterations)
-            rigidTransform[:,-1] = center_transform[idx][:,-1]
-            idx+=1
-            Rigid_transforms.append(rigidTransform)
-            print(rigidTransform)
-
-       subjects = []
+        subjects = []
         number_domains = 1
         seg_dir = "Output/ellipsoid/ellipsoid_1mode/segmentations/"
         for i in range(len(shape_seg_list)):
@@ -189,7 +214,7 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        
+        "narrow_band":4,
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
