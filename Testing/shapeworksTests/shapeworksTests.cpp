@@ -279,9 +279,9 @@ TEST(shapeworksTests, smoothTest)
   run_use_case("smooth.sh");
 }
 
-TEST(shapeworksTests, decimateTest)
+TEST(shapeworksTests, remeshTest)
 {
-  run_use_case("decimate.sh");
+  run_use_case("remesh.sh");
 }
 
 TEST(shapeworksTests, reflectmeshTest)

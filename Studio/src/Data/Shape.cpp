@@ -15,6 +15,7 @@
 #include <Data/MeshGenerator.h>
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
+#include <Libs/Project/ProjectUtils.h>
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -585,27 +586,6 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::convert_transform(std::vector<double> list)
-{
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  transform->Identity();
-  if (list.size() == 12) {
-    double tx = list[9];
-    double ty = list[10];
-    double tz = list[11];
-    transform->Translate(tx, ty, tz);
-  }
-  else if (list.size() == 16) {
-    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    for (int i = 0; i < 16; i++) {
-      matrix->GetData()[i] = list[i];
-    }
-    transform->SetMatrix(matrix);
-  }
-  return transform;
-}
-
-//---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
 {
   auto it = this->point_features_.find(feature);
@@ -624,7 +604,7 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
     domain = transforms.size() - 1;
   }
   if (domain < transforms.size()) {
-    return this->convert_transform(transforms[domain]);
+    return ProjectUtils::convert_transform(transforms[domain]);
   }
   return nullptr;
 }
@@ -634,7 +614,7 @@ vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain)
 {
   auto transforms = this->subject_->get_procrustes_transforms();
   if (domain < transforms.size()) {
-    return this->convert_transform(transforms[domain]);
+    return ProjectUtils::convert_transform(transforms[domain]);
   }
   return nullptr;
 }
@@ -645,7 +625,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms()
   auto lists = this->subject_->get_procrustes_transforms();
   std::vector<vtkSmartPointer<vtkTransform>> transforms;
   for (size_t i = 0; i < lists.size(); i++) {
-    transforms.push_back(this->convert_transform(lists[i]));
+    transforms.push_back(ProjectUtils::convert_transform(lists[i]));
   }
   return transforms;
 }

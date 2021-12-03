@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(SmoothSinc::getCommand());
-  shapeworks.addCommand(Decimate::getCommand());
-  shapeworks.addCommand(CVDDecimate::getCommand());
+  shapeworks.addCommand(Remesh::getCommand());
+  shapeworks.addCommand(RemeshPercent::getCommand());
   shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(TransformMesh::getCommand());
