@@ -13,6 +13,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
   
 jobs:
   build:
@@ -21,6 +22,17 @@ jobs:
     
     steps:
 
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v2.0.0
+      with:
+          miniconda-version: 'latest'
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -30,11 +42,14 @@ jobs:
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Get NSIS
-      run: curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
-
-    - name: Unzip NSIS
       working-directory: ${{runner.workspace}}
-      run: Expand-Archive -LiteralPath nsis.zip -DestinationPath .
+      run: |
+        curl -o nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
+        Expand-Archive -LiteralPath nsis.zip -DestinationPath .
+          
+    - name: Restore Caches
+      shell: bash -l {0}
+      run: .github/workflows/restore_caches.sh
       
     - name: Cache Qt
       id: cache-qt
@@ -50,34 +65,14 @@ jobs:
         setup-python: 'false'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-    - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
-
-    - name: conda installs
+    - name: Conda Installs
       shell: bash -l {0}
-      run: source ./install_shapeworks.sh
+      run: .github/workflows/gha_conda.sh
 
-    - name: conda cleanup
+    - name: Build Dependencies
       shell: bash -l {0}
-      run: conda clean -p -t
-
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v1
-      with:
-        path: "C:\\deps"
-        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
-
-    - name: Build dependencies
-      shell: bash -l {0}
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && bash -x ./build_dependencies.sh --install-dir="C:\deps" --build-dir="/c/bdeps" --build-type=$BUILD_TYPE
-
+      run: .github/workflows/gha_deps.sh
+      
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
