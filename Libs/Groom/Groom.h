@@ -76,8 +76,6 @@ private:
 
   Mesh get_mesh(int subject, int domain);
 
-  void isolate(Image& image);
-
   void fix_origin(Image& image);
 
   bool verbose_ = false;

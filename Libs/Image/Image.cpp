@@ -30,6 +30,9 @@
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
 #include <itkOrientImageFilter.h>
+#include <itkConnectedComponentImageFilter.h>
+#include <itkRelabelComponentImageFilter.h>
+#include <itkThresholdImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -828,6 +831,41 @@ Image& Image::setCoordsys(ImageType::DirectionType coordsys)
   filter->ChangeDirectionOn();
   filter->Update();
   this->image = filter->GetOutput();
+
+  return *this;
+}
+
+Image &Image::isolate()
+{
+  typedef itk::Image<unsigned char, 3> IsolateType;
+  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
+  ToIntType::Pointer filter = ToIntType::New();
+  filter->SetInput(this->image);
+  filter->Update();
+
+  // Find the connected components in this image.
+  auto cc = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
+  cc->SetInput(filter->GetOutput());
+  cc->FullyConnectedOn();
+  cc->Update();
+
+  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
+  relabel->SetInput(cc->GetOutput());
+  relabel->SortByObjectSizeOn();
+  relabel->Update();
+
+  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
+  thresh->SetInput(relabel->GetOutput());
+  thresh->SetOutsideValue(0);
+  thresh->ThresholdBelow(0);
+  thresh->ThresholdAbove(1);
+  thresh->Update();
+
+  auto cast = itk::CastImageFilter<IsolateType, ImageType>::New();
+  cast->SetInput(thresh->GetOutput());
+  cast->Update();
+
+  this->image = cast->GetOutput();
 
   return *this;
 }

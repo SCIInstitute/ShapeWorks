@@ -328,3 +328,8 @@ TEST(shapeworksTests, shapeevaluationTest)
 {
   run_use_case("shapeevaluation.sh");
 }
+
+TEST(shapeworksTests, isolateTest)
+{
+  run_use_case("isolate.sh");
+}
