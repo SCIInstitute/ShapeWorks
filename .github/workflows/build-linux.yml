@@ -5,15 +5,16 @@ on:
     branches:
       - master
       - release_v*
+      - remote_cache
     tags:
     - '*'
   pull_request:
 
 env:
-  CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
   LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
     
 jobs:
@@ -23,6 +24,12 @@ jobs:
     container: akenmorris/ubuntu-build-box
     
     steps:
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
     - name: Conda info
       run: conda info
@@ -35,25 +42,17 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: conda installs
+    - name: Restore Caches
       shell: bash -l {0}
-      run: source ./install_shapeworks.sh
-
-    - name: install ccache
+      run: .github/workflows/restore_caches.sh
+    
+    - name: Conda Installs
       shell: bash -l {0}
-      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
+      run: .github/workflows/gha_conda.sh
 
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/install
-        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
-
-    - name: Build dependencies
+    - name: Build Dependencies
       shell: bash -l {0}
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE && rm -rf $HOME/build
+      run: .github/workflows/gha_deps.sh
 
     - name: cmake
       shell: bash -l {0}
@@ -83,10 +82,6 @@ jobs:
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
-    - name: ccache statistics
-      shell: bash -l {0}
-      run: conda activate shapeworks && ccache -s
-
     - uses: actions/upload-artifact@v1
       with:
         name: artifact-${{github.sha}}-linux
@@ -103,3 +98,8 @@ jobs:
         title: "Development Build for Linux"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+
+    - name: Store ccache
+      shell: bash -l {0}
+      run: .github/workflows/store_ccache.sh
+            
