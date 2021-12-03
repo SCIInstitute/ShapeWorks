@@ -143,8 +143,12 @@ void DataTool::new_landmark()
   int row = ui_->landmark_table->rowCount() + 1;
   this->ui_->landmark_table->setRowCount(row);
 
-  QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString("something1"));
-  new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
+//  QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString("something1"));
+  //new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
+
+  QTableWidgetItem* new_item = new QTableWidgetItem(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")), "");
+
+
 
   this->ui_->landmark_table->setItem(row - 1, 0, new_item);
   new_item = new QTableWidgetItem(QString::fromStdString("#FF00FF"));
