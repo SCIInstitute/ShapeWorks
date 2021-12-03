@@ -379,6 +379,9 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_fill_holes_tool</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fill_holes_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_fill_mesh_holes_tool</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fill_mesh_holes_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_auto_pad_tool</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_auto_pad_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
@@ -421,6 +424,49 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_use_icp</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_use_center</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_crop</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_crop</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">crop</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_convert_to_mesh</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_convert_to_mesh</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+
+
+<span class="w">  </span><span class="c1">// reflection</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_reflect</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">reflect</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_column</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect_column</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">column</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_choice</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect_choice</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">choice</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_axis</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w">  </span><span class="nf">set_reflect_axis</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">axies</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// resampling</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_resample</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_resample</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">resample</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_isotropic</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_isotropic</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isotropic</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_iso_spacing</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_iso_spacing</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_spacing</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_spacing</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_remesh</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">remesh</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_remesh_percent_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_percent_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_remesh_percent</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_percent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">percent</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_remesh_num_vertices</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_num_vertices</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_vertices</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_remesh_gradation</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_gradation</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">gradation</span><span class="p">);</span><span class="w"></span>
+
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// constants</span>
@@ -435,13 +481,11 @@
 <span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name_</span><span class="p">;</span><span class="w"></span>
-
 <span class="p">};</span><span class="w"></span>
-
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2021-12-03 at 02:18:11 +0000</p>
+<p>Updated on 2021-12-03 at 20:11:58 +0000</p>
               
             </div>
           </div>

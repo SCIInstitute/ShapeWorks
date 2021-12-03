@@ -21,7 +21,7 @@ Representation of a single subject.  [More...](#detailed-description)
 | | **[~Subject](../Classes/classshapeworks_1_1Subject.md#function-~subject)**() |
 | void | **[set_segmentation_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-segmentation-filenames)**(std::vector< std::string > filenames)<br>Set segmentatation filenames (one per domain)  |
 | std::vector< std::string > | **[get_segmentation_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-segmentation-filenames)**()<br>Get segmentation filenames.  |
-| std::vector< DomainType > | **[get_domain_types](../Classes/classshapeworks_1_1Subject.md#function-get-domain-types)**()<br>Return the domain types.  |
+| std::vector< DomainType > | **[get_domain_types](../Classes/classshapeworks_1_1Subject.md#function-get-domain-types)**(bool groomed =false)<br>Return the domain types.  |
 | void | **[set_groomed_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-filenames)**(std::vector< std::string > filenames)<br>Set groomed filenames.  |
 | std::vector< std::string > | **[get_groomed_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-groomed-filenames)**()<br>Get groomed filenames.  |
 | void | **[set_local_particle_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-local-particle-filenames)**(std::vector< std::string > filenames)<br>Set local particle filenames (one per domain)  |
@@ -38,6 +38,7 @@ Representation of a single subject.  [More...](#detailed-description)
 | void | **[set_feature_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-feature-filenames)**(const std::map< std::string, std::string > & feature_filenames)<br>Set the feature map filenames.  |
 | std::vector< std::vector< double > > | **[get_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-get-groomed-transforms)**() const<br>Get the groomed transforms (one vector per domain)  |
 | void | **[set_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-transforms)**(std::vector< std::vector< double >> transforms)<br>Set the groomed transforms (one vector per domain)  |
+| void | **[set_groomed_transform](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-transform)**(int i, std::vector< double > transform)<br>Set the i-th groomed transform.  |
 | std::vector< std::vector< double > > | **[get_procrustes_transforms](../Classes/classshapeworks_1_1Subject.md#function-get-procrustes-transforms)**() const<br>Get the procrustes transforms (one vector per domain)  |
 | void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-procrustes-transforms)**(std::vector< std::vector< double >> transforms)<br>Set the procrustes transforms (one vector per domain)  |
 | std::map< std::string, std::string > | **[get_group_values](../Classes/classshapeworks_1_1Subject.md#function-get-group-values)**() const<br>Get the group values.  |
@@ -45,6 +46,8 @@ Representation of a single subject.  [More...](#detailed-description)
 | void | **[set_group_values](../Classes/classshapeworks_1_1Subject.md#function-set-group-values)**(const std::map< std::string, std::string > & group_values)<br>Set the group values.  |
 | std::map< std::string, std::string > | **[get_extra_values](../Classes/classshapeworks_1_1Subject.md#function-get-extra-values)**() const<br>Get extra values (extra columns we don't interpret)  |
 | void | **[set_extra_values](../Classes/classshapeworks_1_1Subject.md#function-set-extra-values)**(std::map< std::string, std::string > extra_values) |
+| std::map< std::string, std::string > | **[get_table_values](../Classes/classshapeworks_1_1Subject.md#function-get-table-values)**() const<br>Get all table values.  |
+| void | **[set_table_values](../Classes/classshapeworks_1_1Subject.md#function-set-table-values)**(std::map< std::string, std::string > table_values) |
 | std::string | **[get_display_name](../Classes/classshapeworks_1_1Subject.md#function-get-display-name)**()<br>Get the display name.  |
 | void | **[set_display_name](../Classes/classshapeworks_1_1Subject.md#function-set-display-name)**(std::string display_name)<br>Set the display name.  |
 
@@ -95,7 +98,9 @@ Get segmentation filenames.
 ### function get_domain_types
 
 ```cpp
-std::vector< DomainType > get_domain_types()
+std::vector< DomainType > get_domain_types(
+    bool groomed =false
+)
 ```
 
 Return the domain types. 
@@ -244,6 +249,17 @@ void set_groomed_transforms(
 
 Set the groomed transforms (one vector per domain) 
 
+### function set_groomed_transform
+
+```cpp
+void set_groomed_transform(
+    int i,
+    std::vector< double > transform
+)
+```
+
+Set the i-th groomed transform. 
+
 ### function get_procrustes_transforms
 
 ```cpp
@@ -307,6 +323,23 @@ void set_extra_values(
 ```
 
 
+### function get_table_values
+
+```cpp
+std::map< std::string, std::string > get_table_values() const
+```
+
+Get all table values. 
+
+### function set_table_values
+
+```cpp
+void set_table_values(
+    std::map< std::string, std::string > table_values
+)
+```
+
+
 ### function get_display_name
 
 ```cpp
@@ -327,4 +360,4 @@ Set the display name.
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:57 +0000

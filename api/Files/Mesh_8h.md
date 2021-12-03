@@ -64,9 +64,9 @@ public:
 
   Mesh& smoothSinc(int iterations = 0, double passband = 0.0);
 
-  Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
+  Mesh& remesh(int numVertices, double adaptivity = 1.0);
 
-  Mesh& cvdDecimate(double percentage = 0.5);
+  Mesh& remeshPercent(double percentage, double adaptivity = 1.0);
 
   Mesh& invertNormals();
 
@@ -190,6 +190,8 @@ public:
 
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
+
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
@@ -223,4 +225,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:58 +0000

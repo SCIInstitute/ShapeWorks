@@ -58,6 +58,7 @@ title: shapeworks
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
 | class | **[shapeworks::PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
+| class | **[shapeworks::ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)**  |
 | class | **[shapeworks::PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)**  |
 | class | **[shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md).  |
 | class | **[shapeworks::QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper.md)** <br>Wraps [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) as a QObject.  |
@@ -191,8 +192,8 @@ title: shapeworks
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Coverage , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Smooth , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(SmoothSinc , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
-| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Decimate , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
-| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(CVDDecimate , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Remesh , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(RemeshPercent , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(InvertNormals , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ReflectMesh , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(TransformMesh , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
@@ -1116,7 +1117,7 @@ COMMAND_DECLARE(
 
 ```cpp
 COMMAND_DECLARE(
-    Decimate ,
+    Remesh ,
     MeshCommand 
 )
 ```
@@ -1126,7 +1127,7 @@ COMMAND_DECLARE(
 
 ```cpp
 COMMAND_DECLARE(
-    CVDDecimate ,
+    RemeshPercent ,
     MeshCommand 
 )
 ```
@@ -2187,4 +2188,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:57 +0000

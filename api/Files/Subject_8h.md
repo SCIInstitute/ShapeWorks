@@ -46,7 +46,7 @@ public:
   void set_segmentation_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_segmentation_filenames();
 
-  std::vector<DomainType> get_domain_types();
+  std::vector<DomainType> get_domain_types(bool groomed = false);
 
   void set_groomed_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_groomed_filenames();
@@ -71,6 +71,7 @@ public:
 
   std::vector<std::vector<double>> get_groomed_transforms() const;
   void set_groomed_transforms(std::vector<std::vector<double>> transforms);
+  void set_groomed_transform(int i, std::vector<double> transform);
 
   std::vector<std::vector<double>> get_procrustes_transforms() const;
   void set_procrustes_transforms(std::vector<std::vector<double>> transforms);
@@ -82,6 +83,9 @@ public:
 
   std::map<std::string, std::string> get_extra_values() const;
   void set_extra_values(std::map<std::string, std::string> extra_values);
+
+  std::map<std::string, std::string> get_table_values() const;
+  void set_table_values(std::map<std::string, std::string> table_values);
 
   std::string get_display_name();
   void set_display_name(std::string display_name);
@@ -103,6 +107,7 @@ private:
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
+  std::map<std::string, std::string> table_values_;
 };
 }
 ```
@@ -110,4 +115,4 @@ private:
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:58 +0000

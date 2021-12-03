@@ -27,6 +27,8 @@ title: Libs/Groom/Groom.h
 ```cpp
 #pragma once
 
+#include <GroomParameters.h>
+
 #include <Libs/Project/Project.h>
 #include <Libs/Image/Image.h>
 
@@ -67,7 +69,11 @@ private:
 
   bool image_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
+  bool run_image_pipeline(Image& image, GroomParameters params);
+
   bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
+
+  bool run_mesh_pipeline(Mesh& mesh, GroomParameters params);
 
   std::string get_output_filename(std::string input, DomainType domain_type);
 
@@ -76,14 +82,15 @@ private:
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
 
   static std::vector<double> get_identity_transform();
-  static std::vector<double> get_center_transform(const Mesh &mesh);
-  static std::vector<double> convert_transform(itk::AffineTransform<double, 3>::Pointer transform);
+  static void add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string& reflect_axis);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image& image);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh& mesh);
 
   Mesh get_mesh(int subject, int domain);
 
-
-  Vector3 center(Image& image);
   void isolate(Image& image);
+
+  void fix_origin(Image& image);
 
   bool verbose_ = false;
 
@@ -102,4 +109,4 @@ private:
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:58 +0000

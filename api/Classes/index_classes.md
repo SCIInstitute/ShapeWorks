@@ -178,6 +178,7 @@ title: Classes
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
+    * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
     * **class [QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md). 
     * **class [QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper.md)** <br>Wraps [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) as a QObject. 
@@ -228,4 +229,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:12 +0000
+Updated on 2021-12-03 at 20:11:58 +0000

@@ -24,7 +24,10 @@ Inherits from QWidget
 | void | **[domain_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-domain-changed)**() |
 | void | **[alignment_checkbox_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-alignment-checkbox-changed)**(int state) |
 | void | **[alignment_option_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-alignment-option-changed)**(int index) |
-| void | **[fill_holes_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-fill-holes-changed)**(int state) |
+| void | **[reflect_checkbox_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-reflect-checkbox-changed)**(int state) |
+| void | **[reflect_column_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-reflect-column-changed)**(int index) |
+| void | **[reflect_choice_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-reflect-choice-changed)**(int index) |
+| void | **[reflect_axis_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-reflect-axis-changed)**(int index) |
 | void | **[on_run_groom_button_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-on-run-groom-button-clicked)**()<br>Run groom tool.  |
 | void | **[handle_thread_complete](../Classes/classshapeworks_1_1GroomTool.md#slot-handle-thread-complete)**() |
 | void | **[handle_progress](../Classes/classshapeworks_1_1GroomTool.md#slot-handle-progress)**(int val) |
@@ -129,11 +132,38 @@ void alignment_option_changed(
 ```
 
 
-### slot fill_holes_changed
+### slot reflect_checkbox_changed
 
 ```cpp
-void fill_holes_changed(
+void reflect_checkbox_changed(
     int state
+)
+```
+
+
+### slot reflect_column_changed
+
+```cpp
+void reflect_column_changed(
+    int index
+)
+```
+
+
+### slot reflect_choice_changed
+
+```cpp
+void reflect_choice_changed(
+    int index
+)
+```
+
+
+### slot reflect_axis_changed
+
+```cpp
+void reflect_axis_changed(
+    int index
 )
 ```
 
@@ -292,4 +322,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:57 +0000

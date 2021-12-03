@@ -400,11 +400,11 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-decimate">decimate</a></strong>(double reduction =0.5, double angle =15.0, bool preserveTopology =true)<br>applies filter to reduce number of triangles in mesh</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-remesh">remesh</a></strong>(int numVertices, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-cvddecimate">cvdDecimate</a></strong>(double percentage =0.5)<br>applies cvd (centroidal voronoi diagram) decimation filter</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-remeshpercent">remeshPercent</a></strong>(double percentage, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -781,20 +781,20 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>applies vtk windowed sinc smoothing </p>
-<h3 id="function-decimate">function decimate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">decimate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">reduction</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">preserveTopology</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="w"></span>
+<h3 id="function-remesh">function remesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remesh</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numVertices</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>applies filter to reduce number of triangles in mesh </p>
-<h3 id="function-cvddecimate">function cvdDecimate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">cvdDecimate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5</span><span class="w"></span>
+<p>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity </p>
+<h3 id="function-remeshpercent">function remeshPercent</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remeshPercent</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>applies cvd (centroidal voronoi diagram) decimation filter </p>
+<p>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity </p>
 <h3 id="function-invertnormals">function invertNormals</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">invertNormals</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -1102,7 +1102,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2021-12-03 at 02:18:11 +0000</p>
+<p>Updated on 2021-12-03 at 20:11:58 +0000</p>
               
             </div>
           </div>

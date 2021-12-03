@@ -489,6 +489,11 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">matching_columns_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_scalars_</span><span class="p">;</span><span class="w"></span>
 
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">feature_names_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// to avoid re-reading from mesh files each time the list of names is requested</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">feature_names_read_done_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input_prefixes_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">supported_version_</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span><span class="w"></span>
@@ -497,7 +502,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2021-12-03 at 02:18:11 +0000</p>
+<p>Updated on 2021-12-03 at 20:11:58 +0000</p>
               
             </div>
           </div>

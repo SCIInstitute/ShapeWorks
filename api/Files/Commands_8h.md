@@ -79,8 +79,8 @@ COMMAND_DECLARE(MeshInfo, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(SmoothSinc, MeshCommand);
-COMMAND_DECLARE(Decimate, MeshCommand);
-COMMAND_DECLARE(CVDDecimate, MeshCommand);
+COMMAND_DECLARE(Remesh, MeshCommand);
+COMMAND_DECLARE(RemeshPercent, MeshCommand);
 COMMAND_DECLARE(InvertNormals, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(TransformMesh, MeshCommand);
@@ -124,4 +124,4 @@ COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:58 +0000

@@ -225,10 +225,6 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#coverage">coverage</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#cvd-decimate">cvd-decimate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#decimate">decimate</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#distance">distance</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#field-mean">field-mean</a>
@@ -270,6 +266,10 @@
     <li class="toctree-l3"><a class="reference internal" href="#read-mesh">read-mesh</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#reflect-mesh">reflect-mesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#remesh">remesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#remesh-percent">remesh-percent</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#scale-mesh">scale-mesh</a>
     </li>
@@ -1086,28 +1086,6 @@
 <p><strong>--backsearchradius=DOUBLE:</strong>  Max distance of a back-intersection [default: 0].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
-<h3 id="cvd-decimate">cvd-decimate</h3>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>shapeworks  cvd-decimate [args]...
-</code></pre></div>
-<p><strong>Description:</strong> applies cvd (centroidal voronoi diagram) decimation filter  </p>
-<p><strong>Options:</strong></p>
-<p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--percentage=DOUBLE:</strong> Percentage of target number of clusters/vertices [default: 0.5].  </p>
-<p><a href="#top">Back to Top</a></p>
-<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
-<h3 id="decimate">decimate</h3>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>shapeworks  decimate [args]...
-</code></pre></div>
-<p><strong>Description:</strong> applies filter to reduce number of triangles in mesh  </p>
-<p><strong>Options:</strong></p>
-<p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--reduction=DOUBLE:</strong> Percent reduction of total number of polygons [default: 0.5].</p>
-<p><strong>--angle=DOUBLE:</strong> Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: 15].</p>
-<p><strong>--preservetopology=BOOL:</strong>  Whether to preserve topology [default: true].  </p>
-<p><a href="#top">Back to Top</a></p>
-<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="distance">distance</h3>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>shapeworks  distance [args]...
@@ -1332,6 +1310,28 @@
 <p><strong>-x DOUBLE, --originx=DOUBLE:</strong>  Origin about which reflection occurs in x-direction [default: 0].</p>
 <p><strong>-y DOUBLE, --originy=DOUBLE:</strong>  Origin about which reflection occurs in y-direction [default: 0].</p>
 <p><strong>-z DOUBLE, --originz=DOUBLE:</strong>  Origin about which reflection occurs in z-direction [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh">remesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=DOUBLE:</strong> Target number of vertices.</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh-percent">remesh-percent</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh-percent [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--percentage=DOUBLE:</strong> Target percentage number of vertices</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="scale-mesh">scale-mesh</h3>

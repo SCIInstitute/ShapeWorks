@@ -25,6 +25,8 @@ title: shapeworks::GroomParameters
 | void | **[set_isolate_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-isolate-tool)**(bool value) |
 | bool | **[get_fill_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-fill-holes-tool)**() |
 | void | **[set_fill_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-fill-holes-tool)**(bool value) |
+| bool | **[get_fill_mesh_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-fill-mesh-holes-tool)**() |
+| void | **[set_fill_mesh_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-fill-mesh-holes-tool)**(bool value) |
 | bool | **[get_auto_pad_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-auto-pad-tool)**() |
 | void | **[set_auto_pad_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-auto-pad-tool)**(bool value) |
 | int | **[get_padding_amount](../Classes/classshapeworks_1_1GroomParameters.md#function-get-padding-amount)**() |
@@ -53,6 +55,36 @@ title: shapeworks::GroomParameters
 | void | **[set_mesh_vtk_windowed_sinc_passband](../Classes/classshapeworks_1_1GroomParameters.md#function-set-mesh-vtk-windowed-sinc-passband)**(double passband) |
 | bool | **[get_use_icp](../Classes/classshapeworks_1_1GroomParameters.md#function-get-use-icp)**() |
 | bool | **[get_use_center](../Classes/classshapeworks_1_1GroomParameters.md#function-get-use-center)**() |
+| bool | **[get_crop](../Classes/classshapeworks_1_1GroomParameters.md#function-get-crop)**() |
+| void | **[set_crop](../Classes/classshapeworks_1_1GroomParameters.md#function-set-crop)**(bool crop) |
+| bool | **[get_convert_to_mesh](../Classes/classshapeworks_1_1GroomParameters.md#function-get-convert-to-mesh)**() |
+| void | **[set_convert_to_mesh](../Classes/classshapeworks_1_1GroomParameters.md#function-set-convert-to-mesh)**(bool value) |
+| bool | **[get_reflect](../Classes/classshapeworks_1_1GroomParameters.md#function-get-reflect)**() |
+| void | **[set_reflect](../Classes/classshapeworks_1_1GroomParameters.md#function-set-reflect)**(bool reflect) |
+| std::string | **[get_reflect_column](../Classes/classshapeworks_1_1GroomParameters.md#function-get-reflect-column)**() |
+| void | **[set_reflect_column](../Classes/classshapeworks_1_1GroomParameters.md#function-set-reflect-column)**(std::string column) |
+| std::string | **[get_reflect_choice](../Classes/classshapeworks_1_1GroomParameters.md#function-get-reflect-choice)**() |
+| void | **[set_reflect_choice](../Classes/classshapeworks_1_1GroomParameters.md#function-set-reflect-choice)**(std::string choice) |
+| std::string | **[get_reflect_axis](../Classes/classshapeworks_1_1GroomParameters.md#function-get-reflect-axis)**() |
+| void | **[set_reflect_axis](../Classes/classshapeworks_1_1GroomParameters.md#function-set-reflect-axis)**(std::string axies) |
+| bool | **[get_resample](../Classes/classshapeworks_1_1GroomParameters.md#function-get-resample)**() |
+| void | **[set_resample](../Classes/classshapeworks_1_1GroomParameters.md#function-set-resample)**(bool resample) |
+| bool | **[get_isotropic](../Classes/classshapeworks_1_1GroomParameters.md#function-get-isotropic)**() |
+| void | **[set_isotropic](../Classes/classshapeworks_1_1GroomParameters.md#function-set-isotropic)**(bool isotropic) |
+| double | **[get_iso_spacing](../Classes/classshapeworks_1_1GroomParameters.md#function-get-iso-spacing)**() |
+| void | **[set_iso_spacing](../Classes/classshapeworks_1_1GroomParameters.md#function-set-iso-spacing)**(double spacing) |
+| std::vector< double > | **[get_spacing](../Classes/classshapeworks_1_1GroomParameters.md#function-get-spacing)**() |
+| void | **[set_spacing](../Classes/classshapeworks_1_1GroomParameters.md#function-set-spacing)**(std::vector< double > spacing) |
+| bool | **[get_remesh](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh)**() |
+| void | **[set_remesh](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh)**(bool remesh) |
+| bool | **[get_remesh_percent_mode](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-percent-mode)**() |
+| void | **[set_remesh_percent_mode](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-percent-mode)**(bool mode) |
+| double | **[get_remesh_percent](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-percent)**() |
+| void | **[set_remesh_percent](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-percent)**(double percent) |
+| int | **[get_remesh_num_vertices](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-num-vertices)**() |
+| void | **[set_remesh_num_vertices](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-num-vertices)**(int num_vertices) |
+| double | **[get_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-gradation)**() |
+| void | **[set_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-gradation)**(double gradation) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
 
 ## Public Attributes
@@ -158,6 +190,22 @@ bool get_fill_holes_tool()
 
 ```cpp
 void set_fill_holes_tool(
+    bool value
+)
+```
+
+
+### function get_fill_mesh_holes_tool
+
+```cpp
+bool get_fill_mesh_holes_tool()
+```
+
+
+### function set_fill_mesh_holes_tool
+
+```cpp
+void set_fill_mesh_holes_tool(
     bool value
 )
 ```
@@ -385,6 +433,246 @@ bool get_use_center()
 ```
 
 
+### function get_crop
+
+```cpp
+bool get_crop()
+```
+
+
+### function set_crop
+
+```cpp
+void set_crop(
+    bool crop
+)
+```
+
+
+### function get_convert_to_mesh
+
+```cpp
+bool get_convert_to_mesh()
+```
+
+
+### function set_convert_to_mesh
+
+```cpp
+void set_convert_to_mesh(
+    bool value
+)
+```
+
+
+### function get_reflect
+
+```cpp
+bool get_reflect()
+```
+
+
+### function set_reflect
+
+```cpp
+void set_reflect(
+    bool reflect
+)
+```
+
+
+### function get_reflect_column
+
+```cpp
+std::string get_reflect_column()
+```
+
+
+### function set_reflect_column
+
+```cpp
+void set_reflect_column(
+    std::string column
+)
+```
+
+
+### function get_reflect_choice
+
+```cpp
+std::string get_reflect_choice()
+```
+
+
+### function set_reflect_choice
+
+```cpp
+void set_reflect_choice(
+    std::string choice
+)
+```
+
+
+### function get_reflect_axis
+
+```cpp
+std::string get_reflect_axis()
+```
+
+
+### function set_reflect_axis
+
+```cpp
+void set_reflect_axis(
+    std::string axies
+)
+```
+
+
+### function get_resample
+
+```cpp
+bool get_resample()
+```
+
+
+### function set_resample
+
+```cpp
+void set_resample(
+    bool resample
+)
+```
+
+
+### function get_isotropic
+
+```cpp
+bool get_isotropic()
+```
+
+
+### function set_isotropic
+
+```cpp
+void set_isotropic(
+    bool isotropic
+)
+```
+
+
+### function get_iso_spacing
+
+```cpp
+double get_iso_spacing()
+```
+
+
+### function set_iso_spacing
+
+```cpp
+void set_iso_spacing(
+    double spacing
+)
+```
+
+
+### function get_spacing
+
+```cpp
+std::vector< double > get_spacing()
+```
+
+
+### function set_spacing
+
+```cpp
+void set_spacing(
+    std::vector< double > spacing
+)
+```
+
+
+### function get_remesh
+
+```cpp
+bool get_remesh()
+```
+
+
+### function set_remesh
+
+```cpp
+void set_remesh(
+    bool remesh
+)
+```
+
+
+### function get_remesh_percent_mode
+
+```cpp
+bool get_remesh_percent_mode()
+```
+
+
+### function set_remesh_percent_mode
+
+```cpp
+void set_remesh_percent_mode(
+    bool mode
+)
+```
+
+
+### function get_remesh_percent
+
+```cpp
+double get_remesh_percent()
+```
+
+
+### function set_remesh_percent
+
+```cpp
+void set_remesh_percent(
+    double percent
+)
+```
+
+
+### function get_remesh_num_vertices
+
+```cpp
+int get_remesh_num_vertices()
+```
+
+
+### function set_remesh_num_vertices
+
+```cpp
+void set_remesh_num_vertices(
+    int num_vertices
+)
+```
+
+
+### function get_remesh_gradation
+
+```cpp
+double get_remesh_gradation()
+```
+
+
+### function set_remesh_gradation
+
+```cpp
+void set_remesh_gradation(
+    double gradation
+)
+```
+
+
 ### function restore_defaults
 
 ```cpp
@@ -424,4 +712,4 @@ static const std::string GROOM_ALIGNMENT_ICP_C;
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:57 +0000

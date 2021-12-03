@@ -39,8 +39,8 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[coverage](../Classes/classshapeworks_1_1Mesh.md#function-coverage)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & otherMesh, bool allowBackIntersections =true, double angleThreshold =0, double backSearchRadius =0)<br>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[smooth](../Classes/classshapeworks_1_1Mesh.md#function-smooth)**(int iterations =0, double relaxation =0.0)<br>applies laplacian smoothing  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[smoothSinc](../Classes/classshapeworks_1_1Mesh.md#function-smoothsinc)**(int iterations =0, double passband =0.0)<br>applies vtk windowed sinc smoothing  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[decimate](../Classes/classshapeworks_1_1Mesh.md#function-decimate)**(double reduction =0.5, double angle =15.0, bool preserveTopology =true)<br>applies filter to reduce number of triangles in mesh  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[cvdDecimate](../Classes/classshapeworks_1_1Mesh.md#function-cvddecimate)**(double percentage =0.5)<br>applies cvd (centroidal voronoi diagram) decimation filter  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remesh](../Classes/classshapeworks_1_1Mesh.md#function-remesh)**(int numVertices, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remeshPercent](../Classes/classshapeworks_1_1Mesh.md#function-remeshpercent)**(double percentage, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[invertNormals](../Classes/classshapeworks_1_1Mesh.md#function-invertnormals)**()<br>handle flipping normals  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const Axis & axis, const Vector3 & origin =makeVector({ 0.0, 0.0, 0.0 }))<br>reflect meshes with respect to a specified center and specific axis  |
 | MeshTransform | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10)<br>creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations  |
@@ -268,27 +268,27 @@ Mesh & smoothSinc(
 
 applies vtk windowed sinc smoothing 
 
-### function decimate
+### function remesh
 
 ```cpp
-Mesh & decimate(
-    double reduction =0.5,
-    double angle =15.0,
-    bool preserveTopology =true
+Mesh & remesh(
+    int numVertices,
+    double adaptivity =1.0
 )
 ```
 
-applies filter to reduce number of triangles in mesh 
+applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity 
 
-### function cvdDecimate
+### function remeshPercent
 
 ```cpp
-Mesh & cvdDecimate(
-    double percentage =0.5
+Mesh & remeshPercent(
+    double percentage,
+    double adaptivity =1.0
 )
 ```
 
-applies cvd (centroidal voronoi diagram) decimation filter 
+applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity 
 
 ### function invertNormals
 
@@ -807,4 +807,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2021-12-03 at 02:18:11 +0000
+Updated on 2021-12-03 at 20:11:58 +0000
