@@ -74,6 +74,7 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 
 FILE(GLOB STUDIO_DATA_SRCS
   Data/CustomSurfaceReconstructionFilter.cpp
+  Data/LandmarkItemDelegate.cpp
   Data/DataTool.cpp
   Data/LegacyMeshGenerator.cpp
   Data/MeshCache.cpp
@@ -97,17 +98,8 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/Worker.cpp
   )
 
-FILE(GLOB STUDIO_JOB_SRCS
-  Job/Job.cpp
-  Job/GroupPvalueJob.cpp
-  )
-
-FILE(GLOB STUDIO_JOB_MOC_HDRS
-  Job/Job.h
-  Job/GroupPvalueJob.h
-  )
-
 FILE(GLOB STUDIO_DATA_MOC_HDRS
+  Data/LandmarkItemDelegate.h
   Data/DataTool.h
   Data/MeshManager.h
   Data/QMeshWarper.h
@@ -117,6 +109,16 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Worker.h
+  )
+
+FILE(GLOB STUDIO_JOB_SRCS
+  Job/Job.cpp
+  Job/GroupPvalueJob.cpp
+  )
+
+FILE(GLOB STUDIO_JOB_MOC_HDRS
+  Job/Job.h
+  Job/GroupPvalueJob.h
   )
 
 SET(STUDIO_GROOM_SRCS

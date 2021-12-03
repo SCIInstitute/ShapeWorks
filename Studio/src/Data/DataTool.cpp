@@ -12,8 +12,9 @@
 
 #include <Libs/Groom/GroomParameters.h>
 
+#include <Data/LandmarkItemDelegate.h>
 #include <ui_DataTool.h>
-
+#include <QDebug>
 
 namespace shapeworks {
 
@@ -31,12 +32,30 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
+  connect(ui_->new_landmark_button, &QPushButton::clicked, this, &DataTool::new_landmark);
+
   // start with these off
-  ui_->landmarks_open_button->toggle();
+  //ui_->landmarks_open_button->toggle();
+  ui_->table_open_button->toggle();
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
 
+  QVariant var = QColor(64,128,255);
+  qDebug() << "variant =" << var.toString() << "\n";
+
+  ui_->landmark_table->setItemDelegate(new LandmarkItemDelegate(this));
+
+  QStringList table_headers;
+  table_headers << "visible";
+  table_headers << "color";
+  table_headers << "name";
+  table_headers << "position";
+  table_headers << "place";
+  this->ui_->landmark_table->setHorizontalHeaderLabels(table_headers);
+  this->ui_->landmark_table->setColumnCount(table_headers.size());
+  this->ui_->landmark_table->verticalHeader()->setVisible(true);
+  this->ui_->landmark_table->horizontalHeader()->setVisible(true);
 }
 
 //---------------------------------------------------------------------------
@@ -115,6 +134,23 @@ void DataTool::update_notes()
 std::string DataTool::get_notes()
 {
   return this->ui_->notes->toHtml().toStdString();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::new_landmark()
+{
+  std::cerr << "new landmark\n";
+  int row = ui_->landmark_table->rowCount() + 1;
+  this->ui_->landmark_table->setRowCount(row);
+
+  QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString("something1"));
+  new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
+
+  this->ui_->landmark_table->setItem(row - 1, 0, new_item);
+  new_item = new QTableWidgetItem(QString::fromStdString("#FF00FF"));
+  this->ui_->landmark_table->setItem(row - 1, 1, new_item);
+  new_item = new QTableWidgetItem(QString::fromStdString("something3"));
+  this->ui_->landmark_table->setItem(row - 1, 2, new_item);
 }
 
 //---------------------------------------------------------------------------

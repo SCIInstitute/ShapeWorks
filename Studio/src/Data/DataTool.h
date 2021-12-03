@@ -40,7 +40,10 @@ public:
 
   std::string get_notes();
 
+
 public Q_SLOTS:
+
+  void new_landmark();
 
   void delete_button_clicked();
 
