@@ -11,16 +11,18 @@
 namespace shapeworks
 {
 
-
-LandmarkTableModel::LandmarkTableModel(std::shared_ptr<Project> project,
-                                       QObject* parent) :
-  QAbstractTableModel(parent),
-  project_(project)
+LandmarkTableModel::LandmarkTableModel(QObject* parent) :
+  QAbstractTableModel(parent)
 {}
 
 LandmarkTableModel::~LandmarkTableModel()
 {
   // Landmarks vector gets destroyed automatically
+}
+
+void LandmarkTableModel::set_project(std::shared_ptr<Project> project)
+{
+  this->project_ = project;
 }
 
 int LandmarkTableModel::rowCount(const QModelIndex& /*index*/) const
@@ -39,15 +41,15 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
   if (!index.isValid()) { return QVariant(); }
 
   /*
-  Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
-  const std::vector< Core::Annotation >& measurements =
-    this->private_->landmark_manager_->annotations_state_->get();
+     Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
+     const std::vector< Core::Annotation >& measurements =
+     this->private_->landmark_manager_->annotations_state_->get();
 
-  if (role == Qt::TextAlignmentRole) {
-    return int( Qt::AlignLeft | Qt::AlignVCenter );
-  }
-  else if (role == Qt::DecorationRole) {
-    if (index.column() == LandmarkColumns::VISIBLE_E) {
+     if (role == Qt::TextAlignmentRole) {
+     return int( Qt::AlignLeft | Qt::AlignVCenter );
+     }
+     else if (role == Qt::DecorationRole) {
+     if (index.column() == LandmarkColumns::VISIBLE_E) {
       if (index.row() < static_cast< int >(measurements.size())) {
         if (measurements[ index.row() ].get_visible()) {
           return QIcon(QString::fromUtf8(":/Images/Visible.png"));
@@ -56,17 +58,17 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
           return QIcon(QString::fromUtf8(":/Images/VisibleOff.png"));
         }
       }
-    }
-    else if (index.column() == LandmarkColumns::COLOR_E) {
+     }
+     else if (index.column() == LandmarkColumns::COLOR_E) {
       Core::Color color;
       measurements[ index.row() ].get_color(color);
       return QColor(color.r() * 255, color.g() * 255, color.b() * 255);
-    }
-  }
-  else if (role == Qt::DisplayRole) {
+     }
+     }
+     else if (role == Qt::DisplayRole) {
 
-    int sz = this->rowCount(index);
-    if (index.row() < sz) {
+     int sz = this->rowCount(index);
+     if (index.row() < sz) {
       if (index.row() < static_cast< int >(measurements.size())) {
         if (index.column() == LandmarkColumns::NAME_E) {
           if (index.row() == this->private_->landmark_manager_->active_landmark_state_->get()
@@ -127,16 +129,16 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
           }
         }
       }
-    }
-  }
-  else if (role == Qt::BackgroundRole) {
-    if (index.row() == this->private_->landmark_manager_->active_landmark_state_->get()) {
+     }
+     }
+     else if (role == Qt::BackgroundRole) {
+     if (index.row() == this->private_->landmark_manager_->active_landmark_state_->get()) {
       // The active index is always selected, but if one column is highlighted it may not be
       // obvious which is the active index, so color it.
       return QBrush(QColor(225, 243, 252));                           // Light blue
-    }
-  }
-  */
+     }
+     }
+   */
   return QVariant();
 }
 
@@ -145,17 +147,17 @@ bool LandmarkTableModel::setData(const QModelIndex &index, const QVariant &value
   // Called only after enter is pressed or focus changed
   if (index.isValid() && role == Qt::EditRole) {
     /*
-    const std::vector< Core::Annotation >& measurements =
-      this->private_->landmark_manager_->annotations_state_->get();
+       const std::vector< Core::Annotation >& measurements =
+       this->private_->landmark_manager_->annotations_state_->get();
 
-    if (index.row() < static_cast< int >(measurements.size())) {
-      if (index.column() == LandmarkColumns::VISIBLE_E) {
+       if (index.row() < static_cast< int >(measurements.size())) {
+       if (index.column() == LandmarkColumns::VISIBLE_E) {
         Core::Annotation m = measurements[ index.row() ];
         m.set_visible(value.toBool());
         Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
                                     this->private_->landmark_manager_->annotations_state_, index.row(), m);
-      }
-      if (index.column() == LandmarkColumns::COLOR_E) {
+       }
+       if (index.column() == LandmarkColumns::COLOR_E) {
         Core::Annotation m = measurements[ index.row() ];
         QColor color = value.value< QColor >();
         Core::Color m_color(color.red() / 255.0f, color.green() / 255.0f,
@@ -163,8 +165,8 @@ bool LandmarkTableModel::setData(const QModelIndex &index, const QVariant &value
         m.set_color(m_color);
         Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
                                     this->private_->landmark_manager_->annotations_state_, index.row(), m);
-      }
-      else if (index.column() == LandmarkColumns::NAME_E) {
+       }
+       else if (index.column() == LandmarkColumns::NAME_E) {
         // Don't save name to state variable yet because we don't want to trigger a full update
         // for every character typed.  A full update interrupts editing so we're never
         // able to type more than one character before losing edit focus.  Instead, wait until
@@ -172,16 +174,15 @@ bool LandmarkTableModel::setData(const QModelIndex &index, const QVariant &value
         // cached copy of the name.
         this->private_->cached_active_name_ = value.toString().toStdString();
         this->private_->use_cached_active_name_ = true;
-      }
-      else if (index.column() == LandmarkColumns::POSITION_E) {
+       }
+       else if (index.column() == LandmarkColumns::POSITION_E) {
         return false;
-      }
-      else {
+       }
+       else {
         return false;
-      }
-      */
-      return true;
-
+       }
+     */
+    return true;
   }
   return false;
 }
@@ -268,8 +269,8 @@ bool LandmarkTableModel::removeRows(int row, int count, const QModelIndex & /* p
 
   // Get all the measurements to be removed first, before indices change
 //  const std::vector< Core::Annotation >& annotations =
-  //  this->private_->landmark_manager_->annotations_state_->get();
-  //std::vector< Core::Annotation > remove_annotations;
+//  this->private_->landmark_manager_->annotations_state_->get();
+//std::vector< Core::Annotation > remove_annotations;
 //  for (int row_index = row; row_index < row + count; row_index++) {
 //    if (row_index < static_cast< int >(annotations.size())) {
 //      remove_annotations.push_back(annotations[ row_index ]);
@@ -278,10 +279,10 @@ bool LandmarkTableModel::removeRows(int row, int count, const QModelIndex & /* p
 
   // Remove rows from measurement list
 //  for (size_t i = 0; i < remove_annotations.size(); i++) {
-    // Remove is done on application thread -- no way to know if it succeeds
+  // Remove is done on application thread -- no way to know if it succeeds
 //    Core::ActionRemove::Dispatch(Core::Interface::GetWidgetActionContext(),
 //                                 this->private_->landmark_manager_->annotations_state_, remove_annotations[ i ]);
- // }
+// }
 
   return true;
 }
@@ -351,15 +352,15 @@ void LandmarkTableModel::toggle_visible()
   }
 
 /*
-  const std::vector< Core::Annotation >& measurements =
+   const std::vector< Core::Annotation >& measurements =
     this->private_->landmark_manager_->annotations_state_->get();
-  for (size_t i = 0; i < measurements.size(); i++) {
+   for (size_t i = 0; i < measurements.size(); i++) {
     Core::Annotation m = measurements[ i ];
     m.set_visible(visible);
     Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
                                 this->private_->landmark_manager_->annotations_state_, i, m);
-  }
-  */
+   }
+ */
 }
 
 void LandmarkTableModel::handle_click(const QModelIndex & index)
@@ -372,75 +373,72 @@ void LandmarkTableModel::handle_click(const QModelIndex & index)
     //const std::vector< Core::Annotation >& measurements =
 //      this->private_->landmark_manager_->annotations_state_->get();
 //    if (index.row() < static_cast< int >(measurements.size())) {
-      // Toggle visible
+    // Toggle visible
 //      bool visible = !(measurements[ index.row() ].get_visible());
 //      this->setData(index, visible, Qt::EditRole);
-    }
-
+  }
 }
 
 void LandmarkTableModel::update_visibility()
 {
   /*
-  ASSERT_IS_INTERFACE_THREAD();
+     ASSERT_IS_INTERFACE_THREAD();
 
-    Core::StateEngine::lock_type lock( Core::StateEngine::GetMutex() );
-    const std::vector< Core::Annotation >& measurements =
+     Core::StateEngine::lock_type lock( Core::StateEngine::GetMutex() );
+     const std::vector< Core::Annotation >& measurements =
       this->landmark_manager_->annotations_state_->get();
-    size_t num_visible_measurements = 0;
-    for ( size_t i = 0; i < measurements.size(); i++ )
-    {
+     size_t num_visible_measurements = 0;
+     for ( size_t i = 0; i < measurements.size(); i++ )
+     {
       if ( measurements[ i ].get_visible() )
       {
         num_visible_measurements++;
       }
-    }
-    if ( num_visible_measurements == 0 )
-    {
+     }
+     if ( num_visible_measurements == 0 )
+     {
       this->visibility_ = LandmarkVisibility::NONE_VISIBLE_E;
-    }
-    else if ( num_visible_measurements == measurements.size() )
-    {
+     }
+     else if ( num_visible_measurements == measurements.size() )
+     {
       this->visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
-    }
-    else
-    {
+     }
+     else
+     {
       this->visibility_ = LandmarkVisibility::SOME_VISIBLE_E;
-    }
-    */
+     }
+   */
 }
 
 void LandmarkTableModel::set_placing_landmark(int row)
 {
   /*
-  Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
+     Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
 
-  int current_placing_landmark = this->private_->landmark_manager_->landmark_placing_index_state_->get();
+     int current_placing_landmark = this->private_->landmark_manager_->landmark_placing_index_state_->get();
 
-  if (current_placing_landmark == row) {
-    Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
+     if (current_placing_landmark == row) {
+     Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
                               private_->landmark_manager_->landmark_placing_index_state_, -1);
-  }
-  else {
-    const std::vector< Core::Annotation >& landmarks =
+     }
+     else {
+     const std::vector< Core::Annotation >& landmarks =
       this->private_->landmark_manager_->annotations_state_->get();
 
-    Core::Annotation landmark = landmarks[row];
-    landmark.set_values(std::vector<float>());
+     Core::Annotation landmark = landmarks[row];
+     landmark.set_values(std::vector<float>());
 
-    Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
+     Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
                                 this->private_->landmark_manager_->annotations_state_, row, landmark);
 
-    Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
+     Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
                               private_->landmark_manager_->landmark_placing_index_state_, row);
-  }
-  */
+     }
+   */
 }
 
 void LandmarkTableModel::set_button_text(std::string text)
 {
   button_text_ = text;
 }
-
 }
-

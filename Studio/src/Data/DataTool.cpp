@@ -55,7 +55,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->landmark_table->verticalHeader()->setVisible(true);
   this->ui_->landmark_table->horizontalHeader()->setVisible(true);
 
-  landmark_table_model_ = std::make_shared<LandmarkTableModel>(session_->get_project(), this);
+  landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   ui_->landmark_table->setModel(landmark_table_model_.get());
 }
 

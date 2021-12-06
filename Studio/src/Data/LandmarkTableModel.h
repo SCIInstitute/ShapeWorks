@@ -36,9 +36,11 @@ class LandmarkTableModel : public QAbstractTableModel
   friend class LandmarkTableModelPrivate;
 
 public:
-  LandmarkTableModel( std::shared_ptr<Project> project, QObject* parent = 0 );
+  LandmarkTableModel( QObject* parent = 0 );
 
   virtual ~LandmarkTableModel();
+
+  void set_project(std::shared_ptr<Project> project);
 
   //
   // Inherited functions
@@ -53,7 +55,6 @@ public:
   Qt::ItemFlags flags( const QModelIndex &index ) const;
   bool removeRows( int row, int count, const QModelIndex & parent = QModelIndex() );
 
-  double compute_distance( int p1, int p2 );
 
   //
   // Extended functions
