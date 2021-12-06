@@ -3,6 +3,7 @@
 #include <QColor>
 #include <QIcon>
 
+#include <iostream>
 #include <sstream>
 
 #include <Data/LandmarkTableModel.h>
@@ -13,7 +14,20 @@ namespace shapeworks
 
 LandmarkTableModel::LandmarkTableModel(QObject* parent) :
   QAbstractTableModel(parent)
-{}
+{
+  this->default_colors_.push_back(QColor(255, 175, 78).name().toStdString());        // orange
+  this->default_colors_.push_back(QColor(116, 255, 122).name().toStdString());       // green
+  this->default_colors_.push_back(QColor(143, 214, 255).name().toStdString());       // light blue
+  this->default_colors_.push_back(QColor(255, 0, 0).name().toStdString());           // red
+  this->default_colors_.push_back(QColor(255, 233, 0).name().toStdString());         // yellow
+  this->default_colors_.push_back(QColor(108, 0, 212).name().toStdString());         // grape
+  this->default_colors_.push_back(QColor(0, 0, 255).name().toStdString());           // blue
+  this->default_colors_.push_back(QColor(255, 94, 122).name().toStdString());        // mauve
+  this->default_colors_.push_back(QColor(255, 255, 165).name().toStdString());       // light yellow
+  this->default_colors_.push_back(QColor(255, 0, 255).name().toStdString());         // magenta
+  this->default_colors_.push_back(QColor(194, 118, 0).name().toStdString());         // brown
+  this->default_colors_.push_back(QColor(159, 143, 255).name().toStdString());       // light purple
+}
 
 LandmarkTableModel::~LandmarkTableModel()
 {
@@ -22,17 +36,22 @@ LandmarkTableModel::~LandmarkTableModel()
 
 void LandmarkTableModel::set_project(std::shared_ptr<Project> project)
 {
+  //beginResetModel();
   this->project_ = project;
+  this->landmarks_ = project->get_landmarks();
+  //endResetModel();
+  this->update_cells();
 }
 
 int LandmarkTableModel::rowCount(const QModelIndex& /*index*/) const
 {
-  return 10;
+  //std::cerr << "returning row count: " << landmarks_.size() << "\n";
+  return landmarks_.size();
 }
 
 int LandmarkTableModel::columnCount(const QModelIndex& /*index*/) const
 {
-  //return LandMarkColumns + LandmarkColumns::END_E;
+  return LandmarkColumns::END_E;
 }
 
 QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
@@ -40,105 +59,62 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
 
   if (!index.isValid()) { return QVariant(); }
 
-  /*
-     Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
-     const std::vector< Core::Annotation >& measurements =
-     this->private_->landmark_manager_->annotations_state_->get();
-
-     if (role == Qt::TextAlignmentRole) {
-     return int( Qt::AlignLeft | Qt::AlignVCenter );
-     }
-     else if (role == Qt::DecorationRole) {
-     if (index.column() == LandmarkColumns::VISIBLE_E) {
-      if (index.row() < static_cast< int >(measurements.size())) {
-        if (measurements[ index.row() ].get_visible()) {
+  if (role == Qt::TextAlignmentRole) {
+    return int( Qt::AlignLeft | Qt::AlignVCenter );
+  }
+  else if (role == Qt::DecorationRole) {
+    if (index.column() == LandmarkColumns::VISIBLE_E) {
+      if (index.row() < static_cast< int >(landmarks_.size())) {
+        if (landmarks_[ index.row() ].visible_) {
           return QIcon(QString::fromUtf8(":/Images/Visible.png"));
         }
         else {
           return QIcon(QString::fromUtf8(":/Images/VisibleOff.png"));
         }
       }
-     }
-     else if (index.column() == LandmarkColumns::COLOR_E) {
-      Core::Color color;
-      measurements[ index.row() ].get_color(color);
-      return QColor(color.r() * 255, color.g() * 255, color.b() * 255);
-     }
-     }
-     else if (role == Qt::DisplayRole) {
+    }
+    else if (index.column() == LandmarkColumns::COLOR_E) {
+      std::cerr << "color = " << landmarks_[index.row()].color_ << "\n";
+      QColor color(QString::fromStdString(landmarks_[index.row()].color_));
+      std::cerr << "color.r = " << color.red() << "\n";
+      std::cerr << "color.g = " << color.green() << "\n";
+      std::cerr << "color.b = " << color.blue() << "\n";
+      return QString::fromStdString(landmarks_[index.row()].color_);
+      //return QColor(QString::fromStdString(landmarks_[index.row()].color_));
+    }
+  }
+  else if (role == Qt::DisplayRole) {
 
-     int sz = this->rowCount(index);
-     if (index.row() < sz) {
-      if (index.row() < static_cast< int >(measurements.size())) {
+    int sz = this->rowCount(index);
+    if (index.row() < sz) {
+      if (index.row() < static_cast< int >(landmarks_.size())) {
         if (index.column() == LandmarkColumns::NAME_E) {
-          if (index.row() == this->private_->landmark_manager_->active_landmark_state_->get()
-              && this->private_->use_cached_active_name_) {
-            return QString::fromStdString(this->private_->cached_active_name_);
-          }
-          else {
-            return QString::fromStdString(measurements[ index.row() ].get_name());
-          }
+          return QString::fromStdString(landmarks_[ index.row() ].name_);
         }
         else if (index.column() == LandmarkColumns::POSITION_E) {
-
-          std::vector<float> values = measurements[index.row()].get_values();
-
-          if (index.row() == private_->landmark_manager_->landmark_placing_index_state_->get()) {
-            return "placing...";
-          }
-
-          if (values.empty()) {
-            return "not placed";
-          }
-
-          std::ostringstream m;
-          m << values[0] << " " << values[1] << " " << values[2];
-
-          return QString::fromStdString(m.str());
+          return "...";
         }
-        else if (index.column() == LandmarkColumns::SET_BUTTON_E) {   // Used only for export
+        else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
           return QString("");
         }
-        else if (index.column() == LandmarkColumns::COMMENT_E) {                         // Used only for export
-          return QString::fromStdString(measurements[ index.row() ].get_comment());
+        else if (index.column() == LandmarkColumns::COMMENT_E) {
+          return QString::fromStdString(landmarks_[ index.row() ].comment_);
         }
         else if (index.column() >= LandmarkColumns::END_E) {
-          if (index.row() == private_->landmark_manager_->landmark_placing_index_state_->get()) {
-            return "painting...";
-          }
-          else {
-
-            std::vector<float> values = measurements[index.row()].get_values();
-
-            if (values.empty()) {
-              return "-";
-            }
-            else {
-
-              int column_index = index.column() - LandmarkColumns::END_E;
-
-              if (column_index >= values.size()) {
-                return "NA";
-              }
-
-              double value = values[column_index];
-              RegionTableColumn region_column = RegionTableColumns::Instance()->get_columns()[column_index];
-
-              return QString::fromStdString(region_column.convert_value_to_string(value));
-            }
-          }
+          return "";
         }
       }
-     }
-     }
-     else if (role == Qt::BackgroundRole) {
-     if (index.row() == this->private_->landmark_manager_->active_landmark_state_->get()) {
+    }
+  }
+  else if (role == Qt::BackgroundRole) {
+    bool setting = false;
+    if (setting) {
       // The active index is always selected, but if one column is highlighted it may not be
       // obvious which is the active index, so color it.
-      return QBrush(QColor(225, 243, 252));                           // Light blue
-     }
-     }
-   */
+      return QBrush(QColor(225, 243, 252));
+    }
+  }
+
   return QVariant();
 }
 
@@ -193,17 +169,17 @@ QVariant LandmarkTableModel::headerData(int section, Qt::Orientation orientation
     if (orientation == Qt::Horizontal) {
       if (section == LandmarkColumns::VISIBLE_E) {
         if (this->visibility_ == LandmarkVisibility::ALL_VISIBLE_E) {
-          return QIcon(QString::fromUtf8(":/Images/Visible.png"));
+          return QIcon(":/Studio/Images/Visible.png");
         }
         else if (this->visibility_ == LandmarkVisibility::NONE_VISIBLE_E) {
-          return QIcon(QString::fromUtf8(":/Images/VisibleOff.png"));
+          return QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
         }
         else if (this->visibility_ == LandmarkVisibility::SOME_VISIBLE_E) {
-          return QIcon(QString::fromUtf8(":/Images/VisibleGray.png"));
+          return QIcon(QString::fromUtf8(":/Studio/Images/VisibleGray.png"));
         }
       }
       else if (section == LandmarkColumns::COLOR_E) {
-        return QIcon(QString::fromUtf8(":/Images/AppearanceOff.png"));
+        return QIcon(QString::fromUtf8(":/Studio/Images/Brush.png"));
       }
     }
   }
@@ -218,7 +194,7 @@ QVariant LandmarkTableModel::headerData(int section, Qt::Orientation orientation
         return QString("Name");
       }
       else if (section == LandmarkColumns::POSITION_E) {
-        return QString("Position");
+        return QString("# Set");
       }
       else if (section == LandmarkColumns::COMMENT_E) {
         return QString("Comment");
@@ -279,7 +255,7 @@ bool LandmarkTableModel::removeRows(int row, int count, const QModelIndex & /* p
 
   // Remove rows from measurement list
 //  for (size_t i = 0; i < remove_annotations.size(); i++) {
-  // Remove is done on application thread -- no way to know if it succeeds
+// Remove is done on application thread -- no way to know if it succeeds
 //    Core::ActionRemove::Dispatch(Core::Interface::GetWidgetActionContext(),
 //                                 this->private_->landmark_manager_->annotations_state_, remove_annotations[ i ]);
 // }
@@ -295,11 +271,19 @@ void LandmarkTableModel::update_table()
   //QAbstractTableModel::reset();
 
   // Column resize doesn't work properly without this call
+  if (this->project_) {
+    this->landmarks_ = project_->get_landmarks();
+  }
   this->update_cells();
 }
 
 void LandmarkTableModel::update_cells()
 {
+  std::cerr << "update_cells!\n";
+  if (project_) {
+    landmarks_ = project_->get_landmarks();
+    std::cerr << "the number of landmarks is " << landmarks_.size() << "\n";
+  }
   this->update_visibility();
   //this->private_->use_cached_active_name_ = false;
 
@@ -410,6 +394,7 @@ void LandmarkTableModel::update_visibility()
    */
 }
 
+//---------------------------------------------------------------------------
 void LandmarkTableModel::set_placing_landmark(int row)
 {
   /*
@@ -436,9 +421,27 @@ void LandmarkTableModel::set_placing_landmark(int row)
      }
    */
 }
+//---------------------------------------------------------------------------
 
 void LandmarkTableModel::set_button_text(std::string text)
 {
   button_text_ = text;
+}
+
+//---------------------------------------------------------------------------
+std::string LandmarkTableModel::get_next_landmark_name()
+{
+  return std::to_string(this->landmarks_.size() + 1);
+}
+
+//---------------------------------------------------------------------------
+std::string LandmarkTableModel::get_next_landmark_color()
+{
+
+  int index = this->landmarks_.size() % this->default_colors_.size();
+
+  std::string c = this->default_colors_[index];
+
+  return c;
 }
 }

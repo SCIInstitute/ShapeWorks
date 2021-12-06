@@ -435,6 +435,52 @@ int Project::get_version() const
 }
 
 //---------------------------------------------------------------------------
+std::vector<Landmark> Project::get_landmarks()
+{
+  std::vector<Landmark> landmarks;
+  if (!this->wb_->contains("landmarks")) {
+    return landmarks;
+  }
+  xlnt::worksheet ws = this->wb_->sheet_by_title("landmarks");
+
+  auto rows = ws.rows(false);
+
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
+    Landmark landmark;
+    landmark.name_ = rows[i][0].to_string();
+    landmark.visible_ = rows[i][1].to_string() == "true";
+    landmark.color_ = rows[i][2].to_string();
+    landmark.comment_ = rows[i][3].to_string();
+    landmarks.push_back(landmark);
+  }
+  return landmarks;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_landmarks(std::vector<Landmark> landmarks)
+{
+  std::string name = "landmarks";
+  if (this->wb_->contains(name)) {
+    this->wb_->remove_sheet(this->wb_->sheet_by_title(name));
+  }
+
+  int id = this->get_or_create_worksheet(name);
+  auto ws = this->wb_->sheet_by_index(id);
+
+  ws.cell(xlnt::cell_reference(1, 1)).value("name");
+  ws.cell(xlnt::cell_reference(2, 1)).value("visible");
+  ws.cell(xlnt::cell_reference(3, 1)).value("color");
+  ws.cell(xlnt::cell_reference(4, 1)).value("comment");
+
+  for (int i = 0; i < landmarks.size(); i++) {
+    ws.cell(xlnt::cell_reference(1, i + 2)).value(landmarks[i].name_);
+    ws.cell(xlnt::cell_reference(2, i + 2)).value(landmarks[i].visible_ ? "true" : "false");
+    ws.cell(xlnt::cell_reference(3, i + 2)).value(landmarks[i].color_);
+    ws.cell(xlnt::cell_reference(4, i + 2)).value(landmarks[i].comment_);
+  }
+}
+
+//---------------------------------------------------------------------------
 int
 Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const
 {
@@ -534,7 +580,7 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   int value_column = 1; // single domain
   if (domain_name != "") {
-    for (int i = ws.lowest_row(); i < ws.highest_column(); i++) {
+    for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
       if (rows[0][i].to_string() == "value_" + domain_name) {
         value_column = i;
       }

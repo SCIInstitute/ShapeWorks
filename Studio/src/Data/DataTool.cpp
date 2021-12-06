@@ -54,9 +54,11 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   //this->ui_->landmark_table->setColumnCount(table_headers.size());
   this->ui_->landmark_table->verticalHeader()->setVisible(true);
   this->ui_->landmark_table->horizontalHeader()->setVisible(true);
+  this->ui_->landmark_table->resizeColumnsToContents();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   ui_->landmark_table->setModel(landmark_table_model_.get());
+  ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
 }
 
 //---------------------------------------------------------------------------
@@ -67,6 +69,7 @@ DataTool::~DataTool()
 void DataTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
+  this->landmark_table_model_->set_project(session->get_project());
   this->update_table();
 }
 
@@ -120,6 +123,10 @@ void DataTool::update_table()
   this->ui_->table->resizeColumnsToContents();
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  landmark_table_model_->update_cells();
+  this->ui_->landmark_table->resizeColumnsToContents();
+
 }
 
 //---------------------------------------------------------------------------
@@ -141,6 +148,16 @@ std::string DataTool::get_notes()
 void DataTool::new_landmark()
 {
   std::cerr << "new landmark\n";
+
+  auto landmarks = session_->get_project()->get_landmarks();
+
+  Landmark landmark;
+  landmark.name_ = landmark_table_model_->get_next_landmark_name();
+  landmark.color_ = landmark_table_model_->get_next_landmark_color();
+  landmarks.push_back(landmark);
+  session_->get_project()->set_landmarks(landmarks);
+  landmark_table_model_->update_table();
+
   //int row = ui_->landmark_table->rowCount() + 1;
   //this->ui_->landmark_table->setRowCount(row);
 
@@ -169,5 +186,5 @@ void DataTool::delete_button_clicked()
   this->session_->remove_shapes(index_list);
 }
 
-//---------------------------------------------------------------------------
+
 }

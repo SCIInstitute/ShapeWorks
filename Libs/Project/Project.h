@@ -19,6 +19,15 @@ namespace shapeworks {
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
+class Landmark {
+public:
+  std::string name_;
+  bool visible_ = true;
+  std::string color_;
+  std::string comment_;
+};
+
+
 //! Representation of a project.
 /*!
  * The Project class encapsulates the spreadsheet based file format for storing project data.
@@ -100,6 +109,12 @@ public:
 
   //! Get the version of the currently loaded project
   int get_version() const;
+
+  //! Return the set of landmarks for this project
+  std::vector<Landmark> get_landmarks();
+
+  //! Set landmarks for this project
+  void set_landmarks(std::vector<Landmark> landmarks);
 
 private:
 

@@ -538,7 +538,14 @@ QWidget#specificity_panel {
           </widget>
          </item>
          <item row="0" column="0" colspan="2">
-          <widget class="QTableView" name="landmark_table"/>
+          <widget class="QTableView" name="landmark_table">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ContiguousSelection</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

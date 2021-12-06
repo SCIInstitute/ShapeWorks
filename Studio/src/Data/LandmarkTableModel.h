@@ -6,6 +6,8 @@
 #include <QModelIndex>
 #include <QItemSelection>
 
+#include <Libs/Project/Project.h>
+
 
 namespace shapeworks
 {
@@ -90,6 +92,10 @@ public:
   void set_placing_landmark( int row );
   void set_button_text( std::string text );
 
+  std::string get_next_landmark_name();
+  std::string get_next_landmark_color();
+
+
 private Q_SLOTS:
 
   // HANDLE_CLICK:
@@ -108,7 +114,12 @@ private:
   std::shared_ptr<Project> project_;
 
   int visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
-  std::string button_text_ = "set";
+  std::string button_text_ = "Place";
+
+  int last_landmark_color_ = -1;
+  std::vector<Landmark> landmarks_;
+
+  std::vector<std::string> default_colors_;
 
 };
 }

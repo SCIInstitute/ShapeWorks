@@ -67,16 +67,18 @@ LandmarkItemDelegate::LandmarkItemDelegate( QObject* parent /*= 0 */ ) :
 void LandmarkItemDelegate::paint( QPainter* painter, const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const
 {
-  qDebug() << "item delgate paint called\n";
+  //qDebug() << "item delgate paint called\n";
 
   if ( index.column() == 1 )
   {
-    qDebug() << "value: " << index.model()->data(index, Qt::DisplayRole);
-    qDebug() << "decorator value: " << index.model()->data(index, Qt::DecorationRole);
+//    qDebug() << "value: " << index.model()->data(index, Qt::DisplayRole);
+//    qDebug() << "decorator value: " << index.model()->data(index, Qt::DecorationRole);
 
     // Use paint function to set color of cell so that color doesn't change when cell is
     // highlighted (selected).
-    QColor measurement_color = index.model()->data( index, Qt::DisplayRole ).value< QColor >();
+    qDebug() << "This is dumb " << index.model()->data( index, Qt::DecorationRole ).value<QString>();
+    QColor measurement_color = index.model()->data( index, Qt::DecorationRole ).value< QColor >();
+    qDebug() << "colah = " << measurement_color.name() << "\n";
     painter->fillRect( option.rect, measurement_color );
     return;
   }

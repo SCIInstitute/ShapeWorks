@@ -52,6 +52,7 @@ Q_SIGNALS:
 
 private:
 
+
   Preferences& preferences_;
 
   Ui_DataTool* ui_;
