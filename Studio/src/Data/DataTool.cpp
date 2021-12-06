@@ -9,10 +9,9 @@
 #include <Data/StudioLog.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/DataTool.h>
-
-#include <Libs/Groom/GroomParameters.h>
-
+#include <Data/LandmarkTableModel.h>
 #include <Data/LandmarkItemDelegate.h>
+
 #include <ui_DataTool.h>
 #include <QDebug>
 
@@ -40,8 +39,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
-
-  QVariant var = QColor(64,128,255);
+  QVariant var = QColor(64, 128, 255);
   qDebug() << "variant =" << var.toString() << "\n";
 
   ui_->landmark_table->setItemDelegate(new LandmarkItemDelegate(this));
@@ -52,10 +50,13 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   table_headers << "name";
   table_headers << "position";
   table_headers << "place";
-  this->ui_->landmark_table->setHorizontalHeaderLabels(table_headers);
-  this->ui_->landmark_table->setColumnCount(table_headers.size());
+  //this->ui_->landmark_table->setHorizontalHeaderLabels(table_headers);
+  //this->ui_->landmark_table->setColumnCount(table_headers.size());
   this->ui_->landmark_table->verticalHeader()->setVisible(true);
   this->ui_->landmark_table->horizontalHeader()->setVisible(true);
+
+  landmark_table_model_ = std::make_shared<LandmarkTableModel>(session_->get_project(), this);
+  ui_->landmark_table->setModel(landmark_table_model_.get());
 }
 
 //---------------------------------------------------------------------------
@@ -140,21 +141,19 @@ std::string DataTool::get_notes()
 void DataTool::new_landmark()
 {
   std::cerr << "new landmark\n";
-  int row = ui_->landmark_table->rowCount() + 1;
-  this->ui_->landmark_table->setRowCount(row);
+  //int row = ui_->landmark_table->rowCount() + 1;
+  //this->ui_->landmark_table->setRowCount(row);
 
 //  QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString("something1"));
-  //new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
+//new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
 
-  QTableWidgetItem* new_item = new QTableWidgetItem(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")), "");
+  //QTableWidgetItem* new_item = new QTableWidgetItem(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")), "");
 
-
-
-  this->ui_->landmark_table->setItem(row - 1, 0, new_item);
-  new_item = new QTableWidgetItem(QString::fromStdString("#FF00FF"));
-  this->ui_->landmark_table->setItem(row - 1, 1, new_item);
-  new_item = new QTableWidgetItem(QString::fromStdString("something3"));
-  this->ui_->landmark_table->setItem(row - 1, 2, new_item);
+  //this->ui_->landmark_table->setItem(row - 1, 0, new_item);
+  //new_item = new QTableWidgetItem(QString::fromStdString("#FF00FF"));
+  //this->ui_->landmark_table->setItem(row - 1, 1, new_item);
+  //new_item = new QTableWidgetItem(QString::fromStdString("something3"));
+  //this->ui_->landmark_table->setItem(row - 1, 2, new_item);
 }
 
 //---------------------------------------------------------------------------

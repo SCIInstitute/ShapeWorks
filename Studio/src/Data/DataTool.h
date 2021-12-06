@@ -15,7 +15,7 @@ class Ui_DataTool;
 namespace shapeworks {
 
 class Session;
-class ShapeWorksStudioApp;
+class LandmarkTableModel;
 
 class DataTool : public QWidget {
   Q_OBJECT;
@@ -56,5 +56,7 @@ private:
 
   Ui_DataTool* ui_;
   QSharedPointer<Session> session_;
+
+  std::shared_ptr<LandmarkTableModel> landmark_table_model_;
 };
 }
