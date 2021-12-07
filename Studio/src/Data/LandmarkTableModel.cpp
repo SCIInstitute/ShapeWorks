@@ -66,19 +66,22 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const
     if (index.column() == LandmarkColumns::VISIBLE_E) {
       if (index.row() < static_cast< int >(landmarks_.size())) {
         if (landmarks_[ index.row() ].visible_) {
-          return QIcon(QString::fromUtf8(":/Images/Visible.png"));
+          return QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
         }
         else {
-          return QIcon(QString::fromUtf8(":/Images/VisibleOff.png"));
+          return QIcon(QString::fromUtf8(":/Studio/Images/VisibleOff.png"));
         }
+      }
+      else {
+        return "I don't know";
       }
     }
     else if (index.column() == LandmarkColumns::COLOR_E) {
-      std::cerr << "color = " << landmarks_[index.row()].color_ << "\n";
+      //std::cerr << "color = " << landmarks_[index.row()].color_ << "\n";
       QColor color(QString::fromStdString(landmarks_[index.row()].color_));
-      std::cerr << "color.r = " << color.red() << "\n";
-      std::cerr << "color.g = " << color.green() << "\n";
-      std::cerr << "color.b = " << color.blue() << "\n";
+      //std::cerr << "color.r = " << color.red() << "\n";
+      //std::cerr << "color.g = " << color.green() << "\n";
+      //std::cerr << "color.b = " << color.blue() << "\n";
       return QString::fromStdString(landmarks_[index.row()].color_);
       //return QColor(QString::fromStdString(landmarks_[index.row()].color_));
     }
@@ -231,7 +234,8 @@ Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex &index) const
   //   flags |= Qt::ItemIsEditable;
   //}
 
-  if (index.column() == LandmarkColumns::NAME_E) {
+  if (index.column() == LandmarkColumns::NAME_E || index.column() == LandmarkColumns::COLOR_E ||
+      index.column() == LandmarkColumns::SET_BUTTON_E) {
     flags |= Qt::ItemIsEditable;
   }
 

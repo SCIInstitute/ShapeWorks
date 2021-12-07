@@ -43,8 +43,9 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   void set_button_pressed(int row);
+  void cell_entered(QModelIndex index);
 
 private:
-  boost::shared_ptr< LandmarkItemDelegatePrivate > private_;
+  std::shared_ptr< LandmarkItemDelegatePrivate > private_;
 };
 } // end namespace Seg3D

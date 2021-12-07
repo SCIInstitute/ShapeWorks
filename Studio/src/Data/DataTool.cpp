@@ -42,7 +42,12 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   QVariant var = QColor(64, 128, 255);
   qDebug() << "variant =" << var.toString() << "\n";
 
-  ui_->landmark_table->setItemDelegate(new LandmarkItemDelegate(this));
+
+  landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
+  ui_->landmark_table->setModel(landmark_table_model_.get());
+  ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
+
+  ui_->landmark_table->setItemDelegate(new LandmarkItemDelegate(ui_->landmark_table));
 
   QStringList table_headers;
   table_headers << "visible";
@@ -56,9 +61,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->landmark_table->horizontalHeader()->setVisible(true);
   this->ui_->landmark_table->resizeColumnsToContents();
 
-  landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
-  ui_->landmark_table->setModel(landmark_table_model_.get());
-  ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
 }
 
 //---------------------------------------------------------------------------
