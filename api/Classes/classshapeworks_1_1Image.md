@@ -84,6 +84,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setOrigin](../Classes/classshapeworks_1_1Image.md#function-setorigin)**(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setSpacing](../Classes/classshapeworks_1_1Image.md#function-setspacing)**(Vector3 spacing)<br>sets the image spacing to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setCoordsys](../Classes/classshapeworks_1_1Image.md#function-setcoordsys)**(ImageType::DirectionType coordsys)<br>sets the coordinate system in which this image lives in physical space  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[isolate](../Classes/classshapeworks_1_1Image.md#function-isolate)**()<br>isolate the largest object in a binary segmentation  |
 | Dims | **[dims](../Classes/classshapeworks_1_1Image.md#function-dims)**() const<br>logical dimensions of the image  |
 | Point3 | **[size](../Classes/classshapeworks_1_1Image.md#function-size)**() const<br>physical dimensions of the image (dims * spacing)  |
 | Vector | **[spacing](../Classes/classshapeworks_1_1Image.md#function-spacing)**() const<br>physical spacing of the image  |
@@ -738,6 +739,14 @@ Image & setCoordsys(
 
 sets the coordinate system in which this image lives in physical space 
 
+### function isolate
+
+```cpp
+Image & isolate()
+```
+
+isolate the largest object in a binary segmentation 
+
 ### function dims
 
 ```cpp
@@ -950,4 +959,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2021-12-03 at 20:11:58 +0000
+Updated on 2021-12-07 at 17:10:24 +0000

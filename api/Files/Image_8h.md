@@ -155,6 +155,8 @@ public:
 
   Image& setCoordsys(ImageType::DirectionType coordsys);
 
+  Image& isolate();
+
   // query functions //
 
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
@@ -238,4 +240,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2021-12-03 at 20:11:58 +0000
+Updated on 2021-12-07 at 17:10:24 +0000

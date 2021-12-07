@@ -182,6 +182,7 @@ title: shapeworks
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(DivideImage , [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ImageToMesh , [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(SetRegion , [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Isolate , [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ReadParticleSystem , [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Compactness , [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Generalization , [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md) ) |
@@ -1008,6 +1009,16 @@ COMMAND_DECLARE(
 ```cpp
 COMMAND_DECLARE(
     SetRegion ,
+    ImageCommand 
+)
+```
+
+
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
+    Isolate ,
     ImageCommand 
 )
 ```
@@ -2188,4 +2199,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2021-12-03 at 20:11:57 +0000
+Updated on 2021-12-07 at 17:10:23 +0000

@@ -88,8 +88,6 @@ private:
 
   Mesh get_mesh(int subject, int domain);
 
-  void isolate(Image& image);
-
   void fix_origin(Image& image);
 
   bool verbose_ = false;
@@ -109,4 +107,4 @@ private:
 
 -------------------------------
 
-Updated on 2021-12-03 at 20:11:58 +0000
+Updated on 2021-12-07 at 17:10:24 +0000

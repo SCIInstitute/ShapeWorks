@@ -530,6 +530,26 @@ shapeworks  intensity [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
+### isolate
+
+
+**Usage:**
+
+```
+shapeworks  isolate [args]...
+```  
+
+
+**Description:** finds the largest object in a binary segmentation and removes all other objects  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
 ### multiply
 
 

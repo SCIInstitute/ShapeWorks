@@ -65,6 +65,7 @@ COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(SetRegion, ImageCommand);
+COMMAND_DECLARE(Isolate, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -124,4 +125,4 @@ COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 -------------------------------
 
-Updated on 2021-12-03 at 20:11:58 +0000
+Updated on 2021-12-07 at 17:10:24 +0000
