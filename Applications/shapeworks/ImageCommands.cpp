@@ -1356,4 +1356,29 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
   return sharedData.validMesh();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Isolate
+///////////////////////////////////////////////////////////////////////////////
+void Isolate::buildParser()
+{
+  const std::string prog = "isolate";
+  const std::string desc = "finds the largest object in a binary segmentation and removes all other objects";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool Isolate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image.isolate();
+  return true;
+}
+
+
 } // shapeworks

@@ -1236,3 +1236,11 @@ TEST(ImageTests, orientationTest3)
 
   ASSERT_TRUE(image == ground_truth);
 }
+
+TEST(ImageTests, isolateTest1)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/isolate_input.nrrd");
+  image.isolate();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/isolate_output.nrrd");
+  ASSERT_TRUE(image == ground_truth);
+}

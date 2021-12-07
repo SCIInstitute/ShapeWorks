@@ -597,6 +597,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        },
        "converts image to mesh at specified isovalue",
        "isovalue"_a)
+
+  .def("isolate",
+       &Image::isolate,
+       "isolate largest object")
   ;
 
   // PhysicalRegion

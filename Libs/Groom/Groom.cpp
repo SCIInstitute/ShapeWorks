@@ -183,7 +183,7 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params)
 {
   // isolate
   if (params.get_isolate_tool()) {
-    this->isolate(image);
+    image.isolate();
     this->increment_progress();
   }
   if (this->abort_) { return false; }
@@ -345,42 +345,6 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
     this->increment_progress();
   }
   return true;
-}
-
-//---------------------------------------------------------------------------
-void Groom::isolate(Image& image)
-{
-  ImageType::Pointer img = image;
-
-  typedef itk::Image<unsigned char, 3> IsolateType;
-  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
-  ToIntType::Pointer filter = ToIntType::New();
-  filter->SetInput(img);
-  filter->Update();
-
-  // Find the connected components in this image.
-  auto cc_filter = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
-  cc_filter->SetInput(filter->GetOutput());
-  cc_filter->FullyConnectedOn();
-  cc_filter->Update();
-
-  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
-  relabel->SetInput(cc_filter->GetOutput());
-  relabel->SortByObjectSizeOn();
-  relabel->Update();
-
-  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
-  thresh->SetInput(relabel->GetOutput());
-  thresh->SetOutsideValue(0);
-  thresh->ThresholdBelow(0);
-  thresh->ThresholdAbove(1);
-  thresh->Update();
-
-  auto cast_filter = itk::CastImageFilter<IsolateType, ImageType>::New();
-  cast_filter->SetInput(thresh->GetOutput());
-  cast_filter->Update();
-
-  image = Image(cast_filter->GetOutput());
 }
 
 //---------------------------------------------------------------------------
