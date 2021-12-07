@@ -9,6 +9,7 @@
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Project/ProjectUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -19,6 +20,7 @@
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
 #include <itkOrientImageFilter.h>
+#include <itkRegionOfInterestImageFilter.h>
 
 using namespace shapeworks;
 
@@ -48,29 +50,32 @@ bool Groom::run()
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
-    for (size_t i = r.begin(); i < r.end(); ++i) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
 
-      for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
+        for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
 
-        if (this->abort_) {
-          success = false;
-          continue;
-        }
-
-        if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
-          if (!this->image_pipeline(subjects[i], domain)) {
+          if (this->abort_) {
             success = false;
+            continue;
           }
-        }
 
-        if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
-          if (!this->mesh_pipeline(subjects[i], domain)) {
-            success = false;
+          bool is_image = subjects[0]->get_domain_types()[domain] == DomainType::Image;
+          bool is_mesh = subjects[0]->get_domain_types()[domain] == DomainType::Mesh;
+
+          if (is_image) {
+            if (!this->image_pipeline(subjects[i], domain)) {
+              success = false;
+            }
+          }
+
+          if (is_mesh) {
+            if (!this->mesh_pipeline(subjects[i], domain)) {
+              success = false;
+            }
           }
         }
       }
-    }
-  });
+    });
 
   if (!this->run_alignment()) {
     success = false;
@@ -93,17 +98,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   Image image(path);
 
   // define a groom transform
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
 
   if (this->skip_grooming_) {
     std::vector<std::vector<double>> groomed_transforms;
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
-    }
-    groomed_transforms.push_back(groomed_transform);
+    groomed_transforms.push_back(ProjectUtils::convert_transform(transform));
     subject->set_groomed_transforms(groomed_transforms);
 
     {
@@ -124,28 +124,68 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     return true;
   }
 
+  this->run_image_pipeline(image, params);
+
+  // reflection
+  if (params.get_reflect()) {
+    auto table = subject->get_table_values();
+    if (table.find(params.get_reflect_column()) != table.end()) {
+      if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+        this->add_reflect_transform(transform, params.get_reflect_axis());
+      }
+    }
+  }
+
   // centering
   if (params.get_use_center()) {
-    auto centering = this->center(image);
-
-    itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-    tform[0] = centering[0];
-    tform[1] = centering[1];
-    tform[2] = centering[2];
-    transform->SetTranslation(tform);
-
-    this->increment_progress();
+    this->add_center_transform(transform, image);
   }
 
   if (this->abort_) { return false; }
 
+  // groomed filename
+  std::string groomed_name = this->get_output_filename(path, DomainType::Image);
 
-  // isolate
-  if (params.get_isolate_tool()) {
-    this->isolate(image);
-    this->increment_progress();
+  if (params.get_convert_to_mesh()) {
+    Mesh mesh = image.toMesh(0.0);
+    this->run_mesh_pipeline(mesh, params);
+    groomed_name = this->get_output_filename(path, DomainType::Mesh);
+    // save the groomed mesh
+    MeshUtils::threadSafeWriteMesh(groomed_name, mesh);
+  }
+  else {
+    // save image
+    image.write(groomed_name);
   }
 
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groomed_name;
+
+    // store filenames back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::run_image_pipeline(Image& image, GroomParameters params)
+{
+  // isolate
+  if (params.get_isolate_tool()) {
+    image.isolate();
+    this->increment_progress();
+  }
   if (this->abort_) { return false; }
 
   // fill holes
@@ -153,15 +193,22 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     image.closeHoles();
     this->increment_progress();
   }
+  if (this->abort_) { return false; }
 
+  // crop
+  if (params.get_crop()) {
+    PhysicalRegion region = image.physicalBoundingBox(0.5);
+    image.crop(region);
+    this->increment_progress();
+  }
   if (this->abort_) { return false; }
 
   // autopad
   if (params.get_auto_pad_tool()) {
     image.pad(params.get_padding_amount());
+    this->fix_origin(image);
     this->increment_progress();
   }
-
   if (this->abort_) { return false; }
 
   // antialias
@@ -169,7 +216,26 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     image.antialias(params.get_antialias_iterations());
     this->increment_progress();
   }
+  if (this->abort_) { return false; }
 
+  // resample
+  if (params.get_resample()) {
+    auto spacing = params.get_spacing();
+    if (params.get_isotropic()) {
+      auto iso = params.get_iso_spacing();
+      spacing = {iso, iso, iso};
+    }
+    Vector v;
+    v[0] = spacing[0];
+    v[1] = spacing[1];
+    v[2] = spacing[2];
+    if (v[0] == 0 || v[1] == 0 || v[2] == 0) {
+      // skip resample
+    }
+    else {
+      image.resample(v, Image::InterpolationType::Linear);
+    }
+  }
   if (this->abort_) { return false; }
 
   // create distance transform
@@ -184,42 +250,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   if (params.get_blur_tool()) {
     image.gaussianBlur(params.get_blur_amount());
     this->increment_progress();
-  }
-
-  if (this->abort_) { return false; }
-
-  // groomed filename
-  std::string dt_name = this->get_output_filename(path, DomainType::Image);
-
-  // save image
-  image.write(dt_name);
-
-  {
-    // lock for project data structure
-    tbb::mutex::scoped_lock lock(mutex_);
-
-    // store transform
-    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
-    }
-    if (domain >= groomed_transforms.size()) {
-      groomed_transforms.resize(domain + 1);
-    }
-    groomed_transforms[domain] = groomed_transform;
-    subject->set_groomed_transforms(groomed_transforms);
-
-    // update groomed filenames
-    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
-    if (domain >= groomed_filenames.size()) {
-      groomed_filenames.resize(domain + 1);
-    }
-    groomed_filenames[domain] = dt_name;
-
-    // store filenames back to subject
-    subject->set_groomed_filenames(groomed_filenames);
   }
 
   return true;
@@ -239,32 +269,25 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
   Mesh mesh = MeshUtils::threadSafeReadMesh(path);
 
   // define a groom transform
-  auto transform = Groom::get_identity_transform();
+  auto transform = vtkSmartPointer<vtkTransform>::New();
 
   if (!this->skip_grooming_) {
 
-    if (params.get_fill_holes_tool()) {
-      mesh.fillHoles();
-      this->increment_progress();
-    }
+    this->run_mesh_pipeline(mesh, params);
 
-    if (params.get_mesh_smooth()) {
-      if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
-        mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
-                    params.get_mesh_vtk_laplacian_relaxation());
+    // reflection
+    if (params.get_reflect()) {
+      auto table = subject->get_table_values();
+      if (table.find(params.get_reflect_column()) != table.end()) {
+        if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+          this->add_reflect_transform(transform, params.get_reflect_axis());
+        }
       }
-      else if (params.get_mesh_smoothing_method() ==
-               GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
-        mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
-                        params.get_mesh_vtk_windowed_sinc_passband());
-      }
-      this->increment_progress();
     }
 
     // centering
     if (params.get_use_center()) {
-      transform = Groom::get_center_transform(mesh);
-      this->increment_progress();
+      this->add_center_transform(transform, mesh);
     }
   }
 
@@ -276,12 +299,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     tbb::mutex::scoped_lock lock(mutex_);
 
     // store transform
-    std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-    if (domain >= groomed_transforms.size()) {
-      groomed_transforms.resize(domain + 1);
-    }
-    groomed_transforms[domain] = transform;
-    subject->set_groomed_transforms(groomed_transforms);
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
 
     // update groomed filenames
     std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
@@ -298,50 +316,47 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 }
 
 //---------------------------------------------------------------------------
-void Groom::isolate(Image& image)
+bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
 {
-  ImageType::Pointer img = image;
+  if (params.get_fill_mesh_holes_tool()) {
+    mesh.fillHoles();
+    this->increment_progress();
+  }
 
-  typedef itk::Image<unsigned char, 3> IsolateType;
-  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
-  ToIntType::Pointer filter = ToIntType::New();
-  filter->SetInput(img);
-  filter->Update();
+  if (params.get_remesh()) {
+    int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
+    int num_vertices = params.get_remesh_num_vertices();
+    if (params.get_remesh_percent_mode()) {
+      num_vertices = total_vertices * params.get_remesh_percent() / 100.0;
+    }
+    mesh.remesh(num_vertices, params.get_remesh_gradation());
+  }
 
-  // Find the connected components in this image.
-  auto cc_filter = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
-  cc_filter->SetInput(filter->GetOutput());
-  cc_filter->FullyConnectedOn();
-  cc_filter->Update();
-
-  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
-  relabel->SetInput(cc_filter->GetOutput());
-  relabel->SortByObjectSizeOn();
-  relabel->Update();
-
-  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
-  thresh->SetInput(relabel->GetOutput());
-  thresh->SetOutsideValue(0);
-  thresh->ThresholdBelow(0);
-  thresh->ThresholdAbove(1);
-  thresh->Update();
-
-  auto cast_filter = itk::CastImageFilter<IsolateType, ImageType>::New();
-  cast_filter->SetInput(thresh->GetOutput());
-  cast_filter->Update();
-
-  image = Image(cast_filter->GetOutput());
+  if (params.get_mesh_smooth()) {
+    if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
+      mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
+                  params.get_mesh_vtk_laplacian_relaxation());
+    }
+    else if (params.get_mesh_smoothing_method() ==
+             GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
+      mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
+                      params.get_mesh_vtk_windowed_sinc_passband());
+    }
+    this->increment_progress();
+  }
+  return true;
 }
 
 //---------------------------------------------------------------------------
-Vector3 Groom::center(Image& image)
+void Groom::fix_origin(Image& image)
 {
-  auto diff = image.centerOfMass();
-  Vector3 translation;
-  translation[0] = -diff[0];
-  translation[1] = -diff[1];
-  translation[2] = -diff[2];
-  return translation;
+  ImageType::Pointer img = image.getITKImage();
+  using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
+  RegionFilterType::Pointer region_filter = RegionFilterType::New();
+  region_filter->SetInput(img);
+  region_filter->SetRegionOfInterest(img->GetLargestPossibleRegion());
+  region_filter->UpdateLargestPossibleRegion();
+  image = Image(region_filter->GetOutput());
 }
 
 //---------------------------------------------------------------------------
@@ -352,18 +367,27 @@ int Groom::get_total_ops()
   int num_tools = 0;
 
   auto domains = this->project_->get_domain_names();
+  auto subjects = this->project_->get_subjects();
 
   for (int i = 0; i < domains.size(); i++) {
 
     auto params = GroomParameters(this->project_, domains[i]);
 
-    num_tools += params.get_use_center() ? 1 : 0;
-    num_tools += params.get_isolate_tool() ? 1 : 0;
-    num_tools += params.get_fill_holes_tool() ? 1 : 0;
-    num_tools += params.get_auto_pad_tool() ? 1 : 0;
-    num_tools += params.get_antialias_tool() ? 1 : 0;
-    num_tools += params.get_fast_marching() ? 10 : 0;
-    num_tools += params.get_blur_tool() ? 1 : 0;
+    if (subjects[i]->get_domain_types()[i] == DomainType::Image) {
+      num_tools += params.get_isolate_tool() ? 1 : 0;
+      num_tools += params.get_fill_holes_tool() ? 1 : 0;
+      num_tools += params.get_crop() ? 1 : 0;
+      num_tools += params.get_auto_pad_tool() ? 1 : 0;
+      num_tools += params.get_antialias_tool() ? 1 : 0;
+      num_tools += params.get_resample() ? 1 : 0;
+      num_tools += params.get_fast_marching() ? 10 : 0;
+      num_tools += params.get_blur_tool() ? 1 : 0;
+    }
+
+    if (subjects[i]->get_domain_types()[i] == DomainType::Mesh) {
+      num_tools += params.get_fill_holes_tool() ? 1 : 0;
+      num_tools += params.get_mesh_smooth() ? 1 : 0;
+    }
   }
 
   return num_subjects * num_tools;
@@ -417,7 +441,12 @@ bool Groom::run_alignment()
       global_icp = true;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-        meshes.push_back(this->get_mesh(i, domain));
+        auto mesh = this->get_mesh(i, domain);
+
+        auto list = subjects[i]->get_groomed_transforms()[domain];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        mesh.applyTransform(transform);
+        meshes.push_back(mesh);
       }
 
       size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
@@ -426,14 +455,14 @@ bool Groom::run_alignment()
 
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
-        // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
 
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transforms[i];
-        subject->set_groomed_transforms(groomed_transforms);
+        auto list = subjects[i]->get_groomed_transforms()[domain];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        transform->PostMultiply();
+        transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
+
+        // store transform
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
   }
@@ -446,6 +475,12 @@ bool Groom::run_alignment()
       for (size_t domain = 1; domain < num_domains; domain++) {
         mesh += this->get_mesh(i, domain); // combine
       }
+
+      // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
+      auto list = subjects[i]->get_groomed_transforms()[0];
+      vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+      mesh.applyTransform(transform);
+
       meshes.push_back(mesh);
     }
 
@@ -457,32 +492,26 @@ bool Groom::run_alignment()
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
-
         size_t domain = num_domains; //end
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transforms[i];
 
-        subject->set_groomed_transforms(groomed_transforms);
+        // grab the first domain's initial transform (e.g. potentially reflect) and combine
+        auto list = subjects[i]->get_groomed_transforms()[0];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        transform->PostMultiply();
+        transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
+
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
     else {   // just center
 
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
-        auto transform = Groom::get_center_transform(meshes[i]);
-
+        auto transform = vtkSmartPointer<vtkTransform>::New();
+        Groom::add_center_transform(transform, meshes[i]);
         // store transform
-        std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
         size_t domain = num_domains; //end
-        if (domain >= groomed_transforms.size()) {
-          groomed_transforms.resize(domain + 1);
-        }
-        groomed_transforms[domain] = transform;
-
-        subject->set_groomed_transforms(groomed_transforms);
+        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }
     }
   }
@@ -541,74 +570,71 @@ Mesh Groom::get_mesh(int subject, int domain)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, size_t reference)
+std::vector<std::vector<double>>
+Groom::get_icp_transforms(const std::vector<Mesh> meshes, size_t reference)
 {
   std::vector<std::vector<double>> transforms(meshes.size());
-
 
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, meshes.size()},
     [&](const tbb::blocked_range<size_t>& r) {
-    for (size_t i = r.begin(); i < r.end(); ++i) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
 
-      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-      matrix->Identity();
+        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+        matrix->Identity();
 
-      Mesh target = meshes[reference];
-      if (i != reference) {
-        Mesh source = meshes[i];
-        matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
-                                               target.getVTKMesh(), Mesh::Rigid, 100, true);
+        Mesh target = meshes[reference];
+        if (i != reference) {
+          Mesh source = meshes[i];
+          matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                 target.getVTKMesh(), Mesh::Rigid, 100, true);
+        }
+
+        auto transform = createMeshTransform(matrix);
+        transform->PostMultiply();
+        Groom::add_center_transform(transform, target);
+        transforms[i] = ProjectUtils::convert_transform(transform);
       }
-
-
-      auto transform = createMeshTransform(matrix);
-      auto center = target.centerOfMass();
-      transform->PostMultiply();
-      transform->Translate(-center[0],-center[1],-center[2]);
-
-
-      std::vector<double> groomed_transform;
-
-      for (int i = 0; i < 16; i++) {
-        groomed_transform.push_back(transform->GetMatrix()->GetData()[i]);
-      }
-      transforms[i] = groomed_transform;
-    }
-  });
+    });
   return transforms;
 }
 
 //---------------------------------------------------------------------------
 std::vector<double> Groom::get_identity_transform()
 {
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
-  return Groom::convert_transform(transform);
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
+  return ProjectUtils::convert_transform(transform);
 }
 
 //---------------------------------------------------------------------------
-std::vector<double> Groom::get_center_transform(const Mesh &mesh)
+void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image& image)
 {
-  auto transform = itk::AffineTransform<double, 3>::New();
-  transform->SetIdentity();
-
-  auto diff = mesh.centerOfMass();
-  itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-  tform[0] = -diff[0];
-  tform[1] = -diff[1];
-  tform[2] = -diff[2];
-  transform->SetTranslation(tform);
-  return Groom::convert_transform(transform);
+  auto com = image.centerOfMass();
+  transform->Translate(-com[0], -com[1], -com[2]);
 }
 
 //---------------------------------------------------------------------------
-std::vector<double> Groom::convert_transform(AffineTransform::Pointer transform)
+void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh& mesh)
 {
-  std::vector<double> groomed_transform;
-  auto transform_params = transform->GetParameters();
-  for (size_t i = 0; i < transform_params.size(); i++) {
-    groomed_transform.push_back(transform_params[i]);
+  auto com = mesh.centerOfMass();
+  transform->Translate(-com[0], -com[1], -com[2]);
+}
+
+//---------------------------------------------------------------------------
+void Groom::add_reflect_transform(vtkSmartPointer<vtkTransform> transform,
+                                  const std::string& reflect_axis)
+{
+  Vector scale(makeVector({1, 1, 1}));
+  if (reflect_axis == "X") {
+    scale[Axis::X] = -1;
   }
-  return groomed_transform;
+  else if (reflect_axis == "Y") {
+    scale[Axis::Y] = -1;
+  }
+  else if (reflect_axis == "Z") {
+    scale[Axis::Z] = -1;
+  }
+  transform->Scale(scale[0], scale[1], scale[2]);
 }
+//---------------------------------------------------------------------------
