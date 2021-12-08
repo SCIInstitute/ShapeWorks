@@ -76,13 +76,7 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
         }
       }
     } else if (index.column() == LandmarkColumns::COLOR_E) {
-      // std::cerr << "color = " << landmarks_[index.row()].color_ << "\n";
-      QColor color(QString::fromStdString(landmarks_[index.row()].color_));
-      // std::cerr << "color.r = " << color.red() << "\n";
-      // std::cerr << "color.g = " << color.green() << "\n";
-      // std::cerr << "color.b = " << color.blue() << "\n";
       return QString::fromStdString(landmarks_[index.row()].color_);
-      // return QColor(QString::fromStdString(landmarks_[index.row()].color_));
     }
   } else if (role == Qt::DisplayRole) {
     int sz = this->rowCount(index);
@@ -91,13 +85,13 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
         if (index.column() == LandmarkColumns::NAME_E) {
           return QString::fromStdString(landmarks_[index.row()].name_);
         } else if (index.column() == LandmarkColumns::POSITION_E) {
+          /// TODO : placeholder
           return "1/100";
         } else if (index.column() == LandmarkColumns::VISIBLE_E) {
           return QVariant();
         } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
           return QString("");
         } else if (index.column() == LandmarkColumns::COMMENT_E) {
-          return "comments here";
           return QString::fromStdString(landmarks_[index.row()].comment_);
         } else if (index.column() >= LandmarkColumns::END_E) {
           return "";
@@ -135,6 +129,8 @@ bool LandmarkTableModel::setData(const QModelIndex& index,
       landmarks_[index.row()].color_ = color.name().toStdString();
     } else if (index.column() == LandmarkColumns::NAME_E) {
       landmarks_[index.row()].name_ = value.toString().toStdString();
+    } else if (index.column() == LandmarkColumns::COMMENT_E) {
+      landmarks_[index.row()].comment_ = value.toString().toStdString();
     } else if (index.column() == LandmarkColumns::POSITION_E) {
       return false;
     }
@@ -188,16 +184,9 @@ QVariant LandmarkTableModel::headerData(int section,
 //---------------------------------------------------------------------------
 Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
   Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-  // if ( index.column() == LandmarkColumns::COLOR_E ||  // TODO: Fix color
-  // dialog position on Windows 	index.column() == LandmarkColumns::NAME_E
-  // ||
-  //	index.column() == LandmarkColumns::LENGTH_E )
-  //{
-  //   flags |= Qt::ItemIsEditable;
-  //}
 
   if (index.column() == LandmarkColumns::NAME_E ||
-      index.column() == LandmarkColumns::COLOR_E ||
+      index.column() == LandmarkColumns::COMMENT_E ||
       index.column() == LandmarkColumns::SET_BUTTON_E) {
     flags |= Qt::ItemIsEditable;
   }
@@ -212,8 +201,7 @@ Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
 //---------------------------------------------------------------------------
 bool LandmarkTableModel::removeRows(int row, int count,
                                     const QModelIndex& /* parent */) {
-  // Lock StateEngine here so that measurements vector doesn't change after
-  // rowCount check
+
   if (row < 0 || row + count > this->rowCount(QModelIndex())) {
     return false;
   }

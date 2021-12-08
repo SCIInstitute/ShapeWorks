@@ -56,7 +56,6 @@ void LandmarkItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
                                  const QModelIndex& index) const {
   Q_ASSERT(index.isValid());
 
-
   if (index.column() == LandmarkColumns::COLOR_E) {
     //    qDebug() << "value: " << index.model()->data(index, Qt::DisplayRole);
     //    qDebug() << "decorator value: " << index.model()->data(index, Qt::DecorationRole);
@@ -113,33 +112,17 @@ QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
                                             const QModelIndex& index) const {
   qDebug() << "create Editor: " << index;
 
-  if (index.column() == LandmarkColumns::POSITION_E) {
+  if (index.column() == LandmarkColumns::NAME_E) {
     QLineEdit* line_edit = new QLineEdit(parent);
-    QDoubleValidator* double_validator = new QDoubleValidator(parent);
-    line_edit->setValidator(double_validator);
     return line_edit;
-  } else if (index.column() == LandmarkColumns::COLOR_E) {
-    std::cerr << "color button\n";
-    //QColor measurement_color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
-    //this->private_->new_color_ = QColorDialog::getColor(measurement_color, parent->parentWidget()->parentWidget());
-
-    // In the case that the user presses cancel instead, we'll abort the edit
-    //if (!this->private_->new_color_.isValid()) {
-//      return 0;
-//    }
-    return 0;
-  } else if (index.column() == LandmarkColumns::NAME_E) {
+  } else if (index.column() == LandmarkColumns::COMMENT_E) {
     QLineEdit* line_edit = new QLineEdit(parent);
     return line_edit;
   } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
-    std::cerr << "other button\n";
     QPushButton* button = new QPushButton("set", parent);
-
     private_->mapper_.setMapping(button, index.row());
     connect(button, SIGNAL(clicked()), &private_->mapper_, SLOT(map()));
-
     return button;
-    //l_view->setIndexWidget(index, l_button);
   } else {
     return QStyledItemDelegate::createEditor(parent, option, index);
   }
@@ -149,6 +132,10 @@ QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
 void LandmarkItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const {
   qDebug() << "setEditorData: " << editor << ", index: " << index;
   if (index.column() == LandmarkColumns::NAME_E) {
+    QString model_text = index.model()->data(index, Qt::DisplayRole).toString();
+    QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
+    line_edit->setText(model_text);
+  } else if (index.column() == LandmarkColumns::COMMENT_E) {
     QString model_text = index.model()->data(index, Qt::DisplayRole).toString();
     QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
     line_edit->setText(model_text);
@@ -217,15 +204,13 @@ void LandmarkItemDelegate::cell_entered(QModelIndex index) {
   }
 }
 
-
 //---------------------------------------------------------------------------
 void LandmarkItemDelegate::set_button_text(std::string button_text) {
   private_->button_text_ = button_text;
 }
 
 //---------------------------------------------------------------------------
-void LandmarkItemDelegate::set_model(std::shared_ptr<LandmarkTableModel> model)
-{
+void LandmarkItemDelegate::set_model(std::shared_ptr<LandmarkTableModel> model) {
   this->model_ = model;
 }
 }  // namespace shapeworks
