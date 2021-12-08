@@ -28,8 +28,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
-  connect(ui_->new_landmark_button, &QPushButton::clicked, this, &DataTool::new_landmark);
-
   // start with these off
   //ui_->landmarks_open_button->toggle();
   ui_->table_open_button->toggle();
@@ -37,6 +35,11 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->notes_open_button->toggle();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
+  connect(ui_->new_landmark_button, &QPushButton::clicked,
+          landmark_table_model_.get(), &LandmarkTableModel::new_landmark);
+  connect(ui_->delete_landmark_button, &QPushButton::clicked,
+          this, &DataTool::delete_landmarks_clicked);
+
   ui_->landmark_table->setModel(landmark_table_model_.get());
   ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
   connect(ui_->landmark_table, &QTableView::clicked, landmark_table_model_.get(), &LandmarkTableModel::handle_click);
@@ -132,8 +135,9 @@ void DataTool::store_data() {
 }
 
 //---------------------------------------------------------------------------
-void DataTool::new_landmark() {
-  landmark_table_model_->new_landmark();
+void DataTool::delete_landmarks_clicked()
+{
+  landmark_table_model_->delete_landmarks(ui_->landmark_table->selectionModel()->selectedRows());
 }
 
 //---------------------------------------------------------------------------

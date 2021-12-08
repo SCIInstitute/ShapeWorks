@@ -23,8 +23,8 @@ class LandmarkItemDelegatePrivate {
   std::string button_text_;
   QPushButton* button_;
   QTableView* table_view_;
-  bool isOneCellInEditMode = false;
-  QPersistentModelIndex currentEditedCellIndex;
+  bool is_one_cell_in_edit_mode_ = false;
+  QPersistentModelIndex current_edited_cell_index;
   QIcon visible_;
   QIcon visible_off_;
 };
@@ -40,11 +40,9 @@ LandmarkItemDelegate::LandmarkItemDelegate(QObject* parent /*= 0 */) : QStyledIt
 
   if (QTableView* table_view = qobject_cast<QTableView*>(parent)) {
     private_->table_view_ = table_view;
-    //btn = new QPushButton("...", myWidget);
-    //btn->hide();
     private_->table_view_->setMouseTracking(true);
     connect(private_->table_view_, &QTableView::entered, this, &LandmarkItemDelegate::cell_entered);
-    private_->isOneCellInEditMode = false;
+    private_->is_one_cell_in_edit_mode_ = false;
   }
 
   private_->visible_ = QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
@@ -57,18 +55,12 @@ void LandmarkItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
   Q_ASSERT(index.isValid());
 
   if (index.column() == LandmarkColumns::COLOR_E) {
-    //    qDebug() << "value: " << index.model()->data(index, Qt::DisplayRole);
-    //    qDebug() << "decorator value: " << index.model()->data(index, Qt::DecorationRole);
-
-    // Use paint function to set color of cell so that color doesn't change when cell is
-    // highlighted (selected).
-    QColor measurement_color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
-    painter->fillRect(option.rect, measurement_color);
+    QColor color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
+    painter->fillRect(option.rect, color);
     return;
 
   } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
     private_->button_->setGeometry(option.rect);
-    //btn->setText("...");
     if (option.state & QStyle::State_Selected) {
       painter->fillRect(option.rect, option.palette.highlight());
       private_->button_->setChecked(true);
@@ -77,41 +69,15 @@ void LandmarkItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     }
     QPixmap map = private_->button_->grab();
     painter->drawPixmap(option.rect.x(), option.rect.y(), map);
-
     return;
   }
 
-  /*
-     if ( index.column() == LandmarkColumns::COLOR_E )
-     {
-     // Use paint function to set color of cell so that color doesn't change when cell is
-     // highlighted (selected).
-     QColor measurement_color = index.model()->data( index, Qt::DecorationRole ).value< QColor >();
-     painter->fillRect( option.rect, measurement_color );
-     }
-     else if ( index.column() == LandmarkColumns::NAME_E || index.column() == LandmarkColumns::POSITION_E )
-     {
-     QStyledItemDelegate::paint( painter, option, index );
-     return;
-     QString text = index.model()->data( index, Qt::DisplayRole ).toString();
-     painter->save();
-     painter->setBackgroundMode( Qt::OpaqueMode );
-     painter->setBackground( index.model()->data( index, Qt::BackgroundRole ).value<QBrush>() );
-     painter->restore();
-     }
-     else
-     {
-     QStyledItemDelegate::paint( painter, option, index );
-     }
-   */
   QStyledItemDelegate::paint(painter, option, index);
 }
 
 //---------------------------------------------------------------------------
 QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                                             const QModelIndex& index) const {
-  qDebug() << "create Editor: " << index;
-
   if (index.column() == LandmarkColumns::NAME_E) {
     QLineEdit* line_edit = new QLineEdit(parent);
     return line_edit;
@@ -130,7 +96,6 @@ QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
 
 //---------------------------------------------------------------------------
 void LandmarkItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const {
-  qDebug() << "setEditorData: " << editor << ", index: " << index;
   if (index.column() == LandmarkColumns::NAME_E) {
     QString model_text = index.model()->data(index, Qt::DisplayRole).toString();
     QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
@@ -149,7 +114,6 @@ void LandmarkItemDelegate::setEditorData(QWidget* editor, const QModelIndex& ind
 //---------------------------------------------------------------------------
 void LandmarkItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                         const QModelIndex& index) const {
-  qDebug() << "setModelData: " << editor << ", index: " << index;
   if (index.column() == LandmarkColumns::NAME_E) {
     QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
     QString editor_text = line_edit->text();
@@ -166,7 +130,6 @@ void LandmarkItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* mod
 
 //---------------------------------------------------------------------------
 QSize LandmarkItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
-  //return QSize(25,25);
   QSize size_hint = QStyledItemDelegate::sizeHint(option, index);
   // We don't want a tall cell when the text has line breaks, so set height to 0 and rely
   // on other columns to set reasonable size.
@@ -188,18 +151,16 @@ void LandmarkItemDelegate::set_button_pressed(int row) {
 //---------------------------------------------------------------------------
 void LandmarkItemDelegate::cell_entered(QModelIndex index) {
   if (index.column() == LandmarkColumns::SET_BUTTON_E) {
-    if (private_->isOneCellInEditMode) {
-      private_->table_view_->closePersistentEditor(private_->currentEditedCellIndex);
+    if (private_->is_one_cell_in_edit_mode_) {
+      private_->table_view_->closePersistentEditor(private_->current_edited_cell_index);
     }
-    qDebug() << "Opening persistent editor!\n";
     private_->table_view_->openPersistentEditor(index);
-    private_->isOneCellInEditMode = true;
-    private_->currentEditedCellIndex = index;
+    private_->is_one_cell_in_edit_mode_ = true;
+    private_->current_edited_cell_index = index;
   } else {
-    if (private_->isOneCellInEditMode) {
-      private_->isOneCellInEditMode = false;
-      qDebug() << "Closing persistent editor!\n";
-      private_->table_view_->closePersistentEditor(private_->currentEditedCellIndex);
+    if (private_->is_one_cell_in_edit_mode_) {
+      private_->is_one_cell_in_edit_mode_ = false;
+      private_->table_view_->closePersistentEditor(private_->current_edited_cell_index);
     }
   }
 }

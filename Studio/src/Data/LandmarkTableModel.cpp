@@ -62,7 +62,6 @@ void LandmarkTableModel::new_landmark() {
 
 //---------------------------------------------------------------------------
 int LandmarkTableModel::rowCount(const QModelIndex& /*index*/) const {
-  // std::cerr << "returning row count: " << landmarks_.size() << "\n";
   return landmarks_.size();
 }
 
@@ -126,7 +125,7 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
 //---------------------------------------------------------------------------
 bool LandmarkTableModel::setData(const QModelIndex& index,
                                  const QVariant& value, int role) {
-  qDebug() << "setData: " << index << ", " << value;
+  //qDebug() << "setData: " << index << ", " << value;
   // Called only after enter is pressed or focus changed
   if (index.isValid() && role == Qt::EditRole) {
     if (index.row() >= static_cast<int>(landmarks_.size())) {
@@ -188,7 +187,7 @@ QVariant LandmarkTableModel::headerData(int section,
       }
     }
   } else if (role == Qt::ToolTipRole) {
-    // ... any tooltips?
+    /// TODO: any tooltips?
   }
 
   return QVariant();
@@ -212,39 +211,8 @@ Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
 }
 
 //---------------------------------------------------------------------------
-bool LandmarkTableModel::removeRows(int row, int count,
-                                    const QModelIndex& /* parent */) {
-  if (row < 0 || row + count > this->rowCount(QModelIndex())) {
-    return false;
-  }
-
-  // Get all the measurements to be removed first, before indices change
-  //  const std::vector< Core::Annotation >& annotations =
-  //  this->private_->landmark_manager_->annotations_state_->get();
-  // std::vector< Core::Annotation > remove_annotations;
-  //  for (int row_index = row; row_index < row + count; row_index++) {
-  //    if (row_index < static_cast< int >(annotations.size())) {
-  //      remove_annotations.push_back(annotations[ row_index ]);
-  //    }
-  //  }
-
-  // Remove rows from measurement list
-  //  for (size_t i = 0; i < remove_annotations.size(); i++) {
-  // Remove is done on application thread -- no way to know if it succeeds
-  //    Core::ActionRemove::Dispatch(Core::Interface::GetWidgetActionContext(),
-  //                                 this->private_->landmark_manager_->annotations_state_,
-  //                                 remove_annotations[ i ]);
-  // }
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
 void LandmarkTableModel::update_table() {
   this->update_visibility();
-
-  // QAbstractTableModel::modelReset();
-  // QAbstractTableModel::reset();
 
   // Column resize doesn't work properly without this call
   if (this->project_) {
@@ -266,26 +234,7 @@ void LandmarkTableModel::update_cells() {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::remove_rows(const std::vector<int>& rows) {
-  // Copy the vector (it should be small)
-  std::vector<int> sorted_rows = rows;
-
-  // Sort rows in ascending order
-  std::sort(sorted_rows.begin(), sorted_rows.end());
-
-  // Must delete in reverse since row numbers are adjusted during removal
-  std::vector<int>::reverse_iterator reverse_iter;
-  for (reverse_iter = sorted_rows.rbegin(); reverse_iter != sorted_rows.rend();
-       ++reverse_iter) {
-    // this->private_->landmark_manager_->handle_delete(*reverse_iter);
-    this->removeRow(*reverse_iter);
-  }
-}
-
-//---------------------------------------------------------------------------
 int LandmarkTableModel::get_active_index() const {
-  // Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
-  // return this->private_->landmark_manager_->active_landmark_state_->get();
 }
 
 //---------------------------------------------------------------------------
@@ -333,7 +282,6 @@ void LandmarkTableModel::handle_click(const QModelIndex& index) {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::handle_double_click(const QModelIndex& index) {
-  qDebug() << "handle double click: " << index;
   if (!index.isValid()) {
     return;
   }
@@ -344,7 +292,6 @@ void LandmarkTableModel::handle_double_click(const QModelIndex& index) {
       QColor color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
       color = QColorDialog::getColor(color, nullptr);
       if (color.isValid()) {
-        qDebug() << "set data" << index << " " << color;
         this->setData(index, color, Qt::EditRole);
       }
     }
@@ -378,33 +325,6 @@ void LandmarkTableModel::update_visibility() {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_placing_landmark(int row) {
-  /*
-     Core::StateEngine::lock_type lock(Core::StateEngine::GetMutex());
-
-     int current_placing_landmark =
-     this->private_->landmark_manager_->landmark_placing_index_state_->get();
-
-     if (current_placing_landmark == row) {
-     Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
-                              private_->landmark_manager_->landmark_placing_index_state_,
-     -1);
-     }
-     else {
-     const std::vector< Core::Annotation >& landmarks =
-      this->private_->landmark_manager_->annotations_state_->get();
-
-     Core::Annotation landmark = landmarks[row];
-     landmark.set_values(std::vector<float>());
-
-     Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
-                                this->private_->landmark_manager_->annotations_state_,
-     row, landmark);
-
-     Core::ActionSet::Dispatch(Core::Interface::GetWidgetActionContext(),
-                              private_->landmark_manager_->landmark_placing_index_state_,
-     row);
-     }
-   */
 }
 //---------------------------------------------------------------------------
 
@@ -425,4 +345,24 @@ std::string LandmarkTableModel::get_next_landmark_color() {
 
   return c;
 }
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
+  std::vector<Landmark> keep;
+  for (int i = 0; i < landmarks_.size(); i++) {
+    int found = false;
+    for (int j = 0; j < list.size(); j++) {
+      if (list[j].row() == i) {
+        found = true;
+      }
+    }
+    if (!found) {
+      keep.push_back(landmarks_[i]);
+    }
+  }
+  landmarks_ = keep;
+  this->store_landmarks();
+  this->update_table();
+}
+
 }  // namespace shapeworks

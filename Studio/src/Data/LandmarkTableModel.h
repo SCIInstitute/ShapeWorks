@@ -40,7 +40,6 @@ class LandmarkTableModel : public QAbstractTableModel {
 
   void set_project(std::shared_ptr<Project> project);
   void store_landmarks();
-  void new_landmark();
 
   int rowCount(const QModelIndex &index) const;
   int columnCount(const QModelIndex &index) const;
@@ -49,7 +48,6 @@ class LandmarkTableModel : public QAbstractTableModel {
   bool setData(const QModelIndex &index, const QVariant &value, int role);
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;
   Qt::ItemFlags flags(const QModelIndex &index) const;
-  bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
   //
   // Extended functions
@@ -88,7 +86,13 @@ class LandmarkTableModel : public QAbstractTableModel {
   std::string get_next_landmark_name();
   std::string get_next_landmark_color();
 
+  //! delete the selected landmarks
+  void delete_landmarks(const QModelIndexList &list);
+
  public Q_SLOTS:
+
+  //! create a new landmark
+  void new_landmark();
 
   //! Handler for when table cells are clicked.
   void handle_click(const QModelIndex &index);

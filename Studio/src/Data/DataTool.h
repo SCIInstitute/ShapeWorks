@@ -44,9 +44,9 @@ class DataTool : public QWidget {
 
  public Q_SLOTS:
 
-  void new_landmark();
-
   void delete_button_clicked();
+
+  void delete_landmarks_clicked();
 
  Q_SIGNALS:
   void import_button_clicked();
