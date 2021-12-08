@@ -21,6 +21,7 @@ public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
+  enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -115,6 +116,8 @@ public:
 
   /// computes and adds curvature (principal (default) or gaussian or mean)
   Field curvature(const CurvatureType type = Principal);
+
+  Mesh& applySubdivisionFilter(int subdivision, const SubdivisionType type = Butterfly);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
