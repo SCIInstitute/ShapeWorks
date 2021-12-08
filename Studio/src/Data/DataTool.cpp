@@ -58,58 +58,57 @@ DataTool::~DataTool() {}
 
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
-  this->session_ = session;
-  this->landmark_table_model_->set_project(session->get_project());
-  this->update_table();
+  session_ = session;
+  landmark_table_model_->set_project(session->get_project());
+  update_table();
 }
 
 //---------------------------------------------------------------------------
 void DataTool::disable_actions() {
-  this->ui_->add_button->setEnabled(false);
-  this->ui_->delete_button->setEnabled(false);
+  ui_->add_button->setEnabled(false);
+  ui_->delete_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
 void DataTool::enable_actions() {
-  this->ui_->add_button->setEnabled(true);
-  this->ui_->delete_button->setEnabled(true);
+  ui_->add_button->setEnabled(true);
+  ui_->delete_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
 void DataTool::update_table() {
-  if (!this->session_) {
+  if (!session_) {
     return;
   }
 
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
+  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
 
-  auto project = this->session_->get_project();
+  auto project = session_->get_project();
   auto headers = project->get_headers();
 
   QStringList table_headers;
   for (const std::string& header : headers) {
-    //std::cerr << "header: " << header << "\n";
     table_headers << QString::fromStdString(header);
   }
 
-  this->ui_->table->clear();
-  this->ui_->table->setRowCount(shapes.size());
-  this->ui_->table->setColumnCount(table_headers.size());
+  ui_->table->clear();
+  ui_->table->setRowCount(shapes.size());
+  ui_->table->setColumnCount(table_headers.size());
 
-  this->ui_->table->setHorizontalHeaderLabels(table_headers);
-  this->ui_->table->verticalHeader()->setVisible(true);
+  ui_->table->setHorizontalHeaderLabels(table_headers);
+  ui_->table->verticalHeader()->setVisible(true);
 
   for (int h = 0; h < table_headers.size(); h++) {
     auto rows = project->get_string_column(table_headers[h].toStdString());
     for (int row = 0; row < shapes.size() && row < rows.size(); row++) {
       QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(rows[row]));
-      this->ui_->table->setItem(row, h, new_item);
+      ui_->table->setItem(row, h, new_item);
     }
   }
 
-  this->ui_->table->resizeColumnsToContents();
-  this->ui_->table->horizontalHeader()->setStretchLastSection(false);
-  this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+  ui_->table->resizeColumnsToContents();
+  ui_->table->horizontalHeader()->setStretchLastSection(false);
+  ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   landmark_table_model_->update_table();
   ui_->landmark_table->resizeColumnsToContents();
@@ -117,15 +116,14 @@ void DataTool::update_table() {
 
 //---------------------------------------------------------------------------
 void DataTool::update_notes() {
-  if (this->session_) {
-    this->ui_->notes->setText(QString::fromStdString(
-        this->session_->parameters().get("notes", "")));
+  if (session_) {
+    ui_->notes->setText(QString::fromStdString(session_->parameters().get("notes", "")));
   }
 }
 
 //---------------------------------------------------------------------------
 std::string DataTool::get_notes() {
-  return this->ui_->notes->toHtml().toStdString();
+  return ui_->notes->toHtml().toStdString();
 }
 
 //---------------------------------------------------------------------------
@@ -140,14 +138,14 @@ void DataTool::new_landmark() {
 
 //---------------------------------------------------------------------------
 void DataTool::delete_button_clicked() {
-  QModelIndexList list = this->ui_->table->selectionModel()->selectedRows();
+  QModelIndexList list = ui_->table->selectionModel()->selectedRows();
 
   QList<int> index_list;
   for (int i = list.size() - 1; i >= 0; i--) {
     index_list << list[i].row();
   }
 
-  this->session_->remove_shapes(index_list);
+  session_->remove_shapes(index_list);
 }
 
 }  // namespace shapeworks
