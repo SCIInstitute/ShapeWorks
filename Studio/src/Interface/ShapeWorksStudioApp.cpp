@@ -1789,6 +1789,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
 
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
+  this->data_tool_->store_data();
   this->groom_tool_->store_params();
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();

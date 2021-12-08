@@ -40,11 +40,24 @@ LandmarkTableModel::~LandmarkTableModel() {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_project(std::shared_ptr<Project> project) {
-  // beginResetModel();
-  this->project_ = project;
-  this->landmarks_ = project->get_landmarks();
-  // endResetModel();
-  this->update_cells();
+  project_ = project;
+  landmarks_ = project->get_landmarks();
+  update_cells();
+}
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::store_landmarks() {
+  this->project_->set_landmarks(landmarks_);
+}
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::new_landmark() {
+  Landmark landmark;
+  landmark.name_ = get_next_landmark_name();
+  landmark.color_ = get_next_landmark_color();
+  landmarks_.push_back(landmark);
+  store_landmarks();
+  update_table();
 }
 
 //---------------------------------------------------------------------------
@@ -201,7 +214,6 @@ Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
 //---------------------------------------------------------------------------
 bool LandmarkTableModel::removeRows(int row, int count,
                                     const QModelIndex& /* parent */) {
-
   if (row < 0 || row + count > this->rowCount(QModelIndex())) {
     return false;
   }

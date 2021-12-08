@@ -39,10 +39,8 @@ class LandmarkTableModel : public QAbstractTableModel {
   virtual ~LandmarkTableModel();
 
   void set_project(std::shared_ptr<Project> project);
-
-  //
-  // Inherited functions
-  //
+  void store_landmarks();
+  void new_landmark();
 
   int rowCount(const QModelIndex &index) const;
   int columnCount(const QModelIndex &index) const;

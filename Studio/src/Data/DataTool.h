@@ -1,14 +1,13 @@
 #pragma once
 
-#include <string>
+#include <Data/Preferences.h>
 
-#include <QWidget>
-#include <QSharedPointer>
-#include <QProgressDialog>
 #include <QElapsedTimer>
 #include <QObject>
-
-#include <Data/Preferences.h>
+#include <QProgressDialog>
+#include <QSharedPointer>
+#include <QWidget>
+#include <string>
 
 class Ui_DataTool;
 
@@ -19,8 +18,8 @@ class LandmarkTableModel;
 
 class DataTool : public QWidget {
   Q_OBJECT;
-public:
 
+ public:
   DataTool(Preferences& prefs);
   ~DataTool();
 
@@ -40,19 +39,19 @@ public:
 
   std::string get_notes();
 
+  void store_data();
 
-public Q_SLOTS:
+
+ public Q_SLOTS:
 
   void new_landmark();
 
   void delete_button_clicked();
 
-Q_SIGNALS:
+ Q_SIGNALS:
   void import_button_clicked();
 
-private:
-
-
+ private:
   Preferences& preferences_;
 
   Ui_DataTool* ui_;
@@ -60,4 +59,4 @@ private:
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
 };
-}
+}  // namespace shapeworks

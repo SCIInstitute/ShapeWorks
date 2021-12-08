@@ -1,25 +1,22 @@
-#include <iostream>
+#include <Data/DataTool.h>
+#include <Data/LandmarkItemDelegate.h>
+#include <Data/LandmarkTableModel.h>
+#include <Data/Session.h>
+#include <Data/Shape.h>
+#include <Data/ShapeWorksWorker.h>
+#include <Data/StudioLog.h>
+#include <Data/StudioMesh.h>
+#include <ui_DataTool.h>
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QThread>
-
-#include <Data/Session.h>
-#include <Data/StudioMesh.h>
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
-#include <Data/ShapeWorksWorker.h>
-#include <Data/DataTool.h>
-#include <Data/LandmarkTableModel.h>
-#include <Data/LandmarkItemDelegate.h>
-
-#include <ui_DataTool.h>
-#include <QDebug>
+#include <iostream>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
-{
+DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DataTool;
   ui_->setupUi(this);
 
@@ -51,43 +48,35 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
 
   ui_->landmark_table->setItemDelegate(delegate);
 
-
-
   ui_->landmark_table->verticalHeader()->setVisible(true);
   ui_->landmark_table->horizontalHeader()->setVisible(true);
   ui_->landmark_table->resizeColumnsToContents();
-
 }
 
 //---------------------------------------------------------------------------
-DataTool::~DataTool()
-{}
+DataTool::~DataTool() {}
 
 //---------------------------------------------------------------------------
-void DataTool::set_session(QSharedPointer<Session> session)
-{
+void DataTool::set_session(QSharedPointer<Session> session) {
   this->session_ = session;
   this->landmark_table_model_->set_project(session->get_project());
   this->update_table();
 }
 
 //---------------------------------------------------------------------------
-void DataTool::disable_actions()
-{
+void DataTool::disable_actions() {
   this->ui_->add_button->setEnabled(false);
   this->ui_->delete_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
-void DataTool::enable_actions()
-{
+void DataTool::enable_actions() {
   this->ui_->add_button->setEnabled(true);
   this->ui_->delete_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
-void DataTool::update_table()
-{
+void DataTool::update_table() {
   if (!this->session_) {
     return;
   }
@@ -124,56 +113,33 @@ void DataTool::update_table()
 
   landmark_table_model_->update_table();
   ui_->landmark_table->resizeColumnsToContents();
-
 }
 
 //---------------------------------------------------------------------------
-void DataTool::update_notes()
-{
+void DataTool::update_notes() {
   if (this->session_) {
     this->ui_->notes->setText(QString::fromStdString(
-                                this->session_->parameters().get("notes", "")));
+        this->session_->parameters().get("notes", "")));
   }
 }
 
 //---------------------------------------------------------------------------
-std::string DataTool::get_notes()
-{
+std::string DataTool::get_notes() {
   return this->ui_->notes->toHtml().toStdString();
 }
 
 //---------------------------------------------------------------------------
-void DataTool::new_landmark()
-{
-  std::cerr << "new landmark\n";
-
-  auto landmarks = session_->get_project()->get_landmarks();
-
-  Landmark landmark;
-  landmark.name_ = landmark_table_model_->get_next_landmark_name();
-  landmark.color_ = landmark_table_model_->get_next_landmark_color();
-  landmarks.push_back(landmark);
-  session_->get_project()->set_landmarks(landmarks);
-  landmark_table_model_->update_table();
-
-  //int row = ui_->landmark_table->rowCount() + 1;
-  //this->ui_->landmark_table->setRowCount(row);
-
-//  QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString("something1"));
-//new_item->setIcon(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")));
-
-  //QTableWidgetItem* new_item = new QTableWidgetItem(QIcon( QString::fromUtf8( ":/Studio/Images/Visible.png")), "");
-
-  //this->ui_->landmark_table->setItem(row - 1, 0, new_item);
-  //new_item = new QTableWidgetItem(QString::fromStdString("#FF00FF"));
-  //this->ui_->landmark_table->setItem(row - 1, 1, new_item);
-  //new_item = new QTableWidgetItem(QString::fromStdString("something3"));
-  //this->ui_->landmark_table->setItem(row - 1, 2, new_item);
+void DataTool::store_data() {
+  landmark_table_model_->store_landmarks();
 }
 
 //---------------------------------------------------------------------------
-void DataTool::delete_button_clicked()
-{
+void DataTool::new_landmark() {
+  landmark_table_model_->new_landmark();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::delete_button_clicked() {
   QModelIndexList list = this->ui_->table->selectionModel()->selectedRows();
 
   QList<int> index_list;
@@ -184,5 +150,4 @@ void DataTool::delete_button_clicked()
   this->session_->remove_shapes(index_list);
 }
 
-
-}
+}  // namespace shapeworks
