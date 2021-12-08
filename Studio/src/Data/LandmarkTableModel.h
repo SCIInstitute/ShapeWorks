@@ -5,6 +5,7 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <QItemSelection>
+#include <QIcon>
 
 #include <Libs/Project/Project.h>
 
@@ -96,7 +97,7 @@ public:
   std::string get_next_landmark_color();
 
 
-private Q_SLOTS:
+public Q_SLOTS:
 
   // HANDLE_CLICK:
   // Handler for when table cells are clicked.
@@ -121,5 +122,7 @@ private:
 
   std::vector<std::string> default_colors_;
 
+  QIcon visible_;
+  QIcon visible_off_;
 };
 }

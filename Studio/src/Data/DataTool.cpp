@@ -46,8 +46,11 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   ui_->landmark_table->setModel(landmark_table_model_.get());
   ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
+  connect(ui_->landmark_table, &QTableView::clicked, landmark_table_model_.get(), &LandmarkTableModel::handle_click);
 
-  ui_->landmark_table->setItemDelegate(new LandmarkItemDelegate(ui_->landmark_table));
+  auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
+
+  ui_->landmark_table->setItemDelegate(delegate);
 
   QStringList table_headers;
   table_headers << "visible";
@@ -126,8 +129,8 @@ void DataTool::update_table()
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  landmark_table_model_->update_cells();
-  this->ui_->landmark_table->resizeColumnsToContents();
+  landmark_table_model_->update_table();
+  ui_->landmark_table->resizeColumnsToContents();
 
 }
 

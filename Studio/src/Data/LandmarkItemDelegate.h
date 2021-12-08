@@ -10,6 +10,7 @@ namespace shapeworks
 {
 
 class LandmarkItemDelegatePrivate;
+class LandmarkTableModel;
 
 // Delegate for editing length and note columns in measurement table.  Note that only one delegate
 // can be set per view, so this delegate handles all custom columns in the table.
@@ -37,6 +38,8 @@ public:
 
   void set_button_text(std::string button_text);
 
+  void set_model(std::shared_ptr<LandmarkTableModel> model);
+
 public:
 Q_SIGNALS:
   void button_clicked(int row);
@@ -47,5 +50,6 @@ private Q_SLOTS:
 
 private:
   std::shared_ptr< LandmarkItemDelegatePrivate > private_;
+  std::shared_ptr<LandmarkTableModel> model_;
 };
 } // end namespace Seg3D
