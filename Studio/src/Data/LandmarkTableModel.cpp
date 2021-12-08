@@ -126,6 +126,7 @@ bool LandmarkTableModel::setData(const QModelIndex& index,
     }
     if (index.column() == LandmarkColumns::VISIBLE_E) {
       landmarks_[index.row()].visible_ = value.toBool();
+      update_visibility();
       Q_EMIT dataChanged(index, index);
       return false;
     }
@@ -151,7 +152,7 @@ QVariant LandmarkTableModel::headerData(int section,
         if (this->visibility_ == LandmarkVisibility::ALL_VISIBLE_E) {
           return QIcon(":/Studio/Images/Visible.png");
         } else if (this->visibility_ == LandmarkVisibility::NONE_VISIBLE_E) {
-          return QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
+          return QIcon(QString::fromUtf8(":/Studio/Images/VisibleOff.png"));
         } else if (this->visibility_ == LandmarkVisibility::SOME_VISIBLE_E) {
           return QIcon(QString::fromUtf8(":/Studio/Images/VisibleGray.png"));
         }
@@ -253,13 +254,7 @@ void LandmarkTableModel::update_table() {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::update_cells() {
-  std::cerr << "update_cells!\n";
-  //if (project_) {
-  //    landmarks_ = project_->get_landmarks();
-  //    std::cerr << "the number of landmarks is " << landmarks_.size() << "\n";
-  //  }
   this->update_visibility();
-  // this->private_->use_cached_active_name_ = false;
 
   int rows = this->rowCount(QModelIndex());
   int columns = this->columnCount(QModelIndex());
@@ -311,17 +306,12 @@ void LandmarkTableModel::toggle_visible() {
     visible = true;
   }
 
-  /*
-     const std::vector< Core::Annotation >& measurements =
-      this->private_->landmark_manager_->annotations_state_->get();
-     for (size_t i = 0; i < measurements.size(); i++) {
-      Core::Annotation m = measurements[ i ];
-      m.set_visible(visible);
-      Core::ActionSetAt::Dispatch(Core::Interface::GetWidgetActionContext(),
-                                  this->private_->landmark_manager_->annotations_state_,
-     i, m);
-     }
-   */
+  for (auto& landmark : landmarks_) {
+    landmark.visible_ = visible;
+  }
+
+  update_visibility();
+  Q_EMIT dataChanged(index(0, 0), index(0, landmarks_.size()));
 }
 
 //---------------------------------------------------------------------------
@@ -330,8 +320,6 @@ void LandmarkTableModel::handle_click(const QModelIndex& index) {
     return;
   }
 
-  qDebug() << "handle_click";
-
   // If visible column was clicked, toggle visible
   if (index.column() == LandmarkColumns::VISIBLE_E) {
     if (index.row() < static_cast<int>(landmarks_.size())) {
@@ -339,6 +327,13 @@ void LandmarkTableModel::handle_click(const QModelIndex& index) {
       bool visible = !landmarks_[index.row()].visible_;
       this->setData(index, visible, Qt::EditRole);
     }
+  }
+}
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::handle_header_click(int index) {
+  if (index == LandmarkColumns::VISIBLE_E) {
+    this->toggle_visible();
   }
 }
 
@@ -357,6 +352,7 @@ void LandmarkTableModel::update_visibility() {
   } else {
     this->visibility_ = LandmarkVisibility::SOME_VISIBLE_E;
   }
+  Q_EMIT headerDataChanged(Qt::Horizontal, LandmarkColumns::VISIBLE_E, LandmarkColumns::VISIBLE_E);
 }
 
 //---------------------------------------------------------------------------

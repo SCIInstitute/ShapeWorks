@@ -1,17 +1,14 @@
 #pragma once
 
-
 // QT Includes
-#include <QAbstractTableModel>
-#include <QModelIndex>
-#include <QItemSelection>
-#include <QIcon>
-
 #include <Libs/Project/Project.h>
 
+#include <QAbstractTableModel>
+#include <QIcon>
+#include <QItemSelection>
+#include <QModelIndex>
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 class Project;
 
@@ -31,15 +28,13 @@ enum LandmarkVisibility {
   SOME_VISIBLE_E
 };
 
-
-class LandmarkTableModel : public QAbstractTableModel
-{
+class LandmarkTableModel : public QAbstractTableModel {
   Q_OBJECT
 
   friend class LandmarkTableModelPrivate;
 
-public:
-  LandmarkTableModel( QObject* parent = 0 );
+ public:
+  LandmarkTableModel(QObject *parent = 0);
 
   virtual ~LandmarkTableModel();
 
@@ -49,15 +44,14 @@ public:
   // Inherited functions
   //
 
-  int rowCount( const QModelIndex &index ) const;
-  int columnCount( const QModelIndex &index ) const;
+  int rowCount(const QModelIndex &index) const;
+  int columnCount(const QModelIndex &index) const;
 
-  QVariant data( const QModelIndex& index, int role ) const;
-  bool setData( const QModelIndex &index, const QVariant &value, int role );
-  QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
-  Qt::ItemFlags flags( const QModelIndex &index ) const;
-  bool removeRows( int row, int count, const QModelIndex & parent = QModelIndex() );
-
+  QVariant data(const QModelIndex &index, int role) const;
+  bool setData(const QModelIndex &index, const QVariant &value, int role);
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
   //
   // Extended functions
@@ -74,7 +68,7 @@ public:
 
   // REMOVE_ROWS:
   // Remove measurements with specified row indices.
-  void remove_rows( const std::vector< int >& rows );
+  void remove_rows(const std::vector<int> &rows);
 
   // GET_ACTIVE_INDEX:
   // Return row index of active measurement. Returns -1 if there are no measurements.
@@ -84,32 +78,33 @@ public:
 
   // HANDLE_SELECTED:
   // Handler for when table cells are selected.
-  void handle_selected( const QItemSelection & selected );
+  void handle_selected(const QItemSelection &selected);
 
   // TOGGLE_VISIBLE:
   // Toggle tri-state button for visibility in horizontal header
   void toggle_visible();
 
-  void set_placing_landmark( int row );
-  void set_button_text( std::string text );
+  void set_placing_landmark(int row);
+  void set_button_text(std::string text);
 
   std::string get_next_landmark_name();
   std::string get_next_landmark_color();
 
-
-public Q_SLOTS:
+ public Q_SLOTS:
 
   // HANDLE_CLICK:
   // Handler for when table cells are clicked.
-  void handle_click( const QModelIndex & index );
+  void handle_click(const QModelIndex &index);
+
+  //! Handle header click
+  void handle_header_click(int index);
 
   // SAVE_ACTIVE_NOTE:
   // Save cached active note to state vector.  Avoids saving to state vector and triggering
   // updates on every keystroke.
   //void save_cached_active_name();
 
-private:
-
+ private:
   void update_visibility();
 
   std::shared_ptr<Project> project_;
@@ -125,4 +120,4 @@ private:
   QIcon visible_;
   QIcon visible_off_;
 };
-}
+}  // namespace shapeworks

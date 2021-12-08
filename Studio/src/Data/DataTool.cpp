@@ -39,30 +39,22 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
-  QVariant var = QColor(64, 128, 255);
-  qDebug() << "variant =" << var.toString() << "\n";
-
-
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   ui_->landmark_table->setModel(landmark_table_model_.get());
   ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
   connect(ui_->landmark_table, &QTableView::clicked, landmark_table_model_.get(), &LandmarkTableModel::handle_click);
+  connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked,
+          landmark_table_model_.get(), &LandmarkTableModel::handle_header_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
 
   ui_->landmark_table->setItemDelegate(delegate);
 
-  QStringList table_headers;
-  table_headers << "visible";
-  table_headers << "color";
-  table_headers << "name";
-  table_headers << "position";
-  table_headers << "place";
-  //this->ui_->landmark_table->setHorizontalHeaderLabels(table_headers);
-  //this->ui_->landmark_table->setColumnCount(table_headers.size());
-  this->ui_->landmark_table->verticalHeader()->setVisible(true);
-  this->ui_->landmark_table->horizontalHeader()->setVisible(true);
-  this->ui_->landmark_table->resizeColumnsToContents();
+
+
+  ui_->landmark_table->verticalHeader()->setVisible(true);
+  ui_->landmark_table->horizontalHeader()->setVisible(true);
+  ui_->landmark_table->resizeColumnsToContents();
 
 }
 
