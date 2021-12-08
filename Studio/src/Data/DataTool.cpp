@@ -43,6 +43,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs)
   ui_->landmark_table->setModel(landmark_table_model_.get());
   ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
   connect(ui_->landmark_table, &QTableView::clicked, landmark_table_model_.get(), &LandmarkTableModel::handle_click);
+  connect(ui_->landmark_table, &QTableView::doubleClicked, landmark_table_model_.get(), &LandmarkTableModel::handle_double_click);
   connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked,
           landmark_table_model_.get(), &LandmarkTableModel::handle_header_click);
 

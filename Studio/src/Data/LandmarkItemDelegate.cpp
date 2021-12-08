@@ -29,6 +29,7 @@ class LandmarkItemDelegatePrivate {
   QIcon visible_off_;
 };
 
+//---------------------------------------------------------------------------
 LandmarkItemDelegate::LandmarkItemDelegate(QObject* parent /*= 0 */) : QStyledItemDelegate(parent),
                                                                        private_(new LandmarkItemDelegatePrivate) {
   private_->button_ = new QPushButton("set");
@@ -50,6 +51,7 @@ LandmarkItemDelegate::LandmarkItemDelegate(QObject* parent /*= 0 */) : QStyledIt
   private_->visible_off_ = QIcon(QString::fromUtf8(":/Studio/Images/VisibleOff.png"));
 }
 
+//---------------------------------------------------------------------------
 void LandmarkItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
                                  const QModelIndex& index) const {
   Q_ASSERT(index.isValid());
@@ -118,13 +120,13 @@ QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
     return line_edit;
   } else if (index.column() == LandmarkColumns::COLOR_E) {
     std::cerr << "color button\n";
-    QColor measurement_color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
-    this->private_->new_color_ = QColorDialog::getColor(measurement_color, parent->parentWidget()->parentWidget());
+    //QColor measurement_color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
+    //this->private_->new_color_ = QColorDialog::getColor(measurement_color, parent->parentWidget()->parentWidget());
 
     // In the case that the user presses cancel instead, we'll abort the edit
-    if (!this->private_->new_color_.isValid()) {
-      return 0;
-    }
+    //if (!this->private_->new_color_.isValid()) {
+//      return 0;
+//    }
     return 0;
   } else if (index.column() == LandmarkColumns::NAME_E) {
     QLineEdit* line_edit = new QLineEdit(parent);

@@ -4,6 +4,7 @@
 
 #include <QBrush>
 #include <QColor>
+#include <QColorDialog>
 #include <QDebug>
 #include <QIcon>
 #include <iostream>
@@ -127,7 +128,6 @@ bool LandmarkTableModel::setData(const QModelIndex& index,
     if (index.column() == LandmarkColumns::VISIBLE_E) {
       landmarks_[index.row()].visible_ = value.toBool();
       update_visibility();
-      Q_EMIT dataChanged(index, index);
       return false;
     }
     if (index.column() == LandmarkColumns::COLOR_E) {
@@ -138,6 +138,7 @@ bool LandmarkTableModel::setData(const QModelIndex& index,
     } else if (index.column() == LandmarkColumns::POSITION_E) {
       return false;
     }
+    Q_EMIT dataChanged(index, index);
   }
   return false;
 }
@@ -326,6 +327,26 @@ void LandmarkTableModel::handle_click(const QModelIndex& index) {
       // Toggle visible
       bool visible = !landmarks_[index.row()].visible_;
       this->setData(index, visible, Qt::EditRole);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::handle_double_click(const QModelIndex& index) {
+  qDebug() << "handle double click: " << index;
+  if (!index.isValid()) {
+    return;
+  }
+
+  // If color column was double clicked, bring up color chooser
+  if (index.column() == LandmarkColumns::COLOR_E) {
+    if (index.row() < static_cast<int>(landmarks_.size())) {
+      QColor color = index.model()->data(index, Qt::DecorationRole).value<QColor>();
+      color = QColorDialog::getColor(color, nullptr);
+      if (color.isValid()) {
+        qDebug() << "set data" << index << " " << color;
+        this->setData(index, color, Qt::EditRole);
+      }
     }
   }
 }

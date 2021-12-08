@@ -92,9 +92,11 @@ class LandmarkTableModel : public QAbstractTableModel {
 
  public Q_SLOTS:
 
-  // HANDLE_CLICK:
-  // Handler for when table cells are clicked.
+  //! Handler for when table cells are clicked.
   void handle_click(const QModelIndex &index);
+
+  //! Handler for when table cells are double clicked.
+  void handle_double_click(const QModelIndex &index);
 
   //! Handle header click
   void handle_header_click(int index);
