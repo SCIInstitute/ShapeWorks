@@ -25,6 +25,11 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->setupUi(this);
   qRegisterMetaType<std::string>();
 
+  // connect panel open buttons
+  connect(ui_->image_open_button, &QPushButton::toggled, ui_->image_content, &QWidget::setVisible);
+  connect(ui_->mesh_open_button, &QPushButton::toggled, ui_->mesh_content, &QWidget::setVisible);
+  connect(ui_->alignment_open_button, &QPushButton::toggled, ui_->alignment_content, &QWidget::setVisible);
+
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged),
