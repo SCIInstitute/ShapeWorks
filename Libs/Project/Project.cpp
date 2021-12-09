@@ -29,7 +29,6 @@ Project::Project()
 
   this->input_prefixes_.push_back(SEGMENTATION_PREFIX);
   this->input_prefixes_.push_back(SHAPE_PREFIX);
-
 }
 
 //---------------------------------------------------------------------------
@@ -144,7 +143,9 @@ std::vector<std::string> Project::get_matching_columns(const std::string& prefix
 std::vector<std::string> Project::get_matching_columns(const std::vector<std::string> prefixes)
 {
   for (auto prefix : prefixes) {
-    this->matching_columns_.insert(prefix);
+    if (prefix != "") {
+      this->matching_columns_.insert(prefix);
+    }
   }
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -167,7 +168,6 @@ std::string Project::get_value(int column, int subject_id)
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   std::string value = ws.cell(xlnt::cell_reference(column, subject_id)).to_string();
   return value;
-
 }
 
 //---------------------------------------------------------------------------
@@ -212,6 +212,7 @@ void Project::load_subjects()
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
+  auto all_columns = this->get_headers();
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -252,11 +253,14 @@ void Project::load_subjects()
     if (name_column >= 0) {
       auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
       subject->set_display_name(name);
-    } else if (subject->get_segmentation_filenames().size() != 0) {
+    }
+    else if (subject->get_segmentation_filenames().size() != 0) {
       subject->set_display_name(subject->get_segmentation_filenames()[0]);
-    } else if (subject->get_groomed_filenames().size() != 0) {
+    }
+    else if (subject->get_groomed_filenames().size() != 0) {
       subject->set_display_name(subject->get_groomed_filenames()[0]);
-    } else if (locals.size() > 0) {
+    }
+    else if (locals.size() > 0) {
       subject->set_display_name(locals[0]);
     }
 
@@ -267,6 +271,14 @@ void Project::load_subjects()
       extra_values[elem] = value;
     }
     subject->set_extra_values(extra_values);
+
+    std::map<std::string, std::string> table_values;
+    for (auto elem : this->get_headers()) {
+      auto value = this->get_value(this->get_index_for_column(elem),
+                                   i + 2); //+1 for header, +1 for 1-based index
+      table_values[elem] = value;
+    }
+    subject->set_table_values(table_values);
 
     this->segmentations_present_ = !seg_columns.empty();
     this->groomed_present_ = !groomed_columns.empty();
@@ -310,11 +322,10 @@ void Project::store_subjects()
   std::vector<std::string> procrustes_transform_columns;
   for (int i = 0; i < groomed_columns.size(); i++) {
     std::string procrustes_transform_column_name = replace_string(groomed_columns[i],
-                                                               GROOMED_PREFIX,
-                                                               PROCRUSTES_TRANSFORMS_PREFIX);
+                                                                  GROOMED_PREFIX,
+                                                                  PROCRUSTES_TRANSFORMS_PREFIX);
     procrustes_transform_columns.push_back(procrustes_transform_column_name);
   }
-
 
   // local and world particle columns
   std::vector<std::string> local_columns;
@@ -633,38 +644,43 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_feature_names()
 {
-  // grab feature volumes
-  auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  if (!this->feature_names_read_done_) {
+    // grab feature volumes
+    auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
 
-  // now check for meshes that have scalars
-  if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
-    auto subject = this->subjects_[0]; // we have to assume that all subjects have the same features
+    // now check for meshes that have scalars
+    if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
+      auto subject = this->subjects_[0]; // we have to assume that all subjects have the same features
 
-    //int domains_per_subject = this->get_number_of_domains_per_subject();
-    for (int d = 0; d < subject->get_domain_types().size(); d++) {
-      if (subject->get_domain_types()[d] == DomainType::Mesh) {
-        if (subject->get_segmentation_filenames().size() > d) {
-          auto filename = subject->get_segmentation_filenames()[d];
-          try {
-            auto poly_data = MeshUtils::threadSafeReadMesh(
-              filename).getVTKMesh();
-            if (poly_data) {
-              vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-              for (vtkIdType i = 0; i < num_arrays; i++) {
-                this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+      //int domains_per_subject = this->get_number_of_domains_per_subject();
+      for (int d = 0; d < subject->get_domain_types().size(); d++) {
+        if (subject->get_domain_types()[d] == DomainType::Mesh) {
+          if (subject->get_segmentation_filenames().size() > d) {
+            auto filename = subject->get_segmentation_filenames()[d];
+            try {
+              auto poly_data = MeshUtils::threadSafeReadMesh(
+                filename).getVTKMesh();
+              if (poly_data) {
+                vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+                for (vtkIdType i = 0; i < num_arrays; i++) {
+                  this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+                }
               }
+            } catch (std::exception& e) {
+              std::cerr << std::string("Error reading: ") + filename;
             }
-          } catch (std::exception& e) {
-            std::cerr << std::string("Error reading: ") + filename;
           }
         }
       }
+      this->feature_names_read_done_ = true;
     }
+
+    // combine
+    feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
+    this->feature_names_ = feature_names;
   }
 
-  // combine
-  feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
-  return feature_names;
+  return this->feature_names_;
 }
 
 //---------------------------------------------------------------------------
@@ -723,7 +739,6 @@ void Project::set_transform_list(const std::vector<std::string>& columns, int su
   }
 
   this->set_list(columns, subject, transform_strings);
-
 }
 
 //---------------------------------------------------------------------------
@@ -830,7 +845,5 @@ std::string Project::get_column_identifier(std::string name)
   }
   return name;
 }
-
-
 
 //---------------------------------------------------------------------------
