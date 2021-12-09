@@ -649,25 +649,22 @@ Field Mesh::curvature(const CurvatureType type)
 
 Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
 {
-  vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
-
-  switch (type) {
-    case Butterfly:
-      // butterfly subdivision filter is the default
-      break;
-    case Loop:
-    {
-      vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
-      break;
-    }
-    default:
-      throw std::invalid_argument("Unknown Mesh::SubdivisionType");
+  if (type == Mesh::SubdivisionType::Loop)
+  {
+    vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
   }
-
-  filter->SetInputData(this->mesh);
-  filter->SetNumberOfSubdivisions(subdivision);
-  filter->Update();
-  this->mesh = filter->GetOutput();
+  else
+  {
+    vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
 
   return *this;
 }
