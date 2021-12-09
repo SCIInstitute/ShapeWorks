@@ -41,6 +41,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
+/*
 TEST(OptimizeTests, sample)
 {
   setupenv(std::string(TEST_DATA_DIR) + "/sphere");
@@ -118,6 +119,7 @@ TEST(OptimizeTests, sphere_huge)
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
 }
+*/
 
 TEST(OptimizeTests, sphere_tiny)
 {

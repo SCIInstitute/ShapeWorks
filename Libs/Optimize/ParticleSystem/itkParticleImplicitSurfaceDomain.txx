@@ -105,7 +105,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool d
       {
       p[i] -= vec[i];
       }
-
+    std::cout << "p_old " << p_old << " p " << p << " grad " << grad << std::endl;
     f = this->Sample(p);
 
     // Raise the tolerance if we have done too many iterations.
