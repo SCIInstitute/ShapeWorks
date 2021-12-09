@@ -3,16 +3,12 @@
 ====================================================================
 Example ShapeWorks Pipeline for mesh optimization
 ====================================================================
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes.
 """
 import os
 import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-import numpy as np
-
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -31,12 +27,12 @@ def Run_Pipeline(args):
         args.use_single_scale = 1
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.ply"))[:3]
+                            dataset_name + "/meshes/*.vtk"))[:3]
     # else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.ply"))
+                            dataset_name + "/meshes/*.vtk"))
 
         # Select data if using subsample
         if args.use_subsample:
@@ -80,12 +76,11 @@ def Run_Pipeline(args):
         mesh_names = []
         for mesh_file in mesh_files:
             print('Loading: ' + mesh_file)
-            # get current shape name
-            mesh_names.append(mesh_file.split('/')
-                               [-1].replace('.nrrd', ''))
+            # get current name
+            mesh_names.append(mesh_file.split('/')[-1].replace('.vtk', ''))
             # load mesh
             mesh = sw.Mesh(mesh_file)
-            # append to the shape list
+            # append to the list
             mesh_list.append(mesh)
 
         """
@@ -94,8 +89,10 @@ def Run_Pipeline(args):
         closest to the mean can be found and selected as the reference. 
         """
         ref_index = sw.find_reference_mesh_index(mesh_list)
-        # Make a copy of the reference segmentation
-        ref_mesh = mesh_list[ref_index].write(groom_dir + 'reference.vtk')
+        # Make a copy of the reference segmentation 
+        ref_mesh = mesh_list[ref_index]
+        # Center the reference mesh at 0,0,0
+        ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
         ref_name = mesh_names[ref_index]
         print("Reference found: " + ref_name)
 
@@ -106,17 +103,12 @@ def Run_Pipeline(args):
         for mesh, name in zip(mesh_list, mesh_names):
             print('Aligning ' + name + ' to ' + ref_name)
             # compute rigid transformation
-            rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid)
+            rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
             mesh.applyTransform(rigid_transform)
-            # apply centering
-            translation = np.eye(4)
-            translation[0:3,-1] = -ref_center
-            mesh.applyTransform(translation)
 
         # Save groomed meshes
-        mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list,
-                        mesh_names, extension='vtk', compressed=False, verbose=True)
+        mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
 
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
@@ -137,17 +129,17 @@ def Run_Pipeline(args):
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
-        "checkpointing_interval": 200,
+        "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
-        "optimization_iterations": 500,
-        "starting_regularization": 100,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
+        "iterations_per_split": 1000,
+        "optimization_iterations": 1000,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
+        "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
         "domain_type": 'mesh',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
+        "relative_weighting": 1,
+        "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
