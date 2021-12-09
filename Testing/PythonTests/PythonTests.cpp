@@ -349,3 +349,8 @@ TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
 }
+
+TEST(pythonTests, isolateTest)
+{
+  run_use_case("isolate.py");
+}
