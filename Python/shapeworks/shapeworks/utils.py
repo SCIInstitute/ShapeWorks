@@ -96,13 +96,14 @@ def find_reference_image_index(inDataList,domains_per_shape=1):
     for img in inDataList:
         mesh = img.toMesh(0.5)
         mesh_list.append(mesh)
+    return find_reference_mesh_index(mesh_list, domains_per_shape)
+
+def find_reference_mesh_index(mesh_list,domains_per_shape=1):
     if(domains_per_shape==1):
         return sw.MeshUtils.findReferenceMesh(mesh_list)
-
     else:
         combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
-        index = sw.MeshUtils.findReferenceMesh(combined_mesh)
-       
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh) 
         return index,combined_mesh
 
 
