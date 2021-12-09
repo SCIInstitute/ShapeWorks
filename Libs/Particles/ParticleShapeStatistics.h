@@ -1,10 +1,5 @@
 #pragma once
 
-#include "vnl/vnl_vector.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector_fixed.h"
-#include "vnl/algo/vnl_matrix_inverse.h"
 #include <Eigen/Eigen>
 
 #include <iostream>
@@ -42,7 +37,7 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Loads a set of point files and pre-computes some statistics. */
-  int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
+  int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
   /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(const std::string &s);
