@@ -178,6 +178,9 @@ public:
   /// sets the coordinate system in which this image lives in physical space
   Image& setCoordsys(ImageType::DirectionType coordsys);
 
+  /// isolate the largest object in a binary segmentation
+  Image& isolate();
+
   // query functions //
 
   /// logical dimensions of the image

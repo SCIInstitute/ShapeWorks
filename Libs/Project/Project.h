@@ -174,6 +174,11 @@ private:
   std::set<std::string> matching_columns_;
   std::vector<std::string> mesh_scalars_;
 
+  std::vector<std::string> feature_names_;
+
+  // to avoid re-reading from mesh files each time the list of names is requested
+  bool feature_names_read_done_{false};
+
   std::vector<std::string> input_prefixes_;
 
   const int supported_version_{2};

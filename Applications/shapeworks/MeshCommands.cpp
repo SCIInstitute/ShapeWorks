@@ -230,23 +230,21 @@ bool SmoothSinc::execute(const optparse::Values &options, SharedCommandData &sha
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Decimate
+// Remesh
 ///////////////////////////////////////////////////////////////////////////////
-void Decimate::buildParser()
+void Remesh::buildParser()
 {
-  const std::string prog = "decimate";
-  const std::string desc = "applies filter to reduce number of triangles in mesh";
+  const std::string prog = "remesh";
+  const std::string desc = "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity";
 
   parser.prog(prog).description(desc);
-
-  parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
-  parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: true].");
+  parser.add_option("--target").action("store").type("double").help("Target number of vertices.");
+  parser.add_option("--adaptivity").action("store").type("double").help("0-2, low adaptivity to high adaptivity");
 
   Command::buildParser();
 }
 
-bool Decimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Remesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -254,30 +252,30 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  double reduction = static_cast<double>(options.get("reduction"));
-  double angle = static_cast<double>(options.get("angle"));
-  bool preserveTopology = static_cast<bool>(options.get("preservetopology"));
+  int numVertices = static_cast<int>(options.get("target"));
+  double adaptivity = static_cast<double>(options.get("adaptivity"));
 
-  sharedData.mesh->decimate(reduction, angle, preserveTopology);
+  sharedData.mesh->remesh(numVertices, adaptivity);
   return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// CVDDecimate
+// RemeshPercent
 ///////////////////////////////////////////////////////////////////////////////
-void CVDDecimate::buildParser()
+void RemeshPercent::buildParser()
 {
-  const std::string prog = "cvd-decimate";
-  const std::string desc = "applies cvd (centroidal voronoi diagram) decimation filter";
+  const std::string prog = "remesh-percent";
+  const std::string desc = "applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity";
 
   parser.prog(prog).description(desc);
 
-  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
+  parser.add_option("--percentage").action("store").type("double").help("Target percentage number of vertices");
+  parser.add_option("--adaptivity").action("store").type("double").help("0-2, low adaptivity to high adaptivity");
 
   Command::buildParser();
 }
 
-bool CVDDecimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool RemeshPercent::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -286,8 +284,9 @@ bool CVDDecimate::execute(const optparse::Values &options, SharedCommandData &sh
   }
 
   double percentage = static_cast<double>(options.get("percentage"));
+  double adaptivity = static_cast<double>(options.get("adaptivity"));
 
-  sharedData.mesh->cvdDecimate(percentage);
+  sharedData.mesh->remeshPercent(percentage, adaptivity);
   return sharedData.validMesh();
 }
 

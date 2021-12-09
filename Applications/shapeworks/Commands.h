@@ -44,6 +44,7 @@ COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(SetRegion, ImageCommand);
+COMMAND_DECLARE(Isolate, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -58,8 +59,8 @@ COMMAND_DECLARE(MeshInfo, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(SmoothSinc, MeshCommand);
-COMMAND_DECLARE(Decimate, MeshCommand);
-COMMAND_DECLARE(CVDDecimate, MeshCommand);
+COMMAND_DECLARE(Remesh, MeshCommand);
+COMMAND_DECLARE(RemeshPercent, MeshCommand);
 COMMAND_DECLARE(InvertNormals, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(TransformMesh, MeshCommand);

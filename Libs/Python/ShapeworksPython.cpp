@@ -601,6 +601,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        },
        "converts image to mesh at specified isovalue",
        "isovalue"_a)
+
+  .def("isolate",
+       &Image::isolate,
+       "isolate largest object")
   ;
 
   // PhysicalRegion
@@ -896,15 +900,15 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies windowed sinc smoothing",
        "iterations"_a=0, "passband"_a=0.0)
 
-  .def("decimate",
-       &Mesh::decimate,
-       "applies filter to reduce number of triangles in mesh",
-       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
+  .def("remesh",
+       &Mesh::remesh,
+       "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity",
+       "numVertices"_a, "adaptivity"_a)
 
-   .def("cvdDecimate",
-       &Mesh::cvdDecimate,
-       "applies cvd (centroidal voronoi diagram) decimation filter",
-       "percentage"_a=0.5)
+   .def("remeshPercent",
+       &Mesh::remeshPercent,
+       "applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity",
+       "percentage"_a, "adaptivity"_a)
 
   .def("invertNormals",
        &Mesh::invertNormals,

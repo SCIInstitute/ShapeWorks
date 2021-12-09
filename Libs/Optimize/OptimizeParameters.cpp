@@ -315,7 +315,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     for (int i = 0; i < files.size(); i++) {
 
       auto filename = files[i];
-      auto domain_type = s->get_domain_types()[i];
+      auto domain_type = s->get_domain_types(true)[i];
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {

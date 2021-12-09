@@ -224,9 +224,9 @@ TEST(pythonTests, smoothTest)
   run_use_case("smooth.py");
 }
 
-TEST(pythonTests, decimateTest)
+TEST(pythonTests, remeshTest)
 {
-  run_use_case("decimate.py");
+  run_use_case("remesh.py");
 }
 
 TEST(pythonTests, invertnormalsTest)
@@ -348,4 +348,9 @@ TEST(pythonTests, pcaTest)
 TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
+}
+
+TEST(pythonTests, isolateTest)
+{
+  run_use_case("isolate.py");
 }

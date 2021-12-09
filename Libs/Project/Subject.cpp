@@ -75,6 +75,15 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 }
 
 //---------------------------------------------------------------------------
+void Subject::set_groomed_transform(int i, std::vector<double> transform)
+{
+  if (i >= this->groomed_transforms_.size()) {
+    this->groomed_transforms_.resize(i + 1);
+  }
+  this->groomed_transforms_[i] = transform;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::vector<double>> Subject::get_procrustes_transforms() const
 {
   return this->procrustes_transforms_;
@@ -105,11 +114,11 @@ std::string Subject::get_group_value(std::string group_name)
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Subject::get_domain_types()
+std::vector<DomainType> Subject::get_domain_types(bool groomed)
 {
   std::vector<DomainType> domain_types;
   auto list = this->segmentation_filenames_;
-  if (this->segmentation_filenames_.empty()) {
+  if (this->segmentation_filenames_.empty() || groomed) {
     list = this->groomed_filenames_;
   }
   for (auto name: list) {
@@ -144,6 +153,18 @@ std::map<std::string, std::string> Subject::get_extra_values() const
 void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 {
   this->extra_values_ = extra_values;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_table_values() const
+{
+  return this->table_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_table_values(std::map<std::string, std::string> table_values)
+{
+  this->table_values_ = table_values;
 }
 
 //---------------------------------------------------------------------------

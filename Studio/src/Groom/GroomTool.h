@@ -69,7 +69,10 @@ public Q_SLOTS:
   void alignment_checkbox_changed(int state);
   void alignment_option_changed(int index);
 
-  void fill_holes_changed(int state);
+  void reflect_checkbox_changed(int state);
+  void reflect_column_changed(int index);
+  void reflect_choice_changed(int index);
+  void reflect_axis_changed(int index);
 
   //! Run groom tool
   void on_run_groom_button_clicked();
@@ -81,6 +84,11 @@ public Q_SLOTS:
 private:
 
   void set_ui_from_params(GroomParameters params);
+
+  void update_page();
+
+  void update_reflect_columns();
+  void update_reflect_choices();
 
   Preferences& preferences_;
 
@@ -97,5 +105,6 @@ private:
 
   std::string current_domain_;
 
+  QStringList reflect_columns_;
 };
 }
