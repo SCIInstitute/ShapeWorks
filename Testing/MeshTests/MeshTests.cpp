@@ -9,6 +9,26 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, subdivisionTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter();;
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, subdivisionTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter(Mesh::SubdivisionType::Loop);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/loop.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, geodesicTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");

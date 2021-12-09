@@ -647,7 +647,7 @@ Field Mesh::curvature(const CurvatureType type)
   return curv;
 }
 
-Mesh& Mesh::applySubdivisionFilter(int subdivision, const SubdivisionType type)
+Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
 {
   vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
 
