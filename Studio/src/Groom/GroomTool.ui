@@ -66,6 +66,11 @@ background: rgb(12, 255, 127)
       </property>
       <item>
        <widget class="QLabel" name="image_grooming_label">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Image Grooming</string>
         </property>
@@ -786,6 +791,11 @@ background: rgb(12, 255, 127)
       </item>
       <item>
        <widget class="QLabel" name="mesh_label">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Mesh Grooming</string>
         </property>
@@ -1200,6 +1210,11 @@ background: rgb(12, 255, 127)
           <width>0</width>
           <height>30</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Alignment Options</string>
