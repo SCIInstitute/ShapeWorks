@@ -1221,7 +1221,7 @@ background: rgb(12, 255, 127)
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>30</height>
+          <height>32</height>
          </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_20">
@@ -1239,6 +1239,12 @@ background: rgb(12, 255, 127)
          </property>
          <item row="2" column="0">
           <widget class="QCheckBox" name="reflect_checkbox">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>18</height>
+            </size>
+           </property>
            <property name="text">
             <string>Reflect</string>
            </property>

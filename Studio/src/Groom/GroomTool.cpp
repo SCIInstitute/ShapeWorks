@@ -14,6 +14,8 @@
 
 #include <ui_GroomTool.h>
 
+#include <QDebug>
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -633,9 +635,11 @@ void GroomTool::update_ui()
   ui_->spacing_z->setEnabled(!iso_mode);
   ui_->spacing_iso->setEnabled(iso_mode);
 
-  ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
-  ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
-  ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_choice->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_column->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_axis->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_equal->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_on_label->setVisible(ui_->reflect_checkbox->isChecked());
 
   ui_->remesh_box->setVisible(ui_->remesh_checkbox->isChecked());
 
