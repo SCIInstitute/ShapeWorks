@@ -37,6 +37,9 @@ public:
   bool get_fill_holes_tool();
   void set_fill_holes_tool(bool value);
 
+  bool get_fill_mesh_holes_tool();
+  void set_fill_mesh_holes_tool(bool value);
+
   bool get_auto_pad_tool();
   void set_auto_pad_tool(bool value);
 
@@ -79,6 +82,49 @@ public:
   bool get_use_icp();
   bool get_use_center();
 
+  bool get_crop();
+  void set_crop(bool crop);
+
+  bool get_convert_to_mesh();
+  void set_convert_to_mesh(bool value);
+
+
+  // reflection
+  bool get_reflect();
+  void set_reflect(bool reflect);
+  std::string get_reflect_column();
+  void set_reflect_column(std::string column);
+  std::string get_reflect_choice();
+  void set_reflect_choice(std::string choice);
+  std::string get_reflect_axis();
+  void  set_reflect_axis(std::string axies);
+
+  // resampling
+  bool get_resample();
+  void set_resample(bool resample);
+  bool get_isotropic();
+  void set_isotropic(bool isotropic);
+  double get_iso_spacing();
+  void set_iso_spacing(double spacing);
+  std::vector<double> get_spacing();
+  void set_spacing(std::vector<double> spacing);
+
+  bool get_remesh();
+  void set_remesh(bool remesh);
+
+  bool get_remesh_percent_mode();
+  void set_remesh_percent_mode(bool mode);
+
+  double get_remesh_percent();
+  void set_remesh_percent(double percent);
+
+  int get_remesh_num_vertices();
+  void set_remesh_num_vertices(int num_vertices);
+
+  double get_remesh_gradation();
+  void set_remesh_gradation(double gradation);
+
+
   void restore_defaults();
 
   // constants
@@ -93,7 +139,5 @@ private:
   Parameters params_;
   ProjectHandle project_;
   std::string domain_name_;
-
 };
-
 }

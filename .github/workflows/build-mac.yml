@@ -5,16 +5,15 @@ on:
     branches:
       - master
       - release_v*
-      - particle_check
     tags:
     - '*'
   pull_request:
 
 env:
-  CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
   
 jobs:
   build:
@@ -23,27 +22,24 @@ jobs:
     
     steps:
 
-    - name: Prepare ccache timestamp
-      id: ccache_cache_timestamp
-      shell: cmake -P {0}
-      run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        message("::set-output name=timestamp::${current_date}")
-
-    - name: ccache cache files
-      uses: actions/cache@v1.1.0
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
       with:
-        path: ~/.ccache
-        key: ${{ runner.os }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
-        restore-keys: |
-          ${{ runner.os }}-ccache-
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
     
+    - name: OS Setup
+      run: |
+        sudo chown -R $UID $CONDA
+        conda init zsh
+        source ~/.zshrc
+        brew install ccache md5sha1sum pigz gnu-tar
+
     - name: Acquire 10.13 SDK
-      run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
-
-    - name: Unpack SDK
-      run: cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
-
+      run: |
+        curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
+        cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
+        
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -51,23 +47,15 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-
-    - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
-      
-    - name: conda installs
+        
+    - name: Restore Caches
       shell: bash -l {0}
-      run: source ./install_shapeworks.sh
-
-    - name: install ccache
-      shell: bash -l {0}
-      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
+      run: .github/workflows/restore_caches.sh
     
+    - name: Conda Installs
+      shell: bash -l {0}
+      run: .github/workflows/gha_conda.sh
+
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
@@ -81,17 +69,9 @@ jobs:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/install
-        key: ${{ runner.os }}-release-${{ hashFiles('**/build_dependencies.sh') }}
-        
-    - name: Build dependencies
+    - name: Build Dependencies
       shell: bash -l {0}
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE
+      run: .github/workflows/gha_deps.sh
 
     - name: cmake
       shell: bash -l {0}
@@ -141,3 +121,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
              
+    - name: Store ccache
+      shell: bash -l {0}
+      run: .github/workflows/store_ccache.sh

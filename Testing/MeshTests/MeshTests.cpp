@@ -9,6 +9,26 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, subdivisionTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter();;
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, subdivisionTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter(Mesh::SubdivisionType::Loop);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/loop.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, geodesicTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
@@ -183,24 +203,38 @@ TEST(MeshTests, fixelementTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, cvddecimateTest1)
+TEST(MeshTests, remeshTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  ShapeworksUtils::setRngSeed(26);
-  ellipsoid.cvdDecimate();
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
-
+  ellipsoid.remesh(3000, 1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh1.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
-TEST(MeshTests, cvddecimateTest2)
+TEST(MeshTests, remeshTest2)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
-  ShapeworksUtils::setRngSeed(42);
-  ellipsoid.cvdDecimate(1.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
-
+  ellipsoid.remesh(1000, 2.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh2.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
+TEST(MeshTests, remeshPercentTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.remeshPercent(0.25, 1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, remeshPercentTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.remeshPercent(0.10, 0.5);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
 }
 
 TEST(MeshTests, smoothTest1)
@@ -226,51 +260,6 @@ TEST(MeshTests, smoothSincTest)
   Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   femur.smoothSinc(10,0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0, false);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate1.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest2)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate2.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest3)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate();
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate3.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest4)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.9, 25.5, true);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate4.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest5)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.9, 25.5, false);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate5.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }

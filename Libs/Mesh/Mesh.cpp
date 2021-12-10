@@ -11,7 +11,6 @@
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
-#include "FECVDDecimationModifier.h"
 #include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <igl/exact_geodesic.h>
@@ -34,7 +33,6 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
-#include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
 #include <vtkFillHolesFilter.h>
@@ -54,13 +52,17 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkNew.h>
-#include <vtkCellData.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
 
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/heat_method_distance.h>
+
+// ACVD
+#include <vtkIsotropicDiscreteRemeshing.h>
 
 namespace shapeworks {
 
@@ -239,37 +241,46 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   return *this;
 }
 
-Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
+Mesh& Mesh::remesh(int numVertices, double adaptivity)
 {
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+  // ACVD is very noisy to std::cout, even with console output set to zero
+  // setting the failbit on std::cout will silence this until it's cleared below
+  std::cout.setstate(std::ios_base::failbit);
+  auto surf = vtkSmartPointer<vtkSurface>::New();
+  auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
+  surf->CreateFromPolyData(this->mesh);
+  surf->GetCellData()->Initialize();
+  surf->GetPointData()->Initialize();
+  surf->DisplayMeshProperties();
+  int subsamplingThreshold = 10;  // subsampling threshold
 
-  decimator->SetInputData(this->mesh);
-  decimator->SetTargetReduction(reduction);
-  decimator->SetFeatureAngle(angle);
-  preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
-  decimator->BoundaryVertexDeletionOn();
-  decimator->Update();
-  this->mesh = decimator->GetOutput();
+  numVertices = std::max<int>(numVertices, 1);
+
+  remesh->SetForceManifold(true);
+  remesh->SetInput(surf);
+  remesh->SetFileLoadSaveOption(0);
+  remesh->SetConsoleOutput(0);
+  remesh->SetSubsamplingThreshold(subsamplingThreshold);
+  remesh->GetMetric()->SetGradation(adaptivity);
+  remesh->SetDisplay(false);
+  remesh->SetUnconstrainedInitialization(1);
+  remesh->SetNumberOfClusters(numVertices);
+  remesh->Remesh();
+  // Restore std::cout
+  std::cout.clear();
+
+  this->mesh = remesh->GetOutput();
+
+  // must regenerate normals after smoothing
+  computeNormals();
 
   return *this;
 }
 
-Mesh &Mesh::cvdDecimate(double percentage)
+Mesh& Mesh::remeshPercent(double percentage, double adaptivity)
 {
-  FEVTKimport import;
-  std::shared_ptr<FEMesh> meshFE(import.Load(this->mesh));
-
-  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
-
-  FECVDDecimationModifier cvd;
-  cvd.m_pct = percentage;
-  cvd.m_gradient = 1;
-  meshFE = std::shared_ptr<FEMesh>(cvd.Apply(meshFE.get()));
-
-  FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFE);
-
-  return *this;
+  int numVertices = mesh->GetNumberOfPoints() * percentage;
+  return remesh(numVertices, adaptivity);
 }
 
 Mesh &Mesh::invertNormals()
@@ -634,6 +645,28 @@ Field Mesh::curvature(const CurvatureType type)
     curv->SetValue(i, C[i]);
 
   return curv;
+}
+
+Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
+{
+  if (type == Mesh::SubdivisionType::Loop)
+  {
+    vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+  else
+  {
+    vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+
+  return *this;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
@@ -1529,7 +1562,7 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
   vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
   appendFilter->AddInputData(this->mesh);
   appendFilter->AddInputData(otherMesh.mesh);
-  
+
   // Remove any duplicate points.
   vtkSmartPointer<vtkCleanPolyData> cleanFilter= vtkSmartPointer<vtkCleanPolyData>::New();
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());

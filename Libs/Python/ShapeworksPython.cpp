@@ -597,6 +597,10 @@ PYBIND11_MODULE(shapeworks_py, m)
        },
        "converts image to mesh at specified isovalue",
        "isovalue"_a)
+
+  .def("isolate",
+       &Image::isolate,
+       "isolate largest object")
   ;
 
   // PhysicalRegion
@@ -855,6 +859,13 @@ PYBIND11_MODULE(shapeworks_py, m)
   .export_values();
   ;
 
+  // Mesh::SubdivisionType
+  py::enum_<Mesh::SubdivisionType>(mesh, "SubdivisionType")
+  .value("Butterfly", Mesh::SubdivisionType::Butterfly)
+  .value("Loop", Mesh::SubdivisionType::Loop)
+  .export_values();
+  ;
+
   // Mesh bindings
   mesh.def(py::init<const std::string &>())
 
@@ -892,15 +903,15 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies windowed sinc smoothing",
        "iterations"_a=0, "passband"_a=0.0)
 
-  .def("decimate",
-       &Mesh::decimate,
-       "applies filter to reduce number of triangles in mesh",
-       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
+  .def("remesh",
+       &Mesh::remesh,
+       "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity",
+       "numVertices"_a, "adaptivity"_a)
 
-   .def("cvdDecimate",
-       &Mesh::cvdDecimate,
-       "applies cvd (centroidal voronoi diagram) decimation filter",
-       "percentage"_a=0.5)
+   .def("remeshPercent",
+       &Mesh::remeshPercent,
+       "applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity",
+       "percentage"_a, "adaptivity"_a)
 
   .def("invertNormals",
        &Mesh::invertNormals,
@@ -1040,6 +1051,11 @@ PYBIND11_MODULE(shapeworks_py, m)
      },
      "computes and adds curvature (principal (default) or gaussian or mean)",
      "type"_a=Mesh::CurvatureType::Principal)
+
+  .def("applySubdivisionFilter",
+       &Mesh::applySubdivisionFilter,
+       "applies subdivision filter (butterfly (default) or loop)",
+       "type"_a=Mesh::SubdivisionType::Butterfly, "subdivision"_a=1)
 
   .def("toImage",
        [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
