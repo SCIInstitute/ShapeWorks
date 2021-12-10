@@ -41,6 +41,7 @@ public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
+  enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -107,6 +108,8 @@ public:
   Field geodesicDistance(const std::vector<Point3> curve);
 
   Field curvature(const CurvatureType type = Principal);
+
+  Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
@@ -225,4 +228,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2021-12-07 at 17:10:24 +0000
+Updated on 2021-12-10 at 00:32:12 +0000

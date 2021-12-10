@@ -356,6 +356,7 @@
 <span class="w">  </span><span class="k">enum</span> <span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Rigid</span><span class="p">,</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span><span class="w"> </span><span class="n">Affine</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 <span class="w">  </span><span class="k">enum</span> <span class="nc">DistanceMethod</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">PointToPoint</span><span class="p">,</span><span class="w"> </span><span class="n">PointToCell</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 <span class="w">  </span><span class="k">enum</span> <span class="nc">CurvatureType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Principal</span><span class="p">,</span><span class="w"> </span><span class="n">Gaussian</span><span class="p">,</span><span class="w"> </span><span class="n">Mean</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span> <span class="nc">SubdivisionType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="n">Loop</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MeshType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
@@ -422,6 +423,8 @@
 <span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">geodesicDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">curve</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">curvature</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CurvatureType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Principal</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applySubdivisionFilter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">subdivision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">}))</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 
@@ -537,7 +540,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2021-12-07 at 17:10:24 +0000</p>
+<p>Updated on 2021-12-10 at 00:32:12 +0000</p>
               
             </div>
           </div>

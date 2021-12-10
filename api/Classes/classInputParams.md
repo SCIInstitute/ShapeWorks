@@ -14,36 +14,17 @@ title: InputParams
 |                | Name           |
 | -------------- | -------------- |
 | | **[InputParams](../Classes/classInputParams.md#function-inputparams)**() |
-| int | **[readParams](../Classes/classInputParams.md#function-readparams)**(char * infilename) |
-| | **[InputParams](../Classes/classInputParams.md#function-inputparams)**() |
 | int | **[readParams](../Classes/classInputParams.md#function-readparams)**(char * infilename, int mode) |
 
 ## Public Attributes
 
 |                | Name           |
 | -------------- | -------------- |
-| bool | **[qcFixWinding](../Classes/classInputParams.md#variable-qcfixwinding)**  |
-| bool | **[qcDoLaplacianSmoothingBeforeDecimation](../Classes/classInputParams.md#variable-qcdolaplaciansmoothingbeforedecimation)**  |
-| bool | **[qcDoLaplacianSmoothingAfterDecimation](../Classes/classInputParams.md#variable-qcdolaplaciansmoothingafterdecimation)**  |
-| float | **[qcSmoothingLambda](../Classes/classInputParams.md#variable-qcsmoothinglambda)**  |
-| int | **[qcSmoothingIterations](../Classes/classInputParams.md#variable-qcsmoothingiterations)**  |
-| float | **[qcDecimationPercentage](../Classes/classInputParams.md#variable-qcdecimationpercentage)**  |
-| float | **[K](../Classes/classInputParams.md#variable-k)**  |
-| std::string | **[out_prefix](../Classes/classInputParams.md#variable-out-prefix)**  |
-| float | **[levelsetValue](../Classes/classInputParams.md#variable-levelsetvalue)**  |
-| float | **[targetReduction](../Classes/classInputParams.md#variable-targetreduction)**  |
-| float | **[featureAngle](../Classes/classInputParams.md#variable-featureangle)**  |
-| int | **[lsSmootherIterations](../Classes/classInputParams.md#variable-lssmootheriterations)**  |
-| int | **[meshSmootherIterations](../Classes/classInputParams.md#variable-meshsmootheriterations)**  |
-| bool | **[preserveTopology](../Classes/classInputParams.md#variable-preservetopology)**  |
-| int | **[subdivision](../Classes/classInputParams.md#variable-subdivision)**  |
-| bool | **[butterfly_subdivision](../Classes/classInputParams.md#variable-butterfly-subdivision)**  |
-| std::vector< std::string > | **[distanceTransformFilenames](../Classes/classInputParams.md#variable-distancetransformfilenames)**  |
-| std::vector< std::string > | **[meshFilenames](../Classes/classInputParams.md#variable-meshfilenames)**  |
 | int | **[number_of_particles](../Classes/classInputParams.md#variable-number-of-particles)**  |
 | bool | **[do_procrustes](../Classes/classInputParams.md#variable-do-procrustes)**  |
 | bool | **[do_procrustes_scaling](../Classes/classInputParams.md#variable-do-procrustes-scaling)**  |
 | const float | **[pi](../Classes/classInputParams.md#variable-pi)**  |
+| std::string | **[out_prefix](../Classes/classInputParams.md#variable-out-prefix)**  |
 | std::string | **[out_path](../Classes/classInputParams.md#variable-out-path)**  |
 | std::string | **[mean_prefix](../Classes/classInputParams.md#variable-mean-prefix)**  |
 | std::string | **[mean_path](../Classes/classInputParams.md#variable-mean-path)**  |
@@ -51,10 +32,23 @@ title: InputParams
 | std::string | **[template_sparse_points](../Classes/classInputParams.md#variable-template-sparse-points)**  |
 | std::string | **[template_good_indices](../Classes/classInputParams.md#variable-template-good-indices)**  |
 | bool | **[use_template_mesh](../Classes/classInputParams.md#variable-use-template-mesh)**  |
+| bool | **[qcFixWinding](../Classes/classInputParams.md#variable-qcfixwinding)**  |
+| bool | **[qcDoLaplacianSmoothingBeforeDecimation](../Classes/classInputParams.md#variable-qcdolaplaciansmoothingbeforedecimation)**  |
+| bool | **[qcDoLaplacianSmoothingAfterDecimation](../Classes/classInputParams.md#variable-qcdolaplaciansmoothingafterdecimation)**  |
+| float | **[qcSmoothingLambda](../Classes/classInputParams.md#variable-qcsmoothinglambda)**  |
+| int | **[qcSmoothingIterations](../Classes/classInputParams.md#variable-qcsmoothingiterations)**  |
+| float | **[qcDecimationPercentage](../Classes/classInputParams.md#variable-qcdecimationpercentage)**  |
+| float | **[K](../Classes/classInputParams.md#variable-k)**  |
 | int | **[number_of_correspondences_in_warp](../Classes/classInputParams.md#variable-number-of-correspondences-in-warp)**  |
 | int | **[number_of_attributes](../Classes/classInputParams.md#variable-number-of-attributes)**  |
 | std::string | **[attributes_prefix](../Classes/classInputParams.md#variable-attributes-prefix)**  |
 | std::vector< std::string > | **[attribute_labels](../Classes/classInputParams.md#variable-attribute-labels)**  |
+| float | **[levelsetValue](../Classes/classInputParams.md#variable-levelsetvalue)**  |
+| float | **[targetReduction](../Classes/classInputParams.md#variable-targetreduction)**  |
+| float | **[featureAngle](../Classes/classInputParams.md#variable-featureangle)**  |
+| int | **[lsSmootherIterations](../Classes/classInputParams.md#variable-lssmootheriterations)**  |
+| int | **[meshSmootherIterations](../Classes/classInputParams.md#variable-meshsmootheriterations)**  |
+| bool | **[preserveTopology](../Classes/classInputParams.md#variable-preservetopology)**  |
 | bool | **[display](../Classes/classInputParams.md#variable-display)**  |
 | float | **[glyph_radius](../Classes/classInputParams.md#variable-glyph-radius)**  |
 | float | **[maximum_variance_captured](../Classes/classInputParams.md#variable-maximum-variance-captured)**  |
@@ -68,25 +62,10 @@ title: InputParams
 | bool | **[use_bspline_interpolation](../Classes/classInputParams.md#variable-use-bspline-interpolation)**  |
 | std::vector< std::string > | **[localPointsFilenames](../Classes/classInputParams.md#variable-localpointsfilenames)**  |
 | std::vector< std::string > | **[worldPointsFilenames](../Classes/classInputParams.md#variable-worldpointsfilenames)**  |
+| std::vector< std::string > | **[distanceTransformFilenames](../Classes/classInputParams.md#variable-distancetransformfilenames)**  |
 | std::vector< std::string > | **[attributeFilenames](../Classes/classInputParams.md#variable-attributefilenames)**  |
 
 ## Public Functions Documentation
-
-### function InputParams
-
-```cpp
-inline InputParams()
-```
-
-
-### function readParams
-
-```cpp
-inline int readParams(
-    char * infilename
-)
-```
-
 
 ### function InputParams
 
@@ -106,132 +85,6 @@ inline int readParams(
 
 
 ## Public Attributes Documentation
-
-### variable qcFixWinding
-
-```cpp
-bool qcFixWinding;
-```
-
-
-### variable qcDoLaplacianSmoothingBeforeDecimation
-
-```cpp
-bool qcDoLaplacianSmoothingBeforeDecimation;
-```
-
-
-### variable qcDoLaplacianSmoothingAfterDecimation
-
-```cpp
-bool qcDoLaplacianSmoothingAfterDecimation;
-```
-
-
-### variable qcSmoothingLambda
-
-```cpp
-float qcSmoothingLambda;
-```
-
-
-### variable qcSmoothingIterations
-
-```cpp
-int qcSmoothingIterations;
-```
-
-
-### variable qcDecimationPercentage
-
-```cpp
-float qcDecimationPercentage;
-```
-
-
-### variable K
-
-```cpp
-float K;
-```
-
-
-### variable out_prefix
-
-```cpp
-std::string out_prefix;
-```
-
-
-### variable levelsetValue
-
-```cpp
-float levelsetValue;
-```
-
-
-### variable targetReduction
-
-```cpp
-float targetReduction;
-```
-
-
-### variable featureAngle
-
-```cpp
-float featureAngle;
-```
-
-
-### variable lsSmootherIterations
-
-```cpp
-int lsSmootherIterations;
-```
-
-
-### variable meshSmootherIterations
-
-```cpp
-int meshSmootherIterations;
-```
-
-
-### variable preserveTopology
-
-```cpp
-bool preserveTopology;
-```
-
-
-### variable subdivision
-
-```cpp
-int subdivision;
-```
-
-
-### variable butterfly_subdivision
-
-```cpp
-bool butterfly_subdivision;
-```
-
-
-### variable distanceTransformFilenames
-
-```cpp
-std::vector< std::string > distanceTransformFilenames;
-```
-
-
-### variable meshFilenames
-
-```cpp
-std::vector< std::string > meshFilenames;
-```
-
 
 ### variable number_of_particles
 
@@ -258,6 +111,13 @@ bool do_procrustes_scaling;
 
 ```cpp
 const float pi = std::acos(-1.0);
+```
+
+
+### variable out_prefix
+
+```cpp
+std::string out_prefix;
 ```
 
 
@@ -310,6 +170,55 @@ bool use_template_mesh;
 ```
 
 
+### variable qcFixWinding
+
+```cpp
+bool qcFixWinding;
+```
+
+
+### variable qcDoLaplacianSmoothingBeforeDecimation
+
+```cpp
+bool qcDoLaplacianSmoothingBeforeDecimation;
+```
+
+
+### variable qcDoLaplacianSmoothingAfterDecimation
+
+```cpp
+bool qcDoLaplacianSmoothingAfterDecimation;
+```
+
+
+### variable qcSmoothingLambda
+
+```cpp
+float qcSmoothingLambda;
+```
+
+
+### variable qcSmoothingIterations
+
+```cpp
+int qcSmoothingIterations;
+```
+
+
+### variable qcDecimationPercentage
+
+```cpp
+float qcDecimationPercentage;
+```
+
+
+### variable K
+
+```cpp
+float K;
+```
+
+
 ### variable number_of_correspondences_in_warp
 
 ```cpp
@@ -335,6 +244,48 @@ std::string attributes_prefix;
 
 ```cpp
 std::vector< std::string > attribute_labels;
+```
+
+
+### variable levelsetValue
+
+```cpp
+float levelsetValue;
+```
+
+
+### variable targetReduction
+
+```cpp
+float targetReduction;
+```
+
+
+### variable featureAngle
+
+```cpp
+float featureAngle;
+```
+
+
+### variable lsSmootherIterations
+
+```cpp
+int lsSmootherIterations;
+```
+
+
+### variable meshSmootherIterations
+
+```cpp
+int meshSmootherIterations;
+```
+
+
+### variable preserveTopology
+
+```cpp
+bool preserveTopology;
 ```
 
 
@@ -429,6 +380,13 @@ std::vector< std::string > worldPointsFilenames;
 ```
 
 
+### variable distanceTransformFilenames
+
+```cpp
+std::vector< std::string > distanceTransformFilenames;
+```
+
+
 ### variable attributeFilenames
 
 ```cpp
@@ -438,4 +396,4 @@ std::vector< std::string > attributeFilenames;
 
 -------------------------------
 
-Updated on 2021-12-07 at 17:10:24 +0000
+Updated on 2021-12-10 at 00:32:12 +0000

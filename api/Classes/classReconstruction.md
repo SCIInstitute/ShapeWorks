@@ -61,8 +61,6 @@ title: Reconstruction
 | void | **[setOutPrefix](../Classes/classReconstruction.md#function-setoutprefix)**(std::string out_prefix) |
 | std::vector< PointArrayType > | **[computeSparseMean](../Classes/classReconstruction.md#function-computesparsemean)**(std::vector< PointArrayType > local_pts, itk::Point< TCoordRep > & common_center, bool do_procrustes =true, bool do_procrustes_scaling =false) |
 | void | **[setOrigin](../Classes/classReconstruction.md#function-setorigin)**(typename ImageType::PointType origin) |
-| void | **[MeshFromDT](../Classes/classReconstruction.md#function-meshfromdt)**(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision) |
-| void | **[MeshFromDT](../Classes/classReconstruction.md#function-meshfromdt)**(typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision) |
 | void | **[EnablePairwiseNormalsDifferencesForGoodBad](../Classes/classReconstruction.md#function-enablepairwisenormalsdifferencesforgoodbad)**() |
 | void | **[DisablePairwiseNormalsDifferencesForGoodBad](../Classes/classReconstruction.md#function-disablepairwisenormalsdifferencesforgoodbad)**() |
 
@@ -437,30 +435,6 @@ inline void setOrigin(
 ```
 
 
-### function MeshFromDT
-
-```cpp
-void MeshFromDT(
-    std::string dtFileName,
-    std::string meshFileName,
-    int subdivision,
-    bool butterfly_subdivision
-)
-```
-
-
-### function MeshFromDT
-
-```cpp
-void MeshFromDT(
-    typename ImageType::Pointer dtImage,
-    std::string meshFileName,
-    int subdivision,
-    bool butterfly_subdivision
-)
-```
-
-
 ### function EnablePairwiseNormalsDifferencesForGoodBad
 
 ```cpp
@@ -477,4 +451,4 @@ inline void DisablePairwiseNormalsDifferencesForGoodBad()
 
 -------------------------------
 
-Updated on 2021-12-07 at 17:10:24 +0000
+Updated on 2021-12-10 at 00:32:12 +0000

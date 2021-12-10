@@ -336,6 +336,10 @@
 <td Gaussian_="Gaussian," Mean="Mean" Principal_="Principal,"><strong><a href="classshapeworks_1_1Mesh.html#enum-curvaturetype">CurvatureType</a></strong></td>
 </tr>
 <tr>
+<td>enum</td>
+<td Butterfly_="Butterfly," Loop="Loop"><strong><a href="classshapeworks_1_1Mesh.html#enum-subdivisiontype">SubdivisionType</a></strong></td>
+</tr>
+<tr>
 <td>using vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#using-meshtype">MeshType</a></strong></td>
 </tr>
@@ -485,6 +489,10 @@
 <tr>
 <td>Field</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-curvature">curvature</a></strong>(const CurvatureType type =Principal)<br>computes and adds curvature (principal (default) or gaussian or mean)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-applysubdivisionfilter">applySubdivisionFilter</a></strong>(const SubdivisionType type =Butterfly, int subdivision =1)<br>applies subdivision filter (butterfly (default) or loop)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a></td>
@@ -708,6 +716,28 @@
 </tr>
 </tbody>
 </table>
+<h3 id="enum-subdivisiontype">enum SubdivisionType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Butterfly</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Loop</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3 id="using-meshtype">using MeshType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -910,6 +940,13 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>computes and adds curvature (principal (default) or gaussian or mean) </p>
+<h3 id="function-applysubdivisionfilter">function applySubdivisionFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applySubdivisionFilter</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Butterfly</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">subdivision</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>applies subdivision filter (butterfly (default) or loop) </p>
 <h3 id="function-toimage">function toImage</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"></span>
@@ -1102,7 +1139,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2021-12-07 at 17:10:24 +0000</p>
+<p>Updated on 2021-12-10 at 00:32:12 +0000</p>
               
             </div>
           </div>

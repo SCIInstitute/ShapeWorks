@@ -21,6 +21,7 @@ title: shapeworks::Mesh
 | enum| **[AlignmentType](../Classes/classshapeworks_1_1Mesh.md#enum-alignmenttype)** { Rigid, Similarity, Affine} |
 | enum| **[DistanceMethod](../Classes/classshapeworks_1_1Mesh.md#enum-distancemethod)** { PointToPoint, PointToCell} |
 | enum| **[CurvatureType](../Classes/classshapeworks_1_1Mesh.md#enum-curvaturetype)** { Principal, Gaussian, Mean} |
+| enum| **[SubdivisionType](../Classes/classshapeworks_1_1Mesh.md#enum-subdivisiontype)** { Butterfly, Loop} |
 | using vtkSmartPointer< vtkPolyData > | **[MeshType](../Classes/classshapeworks_1_1Mesh.md#using-meshtype)**  |
 
 ## Public Functions
@@ -61,6 +62,7 @@ title: shapeworks::Mesh
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const Point3 landmark)<br>computes geodesic distance between a point (landmark) and each vertex on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const std::vector< Point3 > curve)<br>computes geodesic distance between a set of points (curve) and each vertex on mesh  |
 | Field | **[curvature](../Classes/classshapeworks_1_1Mesh.md#function-curvature)**(const CurvatureType type =Principal)<br>computes and adds curvature (principal (default) or gaussian or mean)  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applySubdivisionFilter](../Classes/classshapeworks_1_1Mesh.md#function-applysubdivisionfilter)**(const SubdivisionType type =Butterfly, int subdivision =1)<br>applies subdivision filter (butterfly (default) or loop)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toImage](../Classes/classshapeworks_1_1Mesh.md#function-toimage)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point spacing =Point({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toDistanceTransform](../Classes/classshapeworks_1_1Mesh.md#function-todistancetransform)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point spacing =Point({1., 1., 1.})) const<br>converts specified region to distance transform image (default: unit spacing)  |
 | Point3 | **[center](../Classes/classshapeworks_1_1Mesh.md#function-center)**() const<br>center of mesh  |
@@ -138,6 +140,16 @@ This class encapsulates a [Mesh](../Classes/classshapeworks_1_1Mesh.md) and oper
 | Principal | |   |
 | Gaussian | |   |
 | Mean | |   |
+
+
+
+
+### enum SubdivisionType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Butterfly | |   |
+| Loop | |   |
 
 
 
@@ -485,6 +497,17 @@ Field curvature(
 
 computes and adds curvature (principal (default) or gaussian or mean) 
 
+### function applySubdivisionFilter
+
+```cpp
+Mesh & applySubdivisionFilter(
+    const SubdivisionType type =Butterfly,
+    int subdivision =1
+)
+```
+
+applies subdivision filter (butterfly (default) or loop) 
+
 ### function toImage
 
 ```cpp
@@ -807,4 +830,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2021-12-07 at 17:10:24 +0000
+Updated on 2021-12-10 at 00:32:12 +0000
