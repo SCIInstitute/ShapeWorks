@@ -30,6 +30,9 @@
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
 #include <itkOrientImageFilter.h>
+#include <itkConnectedComponentImageFilter.h>
+#include <itkRelabelComponentImageFilter.h>
+#include <itkThresholdImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -570,43 +573,6 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-TransformPtr Image::createTransform(XFormType type)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      transform = createRigidRegistrationTransform(*this, 0.0, 20);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
-TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      if (!target.image) { throw std::invalid_argument("Invalid target image"); }
-      transform = createRigidRegistrationTransform(target, isoValue, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
   return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
@@ -869,6 +835,41 @@ Image& Image::setCoordsys(ImageType::DirectionType coordsys)
   return *this;
 }
 
+Image &Image::isolate()
+{
+  typedef itk::Image<unsigned char, 3> IsolateType;
+  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
+  ToIntType::Pointer filter = ToIntType::New();
+  filter->SetInput(this->image);
+  filter->Update();
+
+  // Find the connected components in this image.
+  auto cc = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
+  cc->SetInput(filter->GetOutput());
+  cc->FullyConnectedOn();
+  cc->Update();
+
+  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
+  relabel->SetInput(cc->GetOutput());
+  relabel->SortByObjectSizeOn();
+  relabel->Update();
+
+  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
+  thresh->SetInput(relabel->GetOutput());
+  thresh->SetOutsideValue(0);
+  thresh->ThresholdBelow(0);
+  thresh->ThresholdAbove(1);
+  thresh->Update();
+
+  auto cast = itk::CastImageFilter<IsolateType, ImageType>::New();
+  cast->SetInput(thresh->GetOutput());
+  cast->Update();
+
+  this->image = cast->GetOutput();
+
+  return *this;
+}
+
 Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
@@ -1002,10 +1003,27 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
+  if (!target_dt.image) {
+    throw std::invalid_argument("Invalid target. Expected distance transform image");
+  }
+
   Mesh sourceContour = toMesh(isoValue);
   Mesh targetContour = target_dt.toMesh(isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
-  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+
+  try {
+    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
+    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  }
+  catch (std::invalid_argument) {
+    std::cerr << "failed to create ICP transform.\n";
+    if (sourceContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for source\n";
+    }
+    if (targetContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for target\n";
+    }
+  }
+  return AffineTransform::New();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)

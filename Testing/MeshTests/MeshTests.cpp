@@ -9,6 +9,26 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, subdivisionTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter();;
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, subdivisionTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.applySubdivisionFilter(Mesh::SubdivisionType::Loop);
+
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/loop.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, geodesicTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
@@ -183,24 +203,38 @@ TEST(MeshTests, fixelementTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, cvddecimateTest1)
+TEST(MeshTests, remeshTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  ShapeworksUtils::setRngSeed(26);
-  ellipsoid.cvdDecimate();
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
-
+  ellipsoid.remesh(3000, 1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh1.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
-TEST(MeshTests, cvddecimateTest2)
+TEST(MeshTests, remeshTest2)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
-  ShapeworksUtils::setRngSeed(42);
-  ellipsoid.cvdDecimate(1.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
-
+  ellipsoid.remesh(1000, 2.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh2.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
+}
+
+TEST(MeshTests, remeshPercentTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.remeshPercent(0.25, 1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, remeshPercentTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.remeshPercent(0.10, 0.5);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
 }
 
 TEST(MeshTests, smoothTest1)
@@ -226,51 +260,6 @@ TEST(MeshTests, smoothSincTest)
   Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   femur.smoothSinc(10,0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0, false);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate1.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest2)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate2.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest3)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate();
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate3.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest4)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.9, 25.5, true);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate4.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
-TEST(MeshTests, decimateTest5)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.9, 25.5, false);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate5.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
@@ -480,7 +469,7 @@ TEST(MeshTests, boundingBoxTest1)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, boundingBoxTest2)
@@ -498,7 +487,7 @@ TEST(MeshTests, boundingBoxTest2)
   Point min({-112.139, -192.471, -1217.76});
   Point max({135.026, 21.495, 1248.45});
 
-  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+  ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
 TEST(MeshTests, antialiasTest3)
@@ -566,8 +555,8 @@ TEST(MeshTests, pointsTest)
   Point3 gn({3.35370102e+01,  1.25301433e+00,  3.71165695e+01});
 
   ASSERT_TRUE(verts.rows() == 14 && verts.cols() == 3);
-  ASSERT_TRUE(epsEqualN(p0, g0));
-  ASSERT_TRUE(epsEqualN(pn, gn));
+  ASSERT_TRUE(epsEqual(p0, g0, 1e-6));
+  ASSERT_TRUE(epsEqual(pn, gn, 1e-6));
 }
 
 TEST(MeshTests, facesTest)
@@ -590,7 +579,7 @@ TEST(MeshTests, getPointTest)
   auto p = ellipsoid.getPoint(7);
   auto closeToP = Point3({44.7543, 2.43769, 12.953});
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-4));
 }
 
 TEST(MeshTests, getFaceTest)
@@ -613,7 +602,7 @@ TEST(MeshTests, closestpointTest1)
   auto pNew = p + v;
   auto closeToP = ellipsoid.closestPoint(pNew);
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
 }
 
 TEST(MeshTests, closestpointTest2)
@@ -627,7 +616,7 @@ TEST(MeshTests, closestpointTest2)
   auto pNew = p - v * 1.1;
   auto closeToP = ellipsoid.closestPoint(pNew);
 
-  ASSERT_TRUE(epsEqualN(p, closeToP));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
 }
 
 TEST(MeshTests, closestpointIdTest)
@@ -679,13 +668,35 @@ TEST(MeshTests, fieldTest3)
 
 //TODO: add tests for independent fields and fields on cells once #935 complete
 
-TEST(MeshTests, icpTest)
+TEST(MeshTests, icpTestRigid)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Rigid);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpRigid.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestSimilarity)
 {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target);
   source.applyTransform(transform);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpSimilarity.ply");
+
+  ASSERT_TRUE(source == ground_truth);
+}
+
+TEST(MeshTests, icpTestAffine)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Affine);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icpAffine.ply");
 
   ASSERT_TRUE(source == ground_truth);
 }
@@ -798,7 +809,7 @@ TEST(MeshTests, findReferenceMeshTest)
   ASSERT_EQ(ref, 2);
 }
 
-TEST(MeshTests,addMesh)
+TEST(MeshTests, addMesh)
 {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
@@ -806,5 +817,5 @@ TEST(MeshTests,addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
-  
+
 }

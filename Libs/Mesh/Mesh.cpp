@@ -11,7 +11,6 @@
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
-#include "FECVDDecimationModifier.h"
 #include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
 
 #include <igl/exact_geodesic.h>
@@ -34,7 +33,6 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
-#include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
 #include <vtkFillHolesFilter.h>
@@ -54,13 +52,17 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkNew.h>
-#include <vtkCellData.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
 
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/heat_method_distance.h>
+
+// ACVD
+#include <vtkIsotropicDiscreteRemeshing.h>
 
 namespace shapeworks {
 
@@ -239,37 +241,46 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   return *this;
 }
 
-Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
+Mesh& Mesh::remesh(int numVertices, double adaptivity)
 {
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+  // ACVD is very noisy to std::cout, even with console output set to zero
+  // setting the failbit on std::cout will silence this until it's cleared below
+  std::cout.setstate(std::ios_base::failbit);
+  auto surf = vtkSmartPointer<vtkSurface>::New();
+  auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
+  surf->CreateFromPolyData(this->mesh);
+  surf->GetCellData()->Initialize();
+  surf->GetPointData()->Initialize();
+  surf->DisplayMeshProperties();
+  int subsamplingThreshold = 10;  // subsampling threshold
 
-  decimator->SetInputData(this->mesh);
-  decimator->SetTargetReduction(reduction);
-  decimator->SetFeatureAngle(angle);
-  preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
-  decimator->BoundaryVertexDeletionOn();
-  decimator->Update();
-  this->mesh = decimator->GetOutput();
+  numVertices = std::max<int>(numVertices, 1);
+
+  remesh->SetForceManifold(true);
+  remesh->SetInput(surf);
+  remesh->SetFileLoadSaveOption(0);
+  remesh->SetConsoleOutput(0);
+  remesh->SetSubsamplingThreshold(subsamplingThreshold);
+  remesh->GetMetric()->SetGradation(adaptivity);
+  remesh->SetDisplay(false);
+  remesh->SetUnconstrainedInitialization(1);
+  remesh->SetNumberOfClusters(numVertices);
+  remesh->Remesh();
+  // Restore std::cout
+  std::cout.clear();
+
+  this->mesh = remesh->GetOutput();
+
+  // must regenerate normals after smoothing
+  computeNormals();
 
   return *this;
 }
 
-Mesh &Mesh::cvdDecimate(double percentage)
+Mesh& Mesh::remeshPercent(double percentage, double adaptivity)
 {
-  FEVTKimport import;
-  std::shared_ptr<FEMesh> meshFE(import.Load(this->mesh));
-
-  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
-
-  FECVDDecimationModifier cvd;
-  cvd.m_pct = percentage;
-  cvd.m_gradient = 1;
-  meshFE = std::shared_ptr<FEMesh>(cvd.Apply(meshFE.get()));
-
-  FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFE);
-
-  return *this;
+  int numVertices = mesh->GetNumberOfPoints() * percentage;
+  return remesh(numVertices, adaptivity);
 }
 
 Mesh &Mesh::invertNormals()
@@ -298,19 +309,9 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormals().applyTransform(transform);
 }
 
-MeshTransform Mesh::createTransform(const Mesh &target, XFormType type, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
-  MeshTransform transform;
-
-  switch (type) {
-    case IterativeClosestPoint:
-      transform = createRegistrationTransform(target, align, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Mesh::TranformType");
-  }
-
-  return transform;
+  return createRegistrationTransform(target, align, iterations);
 }
 
 Mesh &Mesh::applyTransform(const MeshTransform transform)
@@ -646,6 +647,28 @@ Field Mesh::curvature(const CurvatureType type)
   return curv;
 }
 
+Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
+{
+  if (type == Mesh::SubdivisionType::Loop)
+  {
+    vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+  else
+  {
+    vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+
+  return *this;
+}
+
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
   // if no region, use mesh bounding box
@@ -958,7 +981,7 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
-    if (!epsEqualN(p1, p2, 5)) {
+    if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
 
@@ -1081,7 +1104,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
         }
       }
       else {
-        if (!equalNSigDigits(v1, v2, 5)) {
+        if (!epsEqual(v1, v2, 1e-5)) {
           printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
           return false;
         }
@@ -1094,13 +1117,13 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
 
 bool Mesh::compare(const Mesh& other, const double eps) const
 {
-  if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
-  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
-  if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
-  if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
-  if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
-  if (!compareAllFaces(other))                             { std::cerr << "faces differ\n"; return false; }
-  if (!compareAllFields(other, eps))                            { std::cerr << "fields differ\n"; return false; }
+  if (!epsEqual(center(), other.center(), 1e-2))             { std::cerr << "centers differ!\n"; return false; }
+  if (!epsEqual(centerOfMass(), other.centerOfMass(), 1e-3)) { std::cerr << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                      { std::cerr << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                        { std::cerr << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                              { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFaces(other))                               { std::cerr << "faces differ\n"; return false; }
+  if (!compareAllFields(other, eps))                         { std::cerr << "fields differ\n"; return false; }
 
   return true;
 }
@@ -1539,7 +1562,7 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
   vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
   appendFilter->AddInputData(this->mesh);
   appendFilter->AddInputData(otherMesh.mesh);
-  
+
   // Remove any duplicate points.
   vtkSmartPointer<vtkCleanPolyData> cleanFilter= vtkSmartPointer<vtkCleanPolyData>::New();
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());

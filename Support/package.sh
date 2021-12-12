@@ -123,7 +123,7 @@ else
     linuxdeployqt ShapeWorksStudio -verbose=2
     cd ..
     
-    rm lib/libx* lib/libX* lib/libfont* lib/libfreetype*
+    rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
     rm bin/vdb_print
     rm -rf geometry-central doc
 fi

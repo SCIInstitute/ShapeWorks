@@ -153,8 +153,6 @@ private:
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void load_feature_from_mesh(std::string feature, MeshHandle mesh);
 
-  vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
-
   int id_;
 
   MeshGroup original_meshes_;

@@ -23,6 +23,7 @@ JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v7.0.0"
 libigl_VER="v2.2.0-fix"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
+ACVD_VER="8880802204ce0ccd3944dcfa62ba687203a75fa5" # This library isn't using tagged version
 
 WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc"  # windows release compilation flags
 WIN_LFLAGS="-LTCG /DEBUG" # windows release compilation flags
@@ -235,15 +236,18 @@ build_xlnt()
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
 
+  # fix rpath
+  sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' source/CMakeLists.txt
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DSTATIC=ON ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DSTATIC=OFF ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -263,6 +267,7 @@ build_jkqtplotter()
   # fix compile on windows
   sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
 
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -304,7 +309,7 @@ build_openvdb()
       make -j${NUM_PROCS} install || exit 1
   fi
 
-  OpenVDB_DIR=${INSTALL_DIR}/lib64/cmake/OpenVDB/
+  OpenVDB_DIR=${INSTALL_DIR}/lib/cmake/OpenVDB/
 }
 
 build_igl()
@@ -329,6 +334,30 @@ build_geometry_central()
   git checkout -f ${geometry_central_VER}
 
   GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
+}
+
+build_acvd()
+{
+  echo ""
+  echo "## Building ACVD..."
+  cd ${BUILD_DIR}
+  git clone https://github.com/valette/ACVD.git acvd
+  cd acvd
+  git checkout -f ${ACVD_VER}
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DVTK_DIR="${VTK_DIR}" ..
+      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+      cmake --build . --config ${BUILD_TYPE} --target install
+  else
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_DIR="${VTK_DIR}" ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  ACVD_DIR=${INSTALL_DIR}
 }
 
 show_shapeworks_build()
@@ -432,6 +461,10 @@ build_all()
     fi
   fi
 
+  if [[ -z $ACVD_DIR ]]; then
+    build_acvd
+  fi
+  
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""
   echo "Dependency paths:"
@@ -442,6 +475,7 @@ build_all()
   echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
   echo "  LIBIGL_DIR: ${LIBIGL_DIR}"
   echo "  GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}"
+  echo "  ACVD_DIR: ${ACVD_DIR}"
   echo ""
   
   show_shapeworks_build

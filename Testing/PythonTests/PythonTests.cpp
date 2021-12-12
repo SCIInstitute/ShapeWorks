@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, subdivisionTest)
+{
+  run_use_case("subdivision.py");
+}
+
 TEST(pythonTests, sw2vtkmeshTest)
 {
   run_use_case("sw2vtkmesh.py");
@@ -224,9 +229,9 @@ TEST(pythonTests, smoothTest)
   run_use_case("smooth.py");
 }
 
-TEST(pythonTests, decimateTest)
+TEST(pythonTests, remeshTest)
 {
-  run_use_case("decimate.py");
+  run_use_case("remesh.py");
 }
 
 TEST(pythonTests, invertnormalsTest)
@@ -348,4 +353,9 @@ TEST(pythonTests, pcaTest)
 TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
+}
+
+TEST(pythonTests, isolateTest)
+{
+  run_use_case("isolate.py");
 }

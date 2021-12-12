@@ -8,9 +8,9 @@ find_package(Python3 3.7 EXACT REQUIRED)
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 2 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 3 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.2.0-rc5")
+SET(SHAPEWORKS_VERSION_STRING "6.3.0-dev")
 
 
 #
@@ -146,6 +146,9 @@ ENDIF()
 find_package (XLNT REQUIRED)
 add_definitions(-DXLNT_STATIC=1)
 
+### ACVD
+find_package (ACVD REQUIRED)
+
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
@@ -231,7 +234,7 @@ if(BUILD_DOCUMENTATION)
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
-  add_subdirectory(docs/Doxygen)
+  add_subdirectory(docs/doxygen)
 endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")

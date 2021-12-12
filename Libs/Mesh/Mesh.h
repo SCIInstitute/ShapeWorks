@@ -8,12 +8,20 @@ class vtkCellLocator;
 
 namespace shapeworks {
 
+/**
+ * \class Mesh
+ * \ingroup Group-Mesh
+ *
+ * This class encapsulates a Mesh and operations that can be performed on meshes
+ *
+ */
 class Mesh
 {
 public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
+  enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -43,11 +51,11 @@ public:
   /// applies vtk windowed sinc smoothing
   Mesh& smoothSinc(int iterations = 0, double passband = 0.0);
 
-  /// applies filter to reduce number of triangles in mesh
-  Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
+  /// applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity
+  Mesh& remesh(int numVertices, double adaptivity = 1.0);
 
-  /// applies cvd (centroidal voronoi diagram) decimation filter
-  Mesh& cvdDecimate(double percentage = 0.5);
+  /// applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity
+  Mesh& remeshPercent(double percentage, double adaptivity = 1.0);
 
   /// handle flipping normals
   Mesh& invertNormals();
@@ -55,8 +63,8 @@ public:
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
-  /// creates a transform based on transform type
-  MeshTransform createTransform(const Mesh &target, XFormType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
+  /// creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations
+  MeshTransform createTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
@@ -64,7 +72,7 @@ public:
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
-  /// samples data values at specified point locations
+  /// samples image data values at point locations specified by image
   Mesh& probeVolume(const Image &image);
 
   /// clips a mesh using a cutting plane
@@ -108,6 +116,9 @@ public:
 
   /// computes and adds curvature (principal (default) or gaussian or mean)
   Field curvature(const CurvatureType type = Principal);
+
+  /// applies subdivision filter (butterfly (default) or loop)
+  Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
@@ -220,6 +231,8 @@ public:
 
   /// Formats mesh into an IGL format
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+
 
 private:
   friend struct SharedCommandData;

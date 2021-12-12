@@ -177,8 +177,8 @@ def Run_Pipeline(args):
             print('Aligning ' + shape_name + ' to ' + ref_name)
             # compute rigid transformation
             shape_seg.antialias(antialias_iterations)
-            rigidTransform = shape_seg.createTransform(
-                ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+            rigidTransform = shape_seg.createRigidRegistrationTransform(
+                ref_seg, iso_value, icp_iterations)
             # second we apply the computed transformation, note that shape_seg has
             # already been antialiased, so we can directly apply the transformation
             shape_seg.applyTransform(rigidTransform,
