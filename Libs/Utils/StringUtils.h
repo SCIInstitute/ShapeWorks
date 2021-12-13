@@ -7,8 +7,7 @@ namespace shapeworks {
 
 //! String utility functions
 class StringUtils {
-
-public:
+ public:
   static std::string removeExtension(std::string const& filename);
   static std::string getPath(std::string const& filename);
   //! Remove path from filename and return
@@ -21,7 +20,6 @@ public:
 
   /// TODO: is this a duplicate of removeExtension?
   static std::string getFileNameWithoutExtension(std::string path);
-
 };
 
-}
+}  // namespace shapeworks
