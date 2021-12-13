@@ -14,12 +14,6 @@
 #include <Groom.h>
 #include <GroomParameters.h>
 
-#include <itkConnectedComponentImageFilter.h>
-#include <itkImageRegionIterator.h>
-#include <itkCastImageFilter.h>
-#include <itkRelabelComponentImageFilter.h>
-#include <itkThresholdImageFilter.h>
-#include <itkOrientImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 
 using namespace shapeworks;
@@ -235,6 +229,7 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params)
     else {
       image.resample(v, Image::InterpolationType::Linear);
     }
+    this->increment_progress();
   }
   if (this->abort_) { return false; }
 
@@ -330,6 +325,7 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
       num_vertices = total_vertices * params.get_remesh_percent() / 100.0;
     }
     mesh.remesh(num_vertices, params.get_remesh_gradation());
+    this->increment_progress();
   }
 
   if (params.get_mesh_smooth()) {
@@ -384,9 +380,13 @@ int Groom::get_total_ops()
       num_tools += params.get_blur_tool() ? 1 : 0;
     }
 
-    if (subjects[i]->get_domain_types()[i] == DomainType::Mesh) {
+    bool run_mesh = subjects[i]->get_domain_types()[i] == DomainType::Mesh
+        || (subjects[i]->get_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+
+    if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
+      num_tools += params.get_remesh() ? 1 : 0;
     }
   }
 
