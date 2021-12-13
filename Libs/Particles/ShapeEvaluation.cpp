@@ -31,6 +31,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   const int D = particleSystem.D();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
 
+  if (num_modes < 1) {
+    return Eigen::VectorXd();
+  }
   Eigen::MatrixXd Y = particleSystem.Particles();
   const Eigen::VectorXd mu = Y.rowwise().mean();
   Y.colwise() -= mu;
@@ -102,6 +105,10 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   const int N = particleSystem.N();
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
+
+  if (N <= 1) {
+    return Eigen::VectorXd();
+  }
 
   Eigen::VectorXd generalizations(N-1);
 

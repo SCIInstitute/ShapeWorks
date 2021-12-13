@@ -54,6 +54,8 @@
 #include <vtkNew.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
 
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
@@ -643,6 +645,28 @@ Field Mesh::curvature(const CurvatureType type)
     curv->SetValue(i, C[i]);
 
   return curv;
+}
+
+Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
+{
+  if (type == Mesh::SubdivisionType::Loop)
+  {
+    vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+  else
+  {
+    vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+
+  return *this;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
