@@ -60,7 +60,13 @@ std::string StringUtils::getFilename(std::string const& pathname)
   return std::string(
     std::find_if(pathname.rbegin(), pathname.rend(),
                  MatchPathSeparator()).base(),
-    pathname.end());
+        pathname.end());
+}
+
+//---------------------------------------------------------------------------
+std::string StringUtils::getBaseFilenameWithoutExtension(const std::string &pathname)
+{
+  return removeExtension(getFilename(pathname));
 }
 
 //---------------------------------------------------------------------------
