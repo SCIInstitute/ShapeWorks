@@ -798,3 +798,79 @@ TEST(OptimizeTests, contour_domain_test)
   ASSERT_GT(values[values.size() - 1], 2000.0);
   ASSERT_LT(values[values.size() - 2], 1.0);
 }
+
+TEST(OptimizeTests, mesh_ffc_test)
+{
+  setupenv(std::string(TEST_DATA_DIR) + "/mesh_constraints");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere_00_world.particles");
+  std::remove("output/sphere_01_world.particles");
+  std::remove("output/sphere_02_world.particles");
+  std::remove("output/sphere_03_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("mesh_constraints.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
+
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k = 0;
+         k < app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
+  bool good = true;
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    for (size_t i = 0; i < lists[domain].size(); i++) {
+      itk::FixedArray<double, 3> p = lists[domain][i];
+
+      auto violation_report_data = app.GetSampler()->GetParticleSystem()->GetDomain(
+        domain)->GetConstraints()->ViolationReportData(p);
+
+      double slack = 3.0e-1;
+
+      for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < violation_report_data[j].size(); k++) {
+          if (violation_report_data[j][k] > slack)
+            std::cout << "VIOLATION: Shape# " << int(domain / domains_per_shape) << " domain# "
+                      << domain % domains_per_shape << " point# " << i << " " << types[j]
+                      << " constraint " << k << " of magnitude " << violation_report_data[j][k]
+                      << " by point " << p << std::endl;
+          //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# "
+          // << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint "
+          // << k << " with evaluation " << violation_report_data[j][k] << " by point " << p << std::endl;
+          if (violation_report_data[j][k] > slack) good = false;
+        }
+      }
+    }
+  }
+  ASSERT_TRUE(good);
+}
