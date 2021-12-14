@@ -13,7 +13,6 @@ import numpy as np
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-import json #TODO remove
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -23,7 +22,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding unsegmented hip CT scans.
     """
-    dataset_name = "femur-v1"
+    dataset_name = "femur-v0"
     output_directory = "Output/femur/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -31,42 +30,26 @@ def Run_Pipeline(args):
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = True
-        # sw.data.download_subset(args.use_case, dataset_name, output_directory) #TODO uncomment
+        sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
         image_files = sorted(glob.glob(output_directory +
                             dataset_name + "/images/*.nrrd"))[:3]
-        # TODO constraints = 
     # else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
-        image_files = sorted(
-            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
-        # TODO constraints = 
+        image_files = sorted(glob.glob(output_directory + 
+                            dataset_name + "/images/*.nrrd"))
 
         # Select data if using subsample
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
-            # TODO constraints =
-    
-    # TODO remove/fix
-    cutting_planes = []
-    cutting_plane_counts = []
-    constraint_dir = "Output/femur/femur-v1/constraints/"
-    for json_file in sorted(os.listdir(constraint_dir)):
-        with open(constraint_dir + json_file) as f:
-            constraints = json.load(f)
-        cutting_planes.append(np.array(constraints["cutting_plane_below_trochanter"]))
-        cutting_plane_counts.append(1)
-    if args.tiny_test:
-        cutting_planes = cutting_planes[:3]
-        cutting_plane_counts = cutting_plane_counts[:3]
 
-    # If skipping grooming, use the pregroomed distance transforms from the portal
+    # If skipping grooming, use the pregroomed meshes from the portal
     if args.skip_grooming:
         print("Skipping grooming.")
         mesh_directory = output_directory + dataset_name + '/groomed/meshes/'
@@ -75,19 +58,19 @@ def Run_Pipeline(args):
             indices = [0, 1, 2]
         elif args.use_subsample:
             indices = sample_idx
-        mesh_files = sw.data.get_file_list(
-            mesh_directory, ending=".vtk", indices=indices)
-    # Else groom the segmentations and get distance transforms for optimization
+        mesh_files = sw.data.get_file_list(mesh_directory, ending=".vtk", indices=indices)
+
+    # Else groom the meshes for optimization
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         """
         Step 2: GROOMING
         The required grooming steps are:
-        1. Apply smoothing and decimation to meshes 
-        2. Clip meshes
-        3. Reflect if neccesary
-        4. Select reference mesh from clipped meshes and center it
-        5. Rigidly align mesh to reference
+        1. Apply smoothing and remeshing
+        2. Reflect if neccesary
+        3. Select reference mesh from clipped meshes and center it
+        4. Rigidly align mesh to reference
+        5. Clip meshes
         Option to groom corresponding images (includes applying transforms)
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -107,7 +90,7 @@ def Run_Pipeline(args):
         names = []
         mesh_list = []
         reflections = [] # save in case grooming images
-        for mesh_filename, cutting_plane in zip(mesh_files, cutting_planes):
+        for mesh_filename in mesh_files:
             print('\nLoading: ' + mesh_filename)
             # Get shape name
             name = os.path.basename(mesh_filename).replace('.ply', '')
@@ -116,53 +99,53 @@ def Run_Pipeline(args):
             mesh = sw.Mesh(mesh_filename)
             mesh_list.append(mesh)
             """
-            Grooming Step 1: Get clipped meshes for alignment
-            """
-            print('Clipping: ' + name)
-            mesh.clip(list(cutting_plane)[0], 
-                            list(cutting_plane)[1], list(cutting_plane)[2])
-            """
-            Grooming Step 2: Smooth and decimate meshes
+            Grooming Step 1: Smooth and remeshing
             """
             print('Smoothing and remeshing: ' + name)
             mesh.smooth(iterations=10).remesh(numVertices=10000, adaptivity=1.0)
             """
-            Grooming Step 3: Get reflection transform - We have left and right femurs, so we reflect the non-reference side
-            meshes so that all of the femurs can be aligned.
+            Grooming Step 2: Get reflection transform - We have left and right femurs, 
+            so we reflect the non-reference side meshes so that all of the femurs can be aligned.
             """
-            print("Reflecting: " + name)
             reflection = np.eye(4) # Identity
             if ref_side in name:
+                print("Reflecting: " + name)
                 reflection[0][0] = -1 # Reflect across X
                 mesh.applyTransform(reflection)
             reflections.append(reflection)
 
         """
-        Grooming Step 4: Select a reference
+        Grooming Step 3: Select a reference
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
         ref_index = sw.find_reference_mesh_index(mesh_list)
-        # Make a copy of the reference segmentation 
+        # Make a copy of the reference mesh
         mesh_list[ref_index].write(groom_dir + 'reference.vtk')
         ref_mesh = sw.Mesh(groom_dir + 'reference.vtk')
+        # Center it
+        ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
         ref_name = names[ref_index]
         print("\nReference found: " + ref_name)
 
-        """
-        Grooming Step 5: Rigid alignment
-        This step rigidly aligns each shape to the selected reference. 
-        """
         rigid_transforms = [] # save in case grooming images
         for mesh, name in zip(mesh_list, names):
+            """
+            Grooming Step 4: Rigid alignment
+            This step rigidly aligns each shape to the selected reference. 
+            """
             print('Aligning ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
             rigid_transforms.append(rigid_transform)
             mesh.applyTransform(rigid_transform)
+            """
+            Grooming Step 5: Clip meshes
+            """
+            print('Clipping: ' + name)
+            mesh.clip([-1,-1,-35], [1,-1,-35], [-1,1,-35])
            
-
         # Write groomed meshes
         print("\nWriting groomed meshes.")
         mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list,
@@ -172,9 +155,8 @@ def Run_Pipeline(args):
         Groom images
         """
         if args.groom_images:
-            bounding_box = sw.MeshUtils.boundingBox(mesh_list)
             # Load corresponding images
-            print("\nGrooming images")
+            print("\nGrooming images:")
             image_list = []
             for name, reflection, rigid_transform in zip(names, reflections, rigid_transforms):
                 # Get corresponding image path
@@ -183,18 +165,21 @@ def Run_Pipeline(args):
                     if prefix in image_files[index]:
                         corresponding_image_file = image_files[index]
                         break
-                print('\nLoading image: ' + corresponding_image_file)
+                print('Loading image: ' + corresponding_image_file)
                 image = sw.Image(corresponding_image_file)
+                image_list.append(image)
+            # Get bounding box
+            bounding_box = sw.MeshUtils.boundingBox(mesh_list)
+            for image, name, reflection, rigid_transform in zip(image_list, names, reflections, rigid_transforms):
                 # Apply transforms to images
-                print("Reflecting image: " + name)
+                print("\nReflecting image: " + name)
                 image.applyTransform(reflection)
                 print("Aligning image: " + name)
+                new_origin = np.matmul(rigid_transform, np.append(image.origin(),1))[:-1]
+                image.setOrigin(new_origin)
                 image.applyTransform(rigid_transform)
                 print('Cropping image: ' + name)
-                image.crop(bounding_box)
-
-                image_list.append(image)
-
+                # image.crop(bounding_box)
 
             # Write images
             print("\nWriting groomed images.")
@@ -236,8 +221,6 @@ def Run_Pipeline(args):
         "save_init_splits" : 1,
         "verbosity" : 0,
         "use_statistics_in_init" : 0
-        # "cutting_plane_counts": cutting_plane_counts, #TODO uncomment when grooming transforms are passed instead of applied
-        # "cutting_planes": cutting_planes
     }
      # If running a tiny test, reduce some parameters
     if args.tiny_test:
