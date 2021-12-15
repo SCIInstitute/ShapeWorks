@@ -14,12 +14,6 @@
 #include <Groom.h>
 #include <GroomParameters.h>
 
-#include <itkConnectedComponentImageFilter.h>
-#include <itkImageRegionIterator.h>
-#include <itkCastImageFilter.h>
-#include <itkRelabelComponentImageFilter.h>
-#include <itkThresholdImageFilter.h>
-#include <itkOrientImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 
 using namespace shapeworks;
@@ -183,7 +177,7 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params)
 {
   // isolate
   if (params.get_isolate_tool()) {
-    this->isolate(image);
+    image.isolate();
     this->increment_progress();
   }
   if (this->abort_) { return false; }
@@ -235,6 +229,7 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params)
     else {
       image.resample(v, Image::InterpolationType::Linear);
     }
+    this->increment_progress();
   }
   if (this->abort_) { return false; }
 
@@ -330,6 +325,7 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
       num_vertices = total_vertices * params.get_remesh_percent() / 100.0;
     }
     mesh.remesh(num_vertices, params.get_remesh_gradation());
+    this->increment_progress();
   }
 
   if (params.get_mesh_smooth()) {
@@ -345,42 +341,6 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params)
     this->increment_progress();
   }
   return true;
-}
-
-//---------------------------------------------------------------------------
-void Groom::isolate(Image& image)
-{
-  ImageType::Pointer img = image;
-
-  typedef itk::Image<unsigned char, 3> IsolateType;
-  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
-  ToIntType::Pointer filter = ToIntType::New();
-  filter->SetInput(img);
-  filter->Update();
-
-  // Find the connected components in this image.
-  auto cc_filter = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
-  cc_filter->SetInput(filter->GetOutput());
-  cc_filter->FullyConnectedOn();
-  cc_filter->Update();
-
-  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
-  relabel->SetInput(cc_filter->GetOutput());
-  relabel->SortByObjectSizeOn();
-  relabel->Update();
-
-  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
-  thresh->SetInput(relabel->GetOutput());
-  thresh->SetOutsideValue(0);
-  thresh->ThresholdBelow(0);
-  thresh->ThresholdAbove(1);
-  thresh->Update();
-
-  auto cast_filter = itk::CastImageFilter<IsolateType, ImageType>::New();
-  cast_filter->SetInput(thresh->GetOutput());
-  cast_filter->Update();
-
-  image = Image(cast_filter->GetOutput());
 }
 
 //---------------------------------------------------------------------------
@@ -420,9 +380,13 @@ int Groom::get_total_ops()
       num_tools += params.get_blur_tool() ? 1 : 0;
     }
 
-    if (subjects[i]->get_domain_types()[i] == DomainType::Mesh) {
+    bool run_mesh = subjects[i]->get_domain_types()[i] == DomainType::Mesh
+        || (subjects[i]->get_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+
+    if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
+      num_tools += params.get_remesh() ? 1 : 0;
     }
   }
 

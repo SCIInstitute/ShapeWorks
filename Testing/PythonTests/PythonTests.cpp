@@ -9,6 +9,11 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, subdivisionTest)
+{
+  run_use_case("subdivision.py");
+}
+
 TEST(pythonTests, sw2vtkmeshTest)
 {
   run_use_case("sw2vtkmesh.py");
@@ -348,4 +353,9 @@ TEST(pythonTests, pcaTest)
 TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
+}
+
+TEST(pythonTests, isolateTest)
+{
+  run_use_case("isolate.py");
 }
