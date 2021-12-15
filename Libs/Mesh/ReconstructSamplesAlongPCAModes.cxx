@@ -185,7 +185,7 @@ int DoIt(InputParams params)
         //double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
         //std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
 
-        Eigen::VectorXd curMode = eigenVectors.get_column(TotalNumberOfModes - modeId - 1);
+        Eigen::VectorXd curMode = eigenVectors.col(TotalNumberOfModes - modeId - 1);
 
         std::vector<double> std_store;
         std::cout << "std_store: " ;

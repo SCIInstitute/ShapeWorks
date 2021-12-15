@@ -489,11 +489,9 @@ int ParticleShapeStatistics::ComputeModes()
 
   vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
   vnl_symmetric_eigensystem<double> symEigen(vnlA);
-  // Eigen::MatrixXd eigenSymEigenV = Eigen::MatrixXd(symEigen.V.data_block());
-  Eigen::MatrixXd eigenSymEigenV = shapeworks::vnlToEigen(symEigen);
-  Eigen::MatrixXd eigenSymEigenD = Eigen::MatrixXd(symEigen.D.data_block());
+  Eigen::MatrixXd eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.data_block(), symEigen.V.rows(), symEigen.V.cols());
+  Eigen::MatrixXd eigenSymEigenD = Eigen::Map<Eigen::MatrixXd>(symEigen.D.data_block(), symEigen.D.rows(), symEigen.D.cols());
 
-  // m_eigenvectors = m_pointsMinusMean * symEigen.V;
   m_eigenvectors = m_pointsMinusMean * eigenSymEigenV;
   m_eigenvalues.resize(m_numSamples);
 
@@ -509,7 +507,6 @@ int ParticleShapeStatistics::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
     }
 
-    // m_eigenvalues[i] = symEigen.D(i, i);
     m_eigenvalues[i] = eigenSymEigenD(i, i);
   }
 
@@ -539,11 +536,7 @@ int ParticleShapeStatistics::PrincipalComponentProjections()
 
   for (unsigned int n = 0; n < m_numSamples; n++) {
     for (unsigned int s = 0; s < m_numSamples; s++) {
-      // double p = m_eigenvectors((m_numSamples - 1) - n).dot(m_pointsMinusMean(s));
-      double p = m_eigenvectors((m_numSamples - 1) - n).dot(m_pointsMinusMean(s));
-      // double p = dot_product<double>(m_eigenvectors((m_numSamples - 1) - n),
-      //                                m_pointsMinusMean(s));
-
+      double p = m_eigenvectors.col((m_numSamples - 1) - n).dot(m_pointsMinusMean.col(s));
       m_principals(s, n) = p; // each row is a sample, columns index PC
 
     }
@@ -569,8 +562,6 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
     s2 = 0;
     for (unsigned int s = 0; s < m_numSamples; s++) {
       double p = m_eigenvectors.col((m_numSamples - 1) - n).dot(m_pointsMinusMean.col(s));
-      // double p = dot_product<double>(m_eigenvectors.col((m_numSamples - 1) - n),
-                                    //  m_pointsMinusMean.col(s));
 
       if (m_groupIDs[s] == 1) {
         m_projectedPMM1(n, s1) = p;
@@ -630,13 +621,10 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 
   Eigen::MatrixXd tmpeigs = m_eigenvectors;
   tmpeigs.rowwise().reverse();
-  // tmpeigs.fliplr();
 
-  // Eigen::MatrixXd bigLD = wext.post_multiply(tmpeigs.transpose());
   Eigen::MatrixXd bigLD = wext * tmpeigs.transpose();
 
-  // Create a file of vectors in the VDimensionD space from bigLD that KWMeshvisu can
-  // read
+  // Create a file of vectors in the VDimensionD space from bigLD that KWMeshvisu can read
 
   // Open the output file.
   std::ofstream out("LinearDiscriminantsVectors.txt");
@@ -735,6 +723,5 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
 {
   return this->m_group_2_matrix;
 }
-
 
 } // shapeworks
