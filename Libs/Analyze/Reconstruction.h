@@ -41,14 +41,12 @@ class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunctionWithDoubleCoefficents
 {};
 }
 
-// template < template < typename TCoordRep, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
-//            template < typename ImageType, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction,
-//            typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>>
-
 namespace shapeworks {
 class Reconstruction {
 public:
     using TCoordRep = double;
+    template < typename TCoordRep, unsigned > class TTransformType;
+
     typedef itk::GradientImageFilter<Image::ImageType, Image::PixelType>               GradientFilterType;
     typedef itk::GradientMagnitudeImageFilter<Image::ImageType, Image::ImageType > GradientMagnitudeFilterType;
     typedef itk::Image< itk::CovariantVector< Image::PixelType, 3 >, 3 >        GradientImageType;
@@ -61,11 +59,11 @@ public:
     typedef itk::AddImageFilter <Image::ImageType, Image::ImageType >              AddImageFilterType;
     typedef itk::ResampleImageFilter<Image::ImageType, Image::ImageType >          ResampleFilterType;
 
-    typedef TInterpolatorType < Image::ImageType, TCoordRep >                  InterpolatorType;
     typedef itk::MultiplyImageFilter <Image::ImageType, Image::ImageType, Image::ImageType>  MultiplyByConstantImageFilterType;
 
     typedef itk::ImageDuplicator< Image::ImageType >                           DuplicatorType;
-    typedef TTransformType < TCoordRep, 3 >                             TransformType;
+
+    typedef itk::CompactlySupportedRBFSparseKernelTransform<double, 3>                            TransformType;
 
     typedef itk::Point< TCoordRep, 3 >                  PointType;
     typedef std::vector< PointType >                    PointArrayType;
