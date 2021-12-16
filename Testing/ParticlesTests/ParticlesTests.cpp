@@ -46,9 +46,6 @@ TEST(ParticlesTests, pca)
   ground_truth << -9.47447, 1.92655, -0.698966,
                   -9.94971, -1.89538, -3.96331,
                   19.4242, -0.0311699, 4.66228;
-  
-  std::cout << pcaVec << std::endl;
-  std::cout << (pcaVec - ground_truth).norm() << std::endl;
 
   ASSERT_TRUE(((pcaVec - ground_truth).norm() < 1E-4));
 }
