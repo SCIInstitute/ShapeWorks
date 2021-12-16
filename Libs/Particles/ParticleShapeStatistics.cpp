@@ -1,9 +1,9 @@
 
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "Libs/Utils/EigenUtils.h"
-#include "tinyxml.h"
+
+#include <vnl/algo/vnl_symmetric_eigensystem.h>
+#include <tinyxml.h>
 
 namespace shapeworks{
 
@@ -609,7 +609,7 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 
   // Normalize to distance between means
   double mag = mdiff.size();
-  m_fishersLD = (w * mag) / w.dot(w);
+  m_fishersLD = (w * mag) / sqrt(w.dot(w));
 
   Eigen::VectorXd wext(m_numSamples);
   for (unsigned int i = 0; i < m_numSamples; i++) {
