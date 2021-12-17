@@ -58,8 +58,9 @@ def Run_Pipeline(args):
         """
         Step 2: GROOMING 
         The required grooming steps are: 
-        1. Reference selection
-        2. Rigid Alignment
+        1. Remesh 
+        2. Reference selection
+        3. Rigid Alignment
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
         """
@@ -78,13 +79,15 @@ def Run_Pipeline(args):
             print('Loading: ' + mesh_file)
             # get current name
             mesh_names.append(mesh_file.split('/')[-1].replace('.vtk', ''))
-            # load mesh
-            mesh = sw.Mesh(mesh_file)
+            """
+            Grooming Step 1: load mesh and remesh
+            """
+            mesh = sw.Mesh(mesh_file).remeshPercent(percentage=99, adaptivity=1.0)
             # append to the list
             mesh_list.append(mesh)
 
         """
-        Grooming Step 1: Select a reference
+        Grooming Step 2: Select a reference
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
@@ -97,7 +100,7 @@ def Run_Pipeline(args):
         print("Reference found: " + ref_name)
 
         """
-        Grooming Step 2: Rigid alignment
+        Grooming Step 3: Rigid alignment
         This step rigidly aligns each shape to the selected reference. 
         """
         for mesh, name in zip(mesh_list, mesh_names):
