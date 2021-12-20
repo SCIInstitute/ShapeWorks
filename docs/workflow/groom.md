@@ -263,3 +263,43 @@ shape_seg  = shape_mesh.toImage()
 ![Mesh to volume example](../img/workflow/mesh2seg.png)
 
 For list of commands, check out [ShapeWorks Commands](http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html)
+
+### Remesh
+
+Remeshing creates meshes with evenly spaced vertices. 
+- `remeshPercent` remeshes the mesh to have a given percent of the current number of vertices
+
+```python
+mesh.remeshPercent(percentage=80, adaptivity=1.0)
+```
+![Remeshing](https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png)
+
+### Aligning meshes
+
+Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.
+    
+Hence, the shapes alignment pipeline includes the following steps:
+
+- *Reference shape selection:* One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.
+  - Use the pymodule function `find_reference_mesh_index` that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+  <!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.-->
+  
+- *Rigid alignment:*
+  - `createTransform`: compute the rigid transformation parameters that would align a segmentation 
+    to the reference shape
+  - `applyTransform`: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference 
+
+Here is an example of performing reference selection and rigid alignment on a list of meshes:
+
+```python
+# reference selection 
+ref_index = sw.find_reference_mesh_index(mesh_list)
+ref_mesh = mesh_list[ref_index]
+# align all meshes in the list to the reference 
+for mesh in mesh_list:
+    # compute rigid transformation
+    rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
+    # apply rigid transform
+    mesh.applyTransform(rigid_transform)
+```
+![Mesh alignment](https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh_alignment.png)
