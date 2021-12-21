@@ -270,6 +270,11 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("applyTransform",
        [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
           Image::InterpolationType interp) -> decltype(auto){
+         eigen_mat.inverse();
+         Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols());
+         Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows());
+         eigen_mat.row(eigen_mat.rows()) = lastColumn;
+         eigen_mat.col(eigen_mat.cols()) = lastRow;
          auto itk_xform = eigen44ToItkTransform(eigen_mat);
          return image.applyTransform(itk_xform, interp);
        },
@@ -292,6 +297,11 @@ PYBIND11_MODULE(shapeworks_py, m)
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp) {
+         eigen_mat.inverse();
+         Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols());
+         Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows());
+         eigen_mat.row(eigen_mat.rows()) = lastColumn;
+         eigen_mat.col(eigen_mat.cols()) = lastRow;
          auto itk_xform = eigen44ToItkTransform(eigen_mat);
          return image.applyTransform(itk_xform,
                                      Point({p[0], p[1], p[2]}),
