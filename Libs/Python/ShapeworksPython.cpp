@@ -270,12 +270,28 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("applyTransform",
        [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
           Image::InterpolationType interp) -> decltype(auto){
-         eigen_mat.inverse();
-         Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols());
-         Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows());
-         eigen_mat.row(eigen_mat.rows()) = lastColumn;
-         eigen_mat.col(eigen_mat.cols()) = lastRow;
-         auto itk_xform = eigen44ToItkTransform(eigen_mat);
+
+         std::cout << "Before Inverse: " << eigen_mat << std::endl;
+
+         Eigen::MatrixXd mat = eigen_mat.block(0, 0, 3, 3);
+         std::cout << "3x3 Matrix: " << mat << std::endl;
+
+         mat = mat.inverse();
+         std::cout << "3x3 Inverse Matrix: " << mat << std::endl;
+     
+         Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
+         Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
+
+         std::cout << "lastColumn: " << lastColumn << std::endl;
+         std::cout << "lastRow: " << lastRow << std::endl;
+         
+         mat.conservativeResize(mat.rows()+1, mat.cols()+1);
+         mat.col(mat.cols()-1) = lastColumn;
+         mat.row(mat.rows()-1) = lastRow;
+         
+         std::cout << "After Inverse: " << mat << std::endl;
+
+         auto itk_xform = eigen44ToItkTransform(mat);
          return image.applyTransform(itk_xform, interp);
        },
        "applies the given transformation to the image by using the specified resampling filter (Linear or NearestNeighbor)",
