@@ -5,12 +5,12 @@
 
 namespace shapeworks {
 
-ReconstructSurface::ReconstructSurface(const std::string& densePath, const std::string& sparsePath, const std::string& pointsPath)
-{
-  this->denseMean = Mesh(densePath);
-  this->sparseMean = getSparseMean(sparsePath);
-  this->goodPoints = getGoodPoints(pointsPath);
-}
+// ReconstructSurface::ReconstructSurface(const std::string& densePath, const std::string& sparsePath, const std::string& pointsPath)
+// {
+//   this->denseMean = Mesh(densePath);
+//   this->sparseMean = getSparseMean(sparsePath);
+//   this->goodPoints = getGoodPoints(pointsPath);
+// }
 
 vtkSmartPointer<vtkPoints> ReconstructSurface::getSparseMean(const std::string& sparsePath)
 {
@@ -144,31 +144,142 @@ Mesh ReconstructSurface::getMesh(std::vector<Point3> local_pts)
   // return denseShape;
 }
 
+void ReconstructSurface::setDistanceTransformFiles(const std::vector<std::string> dtFiles)
+{
+  this->distanceTransformFiles = dtFiles;
+}
+
+std::vector<std::vector<Point3>> ReconstructSurface::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
+{
+  std::vector<std::vector<Point3>> localPoints;
+  this->localPointsFiles = localPointsFiles;
+
+  for (int i=0; i<this->localPointsFiles.size(); i++)
+  {
+    std::vector<Point3> curShape;
+    Utils::readSparseShape(curShape, const_cast<char*>(this->localPointsFiles[i].c_str()));
+
+    localPoints.push_back(curShape);
+  }
+
+  return localPoints;
+}
+
+std::vector<std::vector<Point3>> ReconstructSurface::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
+{
+  std::vector<std::vector<Point3>> worldPoints;
+  this->worldPointsFiles = worldPointsFiles;
+
+  for (int i=0; i<this->worldPointsFiles.size(); i++)
+  {
+    std::vector<Point3> curShape;
+    Utils::readSparseShape(curShape, const_cast<char*>(this->worldPointsFiles[i].c_str()));
+
+    worldPoints.push_back(curShape);
+  }
+
+  return worldPoints;
+}
+
+void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles)
+{
+  double maxAngleDegrees = normalAngle * (180.0 / Pi);
+
+  setDistanceTransformFiles(distanceTransformFiles);
+  std::vector<std::vector<Point3>> localPoints = setLocalPointsFiles(localPointsFiles);
+
+  if(this->worldPointsFiles.size() == 0)
+  {
+    // TODO
+  }
+
+  else
+  {
+    std::vector<std::vector<Point3>> worldPoints = setWorldPointsFiles(worldPointsFiles);
+
+    // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
+    Point3 origin_local;
+    Point3 origin_global;
+
+    // the bounding box of the local points
+    double min_x_local, min_y_local, min_z_local;
+    double max_x_local, max_y_local, max_z_local;
+
+    // the bounding box of the global points
+    double min_x_global, min_y_global, min_z_global;
+    double max_x_global, max_y_global, max_z_global;
+
+    // compute the center of mass for both local and global points
+    Utils::computeCenterOfMassForShapeEnsemble(localPoints,  origin_local);
+    Utils::computeCenterOfMassForShapeEnsemble(worldPoints, origin_global);
+    
+    // find the bounding box of both local and global points
+    Utils::getBoundingBoxForShapeEnsemble(localPoints,
+                                          min_x_local, min_y_local, min_z_local,
+                                          max_x_local, max_y_local, max_z_local);
+    Utils::getBoundingBoxForShapeEnsemble(worldPoints,
+                                          min_x_global, min_y_global, min_z_global,
+                                          max_x_global, max_y_global, max_z_global);
+    
+    // compute the image origin (corner) based on the center of mass
+    double x_width_local = max_x_local - min_x_local;
+    double y_width_local = max_y_local - min_y_local;
+    double z_width_local = max_z_local - min_z_local;
+
+    double x_width_global = max_x_global - min_x_global;
+    double y_width_global = max_y_global - min_y_global;
+    double z_width_global = max_z_global - min_z_global;
+
+    origin_local[0] = origin_local[0] - (x_width_local/2.0);
+    origin_local[1] = origin_local[1] - (y_width_local/2.0);
+    origin_local[2] = origin_local[2] - (z_width_local/2.0);
+
+    origin_global[0] = origin_global[0] - (x_width_global/2.0);
+    origin_global[1] = origin_global[1] - (y_width_global/2.0);
+    origin_global[2] = origin_global[2] - (z_width_global/2.0);
+
+    Image dt(this->distanceTransformFiles[0]);
+    Point3 origin_dt = dt.origin();
+
+    double offset_x = origin_dt[0] - origin_local[0];
+    double offset_y = origin_dt[1] - origin_local[1];
+    double offset_z = origin_dt[2] - origin_local[2];
+
+    // adjust global origin based on local offset
+    origin_global[0] = origin_global[0] + offset_x;
+    origin_global[1] = origin_global[1] + offset_y;
+    origin_global[2] = origin_global[2] + offset_z;
+
+    dt.setOrigin(origin_global);
+  }
+
+}
+
 void ReconstructSurface::surface()
 {
   // reconstructor_.readMeanInfo(this->denseFile, this->sparseFile, this->goodPointsFile);
 
-  for (unsigned int shapeNo = 0; shapeNo < this->localPointsFile.size(); shapeNo++)
+  for (unsigned int shapeNo = 0; shapeNo < this->localPointsFiles.size(); shapeNo++)
   {
-    std::string basename = StringUtils::getFilename(this->localPointsFile[shapeNo]);
-    std::cout << "Processing: " << this->localPointsFile[shapeNo].c_str() << std::endl;
+    std::string basename = StringUtils::getFilename(this->localPointsFiles[shapeNo]);
+    std::cout << "Processing: " << this->localPointsFiles[shapeNo].c_str() << std::endl;
 
     std::vector<Point3> curSparse;
-    Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFile[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFiles[shapeNo].c_str()));
 
     Mesh curDense = getMesh(curSparse);
 
-    std::string outfilename = this->out_prefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.vtk";
+    std::string outfilename = this->out_prefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_dense.vtk";
     std::cout << "Writing: " << outfilename << std::endl;
     curDense.write(outfilename);
 
-    std::string ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.particles";
+    std::string ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_dense.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curDense.getVTKMesh()->GetPoints());
 
     vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
-    Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFile[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFiles[shapeNo].c_str()));
 
-    ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_sparse.particles";
+    ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_sparse.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
   }
 }
