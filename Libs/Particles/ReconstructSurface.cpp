@@ -198,59 +198,42 @@ void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTran
     std::vector<std::vector<Point3>> worldPoints = setWorldPointsFiles(worldPointsFiles);
 
     // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
-    Point3 origin_local;
-    Point3 origin_global;
+    Point3 originLocal;
+    Point3 originWorld;
 
-    // the bounding box of the local points
-    double min_x_local, min_y_local, min_z_local;
-    double max_x_local, max_y_local, max_z_local;
+    Point3 minLocal;
+    Point3 maxLocal;
 
     // the bounding box of the global points
-    double min_x_global, min_y_global, min_z_global;
-    double max_x_global, max_y_global, max_z_global;
+    Point3 minWorld;
+    Point3 maxWorld;
 
     // compute the center of mass for both local and global points
-    Utils::computeCenterOfMassForShapeEnsemble(localPoints,  origin_local);
-    Utils::computeCenterOfMassForShapeEnsemble(worldPoints, origin_global);
-    
+    Utils::computeCenterOfMassForShapeEnsemble(localPoints,  originLocal);
+    Utils::computeCenterOfMassForShapeEnsemble(worldPoints, originWorld);
+
     // find the bounding box of both local and global points
     Utils::getBoundingBoxForShapeEnsemble(localPoints,
-                                          min_x_local, min_y_local, min_z_local,
-                                          max_x_local, max_y_local, max_z_local);
+                                          minLocal[0], minLocal[1], minLocal[2],
+                                          maxLocal[0], maxLocal[1], maxLocal[2]);
     Utils::getBoundingBoxForShapeEnsemble(worldPoints,
-                                          min_x_global, min_y_global, min_z_global,
-                                          max_x_global, max_y_global, max_z_global);
-    
+                                          minWorld[0], minWorld[1], minWorld[2],
+                                          maxWorld[0], maxWorld[1], maxWorld[2]);
+
     // compute the image origin (corner) based on the center of mass
-    double x_width_local = max_x_local - min_x_local;
-    double y_width_local = max_y_local - min_y_local;
-    double z_width_local = max_z_local - min_z_local;
-
-    double x_width_global = max_x_global - min_x_global;
-    double y_width_global = max_y_global - min_y_global;
-    double z_width_global = max_z_global - min_z_global;
-
-    origin_local[0] = origin_local[0] - (x_width_local/2.0);
-    origin_local[1] = origin_local[1] - (y_width_local/2.0);
-    origin_local[2] = origin_local[2] - (z_width_local/2.0);
-
-    origin_global[0] = origin_global[0] - (x_width_global/2.0);
-    origin_global[1] = origin_global[1] - (y_width_global/2.0);
-    origin_global[2] = origin_global[2] - (z_width_global/2.0);
+    Point3 widthLocal = maxLocal - minLocal;
+    Point3 widthWorld = maxWorld - minWorld;
+    originLocal -= widthLocal/2.0;
+    originWorld -= widthWorld/2.0;
 
     Image dt(this->distanceTransformFiles[0]);
     Point3 origin_dt = dt.origin();
-
-    double offset_x = origin_dt[0] - origin_local[0];
-    double offset_y = origin_dt[1] - origin_local[1];
-    double offset_z = origin_dt[2] - origin_local[2];
+    Point3 offset = origin_dt - originLocal;
 
     // adjust global origin based on local offset
-    origin_global[0] = origin_global[0] + offset_x;
-    origin_global[1] = origin_global[1] + offset_y;
-    origin_global[2] = origin_global[2] + offset_z;
+    originWorld += offset;
 
-    dt.setOrigin(origin_global);
+    dt.setOrigin(originWorld);
   }
 
 }
