@@ -4,6 +4,7 @@
 #include "Region.h"
 
 #include <itkImage.h>
+#include <itkImageRegionIterator.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
@@ -30,6 +31,9 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
+  using ImageIterator = itk::ImageRegionIterator<ImageType>;
+  using CovariantImageType = itk::Image<Covariant, 3>;
+  using CovariantImageIterator = itk::ImageRegionIterator<CovariantImageType>;
 
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
@@ -143,6 +147,9 @@ public:
   Image& applyCurvatureFilter(unsigned iterations = 10);
 
   /// computes gradient magnitude at each pixel using gradient magnitude filter
+  Image& applyGradientMagFilter();
+
+  /// computes gradient magnitude at each pixel using gradient magnitude filter
   Image& applyGradientFilter();
 
   /// computes sigmoid function pixel-wise using sigmoid image filter
@@ -236,6 +243,8 @@ public:
 
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3 &p) const;
+
+  ImageIterator setIterator();
 
   /// compares this with another image using the region of interest filter
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;

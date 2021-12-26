@@ -120,12 +120,12 @@ public:
     std::string OutPrefix(){return out_prefix_;}
     void setOutPrefix(std::string out_prefix){out_prefix_ = out_prefix;}
 
-    std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
+    std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts, // consolidate
                                                      itk::Point<TCoordRep>& common_center,
                                                      bool do_procrustes = true,
                                                      bool do_procrustes_scaling = false);
 
-    void setOrigin(typename Image::ImageType::PointType origin)
+    void setOrigin(typename Image::ImageType::PointType origin) // remove
     {
         use_origin = true;
         origin_[0] = origin[0];
@@ -133,36 +133,35 @@ public:
         origin_[2] = origin[2];
     }
 
-    void EnablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = true;}
-    void DisablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = false;}
-
 private:
-    int ComputeMedianShape(std::vector<vnl_matrix<double>> & shapeList);
-    void computeDenseMean(
+    int ComputeMedianShape(std::vector<vnl_matrix<double>> & shapeList); // consolidate
+    void computeDenseMean( // consolidate
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
             std::vector<std::string> distance_transform);
-    vnl_matrix<double> computeParticlesNormals(
+    vnl_matrix<double> computeParticlesNormals( // consolidate
             vtkSmartPointer< vtkPoints > particles,
             typename Image::ImageType::Pointer distance_transform);
-    void generateWarpedMeshes(typename TransformType::Pointer transform,
+    void generateWarpedMeshes(typename TransformType::Pointer transform, // consolidate
                               vtkSmartPointer<vtkPolyData>& outputMesh);
-    double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points,
+    double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points, // consolidate
                                              std::vector<int> particles_indices);
-    void CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
+    void CheckMapping(vtkSmartPointer<vtkPoints> sourcePts, // consolidate
                       vtkSmartPointer<vtkPoints> targetPts,
                       typename TransformType::Pointer transform,
                       vtkSmartPointer<vtkPoints> & mappedCorrespondences,
                       double & rms, double & rms_wo_mapping, double & maxmDist);
-    vtkSmartPointer<vtkPoints> convertToImageCoordinates(
+
+    vtkSmartPointer<vtkPoints> convertToImageCoordinates( // remove
             vtkSmartPointer<vtkPoints> particles, int number_of_particles,
             const itk::Image< float, 3 >::SpacingType& spacing,
             const itk::Image< float, 3 >::PointType& origin);
-    vtkSmartPointer<vtkPoints> convertToPhysicalCoordinates(
+    vtkSmartPointer<vtkPoints> convertToPhysicalCoordinates( // remove
             vtkSmartPointer<vtkPoints> particles, int number_of_particles,
             const itk::Image< float, 3 >::SpacingType& spacing,
             const itk::Image< float, 3 >::PointType& origin);
-    vtkSmartPointer<vtkPolyData> extractIsosurface(
+
+    vtkSmartPointer<vtkPolyData> extractIsosurface( // consolidate
             vtkSmartPointer<vtkImageData> volData,
             float levelsetValue        = 0.0f,
             float targetReduction      = 0.1f,
@@ -170,20 +169,19 @@ private:
             int lsSmootherIterations   = 1,
             int meshSmootherIterations = 1,
             bool preserveTopology      = true);
-    vtkSmartPointer<vtkPolyData> MeshQC(
+    vtkSmartPointer<vtkPolyData> MeshQC( // maybe remove
             vtkSmartPointer<vtkPolyData> meshIn);
 
-    typename Image::ImageType::Pointer loadImage(std::string filename);
+    typename Image::ImageType::Pointer loadImage(std::string filename); // remove
 
-    void performKMeansClustering(
+    void performKMeansClustering( // consolidate
             std::vector< PointArrayType > global_pts,
             unsigned int number_of_particles,
             std::vector<int> & centroidIndices);
 
-    void writePLY(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
-    void writeVTK(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
+    void writePLY(char* filename, vtkSmartPointer<vtkPolyData> meshIn); // remove
+    void writeVTK(char* filename, vtkSmartPointer<vtkPolyData> meshIn); // remove
 
-    //members.
     vtkSmartPointer<vtkPoints> sparseMean_;
     vtkSmartPointer<vtkPolyData> denseMean_;
     std::vector<bool> goodPoints_;
@@ -193,20 +191,16 @@ private:
     double maxAngleDegrees_;
     size_t numClusters_;
     int medianShapeIndex_;
-
     bool fixWinding_;
     bool doLaplacianSmoothingBeforeDecimation_;
     bool doLaplacianSmoothingAfterDecimation_;
     float smoothingLambda_;
     int smoothingIterations_;
-
     typename Image::ImageType::PointType origin_;
     bool use_origin;
-
-    std::string out_prefix_; // to save intermediate files in case needed
+    std::string out_prefix_;
     bool output_enabled_ = true;
     bool usePairwiseNormalsDifferencesForGoodBad_ = false;
-
     bool mean_before_warp_enabled_ = true;
 };
 
