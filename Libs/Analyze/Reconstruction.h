@@ -1,5 +1,7 @@
-#ifndef __RECONSTRUCTION_H__
-#define __RECONSTRUCTION_H__
+#pragma once
+
+#include "Procrustes3D.h"
+#include "Image.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -7,31 +9,12 @@
 #include "itkThinPlateSplineKernelTransform2.h"
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 
-#include <itkImageToVTKImageFilter.h>
-#include <itkVTKImageToImageFilter.h>
-
-#include <vtkPolyData.h>
 #include <itkAddImageFilter.h>
-#include <itkGradientImageFilter.h>
-#include <itkGradientMagnitudeImageFilter.h>
-#include <itkResampleImageFilter.h>
-
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkBSplineInterpolateImageFunction.h>
-
 #include <itkMultiplyImageFilter.h>
-#include "itkImageRegionConstIterator.h"
+#include <itkImageRegionConstIterator.h>
 #include <itkImageDuplicator.h>
-#include <vtkSmartPointer.h>
-#include <itkImageFileWriter.h>
-#include "Procrustes3D.h"
-
-#include "Image.h"
-
-#ifdef assert
-#undef assert
-#define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
-#endif
 
 namespace itk
 {
@@ -44,31 +27,11 @@ class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunctionWithDoubleCoefficents
 namespace shapeworks {
 class Reconstruction {
 public:
-    using TCoordRep = double;
-    template < typename TCoordRep, unsigned > class TTransformType;
 
-    typedef itk::GradientImageFilter<Image::ImageType, Image::PixelType>               GradientFilterType;
-    typedef itk::GradientMagnitudeImageFilter<Image::ImageType, Image::ImageType > GradientMagnitudeFilterType;
-    typedef itk::Image< itk::CovariantVector< Image::PixelType, 3 >, 3 >        GradientImageType;
-    typedef itk::ImageRegionIterator< GradientImageType >            GradientImageIteratorType;
-    typedef itk::ImageRegionIterator< Image::ImageType >                    ImageIteratorType;
-
-    typedef itk::ImageFileWriter< Image::ImageType >  WriterType;
-
-    typedef itk::ImageToVTKImageFilter<Image::ImageType>                    ITK2VTKConnectorType;
-    typedef itk::AddImageFilter <Image::ImageType, Image::ImageType >              AddImageFilterType;
-    typedef itk::ResampleImageFilter<Image::ImageType, Image::ImageType >          ResampleFilterType;
-
-    typedef itk::MultiplyImageFilter <Image::ImageType, Image::ImageType, Image::ImageType>  MultiplyByConstantImageFilterType;
-
-    typedef itk::ImageDuplicator< Image::ImageType >                           DuplicatorType;
-
-    typedef itk::CompactlySupportedRBFSparseKernelTransform<double, 3>                            TransformType;
-
-    typedef itk::Point< TCoordRep, 3 >                  PointType;
-    typedef std::vector< PointType >                    PointArrayType;
-    typedef typename TransformType::PointSetType        PointSetType;
-    typedef typename PointSetType::PointIdentifier      PointIdType;
+    using AddImageFilter = itk::AddImageFilter<Image::ImageType, Image::ImageType>;
+    using MultiplyByConstantImageFilter = itk::MultiplyImageFilter<Image::ImageType, Image::ImageType, Image::ImageType>;
+    using ImageDuplicator = itk::ImageDuplicator<Image::ImageType>;
+    using PointArray = std::vector<Point3>;
 
     Reconstruction(std::string out_prefix = "",
                    float decimationPercent = 0.3f,
@@ -100,14 +63,10 @@ public:
     void setSmoothingIterations(int smoothingIterations);
     void setOutputEnabled(bool enabled);
 
-    //! Set if the mean DT before warp is enabled or not
-    //! Disabling this allows Reconstruction to use DTs that are of
-    //! different sizes and with different origins
     void setMeanBeforeWarpEnabled(bool enabled);
 
     vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
-    void readMeanInfo(std::string dense,
-                      std::string sparse, std::string goodPoints);
+    void readMeanInfo(std::string dense, std::string sparse, std::string goodPoints); // remove
     bool sparseDone();
     bool denseDone();
     void writeMeanInfo(std::string nameBase);
@@ -121,7 +80,7 @@ public:
     void setOutPrefix(std::string out_prefix){out_prefix_ = out_prefix;}
 
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts, // consolidate
-                                                     itk::Point<TCoordRep>& common_center,
+                                                     itk::Point<double>& common_center,
                                                      bool do_procrustes = true,
                                                      bool do_procrustes_scaling = false);
 

@@ -5,17 +5,25 @@
 
 #include <vtkFloatArray.h>
 #include <vtkDoubleArray.h>
+#include <vtkKdTreePointLocator.h>
 
 namespace shapeworks {
 
-// ReconstructSurface::ReconstructSurface(const std::string& densePath, const std::string& sparsePath, const std::string& pointsPath)
-// {
-//   this->denseMean = Mesh(densePath);
-//   this->sparseMean = getSparseMean(sparsePath);
-//   this->goodPoints = getGoodPoints(pointsPath);
-// }
+ReconstructSurface::ReconstructSurface(TransformType transform, InterpType interp)
+{
+  if (transform == ThinPlateSplineTransform)
+  {
+    this->ifTransform1 = true;
+  }
+  else if (transform == RBFSSparseTransform)
+  {
+    this->ifTransform2 = true;
+  }
+  else
+    std::invalid_argument("Incorrect transform type");
+}
 
-vtkSmartPointer<vtkPoints> ReconstructSurface::getSparseMean(const std::string& sparsePath)
+vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& sparsePath)
 {
   int nPoints = 0;
   std::ifstream ptsIn0(sparsePath.c_str());
@@ -36,7 +44,7 @@ vtkSmartPointer<vtkPoints> ReconstructSurface::getSparseMean(const std::string& 
   return sparsePoints;
 }
 
-std::vector<bool> ReconstructSurface::getGoodPoints(const std::string& pointsPath)
+std::vector<bool> ReconstructSurface::setGoodPoints(const std::string& pointsPath)
 {
   std::ifstream ptsIn(pointsPath.c_str());
   std::vector<bool> goodPoints;
@@ -62,6 +70,197 @@ std::vector<bool> ReconstructSurface::getGoodPoints(const std::string& pointsPat
   ptsIn.close();
 
   return goodPoints;
+}
+
+double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
+{
+  int K = 6; // hexagonal ring - one jump
+  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->SetPoints(points);
+
+  // Create the tree
+  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kDTree->SetDataSet(polydata);
+  kDTree->BuildLocator();
+
+  // Find the closest points to each particle
+  double avgDist = 0;
+  for (unsigned int i = 0; i < particlesIndices.size(); i++)
+  {
+    double p[3];
+    points->GetPoint(particlesIndices[i], p);
+
+    vtkSmartPointer<vtkIdList> result = vtkSmartPointer<vtkIdList>::New();
+    kDTree->FindClosestNPoints(K + 1, p, result); // +1 to exclude myself
+
+    double meanDist = 0;
+    for (vtkIdType k = 0; k < K + 1; k++)
+    {
+      vtkIdType pid = result->GetId(k);
+
+      if (pid == particlesIndices[i]) // close to myself
+        continue;
+
+      double pk[3];
+      points->GetPoint(pid, pk);
+
+      double curDist = sqrt(pow(p[0] - pk[0], 2.0) + pow(p[1] - pk[1], 2.0) + pow(p[2] - pk[2], 2.0));
+
+      meanDist += curDist;
+    }
+    meanDist /= K;
+    avgDist += meanDist;
+  }
+
+  avgDist /= particlesIndices.size();
+  return avgDist;
+}
+
+void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, typename T::Pointer transform, Mesh::MeshPoints& mappedCorrespondences,
+                                      double& rms, double& rms_wo_mapping, double& maxmDist)
+{
+  // source should be warped to the target
+  rms = 0.0;
+  rms_wo_mapping = 0.0;
+
+  for (unsigned int i = 0; i < sourcePoints->GetNumberOfPoints(); i++)
+  {
+    double ps[3]; // source
+    double pt[3]; // target
+    double pw[3]; // warped
+
+    sourcePoints->GetPoint(i, ps);
+    targetPoints->GetPoint(i, pt);
+
+    Point3 ps_({ps[0], ps[1], ps[2]});
+    Point3 pt_({pt[0], pt[1], pt[2]});
+    Point3 pw_({pw[0], pw[1], pw[2]});
+
+    pw_ = transform->TransformPoint(ps_);
+
+    double cur_rms = pw_.EuclideanDistanceTo(pt_);
+    double cur_rms_wo_mapping = ps_.EuclideanDistanceTo(pt_);
+
+    rms += cur_rms;
+    rms_wo_mapping += cur_rms_wo_mapping;
+
+    pw[0] = pw_[0]; pw[1] = pw_[1]; pw[2] = pw_[2];
+    mappedCorrespondences->InsertNextPoint(pw);
+  }
+
+  maxmDist = double(-10000.0f);
+  for (unsigned int i = 0; i < mappedCorrespondences->GetNumberOfPoints(); i++)
+  {
+    double pi[3];
+    mappedCorrespondences->GetPoint(i, pi);
+    Point3 pi_({pi[0], pi[1], pi[2]});
+
+    for (unsigned int j = 0; j < mappedCorrespondences->GetNumberOfPoints(); j++)
+    {
+      double pj[3];
+      mappedCorrespondences->GetPoint(j, pj);
+      Point3 pj_({pj[0], pj[1], pj[2]});
+
+      double dist = pi_.EuclideanDistanceTo(pj_);
+      if (dist > maxmDist)
+      {
+        maxmDist = dist;
+      }
+    }
+  }
+
+  rms /= sourcePoints->GetNumberOfPoints();
+  rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
+}
+
+void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh)
+{
+  vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
+  vertices->DeepCopy(outputMesh->GetPoints());
+
+  unsigned int numPointsToTransform = vertices->GetNumberOfPoints();
+  for (unsigned int i = 0; i < numPointsToTransform; i++)
+  {
+    double meshPoint[3];
+    vertices->GetPoint(i, meshPoint);
+
+    Point3 pm_({meshPoint[0], meshPoint[1], meshPoint[2]});
+
+    Point3 pw_;
+    pw_ = transform->TransformPoint(pm_);
+
+    vertices->SetPoint(i, pw_[0], pw_[1], pw_[2]);
+  }
+
+  outputMesh->SetPoints(vertices);
+  outputMesh->Modified();
+}
+
+Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Point3> localPoints)
+{
+  if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
+
+  std::vector<int> particlesIndices;
+  for (int i = 0; i < this->goodPoints.size(); i++)
+  {
+    if (this->goodPoints[i])
+      particlesIndices.push_back(i);
+  }
+
+  vtkSmartPointer<vtkPoints> subjectPoints = vtkSmartPointer<vtkPoints>::New();
+  for (auto &a : localPoints)
+    subjectPoints->InsertNextPoint(a[0], a[1], a[2]);
+
+  double sigma = computeAverageDistanceToNeighbors(subjectPoints, particlesIndices);
+
+  PointIdType id;
+  id = itk::NumericTraits<PointIdType>::Zero;
+  PointSetType::Pointer sourceLandMarks = PointSetType::New();
+  PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+  Point3 ps;
+  int ns = 0;
+  for (int i = 0; i < localPoints.size(); i++)
+  {
+    if (std::find(particlesIndices.begin(), particlesIndices.end(), i) != particlesIndices.end())
+    {
+      double p[3];
+      this->sparseMean->GetPoint(i, p);
+      ps[0] = p[0];
+      ps[1] = p[1];
+      ps[2] = p[2];
+      sourceLandMarkContainer->InsertElement(id++, ps);
+      ns++;
+    }
+  }
+
+  id = itk::NumericTraits<PointIdType>::Zero;
+  PointSetType::Pointer targetLandMarks = PointSetType::New();
+  PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
+  Point3 pt;
+  int nt = 0;
+  for (int i = 0; i < localPoints.size(); i++)
+  {
+    if (std::find(particlesIndices.begin(), particlesIndices.end(), i) != particlesIndices.end())
+    {
+      double p[3];
+      subjectPoints->GetPoint(i, p);
+      pt[0] = p[0];
+      pt[1] = p[1];
+      pt[2] = p[2];
+      targetLandMarkContainer->InsertElement(id++, pt);
+      nt++;
+    }
+  }
+  transform->SetTargetLandmarks(targetLandMarks);
+
+  vtkSmartPointer<vtkPoints> mappedCorrespondences = vtkSmartPointer<vtkPoints>::New();
+  double rms, rms_wo_mapping, maxmDist;
+  CheckMapping(this->sparseMean, subjectPoints, transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+
+  vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
+  denseShape->DeepCopy(this->denseMean);
+  generateWarpedMeshes(transform, denseShape);
+  return Mesh(denseShape);
 }
 
 void ReconstructSurface::setDistanceTransformFiles(const std::vector<std::string> dtFiles)
@@ -248,7 +447,7 @@ Eigen::MatrixXd ReconstructSurface::computeParticlesNormals(vtkSmartPointer<vtkP
   Image Ny(nyImage.getVTKImage());
   Image Nz(nzImage.getVTKImage());
 
-  vtkSmartPointer<vtkPoints> pts = this->convertToImageCoordinates(particles, particles->GetNumberOfPoints(), spacing, origin);
+  vtkSmartPointer<vtkPoints> pts = convertToImageCoordinates(particles, particles->GetNumberOfPoints(), spacing, origin);
   vtkSmartPointer<vtkPolyData> polyParticles = vtkSmartPointer<vtkPolyData>::New();
   polyParticles->SetPoints(pts);
 
@@ -282,8 +481,8 @@ Eigen::MatrixXd ReconstructSurface::computeParticlesNormals(vtkSmartPointer<vtkP
 
   particlesData->GetPointData()->SetNormals(pointNormalsArray);
 
-  vtkSmartPointer<vtkPoints> pts2 = this->convertToPhysicalCoordinates(polyParticles->GetPoints(), particlesData->GetPoints()->GetNumberOfPoints(),
-                                                                       spacing, origin);
+  vtkSmartPointer<vtkPoints> pts2 = convertToPhysicalCoordinates(polyParticles->GetPoints(), particlesData->GetPoints()->GetNumberOfPoints(),
+                                                                 spacing, origin);
   polyParticles->SetPoints(pts2);
 
   return particlesNormals;
@@ -292,9 +491,9 @@ Eigen::MatrixXd ReconstructSurface::computeParticlesNormals(vtkSmartPointer<vtkP
 // TODO : FINISH CONSOLIDATING THIS
 vtkSmartPointer<vtkPolyData> ReconstructSurface::getDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform)
 {
-  // if (!this->denseDone_ || !local_pts.empty() || !distance_transform.empty() || !global_pts.empty()) 
+  // if (!this->denseDone || !local_pts.empty() || !distance_transform.empty() || !global_pts.empty()) 
   // {
-  //   this->denseDone_ = false;
+  //   this->denseDone = false;
   //   if (local_pts.empty() || distance_transform.empty() || global_pts.empty() || local_pts.size() != distance_transform.size())
   //   {
   //     throw std::runtime_error("Invalid input for reconstruction!");
@@ -666,7 +865,7 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
   {
     if (this->denseMean_ != NULL)
     {
-      this->denseDone_ = true;
+      this->denseDone = true;
       throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
     }
   }
@@ -678,55 +877,40 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
   {
     throw std::runtime_error("Reconstruction failed!");
   }
-  this->denseDone_ = true;
+  this->denseDone = true;
 }
 
-void ReconstructSurface::surface()
+void ReconstructSurface::surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
 {
-  // reconstructor_.readMeanInfo(this->denseFile, this->sparseFile, this->goodPointsFile);
+  double maxAngleDegrees = this->normalAngle * (180.0 / Pi);
+  
+  this->denseMean = Mesh(denseFile);
+  this->sparseMean = setSparseMean(sparseFile);
+  this->goodPoints = setGoodPoints(goodPointsFile);
 
-  for (unsigned int shapeNo = 0; shapeNo < this->localPointsFiles.size(); shapeNo++)
+  for (unsigned int i = 0; i < this->localPointsFiles.size(); i++)
   {
-    std::string basename = StringUtils::getFilename(this->localPointsFiles[shapeNo]);
-    std::cout << "Processing: " << this->localPointsFiles[shapeNo].c_str() << std::endl;
+    std::string basename = StringUtils::getFilename(this->localPointsFiles[i]);
+    std::cout << "Processing: " << this->localPointsFiles[i].c_str() << std::endl;
 
     std::vector<Point3> curSparse;
-    Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFiles[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFiles[i].c_str()));
 
-    Mesh curDense = getMesh(curSparse);
+    Mesh curDense = getMesh(transform, curSparse);
 
-    std::string outfilename = this->out_prefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_dense.vtk";
+    std::string outfilename = this->outPrefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.vtk";
     std::cout << "Writing: " << outfilename << std::endl;
     curDense.write(outfilename);
 
-    std::string ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_dense.particles";
+    std::string ptsfilename = this->outPrefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curDense.getVTKMesh()->GetPoints());
 
     vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
-    Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFiles[shapeNo].c_str()));
+    Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFiles[i].c_str()));
 
-    ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_sparse.particles";
+    ptsfilename = this->outPrefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_sparse.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
   }
-}
-
-// TODO: FINISH CONSOLIDATING THIS
-void ReconstructSurface::writeOutFiles()
-{
-  // Mesh curDense = reconstructor_.getMesh(curSparse);
-
-  // std::string outfilename = this->out_prefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.vtk";
-  // std::cout << "Writing: " << outfilename << std::endl;
-  // curDense.write(outfilename);
-
-  // std::string ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_dense.particles";
-  // Utils::writeSparseShape((char*) ptsfilename.c_str(), curDense.getVTKMesh()->GetPoints());
-
-  // vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
-  // Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFile[shapeNo].c_str()));
-
-  // ptsfilename = this->out_prefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFile[shapeNo])) + "_sparse.particles";
-  // Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
 }
 
 } // shapeworks

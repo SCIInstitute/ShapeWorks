@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Mesh.h"
+#include "itkThinPlateSplineKernelTransform2.h"
+#include "itkCompactlySupportedRBFSparseKernelTransform.h"
+
+#include <itkPointSet.h>
 
 namespace shapeworks {
 
@@ -10,21 +14,45 @@ public:
   enum TransformType { ThinPlateSplineTransform, RBFSSparseTransform };
   enum InterpType { LinearInterpolation, BSplineInterpolation };
 
-  // ReconstructSurface(const std::string& dense, const std::string& sparse, const std::string& goodPoints);
+  using transform1 = itk::ThinPlateSplineKernelTransform2<double, 3>;
+  using transform2 = itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;
 
-  void surface();
-  void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
-  int samplesAlongPCAModes(int mode_index = -1, int number_of_modes = -1, float maximum_variance_captured = 0.95, int number_of_samples_per_mode = 10);
-  Mesh getMesh(std::vector<Point3> local_pts);
-  void display();
-  Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
+  using PointSetTraitsType = itk::DefaultStaticMeshTraits<double, 3, 3, double, double>;
+  using PointSetType = itk::PointSet<double, 3, PointSetTraitsType>;
+  using PointIdType = PointSetType::PointIdentifier;
+
+  ReconstructSurface(TransformType transform, InterpType interp);
+
+  double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
+
+  template<class T>
+  void CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, typename T::Pointer transform, Mesh::MeshPoints& mappedCorrespondences,
+                    double& rms, double& rms_wo_mapping, double& maxmDist);
+
+  template<class T>
+  void generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh);
+
+  template<class T>
+  Mesh getMesh(typename T::Pointer transform, std::vector<Point3> localPoints);
+
+  Eigen::MatrixXd computeParticlesNormals(Mesh::MeshPoints particles, Image dt);
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
   void computeDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
-  void writeOutFiles();
   
   Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
   
   Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
+
+  void display();
+
+  template<class T>
+  void surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile);
+
+  void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
+
+  // set operations //
+
+  void setOutPrefix(std::string prefix) { this->outPrefix = prefix; }
 
 private:
   float normalAngle = Pi/2.0;
@@ -34,17 +62,20 @@ private:
   std::vector<std::string> localPointsFiles;
   std::vector<std::string> worldPointsFiles;
   std::vector<std::string> distanceTransformFiles;
-  std::string out_prefix;
+  std::string outPrefix;
   std::string out_path; // check on this
+  bool denseDone = true; // check on this
+
+  bool ifTransform1 = false;
+  bool ifTransform2 = false;
 
   Mesh denseMean;
-  vtkSmartPointer<vtkPoints> sparseMean;
+  Mesh::MeshPoints sparseMean;
   std::vector<bool> goodPoints;
 
-  bool denseDone_ = true; // check on this
+  Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
+  std::vector<bool> setGoodPoints(const std::string& pointsPath);
 
-  static vtkSmartPointer<vtkPoints> getSparseMean(const std::string& sparsePath);
-  std::vector<bool> getGoodPoints(const std::string& pointsPath);
   void setDistanceTransformFiles(const std::vector<std::string> dtFiles);
   std::vector<std::vector<Point3>> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
   std::vector<std::vector<Point3>> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
