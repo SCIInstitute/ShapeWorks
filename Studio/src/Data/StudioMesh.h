@@ -64,7 +64,7 @@ public:
 
   //! Interpolation scalars at positions to this mesh
   void interpolate_scalars_to_mesh(std::string name,
-                                   vnl_vector<double> positions, Eigen::VectorXf scalar_values);
+                                   Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
 
 private:
 

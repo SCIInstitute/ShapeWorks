@@ -92,7 +92,7 @@ void Session::calculate_reconstructed_samples()
   //this->preferences_.set_preference("Studio/cache_enabled", false);
   for (auto shape : this->shapes_) {
     auto pts = shape->get_local_correspondence_points();
-    if (!pts.empty()) {
+    if (!(pts.size() == 0)) {
       /// TODO: fix
       //shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
     }
@@ -174,12 +174,12 @@ bool Session::save_project(std::string fname)
 }
 
 //---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const vnl_vector<double>& points)
+void Session::save_particles_file(std::string filename, const Eigen::VectorXd& points)
 {
   std::ofstream out(filename);
   size_t newline = 1;
-  for (auto& a : points) {
-    out << a << (newline % 3 == 0 ? "\n" : "    ");
+  for (int i = 0; i < points.size(); i++) {
+    out << points[i] << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
   out.close();
@@ -676,8 +676,8 @@ double Session::update_auto_glyph_size()
   double max_range = std::numeric_limits<double>::min();
   int num_particles = 0;
   for (auto& shape : this->shapes_) {
-    vnl_vector<double> points = shape->get_global_correspondence_points();
-    if (points.empty()) {
+    Eigen::VectorXd points = shape->get_global_correspondence_points();
+    if (points.size() == 0) {
       return this->auto_glyph_size_;
     }
     num_particles = points.size() / 3;
@@ -876,7 +876,7 @@ std::vector<DomainType> Session::get_domain_types()
 }
 
 //---------------------------------------------------------------------------
-Point3 Session::get_point(const vnl_vector<double>& points, int i)
+Point3 Session::get_point(const Eigen::VectorXd& points, int i)
 {
   if ((i * 3) + 2 > points.size() - 1) {
     return Point3();

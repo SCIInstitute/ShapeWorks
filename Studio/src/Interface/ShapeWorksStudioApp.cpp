@@ -1946,12 +1946,12 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   auto basename =
     filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
-  for (size_t i = values.columns() - 1, ii = 0; i > 0; i--, ii++) {
-    auto col = values.get_column(i);
+  for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
+    auto col = values.col(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
     size_t newline = 1;
-    for (auto& a : col) {
-      out << a << (newline % 3 == 0 ? "\n" : "    ");
+    for (int i = 0; i < col.size(); i++) {
+      out << col[i] << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
     out.close();
@@ -2013,15 +2013,15 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::write_particle_file(std::string filename, vnl_vector<double> particles)
+bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::VectorXd particles)
 {
   std::ofstream out(filename);
   if (!out) {
     return false;
   }
   size_t newline = 1;
-  for (auto& p : particles) {
-    out << p << (newline % 3 == 0 ? "\n" : "    ");
+  for (int i = 0; i < particles.size(); i++) {
+    out << particles[i] << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
   out.close();
