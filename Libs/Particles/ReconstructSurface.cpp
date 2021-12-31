@@ -9,19 +9,19 @@
 
 namespace shapeworks {
 
-ReconstructSurface::ReconstructSurface(TransformType transform, InterpType interp)
-{
-  if (transform == ThinPlateSplineTransform)
-  {
-    this->ifTransform1 = true;
-  }
-  else if (transform == RBFSSparseTransform)
-  {
-    this->ifTransform2 = true;
-  }
-  else
-    std::invalid_argument("Incorrect transform type");
-}
+// ReconstructSurface::ReconstructSurface(TransformType transform, InterpType interp)
+// {
+//   if (transform == ThinPlateSplineTransform)
+//   {
+//     this->ifTransform1 = true;
+//   }
+//   else if (transform == RBFSSparseTransform)
+//   {
+//     this->ifTransform2 = true;
+//   }
+//   else
+//     std::invalid_argument("Incorrect transform type");
+// }
 
 vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& sparsePath)
 {
@@ -116,6 +116,7 @@ double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints po
   return avgDist;
 }
 
+template<class T>
 void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, typename T::Pointer transform, Mesh::MeshPoints& mappedCorrespondences,
                                       double& rms, double& rms_wo_mapping, double& maxmDist)
 {
@@ -173,6 +174,7 @@ void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshP
   rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
 }
 
+template<class T>
 void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh)
 {
   vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
@@ -196,6 +198,7 @@ void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtk
   outputMesh->Modified();
 }
 
+template<class T>
 Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Point3> localPoints)
 {
   if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
@@ -258,7 +261,7 @@ Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Poin
   CheckMapping(this->sparseMean, subjectPoints, transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
-  denseShape->DeepCopy(this->denseMean);
+  denseShape->DeepCopy(this->denseMean.getVTKMesh());
   generateWarpedMeshes(transform, denseShape);
   return Mesh(denseShape);
 }
@@ -508,17 +511,15 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
 {
   try {
 
-    //turn the sets of global points to one sparse global mean.
-    // float init[] = { 0.f,0.f,0.f };
+    // turn the sets of global points to one sparse global mean.
     Point init({0.f, 0.f, 0.f});
-    // PointArrayType sparseMean = PointArrayType(worldPts[0].size(), itk::Point<float>(init));
     std::vector<Point> sparseMeanPoint = std::vector<Point>(worldPts[0]);
     for (auto &a : worldPts)
     {
       for (size_t i = 0; i < a.size(); i++)
       {
         init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
-        itk::Vector<float> vec(init);
+        Vector3 vec = toVector(init);
         sparseMeanPoint[i] = sparseMeanPoint[i] + vec;
       }
     }
@@ -532,7 +533,7 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
       sparseMeanPoint[i] = itk::Point<float>(init);
     }
 
-    std::vector<vnl_matrix<double> > normals;
+    std::vector<Eigen::MatrixXd> normals;
     std::vector<vtkSmartPointer< vtkPoints > > subjectPts;
     this->sparseMean = vtkSmartPointer<vtkPoints>::New();
     for (auto &a : sparseMeanPoint)
@@ -880,6 +881,7 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
   this->denseDone = true;
 }
 
+template<class T>
 void ReconstructSurface::surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
 {
   double maxAngleDegrees = this->normalAngle * (180.0 / Pi);

@@ -33,14 +33,15 @@ public:
   void generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
   template<class T>
+  // template < template < typename Image::PixelType, unsigned > class T
   Mesh getMesh(typename T::Pointer transform, std::vector<Point3> localPoints);
 
   Eigen::MatrixXd computeParticlesNormals(Mesh::MeshPoints particles, Image dt);
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
   void computeDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
-  
+
   Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
-  
+
   Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
 
   void display();
