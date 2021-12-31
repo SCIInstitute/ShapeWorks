@@ -178,7 +178,7 @@ def Run_Pipeline(args):
                 print("Aligning image: " + name)
                 new_origin = np.matmul(rigid_transform, np.append(image.origin(),1))[:-1]
                 image.setOrigin(new_origin)
-                image.applyTransform(rigid_transform)
+                image.applyTransform(rigid_transform, meshTransform=True)
                 print('Cropping image: ' + name)
                 # image.crop(bounding_box)
 
