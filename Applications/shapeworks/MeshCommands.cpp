@@ -49,6 +49,7 @@ void WriteMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write.");
+  parser.add_option("--binary").action("store").type("bool").set_default(false).help("Whether to write file as binary.");
 
   Command::buildParser();
 }
@@ -66,8 +67,9 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
     std::cerr << "writemesh error: no filename specified, must pass `--name <filename>`\n";
     return false;
   }
+  bool binary = static_cast<bool>(options.get("binary"));
 
-  sharedData.mesh->write(filename);
+  sharedData.mesh->write(filename, binary);
   return true;
 }
 
