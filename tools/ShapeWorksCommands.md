@@ -2017,7 +2017,9 @@ shapeworks  write-mesh [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of file to write.  
+**--name=STRING:** Name of file to write.
+
+**--binary=BOOL:** Whether to write file as binary.  
   
 <a href="#top">Back to Top</a>
   

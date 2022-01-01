@@ -56,7 +56,7 @@ public:
 
   MeshType getVTKMesh() const { return this->mesh; }
 
-  Mesh& write(const std::string &pathname);
+  Mesh& write(const std::string &pathname, bool binaryFile = false);
 
   Mesh& coverage(const Mesh& otherMesh, bool allowBackIntersections = true,
                  double angleThreshold = 0, double backSearchRadius = 0);
@@ -228,4 +228,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2022-01-01 at 17:33:55 +0000
+Updated on 2022-01-01 at 17:59:59 +0000

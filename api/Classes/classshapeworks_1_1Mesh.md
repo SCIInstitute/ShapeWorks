@@ -36,7 +36,7 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[operator=](../Classes/classshapeworks_1_1Mesh.md#function-operator=)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) && orig) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[operator+=](../Classes/classshapeworks_1_1Mesh.md#function-operator+=)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & otherMesh)<br>append two meshes  |
 | MeshType | **[getVTKMesh](../Classes/classshapeworks_1_1Mesh.md#function-getvtkmesh)**() const<br>return the current mesh  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[write](../Classes/classshapeworks_1_1Mesh.md#function-write)**(const std::string & pathname)<br>writes mesh, format specified by filename extension  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[write](../Classes/classshapeworks_1_1Mesh.md#function-write)**(const std::string & pathname, bool binaryFile =false)<br>writes mesh, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[coverage](../Classes/classshapeworks_1_1Mesh.md#function-coverage)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & otherMesh, bool allowBackIntersections =true, double angleThreshold =0, double backSearchRadius =0)<br>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[smooth](../Classes/classshapeworks_1_1Mesh.md#function-smooth)**(int iterations =0, double relaxation =0.0)<br>applies laplacian smoothing  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[smoothSinc](../Classes/classshapeworks_1_1Mesh.md#function-smoothsinc)**(int iterations =0, double passband =0.0)<br>applies vtk windowed sinc smoothing  |
@@ -239,7 +239,8 @@ return the current mesh
 
 ```cpp
 Mesh & write(
-    const std::string & pathname
+    const std::string & pathname,
+    bool binaryFile =false
 )
 ```
 
@@ -830,4 +831,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-01-01 at 17:33:55 +0000
+Updated on 2022-01-01 at 17:59:58 +0000
