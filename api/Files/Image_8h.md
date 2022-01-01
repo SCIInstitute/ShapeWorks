@@ -240,4 +240,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2022-01-01 at 17:29:13 +0000
+Updated on 2022-01-01 at 17:33:55 +0000
