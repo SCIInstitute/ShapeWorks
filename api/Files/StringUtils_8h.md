@@ -33,23 +33,22 @@ title: Libs/Utils/StringUtils.h
 namespace shapeworks {
 
 class StringUtils {
-
-public:
+ public:
   static std::string removeExtension(std::string const& filename);
   static std::string getPath(std::string const& filename);
   static std::string getFilename(std::string const& pathname);
+  static std::string getBaseFilenameWithoutExtension(std::string const& pathname);
   static std::string toLower(std::string s);
   static bool hasSuffix(std::string const& filename, std::string const& suffix);
   static std::vector<std::string> getFileNamesFromPaths(const std::vector<std::string>& paths);
 
   static std::string getFileNameWithoutExtension(std::string path);
-
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2021-12-13 at 17:42:54 +0000
+Updated on 2022-01-01 at 17:29:14 +0000

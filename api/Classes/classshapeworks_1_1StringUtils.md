@@ -19,7 +19,8 @@ String utility functions.
 | -------------- | -------------- |
 | std::string | **[removeExtension](../Classes/classshapeworks_1_1StringUtils.md#function-removeextension)**(std::string const & filename) |
 | std::string | **[getPath](../Classes/classshapeworks_1_1StringUtils.md#function-getpath)**(std::string const & filename) |
-| std::string | **[getFilename](../Classes/classshapeworks_1_1StringUtils.md#function-getfilename)**(std::string const & pathname) |
+| std::string | **[getFilename](../Classes/classshapeworks_1_1StringUtils.md#function-getfilename)**(std::string const & pathname)<br>Remove path from filename and return.  |
+| std::string | **[getBaseFilenameWithoutExtension](../Classes/classshapeworks_1_1StringUtils.md#function-getbasefilenamewithoutextension)**(std::string const & pathname)<br>Get just the filename without path and without extension.  |
 | std::string | **[toLower](../Classes/classshapeworks_1_1StringUtils.md#function-tolower)**(std::string s) |
 | bool | **[hasSuffix](../Classes/classshapeworks_1_1StringUtils.md#function-hassuffix)**(std::string const & filename, std::string const & suffix) |
 | std::vector< std::string > | **[getFileNamesFromPaths](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamesfrompaths)**(const std::vector< std::string > & paths) |
@@ -53,6 +54,17 @@ static std::string getFilename(
 )
 ```
 
+Remove path from filename and return. 
+
+### function getBaseFilenameWithoutExtension
+
+```cpp
+static std::string getBaseFilenameWithoutExtension(
+    std::string const & pathname
+)
+```
+
+Get just the filename without path and without extension. 
 
 ### function toLower
 
@@ -94,4 +106,4 @@ TODO: is this a duplicate of removeExtension?
 
 -------------------------------
 
-Updated on 2021-12-13 at 17:42:53 +0000
+Updated on 2022-01-01 at 17:29:13 +0000

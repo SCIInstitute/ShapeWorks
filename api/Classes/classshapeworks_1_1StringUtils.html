@@ -332,7 +332,11 @@
 </tr>
 <tr>
 <td>std::string</td>
-<td><strong><a href="classshapeworks_1_1StringUtils.html#function-getfilename">getFilename</a></strong>(std::string const &amp; pathname)</td>
+<td><strong><a href="classshapeworks_1_1StringUtils.html#function-getfilename">getFilename</a></strong>(std::string const &amp; pathname)<br>Remove path from filename and return.</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1StringUtils.html#function-getbasefilenamewithoutextension">getBaseFilenameWithoutExtension</a></strong>(std::string const &amp; pathname)<br>Get just the filename without path and without extension.</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -368,6 +372,13 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Remove path from filename and return. </p>
+<h3 id="function-getbasefilenamewithoutextension">function getBaseFilenameWithoutExtension</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getBaseFilenameWithoutExtension</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Get just the filename without path and without extension. </p>
 <h3 id="function-tolower">function toLower</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">toLower</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
@@ -391,7 +402,7 @@
 </code></pre></div>
 <p>TODO: is this a duplicate of removeExtension? </p>
 <hr />
-<p>Updated on 2021-12-13 at 17:42:53 +0000</p>
+<p>Updated on 2022-01-01 at 17:29:13 +0000</p>
               
             </div>
           </div>
