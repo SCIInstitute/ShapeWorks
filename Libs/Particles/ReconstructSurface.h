@@ -21,8 +21,6 @@ public:
   using PointSetType = itk::PointSet<double, 3, PointSetTraitsType>;
   using PointIdType = PointSetType::PointIdentifier;
 
-  ReconstructSurface(TransformType transform, InterpType interp);
-
   double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
 
   template<class T>
@@ -36,22 +34,10 @@ public:
   // template < template < typename Image::PixelType, unsigned > class T
   Mesh getMesh(typename T::Pointer transform, std::vector<Point3> localPoints);
 
-  Eigen::MatrixXd computeParticlesNormals(Mesh::MeshPoints particles, Image dt);
-
-  vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
-
-  void computeDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
-
-  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
-
-  Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
-
   void display();
 
   template<class T>
   void surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile);
-
-  void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
 
   template<class T>
   void samplesAlongPCAModes(typename T::Pointer transform);
@@ -69,8 +55,8 @@ private:
   std::vector<std::string> worldPointsFiles;
   std::vector<std::string> distanceTransformFiles;
   std::string outPrefix;
-  std::string outPath; // check on this
-  bool denseDone = true; // check on this
+  std::string outPath;
+  bool denseDone = true;
   int modeIndex;
   int numberOfModes;
   float maximumVarianceCaptured;
@@ -88,7 +74,6 @@ private:
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
 
-  void setDistanceTransformFiles(const std::vector<std::string> dtFiles);
   std::vector<std::vector<Point3>> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
   std::vector<std::vector<Point3>> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
 

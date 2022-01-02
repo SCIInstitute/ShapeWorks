@@ -24,10 +24,16 @@
 #include "itkMetaImageIOFactory.h"
 #include "Reconstruction.h"
 
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
+
 #include <itkImageFileWriter.h>
 #include <Utils.h>
 #include <math.h>
 
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
 Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(std::string out_prefix,
                                                                                                    float decimationPercent, double maxAngleDegrees,
                                                                                                    size_t numClusters,

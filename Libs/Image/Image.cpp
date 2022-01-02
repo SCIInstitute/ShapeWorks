@@ -650,21 +650,9 @@ Image& Image::applyCurvatureFilter(unsigned iterations)
   return *this;
 }
 
-Image& Image::applyGradientMagFilter()
-{
-  using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter  = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->Update();
-  this->image = filter->GetOutput();
-  
-  return *this;
-}
-
 Image& Image::applyGradientFilter()
 {
-  using FilterType = itk::GradientImageFilter<ImageType, PixelType>;
+  using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter  = FilterType::New();
 
   filter->SetInput(this->image);
@@ -992,18 +980,6 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
-}
-
-ImageIterator Image::setIterator()
-{  
-  ImageIterator iter(this->image, image->GetLargestPossibleRegion()->Allocate()->GetRequestedRegion());
-  return iter;
-}
-
-CovariantImageIterator Image::setCovariantIterator()
-{  
-  CovariantImageIterator iter(this->image, image->GetLargestPossibleRegion()->Allocate()->GetRequestedRegion());
-  return iter;
 }
 
 Mesh Image::toMesh(PixelType isoValue) const
