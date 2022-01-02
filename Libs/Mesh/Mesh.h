@@ -40,7 +40,7 @@ public:
   MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
-  Mesh& write(const std::string &pathname);
+  Mesh& write(const std::string &pathname, bool binaryFile = false);
 
   /// determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)
   Mesh& coverage(const Mesh& otherMesh, bool allowBackIntersections = true,

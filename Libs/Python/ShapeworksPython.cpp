@@ -886,7 +886,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("write",
        &Mesh::write,
        "writes mesh, format specified by filename extension",
-       "pathname"_a)
+       "pathname"_a, "binaryFile"_a=false)
 
   .def("coverage",
        &Mesh::coverage,

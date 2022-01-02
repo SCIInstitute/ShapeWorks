@@ -6,6 +6,8 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include <vtkPointData.h>
 
+#include <StringUtils.h>
+
 #include <cstring>
 
 using namespace shapeworks;
@@ -250,19 +252,20 @@ void Project::load_subjects()
       this->particles_present_ = true;
     }
 
+    std::string name = "";
     if (name_column >= 0) {
-      auto name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
-      subject->set_display_name(name);
+      name = this->get_value(name_column, i + 2); //+1 for header, +1 for 1-based index
     }
     else if (subject->get_segmentation_filenames().size() != 0) {
-      subject->set_display_name(subject->get_segmentation_filenames()[0]);
+      name = StringUtils::getFileNameWithoutExtension(subject->get_segmentation_filenames()[0]);
     }
     else if (subject->get_groomed_filenames().size() != 0) {
-      subject->set_display_name(subject->get_groomed_filenames()[0]);
+      name = StringUtils::getFileNameWithoutExtension(subject->get_groomed_filenames()[0]);
     }
     else if (locals.size() > 0) {
-      subject->set_display_name(locals[0]);
+      name = StringUtils::getFileNameWithoutExtension(locals[0]);
     }
+    subject->set_display_name(name);
 
     std::map<std::string, std::string> extra_values;
     for (auto elem : this->get_extra_columns()) {
