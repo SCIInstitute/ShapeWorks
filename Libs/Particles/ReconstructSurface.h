@@ -37,7 +37,9 @@ public:
   Mesh getMesh(typename T::Pointer transform, std::vector<Point3> localPoints);
 
   Eigen::MatrixXd computeParticlesNormals(Mesh::MeshPoints particles, Image dt);
+
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
+
   void computeDenseMean(std::vector<std::vector<Point>> localPts, std::vector<std::vector<Point>> worldPts, std::vector<std::string> distance_transform);
 
   Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
@@ -50,6 +52,9 @@ public:
   void surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile);
 
   void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
+
+  template<class T>
+  void samplesAlongPCAModes(typename T::Pointer transform);
 
   // set operations //
 
@@ -64,8 +69,14 @@ private:
   std::vector<std::string> worldPointsFiles;
   std::vector<std::string> distanceTransformFiles;
   std::string outPrefix;
-  std::string out_path; // check on this
+  std::string outPath; // check on this
   bool denseDone = true; // check on this
+  int modeIndex;
+  int numberOfModes;
+  float maximumVarianceCaptured;
+  int numberOfParticles;
+  float maxStdDev;
+  int numberOfSamplesPerMode;
 
   bool ifTransform1 = false;
   bool ifTransform2 = false;

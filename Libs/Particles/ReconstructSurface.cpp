@@ -360,8 +360,8 @@ void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTran
 
   // write global points to be use for pca modes and also local points
   int mkdirStatus;
-  std::string worldPointsPath = this->out_path + "/global_particles";
-  std::string localPointsPath = this->out_path + "/local_particles";
+  std::string worldPointsPath = this->outPath + "/global_particles";
+  std::string localPointsPath = this->outPath + "/local_particles";
 
 #ifdef WIN32
   mkdirStatus = _mkdir(worldPointsPath.c_str());
@@ -912,6 +912,185 @@ void ReconstructSurface::surface(typename T::Pointer transform, std::string dens
 
     ptsfilename = this->outPrefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_sparse.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
+  }
+}
+
+template<class T>
+void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
+{
+  int domainsPerShape = 1;
+  const unsigned int Dimension = 3;
+  ParticleShapeStatistics shapeStats;
+
+  this->denseMean = Mesh(denseFile);
+  this->sparseMean = setSparseMean(sparseFile);
+  this->goodPoints = setGoodPoints(goodPointsFile);
+
+  std::vector<std::vector<Point3>> globalPoints;
+  for (unsigned int i = 0; i < this->worldPointsFiles.size(); i++)
+  {
+    std::vector<Point3> curShape; curShape.clear();
+
+    std::string curfilename = this->worldPointsFiles[i];
+    std::cout << "curfilename: " << curfilename << std::endl;
+
+    Utils::readSparseShape(curShape, (char*)curfilename.c_str());
+
+    std::cout << "curShape.size() = " << curShape.size() << "-------------\n";
+    globalPoints.push_back(curShape);
+  }
+
+  // perform PCA on the global points that were used to compute the dense mean mesh
+  shapeStats.DoPCA(globalPoints, domainsPerShape);
+
+  std::vector<double> percentVarByMode = shapeStats.PercentVarByMode();
+  int totalNumberOfModes = percentVarByMode.size();
+
+  int numberOfModes = 0;
+  bool singleModeToBeGen = false;
+  if ((this->modeIndex >= 0) && (this->modeIndex < totalNumberOfModes))
+  {
+    numberOfModes = 1; singleModeToBeGen = true;
+    std::cout << "Mode #" << this->modeIndex << " is requested to be generated  ..." << std::endl;
+  }
+  else
+  {
+    if (this->numberOfModes > 0)
+    {
+      numberOfModes = std::min(this->numberOfModes, totalNumberOfModes);
+      std::cout << numberOfModes << " dominant modes are requested to be generated  ..." << std::endl;
+    }
+    else
+    {
+      // detect number of modes
+      bool found = false;
+      for (int n = totalNumberOfModes-1; n >=0; n--)
+      {
+        if (percentVarByMode[n] >= this->maximumVarianceCaptured && found==false)
+        {
+          numberOfModes = n;
+          found = true;
+        }
+      }
+
+      if(!found)
+        numberOfModes = percentVarByMode.size();
+
+      if (numberOfModes == 0)
+      {
+        std::invalid_argument("No dominant modes detected");
+      }
+    }
+    std::cout << numberOfModes << " dominant modes is found to capture " << this->maximumVarianceCaptured*100 << "% of total variation ..." << std::endl;
+  }
+
+  // start sampling along each mode
+  std::vector<double> eigenValues = shapeStats.Eigenvalues();
+  vnl_matrix<double> eigenVectors = shapeStats.Eigenvectors();
+  vnl_vector<double> mean         = shapeStats.Mean();
+
+  Mesh::MeshPoints meanPoints = Mesh::MeshPoints::New();
+  for(unsigned int i = 0; i < this->numberOfParticles; i++)
+  {
+    double pt[3];
+    for (unsigned int d = 0; d < Dimension; d++)
+      pt[d] = mean(i*Dimension + d);
+
+    meanPoints->InsertNextPoint(pt);
+  }
+
+  std::string prefix = shapeworks::StringUtils::getFilename(this->outPrefix);
+  if(!prefix.empty())
+    prefix = prefix + "_";
+  
+  for (int modeId = 0; modeId < totalNumberOfModes; modeId++)
+  {
+    if (singleModeToBeGen && (modeId != this->modeIndex))
+      continue;
+
+    if ((!singleModeToBeGen) && (modeId >= numberOfModes))
+      break;
+
+    std::string modeStr  = Utils::int2str(modeId, 2);
+    std::string cur_path = this->outPath + "/mode-" + modeStr;
+    int mkdirStatus;
+#ifdef WIN32
+    mkdirStatus = _mkdir(cur_path.c_str());
+#else
+    // mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
+#endif
+
+    double sqrt_eigenValue = sqrt(eigenValues[totalNumberOfModes - modeId - 1]);
+    double min_std_factor = -1 * this->maxStdDev;
+    double max_std_factor = +1 * this->maxStdDev;
+    std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, this->numberOfSamplesPerMode);
+
+    vnl_vector<double> curMode = eigenVectors.get_column(totalNumberOfModes - modeId - 1);
+
+    std::vector<double> std_store;
+    std::cout << "std_store: ";
+    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
+    {
+      std_store.push_back(std_factor_store[sid]*sqrt_eigenValue);
+      std::cout << std_store[sid] << ", " ;
+    }
+    std::cout << std::endl;
+
+    // writing stds on file
+    std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
+    ofstream ofs(stdfilename.c_str());
+
+    if (!ofs)
+      throw std::runtime_error("Could not open file for output: " + stdfilename);
+
+    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
+      ofs << std_factor_store[sid] << "\n" ;
+    ofs.close();
+
+    for(unsigned int sampleId = 0; sampleId < std_store.size(); sampleId++)
+    {
+      std::string sampleStr = Utils::int2str(int(sampleId), 3);
+      std::string basename = prefix + "mode-" + modeStr + "_sample-" + sampleStr ;
+
+      std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
+
+      // generate the sparse shape of the current sample
+      double cur_std = std_store[sampleId];
+
+      std::cout << "cur_std: " << cur_std << std::endl;
+
+      vnl_vector<double> curSample = mean + cur_std * curMode;
+
+      // fill-in the vtkpoints structure to perform warping for dense reconstruction of the current sample
+      vtkSmartPointer< vtkPoints > curSamplePts = vtkSmartPointer< vtkPoints >::New();
+      std::vector<Point3> curSparse;
+      for(unsigned int i = 0; i < this->numberOfParticles; i++)
+      {
+        double pt[3];
+        for (unsigned int d = 0 ; d < Dimension; d++)
+            pt[d] = curSample(i*Dimension + d);
+
+        Point3 p({pt[0], pt[1], pt[2]});
+
+        curSamplePts->InsertNextPoint(pt);
+        curSparse.push_back(p);
+      }
+
+      Mesh curDense = getMesh(transform, curSparse);
+
+      std::string outfilename = cur_path + "/" + basename + "_dense.vtk";
+      std::cout << "Writing: " << outfilename << std::endl;
+      curDense.write(outfilename);
+
+      vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
+      vertices->DeepCopy(curDense.getVTKMesh()->GetPoints());
+
+      std::string ptsfilename = cur_path + "/" + basename + "_dense.particles";
+      Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
+
+      ptsfilename = cur_path + "/" + basename + "_sparse.particles";
+      Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
+    }
   }
 }
 
