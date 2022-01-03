@@ -481,14 +481,64 @@ std::string Viewer::get_displayed_feature_map()
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape)
 {
-
   this->visible_ = true;
-
   this->shape_ = shape;
 
-  this->meshes_ = shape->get_meshes(this->visualizer_->get_display_mode());
+  vector< vtkSmartPointer<vtkTransform> > mesh_transforms;
 
-  cout << "get_superimpose_surfaces: " << this->visualizer_->get_superimpose_surfaces() << std::endl;
+  if (!this->visualizer_->get_superimpose_surfaces())
+  {
+    this->meshes_ = shape->get_meshes(this->visualizer_->get_display_mode());
+
+    for (size_t i = 0; i < this->meshes_.meshes().size(); ++i)
+    {
+      mesh_transforms.push_back(this->get_transform(this->visualizer_->get_alignment_domain(), i));
+    }
+  }
+  else
+  {
+    MeshGroup groomed_meshes = shape->get_meshes(Visualizer::MODE_GROOMED_C);
+    size_t nb_meshes_groom = groomed_meshes.meshes().size();
+
+    MeshGroup reconstructed_meshes = shape->get_meshes(Visualizer::MODE_RECONSTRUCTION_C);
+    size_t nb_meshes_reconstructed = reconstructed_meshes.meshes().size();
+
+    this->meshes_ = MeshGroup(nb_meshes_groom + nb_meshes_reconstructed);
+
+    for (size_t i = 0; i < nb_meshes_groom; ++i)
+    {
+      this->meshes_.set_mesh(i, groomed_meshes.meshes()[i]);
+
+      auto transfo = vtkSmartPointer<vtkTransform>::New();
+      if (this->visualizer_->get_center())
+        transfo = shape->get_alignment(i);
+      mesh_transforms.push_back(transfo);
+    }
+
+    for (size_t i = 0; i < nb_meshes_reconstructed; ++i)
+    {
+      this->meshes_.set_mesh(nb_meshes_groom+i, reconstructed_meshes.meshes()[i]);
+
+      auto procruste_transfo = shape->get_procrustest_transform(i);
+      if (procruste_transfo)
+      {
+        vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
+        procruste_transfo_inv->DeepCopy(procruste_transfo);
+        procruste_transfo_inv->Inverse();
+
+        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+        vtkMatrix4x4::Multiply4x4(procruste_transfo_inv->GetMatrix(), shape->get_reconstruction_transform(i)->GetMatrix(), matrix);
+
+        auto transfo = vtkSmartPointer<vtkTransform>::New();
+        transfo->SetMatrix(matrix);
+        mesh_transforms.push_back(transfo);
+      }
+      else
+      {
+        mesh_transforms.push_back(shape->get_reconstruction_transform(i));
+      }
+    }
+  }
 
   if (!this->meshes_.valid() && this->loading_displayed_) {
     // no need to proceed
@@ -548,7 +598,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      auto transform = this->get_transform(this->visualizer_->get_alignment_domain(), i);
+      auto transform = mesh_transforms[i];
       if (Viewer::is_reverse(transform)) { // if it's been reflected we need to reverse
         vtkSmartPointer<vtkReverseSense> reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
         reverse_filter->SetInputData(poly_data);
@@ -676,14 +726,83 @@ void Viewer::update_points()
   }
 
   Eigen::VectorXd correspondence_points;
+  Eigen::VectorXd added_points;
+
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
     correspondence_points = this->shape_->get_global_correspondence_points_for_display();
+
+    auto procruste_transfo = this->shape_->get_procrustest_transform();
+    if (procruste_transfo && this->visualizer_->get_center())
+    {
+      vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
+      procruste_transfo_inv->DeepCopy(procruste_transfo);
+      procruste_transfo_inv->Inverse();
+
+      for (int j = 0; j < correspondence_points.size(); j += 3)
+      {
+        double p[3];
+        p[0] = correspondence_points[j + 0];
+        p[1] = correspondence_points[j + 1];
+        p[2] = correspondence_points[j + 2];
+        double *pt = procruste_transfo_inv->TransformPoint(p);
+        correspondence_points[j + 0] = pt[0];
+        correspondence_points[j + 1] = pt[1];
+        correspondence_points[j + 2] = pt[2];
+      }
+    }
   }
   else {
     correspondence_points = this->shape_->get_local_correspondence_points();
+    if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C &&
+        this->visualizer_->get_superimpose_surfaces())
+    {
+      // Add reconstructed points (supperposition)
+      added_points = this->shape_->get_global_correspondence_points_for_display();
+
+      auto procruste_transfo = this->shape_->get_procrustest_transform();
+      if (procruste_transfo /* && this->visualizer_->get_center() */)
+      {
+        vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
+        procruste_transfo_inv->DeepCopy(procruste_transfo);
+        procruste_transfo_inv->Inverse();
+
+        for (int j = 0; j < added_points.size(); j += 3)
+        {
+          double p[3];
+          p[0] = added_points[j + 0];
+          p[1] = added_points[j + 1];
+          p[2] = added_points[j + 2];
+          double *pt = procruste_transfo_inv->TransformPoint(p);
+          added_points[j + 0] = pt[0];
+          added_points[j + 1] = pt[1];
+          added_points[j + 2] = pt[2];
+        }
+      }
+      
+
+      // TODO Transform
+      if (this->visualizer_->get_center()) {
+        auto align_transform = this->shape_->get_alignment(this->visualizer_->get_alignment_domain());
+        vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+        transform->DeepCopy(align_transform);
+        transform->Inverse();
+        for (int j = 0; j < added_points.size(); j += 3) {
+          double p[3];
+          p[0] = added_points[j + 0];
+          p[1] = added_points[j + 1];
+          p[2] = added_points[j + 2];
+          double* pt = transform->TransformPoint(p);
+          added_points[j + 0] = pt[0];
+          added_points[j + 1] = pt[1];
+          added_points[j + 2] = pt[2];
+        }
+      }
+    }
   }
 
   int num_points = correspondence_points.size() / 3;
+  int num_added_points = added_points.size() / 3;
+  int num_total_points = num_points + num_added_points;
 
   vtkFloatArray* scalars =
     (vtkFloatArray*) (this->glyph_point_set_->GetPointData()->GetScalars());
@@ -700,10 +819,10 @@ void Viewer::update_points()
     this->glyph_mapper_->SetScalarRange(0.0, (double) num_points + 1.0);
 
     this->glyph_points_->Reset();
-    this->glyph_points_->SetNumberOfPoints(num_points);
+    this->glyph_points_->SetNumberOfPoints(num_total_points);
 
     scalars->Reset();
-    scalars->SetNumberOfTuples(num_points);
+    scalars->SetNumberOfTuples(num_total_points);
 
     unsigned int idx = 0;
     for (int i = 0; i < num_points; i++) {
@@ -718,6 +837,17 @@ void Viewer::update_points()
       double z = correspondence_points[idx++];
 
       this->glyph_points_->InsertPoint(i, x, y, z);
+    }
+
+    idx = 0;
+    for (int i = 0; i < num_added_points; i++) {
+      scalars->InsertValue(i+num_points, i);
+      
+      double x = added_points[idx++];
+      double y = added_points[idx++];
+      double z = added_points[idx++];
+
+      this->glyph_points_->InsertPoint(i+num_points, x, y, z);
     }
   }
   else {

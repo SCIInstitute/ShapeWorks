@@ -612,9 +612,11 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain)
 {
-  auto transforms = this->subject_->get_procrustes_transforms();
-  if (domain < transforms.size()) {
-    return ProjectUtils::convert_transform(transforms[domain]);
+  if (this->subject_) {
+    auto transforms = this->subject_->get_procrustes_transforms();
+    if (domain < transforms.size()) {
+      return ProjectUtils::convert_transform(transforms[domain]);
+    }
   }
   return nullptr;
 }

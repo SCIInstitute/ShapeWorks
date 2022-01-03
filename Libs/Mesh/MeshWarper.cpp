@@ -487,13 +487,13 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   // Throw away interior tet-vertices, keep weights and indices of boundary
   Eigen::VectorXi I, J;
   igl::remove_unreferenced(TV.rows(), TF, I, J);
-  std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) {
+  /*std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) {
       a = I(a);
     });
   std::for_each(b.data(), b.data() + b.size(), [&I](int& a) {
       a = I(a);
     });
-  igl::slice(Eigen::MatrixXd(TV), J, 1, TV);
+  igl::slice(Eigen::MatrixXd(TV), J, 1, TV);*/
   igl::slice(Eigen::MatrixXd(W), J, 1, W);
   return true;
 }
