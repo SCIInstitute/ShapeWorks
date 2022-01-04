@@ -21,6 +21,7 @@ public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
+  enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -38,7 +39,7 @@ public:
   MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
-  Mesh& write(const std::string &pathname);
+  Mesh& write(const std::string &pathname, bool binaryFile = false);
 
   /// determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)
   Mesh& coverage(const Mesh& otherMesh, bool allowBackIntersections = true,
@@ -115,6 +116,9 @@ public:
 
   /// computes and adds curvature (principal (default) or gaussian or mean)
   Field curvature(const CurvatureType type = Principal);
+
+  /// applies subdivision filter (butterfly (default) or loop)
+  Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
