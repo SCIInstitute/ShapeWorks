@@ -3,13 +3,18 @@
 #include "ParticleShapeStatistics.h"
 #include "Utils.h"
 
-#include <vtkFloatArray.h>
-#include <vtkDoubleArray.h>
 #include <vtkKdTreePointLocator.h>
 
 namespace shapeworks {
 
-vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& sparsePath)
+template<class TransformType>
+ReconstructSurface<TransformType>::ReconstructSurface(const std::vector<std::string> &localPointsFiles)
+{
+  this->localPointsFiles = localPointsFiles;
+}
+
+template<class TransformType>
+vtkSmartPointer<vtkPoints> ReconstructSurface<TransformType>::setSparseMean(const std::string& sparsePath)
 {
   int nPoints = 0;
   std::ifstream ptsIn0(sparsePath.c_str());
@@ -30,7 +35,8 @@ vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& 
   return sparsePoints;
 }
 
-std::vector<bool> ReconstructSurface::setGoodPoints(const std::string& pointsPath)
+template<class TransformType>
+std::vector<bool> ReconstructSurface<TransformType>::setGoodPoints(const std::string& pointsPath)
 {
   std::ifstream ptsIn(pointsPath.c_str());
   std::vector<bool> goodPoints;
@@ -58,7 +64,8 @@ std::vector<bool> ReconstructSurface::setGoodPoints(const std::string& pointsPat
   return goodPoints;
 }
 
-double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
+template<class TransformType>
+double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
 {
   int K = 6; // hexagonal ring - one jump
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
@@ -102,9 +109,9 @@ double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints po
   return avgDist;
 }
 
-template<class T>
-void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, typename T::Pointer transform, Mesh::MeshPoints& mappedCorrespondences,
-                                      double& rms, double& rms_wo_mapping, double& maxmDist)
+template<class TransformType>
+void ReconstructSurface<TransformType>::CheckMapping(TransformType transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints,
+                                                     Mesh::MeshPoints& mappedCorrespondences, double& rms, double& rms_wo_mapping, double& maxmDist)
 {
   // source should be warped to the target
   rms = 0.0;
@@ -160,8 +167,8 @@ void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshP
   rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
 }
 
-template<class T>
-void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh)
+template<class TransformType>
+void ReconstructSurface<TransformType>::generateWarpedMeshes(TransformType transform, vtkSmartPointer<vtkPolyData>& outputMesh)
 {
   vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
   vertices->DeepCopy(outputMesh->GetPoints());
@@ -184,8 +191,8 @@ void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtk
   outputMesh->Modified();
 }
 
-template<class T>
-Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Point3> localPoints)
+template<class TransformType>
+Mesh ReconstructSurface<TransformType>::getMesh(TransformType transform, std::vector<Point3> localPoints)
 {
   if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
 
@@ -247,15 +254,15 @@ Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Poin
   CheckMapping(this->sparseMean, subjectPoints, transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
-  denseShape->DeepCopy(this->denseMean.getVTKMesh());
+  denseShape->DeepCopy(this->denseMean);
   generateWarpedMeshes(transform, denseShape);
   return Mesh(denseShape);
 }
 
-std::vector<std::vector<Point3>> ReconstructSurface::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
+template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
 {
   std::vector<std::vector<Point3>> localPoints;
-  this->localPointsFiles = localPointsFiles;
 
   for (int i=0; i<this->localPointsFiles.size(); i++)
   {
@@ -268,7 +275,8 @@ std::vector<std::vector<Point3>> ReconstructSurface::setLocalPointsFiles(const s
   return localPoints;
 }
 
-std::vector<std::vector<Point3>> ReconstructSurface::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
+template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
 {
   std::vector<std::vector<Point3>> worldPoints;
   this->worldPointsFiles = worldPointsFiles;
@@ -284,12 +292,12 @@ std::vector<std::vector<Point3>> ReconstructSurface::setWorldPointsFiles(const s
   return worldPoints;
 }
 
-template<class T>
-void ReconstructSurface::surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
+template<class TransformType>
+void ReconstructSurface<TransformType>::surface(TransformType transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
 {
   double maxAngleDegrees = this->normalAngle * (180.0 / Pi);
-  
-  this->denseMean = Mesh(denseFile);
+
+  this->denseMean = Mesh(denseFile).getVTKMesh();
   this->sparseMean = setSparseMean(sparseFile);
   this->goodPoints = setGoodPoints(goodPointsFile);
 
@@ -318,14 +326,14 @@ void ReconstructSurface::surface(typename T::Pointer transform, std::string dens
   }
 }
 
-template<class T>
-void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
+template<class TransformType>
+void ReconstructSurface<TransformType>::samplesAlongPCAModes(TransformType transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
 {
   int domainsPerShape = 1;
   const unsigned int Dimension = 3;
   ParticleShapeStatistics shapeStats;
 
-  this->denseMean = Mesh(denseFile);
+  this->denseMean = Mesh(denseFile).getVTKMesh();
   this->sparseMean = setSparseMean(sparseFile);
   this->goodPoints = setGoodPoints(goodPointsFile);
 

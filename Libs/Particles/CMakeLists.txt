@@ -28,7 +28,7 @@ target_include_directories(Particles PUBLIC
   )
 
 target_link_libraries(Particles PUBLIC
-  Analyze
+  Mesh
   tinyxml
   Eigen3::Eigen
   )
