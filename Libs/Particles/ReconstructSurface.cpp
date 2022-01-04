@@ -303,86 +303,6 @@ std::vector<std::vector<Point3>> ReconstructSurface::setWorldPointsFiles(const s
   return worldPoints;
 }
 
-void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles)
-{
-  double maxAngleDegrees = normalAngle * (180.0 / Pi);
-  std::vector<std::vector<Point3>> worldPoints;
-  setDistanceTransformFiles(distanceTransformFiles);
-  std::vector<std::vector<Point3>> localPoints = setLocalPointsFiles(localPointsFiles);
-
-  if(this->worldPointsFiles.size() == 0)
-  {
-    // TODO
-  }
-
-  else
-  {
-    worldPoints = setWorldPointsFiles(worldPointsFiles);
-
-    // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
-    Point3 originLocal;
-    Point3 originWorld;
-
-    Point3 minLocal;
-    Point3 maxLocal;
-
-    // the bounding box of the global points
-    Point3 minWorld;
-    Point3 maxWorld;
-
-    // compute the center of mass for both local and global points
-    Utils::computeCenterOfMassForShapeEnsemble(localPoints,  originLocal);
-    Utils::computeCenterOfMassForShapeEnsemble(worldPoints, originWorld);
-
-    // find the bounding box of both local and global points
-    Utils::getBoundingBoxForShapeEnsemble(localPoints,
-                                          minLocal[0], minLocal[1], minLocal[2],
-                                          maxLocal[0], maxLocal[1], maxLocal[2]);
-    Utils::getBoundingBoxForShapeEnsemble(worldPoints,
-                                          minWorld[0], minWorld[1], minWorld[2],
-                                          maxWorld[0], maxWorld[1], maxWorld[2]);
-
-    // compute the image origin (corner) based on the center of mass
-    Point3 widthLocal = maxLocal - minLocal;
-    Point3 widthWorld = maxWorld - minWorld;
-    originLocal -= widthLocal/2.0;
-    originWorld -= widthWorld/2.0;
-
-    Image dt(this->distanceTransformFiles[0]);
-    Point3 origin_dt = dt.origin();
-    Point3 offset = origin_dt - originLocal;
-
-    // adjust global origin based on local offset
-    originWorld += offset;
-
-    dt.setOrigin(originWorld);
-  }
-
-  // write global points to be use for pca modes and also local points
-  int mkdirStatus;
-  std::string worldPointsPath = this->outPath + "/global_particles";
-  std::string localPointsPath = this->outPath + "/local_particles";
-
-#ifdef WIN32
-  mkdirStatus = _mkdir(worldPointsPath.c_str());
-  mkdirStatus = _mkdir(localPointsPath.c_str());
-#else
-  // mkdirStatus = mkdir(worldPointsPath.c_str(), S_IRWXU); // check on this
-  // mkdirStatus = mkdir(localPointsPath.c_str(), S_IRWXU); // check on this
-#endif
-
-  for (int i=0; i<this->worldPointsFiles.size(); i++)
-  {
-    std::string curfilename = worldPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_global.particles";
-    Utils::writeSparseShape((char*)curfilename.c_str(), worldPoints[i]);
-
-    std::string curfilename_local = localPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_local.particles";
-    Utils::writeSparseShape((char*)curfilename_local.c_str(), localPoints[i]);
-  }
-
-  vtkSmartPointer<vtkPolyData> denseMean = getDenseMean(localPoints, worldPoints, this->distanceTransformFiles);
-}
-
 Mesh::MeshPoints ReconstructSurface::convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin)
 {
   Mesh::MeshPoints points = Mesh::MeshPoints::New();
@@ -1091,6 +1011,149 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
       ptsfilename = cur_path + "/" + basename + "_sparse.particles";
       Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
     }
+  }
+}
+
+void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles)
+{
+  double maxAngleDegrees = normalAngle * (180.0 / Pi);
+  std::vector<std::vector<Point3>> worldPoints;
+  setDistanceTransformFiles(distanceTransformFiles);
+  std::vector<std::vector<Point3>> localPoints = setLocalPointsFiles(localPointsFiles);
+
+  if(this->worldPointsFiles.size() == 0)
+  {
+    // if no world points are given, they will be estimated using procrustes
+    // define mean sparse shape -- this is considered as target points in the warp
+    std::cout << "Computing mean sparse shape .... \n ";
+
+    PointType commonCenter;
+    global_pts = computeSparseMean(local_pts, commonCenter, params.do_procrustes, params.do_procrustes_scaling);
+  }
+
+  else
+  {
+    worldPoints = setWorldPointsFiles(worldPointsFiles);
+
+    // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
+    Point3 originLocal;
+    Point3 originWorld;
+
+    Point3 minLocal;
+    Point3 maxLocal;
+
+    // the bounding box of the global points
+    Point3 minWorld;
+    Point3 maxWorld;
+
+    // compute the center of mass for both local and global points
+    Utils::computeCenterOfMassForShapeEnsemble(localPoints,  originLocal);
+    Utils::computeCenterOfMassForShapeEnsemble(worldPoints, originWorld);
+
+    // find the bounding box of both local and global points
+    Utils::getBoundingBoxForShapeEnsemble(localPoints,
+                                          minLocal[0], minLocal[1], minLocal[2],
+                                          maxLocal[0], maxLocal[1], maxLocal[2]);
+    Utils::getBoundingBoxForShapeEnsemble(worldPoints,
+                                          minWorld[0], minWorld[1], minWorld[2],
+                                          maxWorld[0], maxWorld[1], maxWorld[2]);
+
+    // compute the image origin (corner) based on the center of mass
+    Point3 widthLocal = maxLocal - minLocal;
+    Point3 widthWorld = maxWorld - minWorld;
+    originLocal -= widthLocal/2.0;
+    originWorld -= widthWorld/2.0;
+
+    Image dt(this->distanceTransformFiles[0]);
+    Point3 origin_dt = dt.origin();
+    Point3 offset = origin_dt - originLocal;
+
+    // adjust global origin based on local offset
+    originWorld += offset;
+
+    dt.setOrigin(originWorld);
+  }
+
+  // write global points to be use for pca modes and also local points
+  int mkdirStatus;
+  std::string worldPointsPath = this->outPath + "/global_particles";
+  std::string localPointsPath = this->outPath + "/local_particles";
+
+#ifdef WIN32
+  mkdirStatus = _mkdir(worldPointsPath.c_str());
+  mkdirStatus = _mkdir(localPointsPath.c_str());
+#else
+  // mkdirStatus = mkdir(worldPointsPath.c_str(), S_IRWXU); // check on this
+  // mkdirStatus = mkdir(localPointsPath.c_str(), S_IRWXU); // check on this
+#endif
+
+  for (int i=0; i<this->worldPointsFiles.size(); i++)
+  {
+    std::string curfilename = worldPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_global.particles";
+    Utils::writeSparseShape((char*)curfilename.c_str(), worldPoints[i]);
+
+    std::string curfilename_local = localPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_local.particles";
+    Utils::writeSparseShape((char*)curfilename_local.c_str(), localPoints[i]);
+  }
+
+  vtkSmartPointer<vtkPolyData> denseMean = getDenseMean(localPoints, worldPoints, this->distanceTransformFiles);
+
+  // write output
+  writeMeanInfo(this->outPrefix);
+
+  // write out good and bad particles for each subject file
+  std::string local_good_bad_path = this->outPath + "/local_good_bad";
+  std::string global_good_bad_path = this->outPath + "/global_good_bad";
+#ifdef WIN32
+  mkdirStatus = _mkdir(local_good_bad_path.c_str());
+  mkdirStatus = _mkdir(global_good_bad_path.c_str());
+#else
+  mkdirStatus = mkdir(local_good_bad_path.c_str(), S_IRWXU);
+  mkdirStatus = mkdir(global_good_bad_path.c_str(), S_IRWXU);
+#endif
+
+  std::vector<bool> goodPoints = GoodPoints();
+  for (unsigned int shapeNo = 0; shapeNo < this->worldPointsFiles.size(); shapeNo++)
+  {
+    std::string outfilenameGood;
+    std::string outfilenameBad;
+    std::ofstream ofsG, ofsB;
+
+    outfilenameGood = local_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_local-good.particles";
+    outfilenameBad  = local_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_local-bad.particles";
+
+    ofsG.open(outfilenameGood.c_str());
+    ofsB.open(outfilenameBad.c_str());
+
+    PointArrayType curShape_local = localPoints[shapeNo];
+    for (unsigned int ii = 0 ; ii < this->numberOfParticles; ii++)
+    {
+      auto pt = curShape_local[ii];
+      if(goodPoints[ii])
+          ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+      else
+          ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+    ofsG.close();
+    ofsB.close();
+
+    outfilenameGood = global_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_global-good.particles";
+    outfilenameBad  = global_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(this->localPointsFiles[shapeNo])) + "_global-bad.particles";
+
+    ofsG.open(outfilenameGood.c_str());
+    ofsB.open(outfilenameBad.c_str());
+
+    PointArrayType curShape_global = global_pts[shapeNo];
+    for (unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
+    {
+        auto pt = curShape_global[ii];
+        if(goodPoints[ii])
+            ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        else
+            ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+    ofsG.close();
+    ofsB.close();
   }
 }
 
