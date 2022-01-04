@@ -307,21 +307,8 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
 
 Mesh& Mesh::remeshPercent(double percentage, double adaptivity)
 {
-  FEVTKimport import;
-  std::shared_ptr<FEMesh> meshFE(import.Load(this->mesh));
-
-  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
-
-  FECVDDecimationModifier cvd;
-  cvd.m_pct = percentage;
-  cvd.m_gradient = 1;
-  meshFE = std::shared_ptr<FEMesh>(cvd.Apply(meshFE.get()));
-
-  FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFE);
-
-  this->invalidateLocators();
-  return *this;
+  int numVertices = mesh->GetNumberOfPoints() * percentage;
+  return remesh(numVertices, adaptivity);
 }
 
 Mesh &Mesh::invertNormals()

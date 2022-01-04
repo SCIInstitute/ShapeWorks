@@ -1229,7 +1229,7 @@ void MeshToDT::buildParser()
   parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
   parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
   parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
-  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
+  parser.add_option("--pad").action("store").type("double").set_default(1.0).help("Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
