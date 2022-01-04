@@ -115,7 +115,7 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
   }
 }
 
-Mesh& Mesh::write(const std::string &pathname)
+Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 {
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
@@ -126,7 +126,10 @@ Mesh& Mesh::write(const std::string &pathname)
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
-      writer->SetFileTypeToBinary();
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }
@@ -135,6 +138,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetDataModeToBinary();
+      else
+        writer->SetDataModeToAscii();
       writer->Update();
       return *this;
     }
@@ -146,6 +153,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }
@@ -168,6 +179,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }

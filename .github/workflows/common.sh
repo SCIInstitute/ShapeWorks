@@ -54,6 +54,7 @@ echo "CONDA_HASH = ${CONDA_HASH}"
 CONDA_FILE="conda-${PLATFORM}-${CONDA_HASH}.${SUFFIX}"
 
 DEP_HASH=`sha1sum build_dependencies.sh | awk '{ print $1 }'`
+DEP_HASH="${CONDA_HASH}_${DEP_HASH}"
 echo "DEP_HASH = ${DEP_HASH}"
 DEP_FILE="dep-${PLATFORM}-${DEP_HASH}.${SUFFIX}"
 

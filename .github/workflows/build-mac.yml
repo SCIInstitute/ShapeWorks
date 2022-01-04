@@ -95,7 +95,7 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts

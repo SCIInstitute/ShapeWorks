@@ -14,6 +14,11 @@ TEST(pythonTests, transformTest)
   run_use_case("transform.py");
 }
 
+TEST(pythonTests, meshwriteTest)
+{
+  run_use_case("meshwrite.py");
+}
+
 TEST(pythonTests, subdivisionTest)
 {
   run_use_case("subdivision.py");
