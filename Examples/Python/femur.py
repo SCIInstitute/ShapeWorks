@@ -90,6 +90,7 @@ def Run_Pipeline(args):
         names = []
         mesh_list = []
         reflections = [] # save in case grooming images
+        COM_translations = [] # save in case grooming images
         for mesh_filename in mesh_files:
             print('\nLoading: ' + mesh_filename)
             # Get shape name
@@ -98,11 +99,6 @@ def Run_Pipeline(args):
             # Get mesh
             mesh = sw.Mesh(mesh_filename)
             mesh_list.append(mesh)
-            """
-            Grooming Step 1: Smooth and remeshing
-            """
-            print('Smoothing and remeshing: ' + name)
-            mesh.smooth(iterations=10).remesh(numVertices=10000, adaptivity=1.0)
             """
             Grooming Step 2: Get reflection transform - We have left and right femurs, 
             so we reflect the non-reference side meshes so that all of the femurs can be aligned.
@@ -113,6 +109,19 @@ def Run_Pipeline(args):
                 reflection[0][0] = -1 # Reflect across X
                 mesh.applyTransform(reflection)
             reflections.append(reflection)
+            """
+            Grooming Step 1: Smooth and remeshing
+            """
+            print('Smoothing and remeshing: ' + name)
+            mesh.smooth(iterations=10).remesh(numVertices=10000, adaptivity=1.0)
+            """
+            Grooming Step 3: Centering
+            """
+            print("Centering: " + name)
+            translation = np.eye(4) # Identity
+            translation[:3,-1] = -mesh.center()
+            mesh.applyTransform(translation)
+            COM_translations.append(translation)
 
         """
         Grooming Step 3: Select a reference
@@ -121,11 +130,7 @@ def Run_Pipeline(args):
         """
         ref_index = sw.find_reference_mesh_index(mesh_list)
         # Make a copy of the reference mesh
-        mesh_list[ref_index].write(groom_dir + 'reference.vtk')
-        ref_mesh = sw.Mesh(groom_dir + 'reference.vtk')
-        # Center it
-        ref_center = ref_mesh.center()
-        ref_mesh.translate(-ref_center).write(groom_dir + 'reference.vtk')
+        ref_mesh = mesh_list[ref_index].copy().write(groom_dir + 'reference.vtk')
         ref_name = names[ref_index]
         print("\nReference found: " + ref_name)
 
@@ -145,7 +150,7 @@ def Run_Pipeline(args):
             Grooming Step 5: Clip meshes
             """
             print('Clipping: ' + name)
-            mesh.clip([-1,-1,-35], [1,-1,-35], [-1,1,-35])
+            mesh.clip([-1,-1,-10], [1,-1,-10], [-1,1,-10])
            
         # Write groomed meshes
         print("\nWriting groomed meshes.")
@@ -171,16 +176,19 @@ def Run_Pipeline(args):
                 image_list.append(image)
             # Get bounding box
             bounding_box = sw.MeshUtils.boundingBox(mesh_list)
-            for image, name, reflection, rigid_transform in zip(image_list, names, reflections, rigid_transforms):
+            for image, name, reflection, translation, rigid_transform in zip(image_list, names, reflections, COM_translations, rigid_transforms):
                 # Apply transforms to images
                 print("\nReflecting image: " + name)
                 image.applyTransform(reflection)
-                print("Aligning image: " + name)
-                new_origin = np.matmul(rigid_transform, np.append(image.origin(),1))[:-1]
-                image.setOrigin(new_origin)
-                image.applyTransform(rigid_transform, meshTransform=True)
+                print("Centering and aligning image: " + name)
+                transform = np.matmul(rigid_transform, translation)             
+                new_origin = np.matmul(transform, np.append(image.origin(),1))[:-1]
+                image.applyTransform(transform, new_origin, 
+                                     image.dims(), image.spacing(),
+                                     image.coordsys(), sw.InterpolationType.Linear,
+                                     meshTransform=True)
                 print('Cropping image: ' + name)
-                # image.crop(bounding_box)
+                image.crop(bounding_box)
 
             # Write images
             print("\nWriting groomed images.")
