@@ -3,8 +3,8 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-The femur data set is comprised of segmented meshes of femurs and corresponding CT
-images that are not segmented.
+The femur data set is comprised of femur meshes and corresponding 
+unsegmented CT images.
 The full images can be carried through every step of grooming.
 """
 import os
@@ -20,7 +20,7 @@ def Run_Pipeline(args):
     Step 1: EXTRACT DATA
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
-    This data is comprised of femur meshes and corresponding unsegmented hip CT scans.
+    This data is comprised of femur meshes and corresponding hip CT scans.
     """
     dataset_name = "femur-v0"
     output_directory = "Output/femur/"
@@ -66,11 +66,12 @@ def Run_Pipeline(args):
         """
         Step 2: GROOMING
         The required grooming steps are:
-        1. Apply smoothing and remeshing
-        2. Reflect if neccesary
-        3. Select reference mesh from clipped meshes and center it
-        4. Rigidly align mesh to reference
-        5. Clip meshes
+        1. Reflect if neccesary
+        2. Apply smoothing and remeshing
+        3. Centering
+        4. Select reference mesh
+        5. Rigidly align mesh to reference
+        6. Clip meshes
         Option to groom corresponding images (includes applying transforms)
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -85,12 +86,12 @@ def Run_Pipeline(args):
         ref_side = "L" # chosen so reflection happens in tiny test 
 
         """
-        To begin grooming, we need to loop over the files and load the meshes and images
+        To begin grooming, we loop over the files and load the meshes
         """
         names = []
         mesh_list = []
         reflections = [] # save in case grooming images
-        COM_translations = [] # save in case grooming images
+        center_translations = [] # save in case grooming images
         for mesh_filename in mesh_files:
             print('\nLoading: ' + mesh_filename)
             # Get shape name
@@ -100,8 +101,9 @@ def Run_Pipeline(args):
             mesh = sw.Mesh(mesh_filename)
             mesh_list.append(mesh)
             """
-            Grooming Step 2: Get reflection transform - We have left and right femurs, 
-            so we reflect the non-reference side meshes so that all of the femurs can be aligned.
+            Grooming Step 1: Get reflection transform - We have left and 
+            right femurs, so we reflect the non-reference side meshes 
+            so that all of the femurs can be aligned.
             """
             reflection = np.eye(4) # Identity
             if ref_side in name:
@@ -119,12 +121,12 @@ def Run_Pipeline(args):
             """
             print("Centering: " + name)
             translation = np.eye(4) # Identity
-            translation[:3,-1] = -mesh.center()
+            translation[:3,-1] = -mesh.center() # Translate center to (0,0,0)
             mesh.applyTransform(translation)
-            COM_translations.append(translation)
+            center_translations.append(translation)
 
         """
-        Grooming Step 3: Select a reference
+        Grooming Step 4: Select a reference
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
@@ -137,10 +139,10 @@ def Run_Pipeline(args):
         rigid_transforms = [] # save in case grooming images
         for mesh, name in zip(mesh_list, names):
             """
-            Grooming Step 4: Rigid alignment
+            Grooming Step 5: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
-            print('Aligning ' + name + ' to ' + ref_name)
+            print('\nAligning ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
@@ -150,7 +152,7 @@ def Run_Pipeline(args):
             Grooming Step 5: Clip meshes
             """
             print('Clipping: ' + name)
-            mesh.clip([-1,-1,-10], [1,-1,-10], [-1,1,-10])
+            mesh.clip([-1,-1,-30], [1,-1,-30], [-1,1,-30])
            
         # Write groomed meshes
         print("\nWriting groomed meshes.")
@@ -164,32 +166,41 @@ def Run_Pipeline(args):
             # Load corresponding images
             print("\nGrooming images:")
             image_list = []
-            for name, reflection, rigid_transform in zip(names, reflections, rigid_transforms):
+            for name, reflection, translation in zip(names, reflections, center_translations):
                 # Get corresponding image path
                 prefix = name.split("_")[0]
                 for index in range(len(image_files)):
                     if prefix in image_files[index]:
                         corresponding_image_file = image_files[index]
                         break
-                print('Loading image: ' + corresponding_image_file)
+                print('\nLoading image: ' + corresponding_image_file)
                 image = sw.Image(corresponding_image_file)
+                # Apply reflection to image
+                print("Reflecting image: " + name)
+                image.applyTransform(reflection)
+                # Apply centering to image
+                print("Centering image: " + name)
+                image.setOrigin(image.origin() + translation[:3,-1])
                 image_list.append(image)
+            # Get reference image
+            ref_image = image_list[ref_index].copy()
+            ref_image.resample([1,1,1], sw.InterpolationType.Linear).write(groom_dir + 'reference.nrrd')
             # Get bounding box
             bounding_box = sw.MeshUtils.boundingBox(mesh_list)
-            for image, name, reflection, translation, rigid_transform in zip(image_list, names, reflections, COM_translations, rigid_transforms):
-                # Apply transforms to images
-                print("\nReflecting image: " + name)
-                image.applyTransform(reflection)
-                print("Centering and aligning image: " + name)
-                transform = np.matmul(rigid_transform, translation)             
-                new_origin = np.matmul(transform, np.append(image.origin(),1))[:-1]
-                image.applyTransform(transform, new_origin, 
-                                     image.dims(), image.spacing(),
-                                     image.coordsys(), sw.InterpolationType.Linear,
-                                     meshTransform=True)
+            for image, name, rigid_transform in zip(image_list, names, rigid_transforms):
+                # Align image
+                print("\nAligning image: " + name)
+                image.applyTransform(rigid_transform,
+                                     ref_image.origin(),  ref_image.dims(),
+                                     ref_image.spacing(), ref_image.coordsys(),
+                                     sw.InterpolationType.Linear, meshTransform=True)
+                # Crop image
                 print('Cropping image: ' + name)
-                image.crop(bounding_box)
-
+                try:
+                    image.crop(bounding_box)
+                except:
+                    print(image)
+                    input(bounding_box)
             # Write images
             print("\nWriting groomed images.")
             image_files = sw.utils.save_images(groom_dir + 'images/', image_list,
@@ -211,26 +222,27 @@ def Run_Pipeline(args):
         os.makedirs(point_dir)
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
-        "number_of_particles": 512,
+        "number_of_particles": 1024,
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 1000,
-        "optimization_iterations": 500,
+        "iterations_per_split": 4000,
+        "optimization_iterations": 4000,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "initial_relative_weighting" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "verbosity" : 0,
         "use_statistics_in_init" : 0
     }
+   
      # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
