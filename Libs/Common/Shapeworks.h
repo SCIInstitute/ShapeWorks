@@ -36,6 +36,7 @@ using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
+using PointArray    = std::vector<Point3>;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);

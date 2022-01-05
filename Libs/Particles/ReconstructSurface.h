@@ -26,11 +26,28 @@ public:
 
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
-  Mesh getMesh(std::vector<Point3> localPoints);
+  Mesh getMesh(PointArray localPoints);
+
+  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
+
+  Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
+
+  Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
+
+  vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPts,
+                                            std::vector<PointArray> worldPts, std::vector<std::string> distance_transform);
+
+  void computeDenseMean(std::vector<PointArray> localPts, std::vector<PointArray> worldPts,
+                        std::vector<std::string> distanceTransform);
+
+  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 &commonCenter,
+                                                     bool doProcrustes, bool doProcrustesScaling);
 
   void surface(const std::vector<std::string> localPointsFiles);
 
   void samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles);
+
+  void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
 
   // set operations //
 
@@ -42,35 +59,42 @@ public:
 
   void setNumOfModes(int numOfModes) { this->numOfModes = numOfModes; }
 
-  void setMaxVarianceCaptured(float maxVarianceCaptured) { this->maxVarianceCaptured = maxVarianceCaptured; }
-
   void setNumOfParticles(int numOfParticles) { this->numOfParticles = numOfParticles; }
+
+  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }
 
   void setMaxStdDev(float maxStdDev) { this->maxStdDev = maxStdDev; }
 
-  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }  
+  void setMaxVarianceCaptured(float maxVarianceCaptured) { this->maxVarianceCaptured = maxVarianceCaptured; }
+
+  void setProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
+
+  void setProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
 
 private:
   float normalAngle = Pi/2.0;
   std::vector<std::string> localPointsFiles;
   std::vector<std::string> worldPointsFiles;
+  std::vector<std::string> distanceTransformFiles;
   vtkSmartPointer<vtkPolyData> denseMean;
   Mesh::MeshPoints sparseMean;
   std::vector<bool> goodPoints;
   std::string outPrefix;
   std::string outPath;
   bool denseDone = true;
+  bool doProcrustes;
+  bool doProcrustesScaling;
   int modeIndex;
   int numOfModes;
-  float maxVarianceCaptured;
   int numOfParticles;
-  float maxStdDev;
   int numOfSamplesPerMode;
+  float maxStdDev;
+  float maxVarianceCaptured;
 
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
-  std::vector<std::vector<Point3>> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
-  std::vector<std::vector<Point3>> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
+  std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
+  std::vector<PointArray> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
 
 };
 
