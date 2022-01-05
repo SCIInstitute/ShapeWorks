@@ -61,7 +61,7 @@ def Run_Pipeline(args):
             indices = [0, 1, 2]
         elif args.use_subsample:
             indices = sample_idx
-        mesh_files = sw.data.get_file_list(mesh_directory, ending=".vtk", indices=indices)
+        mesh_files = sw.data.get_file_list(mesh_directory, ending=".ply", indices=indices)
 
     # Else groom the meshes for optimization
     else:
@@ -233,15 +233,15 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 1,
-        "iterations_per_split" : 4000,
-        "optimization_iterations" : 4000,
-        "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
+        "iterations_per_split" : 1000,
+        "optimization_iterations" : 1000,
+        "starting_regularization" : 1000,
+        "ending_regularization" : 10,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 1,
+        "relative_weighting" : 1,
+        "initial_relative_weighting" : 0.01,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
@@ -261,7 +261,7 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 64
-
+    
     # Execute the optimization function on distance transforms
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
         point_dir, mesh_files, parameter_dictionary)
@@ -277,7 +277,8 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
+    
     # Prepare analysis XML
     analyze_xml = point_dir + "/femur_cut_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
+    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
     AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
