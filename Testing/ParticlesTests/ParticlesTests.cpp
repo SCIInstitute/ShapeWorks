@@ -6,6 +6,7 @@
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "ReconstructSurface.h"
 
 using namespace shapeworks;
 
@@ -69,4 +70,11 @@ TEST(ParticlesTests, specificity)
   ParticleSystem particleSystem(filenames);
   const double specificity = ShapeEvaluation::ComputeSpecificity(particleSystem, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
+}
+
+// TODO: Add test
+TEST(ParticlesTests, reconstructsurface)
+{
+  // ReconstructSurface<ThinPlateSplineTransform> reconstructor(subFilenames);
+  // reconstructor.surface(subFilenames[0], subFilenames[1], subFilenames[2]);
 }

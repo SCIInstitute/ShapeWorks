@@ -3,27 +3,20 @@
 #include "ParticleShapeStatistics.h"
 #include "Utils.h"
 
-#include <vtkFloatArray.h>
-#include <vtkDoubleArray.h>
 #include <vtkKdTreePointLocator.h>
 
 namespace shapeworks {
 
-// ReconstructSurface::ReconstructSurface(TransformType transform, InterpType interp)
-// {
-//   if (transform == ThinPlateSplineTransform)
-//   {
-//     this->ifTransform1 = true;
-//   }
-//   else if (transform == RBFSSparseTransform)
-//   {
-//     this->ifTransform2 = true;
-//   }
-//   else
-//     std::invalid_argument("Incorrect transform type");
-// }
+template<class TransformType>
+ReconstructSurface<TransformType>::ReconstructSurface(const std::string &denseFile, const std::string &sparseFile, const std::string &goodPointsFile)
+{
+  this->denseMean = Mesh(denseFile).getVTKMesh();
+  this->sparseMean = setSparseMean(sparseFile);
+  this->goodPoints = setGoodPoints(goodPointsFile);
+}
 
-vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& sparsePath)
+template<class TransformType>
+vtkSmartPointer<vtkPoints> ReconstructSurface<TransformType>::setSparseMean(const std::string& sparsePath)
 {
   int nPoints = 0;
   std::ifstream ptsIn0(sparsePath.c_str());
@@ -44,7 +37,8 @@ vtkSmartPointer<vtkPoints> ReconstructSurface::setSparseMean(const std::string& 
   return sparsePoints;
 }
 
-std::vector<bool> ReconstructSurface::setGoodPoints(const std::string& pointsPath)
+template<class TransformType>
+std::vector<bool> ReconstructSurface<TransformType>::setGoodPoints(const std::string& pointsPath)
 {
   std::ifstream ptsIn(pointsPath.c_str());
   std::vector<bool> goodPoints;
@@ -72,7 +66,8 @@ std::vector<bool> ReconstructSurface::setGoodPoints(const std::string& pointsPat
   return goodPoints;
 }
 
-double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
+template<class TransformType>
+double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
 {
   int K = 6; // hexagonal ring - one jump
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
@@ -116,9 +111,9 @@ double ReconstructSurface::computeAverageDistanceToNeighbors(Mesh::MeshPoints po
   return avgDist;
 }
 
-template<class T>
-void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, typename T::Pointer transform, Mesh::MeshPoints& mappedCorrespondences,
-                                      double& rms, double& rms_wo_mapping, double& maxmDist)
+template<class TransformType>
+void ReconstructSurface<TransformType>::CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints,
+                                                     Mesh::MeshPoints& mappedCorrespondences, double& rms, double& rms_wo_mapping, double& maxmDist)
 {
   // source should be warped to the target
   rms = 0.0;
@@ -174,8 +169,8 @@ void ReconstructSurface::CheckMapping(Mesh::MeshPoints sourcePoints, Mesh::MeshP
   rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
 }
 
-template<class T>
-void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtkSmartPointer<vtkPolyData>& outputMesh)
+template<class TransformType>
+void ReconstructSurface<TransformType>::generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh)
 {
   vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
   vertices->DeepCopy(outputMesh->GetPoints());
@@ -198,8 +193,8 @@ void ReconstructSurface::generateWarpedMeshes(typename T::Pointer transform, vtk
   outputMesh->Modified();
 }
 
-template<class T>
-Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Point3> localPoints)
+template<class TransformType>
+Mesh ReconstructSurface<TransformType>::getMesh(std::vector<Point3> localPoints)
 {
   if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
 
@@ -218,8 +213,8 @@ Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Poin
 
   PointIdType id;
   id = itk::NumericTraits<PointIdType>::Zero;
-  PointSetType::Pointer sourceLandMarks = PointSetType::New();
-  PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+  typename PointSetType::Pointer sourceLandMarks = PointSetType::New();
+  typename PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
   Point3 ps;
   int ns = 0;
   for (int i = 0; i < localPoints.size(); i++)
@@ -237,8 +232,9 @@ Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Poin
   }
 
   id = itk::NumericTraits<PointIdType>::Zero;
-  PointSetType::Pointer targetLandMarks = PointSetType::New();
-  PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
+  typename TransformType::Pointer transform = TransformType::New();
+  typename PointSetType::Pointer targetLandMarks = PointSetType::New();
+  typename PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
   Point3 pt;
   int nt = 0;
   for (int i = 0; i < localPoints.size(); i++)
@@ -258,23 +254,18 @@ Mesh ReconstructSurface::getMesh(typename T::Pointer transform, std::vector<Poin
 
   vtkSmartPointer<vtkPoints> mappedCorrespondences = vtkSmartPointer<vtkPoints>::New();
   double rms, rms_wo_mapping, maxmDist;
-  CheckMapping(this->sparseMean, subjectPoints, transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+  CheckMapping(transform, this->sparseMean, subjectPoints, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
-  denseShape->DeepCopy(this->denseMean.getVTKMesh());
+  denseShape->DeepCopy(this->denseMean);
   generateWarpedMeshes(transform, denseShape);
   return Mesh(denseShape);
 }
 
-void ReconstructSurface::setDistanceTransformFiles(const std::vector<std::string> dtFiles)
-{
-  this->distanceTransformFiles = dtFiles;
-}
-
-std::vector<std::vector<Point3>> ReconstructSurface::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
+template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
 {
   std::vector<std::vector<Point3>> localPoints;
-  this->localPointsFiles = localPointsFiles;
 
   for (int i=0; i<this->localPointsFiles.size(); i++)
   {
@@ -287,7 +278,8 @@ std::vector<std::vector<Point3>> ReconstructSurface::setLocalPointsFiles(const s
   return localPoints;
 }
 
-std::vector<std::vector<Point3>> ReconstructSurface::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
+template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
 {
   std::vector<std::vector<Point3>> worldPoints;
   this->worldPointsFiles = worldPointsFiles;
@@ -803,12 +795,12 @@ void ReconstructSurface::computeDenseMean(std::vector<std::vector<Point>> localP
 
 template<class T>
 void ReconstructSurface::surface(typename T::Pointer transform, std::string denseFile, std::string sparseFile, std::string goodPointsFile)
+template<class TransformType>
+void ReconstructSurface<TransformType>::surface(const std::vector<std::string> localPointsFiles)
 {
   double maxAngleDegrees = this->normalAngle * (180.0 / Pi);
-  
-  this->denseMean = Mesh(denseFile);
-  this->sparseMean = setSparseMean(sparseFile);
-  this->goodPoints = setGoodPoints(goodPointsFile);
+
+  this->localPointsFiles = localPointsFiles;
 
   for (unsigned int i = 0; i < this->localPointsFiles.size(); i++)
   {
@@ -818,7 +810,7 @@ void ReconstructSurface::surface(typename T::Pointer transform, std::string dens
     std::vector<Point3> curSparse;
     Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFiles[i].c_str()));
 
-    Mesh curDense = getMesh(transform, curSparse);
+    Mesh curDense = getMesh(curSparse);
 
     std::string outfilename = this->outPrefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.vtk";
     std::cout << "Writing: " << outfilename << std::endl;
@@ -835,16 +827,14 @@ void ReconstructSurface::surface(typename T::Pointer transform, std::string dens
   }
 }
 
-template<class T>
-void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
+template<class TransformType>
+void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles)
 {
   int domainsPerShape = 1;
   const unsigned int Dimension = 3;
   ParticleShapeStatistics shapeStats;
 
-  this->denseMean = Mesh(denseFile);
-  this->sparseMean = setSparseMean(sparseFile);
-  this->goodPoints = setGoodPoints(goodPointsFile);
+  this->worldPointsFiles = worldPointsFiles;
 
   std::vector<std::vector<Point3>> globalPoints;
   for (unsigned int i = 0; i < this->worldPointsFiles.size(); i++)
@@ -875,9 +865,9 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
   }
   else
   {
-    if (this->numberOfModes > 0)
+    if (this->numOfModes > 0)
     {
-      numberOfModes = std::min(this->numberOfModes, totalNumberOfModes);
+      numberOfModes = std::min(this->numOfModes, totalNumberOfModes);
       std::cout << numberOfModes << " dominant modes are requested to be generated  ..." << std::endl;
     }
     else
@@ -886,7 +876,7 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
       bool found = false;
       for (int n = totalNumberOfModes-1; n >=0; n--)
       {
-        if (percentVarByMode[n] >= this->maximumVarianceCaptured && found==false)
+        if (percentVarByMode[n] >= this->maxVarianceCaptured && found==false)
         {
           numberOfModes = n;
           found = true;
@@ -901,7 +891,7 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
         std::invalid_argument("No dominant modes detected");
       }
     }
-    std::cout << numberOfModes << " dominant modes is found to capture " << this->maximumVarianceCaptured*100 << "% of total variation ..." << std::endl;
+    std::cout << numberOfModes << " dominant modes is found to capture " << this->maxVarianceCaptured*100 << "% of total variation ..." << std::endl;
   }
 
   // start sampling along each mode
@@ -910,7 +900,7 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
   vnl_vector<double> mean         = shapeStats.Mean();
 
   Mesh::MeshPoints meanPoints = Mesh::MeshPoints::New();
-  for(unsigned int i = 0; i < this->numberOfParticles; i++)
+  for(unsigned int i = 0; i < this->numOfParticles; i++)
   {
     double pt[3];
     for (unsigned int d = 0; d < Dimension; d++)
@@ -937,13 +927,13 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
 #ifdef WIN32
     mkdirStatus = _mkdir(cur_path.c_str());
 #else
-    // mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
+    // mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU); // TODO: does not built
 #endif
 
     double sqrt_eigenValue = sqrt(eigenValues[totalNumberOfModes - modeId - 1]);
     double min_std_factor = -1 * this->maxStdDev;
     double max_std_factor = +1 * this->maxStdDev;
-    std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, this->numberOfSamplesPerMode);
+    std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, this->numOfSamplesPerMode);
 
     vnl_vector<double> curMode = eigenVectors.get_column(totalNumberOfModes - modeId - 1);
 
@@ -984,7 +974,7 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
       // fill-in the vtkpoints structure to perform warping for dense reconstruction of the current sample
       vtkSmartPointer< vtkPoints > curSamplePts = vtkSmartPointer< vtkPoints >::New();
       std::vector<Point3> curSparse;
-      for(unsigned int i = 0; i < this->numberOfParticles; i++)
+      for(unsigned int i = 0; i < this->numOfParticles; i++)
       {
         double pt[3];
         for (unsigned int d = 0 ; d < Dimension; d++)
@@ -996,7 +986,7 @@ void ReconstructSurface::samplesAlongPCAModes(typename T::Pointer transform)
         curSparse.push_back(p);
       }
 
-      Mesh curDense = getMesh(transform, curSparse);
+      Mesh curDense = getMesh(curSparse);
 
       std::string outfilename = cur_path + "/" + basename + "_dense.vtk";
       std::cout << "Writing: " << outfilename << std::endl;
@@ -1156,5 +1146,7 @@ void ReconstructSurface::meanSurface(const std::vector<std::string> distanceTran
     ofsB.close();
   }
 }
+template class ReconstructSurface<ThinPlateSplineTransform>;
+template class ReconstructSurface<RBFSSparseTransform>;
 
 } // shapeworks
