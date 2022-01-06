@@ -48,20 +48,20 @@ Here are the resulting groomed femurs:
 The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
 Below are the default optimization parameters for this use case.
 ```python        
-        "number_of_particles" : 1024,
+        "number_of_particles" : 512,
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval" : 200,
-        "keep_checkpoints" : 1,
-        "iterations_per_split" : 4000,
-        "optimization_iterations" : 4000,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 1000,
+        "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 1,
+        "initial_relative_weighting" : 0.01,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
@@ -74,10 +74,21 @@ Below are the default optimization parameters for this use case.
         "use_shape_statistics_after" = 64
 ```
 
-Here `cutting_plane_counts` is one for every femur and the `cutting_planes` is the same cutting plane points for every femur.
+Here `cutting_plane_counts` is 49, one for every femur and the `cutting_planes` is the same cutting plane points for every femur.
 
 ## Analyzing Shape Model        
-Below we can see the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization. Here we can see the particles are constrained to be above the cutting plane.
+Here is the mean shape of the optimized shape mode using multi-scale optimization.
 
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_cut.mp4" autoplay muted loop controls style="width:100%"></p>
+![Femur Samples](../../img/use-cases/femur_mean.png)
 
+Note the particles are not placed below the cutting plane constraint. The surface extending below the particles is a surface reconstruction artifact which can be ignored.
+
+Here are femur samples with their optimized correspondences.
+![Femur Samples](../../img/use-cases/femur_samples.png)
+
+Zooming in some femur samples.
+![Zoom Femur Samples](../../img/use-cases/femur_samples_zoom.png)
+
+Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset.
+
+![Femur PCA](https://sci.utah.edu/~shapeworks/doc-resources/gifs/femur_pca.gif)
