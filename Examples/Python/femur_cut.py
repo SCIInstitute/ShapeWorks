@@ -232,7 +232,7 @@ def Run_Pipeline(args):
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval" : 200,
-        "keep_checkpoints" : 1,
+        "keep_checkpoints" : 0,
         "iterations_per_split" : 1000,
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
