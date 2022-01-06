@@ -16,13 +16,13 @@ def transformTest1():
     img3 = img1.applyTransform(vtkTransform)
     img4 = copyImg.applyTransform(vtkTransform, meshTransform=True)
 
-    img3.write("imageTransformWithoutMeshTransform.nrrd")
-    img4.write("imageTransformWithMeshTransform.nrrd")
+    img3.write(os.environ["DATA"] + "/transforms/imageTransformWithoutMeshTransform.nrrd")
+    img4.write(os.environ["DATA"] + "/transforms/imageTransformWithMeshTransform.nrrd")
 
     mesh3 = mesh1.applyTransform(itkTransform)
     mesh4 = copyMesh.applyTransform(itkTransform, imageTransform=True)
 
-    mesh3.write("meshTransformWithoutImageTransform.vtk")
-    mesh4.write("meshTransformWithImageTransform.vtk")
+    mesh3.write(os.environ["DATA"] + "/transforms/meshTransformWithoutImageTransform.vtk")
+    mesh4.write(os.environ["DATA"] + "/transforms/meshTransformWithImageTransform.vtk")
 
 transformTest1()
