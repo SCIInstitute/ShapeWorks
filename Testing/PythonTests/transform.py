@@ -3,14 +3,14 @@ import sys
 from shapeworks import *
 
 def transformTest1():
-    img1 = Image(os.environ["DATA"] + "/../../Examples/Python/Data/ellipsoid_1mode/segmentations/ellipsoid_00.nrrd");
+    img1 = Image(os.environ["DATA"] + "/transforms/ellipsoid_00.nrrd");
     copyImg = img1.copy()
-    img2 = Image (os.environ["DATA"] + "/../../Examples/Python/Data/ellipsoid_1mode/segmentations/ellipsoid_01.nrrd");
+    img2 = Image (os.environ["DATA"] + "/transforms/ellipsoid_01.nrrd");
     itkTransform = img1.createRigidRegistrationTransform(img2, 0.5, 100);
 
-    mesh1 = Mesh(os.environ["DATA"] + "/../../Examples/Python/Data/ellipsoid_1mode/meshes/ellipsoid_00.vtk");
+    mesh1 = Mesh(os.environ["DATA"] + "/transforms/ellipsoid_00.vtk");
     copyMesh = mesh1.copy()
-    mesh2 = Mesh(os.environ["DATA"] + "/../../Examples/Python/Data/ellipsoid_1mode/meshes/ellipsoid_01.vtk");
+    mesh2 = Mesh(os.environ["DATA"] + "/transforms/ellipsoid_01.vtk");
     vtkTransform = mesh1.createTransform(mesh2, Mesh.AlignmentType.Rigid, 100);
 
     img3 = img1.applyTransform(vtkTransform)
