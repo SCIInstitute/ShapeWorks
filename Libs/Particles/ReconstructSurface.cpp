@@ -424,71 +424,196 @@ vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std
 }
 
 template<class TransformType>
-void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray> localPts, std::vector<PointArray> worldPts, std::vector<std::string> distanceTransform)
+void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints, std::vector<std::string> distanceTransform)
 {
-  // try {
+  try
+  {
+    // turn the sets of global points to one sparse global mean.
+    Point init({0.f, 0.f, 0.f});
+    std::vector<Point3> sparseMeanPoint = std::vector<Point3>(worldPoints[0]);
+    for (auto &a : worldPoints)
+    {
+      for (size_t i = 0; i < a.size(); i++)
+      {
+        init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
+        Vector3 vec = toVector(init);
+        sparseMeanPoint[i] += vec;
+      }
+    }
 
-  //   // turn the sets of global points to one sparse global mean.
-  //   Point init({0.f, 0.f, 0.f});
-  //   std::vector<Point> sparseMeanPoint = std::vector<Point>(worldPts[0]);
-  //   for (auto &a : worldPts)
-  //   {
-  //     for (size_t i = 0; i < a.size(); i++)
-  //     {
-  //       init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
-  //       Vector3 vec = toVector(init);
-  //       sparseMeanPoint[i] = sparseMeanPoint[i] + vec;
-  //     }
-  //   }
+    auto div = static_cast<float>(worldPoints.size());
+    for (size_t i = 0; i < sparseMeanPoint.size(); i++)
+    {
+      init[0] = sparseMeanPoint[i][0] / div;
+      init[1] = sparseMeanPoint[i][1] / div;
+      init[2] = sparseMeanPoint[i][2] / div;
+      sparseMeanPoint[i] = Point3(init);
+    }
 
-  //   auto div = static_cast<float>(worldPts.size());
-  //   for (size_t i = 0; i < sparseMeanPoint.size(); i++)
-  //   {
-  //     init[0] = sparseMeanPoint[i][0] / div;
-  //     init[1] = sparseMeanPoint[i][1] / div;
-  //     init[2] = sparseMeanPoint[i][2] / div;
-  //     sparseMeanPoint[i] = itk::Point<float>(init);
-  //   }
+    std::vector<Eigen::MatrixXd> normals;
+    std::vector<Mesh::MeshPoints> subjectPoints;
+    this->sparseMean = Mesh::MeshPoints::New();
+    for (auto &a : sparseMeanPoint)
+    {
+      this->sparseMean->InsertNextPoint(a[0], a[1], a[2]);
+    }
+    for (size_t shape = 0; shape < localPoints.size(); shape++)
+    {
+      subjectPoints.push_back(Mesh::MeshPoints::New());
+      for (auto &a : localPoints[shape])
+      {
+        subjectPoints[shape]->InsertNextPoint(a[0], a[1], a[2]);
+      }
+      //calculate the normals from the DT
+      normals.push_back(this->computeParticlesNormals(subjectPoints[shape], Image(distanceTransform[shape])));
+    }
 
-  //   std::vector<Eigen::MatrixXd> normals;
-  //   std::vector<vtkSmartPointer< vtkPoints > > subjectPts;
-  //   this->sparseMean = vtkSmartPointer<vtkPoints>::New();
-  //   for (auto &a : sparseMeanPoint)
-  //   {
-  //     this->sparseMean->InsertNextPoint(a[0], a[1], a[2]);
-  //   }
-  //   for (size_t shape = 0; shape < localPts.size(); shape++)
-  //   {
-  //     subjectPts.push_back(vtkSmartPointer<vtkPoints>::New());
-  //     for (auto &a : localPts[shape])
-  //     {
-  //       subjectPts[shape]->InsertNextPoint(a[0], a[1], a[2]);
-  //     }
-  //     //calculate the normals from the DT
-  //     normals.push_back(this->computeParticlesNormals(subjectPts[shape], Image(distanceTransform[shape])));
-  //   }
-  // }
-  // catch (std::runtime_error e)
-  // {
-  //   if (this->denseMean_ != NULL)
-  //   {
-  //     this->denseDone = true;
-  //     throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
-  //   }
-  // }
-  // catch (itk::ExceptionObject& excep)
-  // {
-  //   throw std::runtime_error(excep.what());
-  // }
-  // catch (...)
-  // {
-  //   throw std::runtime_error("Reconstruction failed!");
-  // }
-  // this->denseDone = true;
+    // now decide whether each particle is a good based on dispersion from mean
+    // (it normals are in the same direction accross shapes) or
+    // bad (there is discrepency in the normal directions across shapes)
+    this->goodPoints.resize(localPoints[0].size(), true);
+    if(usePairwiseNormalsDifferencesForGoodBad)
+    {
+      for (unsigned int i = 0; i < localPoints[0].size(); i++)
+      {
+        bool isGood = true;
+
+        // the normal of the first shape
+        double nx_jj = normals[0](i, 0);
+        double ny_jj = normals[0](i, 1);
+        double nz_jj = normals[0](i, 2);
+
+        // start from the second
+        for (unsigned int shapeNo_kk = 1; shapeNo_kk < localPoints.size(); shapeNo_kk++)
+        {
+          double nx_kk = normals[shapeNo_kk](i, 0);
+          double ny_kk = normals[shapeNo_kk](i, 1);
+          double nz_kk = normals[shapeNo_kk](i, 2);
+
+          this->goodPoints[i] = this->goodPoints[i] && ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+                                                         std::cos(this->maxAngleDegrees * Pi / 180.));
+        }
+      }
+    }
+    else
+    {
+      // here use the angle to the average normal
+      // spherical coordinates of normal vector per particle per shape sample to compute average normals
+      std::vector<std::vector<double>> thetas; thetas.clear();
+      std::vector<std::vector<double>> phis; phis.clear();
+
+      thetas.resize(sparseMeanPoint.size());
+      phis.resize(sparseMeanPoint.size());
+      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      {
+        thetas[j].resize(localPoints.size());
+        phis[j].resize(localPoints.size());
+      }
+      for (int i = 0; i < localPoints.size(); i++)
+      {
+        for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+        {
+          double curNormal[3];
+          double curNormalSph[3];
+
+          curNormal[0] = normals[i](j,0);
+          curNormal[1] = normals[i](j,1);
+          curNormal[2] = normals[i](j,2);
+
+          Utils::cartesian2spherical(curNormal, curNormalSph);
+          phis[j][i]   = curNormalSph[1];
+          thetas[j][i] = curNormalSph[2];
+        }
+      }
+
+      // compute mean normal for every particle
+      Eigen::MatrixXd average_normals(sparseMeanPoint.size(), 3);
+      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      {
+        double avgNormal_sph[3];
+        double avgNormal_cart[3];
+        avgNormal_sph[0] = 1;
+        avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
+        avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
+        Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
+
+        average_normals(j,0) = avgNormal_cart[0];
+        average_normals(j,1) = avgNormal_cart[1];
+        average_normals(j,2) = avgNormal_cart[2];
+      }
+
+      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      {
+        double cur_cos_appex = 0;
+        // the mean normal of the current particle index
+        double nx_jj = average_normals(j,0);
+        double ny_jj = average_normals(j,1);
+        double nz_jj = average_normals(j,2);
+
+        for (unsigned int shapeNo_kk = 0; shapeNo_kk < localPoints.size(); shapeNo_kk++)
+        {
+          double nx_kk = normals[shapeNo_kk](j, 0);
+          double ny_kk = normals[shapeNo_kk](j, 1);
+          double nz_kk = normals[shapeNo_kk](j, 2);
+
+          cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
+        }
+
+        cur_cos_appex /= localPoints.size();
+        cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+
+        this->goodPoints[j] = cur_cos_appex > std::cos(this->maxAngleDegrees * Pi / 180.);
+      }
+    }
+
+    // decide which correspondences will be used to build the warp
+    std::vector<int> particlesIndices;
+    particlesIndices.clear();
+    for (unsigned int kk = 0; kk < this->goodPoints.size(); kk++)
+    {
+      if (this->goodPoints_[kk])
+      {
+        particlesIndices.push_back(int(kk));
+      }
+    }
+    std::cout << "There are " << particlesIndices.size() << " / " << this->goodPoints.size() << " good points." << std::endl;
+
+    Image dt(distanceTransform[0]);
+
+    Image::ImageType::Pointer meanDistanceTransform = Image::ImageType::New();
+    meanDistanceTransform->SetOrigin(dt.origin());
+    meanDistanceTransform->SetSpacing(dt.spacing());
+    meanDistanceTransform->SetDirection(dt.coordsys());
+    meanDistanceTransform->SetLargestPossibleRegion(dt.dims());
+
+    ImageType::Pointer meanDistanceTransformBeforeWarp = ImageType::New();
+    meanDistanceTransformBeforeWarp->SetOrigin(origin);
+    meanDistanceTransformBeforeWarp->SetSpacing(spacing);
+    meanDistanceTransformBeforeWarp->SetDirection(direction);
+    meanDistanceTransformBeforeWarp->SetLargestPossibleRegion(size);
+  
+  }
+  catch (std::runtime_error e)
+  {
+    if (this->denseMean != NULL)
+    {
+      this->denseDone = true;
+      throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+    }
+  }
+  catch (itk::ExceptionObject& excep)
+  {
+    throw std::runtime_error(excep.what());
+  }
+  catch (...)
+  {
+    throw std::runtime_error("Reconstruction failed!");
+  }
+  this->denseDone = true;
 }
 
 template<class TransformType>
-std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std::vector<PointArray> localPoints, Point3 &commonCenter,
+std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter,
                                                                              bool doProcrustes, bool doProcrustesScaling)
 {
   // (1) define mean sparse shape:

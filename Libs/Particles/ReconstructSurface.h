@@ -34,14 +34,14 @@ public:
 
   Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
 
-  vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPts,
-                                            std::vector<PointArray> worldPts, std::vector<std::string> distance_transform);
+  vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
+                                            std::vector<PointArray> worldPoints, std::vector<std::string> distance_transform);
 
-  void computeDenseMean(std::vector<PointArray> localPts, std::vector<PointArray> worldPts,
+  void computeDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints,
                         std::vector<std::string> distanceTransform);
 
-  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 &commonCenter,
-                                                     bool doProcrustes, bool doProcrustesScaling);
+  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter,
+                                            bool doProcrustes, bool doProcrustesScaling);
 
   void surface(const std::vector<std::string> localPointsFiles);
 
@@ -84,12 +84,14 @@ private:
   bool denseDone = true;
   bool doProcrustes;
   bool doProcrustesScaling;
+  bool usePairwiseNormalsDifferencesForGoodBad;
   int modeIndex;
   int numOfModes;
   int numOfParticles;
   int numOfSamplesPerMode;
   float maxStdDev;
   float maxVarianceCaptured;
+  float maxAngleDegrees;
 
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
