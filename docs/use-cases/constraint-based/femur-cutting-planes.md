@@ -1,4 +1,4 @@
-# Femur: Shape Model from Meshes with Cutting Plane
+# Femur: Shape Model from Meshes with Cutting Planes
 
 ## What is the Use Case?
 
