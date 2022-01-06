@@ -25,7 +25,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur-v0"
+    dataset_name = "femur-v1"
     output_directory = "Output/femur_cut/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -223,7 +223,7 @@ def Run_Pipeline(args):
     cutting_planes = []
     cutting_plane_counts = []
     for i in range(len(mesh_files)):
-        cutting_planes.append(np.array([[-1,-1,-36], [1,-1,-36], [-1,1,-36]]))
+        cutting_planes.append(np.array([[-1,-1,-10], [1,-1,-10], [-1,1,-10]]))
         cutting_plane_counts.append(1)
 
     # Create a dictionary for all the parameters required by optimization
