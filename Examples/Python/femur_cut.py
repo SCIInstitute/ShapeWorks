@@ -11,7 +11,6 @@ The full images can be carried through every step of grooming.
 """
 import os
 import glob
-import pickle
 import numpy as np
 import shapeworks as sw
 import OptimizeUtils
@@ -61,7 +60,7 @@ def Run_Pipeline(args):
             indices = [0, 1, 2]
         elif args.use_subsample:
             indices = sample_idx
-        mesh_files = sw.data.get_file_list(mesh_directory, ending=".ply", indices=indices)
+        mesh_files = sw.data.get_file_list(mesh_directory, ending=".vtk", indices=indices)
 
     # Else groom the meshes for optimization
     else:
