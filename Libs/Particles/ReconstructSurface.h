@@ -21,8 +21,8 @@ public:
 
   double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
 
-  void CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, Mesh::MeshPoints& mappedCorrespondences,
-                    double& rms, double& rms_wo_mapping, double& maxmDist);
+  void CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, Mesh::MeshPoints mappedCorrespondences,
+                    double rms, double rms_wo_mapping, double maxmDist);
 
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 

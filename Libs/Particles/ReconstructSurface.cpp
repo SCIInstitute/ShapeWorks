@@ -114,7 +114,7 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
 
 template<class TransformType>
 void ReconstructSurface<TransformType>::CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints,
-                                                     Mesh::MeshPoints& mappedCorrespondences, double& rms, double& rms_wo_mapping, double& maxmDist)
+                                                     Mesh::MeshPoints mappedCorrespondences, double rms, double rms_wo_mapping, double maxmDist)
 {
   // source should be warped to the target
   rms = 0.0;
@@ -408,19 +408,19 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
 }
 
 template<class TransformType>
-vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std::vector<PointArray> localPts, std::vector<PointArray> worldPts, std::vector<std::string> distance_transform)
+vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints, std::vector<std::string> distanceTransform)
 {
-  // if (!this->denseDone || !local_pts.empty() || !distance_transform.empty() || !global_pts.empty()) 
-  // {
-  //   this->denseDone = false;
-  //   if (local_pts.empty() || distance_transform.empty() || global_pts.empty() || local_pts.size() != distance_transform.size())
-  //   {
-  //     throw std::runtime_error("Invalid input for reconstruction!");
-  //   }
-  //   this->computeDenseMean(local_pts, global_pts, distance_transform);
-  // }
+  if (!this->denseDone || !localPoints.empty() || !distanceTransform.empty() || !worldPoints.empty()) 
+  {
+    this->denseDone = false;
+    if (localPoints.empty() || distanceTransform.empty() || worldPoints.empty() || localPoints.size() != distanceTransform.size())
+    {
+      throw std::runtime_error("Invalid input for reconstruction!");
+    }
+    this->computeDenseMean(localPoints, worldPoints, distanceTransform);
+  }
 
-  // return this->denseMean_;
+  return this->denseMean;
 }
 
 template<class TransformType>
