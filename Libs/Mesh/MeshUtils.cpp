@@ -64,7 +64,8 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   if (meshTransform)
     m = icp->GetMatrix();
   else
-    vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+    vtkMatrix4x4::Invert(icp->GetMatrix(), m); // It's inversed because when an image is transformed,
+                                               // a new image is created in the target space and samples through the transform back to the original space
 
   return m;
 }
