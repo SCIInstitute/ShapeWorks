@@ -130,18 +130,60 @@ TEST(ParticlesTests, reconstructsurfaceTest1)
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
-// TEST(ParticlesTests, reconstructsurfaceTest2)
-// {
-//   std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
-//   std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
-//   std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
+TEST(ParticlesTests, reconstructsurfaceTest2)
+{
+  std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
+  std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
+  std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
 
-//   std::vector<std::string> localParticles = {
-//   std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
-//   std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
-//   std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
-//   };
+  std::vector<std::string> localParticles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
+  };
 
-//   ReconstructSurface<ThinPlateSplineTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
-//   reconstructor.surface(localParticles);
-// }
+  ReconstructSurface<ThinPlateSplineTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
+  reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
+  reconstructor.surface(localParticles);
+
+  Mesh baselineDenseMesh1(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_00.dense.vtk");
+  Mesh baselineDenseMesh2(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_01.dense.vtk");
+  Mesh baselineDenseMesh3(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_02.dense.vtk");
+
+  Mesh denseMesh1(std::string(TEST_DATA_DIR) + "/ellipsoid_00.local_dense.vtk");
+  Mesh denseMesh2(std::string(TEST_DATA_DIR) + "/ellipsoid_01.local_dense.vtk");
+  Mesh denseMesh3(std::string(TEST_DATA_DIR) + "/ellipsoid_02.local_dense.vtk");
+
+  std::vector<std::string> baselineSparseParticleFiles = {
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_00.sparse.particles",
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_01.sparse.particles",
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_02.sparse.particles"
+  };
+
+  std::vector<std::string> sparseParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local_sparse.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local_sparse.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local_sparse.particles"
+  };
+
+  std::vector<std::string> baselineDenseParticleFiles = {
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_00.dense.particles",
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_01.dense.particles",
+  std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_02.dense.particles"
+  };
+
+  std::vector<std::string> denseParticleFiles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local_dense.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local_dense.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local_dense.particles"
+  };
+
+  ParticleSystem baselineSparseParticles(baselineSparseParticleFiles);
+  ParticleSystem sparseParticles(sparseParticlesFiles);
+
+  ParticleSystem baselineDenseParticles(baselineDenseParticleFiles);
+  ParticleSystem denseParticles(denseParticleFiles);
+
+  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
+              baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
+}
