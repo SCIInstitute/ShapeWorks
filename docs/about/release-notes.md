@@ -4,25 +4,18 @@
 ## ShapeWorks 6.2.1 - 2022-01-07
 
 ### What is new?
-
-#### ShapeWorks Back-end
-  * Added new `isolate` functionality that isolates the largest object in a segmentation
-  * Added remeshing using ACVD library
-  * Added option to save mesh file as binary (default is ASCII)
-  * Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. 
-
-#### ShapeWorks Front-end
-  * Studio: Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)
-  * Studio: Added reflection, remeshing, image cropping, image resampling to grooming
-  * Studio: New UI for grooming
-
-#### User's Support
-  * Updated `ellipsoid_mesh` use case to demonstrate mesh grooming
-  * Combined the functionality of the three femur use cases - `femur`,`femur_mesh`,`femur_cut` into one use case. The `femur_cut` use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.
-#### Deep Learning
-
-### Improvements
-
+  * **ShapeWorks Back-end**
+    * Added new `isolate` functionality that isolates the largest object in a segmentation
+    * Added remeshing using ACVD library
+    * Added option to save mesh file as binary (default is ASCII)
+    * Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. 
+  * **ShapeWorks Front-end**
+    * Studio: Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)
+    * Studio: Added reflection, remeshing, image cropping, image resampling to grooming
+    * Studio: New UI for grooming
+  * **User's Support**
+    * Updated `ellipsoid_mesh` use case to demonstrate mesh grooming
+    * Combined the functionality of the three femur use cases - `femur`,`femur_mesh`,`femur_cut` into one use case. The `femur_cut` use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.
 ### Fixes
   * Studio: Fixed display names in the corner (removing long paths)
   * Studio: Fixed recomputation of shape statistics upon re-running shape model and removing shapes
