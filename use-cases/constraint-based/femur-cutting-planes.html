@@ -179,10 +179,6 @@
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
@@ -330,42 +326,61 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="femur-with-cutting-planes">Femur with Cutting Planes</h1>
+                <h1 id="femur-shape-model-from-meshes-with-cutting-planes">Femur: Shape Model from Meshes with Cutting Planes</h1>
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
-<p>The <code>femur_cut</code> use case demonstrates an alternative approach to the <a href="../mesh-based/femur.html">femur use case</a> by using cutting planes to constrain the particle distribution on the femur surface. The data and workflow of this use case are identical to the <a href="../mesh-based/femur.html">femur use case</a> with one exception: the shapes are not clipped using cutting planes in grooming, but rather the cutting planes are fed as an optimization parameter. This prevents particles from moving beyond the cutting plane during optimization, preventing the false bottom created by clipping from being captured in the shape model as it is in the <a href="../mesh-based/femur.html">femur use case</a>.</p>
+<p>The <code>femur</code> use case demonstrates using the shape modeling workflow on a real-world femur dataset. The the femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT). These images are groomed along with the shapes when <code>--groom_images</code> is used, so that they remain in alignment for subsequent analysis.</p>
+<p>There are both left and right femurs in this dataset, thus some must be relfected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
+<img alt="Femur Lengths" src="../../img/use-cases/femurLengths.png" /></p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Minimum of 32GB of RAM required to run the full use case.</p>
 </div>
 <h2 id="grooming-steps">Grooming Steps</h2>
-<p>The grooming steps are the same as the <a href="../mesh-based/femur.html">femur use case</a>, except clipping is not performed. Please refer back to the <a href="../mesh-based/femur.html#grooming-steps">femur grooming steps</a> for a full explanation of grooming.</p>
-<p>Note because the clipping step is skipped, the groomed femurs vary in shaft length:
-<img alt="Groomed femur_cut input" src="../../img/use-cases/femur_cut_groomed.png" /></p>
+<p>Here is what the femur meshes look like before grooming:
+<img alt="Ungroomed femurs" src="../../img/use-cases/femur_ungroomed.png" /></p>
+<p>The femur mesh grooming steps are:</p>
+<ol>
+<li><a href="../../workflow/groom.html#reflect-meshes"><strong>Reflect Meshes</strong></a>: In this use case, we have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect.</li>
+<li><a href="../../workflow/groom.html#remesh"><strong>Smoothing and Remeshing</strong></a>: Meshes are smoothed and remeshed to ensure uniform vertices.</li>
+<li><a href="../../workflow/groom.html#aligning-meshes"><strong>Centering</strong></a>: Meshes are translated so that their center lies at [0,0,0].</li>
+<li><a href="../../workflow/groom.html#aligning-meshes"><strong>Reference Selection</strong></a>: The reference is selected by first computing the mean (average) mesh, then selecting the mesh closest to that mean (i.e., medoid).</li>
+<li><a href="../../workflow/groom.html#aligning-meshes"><strong>Rigid Alignment</strong></a>: All of the meshes are aligned to the selected reference using rigid alignment, which factors out the rotation and translation. </li>
+</ol>
+<p><em>Note: The reflection, centering translation, and rigid alignment transforms are saved to use for grooming the corresponding images.</em></p>
+<p>If the <code>--groom_images</code> tag is used, the corresponding images are groomed as follows:</p>
+<ol>
+<li><a href="../../workflow/groom.html#reflect-meshes"><strong>Reflection</strong></a>: If the corresponding mesh was reflected, we reflect the image.</li>
+<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Centering</strong></a>: The translation used to center the mesh is applied to the image.</li>
+<li><a href="../../workflow/groom.html#resampling-images-and-segmentations"><strong>Reference selection</strong></a>: The image corresponding to the reference mesh is selected as a reference image for applying rigid transforms to the images. The reference image is resampled to have isotropic spacing.</li>
+<li><a href="../../workflow/groom.html#aligning-segmentations"><strong>Rigid alignment</strong></a>: All of the images are aligned using the rigid alignment transforms applied to the meshes. The reference image parameters (i.e. origin, dims, spacing, and coordsys) are passed to define a valid coordinate system for the resulting images.</li>
+<li><a href="../../workflow/groom.html#cropping-and-padding-segmentations"><strong>Cropping</strong></a>: The images are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the groomed meshes.</li>
+</ol>
+<p>Here are the resulting groomed femurs:
+<img alt="Groomed femurs" src="../../img/use-cases/femur_groomed.png" /></p>
 <h2 id="relevant-arguments">Relevant Arguments</h2>
 <p><a href="../use-cases.html#-groom_images">--groom_images</a>
 <a href="../use-cases.html#-use_subsample">--use_subsample</a>
 <a href="../use-cases.html#-use_subsample">--num_subsample</a>
 <a href="../use-cases.html#-skip_grooming">--skip_grooming</a>
 <a href="../use-cases.html#-use_single_scale">--use_single_scale</a>
-<a href="../use-cases.html#-mesh_mode">--mesh_mode</a>
 <a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. 
 Below are the default optimization parameters for this use case.
-<div class="highlight"><pre><span></span><code>        <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+<div class="highlight"><pre><span></span><code>        <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
         <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+        <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
         <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
         <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
         <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;domain_type&quot;</span> <span class="p">:</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;domain_type&quot;</span> <span class="p">:</span> <span class="s1">&#39;mesh&#39;</span><span class="p">,</span>
         <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -377,10 +392,17 @@ Below are the default optimization parameters for this use case.
         <span class="s2">&quot;cutting_planes&quot;</span><span class="p">:</span> <span class="n">cutting_planes</span><span class="p">,</span>
         <span class="s2">&quot;use_shape_statistics_after&quot;</span> <span class="o">=</span> <span class="mi">64</span>
 </code></pre></div></p>
-<p>Here <code>cutting_plane_counts</code> is one for every femur and the <code>cutting_planes</code> is the same cutting plane points for every femur.</p>
+<p>Here <code>cutting_plane_counts</code> is 49, one for every femur and the <code>cutting_planes</code> is the same cutting plane points for every femur.</p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>Below we can see the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization. Here we can see the particles are constrained to be above the cutting plane.</p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_cut.mp4" autoplay muted loop controls style="width:100%"></p>
+<p>Here is the mean shape of the optimized shape mode using multi-scale optimization.</p>
+<p><img alt="Femur Samples" src="../../img/use-cases/femur_mean.png" /></p>
+<p>Note the particles are not placed below the cutting plane constraint. The surface extending below the particles is a surface reconstruction artifact which can be ignored.</p>
+<p>Here are femur samples with their optimized correspondences.
+<img alt="Femur Samples" src="../../img/use-cases/femur_samples.png" /></p>
+<p>Zooming in some femur samples.
+<img alt="Zoom Femur Samples" src="../../img/use-cases/femur_samples_zoom.png" /></p>
+<p>Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset.</p>
+<p><img alt="Femur PCA" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/femur_pca.gif" /></p>
               
             </div>
           </div>

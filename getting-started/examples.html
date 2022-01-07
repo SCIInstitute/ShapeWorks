@@ -93,10 +93,6 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#ellipsoid-mesh-basic-example">Ellipsoid Mesh: Basic Example</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#femur-shape-model-on-distance-transforms-from-meshes">Femur: Shape Model on Distance Transforms from Meshes</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#femur-mesh-shape-model-directly-from-mesh">Femur-Mesh: Shape Model directly from Mesh</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#lumps-shape-model-directly-from-mesh">Lumps: Shape Model directly from Mesh</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#thin-cavity-bean-shape-model-with-geodesic-distances">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
@@ -115,7 +111,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#ellipsoid-shape-model-with-cutting-planes">Ellipsoid: Shape Model with Cutting Planes</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#femurshape-model-with-cutting-planes">Femur:Shape Model with Cutting Planes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#femur-shape-model-from-meshes-with-cutting-planes">Femur: Shape Model from Meshes with Cutting Planes</a>
     </li>
         </ul>
     </li>
@@ -240,10 +236,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
@@ -393,10 +385,6 @@ Here we list the available use cases grouped according to different categories b
 <p>This use case set demonstrates the <a href="workflow.html">Shape Modeling Workflow</a> directly on meshes. Currently, mesh-based use cases run on pre-groomed meshes. They will be updated soon to demonstrate mesh grooming.</p>
 <h3 id="ellipsoid-mesh-basic-example"><a href="../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a></h3>
 <p>This use case uses the same dataset as the <a href="../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a> use case, but optimization is done on meshes rather than distance transforms. </p>
-<h3 id="femur-shape-model-on-distance-transforms-from-meshes"><a href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a></h3>
-<p>This use case demonstrates using shape modeling workflow using ShapeWorks on real-world femur dataset. The femur shapes are meshes, but they are converted to segmentations in the grooming process and distance transforms are optimized on. This use case exhibits how to handle challenges that arise when using real-world clinical data. It shows grooming imaging data (CT scans) of the hip to be tied with the groomed shape data. As femur meshes in this dataset have been segmented with various shaft lengths, this use case includes the ability for the user to select a cutting plane on a single mesh (e.g., representative sample) to remove the shaft length variability so that it is not captured in the shape model.</p>
-<h3 id="femur-mesh-shape-model-directly-from-mesh"><a href="../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a></h3>
-<p>This use case uses the same dataset as the <a href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a> use case, but optimization is done on meshes rather than distance transforms. No image grooming is demonstrated here.</p>
 <h3 id="lumps-shape-model-directly-from-mesh"><a href="../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a></h3>
 <p>This use case demonstrates a minimal example of running ShapeWorks directly on a mesh using a synthetic dataset. The shapes in this dataset are spheres with two lumps or nodes that vary in size. The use case demonstrates that the ShapeWorks workflow results in a correct shape model- i.e., only the position of particles on the lumps vary; the rest are constant across the shape population.</p>
 <h3 id="thin-cavity-bean-shape-model-with-geodesic-distances"><a href="../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a></h3>
@@ -409,11 +397,11 @@ Here we list the available use cases grouped according to different categories b
 <h2 id="constraints-based-use-cases">Constraints Based Use Cases</h2>
 <h3 id="ellipsoid-shape-model-with-cutting-planes"><a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a></h3>
 <p>This use case demonstrates using multiple cutting planes to constrain the distribution of particles on ellipsoids that are already aligned. Cutting planes can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without affecting the input data. </p>
-<h3 id="femurshape-model-with-cutting-planes"><a href="../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a></h3>
-<p>This use case is similar to <a href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>, but it uses cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths. Cutting planes are used in optimization to remove this variability so that it is not captured in the shape model. Cutting planes can limit the statistical analysis to the standard anatomical regions across all samples.</p>
+<h3 id="femur-shape-model-from-meshes-with-cutting-planes"><a href="../use-cases/constraint-based/femur-cutting-planes.html">Femur: Shape Model from Meshes with Cutting Planes</a></h3>
+<p>This use case demonstrates using shape modeling workflow using ShapeWorks on real-world femur dataset. It involves performing grooming on femur meshes and corresponding imaging data (CT scans) of the hip. The femur meshes in this dataset have been segmented with various shaft lengths, so cutting planes are used in optimization to remove this variability, preventing it from being captured in the shape model. Cutting planes can limit the statistical analysis to the standard anatomical regions across all samples.</p>
 <h2 id="statistics-based-use-cases">Statistics Based Use Cases</h2>
 <h3 id="femur-group-difference-statistics-in-python"><a href="../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a></h3>
-<p>This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the <a href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a> use case. </p>
+<p>This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the <a href="../use-cases/mesh-based/femur.md">Femur: Shape Model on Distance Transforms from Meshes</a> use case. </p>
 <h3 id="ellipsoid-shape-statistics-in-python"><a href="../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a></h3>
 <p>This use case demonstrates the functionality of shape statistics tools of ShapeWorks python API. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. This use case reads the correspondence model of the <a href="../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a> use case. </p>
 <h3 id="ellipsoid-shape-evaluation-in-python"><a href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a></h3>

@@ -187,10 +187,6 @@
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
@@ -327,7 +323,7 @@
 <p><img alt="ShapeWorks Workflow" src="../img/getting-started/workflow.png" /></p>
 <h2 id="groom-stage">Groom Stage</h2>
 <p>The <a href="../workflow/groom.html">groom stage</a> entails data inspection and preprocessing, including conversion of the input segmentations and surface meshes into the appropriate data types that are optimization friendly so that landmarks can be optimized in a numerically stable way. It also includes visualization for preprocessed/groomed data for quality control, and we are planning to include annotations for user-defined modeling preferences such as landmarks and constraints.</p>
-<p>The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. Imaging data (e.g., CT, MRI) becomes out of alignment and cannot be tied to the resulting shape models. We have developed <a href="../use-cases/segmentation-based/left-atrium.html">segmentation-based</a> and <a href="../use-cases/mesh-based/femur.html">mesh-based</a> grooming tools and associated python scripts (i.e., use cases) to carry volumetric data through each grooming step with the shapes (meshes or segmentations) such that they can be used for subsequent analysis and visualization. These tools include image reflection (for paired anatomies), isotropic voxel resampling, image padding, applying shape-based alignment to images (center of mass and rigid alignment), and image cropping.</p>
+<p>The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. Imaging data (e.g., CT, MRI) becomes out of alignment and cannot be tied to the resulting shape models. We have developed <a href="../use-cases/segmentation-based/left-atrium.html">segmentation-based</a> and <a href="../use-cases/mesh-based/femur.md">mesh-based</a> grooming tools and associated python scripts (i.e., use cases) to carry volumetric data through each grooming step with the shapes (meshes or segmentations) such that they can be used for subsequent analysis and visualization. These tools include image reflection (for paired anatomies), isotropic voxel resampling, image padding, applying shape-based alignment to images (center of mass and rigid alignment), and image cropping.</p>
 <h2 id="optimize-stage">Optimize Stage</h2>
 <p>The <a href="../workflow/optimize.html">optimize stage</a> is an iterative cycle of correspondences (landmarks/particles) optimization, visualization/quality control of resulting correspondence model and parameter tuning. </p>
 <p>The model initialization proceeds simultaneously with the optimization in a multi-scale fashion using an iterative particle splitting strategy to generate progressively detailed correspondence models with each split.</p>

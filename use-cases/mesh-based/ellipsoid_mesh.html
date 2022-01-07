@@ -191,10 +191,6 @@
     </li>
     </ul>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
@@ -334,8 +330,15 @@
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
 <p>The <code>ellipsoid_mesh</code> use case uses the same dataset as the <code>ellipsoid</code> use case, but optimization is done on meshes rather than distance transforms. The dataset comprises of axis-aligned ellipsoids with varying radii along the x-axis. The <code>ellipsoid_mesh</code> use case represents the standard use version of a shape modeling workflow from meshes using ShapeWorks. </p>
 <h2 id="grooming-steps">Grooming Steps</h2>
-<p>This use case starts with pre-aligned meshes and does not require grooming.<br />
-<img alt="Ellipsoid meshes" src="../../img/use-cases/ellipsoid_mesh_input.png" /></p>
+<p>This is how the meshes in the dataset look before grooming. The ellipsoids have random orientations.</p>
+<p><img alt="This is how the meshes in the dataset look before grooming." src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_pre_groom.png" /></p>
+<ol>
+<li><a href="../../workflow/groom.html#remesh"><strong>Remeshing</strong></a>: Meshes are remeshed to ensure uniform vertices.</li>
+<li><a href="../../workflow/groom.html#aligning-meshes"><strong>Reference Selection</strong></a>: The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid).</li>
+<li><a href="../../workflow/groom.html#aligning-meshes"><strong>Rigid Alignment</strong></a>: All of the meshes are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.</li>
+</ol>
+<p>The ellipsoids are now aligned ready to be sent to the optimizer.
+<img alt="Meshes obtained after grooming" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_post_groom.png" /></p>
 <h2 id="relevant-arguments">Relevant Arguments</h2>
 <p><a href="../use-cases.html#-use_subsample">--use_subsample</a>
 <a href="../use-cases.html#-use_subsample">--num_subsample</a>
@@ -369,7 +372,7 @@ Below are the default optimization parameters for this use case.</p>
 <p>Below is the mean shape reulting from optimization. Here we can see that there is only one major mode of variation.
 <img alt="Ellipsoid Mesh Optimization" src="../../img/use-cases/ellipsoid_mesh.png" /></p>
 <p>Animating along the first PCA mode we can see the variation in the radius along the x-axis.
-<img alt="Ellipsoid Mesh Mode 1" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mesh_mode1.gif" /></p>
+<img alt="Ellipsoid Mesh Mode 1" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mesh_1mode.gif" /></p>
               
             </div>
           </div>
@@ -377,7 +380,7 @@ Below are the default optimization parameters for this use case.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="femur.html" class="btn btn-neutral float-right" title="Femur: Shape Model on Distance Transforms from Meshes">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="lumps.html" class="btn btn-neutral float-right" title="Lumps: Shape Model directly from Mesh">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../segmentation-based/ellipsoid-multiple-domain.html" class="btn btn-neutral" title="Shape Model for Multiple Domains from Segmentations"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -413,7 +416,7 @@ Below are the default optimization parameters for this use case.</p>
         <span><a href="../segmentation-based/ellipsoid-multiple-domain.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="femur.html" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="lumps.html" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

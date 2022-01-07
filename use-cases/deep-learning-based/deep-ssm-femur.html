@@ -179,10 +179,6 @@
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
@@ -342,7 +338,7 @@
               
                 <h1 id="femur-shape-model-directly-from-images">Femur Shape Model Directly from Images</h1>
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
-<p>The <code>deep_ssm</code> use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see <a href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a> and <a href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>. The image and shape data used for training and testing results from running the <a href="../mesh-based/femur.html">femur use case</a>. Note running this use case does not require running the <a href="../mesh-based/femur.html">femur use case</a>, the required data will automatically be downloaded.</p>
+<p>The <code>deep_ssm</code> use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see <a href="../../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a> and <a href="../../deep-learning/deep-ssm.html">SSMs Directly from Images</a>. The image and shape data used for training and testing results from running the <a href="../mesh-based/femur.md">femur use case</a>. Note running this use case does not require running the <a href="../mesh-based/femur.md">femur use case</a>, the required data will automatically be downloaded.</p>
 <div class="admonition danger">
 <p class="admonition-title">On CUDA</p>
 <p>This use case uses Pytorch and requires a GPU to run in a timely manner. When you source <code>install_shapeworks.sh</code>, it detects if you have a GPU and installs the version of Pytorch compatible with your version of CUDA. </p>

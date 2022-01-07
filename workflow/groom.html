@@ -113,6 +113,10 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#meshes-to-volumes">Meshes to volumes</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#remesh">Remesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aligning-meshes">Aligning meshes</a>
+    </li>
         </ul>
     </li>
     </ul>
@@ -202,10 +206,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur.html">Femur: Shape Model on Distance Transforms from Meshes</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/femur-mesh.html">Femur-Mesh: Shape Model directly from Mesh</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
                 </li>
@@ -555,6 +555,41 @@ to the reference shape</li>
 </code></pre></div>
 <p><img alt="Mesh to volume example" src="../img/workflow/mesh2seg.png" /></p>
 <p>For list of commands, check out <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a></p>
+<h3 id="remesh">Remesh</h3>
+<p>Remeshing creates meshes with evenly spaced vertices. 
+- <code>remeshPercent</code> remeshes the mesh to have a given percent of the current number of vertices</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">mesh</span><span class="o">.</span><span class="n">remeshPercent</span><span class="p">(</span><span class="n">percentage</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">adaptivity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Remeshing" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png" /></p>
+<h3 id="aligning-meshes">Aligning meshes</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
+<ul>
+<li><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</li>
+<li>
+<p>Use the pymodule function <code>find_reference_mesh_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+  <!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.-->
+</p>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
+</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+    to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+</ul>
+<p>Here is an example of performing reference selection and rigid alignment on a list of meshes:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># reference selection </span>
+<span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_mesh_index</span><span class="p">(</span><span class="n">mesh_list</span><span class="p">)</span>
+<span class="n">ref_mesh</span> <span class="o">=</span> <span class="n">mesh_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span>
+<span class="c1"># align all meshes in the list to the reference </span>
+<span class="k">for</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="n">mesh_list</span><span class="p">:</span>
+    <span class="c1"># compute rigid transformation</span>
+    <span class="n">rigid_transform</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_mesh</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="o">.</span><span class="n">AlignmentType</span><span class="o">.</span><span class="n">Rigid</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="c1"># apply rigid transform</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigid_transform</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Mesh alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh_alignment.png" /></p>
               
             </div>
           </div>
