@@ -35,6 +35,7 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "ReconstructSurface.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
@@ -1326,6 +1327,38 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("percentVarByMode",
        &ParticleShapeStatistics::PercentVarByMode,
        "return the variance accounted for by the principal components")
+  ;
+
+  py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
+
+  .def(py::init<>())
+
+  .def(py::init<const std::string &, const std::string &, const std::string &>())
+
+  .def("setOutPrefix",
+       &ReconstructSurface<ThinPlateSplineTransform>::setOutPrefix,
+       "prefix"_a)
+
+  .def("surface",
+       &ReconstructSurface<ThinPlateSplineTransform>::surface,
+       "localPointsFiles"_a)
+
+  ;
+
+  py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
+
+  .def(py::init<>())
+
+  .def(py::init<const std::string &, const std::string &, const std::string &>())
+
+  .def("setOutPrefix",
+       &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
+       "prefix"_a)
+
+  .def("surface",
+       &ReconstructSurface<RBFSSparseTransform>::surface,
+       "localPointsFiles"_a)
+
   ;
 
   // Optimize (TODO)

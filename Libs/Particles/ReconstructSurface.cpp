@@ -1,5 +1,3 @@
-#define S_IRWXU 0000700
-
 #include "ReconstructSurface.h"
 #include "StringUtils.h" 
 #include "ParticleShapeStatistics.h"
@@ -7,6 +5,10 @@
 
 #include <sys/stat.h>
 #include <vtkKdTreePointLocator.h>
+
+#ifdef _WIN32
+  #include <direct.h>
+#endif
 
 namespace shapeworks {
 
