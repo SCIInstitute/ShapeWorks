@@ -1,5 +1,35 @@
 # Release Notes
 
+
+## ShapeWorks 6.2.1 - 2022-01-07
+
+### What is new?
+
+#### Studio
+  * Fixed display names in the corner (removing long paths)
+  * Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)
+  * Fixed #1612 and #1616, bugs regarding recomputing of shape statistics
+  * Added reflection (based on spreadsheet column)
+  * Added remeshing tool for meshes (using ACVD library)
+  * Added image cropping to groom
+  * Added image resampling to groom
+  * New UI for grooming page with collapsible panels
+#### New commands / python
+  * isolate - Isolates the largest object in a segmentation
+  * remesh - Remesh a mesh using ACVD libary
+  * Adding option to save mesh file as binary (default is ascii)
+
+#### User Support
+* Updated `ellipsoid_mesh` use case to demonstrate mesh grooming
+* Combined the functionality of the three femur use cases - `femur`,`femur_mesh`,`femur_cut` into one use case. The `femur_cut` use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.
+
+#### Back End
+* Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. 
+```
+Newimg = img.applyTransform(vtkTransform, meshTransform=True)
+Newmesh = mesh.applyTransform(itkTransform, imageTransform=True)
+```
+
 ## ShapeWorks 6.2 - 2021-11-16
 
 ![](../img/about/release6.2.png)

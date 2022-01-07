@@ -20,14 +20,7 @@ The Data Module shows the project data table as well as user-defined/saved notes
 
 The Groom module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes. You also have the option of skipping grooming if your data is already prepped.
 
-Grooming options for binary segmentation volumes:
-
 ![ShapeWorks Studio Groom Module](../img/studio/studio_groom.png){: width="300" }
-
-Grooming options for meshes:
-
-![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom_mesh.png){: width="300" }
-
 
 ## Optimize Module
 
