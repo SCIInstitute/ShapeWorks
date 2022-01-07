@@ -258,6 +258,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
 
   auto path = subject->get_segmentation_filenames()[domain];
 
+  std::cerr << "starting mesh_pipeline for " << path << "\n";
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
 
@@ -306,6 +307,8 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain)
     // store filename back to subject
     subject->set_groomed_filenames(groomed_filenames);
   }
+
+  std::cerr << "finished mesh_pipeline for " << path << "\n";
 
   return true;
 }

@@ -63,8 +63,6 @@ nav:
       - 'Shape Model for Multiple Domains from Segmentations':       'use-cases/segmentation-based/ellipsoid-multiple-domain.md'
    - Mesh Based Use Cases:
       - 'Ellipsoid Mesh: Basic Example':                             'use-cases/mesh-based/ellipsoid_mesh.md'
-      - 'Femur: Shape Model on Distance Transforms from Meshes':     'use-cases/mesh-based/femur.md'
-      - 'Femur-Mesh: Shape Model directly from Mesh':                'use-cases/mesh-based/femur-mesh.md'
       - 'Lumps: Shape Model directly from Mesh':                     'use-cases/mesh-based/lumps.md'
       - 'Thin Cavity Bean: Shape Model with Geodesic Distances':     'use-cases/mesh-based/thin-cavity-bean.md'
       - 'Shape Model for Multiple Domains directly from Mesh':       'use-cases/mesh-based/ellipsoid-multiple-domain-mesh.md'
