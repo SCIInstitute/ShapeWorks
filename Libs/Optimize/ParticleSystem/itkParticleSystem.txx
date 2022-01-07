@@ -46,6 +46,7 @@ ParticleSystem<VDimension>
     m_InversePrefixTransforms.push_back(transform);
   }
   m_Positions.resize(num);
+  m_Normals.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
   while(num >= this->m_DomainFlags.size()) {
@@ -74,6 +75,7 @@ void ParticleSystem<VDimension>
   this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
   m_Domains[ static_cast<int>( m_Domains.size() ) - 1] = input;
   m_Positions[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New();
+  m_Normals[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New();
   m_IndexCounters[static_cast<int>( m_Domains.size() -1)] = 0;
   m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();
@@ -222,6 +224,15 @@ ParticleSystem<VDimension>
 }
 
 template <unsigned int VDimension>
+const typename ParticleSystem<VDimension>::PointType &
+ParticleSystem<VDimension>
+::AddNormal( const PointType &p, unsigned int d, unsigned int idx)
+{
+  m_Normals[d]->operator[](idx) = p;
+  return m_Normals[d]->operator[](idx);
+}
+
+template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
 ::RemovePosition(unsigned long int k,
@@ -252,6 +263,18 @@ ParticleSystem<VDimension>
   }
 }
 
+template <unsigned int VDimension>
+void
+ParticleSystem<VDimension>
+::AddNormalsList(const std::vector<PointType> &p,
+                                            unsigned int d)
+{ 
+  unsigned int idx = 0;
+  for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
+    this->AddNormal(*it, d, idx);
+    idx++;
+  }
+}
 template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>

@@ -138,14 +138,29 @@ public:
             k += VDimension;
             s += VDimension;
         }
-        if (m_use_normals[dom])
-        {
+        if (!ps->GetDomainFlag(d) && m_use_normals[dom])
+        {   
             vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
             typename ParticleSystemType::VectorType tmp;
             tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
             tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
             pN[0] = tmp[0]; pN[1] = tmp[1]; pN[2] = tmp[2];
             pN = pN.normalize(); // contains scaling
+            for (unsigned int i = 0; i < VDimension; i++)
+                this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
+            k += VDimension;
+            s += VDimension;
+        }
+        if (ps->GetDomainFlag(d) && m_use_normals[dom])
+        {   
+            Point<double, VDimension> pVar = ps->GetNormal(idx,d);
+            vnl_vector_fixed<float, DIMENSION> pN;
+            pN[0] = pVar[0]; pN[1] = pVar[1]; pN[2] = pVar[2];
+            typename ParticleSystemType::VectorType tmp;
+            tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
+            tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+            pN[0] = tmp[0]; pN[1] = tmp[1]; pN[2] = tmp[2];
+            pN = pN.normalize(); 
             for (unsigned int i = 0; i < VDimension; i++)
                 this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
             k += VDimension;

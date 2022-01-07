@@ -146,6 +146,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
       return false;
     }
   }
+   if (!this->read_normal_files(&doc_handle, optimize)) {
+    return false;
+  }
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
   }
@@ -626,6 +629,35 @@ bool OptimizeParameterFile::read_point_files(TiXmlHandle* docHandle, Optimize* o
     }
     else {
       optimize->SetPointFiles(pointFiles);
+    }
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_normal_files(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  // load normal files
+  TiXmlElement* elem = nullptr;
+  std::istringstream inputsBuffer;
+  std::vector<std::string> normalFiles;
+  elem = docHandle->FirstChild("normal_files").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    std::string normalsfilename;
+    while (inputsBuffer >> normalsfilename) {
+      normalFiles.push_back(normalsfilename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    // read normal files only if they are all present
+    if (normalFiles.size() != optimize->GetDomainFlags().size()) {
+      std::cerr << "ERROR: incorrect number of Normal files!" << std::endl;
+      return false;
+    }
+    else {
+      optimize->SetNormalFiles(normalFiles);
     }
   }
   return true;

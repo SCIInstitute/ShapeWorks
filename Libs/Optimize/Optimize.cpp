@@ -188,6 +188,7 @@ bool Optimize::Run()
 
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteNormalFiles(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
       this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(dir_name);
@@ -822,6 +823,7 @@ void Optimize::Initialize()
 
       this->WritePointFiles(tmp_dir_name);
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteNormalFiles(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
       this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(tmp_dir_name);
@@ -875,12 +877,14 @@ void Optimize::Initialize()
 
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteNormalFiles(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
       this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(tmp_dir_name);
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
+    this->WriteNormalFiles();
     this->WriteEnergyFiles();
     this->WriteTransformFile();
     this->WriteTransformFiles();
@@ -896,6 +900,7 @@ void Optimize::Initialize()
   }
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
+  this->WriteNormalFiles();
   this->WriteTransformFile();
   this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
@@ -937,6 +942,7 @@ void Optimize::AddAdaptivity()
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
+  this->WriteNormalFiles();
   this->WriteTransformFile();
   this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
@@ -1060,6 +1066,7 @@ void Optimize::RunOptimize()
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
+  this->WriteNormalFiles();
   this->WriteEnergyFiles();
   this->WriteTransformFile();
   this->WriteTransformFiles();
@@ -1157,6 +1164,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
       this->WriteTransformFile();
       this->WriteTransformFiles();
       this->WritePointFilesWithFeatures();
+      this->WriteNormalFiles();
       this->WriteModes();
       this->WriteParameters();
       this->WriteEnergyFiles();
@@ -1164,6 +1172,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
       if (m_keep_checkpoints) {
         this->WritePointFiles(this->GetCheckpointDir());
         this->WritePointFilesWithFeatures(this->GetCheckpointDir());
+        this->WriteNormalFiles(this->GetCheckpointDir());
         this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
         this->WriteTransformFiles(this->GetCheckpointDir());
         this->WriteParameters(this->GetCheckpointDir());
@@ -1579,9 +1588,78 @@ void Optimize::WritePointFiles(std::string iter_prefix)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::WriteNormalFiles(int iter)
+{
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
+  if(m_fixed_domains_present){
+    return;
+  }
+  
+  std::stringstream ss;
+  ss << iter + m_optimization_iterations_completed;
+
+  std::stringstream ssp;
+  ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(); 
+
+  std::string out_path = m_output_dir;
+  std::string tmp_dir_name = iter >=
+                             0 ? out_path + "/iter" + ss.str() + "_p" + ssp.str() : out_path;
+
+  this->WriteNormalFiles(tmp_dir_name);
+}
+
+
+void Optimize::WriteNormalFiles(std::string iter_prefix)
+{
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
+  if (m_fixed_domains_present) {
+    return;
+  }
+
+  this->PrintStartMessage("Writing Normal files...\n");
+  typedef Sampler::PointType PointType;
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+
+  int counter;
+  for (int i = 0; i < n; i++) {
+    counter = 0;
+
+    std::string normal_file = iter_prefix + "/" + m_filenames[i] + "_normals.particles";
+    std::ofstream out1(normal_file.c_str());
+    std::string str = "Writing " + normal_file + "...";
+    this->PrintStartMessage(str, 1);
+   
+    if (!out1) {
+      std::cerr << "Error opening output file: " << normal_file << std::endl;
+      throw 1;
+    }
+
+    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
+      vnl_vector_fixed<float, DIMENSION> pG = m_sampler->GetParticleSystem()->GetDomain(i)->SampleNormalAtPoint(pos, j);
+      vnl_matrix_fixed<float, DIMENSION, DIMENSION> pGN = m_sampler->GetParticleSystem()->GetDomain(i)->SampleGradNAtPoint(pos, j);
+      out1 << pG[0] << " " << pG[1] << " " << pG[2] << " ";
+      out1 << std::endl;
+      counter++;
+    }  
+    out1.close(); 
+    this->PrintDoneMessage(1);
+  }
+  this->PrintDoneMessage();
+}
+//---------------------------------------------------------------------------
 void Optimize::WritePointFilesWithFeatures(int iter)
 {
   if (!this->m_file_output_enabled) {
+    return;
+  }
+  if(m_fixed_domains_present){
     return;
   }
 
@@ -1602,6 +1680,9 @@ void Optimize::WritePointFilesWithFeatures(int iter)
 void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 {
   if (!this->m_file_output_enabled) {
+    return;
+  }
+  if(m_fixed_domains_present){
     return;
   }
 
@@ -2144,6 +2225,14 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files)
 {
   for (int shapeCount = 0; shapeCount < point_files.size(); shapeCount++) {
     this->m_sampler->SetPointsFile(shapeCount, point_files[shapeCount]);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetNormalFiles(const std::vector<std::string>& normal_files)
+{
+  for (int shapeCount = 0; shapeCount < normal_files.size(); shapeCount++) {
+    this->m_sampler->SetNormalsFile(shapeCount, normal_files[shapeCount]);
   }
 }
 

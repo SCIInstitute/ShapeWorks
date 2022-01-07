@@ -124,6 +124,17 @@ public:
   void SetPointsFile(const std::string& s)
   { this->SetPointsFile(0, s); }
 
+  void SetNormalsFile(unsigned int i, const std::string& s)
+  {
+    if (m_NormalsFiles.size() < i + 1) {
+      m_NormalsFiles.resize(i + 1);
+    }
+    m_NormalsFiles[i] = s;
+  }
+
+  void SetNormalsFile(const std::string& s)
+  { this->SetNormalsFile(0, s); }
+
   /**Optionally provide a filename for a mesh with geodesic distances.*/
   void SetMeshFile(unsigned int i, const std::string& s)
   {
@@ -395,6 +406,7 @@ public:
 
   void ReadTransforms();
   void ReadPointsFiles();
+  void ReadNormalsFiles();
   virtual void AllocateDataCaches();
   virtual void AllocateDomainsAndNeighborhoods();
   virtual void InitializeOptimizationFunctions();
@@ -525,6 +537,7 @@ private:
   void operator=(const Sampler&); //purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
+  std::vector<std::string> m_NormalsFiles;
   std::vector<std::string> m_MeshFiles;
   std::vector<std::string> m_FeaMeshFiles;
   std::vector<std::string> m_FeaGradFiles;

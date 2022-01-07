@@ -184,6 +184,21 @@ void Sampler::ReadPointsFiles()
   this->GetParticleSystem()->SynchronizePositions();
 }
 
+void Sampler::ReadNormalsFiles()
+{
+  // If Normals file names have been specified, then read and extablish Base Normals.
+  for (unsigned int i = 0; i < m_NormalsFiles.size(); i++) {
+    if (m_NormalsFiles[i] != "") {
+      itk::ParticlePositionReader<3>::Pointer reader
+        = itk::ParticlePositionReader<3>::New();
+      reader->SetFileName(m_NormalsFiles[i].c_str());
+      reader->Update();
+      this->GetParticleSystem()->AddNormalsList(reader->GetOutput(), i);
+    }
+  }
+
+}
+
 void Sampler::InitializeOptimizationFunctions()
 {
   // Set the minimum neighborhood radius and maximum sigma based on the
@@ -251,6 +266,7 @@ void Sampler::Execute()
     // Point the optimizer to the particle system.
     this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
     this->ReadTransforms();
+    this->ReadNormalsFiles();
     this->ReadPointsFiles();
     this->InitializeOptimizationFunctions();
 

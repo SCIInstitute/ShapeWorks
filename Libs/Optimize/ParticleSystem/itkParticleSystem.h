@@ -138,6 +138,7 @@ public:
   const PointType &AddPosition( const PointType &, unsigned int d=0, int threadId=0);
   const PointType &SetPosition( const PointType &,  unsigned long int k,  unsigned int d=0, int threadId=0);
 
+  const PointType &AddNormal( const PointType &, unsigned int d=0, unsigned int idx = 0);
   //  inline const PointType &SetTransformedPosition(const PointType &p,
   //                                                 unsigned long int k,  unsigned int d=0, int threadId=0)
   //  {
@@ -258,6 +259,16 @@ public:
   const DomainType *GetDomain() const
   {return m_Domains[0].GetPointer(); }
 
+  PointType &GetNormal(unsigned long int k, unsigned int d=0)
+  {
+    return (m_Normals[d]->operator[](k));
+  }
+
+  const PointType &GetNormal(unsigned long int k, unsigned int d=0) const 
+  {
+    return (m_Normals[d]->operator[](k));
+  }
+
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const
   { return m_Domains.size(); }
@@ -354,6 +365,7 @@ public:
   /** Adds a list of points to the specified domain.  The arguments are the
      std::vector of points and the domain number. */
   void AddPositionList(const std::vector<PointType> &, unsigned int d = 0, int threadId = 0);
+  void AddNormalsList(const std::vector<PointType> &, unsigned int d = 0);
 
   /** Transforms a point using the given transform. NOTE: Scaling is not
       currently implemented. (This method may be converted to virtual and
@@ -498,6 +510,7 @@ private:
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<typename  PointContainerType::Pointer>  m_Positions;
 
+  std::vector<typename  PointContainerType::Pointer>  m_Normals;
   /** The set of particle domain definitions. */
   std::vector< typename DomainType::Pointer > m_Domains;
 

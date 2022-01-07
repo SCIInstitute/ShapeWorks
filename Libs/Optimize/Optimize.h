@@ -218,6 +218,8 @@ public:
   //! Set starting point files (TODO: details)
   void SetPointFiles(const std::vector<std::string>& point_files);
 
+  void SetNormalFiles(const std::vector<std::string>& normal_files);
+  
   //! Get number of shapes
   int GetNumShapes();
   //! Set the mesh files (TODO: details)
@@ -318,6 +320,8 @@ protected:
   void WriteTransformFiles(std::string iter_prefix) const;
   void WritePointFiles(int iter = -1);
   void WritePointFiles(std::string iter_prefix);
+  void WriteNormalFiles(int iter = -1);
+  void WriteNormalFiles(std::string iter_prefix);
   void WritePointFilesWithFeatures(int iter = -1);
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();

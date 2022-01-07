@@ -125,7 +125,7 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     file = open(xmlfilename, "w+")
     file.write(data)
 
-def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, outDir, numFixedDomains, fixedPointFiles):
+def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, outDir, numFixedDomains, fixedPointFiles, fixedNormalFiles):
     root = ET.Element('sample')
     output_dir = ET.SubElement(root, 'output_dir')
     output_dir.text = "\n" + outDir + "\n"
@@ -206,6 +206,14 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
         t1 = fd.text
         t1 = t1 + str(i) + '\n'
         fd.text = t1
+    if 'use_normals' in parameterDictionary:
+        if parameterDictionary['use_normals'] == 1:
+            normals = ET.SubElement(root, 'normal_files')
+            normals.text = "\n"
+            for i in range(numFixedDomains):
+                    t1 = normals.text
+                    t1 = t1 + fixedNormalFiles[i].replace('\\','/') + '\n'
+                    normals.text = t1
 
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
@@ -253,7 +261,7 @@ def findMeanShape(shapeModelDir):
 
 
 
-def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictionary):
+def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictionary, mesh=False):
     # outDir, numFixedDomains, fixedPointFiles
     numP = parameterDictionary['number_of_particles']
     numFD = parameterDictionary['number_fixed_domains']
@@ -263,20 +271,26 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     inparts = []
+    normals = []
+    extn = '.vtk' if mesh else '.nrrd'
     for j in range(len(inDataFiles)):
         if j < numFD:
             inname = inDataFiles[j].replace('\\','/')
             inpath = os.path.dirname(inDataFiles[j]) + '/'
             outname = inname.replace(inpath, shapeModelDir)
-            lclname = outname.replace('.nrrd', '_local.particles')
+            lclname = outname.replace(extn, '_local.particles')
             inparts.append(lclname)
+            if 'use_normals' in parameterDictionary:
+                if parameterDictionary['use_normals'] == 1:
+                    normalname = outname.replace(extn, '_normals.particles')
+                    normals.append(normalname)
         else:
             # check the validity of this file existing everytime
             lclname = meanShapePath
             inparts.append(lclname)
 
     parameterFile = parentDir + "/correspondence_" + str(numP) + ".xml"
-    create_SWRun_fixed_domains(parameterFile, inDataFiles, parameterDictionary, outDir, numFD, inparts)
+    create_SWRun_fixed_domains(parameterFile, inDataFiles, parameterDictionary, outDir, numFD, inparts, normals)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
     execCommand = ["shapeworks", "optimize", "--name=" + parameterFile]

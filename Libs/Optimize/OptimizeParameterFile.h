@@ -51,6 +51,8 @@ private:
 
   bool read_point_files(TiXmlHandle* docHandle, Optimize* optimize);
 
+  bool read_normal_files(TiXmlHandle* docHandle, Optimize* optimize);
+
   bool read_constraints(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_distribution_cutting_plane(TiXmlHandle* doc_handle, Optimize* optimize);
