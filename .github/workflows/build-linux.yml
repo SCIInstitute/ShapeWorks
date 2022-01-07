@@ -81,13 +81,9 @@ jobs:
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
-    - name: List files
-      shell: bash -l {0}
-      run: ls -R /home
-
     - name: Copy artifact
       shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux ${{runner.workspace}}/ShapeWorks/artifacts
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux /__w/ShapeWorks/ShapeWorks/artifacts
       
     - uses: actions/upload-artifact@v2
       with:
