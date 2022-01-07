@@ -81,6 +81,14 @@ jobs:
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
+    - name: List files
+      shell: bash -l {0}
+      run: ls -R /home
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux ${{runner.workspace}}/ShapeWorks/artifacts
+      
     - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-linux
@@ -102,11 +110,4 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/store_ccache.sh
 
-    - name: List files
-      shell: bash -l {0}
-      run: ls -R ${{runner.workspace}}
-
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux ${{runner.workspace}}/ShapeWorks/artifacts
       
