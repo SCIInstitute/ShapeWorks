@@ -101,4 +101,8 @@ jobs:
     - name: Store ccache
       shell: bash -l {0}
       run: .github/workflows/store_ccache.sh
-            
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+      

@@ -146,3 +146,8 @@ jobs:
         title: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-windows ${{runner.workspace}}/ShapeWorks/artifacts/*
+             
