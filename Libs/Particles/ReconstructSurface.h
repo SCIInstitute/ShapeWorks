@@ -57,11 +57,11 @@ private:
   std::string outPrefix;
   std::string outPath;
   bool denseDone = true;
-  int modeIndex;
+  int modeIndex = -1;
   int numOfModes;
-  float maxVarianceCaptured;
+  float maxVarianceCaptured = 0.95;
   int numOfParticles;
-  float maxStdDev;
+  float maxStdDev = 2.0;
   int numOfSamplesPerMode;
 
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);

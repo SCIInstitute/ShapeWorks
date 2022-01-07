@@ -1,8 +1,11 @@
+#define S_IRWXU 0000700
+
 #include "ReconstructSurface.h"
 #include "StringUtils.h" 
 #include "ParticleShapeStatistics.h"
 #include "Utils.h"
 
+#include <sys/stat.h>
 #include <vtkKdTreePointLocator.h>
 
 namespace shapeworks {
@@ -429,7 +432,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 #ifdef WIN32
     mkdirStatus = _mkdir(cur_path.c_str());
 #else
-    // mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU); // TODO: does not built
+    mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
 #endif
 
     double sqrt_eigenValue = sqrt(eigenValues[totalNumberOfModes - modeId - 1]);
