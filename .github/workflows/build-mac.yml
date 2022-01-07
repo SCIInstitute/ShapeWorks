@@ -127,5 +127,5 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts/*
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts
       
