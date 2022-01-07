@@ -266,9 +266,17 @@
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="release-notes.html">Release Notes</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-62-2021-11-16">ShapeWorks 6.2 - 2021-11-16</a>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-621-2022-01-07">ShapeWorks 6.2.1 - 2022-01-07</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-is-new">What is new?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-62-2021-11-16">ShapeWorks 6.2 - 2021-11-16</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-new_1">What is new?</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end">ShapeWorks Back-end</a>
     </li>
@@ -288,7 +296,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_1">Fixes</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_2">ShapeWorks Back-end</a>
     </li>
@@ -300,7 +308,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#what-is-new_1">What is new?</a>
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-new_2">What is new?</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_3">ShapeWorks Back-end</a>
     </li>
@@ -322,7 +330,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_1">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_2">Fixes</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_5">ShapeWorks Back-end</a>
     </li>
@@ -360,7 +368,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_2">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_3">Fixes</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_8">ShapeWorks Back-end</a>
     </li>
@@ -394,7 +402,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_3">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_4">Fixes</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_11">ShapeWorks Back-end</a>
     </li>
@@ -404,7 +412,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_4">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_5">Fixes</a>
     </li>
         </ul>
     </li>
@@ -414,7 +422,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#improvements_4">Improvements</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_5">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_6">Fixes</a>
     </li>
         </ul>
     </li>
@@ -428,13 +436,13 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_6">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_7">Fixes</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_7">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_8">Fixes</a>
     </li>
         </ul>
     </li>
@@ -444,7 +452,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#improvements_6">Improvements</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fixes_8">Fixes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_9">Fixes</a>
     </li>
         </ul>
     </li>
@@ -495,9 +503,36 @@
             <div class="section">
               
                 <h1 id="release-notes">Release Notes</h1>
+<h2 id="shapeworks-621-2022-01-07">ShapeWorks 6.2.1 - 2022-01-07</h2>
+<h3 id="what-is-new">What is new?</h3>
+<ul>
+<li><strong>ShapeWorks Back-end</strong><ul>
+<li>Added new <code>isolate</code> functionality that isolates the largest object in a segmentation</li>
+<li>Added remeshing using ACVD library</li>
+<li>Added option to save mesh file as binary (default is ASCII)</li>
+<li>Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. </li>
+</ul>
+</li>
+<li><strong>ShapeWorks Front-end</strong><ul>
+<li>Studio: Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)</li>
+<li>Studio: Added reflection, remeshing, image cropping, image resampling to grooming</li>
+<li>Studio: New UI for grooming</li>
+</ul>
+</li>
+<li><strong>User's Support</strong><ul>
+<li>Updated <code>ellipsoid_mesh</code> use case to demonstrate mesh grooming</li>
+<li>Combined the functionality of the three femur use cases - <code>femur</code>,<code>femur_mesh</code>,<code>femur_cut</code> into one use case. The <code>femur_cut</code> use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Studio: Fixed display names in the corner (removing long paths)</li>
+<li>Studio: Fixed recomputation of shape statistics upon re-running shape model and removing shapes</li>
+</ul>
 <h2 id="shapeworks-62-2021-11-16">ShapeWorks 6.2 - 2021-11-16</h2>
 <p><img alt="" src="../img/about/release6.2.png" /></p>
-<h3 id="what-is-new">What is new?</h3>
+<h3 id="what-is-new_1">What is new?</h3>
 <h4 id="shapeworks-back-end">ShapeWorks Back-end</h4>
 <ul>
 <li>
@@ -599,7 +634,7 @@ The following tools are supported from all three different interfaces - command 
 <p><strong>Restructured <code>ellipsoid_evaluate</code> use case:</strong> The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See <a href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a> for more details.</p>
 </li>
 </ul>
-<h3 id="fixes">Fixes</h3>
+<h3 id="fixes_1">Fixes</h3>
 <h4 id="shapeworks-back-end_2">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Memory leak:</strong> Fixed memory leak issues in <code>FEMesh</code> operations</li>
@@ -610,7 +645,7 @@ The following tools are supported from all three different interfaces - command 
 </ul>
 <h2 id="shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</h2>
 <p><img alt="" src="../img/about/release6.1.png" /></p>
-<h3 id="what-is-new_1">What is new?</h3>
+<h3 id="what-is-new_2">What is new?</h3>
 <h4 id="shapeworks-back-end_3">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Improved shape models for convoluted structures:</strong> Geodesic distance-based repulsion is now supported for mesh domains. This improves results on structures with thin and/or convoluted features at the cost of increased memory and runtime. Refer to the <code>thin_cavity_bean</code> use case for an example.</li>
@@ -668,7 +703,7 @@ The following tools are supported from all three different interfaces - command 
 <li><strong>New shapeworks environments can now be created using <code>install_shapeworks [name]</code>:</strong> This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.</li>
 <li><strong>Clean installation for ShapeWorks Python module:</strong> ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. </li>
 </ul>
-<h3 id="fixes_1">Fixes</h3>
+<h3 id="fixes_2">Fixes</h3>
 <h4 id="shapeworks-back-end_5">ShapeWorks Back-end</h4>
 <ul>
 <li><strong>Image to Array:</strong> ShapeWorks image functionality is fixed such that an image can be successfully converted to a numpy array and back to a ShapeWorks image. </li>
@@ -744,7 +779,7 @@ The following tools are supported from all three different interfaces - command 
 <ul>
 <li><strong>More control on data augmentation:</strong> In data augmentation, the user can now either specify how many PCA components to retain in embedding OR what percentage of population variability to retain. For example, suppose the user specifies that 95% of population variability should be kept. In that case, the number of components will be automatically selected such that less than 5% of shape variation is lost in embedding.</li>
 </ul>
-<h3 id="fixes_2">Fixes</h3>
+<h3 id="fixes_3">Fixes</h3>
 <!--#### User's Support
 -->
 
@@ -826,7 +861,7 @@ The following tools are supported from all three different interfaces - command 
 <ul>
 <li><strong>Improved interface design for Studio:</strong> User interface improvements to Studio have been added. These improvements include collapsable analysis panels to improve screen usability, a cleaner file menu, an about box that shows website information and software version, and a splash screen that enables the opening of new/recent projects.</li>
 </ul>
-<h3 id="fixes_3">Fixes</h3>
+<h3 id="fixes_4">Fixes</h3>
 <h4 id="shapeworks-back-end_11">ShapeWorks Back-end</h4>
 <ul>
 <li>
@@ -841,7 +876,7 @@ The following tools are supported from all three different interfaces - command 
 </ul>
 <hr />
 <h2 id="shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</h2>
-<h3 id="fixes_4">Fixes</h3>
+<h3 id="fixes_5">Fixes</h3>
 <ul>
 <li><strong>ShapeWorks Studio:</strong> Fixed crash when importing data on a new/blank project.    </li>
 </ul>
@@ -864,7 +899,7 @@ The following tools are supported from all three different interfaces - command 
 <li><strong>Documentation for running existing shape models:</strong> Added <a href="../use-cases/use-cases.html#running-subsequent-analysis">instructions</a> on how to load a pre-trained shape model without running the full pipeline.</li>
 <li><strong>Consistent cross-platform splitting direction:</strong> Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.</li>
 </ul>
-<h3 id="fixes_5">Fixes</h3>
+<h3 id="fixes_6">Fixes</h3>
 <ul>
 <li><strong>Mesh export in Studio:</strong> Changed exported meshes to be compatible with CloudCompare</li>
 </ul>
@@ -885,7 +920,7 @@ The following tools are supported from all three different interfaces - command 
 </ul>
 <hr />
 <h2 id="shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</h2>
-<h3 id="fixes_6">Fixes</h3>
+<h3 id="fixes_7">Fixes</h3>
 <ul>
 <li>Returned to superbuild.sh build process</li>
 <li>Fixed non-Qt build</li>
@@ -895,7 +930,7 @@ The following tools are supported from all three different interfaces - command 
 </ul>
 <hr />
 <h2 id="shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</h2>
-<h3 id="fixes_7">Fixes</h3>
+<h3 id="fixes_8">Fixes</h3>
 <ul>
 <li>Fix examples, binaries</li>
 </ul>
@@ -917,7 +952,7 @@ The following tools are supported from all three different interfaces - command 
 <li>Studio: Added legacy (View2) surface reconstructor</li>
 <li>Studio: Replaced optimization library with same used by ShapeWorksRun</li>
 </ul>
-<h3 id="fixes_8">Fixes</h3>
+<h3 id="fixes_9">Fixes</h3>
 <ul>
 <li>Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)</li>
 </ul>
