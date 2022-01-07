@@ -81,7 +81,7 @@ jobs:
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts

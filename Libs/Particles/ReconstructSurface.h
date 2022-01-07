@@ -10,8 +10,6 @@ template<class TransformType>
 class ReconstructSurface
 {
 public:
-  enum InterpType { LinearInterpolation, BSplineInterpolation };
-
   using TransformTypePtr = typename TransformType::Pointer;
   using PointSetType = typename TransformType::PointSetType;
   using PointIdType = typename PointSetType::PointIdentifier;
@@ -21,8 +19,7 @@ public:
 
   double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
 
-  void CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints, Mesh::MeshPoints mappedCorrespondences,
-                    double rms, double rms_wo_mapping, double maxmDist);
+  void checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints);
 
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
@@ -86,13 +83,10 @@ private:
   bool doProcrustesScaling;
   bool usePairwiseNormalsDifferencesForGoodBad;
   int modeIndex;
-  int numOfModes;
-  int numOfParticles;
   int numOfSamplesPerMode;
   float maxStdDev;
   float maxVarianceCaptured;
   float maxAngleDegrees;
-
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
   std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);

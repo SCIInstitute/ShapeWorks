@@ -1359,6 +1359,7 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
                                QString x_label, QString y_label)
 {
   JKQTPDatastore* ds = plot->getDatastore();
+  ds->clear();
 
   QVector<double> x, y;
   for (int i = 0; i < data.size(); i++) {

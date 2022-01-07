@@ -4,7 +4,12 @@
 #include "StringUtils.h" 
 #include "Utils.h"
 
+#include <sys/stat.h>
 #include <vtkKdTreePointLocator.h>
+
+#ifdef _WIN32
+  #include <direct.h>
+#endif
 
 namespace shapeworks {
 
@@ -14,6 +19,7 @@ ReconstructSurface<TransformType>::ReconstructSurface(const std::string &denseFi
   this->denseMean = Mesh(denseFile).getVTKMesh();
   this->sparseMean = setSparseMean(sparseFile);
   this->goodPoints = setGoodPoints(goodPointsFile);
+  this->denseDone = true;
 }
 
 template<class TransformType>
@@ -113,12 +119,12 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
 }
 
 template<class TransformType>
-void ReconstructSurface<TransformType>::CheckMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints,
-                                                     Mesh::MeshPoints mappedCorrespondences, double rms, double rms_wo_mapping, double maxmDist)
+void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints)
 {
   // source should be warped to the target
-  rms = 0.0;
-  rms_wo_mapping = 0.0;
+  double rms = 0.0;
+  double rms_wo_mapping = 0.0;
+  Mesh::MeshPoints mappedCorrespondences = Mesh::MeshPoints::New();
 
   for (unsigned int i = 0; i < sourcePoints->GetNumberOfPoints(); i++)
   {
@@ -145,7 +151,7 @@ void ReconstructSurface<TransformType>::CheckMapping(TransformTypePtr transform,
     mappedCorrespondences->InsertNextPoint(pw);
   }
 
-  maxmDist = double(-10000.0f);
+  double maxmDist = double(-10000.0f);
   for (unsigned int i = 0; i < mappedCorrespondences->GetNumberOfPoints(); i++)
   {
     double pi[3];
@@ -232,8 +238,12 @@ Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
     }
   }
 
-  id = itk::NumericTraits<PointIdType>::Zero;
   typename TransformType::Pointer transform = TransformType::New();
+  transform->SetSigma(sigma);
+  transform->SetStiffness(1e-10);
+  transform->SetSourceLandmarks(sourceLandMarks);
+
+  id = itk::NumericTraits<PointIdType>::Zero;
   typename PointSetType::Pointer targetLandMarks = PointSetType::New();
   typename PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
   Point3 pt;
@@ -253,9 +263,7 @@ Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
   }
   transform->SetTargetLandmarks(targetLandMarks);
 
-  vtkSmartPointer<vtkPoints> mappedCorrespondences = vtkSmartPointer<vtkPoints>::New();
-  double rms, rms_wo_mapping, maxmDist;
-  CheckMapping(transform, this->sparseMean, subjectPoints, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+  checkMapping(transform, this->sparseMean, subjectPoints);
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
   denseShape->DeepCopy(this->denseMean);
@@ -744,13 +752,12 @@ void ReconstructSurface<TransformType>::surface(const std::vector<std::string> l
 
     Mesh curDense = getMesh(curSparse);
 
-    std::string outfilename = this->outPrefix + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.vtk";
+    std::string outfilename = this->outPrefix + '/' + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.vtk";
     std::cout << "Writing: " << outfilename << std::endl;
     curDense.write(outfilename);
 
     std::string ptsfilename = this->outPrefix + '/'+ StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_dense.particles";
     Utils::writeSparseShape((char*) ptsfilename.c_str(), curDense.getVTKMesh()->GetPoints());
-
     vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
     Utils::readSparseShape(curSparse_, const_cast<char*> (this->localPointsFiles[i].c_str()));
 
@@ -859,7 +866,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 #ifdef WIN32
     mkdirStatus = _mkdir(cur_path.c_str());
 #else
-    // mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU); // TODO: does not built
+    mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
 #endif
 
     double sqrt_eigenValue = sqrt(eigenValues[totalNumberOfModes - modeId - 1]);
