@@ -1339,10 +1339,41 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setOutPrefix,
        "prefix"_a)
 
+  .def("setOutPath",
+       &ReconstructSurface<ThinPlateSplineTransform>::setOutPath,
+       "path"_a)
+
+  .def("setModeIndex",
+       &ReconstructSurface<ThinPlateSplineTransform>::setModeIndex,
+       "modeIndex"_a)
+
+  .def("setNumOfModes",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfModes,
+       "numOfModes"_a)
+
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setNumOfParticles",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfParticles,
+       "numOfParticles"_a)
+
+  .def("setMaxStdDev",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxStdDev,
+       "maxStdDev"_a)
+
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a) 
+
   .def("surface",
        &ReconstructSurface<ThinPlateSplineTransform>::surface,
        "localPointsFiles"_a)
 
+  .def("samplesAlongPCAModes",
+       &ReconstructSurface<ThinPlateSplineTransform>::samplesAlongPCAModes,
+       "worldPointsFiles"_a)
   ;
 
   py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
@@ -1355,10 +1386,41 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
        "prefix"_a)
 
+    .def("setOutPath",
+       &ReconstructSurface<RBFSSparseTransform>::setOutPath,
+       "path"_a)
+
+  .def("setModeIndex",
+       &ReconstructSurface<RBFSSparseTransform>::setModeIndex,
+       "modeIndex"_a)
+
+  .def("setNumOfModes",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfModes,
+       "numOfModes"_a)
+
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setNumOfParticles",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfParticles,
+       "numOfParticles"_a)
+
+  .def("setMaxStdDev",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxStdDev,
+       "maxStdDev"_a)
+
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
+
   .def("surface",
        &ReconstructSurface<RBFSSparseTransform>::surface,
        "localPointsFiles"_a)
 
+  .def("samplesAlongPCAModes",
+       &ReconstructSurface<RBFSSparseTransform>::samplesAlongPCAModes,
+       "worldPointsFiles"_a)
   ;
 
   // Optimize (TODO)
