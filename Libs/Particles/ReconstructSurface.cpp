@@ -1014,8 +1014,8 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
   mkdirStatus = _mkdir(worldPointsPath.c_str());
   mkdirStatus = _mkdir(localPointsPath.c_str());
 #else
-  // mkdirStatus = mkdir(worldPointsPath.c_str(), S_IRWXU); // check on this
-  // mkdirStatus = mkdir(localPointsPath.c_str(), S_IRWXU); // check on this
+  mkdirStatus = mkdir(worldPointsPath.c_str(), S_IRWXU); // check on this
+  mkdirStatus = mkdir(localPointsPath.c_str(), S_IRWXU); // check on this
 #endif
 
   for (int i=0; i<this->worldPointsFiles.size(); i++)
@@ -1039,8 +1039,8 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
   mkdirStatus = _mkdir(localGoodBadPath.c_str());
   mkdirStatus = _mkdir(worldGoodBadPath.c_str());
 #else
-  // mkdirStatus = mkdir(localGoodBadPath.c_str(), S_IRWXU);
-  // mkdirStatus = mkdir(worldGoodBadPath.c_str(), S_IRWXU);
+  mkdirStatus = mkdir(localGoodBadPath.c_str(), S_IRWXU);
+  mkdirStatus = mkdir(worldGoodBadPath.c_str(), S_IRWXU);
 #endif
 
   for (unsigned int shapeNo = 0; shapeNo < this->worldPointsFiles.size(); shapeNo++)
