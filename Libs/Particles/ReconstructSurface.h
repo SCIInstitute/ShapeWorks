@@ -1,10 +1,16 @@
 #pragma once
 
+#include "Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h"
+#include "Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h"
 #include "Mesh.h"
 
 #include <itkPointSet.h>
 
 namespace shapeworks {
+
+/// Transforms that can be used for ReconstructSurface
+using ThinPlateSplineTransform = itk::ThinPlateSplineKernelTransform2<double, 3>;
+using RBFSSparseTransform      = itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;
 
 template<class TransformType>
 class ReconstructSurface

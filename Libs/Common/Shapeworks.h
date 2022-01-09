@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h"
-#include "Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h"
-
 #include <itkPoint.h>
 #include <itkVector.h>
 #include <itkCovariantVector.h>
@@ -45,10 +42,6 @@ using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
-
-/// Transforms that can be used for ReconstructSurface
-using ThinPlateSplineTransform = itk::ThinPlateSplineKernelTransform2<double, 3>;
-using RBFSSparseTransform      = itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;
 
 /// Make a plane
 Plane makePlane(const Point &p, const Vector3 &n);
