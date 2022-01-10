@@ -183,6 +183,7 @@ title: Classes
     * **class [QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md). 
     * **class [QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper.md)** <br>Wraps [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) as a QObject. 
     * **class [QOptimize](../Classes/classshapeworks_1_1QOptimize.md)** <br>Wraps [Optimize](../Classes/classshapeworks_1_1Optimize.md) as a QObject. 
+    * **class [ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)** 
     * **struct [Reconstruction](../Classes/structshapeworks_1_1Reconstruction.md)** 
     * **class [Sampler](../Classes/classshapeworks_1_1Sampler.md)** 
         * **struct [CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)** 
@@ -229,4 +230,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:46 +0000
+Updated on 2022-01-10 at 16:27:27 +0000

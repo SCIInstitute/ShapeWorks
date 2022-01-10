@@ -45,6 +45,7 @@ using Matrix44      = itk::Matrix<double, 4, 4>;
 using Matrix33      = itk::Matrix<double, 3, 3>;
 using IPoint3       = itk::Point<int, 3>;
 using FPoint3       = itk::Point<float, 3>;
+using Covariant     = itk::CovariantVector<float, 3>;
 using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
@@ -271,4 +272,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:45 +0000
+Updated on 2022-01-10 at 16:27:27 +0000

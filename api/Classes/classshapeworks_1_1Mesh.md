@@ -23,6 +23,7 @@ title: shapeworks::Mesh
 | enum| **[CurvatureType](../Classes/classshapeworks_1_1Mesh.md#enum-curvaturetype)** { Principal, Gaussian, Mean} |
 | enum| **[SubdivisionType](../Classes/classshapeworks_1_1Mesh.md#enum-subdivisiontype)** { Butterfly, Loop} |
 | using vtkSmartPointer< vtkPolyData > | **[MeshType](../Classes/classshapeworks_1_1Mesh.md#using-meshtype)**  |
+| using vtkSmartPointer< vtkPoints > | **[MeshPoints](../Classes/classshapeworks_1_1Mesh.md#using-meshpoints)**  |
 
 ## Public Functions
 
@@ -92,7 +93,7 @@ title: shapeworks::Mesh
 | bool | **[splitMesh](../Classes/classshapeworks_1_1Mesh.md#function-splitmesh)**(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num)<br>Splits the mesh for FFCs by setting scalar and vector fields.  |
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query)<br>Gets values and gradients for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) |
-| vtkSmartPointer< vtkPoints > | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
+| MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>getSupportedTypes  |
 
 ## Friends
@@ -158,6 +159,13 @@ This class encapsulates a [Mesh](../Classes/classshapeworks_1_1Mesh.md) and oper
 
 ```cpp
 using shapeworks::Mesh::MeshType =  vtkSmartPointer<vtkPolyData>;
+```
+
+
+### using MeshPoints
+
+```cpp
+using shapeworks::Mesh::MeshPoints =  vtkSmartPointer<vtkPoints>;
 ```
 
 
@@ -804,7 +812,7 @@ Eigen::Vector3d getFFCGradient(
 ### function getIGLMesh
 
 ```cpp
-vtkSmartPointer< vtkPoints > getIGLMesh(
+MeshPoints getIGLMesh(
     Eigen::MatrixXd & V,
     Eigen::MatrixXi & F
 ) const
@@ -831,4 +839,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:45 +0000
+Updated on 2022-01-10 at 16:27:27 +0000

@@ -44,6 +44,7 @@ public:
   enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
+  using MeshPoints = vtkSmartPointer<vtkPoints>;
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
@@ -191,9 +192,7 @@ public:
   double getFFCValue(Eigen::Vector3d query);
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
-  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
-
-
+  MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
 private:
   friend struct SharedCommandData;
@@ -209,18 +208,15 @@ private:
 
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
 
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-
 };
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
-
-
 
 } // shapeworks
 ```
@@ -228,4 +224,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:46 +0000
+Updated on 2022-01-10 at 16:27:27 +0000

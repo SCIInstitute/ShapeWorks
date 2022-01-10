@@ -186,4 +186,4 @@ inline Eigen::Vector3d LagragianGradient(
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:44 +0000
+Updated on 2022-01-10 at 16:27:26 +0000

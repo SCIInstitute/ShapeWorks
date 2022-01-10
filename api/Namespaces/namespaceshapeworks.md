@@ -64,6 +64,7 @@ title: shapeworks
 | class | **[shapeworks::QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper.md)** <br>Wraps [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) as a QObject.  |
 | class | **[shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)** <br>Wraps [Optimize](../Classes/classshapeworks_1_1Optimize.md) as a QObject.  |
 | struct | **[shapeworks::Reconstruction](../Classes/structshapeworks_1_1Reconstruction.md)**  |
+| class | **[shapeworks::ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)**  |
 | class | **[shapeworks::Sampler](../Classes/classshapeworks_1_1Sampler.md)**  |
 | class | **[shapeworks::Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session.  |
 | class | **[shapeworks::Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject.  |
@@ -112,6 +113,7 @@ title: shapeworks
 | using itk::Matrix< double, 3, 3 > | **[Matrix33](../Namespaces/namespaceshapeworks.md#using-matrix33)**  |
 | using itk::Point< int, 3 > | **[IPoint3](../Namespaces/namespaceshapeworks.md#using-ipoint3)**  |
 | using itk::Point< float, 3 > | **[FPoint3](../Namespaces/namespaceshapeworks.md#using-fpoint3)**  |
+| using itk::CovariantVector< float, 3 > | **[Covariant](../Namespaces/namespaceshapeworks.md#using-covariant)**  |
 | using Vector3 | **[Vector](../Namespaces/namespaceshapeworks.md#using-vector)**  |
 | using Point3 | **[Point](../Namespaces/namespaceshapeworks.md#using-point)**  |
 | using Matrix33 | **[Matrix](../Namespaces/namespaceshapeworks.md#using-matrix)**  |
@@ -124,6 +126,8 @@ title: shapeworks
 | using itk::AffineTransform< double, 3 > | **[AffineTransform](../Namespaces/namespaceshapeworks.md#using-affinetransform)** <br>Affine transforms are used for many [Image]() manipulation commands.  |
 | using AffineTransform::Pointer | **[AffineTransformPtr](../Namespaces/namespaceshapeworks.md#using-affinetransformptr)**  |
 | using vtkSmartPointer< vtkTransform > | **[MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform)** <br>[Mesh]() transforms.  |
+| using [itk::ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)< double, 3 > | **[ThinPlateSplineTransform](../Namespaces/namespaceshapeworks.md#using-thinplatesplinetransform)** <br>Transforms that can be used for [ReconstructSurface]().  |
+| using [itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)< double, 3 > | **[RBFSSparseTransform](../Namespaces/namespaceshapeworks.md#using-rbfssparsetransform)**  |
 | using std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[ProjectHandle](../Namespaces/namespaceshapeworks.md#using-projecthandle)**  |
 | template <typename T \> <br>using Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor > | **[VnlMatrix](../Namespaces/namespaceshapeworks.md#using-vnlmatrix)**  |
 | using std::map< [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md), MeshHandle > | **[CacheMap](../Namespaces/namespaceshapeworks.md#using-cachemap)**  |
@@ -434,6 +438,13 @@ using shapeworks::FPoint3 = typedef itk::Point<float, 3>;
 ```
 
 
+### using Covariant
+
+```cpp
+using shapeworks::Covariant = typedef itk::CovariantVector<float, 3>;
+```
+
+
 ### using Vector
 
 ```cpp
@@ -520,6 +531,21 @@ using shapeworks::MeshTransform = typedef vtkSmartPointer<vtkTransform>;
 ```
 
 [Mesh]() transforms. 
+
+### using ThinPlateSplineTransform
+
+```cpp
+using shapeworks::ThinPlateSplineTransform = typedef itk::ThinPlateSplineKernelTransform2<double, 3>;
+```
+
+Transforms that can be used for [ReconstructSurface](). 
+
+### using RBFSSparseTransform
+
+```cpp
+using shapeworks::RBFSSparseTransform = typedef itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;
+```
+
 
 ### using ProjectHandle
 
@@ -2199,4 +2225,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-01-07 at 20:14:44 +0000
+Updated on 2022-01-10 at 16:27:26 +0000
