@@ -19,6 +19,7 @@ namespace shapeworks {
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
+//! Landmark class containing properties of each landmark
 class Landmark {
 public:
   std::string name_;

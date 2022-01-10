@@ -807,6 +807,7 @@ int Viewer::handle_pick(int* click_pos)
   // First determine what was picked
   vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
   prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
+
   if (prop_picker->GetActor() != this->glyph_actor_) {
     return -1;
   }
@@ -834,6 +835,26 @@ int Viewer::handle_pick(int* click_pos)
   }
 
   return -1;
+}
+
+//-----------------------------------------------------------------------------
+PickResult Viewer::handle_ctrl_click(int *click_pos)
+{
+  // First determine what was picked
+  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
+  prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
+  PickResult result;
+
+  for (int i=0;i<surface_actors_.size();i++) {
+    if (prop_picker->GetActor() == surface_actors_[i]) {
+      double* pos = prop_picker->GetPickPosition();
+      result.pos_ = QPointF(pos[0], pos[1]);
+      result.domain_ = i;
+      return result;
+
+    }
+  }
+return result;
 }
 
 //-----------------------------------------------------------------------------

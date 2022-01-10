@@ -521,4 +521,10 @@ double Visualizer::get_current_glyph_size()
 {
   return this->current_glyph_size_;
 }
+
+//-----------------------------------------------------------------------------
+void Visualizer::handle_ctrl_click(PickResult result)
+{
+
+}
 }

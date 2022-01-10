@@ -55,7 +55,7 @@ public:
 
   void redraw();
 
-  void handle_pick(int* click_pos, bool one);
+  void handle_pick(int* click_pos, bool one, bool ctrl);
 
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
 

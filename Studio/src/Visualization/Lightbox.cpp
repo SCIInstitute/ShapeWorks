@@ -322,9 +322,20 @@ ViewerList Lightbox::get_viewers()
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::handle_pick(int* click_pos, bool one)
+void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl)
 {
-  int id = -1;
+  if (ctrl) {
+    for (int i=0;i<viewers_.size();i++)  {
+      auto result = viewers_[i]->handle_ctrl_click(click_pos);
+      if (result.domain_ != -1) {
+        result.subject_ = i;
+        visualizer_->handle_ctrl_click(result);
+        return;
+      }
+    }
+  }
+  else {
+    int id = -1;
     foreach(ViewerHandle viewer, this->viewers_) {
       int vid = viewer->handle_pick(click_pos);
       if (vid != -1) {
@@ -332,11 +343,12 @@ void Lightbox::handle_pick(int* click_pos, bool one)
       }
     }
 
-  if (one) {
-    this->visualizer_->set_selected_point_one(id);
-  }
-  else {
-    this->visualizer_->set_selected_point_two(id);
+    if (one) {
+      this->visualizer_->set_selected_point_one(id);
+    }
+    else {
+      this->visualizer_->set_selected_point_two(id);
+    }
   }
 }
 

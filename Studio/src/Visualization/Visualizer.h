@@ -125,6 +125,9 @@ public:
   //! Get the current glyph size
   double get_current_glyph_size();
 
+  //! Handle ctrl click
+  void handle_ctrl_click(PickResult result);
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

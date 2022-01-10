@@ -2,6 +2,7 @@
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
+#include <QPointF>
 
 #include <Data/Shape.h>
 
@@ -31,6 +32,13 @@ class StudioInteractorStyle;
 typedef QSharedPointer<Viewer> ViewerHandle;
 typedef QVector<ViewerHandle> ViewerList;
 
+class PickResult {
+public:
+  QPointF pos_;
+  int domain_ = -1;
+  int subject_ = -1;
+};
+
 //! 3D Viewer
 /*!
  * The Viewer class encapsulates all the functionality for visualizing a single subject/shape
@@ -59,6 +67,8 @@ public:
   void update_glyph_properties();
 
   int handle_pick(int* click_pos);
+
+  PickResult handle_ctrl_click(int *click_pos);
 
   void set_selected_point(int id);
 
