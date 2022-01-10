@@ -70,6 +70,26 @@ Viewer::Viewer() {
   this->glyph_actor_->GetProperty()->SetSpecularPower(10.0);
   this->glyph_actor_->SetMapper(this->glyph_mapper_);
 
+  // set up landmarks
+  this->landmark_points_ = vtkSmartPointer<vtkPoints>::New();
+  this->landmark_points_->SetDataTypeToDouble();
+  this->landmark_point_set_ = vtkSmartPointer<vtkPolyData>::New();
+  this->landmark_point_set_->SetPoints(this->landmark_points_);
+  this->landmark_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
+  this->landmark_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
+  this->landmark_glyph_->SetInputData(this->landmark_point_set_);
+  this->landmark_glyph_->ScalingOn();
+  this->landmark_glyph_->ClampingOff();
+  this->landmark_glyph_->SetScaleModeToScaleByScalar();
+  this->landmark_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
+  this->landmark_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->landmark_mapper_->SetInputConnection(this->landmark_glyph_->GetOutputPort());
+  this->landmark_mapper_->SetScalarVisibility(0);
+  this->landmark_actor_ = vtkSmartPointer<vtkActor>::New();
+  this->landmark_actor_->GetProperty()->SetOpacity(0.5);
+  this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
+  this->landmark_actor_->SetMapper(this->landmark_mapper_);
+
   // exclusion spheres
   this->exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
   this->exclusion_sphere_points_->SetDataTypeToDouble();
@@ -461,6 +481,27 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_landmarks() {
+  auto& landmarks = shape_->landmarks();
+  int num_points = landmarks.rows();
+
+  vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
+  scalars->Reset();
+  scalars->SetNumberOfTuples(num_points);
+
+  landmark_glyph_->SetRange(0.0, (double)num_points + 1);
+  landmark_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+
+  landmark_points_->Reset();
+  landmark_points_->SetNumberOfPoints(landmarks.rows());
+
+  for (int i = 0; i < num_points; i++) {
+    scalars->InsertValue(i, 5);
+    landmark_points_->SetPoint(i, landmarks(i, 2), landmarks(i, 3), landmarks(i, 4));
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape) {
   this->visible_ = true;
 
@@ -732,6 +773,7 @@ void Viewer::update_actors() {
   this->renderer_->RemoveActor(this->glyph_actor_);
   this->renderer_->RemoveActor(this->arrow_glyph_actor_);
   this->renderer_->RemoveActor(this->scalar_bar_actor_);
+  renderer_->RemoveActor(landmark_actor_);
 
   for (size_t i = 0; i < this->surface_actors_.size(); i++) {
     this->renderer_->RemoveActor(this->surface_actors_[i]);
@@ -749,6 +791,8 @@ void Viewer::update_actors() {
       this->renderer_->AddActor(this->scalar_bar_actor_);
     }
   }
+
+  renderer_->AddActor(landmark_actor_);
 
   if (this->show_surface_ && this->meshes_.valid()) {
     for (int i = 0; i < this->number_of_domains_; i++) {

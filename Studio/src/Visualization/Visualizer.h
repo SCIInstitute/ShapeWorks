@@ -59,6 +59,8 @@ public:
 
   void update_samples();
 
+  void update_landmarks();
+
   void display_sample(int i);
 
   void display_shape(ShapeHandle shape);

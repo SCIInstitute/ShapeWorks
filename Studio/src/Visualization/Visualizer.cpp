@@ -49,6 +49,7 @@ void Visualizer::set_session(SessionHandle session)
 {
   this->session_ = session;
   connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
+  connect(session_.data(), &Session::landmarks_changed, this, &Visualizer::update_landmarks);
 }
 
 //-----------------------------------------------------------------------------
@@ -83,6 +84,16 @@ void Visualizer::update_samples()
   QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
   foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
     viewer->update_points();
+  }
+  this->lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_landmarks()
+{
+  QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_landmarks();
   }
   this->lightbox_->redraw();
 }

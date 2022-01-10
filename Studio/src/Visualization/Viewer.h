@@ -90,6 +90,8 @@ public:
 
   QSharedPointer<Shape> get_shape();
 
+  void update_landmarks();
+
 private:
 
   vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
@@ -116,6 +118,7 @@ private:
   bool showing_feature_map();
   std::string get_displayed_feature_map();
 
+
   bool visible_;
 
   QSharedPointer<Shape> shape_;
@@ -136,6 +139,12 @@ private:
   vtkSmartPointer<vtkGlyph3D> glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
+
+  vtkSmartPointer<vtkPoints> landmark_points_;
+  vtkSmartPointer<vtkPolyData> landmark_point_set_;
+  vtkSmartPointer<vtkGlyph3D> landmark_glyph_;
+  vtkSmartPointer<vtkPolyDataMapper> landmark_mapper_;
+  vtkSmartPointer<vtkActor> landmark_actor_;
 
   vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
   vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;

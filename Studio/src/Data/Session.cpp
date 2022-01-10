@@ -963,6 +963,7 @@ void Session::handle_ctrl_click(PickResult result)
     landmarks(row,3) = result.pos_.y;
     landmarks(row,4) = result.pos_.z;
   }
+  emit landmarks_changed();
 }
 //---------------------------------------------------------------------------
 }

@@ -144,6 +144,7 @@ signals:
   /// signal that the data has changed
   void data_changed();
   void points_changed();
+  void landmarks_changed();
   void update_display();
   void new_mesh();
   void message(QString);
