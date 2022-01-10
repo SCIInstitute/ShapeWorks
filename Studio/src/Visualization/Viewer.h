@@ -74,6 +74,8 @@ public:
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
 
+  void set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut);
+
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
   void set_color_scheme(int i);
@@ -145,6 +147,7 @@ private:
   vtkSmartPointer<vtkGlyph3D> landmark_glyph_;
   vtkSmartPointer<vtkPolyDataMapper> landmark_mapper_;
   vtkSmartPointer<vtkActor> landmark_actor_;
+  vtkSmartPointer<vtkLookupTable> landmark_lut_;
 
   vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
   vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;

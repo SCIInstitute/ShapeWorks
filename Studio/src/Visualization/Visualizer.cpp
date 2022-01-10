@@ -9,6 +9,8 @@
 #include <Data/Shape.h>
 #include <Data/MeshManager.h>
 #include <QThread>
+#include <QColor>
+
 
 namespace shapeworks {
 
@@ -31,6 +33,8 @@ Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs)
   this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->selected_point_one_ = -1;
   this->selected_point_two_ = -1;
+
+  landmark_lut_ = vtkSmartPointer<vtkLookupTable>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -91,11 +95,12 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks()
 {
-  QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
-  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+  QVector<QSharedPointer<Shape >> shapes = session_->get_shapes();
+  foreach(ViewerHandle viewer, lightbox_->get_viewers()) {
     viewer->update_landmarks();
   }
-  this->lightbox_->redraw();
+  update_landmark_lut();
+  lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -249,6 +254,7 @@ void Visualizer::update_viewer_properties()
     this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
                                             this->preferences_.get_orientation_marker_corner());
     this->update_lut();
+    update_landmark_lut();
 
     this->lightbox_->redraw();
   }
@@ -350,6 +356,29 @@ void Visualizer::update_lut()
 
   this->glyph_lut_->Modified();
   this->lightbox_->set_glyph_lut(this->glyph_lut_);
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_landmark_lut()
+{
+  auto landmarks = session_->get_project()->get_landmarks();
+  landmark_lut_->SetNumberOfTableValues(landmarks.size());
+  landmark_lut_->SetTableRange(0.0, (double) landmarks.size());
+  landmark_lut_->SetRange(0, landmarks.size());
+  //landmark_lut_->SetIndexedLookup(true);
+  landmark_lut_->Build();
+  std::cerr << "\n--------------------\n";
+  for (int i=0;i<landmarks.size();i++) {
+    QColor color(QString::fromStdString(landmarks[i].color_));
+
+    std::cerr << i << ": " << color.red() << "\n";
+    std::cerr << i << ": " << color.green() << "\n";
+    std::cerr << i << ": " << color.blue() << "\n";
+
+    landmark_lut_->SetTableValue(i, color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
+  }
+  landmark_lut_->Modified();
+  lightbox_->set_landmark_lut(landmark_lut_);
 }
 
 //-----------------------------------------------------------------------------

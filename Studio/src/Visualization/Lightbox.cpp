@@ -355,9 +355,17 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl)
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
-    foreach(ViewerHandle viewer, this->viewers_) {
-      viewer->set_lut(lut);
-    }
+  foreach(ViewerHandle viewer, this->viewers_) {
+    viewer->set_lut(lut);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut)
+{
+  foreach(ViewerHandle viewer, this->viewers_) {
+    viewer->set_landmark_lut(lut);
+  }
 }
 
 //-----------------------------------------------------------------------------

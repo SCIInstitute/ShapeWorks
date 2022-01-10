@@ -75,19 +75,23 @@ Viewer::Viewer() {
   this->landmark_points_->SetDataTypeToDouble();
   this->landmark_point_set_ = vtkSmartPointer<vtkPolyData>::New();
   this->landmark_point_set_->SetPoints(this->landmark_points_);
-  this->landmark_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
-  this->landmark_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-  this->landmark_glyph_->SetInputData(this->landmark_point_set_);
-  this->landmark_glyph_->ScalingOn();
-  this->landmark_glyph_->ClampingOff();
-  this->landmark_glyph_->SetScaleModeToScaleByScalar();
-  this->landmark_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
+  this->landmark_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkFloatArray>::New());
+  landmark_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
+  landmark_glyph_->SetInputData(this->landmark_point_set_);
+  landmark_glyph_->SetColorModeToColorByScalar();
+  landmark_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
+  landmark_glyph_->ScalingOn();
+  landmark_glyph_->ClampingOn();
+  landmark_glyph_->SetScaleModeToDataScalingOff();
+  landmark_glyph_->GeneratePointIdsOn();
+
+
   this->landmark_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->landmark_mapper_->SetInputConnection(this->landmark_glyph_->GetOutputPort());
-  this->landmark_mapper_->SetScalarVisibility(0);
+  this->landmark_mapper_->SetScalarVisibility(1);
   this->landmark_actor_ = vtkSmartPointer<vtkActor>::New();
-  this->landmark_actor_->GetProperty()->SetOpacity(0.5);
-  this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
+  this->landmark_actor_->GetProperty()->SetOpacity(1);
+  //this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
   this->landmark_actor_->SetMapper(this->landmark_mapper_);
 
   // exclusion spheres
@@ -485,20 +489,27 @@ void Viewer::update_landmarks() {
   auto& landmarks = shape_->landmarks();
   int num_points = landmarks.rows();
 
-  vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
+  std::cerr << "num_points = " << num_points << "\n";
+  vtkFloatArray* scalars = (vtkFloatArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
   scalars->Reset();
   scalars->SetNumberOfTuples(num_points);
+  scalars->SetNumberOfValues(num_points);
 
-  landmark_glyph_->SetRange(0.0, (double)num_points + 1);
-  landmark_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+//  landmark_glyph_->SetRange(0.0, (double)num_points-1);
+  //landmark_mapper_->SetScalarRange(0.0, (double)num_points-1);
+  landmark_glyph_->SetRange(0.0, landmark_lut_->GetNumberOfTableValues()-1);
+  landmark_mapper_->SetScalarRange(0.0, landmark_lut_->GetNumberOfTableValues()-1);
 
   landmark_points_->Reset();
   landmark_points_->SetNumberOfPoints(landmarks.rows());
 
   for (int i = 0; i < num_points; i++) {
-    scalars->InsertValue(i, 5);
+    std::cerr << "set " << i  << " to " << i << "\n";
+    scalars->InsertValue(i, i);
     landmark_points_->SetPoint(i, landmarks(i, 2), landmarks(i, 3), landmarks(i, 4));
   }
+  landmark_point_set_->Modified();
+  landmark_points_->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -649,6 +660,7 @@ void Viewer::update_glyph_properties() {
   //  std::cerr << "update glyph props\n";
   this->glyphs_->SetScaleFactor(this->glyph_size_);
   this->arrow_glyphs_->SetScaleFactor(this->glyph_size_);
+  landmark_glyph_->SetScaleFactor(glyph_size_);
 
   this->sphere_source_->SetThetaResolution(this->glyph_quality_);
   this->sphere_source_->SetPhiResolution(this->glyph_quality_);
@@ -862,6 +874,13 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
   if (!this->arrows_visible_ && !this->showing_feature_map()) {
     this->glyph_mapper_->SetLookupTable(this->lut_);
   }
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut)
+{
+  landmark_lut_  = lut;
+  landmark_mapper_->SetLookupTable(landmark_lut_);
 }
 
 //-----------------------------------------------------------------------------

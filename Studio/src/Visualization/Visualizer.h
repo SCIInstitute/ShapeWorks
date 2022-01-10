@@ -78,6 +78,7 @@ public:
   void reset_camera();
 
   void update_lut();
+  void update_landmark_lut();
 
   StudioParticles get_current_shape();
 
@@ -160,6 +161,8 @@ private:
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_one_;
   int selected_point_two_;
+
+  vtkSmartPointer<vtkLookupTable> landmark_lut_;
 
   vnl_vector<double> cached_mean_;
   StudioParticles current_shape_;
