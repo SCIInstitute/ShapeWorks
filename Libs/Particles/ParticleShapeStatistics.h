@@ -2,6 +2,7 @@
 
 #include "vnl/vnl_vector.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
+#include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
@@ -38,6 +39,10 @@ public:
 
   int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
 
+  void MCADecomposition(); 
+  void ComputeBetweenParams(int b);
+  void ComputeWithinParams(int w);
+  void ComputeMCAModeStats();
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
@@ -74,6 +79,7 @@ public:
 
   /** Returns the number of dimensions (this is number of points times Dimension) */
   const int NumberOfDimensions() { return m_numDimensions; }
+  const int DomainNumberOfDimensions() { return m_domainNumDimensions; }
 
   /** Returns the group ids */
   const int GroupID(unsigned int i) { return m_groupIDs[i]; }
@@ -83,8 +89,17 @@ public:
   const vnl_matrix<double> &Eigenvectors() { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
 
+
+  const vnl_matrix<double> &BetweenEigenvectors() { return m_betweenEigenvectors; }
+  const std::vector<double> &BetweenEigenvalues() { return m_betweenEigenvalues; }
+
+  const vnl_matrix<double> &WithinEigenvectors() { return m_withinEigenvectors; }
+  const std::vector<double> &WithinEigenvalues() { return m_withinEigenvalues; }
+
+
   /** Returns the mean shape. */
   const vnl_vector<double> &Mean() { return m_mean; }
+  const vnl_vector<double> &MCAMean() { return m_mcaMean; }
   const vnl_vector<double> &Group1Mean() { return m_mean1; }
   const vnl_vector<double> &Group2Mean() { return m_mean2; }
 
@@ -138,16 +153,35 @@ private:
   unsigned int m_numSamples;
   unsigned int m_domainsPerShape;
   unsigned int m_numDimensions;
+  unsigned int m_domainNumDimensions;
   std::vector<int> m_groupIDs;
 
   vnl_matrix<double> m_pooled_covariance;
   vnl_matrix<double> m_eigenvectors;
   std::vector<double> m_eigenvalues;
+  // For MCA
+  vnl_matrix<double> m_betweenEigenvectors;
+  vnl_matrix<double> m_withinEigenvectors;
+
+  vnl_matrix<double> between_component_scores;
+  std::vector<vnl_matrix<double>> within_component_scores;
+  std::vector<vnl_matrix<double>> within_loading_matrix;
+  vnl_matrix<double> between_loading_matrix;
+
+
+  
+  
+  std::vector<double> m_betweenEigenvalues;
+  std::vector<double> m_withinEigenvalues;
   vnl_vector<double> m_mean;
+  // For MCA
+  vnl_matrix<double> grand_mean;
+  vnl_vector<double> m_mcaMean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
   vnl_matrix<double> m_pointsMinusMean;
   vnl_matrix<double> m_shapes;
+  std::vector<vnl_matrix<double>> m_shapes_mca;
   vnl_matrix<double> m_projectedPMM1;
   vnl_matrix<double> m_projectedPMM2;
   vnl_vector<double> m_projectedMean1;

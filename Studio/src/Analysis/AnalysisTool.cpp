@@ -29,6 +29,7 @@ namespace shapeworks {
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
+const std::string AnalysisTool::MODE_MCA_C("mca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
@@ -63,6 +64,11 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
+  //TODO: make connections for mca
+  connect(this->ui_->mcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
+          SLOT(handle_mca_animate_state_changed()));
+  connect(&this->mca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_mca_timer()));
+
   // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
           &AnalysisTool::handle_group_animate_state_changed);
@@ -87,7 +93,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->metrics_open_button->setChecked(false);
 
   /// TODO nothing there yet (regression tab)
-  this->ui_->tabWidget->removeTab(3);
+  this->ui_->tabWidget->removeTab(4);
 
   this->ui_->graph_->set_y_label("Explained Variance");
 
@@ -156,6 +162,20 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
   }
 }
 
+void AnalysisTool::on_mca_between_radio_toggled(bool b)
+{
+  if(b)
+  {
+    this->ui_->mcaLevelWithinButton->setChecked(false);
+    this->ui_->mcaLevelBetweenButton->setChecked(true);
+  }
+  else{
+    this->ui_->mcaLevelBetweenButton->setChecked(false);
+    this->ui_->mcaLevelWithinButton->setChecked(true);
+  }
+  emit mca_update();
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_reconstruction_complete()
 {
@@ -208,6 +228,12 @@ int AnalysisTool::getPCAMode()
 }
 
 //---------------------------------------------------------------------------
+int AnalysisTool::getMCAMode()
+{
+  return this->ui_->mcaModeSpinBox->value() - 1;
+}
+
+//---------------------------------------------------------------------------
 double AnalysisTool::get_group_value()
 {
   double groupSliderValue = this->ui_->group_slider->value();
@@ -222,6 +248,12 @@ bool AnalysisTool::pcaAnimate()
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::mcaAnimate()
+{
+  return this->ui_->mcaAnimateCheckBox->isChecked();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::setLabels(QString which, QString value)
 {
   if (which == QString("pca")) {
@@ -232,6 +264,15 @@ void AnalysisTool::setLabels(QString which, QString value)
   }
   else if (which == QString("lambda")) {
     this->ui_->pcaLambdaLabel->setText(value);
+  }
+  else if (which == QString("mca")) {
+    this->ui_->mcaValueLabel->setText(value);
+  }
+  else if (which == QString("mcaeigen")) {
+    this->ui_->mcaEigenValueLabel->setText(value);
+  }
+  else if (which == QString("mcalambda")) {
+    this->ui_->mcaLambdaLabel->setText(value);
   }
 }
 
@@ -317,6 +358,18 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaSlider->setEnabled(true);
     this->ui_->pcaAnimateCheckBox->setEnabled(true);
     this->ui_->pcaModeSpinBox->setEnabled(true);
+  }
+  else if (this->ui_->tabWidget->currentWidget() == this->ui_->mca_tab){
+    // mca mode
+    this->ui_->sampleSpinBox->setEnabled(false);
+    this->ui_->medianButton->setEnabled(false);
+    this->ui_->mcaSlider->setEnabled(true);
+    this->ui_->mcaAnimateCheckBox->setEnabled(true);
+    this->ui_->mcaModeSpinBox->setEnabled(true);
+    this->ui_->mcaLevelWithinButton->setEnabled(true);
+    this->ui_->mcaLevelBetweenButton->setEnabled(true);
+    // TODO: needs more refinement
+
   }
   else {
     //regression mode
@@ -593,11 +646,75 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
   return this->convert_from_combined(this->temp_shape_);
 }
 
+
+//---------------------------------------------------------------------------
+StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int level)
+{
+ //TODO: for mca
+ vnl_matrix<double> eigenvectors;
+ std::vector<double> eigenvalues;
+ if(level == 1)
+ {
+   eigenvectors = this->stats_.WithinEigenvectors();
+   eigenvalues = this->stats_.WithinEigenvalues();
+ }
+ else
+ {
+   eigenvectors = this->stats_.BetweenEigenvectors();
+   eigenvalues = this->stats_.BetweenEigenvalues();
+ }
+ 
+ if (!this->compute_stats() || eigenvectors.size() <= 1) {
+    return StudioParticles();
+  }
+  if (mode + 2 > eigenvalues.size()) {
+    mode = eigenvalues.size() - 2;
+  }
+  unsigned int m = eigenvectors.columns() - (mode + 1);
+  vnl_vector<double> e = eigenvectors.get_column(m);
+  double lambda = sqrt(eigenvalues[m]);
+  this->mca_labels_changed(QString::number(value, 'g', 2),
+                           QString::number(eigenvalues[m]),
+                           QString::number(value * lambda));
+
+  std::vector<double> vals;
+  for (int i = eigenvalues.size() - 1; i > 0; i--) {
+    vals.push_back(eigenvalues[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+  if (sum > 0) {
+    this->ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->mca_cumulative_explained_variance->setText(
+      QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  }
+  else {
+    this->ui_->mca_explained_variance->setText("");
+    this->ui_->mca_cumulative_explained_variance->setText("");
+  }
+
+  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  // see what this does
+  return this->convert_from_combined(this->temp_shape_);
+  
+}
+
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
 {
   return this->create_shape_from_points(this->get_shape_points(mode, value));
 }
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, int level)
+{
+  return this->create_shape_from_points(this->get_mca_shape_points(mode, value, level));
+}
+
+
 
 //---------------------------------------------------------------------------
 ParticleShapeStatistics AnalysisTool::get_stats()
@@ -698,6 +815,15 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::on_mcaSlider_valueChanged()
+{
+  QCoreApplication::processEvents();
+
+  emit mca_update();
+}
+
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
@@ -718,6 +844,12 @@ void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::on_mcaModeSpinBox_valueChanged(int i)
+{
+  emit mca_update();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed()
 {
   if (this->pcaAnimate()) {
@@ -726,6 +858,19 @@ void AnalysisTool::handle_pca_animate_state_changed()
   }
   else {
     this->pca_animate_timer_.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_mca_animate_state_changed()
+{
+  if(this->mcaAnimate())
+  {
+    this->mca_animate_timer_.setInterval(10);
+    this->mca_animate_timer_.start();
+  }
+  else{
+    this->mca_animate_timer_.stop();
   }
 }
 
@@ -749,6 +894,32 @@ void AnalysisTool::handle_pca_timer()
   }
 
   this->ui_->pcaSlider->setValue(value);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_mca_timer()
+{
+  if(!this->mcaAnimate())
+  {
+    return;
+  }
+
+  int value = this->ui_->mcaSlider->value();
+  if(this->mca_animate_direction_) 
+  {
+    value += this->ui_->mcaSlider->singleStep();
+  }
+  else{
+    value -= this->ui_->mcaSlider->singleStep();
+  }
+
+  if(value >= this->ui_->mcaSlider->maximum() || value <= this->ui_->mcaSlider->minimum())
+  {
+    this->mca_animate_direction_ = !this->mca_animate_direction_;
+  }
+
+  this->ui_->mcaSlider->setValue(value);
+
 }
 
 //---------------------------------------------------------------------------
@@ -794,12 +965,45 @@ double AnalysisTool::get_pca_value()
 }
 
 //---------------------------------------------------------------------------
+double AnalysisTool::get_mca_value()
+{
+  int slider_value = this->ui_->mcaSlider->value();
+  float range = preferences_.get_pca_range();
+  int halfRange = this->ui_->mcaSlider->maximum();
+
+  double value = (double) slider_value / (double) halfRange * range;
+  return value;
+}
+
+//---------------------------------------------------------------------------
+int AnalysisTool::get_mca_level()
+{
+  bool between = this->ui_->mcaLevelBetweenButton->isChecked();
+  if(between){
+    return 2;
+  }
+  else{
+    return 1;
+  }
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lambda)
 {
   this->setLabels(QString("pca"), value);
   this->setLabels(QString("eigen"), eigen);
   this->setLabels(QString("lambda"), lambda);
 }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mca_labels_changed(QString value, QString eigen, QString lambda)
+{
+  this->setLabels(QString("mca"), value);
+  this->setLabels(QString("mcaeigen"), eigen);
+  this->setLabels(QString("mcalambda"), lambda);
+
+}
+
 
 //---------------------------------------------------------------------------
 void AnalysisTool::updateSlider()
@@ -809,6 +1013,14 @@ void AnalysisTool::updateSlider()
   this->ui_->pcaSlider->setSingleStep(sliderRange / steps);
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::updateMcaSlider()
+{
+  auto steps = this->preferences_.get_pca_steps();
+  auto sliderRange = this->ui_->mcaSlider->maximum() - this->ui_->mcaSlider->minimum();
+  this->ui_->mcaSlider->setSingleStep(sliderRange/steps);
+  
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
@@ -821,6 +1033,15 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaAnimateCheckBox->setEnabled(false);
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
+  //TODO: Add reset_stats for MCA
+  this->ui_->mcaSlider->setEnabled(false);
+  this->ui_->mcaAnimateCheckBox->setEnabled(false);
+  this->ui_->mcaModeSpinBox->setEnabled(false);
+  this->ui_->mcaAnimateCheckBox->setChecked(false);
+  this->ui_->mcaLevelWithinButton->setChecked(true);
+  this->ui_->mcaLevelWithinButton->setEnabled(false);
+  this->ui_->mcaLevelBetweenButton->setEnabled(false);
+
   this->stats_ready_ = false;
   this->evals_ready_ = false;
   this->stats_ = ParticleShapeStatistics();
@@ -868,6 +1089,11 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   }
   else if (mode == "pca") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->pca_tab);
+  }
+  else if (mode == "mca"){
+    this->ui_->tabWidget->setCurrentWidget(this->ui_->mca_tab);
+    this->ui_->mcaLevelWithinButton->setChecked(true);
+    this->ui_->mcaLevelBetweenButton->setChecked(false);
   }
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);

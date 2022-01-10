@@ -93,6 +93,7 @@ public Q_SLOTS:
   void on_auto_view_button_clicked();
 
   void handle_pca_changed();
+  void handle_mca_changed(); 
   void handle_slider_update();
 
   void handle_project_changed();
@@ -112,6 +113,7 @@ public Q_SLOTS:
 
   void handle_color_scheme();
   void handle_pca_update();
+  void handle_mca_update();
   void handle_message(QString str);
   void handle_status(QString str);
   void handle_error(QString str);
@@ -185,6 +187,8 @@ private:
   void update_display(bool force = false);
 
   void compute_mode_shape();
+
+  void compute_mca_mode_shape(); //TODO: for MCA
 
   bool set_view_mode(std::string view_mode);
 

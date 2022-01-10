@@ -64,28 +64,41 @@ public:
 
   int getPCAMode();
 
+  int getMCAMode();
+
   double get_group_value();
 
   double get_pca_value();
 
+  double get_mca_value();
+
+  int get_mca_level();
+
   bool pcaAnimate();
+  bool mcaAnimate();
 
   int get_sample_number();
 
-  bool compute_stats();
+  bool compute_stats(); // TODO : Make changes here
 
   void updateSlider();
+  
+  void updateMcaSlider(); //TODO: Check correct usage
 
-  void reset_stats();
+  void reset_stats(); //TODO: add for mca
   void enable_actions(bool newly_enabled = false);
 
   StudioParticles get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
+  StudioParticles get_mca_shape_points(int mode, double value, int level);
+
   ShapeHandle get_mode_shape(int mode, double value);
 
-  ParticleShapeStatistics get_stats();
+  ShapeHandle get_mca_mode_shape(int mode, double value, int level);
+
+  ParticleShapeStatistics get_stats(); // make changes here
   void load_settings();
   void store_settings();
 
@@ -98,6 +111,7 @@ public:
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
+  static const std::string MODE_MCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
@@ -130,6 +144,15 @@ public Q_SLOTS:
   void handle_reconstruction_complete();
 
   void on_reconstructionButton_clicked();
+
+  //MCA
+  void on_mcaSlider_valueChanged();
+
+  void on_mcaModeSpinBox_valueChanged(int i);
+
+  void handle_mca_animate_state_changed();
+  void handle_mca_timer();
+  void on_mca_between_radio_toggled(bool b);
 
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
@@ -164,6 +187,7 @@ signals:
 
   void update_view();
   void pca_update();
+  void mca_update();
   void progress(int);
   void message(QString);
   void error(QString);
@@ -179,8 +203,9 @@ private:
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-  void compute_mode_shape();
-  void update_analysis_mode();
+  void mca_labels_changed(QString value, QString eigen, QString lambda);
+  void compute_mode_shape(); // see usage
+  void update_analysis_mode(); // TODO: Recehck here
 
   bool group_pvalues_valid();
 
@@ -213,6 +238,9 @@ private:
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
+
+  bool mca_animate_direction_ = true;
+  QTimer mca_animate_timer_;
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
