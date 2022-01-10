@@ -14,7 +14,7 @@ import json
 import os
 from swcc.api import swcc_session
 from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles,OptimizedShapeModel, Project, Segmentation, Subject)
-
+from itertools import islice
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin_new.txt'
 
 def printDataPortalWelcome():
@@ -85,11 +85,22 @@ def generate_download_flag(outputDirectory,folder):
         download_flag = True        
     return download_flag
             
-# def download_subset(use_case,datasetName,outputDirectory):
-#     import DatasetUtils
-#     import re
-#     fileList = DatasetUtils.getFileList(datasetName)
-#     outputDirectory = outputDirectory + datasetName+"/"
+def download_subset(use_case,datasetName,outputDirectory):
+    import DatasetUtils
+    import re
+    username,password = login()
+    # fileList = DatasetUtils.getFileList(datasetName)
+    outputDirectory = outputDirectory #+ datasetName+"/"
+    print('Downloading subset')
+    with swcc_session()  as session:
+        token = session.login(username, password)
+        session = swcc_session(token=token).__enter__()
+        dataset = Dataset.from_name(datasetName)
+        for segmentation, image in islice(zip(dataset.segmentations, dataset.images), 3):
+            print(segmentation, image)
+            segmentation.file.download(outputDirectory)
+            image.file.download(outputDirectory)
+        input("Wait")
 #     if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
 #         if(generate_download_flag(outputDirectory,"segmentations")):
 #             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
@@ -148,7 +159,7 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             # Download a full dataset in bulk
             dataset = Dataset.from_name(datasetName)
             print(outputDirectory+datasetName+"/")
-            download_path = Path(outputDirectory+datasetName+"/")
+            download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
                 
