@@ -113,6 +113,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
+  // TODO:make connections for mca
+  connect(this->analysis_tool_.data(), SIGNAL(mca_update()), this, SLOT(handle_mca_update()));
+
   connect(this->analysis_tool_.data(), &AnalysisTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
@@ -686,6 +689,16 @@ void ShapeWorksStudioApp::handle_pca_changed()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_changed()
+{
+  if (!this->session_->particles_present()) { return; }
+  this->session_->handle_clear_cache();
+  this->visualizer_->update_lut();
+  this->compute_mca_mode_shape();
+}
+
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update()
 {
   this->analysis_tool_->updateSlider();
@@ -697,6 +710,15 @@ void ShapeWorksStudioApp::handle_pca_update()
   if (this->analysis_tool_->get_active() &&
       this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
     this->compute_mode_shape();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_update()
+{
+  if (this->analysis_tool_->get_active() &&
+      this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MCA_C) {
+    this->compute_mca_mode_shape();
   }
 }
 
@@ -1227,6 +1249,7 @@ void ShapeWorksStudioApp::handle_optimize_start()
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
   if (this->analysis_tool_->pcaAnimate()) { return; }
+  if (this->analysis_tool_->mcaAnimate()) { return; }
   this->update_display(true);
 }
 
@@ -1443,8 +1466,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
       "Some features may not work and some settings may be incorrect or missing");
   }
 
-  this->analysis_tool_->reset_stats();
-  this->analysis_tool_->initialize_mesh_warper();
+  this->analysis_tool_->reset_stats(); //TODO: for mca
+  this->analysis_tool_->initialize_mesh_warper(); //TODO: for mca
 
   this->block_update_ = true;
 
@@ -1771,6 +1794,16 @@ void ShapeWorksStudioApp::compute_mode_shape()
   double pca_value = this->analysis_tool_->get_pca_value();
 
   this->visualizer_->display_shape(this->analysis_tool_->get_mode_shape(pca_mode, pca_value));
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::compute_mca_mode_shape()
+{
+  int mca_mode = this->analysis_tool_->getMCAMode();
+  double mca_value = this->analysis_tool_->get_mca_value();
+  int mca_level = this->analysis_tool_->get_mca_level();
+  this->visualizer_->display_shape(this->analysis_tool_->get_mca_mode_shape(mca_mode, mca_value, mca_level));
+  
 }
 
 //---------------------------------------------------------------------------

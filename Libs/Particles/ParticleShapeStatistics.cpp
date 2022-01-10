@@ -97,6 +97,8 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 
 int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids)
 {
+  // debug
+  std::cout << "importing points now" << std::endl;
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
 
@@ -107,6 +109,8 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   m_numSamples2 = 0;
   m_numSamples = points.size() / m_domainsPerShape;
   m_numDimensions = num_points * VDimension * m_domainsPerShape;
+  m_domainNumDimensions = points[0].size();
+
 
   // If there are no group IDs, make up some bogus ones
   if (m_groupIDs.size() != m_numSamples) {
@@ -142,6 +146,7 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_pointsMinusMean.fill(0);
   m_shapes.set_size(m_numDimensions, m_numSamples);
+  m_shapes_mca.clear();
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
@@ -154,6 +159,9 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       unsigned int q = points[i].size();
+      vnl_matrix<double> domain_shape;
+      domain_shape.set_size(q, m_numSamples);
+
       for (unsigned int j = 0; j < q; j++) {
         m_pointsMinusMean(q * k * VDimension + j, i) = points[i][j];
 
@@ -167,7 +175,9 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
         }
 
         m_shapes(q * k * VDimension + j, i) = points[i][j];
+        domain_shape(j, i) = points[i][j];
       }
+      m_shapes_mca.push_back(domain_shape);
     }
   }
 
@@ -211,6 +221,8 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
     }
   }
 
+  //debug
+  std::cout << "Import points done" << std::endl;
   return 0;
 }
 
@@ -250,6 +262,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   m_numSamples2 = 0;
   m_numSamples = pointsfiles.size() / m_domainsPerShape;
   m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
+  m_domainNumDimensions = reader1->GetOutput().size() * VDimension;
 
   // Read the group ids
   int tmpID;
@@ -287,6 +300,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);
+  m_shapes_mca.clear();
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
@@ -304,6 +318,9 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
+      vnl_matrix<double> domain_shape;
+      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
+
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
           q * k * VDimension + (VDimension * j) + 0, i)
@@ -330,7 +347,12 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
 
+        domain_shape(j * VDimension + 0, i) = reader->GetOutput()[j][0];
+        domain_shape(j * VDimension + 1, i) = reader->GetOutput()[j][1];
+        domain_shape(j * VDimension + 2, i) = reader->GetOutput()[j][2];
       }
+      // m_shapes_mca[k] = domain_shape;
+      m_shapes_mca.push_back(domain_shape);
     }
   }
 
@@ -358,9 +380,11 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
   // Assumes all the same size.
   m_numSamples = global_pts.size() / m_domainsPerShape;
   m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
+  m_domainNumDimensions = global_pts[0].size() * VDimension;
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);
+  m_shapes_mca.clear();
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
@@ -375,6 +399,8 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
       //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
       std::vector<Point> curDomain = global_pts[i * m_domainsPerShape + k];
       unsigned int q = curDomain.size();
+      vnl_matrix<double> domain_shape;
+      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
 
       //std::cout << "q = " << q << "-------------\n";
       for (unsigned int j = 0; j < q; j++) {
@@ -392,7 +418,11 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = curDomain[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = curDomain[j][2];
 
+        domain_shape(j * VDimension + 0, i) = curDomain[j][0];
+        domain_shape(j * VDimension + 1, i) = curDomain[j][1];
+        domain_shape(j * VDimension + 2, i) = curDomain[j][2];
       }
+      m_shapes_mca.push_back(domain_shape);
     }
   }
 
@@ -447,6 +477,9 @@ int ParticleShapeStatistics::ReloadPointFiles()
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
+      vnl_matrix<double> domain_shape;
+      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
+
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
           q * k * VDimension + (VDimension * j) + 0, i)
@@ -473,7 +506,11 @@ int ParticleShapeStatistics::ReloadPointFiles()
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
 
+        domain_shape(j * VDimension + 0, i) = reader->GetOutput()[j][0];
+        domain_shape(j * VDimension + 1, i) = reader->GetOutput()[j][1];
+        domain_shape(j * VDimension + 2, i) = reader->GetOutput()[j][2];
       }
+      m_shapes_mca[k] = domain_shape;
     }
   }
 
@@ -537,6 +574,155 @@ int ParticleShapeStatistics::ComputeModes()
   return 0;
 }
 
+void ParticleShapeStatistics::MCADecomposition()
+{
+  // Super matrix
+  //grand mean 
+  unsigned int m = m_shapes.rows();
+  vnl_matrix<double> ones_m;
+  ones_m.set_size(1, m);
+  ones_m.fill(1.0);
+  grand_mean = ones_m * m_shapes;
+  grand_mean = (1.0/m) * grand_mean;
+  grand_mean = grand_mean.transpose(); // 1 X N
+
+  ComputeBetweenParams(7);
+  ComputeWithinParams(7);
+}
+
+void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
+{
+  //centering matrix
+  unsigned int m = m_shapes.rows(); // M
+  unsigned int n = m_numSamples; // N
+  unsigned int m_k = (int)(m/m_domainsPerShape);
+  vnl_matrix<double> centering_matrix;
+  centering_matrix.set_size(m, m);
+  centering_matrix.fill(1.0);
+  vnl_matrix<double> ones_m;
+  vnl_matrix<double> ones_m_sub;
+  ones_m.set_size(m, 1);
+  ones_m_sub.set_size(m_k, 1);
+  ones_m.fill(1.0);
+  ones_m_sub.fill(1.0);
+  centering_matrix = centering_matrix - (1.0/m)*(ones_m * ones_m.transpose());
+
+  vnl_matrix<double> z_sub_total = centering_matrix * m_shapes;
+  vnl_matrix<double> z_centred_res;
+  z_centred_res.set_size(m_domainsPerShape, n);
+  z_centred_res.fill(0.0);
+
+  for(unsigned int i = 0; i < m_domainsPerShape; i++)
+  {
+    vnl_matrix<double> z_c_temp;
+    z_c_temp.set_size(m_k * VDimension, n);
+    z_sub_total.extract(z_c_temp, i * m_domainsPerShape, 0);
+    vnl_matrix<double> z_centred_k;
+    z_centred_k.set_size(1, n);
+    z_centred_k = (1.0/m_k) * (ones_m_sub.transpose() * z_c_temp);
+    z_centred_res.update(z_centred_k, i, 0);
+  } 
+  vnl_matrix<double> w;
+  w.set_size(m_domainsPerShape, m_domainsPerShape);
+  w.fill_diagonal(sqrt(m_k));
+
+  vnl_matrix<double> between_objective_matrix = w * z_centred_res; // K X N
+
+  // do svd for between
+  vnl_svd<double> between_svd(between_objective_matrix);
+
+  // compute CA loading matrix and component scores
+  // TODO: check for particular components extraction
+  vnl_matrix<double> w_inv = w * m_k;
+  between_component_scores = w_inv * between_svd.U();
+  between_loading_matrix = between_svd.V() * between_svd.W();
+}
+
+void ParticleShapeStatistics::ComputeWithinParams(int within_components)
+{
+  unsigned int m = m_shapes.rows(); // M
+  unsigned int n = m_numSamples; // N
+  unsigned int m_k = (int)(m/m_domainsPerShape);
+  within_loading_matrix.clear();
+  within_component_scores.clear();
+
+  for(int i = 0; i < m_domainsPerShape; i++)
+  {
+    // compute centering matrix
+    vnl_matrix<double> centering_matrix;
+    centering_matrix.set_size(m_k, m_k);
+    centering_matrix.fill(1.0);
+    vnl_matrix<double> ones_m_k;
+    ones_m_k.set_size(m_k, 1);
+    ones_m_k.fill(1.0);
+    centering_matrix = centering_matrix - (1.0/m_k) * (ones_m_k * ones_m_k.transpose());
+
+    vnl_matrix<double> within_objective_matrix = centering_matrix.transpose() * m_shapes_mca[i];
+    vnl_svd<double> within_svd(within_objective_matrix);
+
+    vnl_matrix<double> within_component_scores_k = within_svd.U();
+    vnl_matrix<double> within_loading_matrix_k = within_svd.V() * within_svd.W();
+
+    within_component_scores.push_back(within_component_scores_k);
+    within_loading_matrix.push_back(within_loading_matrix_k);
+  }
+}
+
+void ParticleShapeStatistics::ComputeMCAModeStats()
+{
+  // reconstruct in terms of MCA decomposition and apply pca on that
+  unsigned int m = m_shapes.rows(); // M
+  unsigned int n = m_numSamples; // N
+  unsigned int m_k = (int)(m/m_domainsPerShape);
+  vnl_matrix<double> ones_m_k;
+  ones_m_k.set_size(m_k, 1);
+  ones_m_k.fill(1.0);
+  vnl_matrix<double> mean_part = ones_m_k * grand_mean.transpose();
+  std::vector<vnl_matrix<double>> z_within;
+  std::vector<vnl_matrix<double>> z_between;
+
+  // A. For Within
+  for(unsigned int k = 0; k < m_domainsPerShape; k++)
+  {
+    vnl_matrix<double> z_k =  within_component_scores[k] * within_loading_matrix[k].transpose(); // M_k X N
+    z_k += mean_part;
+    z_within.push_back(z_k);
+  }
+
+  for(unsigned int k = 0; k < m_domainsPerShape; k++)
+  {
+    vnl_matrix<double> z_k =  ones_m_k * between_component_scores.get_n_rows(k, 1).transpose() * between_loading_matrix.transpose();
+    z_k += mean_part;
+    z_between.push_back(z_k);
+  }
+
+  // make overall matix now for pca on top of this
+  vnl_matrix<double> pointsMinusMean_for_between;
+  pointsMinusMean_for_between.set_size(m_numDimensions, m_numSamples);
+  pointsMinusMean_for_between.fill(0);
+  vnl_vector<double> mean_between;
+  mean_between.set_size(m_numDimensions);
+  mean_between.fill(0);
+
+  for(unsigned int k = 0; k < m_domainsPerShape; k++)
+  {
+    pointsMinusMean_for_between.update(z_between[k], k * m_domainsPerShape, 0);
+  }
+
+  for (unsigned int i = 0; i < m_numSamples; i++)
+  {
+    mean_between += pointsMinusMean_for_between.get_column(i);
+  }
+
+  mean_between = mean_between * (double)(1.0/m_numSamples);
+  for (unsigned int j = 0; j < m_numDimensions; j++) {
+    for (unsigned int i = 0; i < m_numSamples; i++) {
+      pointsMinusMean_for_between(j, i) -= mean_between(j);
+    }
+  }
+
+
+}
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
