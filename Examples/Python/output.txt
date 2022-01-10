@@ -1,17 +1,0 @@
-Using shapeworks module from /home/sci/nawazish.khan/ShapeWorks/Python/shapeworks/shapeworks/__init__.py
-Using shapeworks from /home/sci/nawazish.khan/ShapeWorks/build/bin/shapeworks
-Can't find Data/femur_pvalues-v0.zip
- _____    ___      .     
-|     |  /   \    / \    
-| ShapeWorks Portal  \   
-|_____|  \___/  /_____\  
-
-Downloading the femur_pvalues-v0 dataset from the ShapeWorks Portal
-Using Server: https://girder.shapeworks-cloud.org/
-./Data//femur_pvalues-v0.zip [719 KB]  
-Downloaded the femur_pvalues-v0 dataset from the ShapeWorks Portal.
-Unzipping Data/femur_pvalues-v0.zip into Output/femur_pvalues/
-Computing p-values
-Saving the pvalues for the group difference: Output/femur_pvalues/femur_pvalues.txt
-
-Shapeworks Pipeline Complete!
