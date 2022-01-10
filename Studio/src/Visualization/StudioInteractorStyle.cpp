@@ -20,7 +20,6 @@ void StudioInteractorStyle::OnLeftButtonDown()
 {
    if ( this->Interactor->GetControlKey() )
    {
-    std::cerr << "ctrl click\n";
     int* clickPos = this->GetInteractor()->GetEventPosition();
     this->lightbox_->handle_pick( clickPos, true, true );
     return;

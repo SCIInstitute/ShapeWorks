@@ -85,9 +85,6 @@ class LandmarkTableModel : public QAbstractTableModel {
   void set_placing_landmark(int row);
   void set_button_text(std::string text);
 
-  std::string get_next_landmark_name();
-  std::string get_next_landmark_color();
-
   //! delete the selected landmarks
   void delete_landmarks(const QModelIndexList &list);
 
@@ -112,6 +109,8 @@ class LandmarkTableModel : public QAbstractTableModel {
 
  private:
   void update_visibility();
+  void remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
+
 
   std::shared_ptr<Project> project_;
   QSharedPointer<Session> session_;
@@ -121,8 +120,6 @@ class LandmarkTableModel : public QAbstractTableModel {
 
   int last_landmark_color_ = -1;
   std::vector<Landmark> landmarks_;
-
-  std::vector<std::string> default_colors_;
 
   QIcon visible_;
   QIcon visible_off_;

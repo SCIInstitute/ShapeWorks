@@ -2,6 +2,7 @@
 #include <Data/LandmarkTableModel.h>
 #include <Project.h>
 
+#include <Eigen/Core>
 #include <QBrush>
 #include <QColor>
 #include <QColorDialog>
@@ -13,21 +14,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-LandmarkTableModel::LandmarkTableModel(QObject* parent)
-    : QAbstractTableModel(parent) {
-  this->default_colors_.push_back(QColor(255, 175, 78).name().toStdString());   // orange
-  this->default_colors_.push_back(QColor(116, 255, 122).name().toStdString());  // green
-  this->default_colors_.push_back(QColor(143, 214, 255).name().toStdString());  // light blue
-  this->default_colors_.push_back(QColor(255, 0, 0).name().toStdString());      // red
-  this->default_colors_.push_back(QColor(255, 233, 0).name().toStdString());    // yellow
-  this->default_colors_.push_back(QColor(108, 0, 212).name().toStdString());    // grape
-  this->default_colors_.push_back(QColor(0, 0, 255).name().toStdString());      // blue
-  this->default_colors_.push_back(QColor(255, 94, 122).name().toStdString());   // mauve
-  this->default_colors_.push_back(QColor(255, 255, 165).name().toStdString());  // light yellow
-  this->default_colors_.push_back(QColor(255, 0, 255).name().toStdString());    // magenta
-  this->default_colors_.push_back(QColor(194, 118, 0).name().toStdString());    // brown
-  this->default_colors_.push_back(QColor(159, 143, 255).name().toStdString());  // light purple
-
+LandmarkTableModel::LandmarkTableModel(QObject* parent) : QAbstractTableModel(parent) {
   visible_ = QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
 
   visible_off_ = QIcon(QString::fromUtf8(":/Studio/Images/VisibleOff.png"));
@@ -46,16 +33,13 @@ void LandmarkTableModel::set_project(std::shared_ptr<Project> project) {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::set_session(QSharedPointer<Session> session)
-{
+void LandmarkTableModel::set_session(QSharedPointer<Session> session) {
   session_ = session;
   connect(session_.data(), &Session::landmarks_changed, this, &LandmarkTableModel::update_table);
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::store_landmarks() {
-  this->project_->set_landmarks(landmarks_);
-}
+void LandmarkTableModel::store_landmarks() { this->project_->set_landmarks(landmarks_); }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::new_landmark() {
@@ -64,14 +48,10 @@ void LandmarkTableModel::new_landmark() {
 }
 
 //---------------------------------------------------------------------------
-int LandmarkTableModel::rowCount(const QModelIndex& /*index*/) const {
-  return landmarks_.size();
-}
+int LandmarkTableModel::rowCount(const QModelIndex& /*index*/) const { return landmarks_.size(); }
 
 //---------------------------------------------------------------------------
-int LandmarkTableModel::columnCount(const QModelIndex& /*index*/) const {
-  return LandmarkColumns::END_E;
-}
+int LandmarkTableModel::columnCount(const QModelIndex& /*index*/) const { return LandmarkColumns::END_E; }
 
 //---------------------------------------------------------------------------
 QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
@@ -126,9 +106,8 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
 }
 
 //---------------------------------------------------------------------------
-bool LandmarkTableModel::setData(const QModelIndex& index,
-                                 const QVariant& value, int role) {
-  //qDebug() << "setData: " << index << ", " << value;
+bool LandmarkTableModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+  // qDebug() << "setData: " << index << ", " << value;
   // Called only after enter is pressed or focus changed
   if (index.isValid() && role == Qt::EditRole) {
     if (index.row() >= static_cast<int>(landmarks_.size())) {
@@ -155,9 +134,7 @@ bool LandmarkTableModel::setData(const QModelIndex& index,
 }
 
 //---------------------------------------------------------------------------
-QVariant LandmarkTableModel::headerData(int section,
-                                        Qt::Orientation orientation,
-                                        int role) const {
+QVariant LandmarkTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
   if (role == Qt::DecorationRole) {
     if (orientation == Qt::Horizontal) {
       if (section == LandmarkColumns::VISIBLE_E) {
@@ -200,8 +177,7 @@ QVariant LandmarkTableModel::headerData(int section,
 Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
   Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-  if (index.column() == LandmarkColumns::NAME_E ||
-      index.column() == LandmarkColumns::COMMENT_E ||
+  if (index.column() == LandmarkColumns::NAME_E || index.column() == LandmarkColumns::COMMENT_E ||
       index.column() == LandmarkColumns::SET_BUTTON_E) {
     flags |= Qt::ItemIsEditable;
   }
@@ -237,8 +213,7 @@ void LandmarkTableModel::update_cells() {
 }
 
 //---------------------------------------------------------------------------
-int LandmarkTableModel::get_active_index() const {
-}
+int LandmarkTableModel::get_active_index() const {}
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::handle_selected(const QItemSelection& selected) {
@@ -327,29 +302,32 @@ void LandmarkTableModel::update_visibility() {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::set_placing_landmark(int row) {
-}
+void LandmarkTableModel::set_placing_landmark(int row) {}
 //---------------------------------------------------------------------------
 
-void LandmarkTableModel::set_button_text(std::string text) {
-  button_text_ = text;
-}
+void LandmarkTableModel::set_button_text(std::string text) { button_text_ = text; }
 
-//---------------------------------------------------------------------------
-std::string LandmarkTableModel::get_next_landmark_name() {
-  return std::to_string(this->landmarks_.size() + 1);
-}
+void LandmarkTableModel::remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int rowToRemove) {
+  if (matrix.rows() == 0) {
+    return;
+  }
+  //std::cerr << "matrix rows before = " << matrix.rows() << "\n";
+  unsigned int numRows = matrix.rows() - 1;
+  unsigned int numCols = matrix.cols();
 
-//---------------------------------------------------------------------------
-std::string LandmarkTableModel::get_next_landmark_color() {
-  int index = this->landmarks_.size() % this->default_colors_.size();
-  std::string c = this->default_colors_[index];
-  return c;
+  if (rowToRemove < numRows) {
+    matrix.block(rowToRemove, 0, numRows - rowToRemove, numCols) = matrix.bottomRows(numRows - rowToRemove);
+  }
+  matrix.conservativeResize(numRows, numCols);
+
+  //std::cerr << "matrix rows after = " << matrix.rows() << "\n";
 }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
   std::vector<Landmark> keep;
+  std::vector<int> indices_to_keep;
+
   for (int i = 0; i < landmarks_.size(); i++) {
     int found = false;
     for (int j = 0; j < list.size(); j++) {
@@ -358,12 +336,23 @@ void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
       }
     }
     if (!found) {
+      indices_to_keep.push_back(i);
       keep.push_back(landmarks_[i]);
     }
   }
+
+  auto shapes = session_->get_shapes();
+
+  for (int i = 0; i < list.size(); i++) {
+    for (int j = 0; j < shapes.size(); j++) {
+      auto& landmarks = shapes[j]->landmarks();
+      remove_eigen_row(landmarks, list[i].row());
+    }
+  }
+
   landmarks_ = keep;
-  this->store_landmarks();
-  this->update_table();
+  store_landmarks();
+  session_->trigger_landmarks_changed();
 }
 
 }  // namespace shapeworks

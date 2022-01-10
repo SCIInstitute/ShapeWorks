@@ -501,18 +501,18 @@ void Project::new_landmark()
 //---------------------------------------------------------------------------
 void Project::set_default_landmark_colors()
 {
-  default_landmark_colors_.push_back("#ffaf4e");
-  default_landmark_colors_.push_back("#74ff7a");
-  default_landmark_colors_.push_back("#8fd6ff");
-  default_landmark_colors_.push_back("#ff0000");
-  default_landmark_colors_.push_back("#ffe900");
-  default_landmark_colors_.push_back("#6c00d4");
-  default_landmark_colors_.push_back("#0000ff");
-  default_landmark_colors_.push_back("#ff5e7a");
-  default_landmark_colors_.push_back("#ffffa5");
-  default_landmark_colors_.push_back("#ff00ff");
-  default_landmark_colors_.push_back("#c27600");
-  default_landmark_colors_.push_back("#9f8fff");
+  default_landmark_colors_.push_back("#ffaf4e"); // orange
+  default_landmark_colors_.push_back("#74ff7a"); // green
+  default_landmark_colors_.push_back("#8fd6ff"); // light blue
+  default_landmark_colors_.push_back("#ff0000"); // red
+  default_landmark_colors_.push_back("#ffe900"); // yellow
+  default_landmark_colors_.push_back("#6c00d4"); // grape
+  default_landmark_colors_.push_back("#0000ff"); // blue
+  default_landmark_colors_.push_back("#ff5e7a"); // mauve
+  default_landmark_colors_.push_back("#ffffa5"); // light yellow
+  default_landmark_colors_.push_back("#ff00ff"); // magenta
+  default_landmark_colors_.push_back("#c27600"); // brown
+  default_landmark_colors_.push_back("#9f8fff"); // light purple
 }
 
 //---------------------------------------------------------------------------

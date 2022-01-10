@@ -968,5 +968,11 @@ void Session::handle_ctrl_click(PickResult result)
   }
   emit landmarks_changed();
 }
+
+//---------------------------------------------------------------------------
+void Session::trigger_landmarks_changed()
+{
+  emit landmarks_changed();
+}
 //---------------------------------------------------------------------------
 }

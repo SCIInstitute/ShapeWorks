@@ -489,7 +489,7 @@ void Viewer::update_landmarks() {
   auto& landmarks = shape_->landmarks();
   int num_points = landmarks.rows();
 
-  std::cerr << "num_points = " << num_points << "\n";
+
   vtkFloatArray* scalars = (vtkFloatArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
   scalars->Reset();
   scalars->SetNumberOfTuples(num_points);
@@ -503,14 +503,11 @@ void Viewer::update_landmarks() {
   landmark_glyph_->SetRange(landmark_lut_->GetRange());
   landmark_mapper_->SetScalarRange(landmark_lut_->GetRange());
 
-  std::cerr << "setting range: " << landmark_lut_->GetRange()[0] << " - " << landmark_lut_->GetRange()[1] << "\n";
-  std::cerr << "found table range: " << landmark_lut_->GetTableRange()[0] << " - " << landmark_lut_->GetTableRange()[1] << "\n";
 
   landmark_points_->Reset();
   landmark_points_->SetNumberOfPoints(landmarks.rows());
 
   for (int i = 0; i < num_points; i++) {
-    std::cerr << "set " << i  << " to " << i << "\n";
     scalars->InsertValue(i, i);
     landmark_points_->SetPoint(i, landmarks(i, 2), landmarks(i, 3), landmarks(i, 4));
   }

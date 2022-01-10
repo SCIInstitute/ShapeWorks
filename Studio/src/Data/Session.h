@@ -132,6 +132,8 @@ public:
 
   void handle_ctrl_click(PickResult result);
 
+  void trigger_landmarks_changed();
+
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
