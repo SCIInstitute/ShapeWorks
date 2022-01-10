@@ -804,7 +804,6 @@ void Viewer::update_actors()
 //-----------------------------------------------------------------------------
 int Viewer::handle_pick(int* click_pos)
 {
-
   // First determine what was picked
   vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
   prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);

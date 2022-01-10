@@ -1306,6 +1306,9 @@ void ShapeWorksStudioApp::update_display(bool force)
   else {
     this->current_display_mode_ = mode;
 
+    this->visualizer_->set_mean(
+      this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
 
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
@@ -1323,8 +1326,6 @@ void ShapeWorksStudioApp::update_display(bool force)
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
         this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-        this->visualizer_->set_mean(
-          this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
 
         this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
       }
