@@ -583,11 +583,11 @@ void ParticleShapeStatistics::MCADecomposition()
   ones_m.set_size(1, m);
   ones_m.fill(1.0);
   grand_mean = ones_m * m_shapes;
-  grand_mean = (1.0/m) * grand_mean;
+  grand_mean = grand_mean * (double)(1.0/m) ;
   grand_mean = grand_mean.transpose(); // 1 X N
 
-  ComputeBetweenParams(7);
-  ComputeWithinParams(7);
+  ComputeBetweenParams(1);
+  ComputeWithinParams(1);
 }
 
 void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
@@ -605,7 +605,7 @@ void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
   ones_m_sub.set_size(m_k, 1);
   ones_m.fill(1.0);
   ones_m_sub.fill(1.0);
-  centering_matrix = centering_matrix - (1.0/m)*(ones_m * ones_m.transpose());
+  centering_matrix = centering_matrix - (ones_m * ones_m.transpose()) * (double)(1.0/m);
 
   vnl_matrix<double> z_sub_total = centering_matrix * m_shapes;
   vnl_matrix<double> z_centred_res;
@@ -619,7 +619,7 @@ void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
     z_sub_total.extract(z_c_temp, i * m_domainsPerShape, 0);
     vnl_matrix<double> z_centred_k;
     z_centred_k.set_size(1, n);
-    z_centred_k = (1.0/m_k) * (ones_m_sub.transpose() * z_c_temp);
+    z_centred_k = (ones_m_sub.transpose() * z_c_temp) * (double)(1.0/m_k);
     z_centred_res.update(z_centred_k, i, 0);
   } 
   vnl_matrix<double> w;
