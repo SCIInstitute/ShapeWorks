@@ -403,8 +403,8 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 
   // start sampling along each mode
   std::vector<double> eigenValues = shapeStats.Eigenvalues();
-  vnl_matrix<double> eigenVectors = shapeStats.Eigenvectors();
-  vnl_vector<double> mean         = shapeStats.Mean();
+  Eigen::MatrixXd eigenVectors = shapeStats.Eigenvectors();
+  Eigen::VectorXd mean = shapeStats.Mean();
 
   Mesh::MeshPoints meanPoints = Mesh::MeshPoints::New();
   for(unsigned int i = 0; i < this->numOfParticles; i++)
@@ -442,7 +442,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
     double max_std_factor = +1 * this->maxStdDev;
     std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, this->numOfSamplesPerMode);
 
-    vnl_vector<double> curMode = eigenVectors.get_column(totalNumberOfModes - modeId - 1);
+    Eigen::VectorXd curMode = eigenVectors.col(totalNumberOfModes - modeId - 1);
 
     std::vector<double> std_store;
     std::cout << "std_store: ";
@@ -476,7 +476,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 
       std::cout << "cur_std: " << cur_std << std::endl;
 
-      vnl_vector<double> curSample = mean + cur_std * curMode;
+      Eigen::VectorXd curSample = mean + cur_std * curMode;
 
       // fill-in the vtkpoints structure to perform warping for dense reconstruction of the current sample
       vtkSmartPointer< vtkPoints > curSamplePts = vtkSmartPointer< vtkPoints >::New();
