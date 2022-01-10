@@ -22,6 +22,7 @@ using ProjectHandle = std::shared_ptr<Project>;
 //! Landmark class containing properties of each landmark
 class Landmark {
 public:
+  std::string domain_;
   std::string name_;
   bool visible_ = true;
   std::string color_;

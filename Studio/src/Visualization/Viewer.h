@@ -34,7 +34,7 @@ typedef QVector<ViewerHandle> ViewerList;
 
 class PickResult {
 public:
-  QPointF pos_;
+  Shape::Point pos_;
   int domain_ = -1;
   int subject_ = -1;
 };

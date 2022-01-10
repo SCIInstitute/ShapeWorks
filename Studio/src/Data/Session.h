@@ -16,6 +16,7 @@
 #include <Data/Preferences.h>
 #include <Data/StudioParticles.h>
 #include <Data/MeshManager.h>
+#include <Visualization/Viewer.h>
 
 namespace shapeworks {
 
@@ -128,6 +129,8 @@ public:
   void set_feature_range(double min, double max);
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
+
+  void handle_ctrl_click(PickResult result);
 
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);

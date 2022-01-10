@@ -28,6 +28,8 @@ public:
   //! TODO: replace this wherever it is used
   class Point {
 public:
+    Point() {};
+    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {};
     double x, y, z;
   };
 
@@ -143,6 +145,9 @@ public:
   void set_override_feature(std::string feature);
   std::string get_override_feature();
 
+
+  Eigen::MatrixXd& landmarks();
+
 private:
 
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
@@ -172,7 +177,9 @@ private:
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
 
+
   std::shared_ptr<shapeworks::Subject> subject_;
+
 
   std::vector<Point> vectors_;
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
@@ -182,5 +189,7 @@ private:
   QStringList corner_annotations_;
 
   QSharedPointer<MeshManager> mesh_manager_;
+
+  Eigen::MatrixXd landmarks_;
 };
 }

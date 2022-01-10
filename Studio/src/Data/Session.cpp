@@ -948,4 +948,22 @@ void Session::set_feature_range_max(double value)
   this->params_.set("feature_range_max", value);
   emit feature_range_changed();
 }
+
+//---------------------------------------------------------------------------
+void Session::handle_ctrl_click(PickResult result)
+{
+  if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
+    Eigen::MatrixXd & landmarks = shapes_[result.subject_]->landmarks();
+
+    landmarks.conservativeResize(landmarks.rows()+1, 5);
+    int row = landmarks.rows()-1;
+    landmarks(row,0) = result.domain_;
+    landmarks(row,1) = result.subject_;
+    landmarks(row,2) = result.pos_.x;
+    landmarks(row,3) = result.pos_.y;
+    landmarks(row,4) = result.pos_.z;
+
+  }
+}
+//---------------------------------------------------------------------------
 }

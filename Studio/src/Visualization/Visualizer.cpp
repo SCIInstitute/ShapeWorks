@@ -525,6 +525,6 @@ double Visualizer::get_current_glyph_size()
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result)
 {
-
+  session_->handle_ctrl_click(result);
 }
 }
