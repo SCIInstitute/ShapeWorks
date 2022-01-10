@@ -118,7 +118,12 @@ public:
   //! Set landmarks for this project
   void set_landmarks(std::vector<Landmark> landmarks);
 
+  //! Add a new landmark
+  void new_landmark();
+
 private:
+
+  void set_default_landmark_colors();
 
   int get_or_create_worksheet(std::string name);
   std::string get_new_file_column(std::string name, int idx);
@@ -171,6 +176,9 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
+  std::string get_next_landmark_name();
+  std::string get_next_landmark_color();
+
   int num_domains_per_subject_ = 1;
 
   std::unique_ptr<xlnt::workbook> wb_;
@@ -180,6 +188,9 @@ private:
   bool loaded_{false};
 
   std::string filename_;
+
+  std::vector<std::string> default_landmark_colors_;
+
 
   bool segmentations_present_{false};
   bool groomed_present_{false};

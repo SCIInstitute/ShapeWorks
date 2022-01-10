@@ -2,6 +2,7 @@
 
 // QT Includes
 #include <Libs/Project/Project.h>
+#include <Data/Session.h>
 
 #include <QAbstractTableModel>
 #include <QIcon>
@@ -39,6 +40,7 @@ class LandmarkTableModel : public QAbstractTableModel {
   virtual ~LandmarkTableModel();
 
   void set_project(std::shared_ptr<Project> project);
+  void set_session(QSharedPointer<Session> session);
   void store_landmarks();
 
   int rowCount(const QModelIndex &index) const;
@@ -112,6 +114,7 @@ class LandmarkTableModel : public QAbstractTableModel {
   void update_visibility();
 
   std::shared_ptr<Project> project_;
+  QSharedPointer<Session> session_;
 
   int visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
   std::string button_text_ = "Place";

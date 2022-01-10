@@ -27,6 +27,7 @@ static std::string replace_string(std::string subject, const std::string& search
 //---------------------------------------------------------------------------
 Project::Project()
 {
+  set_default_landmark_colors();
   this->wb_ = std::make_unique<xlnt::workbook>();
 
   this->input_prefixes_.push_back(SEGMENTATION_PREFIX);
@@ -487,6 +488,34 @@ void Project::set_landmarks(std::vector<Landmark> landmarks)
 }
 
 //---------------------------------------------------------------------------
+void Project::new_landmark()
+{
+  auto landmarks = get_landmarks();
+  Landmark landmark;
+  landmark.name_ = get_next_landmark_name();
+  landmark.color_ = get_next_landmark_color();
+  landmarks.push_back(landmark);
+  set_landmarks(landmarks);
+}
+
+//---------------------------------------------------------------------------
+void Project::set_default_landmark_colors()
+{
+  default_landmark_colors_.push_back("#ffaf4e");
+  default_landmark_colors_.push_back("#74ff7a");
+  default_landmark_colors_.push_back("#8fd6ff");
+  default_landmark_colors_.push_back("#ff0000");
+  default_landmark_colors_.push_back("#ffe900");
+  default_landmark_colors_.push_back("#6c00d4");
+  default_landmark_colors_.push_back("#0000ff");
+  default_landmark_colors_.push_back("#ff5e7a");
+  default_landmark_colors_.push_back("#ffffa5");
+  default_landmark_colors_.push_back("#ff00ff");
+  default_landmark_colors_.push_back("#c27600");
+  default_landmark_colors_.push_back("#9f8fff");
+}
+
+//---------------------------------------------------------------------------
 int
 Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const
 {
@@ -691,6 +720,20 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
   for (int i = 0; i < items.size(); i++) {
     ws.cell(xlnt::cell_reference(index + 1, i + 2)).value(items[i]);
   }
+}
+
+//---------------------------------------------------------------------------
+std::string Project::get_next_landmark_name()
+{
+  return std::to_string(get_landmarks().size() + 1);
+}
+
+//---------------------------------------------------------------------------
+std::string Project::get_next_landmark_color()
+{
+  int index = get_landmarks().size() % default_landmark_colors_.size();
+  std::string c = default_landmark_colors_[index];
+  return c;
 }
 
 //---------------------------------------------------------------------------

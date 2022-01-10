@@ -46,17 +46,20 @@ void LandmarkTableModel::set_project(std::shared_ptr<Project> project) {
 }
 
 //---------------------------------------------------------------------------
+void LandmarkTableModel::set_session(QSharedPointer<Session> session)
+{
+  session_ = session;
+  connect(session_.data(), &Session::landmarks_changed, this, &LandmarkTableModel::update_table);
+}
+
+//---------------------------------------------------------------------------
 void LandmarkTableModel::store_landmarks() {
   this->project_->set_landmarks(landmarks_);
 }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::new_landmark() {
-  Landmark landmark;
-  landmark.name_ = get_next_landmark_name();
-  landmark.color_ = get_next_landmark_color();
-  landmarks_.push_back(landmark);
-  store_landmarks();
+  project_->new_landmark();
   update_table();
 }
 
@@ -340,9 +343,7 @@ std::string LandmarkTableModel::get_next_landmark_name() {
 //---------------------------------------------------------------------------
 std::string LandmarkTableModel::get_next_landmark_color() {
   int index = this->landmarks_.size() % this->default_colors_.size();
-
   std::string c = this->default_colors_[index];
-
   return c;
 }
 

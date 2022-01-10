@@ -95,11 +95,11 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks()
 {
+  update_landmark_lut();
   QVector<QSharedPointer<Shape >> shapes = session_->get_shapes();
   foreach(ViewerHandle viewer, lightbox_->get_viewers()) {
     viewer->update_landmarks();
   }
-  update_landmark_lut();
   lightbox_->redraw();
 }
 
@@ -363,10 +363,17 @@ void Visualizer::update_landmark_lut()
 {
   auto landmarks = session_->get_project()->get_landmarks();
   landmark_lut_->SetNumberOfTableValues(landmarks.size());
-  landmark_lut_->SetTableRange(0.0, (double) landmarks.size());
-  landmark_lut_->SetRange(0, landmarks.size());
+  double range[2];
+  range[0] = 0;
+  range[1] = std::max<double>(0,static_cast<double>(landmarks.size())-1);
+
+  std::cerr << "about to set table range: 0 to " << range[1] << "\n";
+
+  landmark_lut_->SetTableRange(range);
+  landmark_lut_->SetRange(range);
+
   //landmark_lut_->SetIndexedLookup(true);
-  landmark_lut_->Build();
+  //landmark_lut_->Build();
   std::cerr << "\n--------------------\n";
   for (int i=0;i<landmarks.size();i++) {
     QColor color(QString::fromStdString(landmarks[i].color_));

@@ -495,10 +495,16 @@ void Viewer::update_landmarks() {
   scalars->SetNumberOfTuples(num_points);
   scalars->SetNumberOfValues(num_points);
 
-//  landmark_glyph_->SetRange(0.0, (double)num_points-1);
+  if (num_points == 0) {
+    return;
+  }
+  //landmark_glyph_->SetRange(0.0, (double)num_points-1);
   //landmark_mapper_->SetScalarRange(0.0, (double)num_points-1);
-  landmark_glyph_->SetRange(0.0, landmark_lut_->GetNumberOfTableValues()-1);
-  landmark_mapper_->SetScalarRange(0.0, landmark_lut_->GetNumberOfTableValues()-1);
+  landmark_glyph_->SetRange(landmark_lut_->GetRange());
+  landmark_mapper_->SetScalarRange(landmark_lut_->GetRange());
+
+  std::cerr << "setting range: " << landmark_lut_->GetRange()[0] << " - " << landmark_lut_->GetRange()[1] << "\n";
+  std::cerr << "found table range: " << landmark_lut_->GetTableRange()[0] << " - " << landmark_lut_->GetTableRange()[1] << "\n";
 
   landmark_points_->Reset();
   landmark_points_->SetNumberOfPoints(landmarks.rows());

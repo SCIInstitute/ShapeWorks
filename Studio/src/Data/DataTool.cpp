@@ -63,6 +63,7 @@ DataTool::~DataTool() {}
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   landmark_table_model_->set_project(session->get_project());
+  landmark_table_model_->set_session(session);
   update_table();
 }
 

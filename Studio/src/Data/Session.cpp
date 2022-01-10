@@ -962,6 +962,9 @@ void Session::handle_ctrl_click(PickResult result)
     landmarks(row,2) = result.pos_.x;
     landmarks(row,3) = result.pos_.y;
     landmarks(row,4) = result.pos_.z;
+    if (row >= project_->get_landmarks().size()) {
+      project_->new_landmark();
+    }
   }
   emit landmarks_changed();
 }
