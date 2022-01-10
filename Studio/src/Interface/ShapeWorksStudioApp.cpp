@@ -619,8 +619,10 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   this->session_->remove_shapes(index_list);
   if (this->session_->get_shapes().size() == 0) {
     this->new_session();
-    this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
+  }
+  if (list.size() > 0) {
+    this->analysis_tool_->reset_stats();
   }
   this->update_table();
   this->update_display(true);

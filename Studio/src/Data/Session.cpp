@@ -597,8 +597,9 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
       this->shapes_.push_back(shape);
     }
 
+    auto base = QString::fromStdString(world[counter]).remove("_world.particles").toStdString();
     QStringList list;
-    list << QFileInfo(QString::fromStdString(world[counter])).fileName();
+    list << QString::fromStdString(StringUtils::getFilename(base));
     list << "";
     list << "";
     list << "";
