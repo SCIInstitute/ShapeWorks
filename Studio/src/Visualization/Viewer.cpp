@@ -27,6 +27,8 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
+#include <vtkHandleWidget.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
 
 namespace shapeworks {
 
@@ -85,6 +87,9 @@ Viewer::Viewer() {
   landmark_glyph_->SetScaleModeToDataScalingOff();
   landmark_glyph_->GeneratePointIdsOn();
 
+  point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+  point_widget_ = vtkSmartPointer<vtkHandleWidget>::New();
+  //point_widget_->setpoi
 
   this->landmark_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->landmark_mapper_->SetInputConnection(this->landmark_glyph_->GetOutputPort());

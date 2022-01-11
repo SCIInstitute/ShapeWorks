@@ -21,6 +21,8 @@ class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
 class vtkReverseSense;
+class vtkHandleWidget;
+class vtkPolygonalSurfacePointPlacer;
 
 namespace shapeworks {
 
@@ -150,6 +152,9 @@ private:
   vtkSmartPointer<vtkPolyDataMapper> landmark_mapper_;
   vtkSmartPointer<vtkActor> landmark_actor_;
   vtkSmartPointer<vtkLookupTable> landmark_lut_;
+
+  vtkSmartPointer<vtkHandleWidget> point_widget_;
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
 
   vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
   vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
