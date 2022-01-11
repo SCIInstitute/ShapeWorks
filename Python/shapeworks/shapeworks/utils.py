@@ -30,7 +30,7 @@ def save_images(outDir,        # path to the directory where we want to save the
                 swImageList,   # list of shapeworks images to be saved
                 swImageNames,  # list of image names to be used as filenames
                 extension        = 'nrrd',
-                compressed       = False, # use false to load in paraview
+                compressed       = True, # use false to load in paraview
                 verbose          = True):
 
     if (len(swImageList) != len(swImageNames)):
@@ -58,7 +58,7 @@ def save_meshes(outDir,        # path to the directory where we want to save the
                 swMeshList,   # list of shapeworks images to be saved
                 swMeshNames,  # list of image names to be used as filenames
                 extension        = 'ply',
-                compressed       = False, # use false to load in paraview
+                compressed       = True,
                 verbose          = True):
 
     if (len(swMeshList) != len(swMeshNames)):
@@ -91,12 +91,21 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
-def find_reference_image_index(inDataList):
+def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
         mesh = img.toMesh(0.5)
         mesh_list.append(mesh)
-    return sw.MeshUtils.findReferenceMesh(mesh_list)
+    return find_reference_mesh_index(mesh_list, domains_per_shape)
+
+def find_reference_mesh_index(mesh_list,domains_per_shape=1):
+    if(domains_per_shape==1):
+        return sw.MeshUtils.findReferenceMesh(mesh_list)
+    else:
+        combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh) 
+        return index,combined_mesh
+
 
 def save_contour_as_vtp(points, lines, filename):
     """
@@ -142,6 +151,9 @@ def compute_line_indices(n, is_closed=True):
 
     return lines
 
+def get_api_version():
+    return "6.2"
+
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
     global sw_logger
@@ -175,26 +187,30 @@ def test(name, failure=False):
         try:
             if name():
                 print(name.__name__ + " failed")
-                sys.exit(1)
+                return False
+            else:
+                return True
         except Exception as e:
-            print(name.__name__ + " failed (exception): " + str(e))
-            sys.exit(0)
+            print(name.__name__ + " unexpected failure (exception): " + str(e))
+            return False
     else:
         try:
-            if not name():
+            if name():
+                return True
+            else:
                 print(name.__name__ + " failed")
-                sys.exit(1)
+                return False
         except Exception as e:
             print(name.__name__ + " failed (exception): " + str(e))
-            sys.exit(1)
+            return False
 
 def expectException(name, etype):
     try:
         name()
         print(name.__name__ + " failed (expected an exception)")
-        sys.exit(1)
+        return False
     except etype:
-        pass
+        return True
     except Exception as e:
         print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
-        sys.exit(1)
+        return False

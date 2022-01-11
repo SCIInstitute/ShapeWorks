@@ -19,6 +19,7 @@ class vtkCornerAnnotation;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
+class vtkReverseSense;
 
 namespace shapeworks {
 
@@ -75,11 +76,15 @@ public:
 
   void update_feature_range(double* range);
 
+  void update_opacities();
+
   QSharedPointer<Shape> get_shape();
 
 private:
 
-  vtkSmartPointer<vtkTransform> get_transform(int domain);
+  vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
+
+  static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void initialize_surfaces();
 
@@ -114,6 +119,7 @@ private:
   vtkSmartPointer<vtkRenderer> renderer_;
 
   vtkSmartPointer<vtkSphereSource> sphere_source_;
+  vtkSmartPointer<vtkReverseSense> reverse_sphere_;
 
   vtkSmartPointer<vtkPoints> glyph_points_;
   vtkSmartPointer<vtkPolyData> glyph_point_set_;

@@ -527,7 +527,7 @@ QWidget#specificity_panel {
          <item>
           <widget class="QWidget" name="views_content_widget" native="true">
            <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
                <number>0</number>
@@ -773,7 +773,7 @@ QWidget#specificity_panel {
                       <bool>true</bool>
                      </property>
                      <property name="toolTip">
-                      <string>Diff of left to right</string>
+                      <string>Display p-values on surface</string>
                      </property>
                      <property name="text">
                       <string>P-values</string>
@@ -1155,6 +1155,23 @@ QWidget#specificity_panel {
                 <string>Regression</string>
                </attribute>
               </widget>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QWidget" name="reference_domain_widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_18">
+               <item row="0" column="0">
+                <widget class="QLabel" name="reference_domain_label">
+                 <property name="text">
+                  <string>Alignment
+Reference Domain</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="reference_domain"/>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>

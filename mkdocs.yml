@@ -34,6 +34,8 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+- ShapeWorks Tools:
+   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
    - 'Multiple Domains SSM': 'studio/multiple-domains.md'
@@ -44,29 +46,39 @@ nav:
    - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
    - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
    - 'Getting Started with Data Augmentation' :       'notebooks/getting-started-with-data-augmentation.ipynb'
-   - 'Getting Started with Shape Cohort Generation' :  'notebooks/getting-started-with-shape-cohort-generation.ipynb'
+   - 'Getting Started with Shape Cohort Generation' : 'notebooks/getting-started-with-shape-cohort-generation.ipynb'
+   - 'Array passing without copying' :                'notebooks/array-passing-without-copying.ipynb'
+   - 'Create and apply Image transforms' :            'notebooks/create-and-apply-image-transforms.ipynb'
+   - 'Create and apply Mesh transforms' :             'notebooks/create-and-apply-mesh-transforms.ipynb'
 - Deep Learning & SSMs:
    - 'PyTorch GPU Support for ShapeWorks':   'deep-learning/pytorch-gpu.md'
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
 - Use Cases:
-   - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
-   - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
-   - 'Ellipsoid: Cutting Planes':               'use-cases/ellipsoid-cutting-planes.md'
-   - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
-   - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
-   - 'Femur: SSM from Meshes':                  'use-cases/femur.md'
-   - 'Femur with Cutting Planes':               'use-cases/femur-cutting-planes.md'
-   - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
-   - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
-   - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
-   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'
-   - 'Shape Model for Multiple Domains':        'use-cases/ellipsoid-multiple-domain.md'
-   - 'Shape Model for Multiple Domains directly from Meshes':     'use-cases/ellipsoid-multiple-domain-mesh.md'
-   - 'Ellipsoid: Shape Statistics in Python':    'use-cases/ellipsoid-pca.md'   
-   - 'Shape Models with Geodesic Distance based Repulsion':   'use-cases/thin-cavity-bean.md'
-   - 'Shape Models for N-dimensional Contours':  'use-cases/supershapes-contour.md'
-     
+   - 'Getting Started with Use Cases':                               'use-cases/use-cases.md'
+   - Segmentation Based Use Cases:
+      - 'Ellipsoid: Basic Example':                                  'use-cases/segmentation-based/ellipsoid.md'
+      - 'Left Atrium: Shape Model from Segmentations':               'use-cases/segmentation-based/left-atrium.md'
+      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/segmentation-based/fixed-domain-ellipsoid.md'
+      - 'Shape Model for Multiple Domains from Segmentations':       'use-cases/segmentation-based/ellipsoid-multiple-domain.md'
+   - Mesh Based Use Cases:
+      - 'Ellipsoid Mesh: Basic Example':                             'use-cases/mesh-based/ellipsoid_mesh.md'
+      - 'Lumps: Shape Model directly from Mesh':                     'use-cases/mesh-based/lumps.md'
+      - 'Thin Cavity Bean: Shape Model with Geodesic Distances':     'use-cases/mesh-based/thin-cavity-bean.md'
+      - 'Shape Model for Multiple Domains directly from Mesh':       'use-cases/mesh-based/ellipsoid-multiple-domain-mesh.md'
+   - Contour Based Use Cases:
+      - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
+   - Constraints Based Use Cases:
+      - 'Ellipsoid: Shape Model with Cutting Planes':                'use-cases/constraint-based/ellipsoid-cutting-planes.md'
+      - 'Femur:Shape Model with Cutting Planes':                     'use-cases//constraint-based/femur-cutting-planes.md'
+   - Statistics Based Use Cases:
+      - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'   
+      - 'Femur: Group Difference Statistics in Python':              'use-cases/stats-based/femur-pvalues.md'
+      - 'Ellipsoid: Shape Evaluation in Python':                     'use-cases/stats-based/ellipsoid-evaluate.md'
+   - Deep Learning Based Use Cases:
+      - 'Femur SSM Directly from Images':                            'use-cases/deep-learning-based/deep-ssm-femur.md'
+   - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
+   
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
@@ -81,8 +93,13 @@ nav:
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
-- ShapeWorks Tools:
-   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
+
+- API Reference:
+   - Groups:     'api/Modules/index_groups.md'
+   - Namespaces: 'api/Namespaces/index_namespaces.md'
+   - Classes:    'api/Classes/index_classes.md'
+   - Files:      'api/Files/index_files.md'
+
 - About:
    - 'Meet ShapeWorkers!':  'about/team.md'
    - 'Release Notes':      'about/release-notes.md'

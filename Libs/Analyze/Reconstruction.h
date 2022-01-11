@@ -131,8 +131,6 @@ public:
         origin_[2] = origin[2];
     }
 
-    void MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision);
-    void MeshFromDT(typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision);
     void EnablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = true;}
     void DisablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = false;}
 

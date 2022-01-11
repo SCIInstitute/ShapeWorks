@@ -78,7 +78,7 @@ def add_mesh_to_plotter(pvPlotter,      # pyvista plotter
 def plot_volumes(volumeList,              # list of shapeworks images to be visualized
                  volumeNames     = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                  use_same_window = False, # plot using multiple rendering windows if false
-                 is_interactive  = True,  # to enable interactive plots
+                 notebook        = False, # Plots inline if true
                  show_borders    = True,  # show borders for each rendering window
                  shade_volumes   = True,  # use shading when performing volume rendering
                  color_map       = "coolwarm", # color map for volume rendering, e.g., 'bone', 'coolwarm', 'cool', 'viridis', 'magma'
@@ -86,7 +86,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
                  show_bounds     = True,  # show volume bounding box
                  show_all_edges  = True,  # add an unlabeled and unticked box at the boundaries of plot
                  font_size       = 10,    # text font size for windows
-                 link_views      = True   # link all rendering windows so that they share same camera and axes boundaries
+                 link_views      = True  # link all rendering windows so that they share same camera and axes boundaries,
                 ):
     """
     Renders all segmentations in a dataset using a pyvista plotter to render
@@ -114,7 +114,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -160,7 +160,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
 def plot_meshes(meshList,                # list of shapeworks meshes to be visualized
                 meshNames       = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                 use_same_window = False, # plot using multiple rendering windows if false
-                is_interactive  = True,  # to enable interactive plots
+                notebook        = False, # Plots inline if true
                 show_borders    = True,  # show borders for each rendering window
                 meshes_color    = 'tan', # color to be used for meshes (can be a list with same size as meshList if different colors are needed)
                 mesh_style      = "surface", # visualization style of mesh. style='surface', style='wireframe', style='points'
@@ -203,7 +203,7 @@ def plot_meshes(meshList,                # list of shapeworks meshes to be visua
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         # notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -253,7 +253,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
                             objectsType,             # list of 'vol', 'mesh' of same size as objectList
                             objectNames     = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window
                             use_same_window = False, # plot using multiple rendering windows if false
-                            is_interactive  = True,  # to enable interactive plots
+                            notebook        = False, # Plots inline if true
                             show_borders    = True,  # show borders for each rendering window
                             meshes_color    = 'tan', # color to be used for meshes (can be a list with same size as meshList if different colors are needed)
                             mesh_style      = "surface", # visualization style of mesh. style='surface', style='wireframe', style='points'
@@ -292,7 +292,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         notebook = is_interactive,
+                         notebook = notebook,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -373,13 +373,13 @@ def plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir):
     plt.bar(X, explained_variance)
     plt.plot(X,cumulative_variance,linewidth=4.0,c='black')
     fig = plt.gcf()
-    fig.set_size_inches(10, 10)
-    plt.title('Variance Plot')
-    plt.xlabel('Mode')
-    plt.ylabel('Explained Variance')
+    fig.set_size_inches(20, 10)
+    plt.title('Variance Plot',fontsize=16)
+    plt.xlabel('Mode',fontsize=16)
+    plt.ylabel('Explained Variance',fontsize=16)
     plt.xticks(X)
-    plt.grid()
-    plt.savefig(shape_models_dir+"variance_plot.png")
+    plt.legend(["Cumulative Explained Variance","Explained Variance"],fontsize=16)
+    plt.savefig(shape_models_dir+"variance_plot.png",dpi=700)
     plt.show(block=False)
     plt.close(fig)
 
@@ -399,8 +399,9 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
         min_dims = 1
     else:
         min_dims = min_dims[-1]+1
-    print("\nNumber of modes covering 99% varaince - ", min_dims)
-    
+
+    print("\nNumber of modes covering 99% variance - ", min_dims)
+    min_dims = 10 if min_dims>15 else min_dims
     loadings = loadings[:,:min_dims]
     dims = []
     for i in range(len(loadings)):
@@ -411,11 +412,12 @@ def pca_loadings_violinplot(loadings,cumulative_variance,shape_models_dir):
     loadings = loadings.flatten()
     data = {'PCA Mode':dims, "PCA Score":loadings}
     df = pd.DataFrame(data) 
-    plt.figure(figsize=(6,4),dpi=300)  
+    plt.figure(figsize=(10,6),dpi=300)  
     ax = sns.violinplot(x='PCA Mode', y='PCA Score',\
                         data=df, palette="cool_r", split=True, scale="area")
     fig = plt.gcf()
-    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png")
+    plt.title("Violin Plots Showing the Distribution of the PCA Loadings",fontsize=16)
+    plt.savefig(shape_models_dir+"pca_loadings_violin_plot.png",dpi=700)
     plt.show(block=False)
     plt.close(fig)
 
@@ -436,9 +438,9 @@ def plot_mode_line(save_dir,filename,title,ylabel):
     plt.plot(X, Y, linewidth=4.0)
     fig = plt.gcf()
     fig.set_size_inches(10, 10)
-    plt.title(title)
-    plt.xlabel('Mode')
-    plt.ylabel(ylabel)
+    plt.title(title,fontsize=16)
+    plt.xlabel('Mode',fontsize=16)
+    plt.ylabel(ylabel,fontsize=16)
     plt.xticks(X)
     plt.ylim(bottom=0, top=max(Y)*1.5)
     plt.xlim(left=1, right=N)

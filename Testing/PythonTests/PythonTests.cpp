@@ -9,6 +9,41 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(pythonTests, reconstructsurfaceTest)
+{
+  run_use_case("reconstructsurface.py");
+}
+
+TEST(pythonTests, reconstructpcaTest)
+{
+  run_use_case("reconstructpca.py");
+}
+
+TEST(pythonTests, transformTest)
+{
+  run_use_case("transform.py");
+}
+
+TEST(pythonTests, meshwriteTest)
+{
+  run_use_case("meshwrite.py");
+}
+
+TEST(pythonTests, subdivisionTest)
+{
+  run_use_case("subdivision.py");
+}
+
+TEST(pythonTests, sw2vtkmeshTest)
+{
+  run_use_case("sw2vtkmesh.py");
+}
+
+TEST(pythonTests, meshcurvatureTest)
+{
+  run_use_case("meshcurvature.py");
+}
+
 TEST(pythonTests, initImageTest)
 {
   run_use_case("initImage.py");
@@ -169,6 +204,11 @@ TEST(pythonTests, warpTest)
   run_use_case("warp.py");
 }
 
+TEST(pythonTests, coordsysTest)
+{
+  run_use_case("coordsys.py");
+}
+
 TEST(pythonTests, setoriginTest)
 {
   run_use_case("setorigin.py");
@@ -209,9 +249,9 @@ TEST(pythonTests, smoothTest)
   run_use_case("smooth.py");
 }
 
-TEST(pythonTests, decimateTest)
+TEST(pythonTests, remeshTest)
 {
-  run_use_case("decimate.py");
+  run_use_case("remesh.py");
 }
 
 TEST(pythonTests, invertnormalsTest)
@@ -237,6 +277,11 @@ TEST(pythonTests, coverageTest)
 TEST(pythonTests, distanceTest)
 {
   run_use_case("distance.py");
+}
+
+TEST(pythonTests, fixElementTest)
+{
+  run_use_case("fixelement.py");
 }
 
 TEST(pythonTests, closestpointTest)
@@ -328,4 +373,9 @@ TEST(pythonTests, pcaTest)
 TEST(pythonTests, findreferencemeshTest)
 {
   run_use_case("findReferenceMesh.py");
+}
+
+TEST(pythonTests, isolateTest)
+{
+  run_use_case("isolate.py");
 }

@@ -10,10 +10,10 @@ on:
   pull_request:
 
 env:
-  CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: RelWithDebInfo
+  BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
   LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
     
 jobs:
@@ -23,6 +23,12 @@ jobs:
     container: akenmorris/ubuntu-build-box
     
     steps:
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
     - name: Conda info
       run: conda info
@@ -35,29 +41,21 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: conda installs
+    - name: Restore Caches
       shell: bash -l {0}
-      run: source ./install_shapeworks.sh
-
-    - name: install ccache
+      run: .github/workflows/restore_caches.sh
+    
+    - name: Conda Installs
       shell: bash -l {0}
-      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
+      run: .github/workflows/gha_conda.sh
 
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/install
-        key: ${{ runner.os }}-docker-ub16-${{ hashFiles('**/build_dependencies.sh') }}
-
-    - name: Build dependencies
+    - name: Build Dependencies
       shell: bash -l {0}
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE && rm -rf $HOME/build
+      run: .github/workflows/gha_deps.sh
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRY_CENTRAL_DIR=$HOME/install/geometry-central -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRY_CENTRAL_DIR=$HOME/install/geometry-central -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       shell: bash -l {0}
@@ -83,11 +81,7 @@ jobs:
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
-    - name: ccache statistics
-      shell: bash -l {0}
-      run: conda activate shapeworks && ccache -s
-
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts
@@ -104,11 +98,7 @@ jobs:
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
 
-    - name: Deploy Docs
-      if: github.ref == 'refs/heads/master'
+    - name: Store ccache
       shell: bash -l {0}
-      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
-      env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             
+      run: .github/workflows/store_ccache.sh
+            

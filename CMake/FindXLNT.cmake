@@ -1,6 +1,6 @@
 
 set(XLNT_DIR "$ENV{XLNT_DIR}" CACHE PATH "XLNT root directory.")
-message("Looking for XLNT in ${XLNT_DIR}")
+message(STATUS "Looking for XLNT in ${XLNT_DIR}")
 
 find_path(XLNT_INCLUDE_DIR
   NAMES xlnt/xlnt.hpp 
@@ -11,14 +11,14 @@ find_path(XLNT_INCLUDE_DIR
 
 if(APPLE)
   find_library(XLNT_LIBRARY 
-    libxlnt.a
+    libxlnt.dylib
     HINTS /usr/local/lib
     HINTS ${XLNT_DIR}/build/source
     HINTS ${XLNT_DIR}/lib
     )
 elseif(UNIX)
   find_library(XLNT_LIBRARY 
-    libxlnt.a 
+    libxlnt.so
     HINTS /usr/local/lib
     HINTS ${XLNT_DIR}/build/source
     HINTS ${XLNT_DIR}/lib

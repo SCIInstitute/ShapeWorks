@@ -27,7 +27,7 @@ public:
 
   //! TODO: replace this wherever it is used
   class Point {
-  public:
+public:
     double x, y, z;
   };
 
@@ -69,6 +69,8 @@ public:
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
+
+  void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
@@ -125,6 +127,9 @@ public:
 
   vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
 
+  vtkSmartPointer<vtkTransform> get_procrustest_transform(int domain = 0);
+  std::vector<vtkSmartPointer<vtkTransform>> get_procrustest_transforms();
+
   vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);
 
   void load_feature(std::string display_mode, std::string feature);
@@ -178,5 +183,4 @@ private:
 
   QSharedPointer<MeshManager> mesh_manager_;
 };
-
 }

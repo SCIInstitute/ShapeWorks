@@ -189,6 +189,7 @@ bool Optimize::Run()
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(dir_name);
     }
 
@@ -424,6 +425,12 @@ void Optimize::SetOutputDir(std::string output_dir)
 void Optimize::SetOutputTransformFile(std::string output_transform_file)
 {
   this->m_output_transform_file = output_transform_file;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetOutputIndividualTransformFiles(bool value)
+{
+  this->m_output_transform_files = value;
 }
 
 //---------------------------------------------------------------------------
@@ -667,6 +674,7 @@ void Optimize::Initialize()
     }
     this->WritePointFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
   }
   m_disable_procrustes = true;
 
@@ -815,6 +823,7 @@ void Optimize::Initialize()
       this->WritePointFiles(tmp_dir_name);
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(tmp_dir_name);
     }
 
@@ -867,12 +876,14 @@ void Optimize::Initialize()
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteTransformFiles(tmp_dir_name + "/");
       this->WriteParameters(tmp_dir_name);
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
     this->WriteEnergyFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
 
     flag_split = false;
     for (int i = 0; i < n; i++) {
@@ -886,6 +897,7 @@ void Optimize::Initialize()
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
   if (m_verbosity_level > 0) {
     std::cout << "Finished initialization!!!" << std::endl;
@@ -926,6 +938,7 @@ void Optimize::AddAdaptivity()
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
 
   if (m_verbosity_level > 0) {
@@ -964,6 +977,7 @@ void Optimize::RunOptimize()
     m_procrustes->RunRegistration();
     this->WritePointFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
 
     if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
       // transform cutting planes
@@ -1048,6 +1062,7 @@ void Optimize::RunOptimize()
   this->WritePointFilesWithFeatures();
   this->WriteEnergyFiles();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteModes();
   this->WriteCuttingPlanePoints();
   this->WriteParameters();
@@ -1140,6 +1155,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 
       this->WritePointFiles();
       this->WriteTransformFile();
+      this->WriteTransformFiles();
       this->WritePointFilesWithFeatures();
       this->WriteModes();
       this->WriteParameters();
@@ -1149,6 +1165,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
         this->WritePointFiles(this->GetCheckpointDir());
         this->WritePointFilesWithFeatures(this->GetCheckpointDir());
         this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
+        this->WriteTransformFiles(this->GetCheckpointDir());
         this->WriteParameters(this->GetCheckpointDir());
       }
     }
@@ -1407,6 +1424,66 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
   writer.SetInput(tlist);
   writer.Update();
   PrintDoneMessage();
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteTransformFiles(int iter) const
+{
+  if (!this->m_file_output_enabled || !this->m_output_transform_files) {
+    return;
+  }
+  std::string output_file = m_output_dir + "/";
+
+  if (iter >= 0) {
+    std::stringstream ss;
+    ss << iter + m_optimization_iterations_completed;
+    std::stringstream ssp;
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
+    output_file = m_output_dir + "/iter" + ss.str() + "_p" + ssp.str() + "/";
+  }
+  this->WriteTransformFiles(output_file);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteTransformFiles(std::string iter_prefix) const
+{
+
+  if (!this->m_file_output_enabled || !this->m_output_transform_files) {
+    return;
+  }
+
+  this->PrintStartMessage("Writing transform files...\n");
+
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+
+  int counter;
+  for (int i = 0; i < n; i++) {
+    counter = 0;
+
+    std::string transform_file = iter_prefix + "/" + m_filenames[i] + ".transform";
+
+    std::ofstream out(transform_file.c_str());
+
+    std::string str = "Writing " + transform_file + "...";
+    this->PrintStartMessage(str, 1);
+    if (!out) {
+      std::cerr << "Error opening output file: " << transform_file << std::endl;
+      throw 1;
+    }
+
+    auto transform = m_sampler->GetParticleSystem()->GetTransform(i);
+
+    for (int i=0;i<transform.cols();i++) {
+      for (int j=0;j<transform.rows();j++) {
+        out << transform(i,j) << " ";
+      }
+    }
+    out << std::endl;
+
+    out.close();
+
+  }
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------

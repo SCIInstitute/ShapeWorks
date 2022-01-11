@@ -5,9 +5,17 @@
 #include "Eigen/Core"
 #include "Eigen/Dense"
 
+class vtkActor;
+
 namespace shapeworks {
 
-/// Helper functions for meshes
+/**
+ * \class MeshUtils
+ * \ingroup Group-Mesh
+ *
+ * This class provides helper functions for meshes
+ *
+ */
 class MeshUtils
 {
 public:
@@ -32,7 +40,7 @@ public:
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
   /// determine the reference mesh
-  static int findReferenceMesh(std::vector<Mesh> &meshes);
+  static size_t findReferenceMesh(std::vector<Mesh> &meshes);
 
   /// generates and adds normals for points and faces for each mesh in given set of meshes
   static void generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen = false);
@@ -42,6 +50,12 @@ public:
 
   /// computes average normals for each point in given set of meshes
   static Field computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes);
+
+  /// This function visualizes vector and scalar fields for FFCs
+  void visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh);
+
+  /// Used as an auxiliary function for vector field visualizations
+  vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
 };
 
 } // shapeworks

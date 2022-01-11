@@ -282,6 +282,17 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  // landmarks/point files
+  std::vector<std::string> point_files;
+
+  for (auto s : subjects) {
+    auto landmarks = s->get_landmarks_filenames();
+    point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
+  }
+  if (point_files.size() > 0) {
+    optimize->SetPointFiles(point_files);
+  }
+
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
   std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
@@ -304,7 +315,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     for (int i = 0; i < files.size(); i++) {
 
       auto filename = files[i];
-      auto domain_type = s->get_domain_types()[i];
+      auto domain_type = s->get_domain_types(true)[i];
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {

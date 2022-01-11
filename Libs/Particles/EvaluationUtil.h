@@ -10,6 +10,10 @@ struct MultiVariateNormalRandom
   Eigen::VectorXd mean;
   Eigen::MatrixXd transform;
 
+  // seed set as constant 42 for test repeatability
+  std::mt19937 gen{42};
+  std::normal_distribution<> dist;
+
   MultiVariateNormalRandom(Eigen::MatrixXd const &covar)
           : MultiVariateNormalRandom(Eigen::VectorXd::Zero(covar.rows()), covar)
   {}
@@ -21,17 +25,11 @@ struct MultiVariateNormalRandom
     transform = eigenSolver.eigenvectors() * eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
   }
 
-  Eigen::MatrixXd operator()() const
+  Eigen::MatrixXd operator()()
   {
-    //static std::mt19937 gen{ std::random_device{}() };
-
-    // seed set as constant 1 for test repeatability
-    static std::mt19937 gen{1};
-
-    static std::normal_distribution<> dist;
-
     return mean + transform * Eigen::VectorXd{mean.size()}.unaryExpr([&](double x) { return dist(gen); });
   }
+
 };
 
 struct Reconstruction

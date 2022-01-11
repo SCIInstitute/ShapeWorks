@@ -1,6 +1,9 @@
 import os
+import sys
 import numpy as np
 from shapeworks import *
+
+success = True
 
 def getpointTest():
   mesh = Mesh(os.environ["DATA"] + "/simple_ellipsoid.ply")
@@ -9,4 +12,6 @@ def getpointTest():
 
   return np.linalg.norm(p-closeToP) < 1e-4
 
-utils.test(getpointTest)
+success &= utils.test(getpointTest)
+
+sys.exit(not success)

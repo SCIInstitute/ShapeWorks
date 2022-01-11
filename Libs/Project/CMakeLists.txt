@@ -1,5 +1,6 @@
 set(SOURCES
   Project.cpp
+  ProjectUtils.cpp
   Subject.cpp
   Parameters.cpp
   Variant.cpp

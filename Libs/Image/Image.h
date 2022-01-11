@@ -15,6 +15,13 @@ namespace shapeworks {
 
 class Mesh;
 
+/**
+ * \class Image
+ * \ingroup Group-Image
+ *
+ * This class represents a 3D image volume and operations that can be performed on images.
+ *
+ */
 class Image
 {
 public:
@@ -108,11 +115,11 @@ public:
   /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
   Image& rotate(const double angle, Axis axis);
 
-  /// creates a transform based on transform type
-  TransformPtr createTransform(XFormType type = CenterOfMass);
+  /// creates a transform that translates center of mass to center of image
+  TransformPtr createCenterOfMassTransform();
 
-  /// creates a transform based on transform type
-  TransformPtr createTransform(const Image &target, XFormType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
+  /// creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations
+  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
@@ -167,6 +174,12 @@ public:
 
   /// sets the image spacing to the given value
   Image& setSpacing(Vector3 spacing);
+
+  /// sets the coordinate system in which this image lives in physical space
+  Image& setCoordsys(ImageType::DirectionType coordsys);
+
+  /// isolate the largest object in a binary segmentation
+  Image& isolate();
 
   // query functions //
 
@@ -248,12 +261,6 @@ private:
 
   /// clones the underlying ImageType (ITK) data
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
-
-  /// generates the Transform necessary to move the contents of this binary image to the center
-  TransformPtr createCenterOfMassTransform();
-
-  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
-  TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);

@@ -114,12 +114,14 @@ private:
   static constexpr const char* SHAPE_PREFIX = "shape_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
+  static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
   static constexpr const char* GROUP_PREFIX = "group_";
   static constexpr const char* IMAGE_PREFIX = "image_";
   static constexpr const char* NAME = "name";
+  static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
@@ -168,6 +170,11 @@ private:
 
   std::set<std::string> matching_columns_;
   std::vector<std::string> mesh_scalars_;
+
+  std::vector<std::string> feature_names_;
+
+  // to avoid re-reading from mesh files each time the list of names is requested
+  bool feature_names_read_done_{false};
 
   std::vector<std::string> input_prefixes_;
 

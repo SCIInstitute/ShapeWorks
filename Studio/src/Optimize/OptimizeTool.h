@@ -52,6 +52,7 @@ public Q_SLOTS:
   void on_run_optimize_button_clicked();
   void on_restoreDefaults_clicked();
   void handle_optimize_complete();
+  void handle_optimize_failed();
   void handle_progress(int val, QString message);
   void handle_error(QString);
   void handle_warning(QString);

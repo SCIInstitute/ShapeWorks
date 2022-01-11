@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(DivideImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
   shapeworks.addCommand(SetRegion::getCommand());
+  shapeworks.addCommand(Isolate::getCommand());
 
   // Particle System Commands
   shapeworks.addCommand(ReadParticleSystem::getCommand());
@@ -66,7 +67,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(SmoothSinc::getCommand());
-  shapeworks.addCommand(Decimate::getCommand());
+  shapeworks.addCommand(Remesh::getCommand());
+  shapeworks.addCommand(RemeshPercent::getCommand());
   shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(TransformMesh::getCommand());
@@ -78,12 +80,14 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
   shapeworks.addCommand(MeshBounds::getCommand());
   shapeworks.addCommand(Distance::getCommand());
-  shapeworks.addCommand(FixMesh::getCommand());
+  shapeworks.addCommand(FixElement::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(ComputeNormals::getCommand());
   shapeworks.addCommand(ClosestPoint::getCommand());
   shapeworks.addCommand(GeodesicDistance::getCommand());
+  shapeworks.addCommand(GeodesicDistanceToLandmark::getCommand());
   shapeworks.addCommand(MeanNormals::getCommand());
+  shapeworks.addCommand(Curvature::getCommand());
   shapeworks.addCommand(SetField::getCommand());
   shapeworks.addCommand(GetField::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
@@ -98,6 +102,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WarpMesh::getCommand());
 
   // Misc Commands
+  shapeworks.addCommand(Seed::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
   shapeworks.addCommand(GroomCommand::getCommand());
 

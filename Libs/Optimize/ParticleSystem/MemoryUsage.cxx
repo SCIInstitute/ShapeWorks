@@ -52,4 +52,10 @@ void process_mem_usage(double& vm_usage, double& resident_set)
   vm_usage     = vsize / 1024.0;
   resident_set = rss * page_size_kb;
 }
+#else // LOG_MEMORY_USAGE
+
+void process_mem_usage(double& vm_usage, double& resident_set) {
+
+}
+
 #endif // LOG_MEMORY_USAGE

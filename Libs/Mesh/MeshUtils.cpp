@@ -2,17 +2,20 @@
 #include "ParticleSystem.h"
 #include "Utils.h"
 
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkLookupTable.h>
+#include <vtkArrowSource.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderer.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkDoubleArray.h>
-#include <igl/biharmonic_coordinates.h>
-#include <igl/cat.h>
-#include <igl/cotmatrix.h>
+#include <vtkCellData.h>
+
 #include <igl/matrix_to_list.h>
-#include <igl/point_mesh_squared_distance.h>
-#include <igl/remove_unreferenced.h>
-#include <igl/slice.h>
 
 // tbb
 #include <tbb/mutex.h>
@@ -29,6 +32,10 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
                                                                   const unsigned iterations,
                                                                   bool meshTransform)
 {
+  if (source.numPoints() == 0 || target.numPoints() == 0) {
+    throw std::invalid_argument("empty mesh passed to MeshUtils::createICPTransform");
+  }  
+
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source.getVTKMesh());
   icp->SetTarget(target.getVTKMesh());
@@ -55,7 +62,8 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   if (meshTransform)
     m = icp->GetMatrix();
   else
-    vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+    vtkMatrix4x4::Invert(icp->GetMatrix(), m); // It's inversed because when an image is transformed,
+                                               // a new image is created in the target space and samples through the transform back to the original space
 
   return m;
 }
@@ -102,19 +110,19 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<c
   return bbox;
 }
 
-int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
+size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
 {
   std::vector<std::pair<int, int>> pairs;
 
   // enumerate all pairs of meshes
-  for (int i = 0; i < meshes.size(); i++) {
-    for (int j = i + 1; j < meshes.size(); j++) {
+  for (size_t i = 0; i < meshes.size(); i++) {
+    for (size_t j = i + 1; j < meshes.size(); j++) {
       pairs.push_back(std::make_pair(i, j));
     }
   }
 
   // map of pair to distance value
-  std::map<int, double> results;
+  std::map<size_t, double> results;
   // mutex for access to results
   tbb::mutex mutex;
 
@@ -149,18 +157,12 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
       }
     });
 
-  std::vector<double> sums(meshes.size(), 0);
-  std::vector<int> counts(meshes.size(), 0);
   std::vector<double> means(meshes.size(), 0);
 
   double count = meshes.size() - 1;
-  for (int i = 0; i < pairs.size(); i++) {
+  for (size_t i = 0; i < pairs.size(); i++) {
     auto pair = pairs[i];
     double result = results[i];
-    sums[pair.first] += result;
-    sums[pair.second] += result;
-    counts[pair.first]++;
-    counts[pair.second]++;
     means[pair.first] += result / count;
     means[pair.second] += result / count;
   }
@@ -282,6 +284,218 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
   std::cerr << "WARNING: Added a multi-component mesh field\n";
 
   return normals;
+}
+
+void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh){
+    //std::cout << "VTK rendering" << std::endl;
+
+    // Render VTK for debug
+    //Creates mesh actor
+//    vtkNew<vtkLookupTable> lut;
+//    lut->SetNumberOfColors(16);
+//    lut->SetHueRange(0, 0.67);
+//    lut->Build();
+
+    //std::cout << "Setting Mesh Mapper" << std::endl;
+
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+
+    mesh->getIGLMesh(V, F);
+
+    vtkNew<vtkPolyDataMapper> meshmapper;
+    meshmapper->SetInputData(mesh->getVTKMesh());
+    //meshmapper->SetLookupTable(lut);
+    meshmapper->SetScalarModeToUsePointData();
+    meshmapper->SetColorModeToMapScalars();
+    meshmapper->ScalarVisibilityOn();
+    //std::cout << "GetArrayName " << meshmapper->GetArrayName() << std::endl;
+    vtkNew<vtkActor> meshactor;
+    meshactor->SetMapper(meshmapper);
+
+  vtkNew<vtkNamedColors> colors;
+
+  //std::cout << "Setting Renderer" << std::endl;
+
+  // Visualize
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetWindowName("Mesh");
+  renderWindow->AddRenderer(renderer);
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  renderWindowInteractor->SetRenderWindow(renderWindow);
+
+  //std::cout << "Adding arrow actors" << std::endl;
+  vtkSmartPointer<vtkDataArray> vff = mesh->getVTKMesh()->GetCellData()->GetArray(0);
+
+  // Computes grad vec for each face
+  for(size_t i = 0; i < F.rows(); i++){
+      const Eigen::Vector3d vert_dists(mesh->getFieldValue("value",F(i,0)), mesh->getFieldValue("value",F(i,1)), mesh->getFieldValue("value",F(i,2)));
+
+      Eigen::Vector3d v1(V(F(i,0),0), V(F(i,0),1), V(F(i,0),2));
+      Eigen::Vector3d v2(V(F(i,1),0), V(F(i,1),1), V(F(i,1),2));
+      Eigen::Vector3d v3(V(F(i,2),0), V(F(i,2),1), V(F(i,2),2));
+      Eigen::Vector3d face_center = (v1+v2+v3)/3;
+
+      // Compute gradient of geodesics
+      Eigen::Vector3d out_grad_eigen(vff->GetTuple3(i));
+      renderer->AddActor(getArrow(face_center, face_center+out_grad_eigen));
+      //out_grad_eigen *= geo_dist / out_grad_eigen.norm();
+  }
+
+  // Debug scalar and gradient queries
+  //vvvvvvvvvvvvvvvvvvvvvvvvvvvv
+//  Eigen::Vector3d addedpt(1,1,1);
+//  Eigen::Vector3d querypt = V.row(0)+ addedpt.transpose();
+//  double val = GetFFCValue(querypt);
+//  Eigen::Vector3d grad = GetFFCGradient(querypt);
+//  std::cout << "Querypt " << querypt.transpose() << std::endl << "val " << val << ", grad " << grad.transpose() << std::endl;
+//  renderer->AddActor(getArrow(querypt, querypt+grad*10));
+  //^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  renderer->AddActor(meshactor);
+  renderer->SetBackground(colors->GetColor3d("MidnightBlue").GetData());
+
+  //std::cout << "Starting" << std::endl;
+
+  renderWindow->SetWindowName("Mesh");
+  renderWindow->Render();
+  renderWindowInteractor->Start();
+}
+
+void CreateArrowMidPoint(double midPoint[], double startPoint[], double endPoint[])
+{
+  midPoint[0] = (startPoint[0] + endPoint[0]) /3;
+  midPoint[1] = (startPoint[1] + endPoint[1]) /3;
+  midPoint[2] = (startPoint[2] + endPoint[2]) /3;
+}
+
+void PrintArray(std::string arrayName, double *arr, int size)
+{
+  std::cout << arrayName << std::endl;
+
+  for (int i = 0; i < size; i++)
+    {
+    std::cout << arr[i] << " " ;
+    }
+
+  std::cout << std::endl;
+}
+
+void PrintTransformParams(vtkSmartPointer<vtkTransform> transform)
+{
+  PrintArray("Transform orientation: ", transform->GetOrientation(), 3);
+  PrintArray("Transform position: ", transform->GetPosition(), 3);
+  PrintArray("Transform scale: ", transform->GetScale(), 3);
+}
+
+void Print4x4Matrix(std::string matrixName, vtkSmartPointer<vtkMatrix4x4> matrix)
+{
+  std::cout << matrixName << std::endl;
+  for (unsigned int i = 0; i < sizeof(matrix->Element)/sizeof(matrix->Element[0]); i++)
+    {
+    std::cout << matrix->GetElement(i,0) << " " <<
+      matrix->GetElement(i,1) << " " <<
+      matrix->GetElement(i,2) << " " <<
+      matrix->GetElement(i,3) << std::endl;
+    }
+
+  std::cout << std::endl;
+}
+
+vtkSmartPointer<vtkActor> MeshUtils::getArrow(Eigen::Vector3d start, Eigen::Vector3d end){
+    // Create an arrow source
+      vtkSmartPointer<vtkArrowSource> arrowSource =
+        vtkSmartPointer<vtkArrowSource>::New();
+
+      arrowSource->SetShaftResolution(50);
+      arrowSource->SetTipResolution(50);
+
+    // Generate a random start and end point
+     double startPoint[3], endPoint[3], midPoint[3];
+     startPoint[0] = start(0);
+     startPoint[1] = start(1);
+     startPoint[2] = start(2);
+
+     endPoint[0] = end(0);
+     endPoint[1] = end(1);
+     endPoint[2] = end(2);
+
+     CreateArrowMidPoint(midPoint, startPoint, endPoint);
+
+     // Print points
+//     PrintArray("Start point: ", startPoint, 3);
+//     PrintArray("Mid point: ", midPoint, 3);
+//     PrintArray("End point: ", endPoint, 3);
+
+     // Compute a basis
+     double normalizedX[3];
+     double normalizedY[3];
+     double normalizedZ[3];
+
+     // The X axis is a vector from start to end
+     vtkMath::Subtract(endPoint, startPoint, normalizedX);
+     double length = vtkMath::Norm(normalizedX);
+     vtkMath::Normalize(normalizedX);
+
+     // The Z axis is an arbitrary vector cross X
+     double arbitrary[3];
+     arbitrary[0] = vtkMath::Random(-10,10);
+     arbitrary[1] = vtkMath::Random(-10,10);
+     arbitrary[2] = vtkMath::Random(-10,10);
+
+     vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
+     vtkMath::Normalize(normalizedZ);
+
+     // The Y axis is the cross product of Z and X axes
+     vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
+
+     vtkSmartPointer<vtkMatrix4x4> matrix =
+       vtkSmartPointer<vtkMatrix4x4>::New();
+     // Create the direction cosine matrix
+     matrix->Identity();
+     for (unsigned int i = 0; i < 3; i++)
+       {
+       matrix->SetElement(i, 0, normalizedX[i]);
+       matrix->SetElement(i, 1, normalizedY[i]);
+       matrix->SetElement(i, 2, normalizedZ[i]);
+       }
+
+//     Print4x4Matrix("4x4 Matrix: ", matrix);
+//     PrintArray("NormalizedX point: ", normalizedX, 3);
+//     PrintArray("NormalizedY point: ", normalizedY, 3);
+//     PrintArray("NormalizedZ point: ", normalizedZ, 3);
+
+     // Apply the transforms
+     vtkSmartPointer<vtkTransform> transform =
+       vtkSmartPointer<vtkTransform>::New();
+     transform->Translate(startPoint);
+     transform->Concatenate(matrix);
+     transform->Scale(length, length, length);
+
+     // Print transform params
+     //PrintTransformParams(transform);
+
+     // Transform the polydata
+     vtkSmartPointer<vtkTransformPolyDataFilter> transformPD =
+       vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+     transformPD->SetTransform(transform);
+     transformPD->SetInputConnection(arrowSource->GetOutputPort());
+
+     // Create a mapper and actor for the arrow
+     vtkSmartPointer<vtkPolyDataMapper> arrowMapper =
+       vtkSmartPointer<vtkPolyDataMapper>::New();
+     vtkSmartPointer<vtkActor> arrowActor =
+       vtkSmartPointer<vtkActor>::New();
+   #ifdef USER_MATRIX
+     arrowMapper->SetInputConnection(arrowSource->GetOutputPort());
+     arrowActor->SetUserMatrix(transform->GetMatrix());
+   #else
+     arrowMapper->SetInputConnection(transformPD->GetOutputPort());
+   #endif
+     arrowActor->SetMapper(arrowMapper);
+
+     return arrowActor;
 }
 
 } // shapeworks

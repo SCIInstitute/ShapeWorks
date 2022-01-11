@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def closeholesTest():
   img = Image(os.environ["DATA"] + "/image_with_holes.nrrd")
   img.closeHoles()
@@ -10,4 +12,6 @@ def closeholesTest():
 
   return img.compare(compareImg)
 
-utils.test(closeholesTest)
+success &= utils.test(closeholesTest)
+
+sys.exit(not success)

@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def statsTest():
   image = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   imgMin = image.min()
@@ -17,4 +19,6 @@ def statsTest():
 
   return abs(imgMin - arrMin) < 1e-4 and abs(imgMax - arrMax) < 1e-4 and abs(imgMean - arrMean) < 1e-4 and abs(imgStd - arrStd) < 1e-4
 
-utils.test(statsTest)
+success &= utils.test(statsTest)
+
+sys.exit(not success)
