@@ -99,6 +99,7 @@ public:
 
   /** Returns the mean shape. */
   const vnl_vector<double> &Mean() { return m_mean; }
+  const vnl_matrix<double> &GrandMean() { return grand_mean; }
   const vnl_vector<double> &MCAMean() { return m_mcaMean; }
   const vnl_vector<double> &Group1Mean() { return m_mean1; }
   const vnl_vector<double> &Group2Mean() { return m_mean2; }

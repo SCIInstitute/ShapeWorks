@@ -697,6 +697,7 @@ void ParticleShapeStatistics::ComputeMCAModeStats()
   }
 
   // make overall matix now for pca on top of this
+
   vnl_matrix<double> pointsMinusMean_for_between;
   pointsMinusMean_for_between.set_size(m_numDimensions, m_numSamples);
   pointsMinusMean_for_between.fill(0);
@@ -704,23 +705,117 @@ void ParticleShapeStatistics::ComputeMCAModeStats()
   mean_between.set_size(m_numDimensions);
   mean_between.fill(0);
 
+  vnl_matrix<double> pointsMinusMean_for_within;
+  pointsMinusMean_for_within.set_size(m_numDimensions, m_numSamples);
+  pointsMinusMean_for_within.fill(0);
+  vnl_vector<double> mean_within;
+  mean_within.set_size(m_numDimensions);
+  mean_within.fill(0);
+
   for(unsigned int k = 0; k < m_domainsPerShape; k++)
   {
     pointsMinusMean_for_between.update(z_between[k], k * m_domainsPerShape, 0);
+    pointsMinusMean_for_within.update(z_within[k], k * m_domainsPerShape, 0);
   }
 
   for (unsigned int i = 0; i < m_numSamples; i++)
   {
     mean_between += pointsMinusMean_for_between.get_column(i);
+    mean_within += pointsMinusMean_for_within.get_column(i);
   }
 
   mean_between = mean_between * (double)(1.0/m_numSamples);
+  mean_within = mean_within * (double)(1.0/m_numSamples);
   for (unsigned int j = 0; j < m_numDimensions; j++) {
     for (unsigned int i = 0; i < m_numSamples; i++) {
       pointsMinusMean_for_between(j, i) -= mean_between(j);
+      pointsMinusMean_for_within(j, i) -= mean_within(i);
     }
   }
 
+  // compute pca for mca components
+  // A. for within
+  vnl_matrix<double> A = pointsMinusMean_for_within.transpose()
+                         * pointsMinusMean_for_within * (1.0 / ((double) (m_numSamples - 1)));
+  vnl_symmetric_eigensystem<double> symEigen(A);
+
+  m_withinEigenvectors = pointsMinusMean_for_within * symEigen.V;
+  m_withinEigenvalues.resize(m_numSamples);
+
+  // normalize
+  for (unsigned int i = 0; i < m_numSamples; i++) {
+    double total = 0.0f;
+    for (unsigned int j = 0; j < m_numDimensions; j++) {
+      total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
+    }
+    total = sqrt(total);
+
+    for (unsigned int j = 0; j < m_numDimensions; j++) {
+      m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
+    }
+
+    m_withinEigenvalues[i] = symEigen.D(i, i);
+  }
+
+  float sum = 0.0;
+  for (unsigned int n = 0; n < m_numSamples; n++) {
+    sum += m_withinEigenvalues[(m_numSamples - 1) - n];
+  }
+
+  float sum2 = 0.0;
+  bool found = false;
+  for (unsigned int n = 0; n < m_numSamples; n++) {
+    sum2 += m_withinEigenvalues[(m_numSamples - 1) - n];
+    m_percentVarByMode.push_back(sum2 / sum);
+
+    if ((sum2 / sum) >= 0.95 && found == false) {
+      found = true;
+    }
+  }
+
+  // Within done
+
+  // B. for between
+  vnl_matrix<double> A = pointsMinusMean_for_between.transpose()
+                         * pointsMinusMean_for_between * (1.0 / ((double) (m_numSamples - 1)));
+  vnl_symmetric_eigensystem<double> symEigen(A);
+
+  m_betweenEigenvectors = pointsMinusMean_for_between * symEigen.V;
+  m_betweenEigenvalues.resize(m_numSamples);
+
+  // normalize
+  for (unsigned int i = 0; i < m_numSamples; i++) {
+    double total = 0.0f;
+    for (unsigned int j = 0; j < m_numDimensions; j++) {
+      total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
+    }
+    total = sqrt(total);
+
+    for (unsigned int j = 0; j < m_numDimensions; j++) {
+      m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
+    }
+
+    m_betweenEigenvalues[i] = symEigen.D(i, i);
+  }
+
+  float sum = 0.0;
+  for (unsigned int n = 0; n < m_numSamples; n++) {
+    sum += m_betweenEigenvalues[(m_numSamples - 1) - n];
+  }
+
+  float sum2 = 0.0;
+  bool found = false;
+  for (unsigned int n = 0; n < m_numSamples; n++) {
+    sum2 += m_betweenEigenvalues[(m_numSamples - 1) - n];
+    m_percentVarByMode.push_back(sum2 / sum);
+
+    if ((sum2 / sum) >= 0.95 && found == false) {
+      found = true;
+    }
+  }
+
+
+  // Within done
 
 }
 int ParticleShapeStatistics::PrincipalComponentProjections()
