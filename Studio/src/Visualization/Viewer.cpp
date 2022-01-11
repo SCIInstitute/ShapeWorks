@@ -489,23 +489,19 @@ void Viewer::update_landmarks() {
   auto& landmarks = shape_->landmarks();
   int num_points = landmarks.rows();
 
-
   vtkFloatArray* scalars = (vtkFloatArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
   scalars->Reset();
   scalars->SetNumberOfTuples(num_points);
   scalars->SetNumberOfValues(num_points);
 
+  landmark_glyph_->SetRange(landmark_lut_->GetRange());
+  landmark_mapper_->SetScalarRange(landmark_lut_->GetRange());
+  landmark_points_->Reset();
+  landmark_points_->SetNumberOfPoints(num_points);
+
   if (num_points == 0) {
     return;
   }
-  //landmark_glyph_->SetRange(0.0, (double)num_points-1);
-  //landmark_mapper_->SetScalarRange(0.0, (double)num_points-1);
-  landmark_glyph_->SetRange(landmark_lut_->GetRange());
-  landmark_mapper_->SetScalarRange(landmark_lut_->GetRange());
-
-
-  landmark_points_->Reset();
-  landmark_points_->SetNumberOfPoints(landmarks.rows());
 
   for (int i = 0; i < num_points; i++) {
     scalars->InsertValue(i, i);
