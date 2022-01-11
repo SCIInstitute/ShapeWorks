@@ -24,15 +24,16 @@ void run_use_case(const std::string& name)
   chdir(std::string(PYTHON_EXAMPLES_DIR).c_str());
 
   // delete the out file to make sure it's remade
-  std::remove("output.txt");
+  const std::string outputname = name + "_output.txt";
+  std::remove(outputname.c_str());
 
   // run python
-  std::string command = "python RunUseCase.py " + name + " --tiny_test 1> output.txt 2>&1";
+  std::string command = "python RunUseCase.py " + name + " --tiny_test 1>" + outputname + " 2>&1";
   std::cerr << "Running command: " << command << "\n";
   bool result = system(command.c_str());
   if (result) {
     std::cerr << "Error running command, output: " << command << "\n";
-    std::ifstream file("output.txt");
+    std::ifstream file(outputname.c_str());
     if (file.good()) {
       std::string line;
       while (std::getline(file, line)) {

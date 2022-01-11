@@ -134,8 +134,8 @@ function install_conda() {
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
-  if ! pip install pyqt5==5.15.6                        then return 1l fi # for jupyter notebook visualization
-  if ! pip install pyvistaqt==0.6.0                     then return 1l fi # for jupyter notebook visualization
+  if ! pip install pyqt5==5.15.6;                       then return 1; fi # for jupyter notebook visualization
+  if ! pip install pyvistaqt==0.6.0;                    then return 1; fi # for jupyter notebook visualization
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation

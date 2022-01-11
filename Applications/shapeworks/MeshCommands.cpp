@@ -1229,7 +1229,7 @@ void MeshToDT::buildParser()
   parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
   parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
   parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
-  parser.add_option("--pad").action("store").type("double").set_default(1.0).help("Pad the region to extract [default: 0.0].");
+  parser.add_option("--pad").action("store").type("int").set_default(1).help("Number of pixels to pad the output region [default: 1].");
 
   Command::buildParser();
 }
@@ -1245,12 +1245,13 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double x = static_cast<double>(options.get("sx"));
   double y = static_cast<double>(options.get("sy"));
   double z = static_cast<double>(options.get("sz"));
-  double pad = static_cast<double>(options.get("pad"));
+  auto pad = static_cast<Dims::SizeValueType >(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox().pad(pad);
-  
-  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
+  auto region = sharedData.mesh->boundingBox();
+  auto padding = Dims({pad, pad, pad});
+
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing, padding);
   return true;
 }
 

@@ -1122,7 +1122,7 @@ PYBIND11_MODULE(shapeworks_py, m)
                                          Point({spacing[0], spacing[1], spacing[2]}),
                                          Dims({padding[0], padding[1], padding[2]}));
        },
-       "converts specified region to distance transform image (default: unit spacing)",
+       "converts specified region to distance transform image with specified spacing and padding (default: unit spacing and 1 pixel of padding)",
        "region"_a=PhysicalRegion(),
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
        "padding"_a=std::vector<unsigned long>({1, 1, 1}))

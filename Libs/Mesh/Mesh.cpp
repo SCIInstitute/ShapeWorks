@@ -515,7 +515,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
     default:
       throw std::invalid_argument("invalid distance method");
   }
-
+  
   return std::vector<Field>{ distance, ids };
 }
 
@@ -960,7 +960,10 @@ Field Mesh::getField(const std::string& name) const
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields.");
 
-  auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
+  Field rawarr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!rawarr)
+    throw std::invalid_argument("Mesh does not contain a point field called " + name);
+
   return rawarr;
 }
 
@@ -969,7 +972,10 @@ Field Mesh::getFieldForFaces(const std::string& name) const
   if (mesh->GetCellData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no face fields.");
 
-  auto rawarr = mesh->GetCellData()->GetArray(name.c_str());
+  Field rawarr = mesh->GetCellData()->GetArray(name.c_str());
+  if (!rawarr)
+    throw std::invalid_argument("Mesh does not contain a cell field called " + name);
+
   return rawarr;
 }
 
@@ -1008,7 +1014,7 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
   }
 
   array->SetName(name.c_str());
-  mesh->GetCellData()->SetAttribute(array, 0);
+  mesh->GetCellData()->AddArray(array);
 
   return *this;
 }
@@ -1254,6 +1260,7 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
+// TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
 bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query,
                      size_t dom, size_t num)
 {
@@ -1271,8 +1278,9 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
     std::vector<size_t> boundaryVerts;
 
     // the locator is continuously rebuilt during this function, so don't use the cached version
-    vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-    locator->SetDataSet(this->mesh);
+    vtkSmartPointer<vtkKdTreePointLocator> tmp_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    tmp_locator->SetDataSet(this->mesh);
+    tmp_locator->BuildLocator();
 
     // Create path creator
     vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra =
@@ -1283,7 +1291,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
     for (size_t i = 0; i < boundaries[bound].size(); i++) {
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
-      vtkIdType ptid = locator->FindClosestPoint(ptdob);
+      vtkIdType ptid = tmp_locator->FindClosestPoint(ptdob);
       mesh->GetPoint(ptid, ptdob);
 
       // Add first point in boundary
@@ -1355,7 +1363,6 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
   return true;
 }
 
-// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
   double closest[3];
@@ -1447,10 +1454,10 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   auto arr = mesh->GetPointData()->GetArray("inout"); // Check if an inout already exists
 
   // Create half-mesh tree
-  vtkSmartPointer<vtkKdTreePointLocator> kdhalf =
+  vtkSmartPointer<vtkKdTreePointLocator> kdhalf_locator =
     vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kdhalf->SetDataSet(halfmesh);
-  kdhalf->BuildLocator();
+  kdhalf_locator->SetDataSet(halfmesh);
+  kdhalf_locator->BuildLocator();
 
   // Create full-mesh tree
   updatePointLocator();
@@ -1458,7 +1465,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   // Checking which mesh is closer to the query point. Recall that the query point must not necessarely lie on the mesh, so we check both the half mesh and the full mesh.
   double querypt[3] = {query[0], query[1], query[2]};
 
-  vtkIdType halfi = kdhalf->FindClosestPoint(querypt);
+  vtkIdType halfi = kdhalf_locator->FindClosestPoint(querypt);
   vtkIdType fulli = this->pointLocator->FindClosestPoint(querypt);
 
   double halfp[3];
@@ -1478,7 +1485,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   for (vtkIdType i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
     this->mesh->GetPoint(i, fullp);
 
-    halfi = kdhalf->FindClosestPoint(fullp);
+    halfi = kdhalf_locator->FindClosestPoint(fullp);
     halfmesh->GetPoint(halfi, halfp);
     //std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] << " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
     bool ptinhalfmesh;
@@ -1501,8 +1508,6 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
       inout->SetValue(i, 0.);
     }
   }
-
-  // confused: why get it and then set it using min (a few lines up)
 
   // Setting scalar field
   this->setField("inout", inout);
@@ -1577,16 +1582,16 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
 
   //std::cout << "Setting field" << std::endl;
 
-  // maybe don't set local field since the user can do this if they want it to be part of the mesh, and the function can therefore be const. Plus, use the Mesh's function for lots of stuff in here!
-  // Setting scalar field for value
-  this->setField("value", values);  // problem is it sets value but returns absvalues
+  // TODO: don't set local field since user can do this if needed, and the
+  // function can be const. (return vector of Fields like Mesh::distance)
+  this->setField("value", values);
 
   return absvalues;
 }
 
 std::vector<Eigen::Matrix3d>
 Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
-                              Eigen::MatrixXi F) const
+                              Eigen::MatrixXi F)
 {
   // Definition of gradient field
   vtkSmartPointer<vtkDoubleArray> vf = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1654,9 +1659,10 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
     vf->SetTuple3(i, grads(i, 0), grads(i, 1), grads(i, 2));
   }
 
-  // don't set local field since the user can do this if they want it to be part of the mesh, and the function can therefore be const. Plus, use the Mesh's function for this!
-  // this->setField("Gradient", vf);
-  // this->mesh->GetCellData()->AddArray(vff);
+  // TODO: don't set field in this mesh since the user can do this if they want
+  // it to be part of the mesh, and the function can therefore be const.
+  this->setField("Gradient", vf);
+  this->setFieldForFaces("vff", vff);
 
   return face_grad_;
 }

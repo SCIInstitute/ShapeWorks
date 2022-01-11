@@ -12,6 +12,7 @@
 #include <vtkTransform.h>
 #include <vtkPlane.h>
 #include <vtkPolyData.h>
+#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -32,6 +33,11 @@ using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
+
+// While doubles are the most commonly stored items, vtkDataArray can store any
+// type, yet has a default interface that conveniently stores and retrieves
+// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray
+// explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
 
