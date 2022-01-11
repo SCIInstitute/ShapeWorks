@@ -70,6 +70,8 @@ public:
 
   PickResult handle_ctrl_click(int *click_pos);
 
+  int handle_hover(int* click_pos);
+
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);

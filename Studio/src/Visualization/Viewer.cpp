@@ -872,6 +872,42 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
 }
 
 //-----------------------------------------------------------------------------
+int Viewer::handle_hover(int *click_pos)
+{
+  // First determine what was picked
+  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
+  prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
+
+  if (prop_picker->GetActor() != this->landmark_actor_) {
+    return -1;
+  }
+
+  vtkSmartPointer<vtkCellPicker> cell_picker = vtkSmartPointer<vtkCellPicker>::New();
+  cell_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
+
+  vtkDataArray* input_ids = this->landmark_glyph_->GetOutput()->GetPointData()->GetArray("InputPointIds");
+
+  if (input_ids) {
+    vtkCell* cell = this->landmark_glyph_->GetOutput()->GetCell(cell_picker->GetCellId());
+
+    if (cell && cell->GetNumberOfPoints() > 0) {
+      // get first PointId from picked cell
+      vtkIdType input_id = cell->GetPointId(0);
+
+      // get matching Id from "InputPointIds" array
+      vtkIdType glyph_id = input_ids->GetTuple1(input_id);
+
+      if (glyph_id >= 0) {
+        std::cerr << "hovering over landmark :" << glyph_id << "\n";
+        return glyph_id;
+      }
+    }
+  }
+
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
   this->lut_ = lut;
   if (!this->arrows_visible_ && !this->showing_feature_map()) {

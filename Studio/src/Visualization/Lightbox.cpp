@@ -353,6 +353,14 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl)
 }
 
 //-----------------------------------------------------------------------------
+void Lightbox::handle_hover(int *click_pos)
+{
+  for (int i=0;i<viewers_.size();i++)  {
+    auto result = viewers_[i]->handle_hover(click_pos);
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
   foreach(ViewerHandle viewer, this->viewers_) {

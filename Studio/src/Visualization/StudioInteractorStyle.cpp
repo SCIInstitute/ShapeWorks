@@ -109,6 +109,15 @@ void StudioInteractorStyle::Rotate()
 }
 
 //-----------------------------------------------------------------------------
+void StudioInteractorStyle::OnMouseMove()
+{
+  int* clickPos = this->GetInteractor()->GetEventPosition();
+  this->lightbox_->handle_hover( clickPos );
+
+  vtkInteractorStyleTrackballCamera::OnMouseMove();
+}
+
+//-----------------------------------------------------------------------------
 void StudioInteractorStyle::Dolly(double factor)
 {
   if (this->CurrentRenderer == NULL) {

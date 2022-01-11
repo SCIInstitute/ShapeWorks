@@ -57,6 +57,8 @@ public:
 
   void handle_pick(int* click_pos, bool one, bool ctrl);
 
+  void handle_hover(int* click_pos);
+
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
   void set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut);
 
