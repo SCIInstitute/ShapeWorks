@@ -431,6 +431,20 @@ TEST(ImageTests, cropTest2)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, cropTest3)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  auto region = image.physicalBoundingBox(0.5);
+  image.crop(region);
+  image.write(std::string(TEST_DATA_DIR) + "/ellipsoid_crop.nrrd");
+  image.resample(1.0);
+
+  Image cropped(std::string(TEST_DATA_DIR) + "/ellipsoid_crop.nrrd");
+  cropped.resample(1.0);
+
+  ASSERT_TRUE(image == cropped);
+}
+
 TEST(ImageTests, boundingBoxSingleTest1)
 {
   auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
