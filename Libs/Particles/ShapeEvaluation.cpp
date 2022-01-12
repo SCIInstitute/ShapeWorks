@@ -15,8 +15,7 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
 {
   const int N = particleSystem.N();
   if (nModes > N-1){
-    std::cerr << "Invalid mode of variation specified\n";
-    return false;
+    throw std::invalid_argument("Invalid mode of variation specified");
   }
   Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particleSystem);
 
@@ -68,8 +67,7 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   const Eigen::MatrixXd &P = particleSystem.Particles();
 
   if (nModes > N-1){
-    std::cerr << "Invalid mode of variation specified\n";
-    return false;
+    throw std::invalid_argument("Invalid mode of variation specified");
   }
   // Keep track of the reconstructions so we can visualize them later
   std::vector<Reconstruction> reconstructions;
@@ -163,10 +161,9 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 
   const int N = particleSystem.N();
   const int D = particleSystem.D();
-    
+
   if (nModes > N-1){
-    std::cerr << "Invalid mode of variation specified\n";
-    return false;
+    throw std::invalid_argument("Invalid mode of variation specified");
   }
   const int nSamples = 1000;
 
