@@ -13,6 +13,11 @@ namespace shapeworks {
 double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
+  const int N = particleSystem.N();
+  if (nModes > N-1){
+    std::cerr << "Invalid mode of variation specified\n";
+    return false;
+  }
   Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particleSystem);
 
   if (!saveTo.empty()) {
@@ -62,6 +67,10 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
 
+  if (nModes > N-1){
+    std::cerr << "Invalid mode of variation specified\n";
+    return false;
+  }
   // Keep track of the reconstructions so we can visualize them later
   std::vector<Reconstruction> reconstructions;
 
@@ -154,7 +163,11 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 
   const int N = particleSystem.N();
   const int D = particleSystem.D();
-
+    
+  if (nModes > N-1){
+    std::cerr << "Invalid mode of variation specified\n";
+    return false;
+  }
   const int nSamples = 1000;
 
   // Keep track of the reconstructions so we can visualize them later
