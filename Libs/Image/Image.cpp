@@ -2,6 +2,7 @@
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 #include "MeshUtils.h"
+#include "Exception.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -107,7 +108,10 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
   try {
     reader->Update();
   }
-  catch (itk::ExceptionObject &exp) {
+  catch (shapeworks::Exception &exp) {
+    throw std::invalid_argument(std::string(exp.what()));
+  }
+  // catch (itk::ExceptionObject &exp) {
     throw std::invalid_argument(std::string(exp.what()));
   }
 

@@ -8,6 +8,7 @@ set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
+  Exception.h
   )
 add_library(Common STATIC
   ${Common_sources}
