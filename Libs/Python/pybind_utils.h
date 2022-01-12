@@ -33,6 +33,9 @@ void printNumpyArrayInfo(const py::array& np_array) {
   for (auto& n: info.strides) {
     std::cout << n << " ";
   }
+  std::cout << "\nsize : ";
+  std::cout << np_array.size();
+
   std::cout << std::endl;
 }
 
@@ -116,9 +119,9 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   size[1] = np_array.shape()[1];
   size[2] = np_array.shape()[0];
 
-  assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
+  assert(size[0]*size[1]*size[2] == np_array.size());
   importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
-                             size[0]*size[1]*size[2]*sizeof(Image::PixelType),
+                             size[0]*size[1]*size[2],
                              true /*importer take_ownership*/);
   ImportType::IndexType start({0,0,0}); // i.e., Coord
   ImportType::RegionType region;
