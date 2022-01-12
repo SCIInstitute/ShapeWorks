@@ -31,23 +31,23 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "left_atrium-v0"
-    output_directory = "Output/left_atrium/"
+    dataset_name = "left_atrium"
+    output_directory = "Output/left_atrium_new/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
-        file_list_img = sorted(
-            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))[:3]
-        file_list_seg = sorted(
-            glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
+        sw.portal.download_subset(args.use_case, dataset_name, output_directory)
+        # file_list_img = sorted(
+        #     glob.glob(output_directory + dataset_name + "/images/*.nrrd"))[:3]
+        # file_list_seg = sorted(
+        #     glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
 
     # Else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.portal.download_and_unzip_dataset(dataset_name, output_directory)
         file_list_img = sorted(
             glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
         file_list_seg = sorted(
