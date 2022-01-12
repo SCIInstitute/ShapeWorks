@@ -382,6 +382,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
 
+  elem = docHandle->FirstChild("mesh_ffc_mode").Element();
+  if (elem) { optimize->SetMeshFFCMode(atoi(elem->GetText())); }
+
   return true;
 }
 
@@ -523,11 +526,13 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         }
       }
 
-      std::cout << "ffcssize " << ffcs.size() << std::endl;
-      if (index < ffcs.size()) {
-          for (size_t i = 0; i < ffcs[index].size(); i++) {
-            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
-            mesh = Mesh(mesh.clipByField("inout", 0.0));
+      if(optimize->GetMeshFFCMode() == 0){
+          std::cout << "ffcssize " << ffcs.size() << std::endl;
+          if (index < ffcs.size()) {
+              for (size_t i = 0; i < ffcs[index].size(); i++) {
+                mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
+                mesh = Mesh(mesh.clipByField("inout", 0.0));
+              }
           }
       }
 

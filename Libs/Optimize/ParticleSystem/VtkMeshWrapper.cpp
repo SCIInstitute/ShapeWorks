@@ -47,6 +47,7 @@ using GradNType = VtkMeshWrapper::GradNType;
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
                                bool is_geodesics_enabled, size_t geodesics_cache_size_multiplier) {
+  og_mesh_ = poly_data;
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
           vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);

@@ -153,6 +153,8 @@ public:
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
+  //! Set adaptivity mode (TODO: details)
+  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
   //! Set pairwise potential type (TODO: details)
@@ -283,6 +285,8 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  int GetMeshFFCMode(){return m_mesh_ffc_mode;}
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback
@@ -375,6 +379,8 @@ protected:
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
+
+  int m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;

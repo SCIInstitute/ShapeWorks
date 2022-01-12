@@ -449,6 +449,8 @@ public:
 
   std::vector<std::vector<FFCType> > GetFFCs(){return m_FFCs;}
 
+  void SetMeshFFCMode(int mesh_ffc_mode) {m_meshFFCMode = mesh_ffc_mode;}
+
 protected:
 
   void GenerateData();
@@ -541,6 +543,7 @@ private:
   std::vector<std::vector<SphereType>> m_Spheres;
   std::vector<std::vector<FFCType>>  m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
+  int m_meshFFCMode;
 
   unsigned int m_verbosity;
 };

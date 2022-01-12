@@ -108,8 +108,10 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       }
     }
 
+
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
+
 
       // Adding free-form constraints to constraint object
       //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
@@ -156,6 +158,16 @@ void Sampler::AllocateDomainsAndNeighborhoods()
           }
         }
       }
+    }
+    else if(domain->GetDomainType() == shapeworks::DomainType::Mesh){
+
+        if(m_meshFFCMode == 1){
+            // Adding free-form constraints to constraint object
+            //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+            if (m_FFCs.size() > i && m_FFCs[i].size() > 0) {
+               initialize_ffcs(i);
+            }
+        }
     }
 
     // END TEST CUTTING PLANE
@@ -303,6 +315,9 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
   if(mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
+//    vtkSmartPointer<vtkPolyData> polydataCopy = vtkSmartPointer<vtkPolyData>();
+//    polydataCopy->DeepCopy(mesh->GetPolydata());
+    this->m_meshes.push_back(mesh->GetPolydata());
     m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled()); // disable weighting for geodesics
   }
   m_DomainList.push_back(domain);
@@ -411,6 +426,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
 bool Sampler::initialize_ffcs(size_t dom)
 {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
+  std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
   for (size_t i = 0; i < m_FFCs[dom].size(); i++) {
     if(m_verbosity >= 1) std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
