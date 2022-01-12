@@ -6,7 +6,7 @@
 
 
 <number_of_particles>
-16
+32
 </number_of_particles>
 
 <use_normals>
@@ -24,15 +24,15 @@
 </keep_checkpoints>
 
 <iterations_per_split>
-500
+1000
 </iterations_per_split>
 
 <optimization_iterations>
-200
+500
 </optimization_iterations>
 
 <starting_regularization>
-15
+1
 </starting_regularization>
 
 <ending_regularization>
@@ -103,3 +103,7 @@ ffcs/sphere20.ffc
 ffcs/sphere30.ffc
 ffcs/sphere40.ffc
 </ffcs>
+
+<mesh_ffc_mode>
+0
+</mesh_ffc_mode>
