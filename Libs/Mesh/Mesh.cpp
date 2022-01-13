@@ -799,29 +799,8 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
   return Image(imgstenc->GetOutput());
 }
 
-// change region to be padding which must be at least +1 (logical coords using spacing) larger than mesh bounds (verify when called)
-//More info from #810:
-//1. to evaluate accuracy, given a mesh, compute a distance transform from *vtk[Static]CellLocator* *trimesh2* or *discregrid*, then extract isosurface (image to mesh) and compute surface2surface distance (Mesh::distance). What is the distribution of this error relative to voxel size used in conversion to distance transform?
-//2. it would be nice if we can add field to Image with face ids for each (closest) voxel (just in case we need it for projecting points on meshes or related tasks).
-// -> i.e., create two images; and yes we can if desired; maybe a... just don't want to compute distance twice
-//3.this is important to deprecate fids (which may already have been done)
 Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, const Dims padding) const
 {
-  // NOTE: distance is positive inside, negative outside, so necessary to know which direction important
-
-  // TODO: convert directly to DT (github #810)
-  // 1) change signature to specify padding (default >= 1)
-  //    check that padding is >= 1 and throw exception if not
-  //    compute region
-  // 2) creat an empty image of the correct size (no longer using toImage)
-  // 3) go through each voxel's location with a loop nearly identical to the one above in Mesh::distance (using the PointToCell method, setting two fields in the image: the distance and the cell id.
-
-#if 0
-  // TODO: try this and produce images to compare
-  Image img(toImage(region, spacing));
-  img.antialias(50, 0.00).computeDT();
-
-#else
   this->updateCellLocator();
 
   // if no region, use mesh bounding box
@@ -835,7 +814,6 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, cons
   // allocate output image, setting origin and spacing
   Image img(dims);
   img.setSpacing(toVector(spacing));
-
   auto origin = region.min - spacing * toPoint(padding);
   img.setOrigin(origin);
 
@@ -856,14 +834,13 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, cons
         Point loc = Point({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
 
         auto cp = closestPoint(loc, outside, distance, face_id);
-        itkimg->SetPixel(idx, outside ? -distance : distance);
 
-        // TODO: return vector of (pointers to) images, one with distances, one with face ids
+        // NOTE: distance is positive inside, negative outside
+        itkimg->SetPixel(idx, outside ? -distance : distance);
       }
     }
   }
-#endif
-  
+
   return img;
 }
 
