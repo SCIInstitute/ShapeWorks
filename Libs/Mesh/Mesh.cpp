@@ -595,7 +595,7 @@ Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, v
   distance = sqrt(dist2);
 
   // compute face normal: (p2-p1) x (p0-p1)
-  double pt0[3], pt1[3], pt2[0];
+  double pt0[3], pt1[3], pt2[3];
   cell->GetPoints()->GetPoint(0, pt0);
   cell->GetPoints()->GetPoint(1, pt1);
   cell->GetPoints()->GetPoint(2, pt2);
