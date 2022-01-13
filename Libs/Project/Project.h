@@ -41,7 +41,7 @@ public:
   std::string get_filename();
 
   //! Set project filename
-  void set_filename(std::string filename);
+  void set_filename(const std::string& filename);
 
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
@@ -58,8 +58,11 @@ public:
   //! Return the domain names (e.g. femur, pelvis, etc)
   std::vector<std::string> get_domain_names();
 
-  //! Return the list of Subjects
+  //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
+
+  //! Set the Subjects
+  void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
 
   //! Return if segmentations are present
   bool get_segmentations_present() const;
@@ -104,7 +107,7 @@ public:
 private:
 
   int get_or_create_worksheet(std::string name);
-  std::string get_new_file_column(std::string name, int idx);
+  std::string get_new_file_column(const std::string& name, int idx);
 
   // e.g. "la" for "groomed_la"
   std::string get_column_identifier(std::string name);
@@ -137,7 +140,7 @@ private:
 
   std::vector<std::string> get_matching_columns(const std::string& prefix);
 
-  std::vector<std::string> get_matching_columns(const std::vector<std::string> prefixes);
+  std::vector<std::string> get_matching_columns(const std::vector<std::string>& prefixes);
 
   std::vector<std::string> get_extra_columns() const;
 
