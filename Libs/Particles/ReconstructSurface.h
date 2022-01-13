@@ -35,6 +35,8 @@ public:
 
   Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
 
+  int computeMedianShape(std::vector<Eigen::MatrixXd>& shapeList);
+
   void performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices);
 
   Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);

@@ -335,6 +335,41 @@ Mesh::MeshPoints ReconstructSurface<TransformType>::convertToPhysicalCoordinates
 }
 
 template<class TransformType>
+int ReconstructSurface<TransformType>::computeMedianShape(std::vector<Eigen::MatrixXd>& shapeList)
+{
+  int medianShapeIndex = -1;
+  double minSum = 1e10;
+
+  for(int i = 0; i < shapeList.size(); i++)
+  {
+    Eigen::MatrixXd shape_i = shapeList[i];
+    double sum = 0.0;
+
+    for(int j = 0; j < shapeList.size(); j++)
+    {
+      if(i == j)
+        continue;
+
+      Eigen::MatrixXd shape_j = shapeList[j];
+
+      for(int k = 0; k < shape_i.rows(); k++)
+        sum += (fabs(shape_i(k, 0) - shape_j(k, 0)) +
+                fabs(shape_i(k, 1) - shape_j(k, 1)) +
+                fabs(shape_i(k, 2) - shape_j(k, 2)));
+    }
+    sum /= shapeList.size();
+
+    if(sum < minSum)
+    {
+      minSum = sum;
+      medianShapeIndex = i;
+    }
+  }
+
+  return medianShapeIndex;
+}
+
+template<class TransformType>
 void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices)
 {
   unsigned int numOfShapes = worldPoints.size();
@@ -360,7 +395,7 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
   if(this->numOfClusters == 1)
   {
     // this should be the median shape rather than a random sample
-    centers[0] = ComputeMedianShape(shapeList);
+    centers[0] = computeMedianShape(shapeList);
     centroidIndices = centers;
     std::cout << "One cluster is given ... and the median shape is used ... \n";
     return;
@@ -387,9 +422,9 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
           break;
         }
         shapeVector = shapeList[s] - shapeList[size_t(centers[c])];
-        distMat(s, c) = shapeVector.fro_norm();
+        distMat(s, c) = shapeVector.norm();
       }
-      minDists(s) = std::min(distMat.row(s));
+      minDists(s) = distMat.row(s).min();
       probs(s) = minDists(s) * minDists(s);
     }
     probs.operator /=(probs.sum());
@@ -397,7 +432,7 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
 
     for (unsigned int s = 0; s < numOfShapes; s++)
     {
-      cumProbs[s] = probs.extract(s + 1, 0).sum();
+      cumProbs[s] = probs.topLeftCorner(s + 1, 0).sum();
     }
     double r = double(rand() % 10000);
     r = r / 10000.0;
