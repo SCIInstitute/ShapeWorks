@@ -303,24 +303,22 @@ void LandmarkTableModel::update_visibility() {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_placing_landmark(int row) {}
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 void LandmarkTableModel::set_button_text(std::string text) { button_text_ = text; }
 
-void LandmarkTableModel::remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int rowToRemove) {
+//---------------------------------------------------------------------------
+void LandmarkTableModel::remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int row_to_remove) {
   if (matrix.rows() == 0) {
     return;
   }
-  //std::cerr << "matrix rows before = " << matrix.rows() << "\n";
   unsigned int numRows = matrix.rows() - 1;
   unsigned int numCols = matrix.cols();
 
-  if (rowToRemove < numRows) {
-    matrix.block(rowToRemove, 0, numRows - rowToRemove, numCols) = matrix.bottomRows(numRows - rowToRemove);
+  if (row_to_remove < numRows) {
+    matrix.block(row_to_remove, 0, numRows - row_to_remove, numCols) = matrix.bottomRows(numRows - row_to_remove);
   }
   matrix.conservativeResize(numRows, numCols);
-
-  //std::cerr << "matrix rows after = " << matrix.rows() << "\n";
 }
 
 //---------------------------------------------------------------------------

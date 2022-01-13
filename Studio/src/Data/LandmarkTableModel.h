@@ -109,8 +109,7 @@ class LandmarkTableModel : public QAbstractTableModel {
 
  private:
   void update_visibility();
-  void remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
-
+  void remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int row_to_remove);
 
   std::shared_ptr<Project> project_;
   QSharedPointer<Session> session_;

@@ -1,18 +1,16 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QSharedPointer>
-#include <QString>
-
+#include <Data/MeshGroup.h>
+#include <Data/MeshManager.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioParticles.h>
 #include <Libs/Project/Subject.h>
-#include <Data/MeshManager.h>
-#include <Data/MeshGroup.h>
-
 #include <itkMatrixOffsetTransformBase.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 namespace shapeworks {
 
@@ -22,14 +20,12 @@ using ShapeList = QVector<ShapeHandle>;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
-
-public:
-
+ public:
   //! TODO: replace this wherever it is used
   class Point {
-public:
-    Point() {};
-    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {};
+   public:
+    Point(){};
+    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
     double x, y, z;
   };
 
@@ -63,11 +59,14 @@ public:
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
-  /// Import global correspondence point file
+  /// Import global correspondence point files
   bool import_global_point_files(QStringList filenames);
 
-  /// Import local correspondence point file
+  /// Import local correspondence point files
   bool import_local_point_files(QStringList filenames);
+
+  /// Import landmarks files
+  bool import_landmarks_files(QStringList filenames);
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
@@ -145,13 +144,11 @@ public:
   void set_override_feature(std::string feature);
   std::string get_override_feature();
 
-
   Eigen::MatrixXd& landmarks();
 
-private:
-
-  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
-                       bool save_transform, bool wait = false);
+ private:
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
+                       bool wait = false);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
@@ -177,9 +174,7 @@ private:
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
 
-
   std::shared_ptr<shapeworks::Subject> subject_;
-
 
   std::vector<Point> vectors_;
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
@@ -192,4 +187,4 @@ private:
 
   Eigen::MatrixXd landmarks_;
 };
-}
+}  // namespace shapeworks
