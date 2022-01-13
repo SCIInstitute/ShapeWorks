@@ -74,14 +74,6 @@ install(TARGETS Mesh
 # TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
 # INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)
 
-# ADD_EXECUTABLE(ReconstructSurface ReconstructSurface.cxx)
-# TARGET_LINK_LIBRARIES(ReconstructSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
-# INSTALL(TARGETS ReconstructSurface RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
-# TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize Particles)
-# INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
-
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
