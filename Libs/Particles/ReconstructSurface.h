@@ -41,6 +41,8 @@ public:
 
   Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
 
+  vtkSmartPointer<vtkPolyData> extractIsoSurface(Image volData);
+
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
                                             std::vector<PointArray> worldPoints,
                                             std::vector<std::string> distance_transform);

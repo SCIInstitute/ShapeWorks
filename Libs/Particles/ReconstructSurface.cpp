@@ -540,6 +540,17 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
 }
 
 template<class TransformType>
+vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::extractIsoSurface(Image volData)
+{
+  Mesh mesh(volData.toMesh(0.0f));
+  mesh.smooth(1);
+  mesh.remesh(mesh.numPoints());
+  mesh.smooth(1);
+
+  return mesh.getVTKMesh();
+}
+
+template<class TransformType>
 vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints, std::vector<std::string> distanceTransform)
 {
   if (!this->denseDone || !localPoints.empty() || !distanceTransform.empty() || !worldPoints.empty()) 
@@ -811,7 +822,7 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
       }
     }
 
-    this->denseMean = extractSurface(multiplyImage.getVTKImage());
+    this->denseMean = extractIsoSurface(multiplyImage);
     this->denseMean = MeshQC(this->denseMean);
   }
   catch (std::runtime_error e)
