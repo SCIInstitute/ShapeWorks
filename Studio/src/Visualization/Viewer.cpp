@@ -1,5 +1,6 @@
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
+#include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
@@ -9,12 +10,14 @@
 #include <vtkCornerAnnotation.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
+#include <vtkHandleWidget.h>
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
@@ -27,13 +30,13 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
-#include <vtkHandleWidget.h>
-#include <vtkPolygonalSurfacePointPlacer.h>
 
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
+  landmark_widget_ = std::make_shared<LandmarkWidget>(this);
+
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   this->reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
   this->reverse_sphere_->SetInputConnection(this->sphere_source_->GetOutputPort());
@@ -89,14 +92,14 @@ Viewer::Viewer() {
 
   point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   point_widget_ = vtkSmartPointer<vtkHandleWidget>::New();
-  //point_widget_->setpoi
+  // point_widget_->setpoi
 
   this->landmark_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->landmark_mapper_->SetInputConnection(this->landmark_glyph_->GetOutputPort());
   this->landmark_mapper_->SetScalarVisibility(1);
   this->landmark_actor_ = vtkSmartPointer<vtkActor>::New();
   this->landmark_actor_->GetProperty()->SetOpacity(1);
-  //this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
+  // this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
   this->landmark_actor_->SetMapper(this->landmark_mapper_);
 
   // exclusion spheres
@@ -491,6 +494,8 @@ std::string Viewer::get_displayed_feature_map() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_landmarks() {
+  landmark_widget_->update_landmarks();
+  /*
   auto& landmarks = shape_->landmarks();
   int num_points = landmarks.rows();
 
@@ -514,7 +519,14 @@ void Viewer::update_landmarks() {
   }
   landmark_point_set_->Modified();
   landmark_points_->Modified();
+  */
 }
+
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
+
+//-----------------------------------------------------------------------------
+MeshGroup Viewer::get_meshes() { return meshes_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape) {
@@ -658,6 +670,18 @@ void Viewer::set_glyph_size_and_quality(double size, double quality) {
   this->glyph_quality_ = quality;
   this->update_glyph_properties();
 }
+
+//-----------------------------------------------------------------------------
+double Viewer::get_glyph_size() { return glyph_size_; }
+
+//-----------------------------------------------------------------------------
+double Viewer::get_glyph_quality() { return glyph_quality_; }
+
+//-----------------------------------------------------------------------------
+void Viewer::set_session(QSharedPointer<Session> session) { session_ = session; }
+
+//-----------------------------------------------------------------------------
+QSharedPointer<Session> Viewer::get_session() { return session_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_glyph_properties() {
@@ -873,8 +897,7 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-int Viewer::handle_hover(int *click_pos)
-{
+int Viewer::handle_hover(int* click_pos) {
   // First determine what was picked
   vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
   prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
@@ -917,9 +940,8 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut)
-{
-  landmark_lut_  = lut;
+void Viewer::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut) {
+  landmark_lut_ = lut;
   landmark_mapper_->SetLookupTable(landmark_lut_);
 }
 

@@ -61,6 +61,7 @@ public:
 
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
   void set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut);
+  void set_session(QSharedPointer<Session> session);
 
   void set_visualizer(Visualizer* visualizer);
 
@@ -135,5 +136,7 @@ private:
     = Preferences::OrientationMarkerType::none;
   Preferences::OrientationMarkerCorner current_orientation_marker_corner_
     = Preferences::OrientationMarkerCorner::upper_right;
+
+  QSharedPointer<Session> session_;
 };
 }

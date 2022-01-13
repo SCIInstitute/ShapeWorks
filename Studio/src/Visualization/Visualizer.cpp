@@ -44,7 +44,8 @@ void Visualizer::set_lightbox(LightboxHandle lightbox) {
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_session(SessionHandle session) {
-  this->session_ = session;
+  session_ = session;
+  lightbox_->set_session(session);
   connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
   connect(session_.data(), &Session::landmarks_changed, this, &Visualizer::update_landmarks);
 }
@@ -314,6 +315,7 @@ void Visualizer::update_lut() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmark_lut() {
+
   auto landmarks = session_->get_project()->get_landmarks();
   landmark_lut_->SetNumberOfTableValues(landmarks.size());
   double range[2];

@@ -30,6 +30,8 @@ class Shape;
 class Viewer;
 class Visualizer;
 class StudioInteractorStyle;
+class LandmarkWidget;
+class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
 typedef QVector<ViewerHandle> ViewerList;
@@ -62,6 +64,11 @@ public:
   void reset_camera(std::array<double, 3> c);
 
   void set_glyph_size_and_quality(double size, double quality);
+  double get_glyph_size();
+  double get_glyph_quality();
+  void set_session(QSharedPointer<Session> session);
+  QSharedPointer<Session> get_session();
+
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
 
@@ -97,6 +104,10 @@ public:
   QSharedPointer<Shape> get_shape();
 
   void update_landmarks();
+
+  std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
+
+  MeshGroup get_meshes();
 
 private:
 
@@ -192,5 +203,9 @@ private:
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
+
+  std::shared_ptr<LandmarkWidget> landmark_widget_;
+  QSharedPointer<Session> session_;
+
 };
 }

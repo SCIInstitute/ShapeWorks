@@ -230,6 +230,7 @@ void Lightbox::setup_renderers()
         viewer = QSharedPointer<Viewer>(new Viewer());
         viewer->set_visualizer(this->visualizer_);
         viewer->set_renderer(renderer);
+        viewer->set_session(session_);
         this->viewers_.push_back(viewer);
       }
       else {
@@ -373,6 +374,15 @@ void Lightbox::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
   foreach(ViewerHandle viewer, this->viewers_) {
     viewer->set_landmark_lut(lut);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::set_session(QSharedPointer<Session> session)
+{
+  session_ = session;
+  foreach(ViewerHandle viewer, this->viewers_) {
+    viewer->set_session(session);
   }
 }
 
