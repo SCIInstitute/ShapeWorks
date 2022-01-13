@@ -29,16 +29,19 @@ public:
 
   Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
 
+  void performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices);
+
   Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
 
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
-                                            std::vector<PointArray> worldPoints, std::vector<std::string> distance_transform);
+                                            std::vector<PointArray> worldPoints,
+                                            std::vector<std::string> distance_transform);
 
-  void computeDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints,
+  void computeDenseMean(std::vector<PointArray> localPoints,
+                        std::vector<PointArray> worldPoints,
                         std::vector<std::string> distanceTransform);
 
-  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter,
-                                            bool doProcrustes, bool doProcrustesScaling);
+  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter);
 
   void surface(const std::vector<std::string> localPointsFiles);
 
@@ -82,11 +85,17 @@ private:
   bool doProcrustes;
   bool doProcrustesScaling;
   bool usePairwiseNormalsDifferencesForGoodBad;
+  bool meanBeforeWarp = true;
+  bool outputEnabled = true;
   int modeIndex;
+  int numOfModes;
   int numOfSamplesPerMode;
+  int numOfParticles;
+  size_t numOfClusters;
   float maxStdDev;
   float maxVarianceCaptured;
   float maxAngleDegrees;
+
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
   std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);

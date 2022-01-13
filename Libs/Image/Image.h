@@ -60,6 +60,9 @@ public:
   Image operator-(const Image& other) const;
   Image& operator-=(const Image& other);
 
+  /// multiply operator to multiply two images
+  Image operator*(const Image& other) const;
+
   /// multiply operator to scale contents of an image
   Image operator*(const PixelType x) const;
   Image& operator*=(const PixelType x);
