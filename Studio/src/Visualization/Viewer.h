@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QSharedPointer>
-#include <Visualization/ColorSchemes.h>
-#include <QPointF>
-
 #include <Data/Shape.h>
+#include <Visualization/ColorSchemes.h>
+
+#include <QPointF>
+#include <QSharedPointer>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -37,7 +37,7 @@ typedef QSharedPointer<Viewer> ViewerHandle;
 typedef QVector<ViewerHandle> ViewerList;
 
 class PickResult {
-public:
+ public:
   Shape::Point pos_;
   int domain_ = -1;
   int subject_ = -1;
@@ -49,9 +49,7 @@ public:
  *
  */
 class Viewer {
-
-public:
-
+ public:
   Viewer();
   ~Viewer() = default;
 
@@ -77,15 +75,13 @@ public:
 
   int handle_pick(int* click_pos);
 
-  PickResult handle_ctrl_click(int *click_pos);
+  PickResult handle_ctrl_click(int* click_pos);
 
-  int handle_hover(int* click_pos);
 
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
 
-  void set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut);
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -109,8 +105,7 @@ public:
 
   MeshGroup get_meshes();
 
-private:
-
+ private:
   vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
@@ -119,12 +114,10 @@ private:
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Shape::Point>& points,
-                                 vtkSmartPointer<vtkFloatArray> magnitudes,
+  void compute_point_differences(const std::vector<Shape::Point>& points, vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
-  void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
-                                   vtkSmartPointer<vtkFloatArray> vectors);
+  void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
   void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
@@ -134,7 +127,6 @@ private:
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
-
 
   bool visible_;
 
@@ -156,16 +148,6 @@ private:
   vtkSmartPointer<vtkGlyph3D> glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
-
-  vtkSmartPointer<vtkPoints> landmark_points_;
-  vtkSmartPointer<vtkPolyData> landmark_point_set_;
-  vtkSmartPointer<vtkGlyph3D> landmark_glyph_;
-  vtkSmartPointer<vtkPolyDataMapper> landmark_mapper_;
-  vtkSmartPointer<vtkActor> landmark_actor_;
-  vtkSmartPointer<vtkLookupTable> landmark_lut_;
-
-  vtkSmartPointer<vtkHandleWidget> point_widget_;
-  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
 
   vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
   vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
@@ -206,6 +188,5 @@ private:
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   QSharedPointer<Session> session_;
-
 };
-}
+}  // namespace shapeworks

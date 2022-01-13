@@ -1,11 +1,11 @@
 #pragma once
 
+#include <Data/Preferences.h>
+#include <Data/Session.h>
+#include <Visualization/Lightbox.h>
+
 #include <map>
 #include <string>
-
-#include <Data/Session.h>
-#include <Data/Preferences.h>
-#include <Visualization/Lightbox.h>
 
 namespace shapeworks {
 
@@ -19,9 +19,9 @@ typedef QSharedPointer<Visualizer> VisualizerHandle;
  * Additionally, it performs all shape-based statistical functions.
  */
 class Visualizer : public QObject {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
   Visualizer(Preferences& prefs);
   ~Visualizer();
 
@@ -78,7 +78,6 @@ public:
   void reset_camera();
 
   void update_lut();
-  void update_landmark_lut();
 
   StudioParticles get_current_shape();
 
@@ -108,7 +107,7 @@ public:
   double* get_feature_range();
 
   //! Get the current raw feature range
-  double *get_feature_raw_range();
+  double* get_feature_raw_range();
 
   //! Return if the feature range is valid or not
   bool get_feature_range_valid();
@@ -131,16 +130,15 @@ public:
   //! Handle ctrl click
   void handle_ctrl_click(PickResult result);
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
   void update_viewer_properties();
 
   void handle_feature_range_changed();
 
-private:
-  ShapeHandle create_display_object(const StudioParticles& points,
-                                    const std::vector<Shape::Point>& vectors);
+ private:
+  ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
   void compute_measurements();
@@ -162,8 +160,6 @@ private:
   int selected_point_one_;
   int selected_point_two_;
 
-  vtkSmartPointer<vtkLookupTable> landmark_lut_;
-
   vnl_vector<double> cached_mean_;
   StudioParticles current_shape_;
 
@@ -175,7 +171,6 @@ private:
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};
-
 };
 
-}
+}  // namespace shapeworks

@@ -75,33 +75,6 @@ Viewer::Viewer() {
   this->glyph_actor_->GetProperty()->SetSpecularPower(10.0);
   this->glyph_actor_->SetMapper(this->glyph_mapper_);
 
-  // set up landmarks
-  this->landmark_points_ = vtkSmartPointer<vtkPoints>::New();
-  this->landmark_points_->SetDataTypeToDouble();
-  this->landmark_point_set_ = vtkSmartPointer<vtkPolyData>::New();
-  this->landmark_point_set_->SetPoints(this->landmark_points_);
-  this->landmark_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkFloatArray>::New());
-  landmark_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-  landmark_glyph_->SetInputData(this->landmark_point_set_);
-  landmark_glyph_->SetColorModeToColorByScalar();
-  landmark_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
-  landmark_glyph_->ScalingOn();
-  landmark_glyph_->ClampingOn();
-  landmark_glyph_->SetScaleModeToDataScalingOff();
-  landmark_glyph_->GeneratePointIdsOn();
-
-  point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  point_widget_ = vtkSmartPointer<vtkHandleWidget>::New();
-  // point_widget_->setpoi
-
-  this->landmark_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->landmark_mapper_->SetInputConnection(this->landmark_glyph_->GetOutputPort());
-  this->landmark_mapper_->SetScalarVisibility(1);
-  this->landmark_actor_ = vtkSmartPointer<vtkActor>::New();
-  this->landmark_actor_->GetProperty()->SetOpacity(1);
-  // this->landmark_actor_->GetProperty()->SetColor(0, 1, 0);
-  this->landmark_actor_->SetMapper(this->landmark_mapper_);
-
   // exclusion spheres
   this->exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
   this->exclusion_sphere_points_->SetDataTypeToDouble();
@@ -689,7 +662,6 @@ void Viewer::update_glyph_properties() {
   //  std::cerr << "update glyph props\n";
   glyphs_->SetScaleFactor(glyph_size_);
   arrow_glyphs_->SetScaleFactor(glyph_size_);
-  landmark_glyph_->SetScaleFactor(glyph_size_);
 
   this->sphere_source_->SetThetaResolution(this->glyph_quality_);
   this->sphere_source_->SetPhiResolution(this->glyph_quality_);
@@ -815,7 +787,6 @@ void Viewer::update_actors() {
   this->renderer_->RemoveActor(this->glyph_actor_);
   this->renderer_->RemoveActor(this->arrow_glyph_actor_);
   this->renderer_->RemoveActor(this->scalar_bar_actor_);
-  renderer_->RemoveActor(landmark_actor_);
 
   for (size_t i = 0; i < this->surface_actors_.size(); i++) {
     this->renderer_->RemoveActor(this->surface_actors_[i]);
@@ -834,7 +805,6 @@ void Viewer::update_actors() {
     }
   }
 
-  renderer_->AddActor(landmark_actor_);
 
   if (this->show_surface_ && this->meshes_.valid()) {
     for (int i = 0; i < this->number_of_domains_; i++) {
@@ -898,40 +868,6 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
   return result;
 }
 
-//-----------------------------------------------------------------------------
-int Viewer::handle_hover(int* click_pos) {
-  // First determine what was picked
-  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
-  prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
-
-  if (prop_picker->GetActor() != this->landmark_actor_) {
-    return -1;
-  }
-
-  vtkSmartPointer<vtkCellPicker> cell_picker = vtkSmartPointer<vtkCellPicker>::New();
-  cell_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
-
-  vtkDataArray* input_ids = this->landmark_glyph_->GetOutput()->GetPointData()->GetArray("InputPointIds");
-
-  if (input_ids) {
-    vtkCell* cell = this->landmark_glyph_->GetOutput()->GetCell(cell_picker->GetCellId());
-
-    if (cell && cell->GetNumberOfPoints() > 0) {
-      // get first PointId from picked cell
-      vtkIdType input_id = cell->GetPointId(0);
-
-      // get matching Id from "InputPointIds" array
-      vtkIdType glyph_id = input_ids->GetTuple1(input_id);
-
-      if (glyph_id >= 0) {
-        std::cerr << "hovering over landmark :" << glyph_id << "\n";
-        return glyph_id;
-      }
-    }
-  }
-
-  return -1;
-}
 
 //-----------------------------------------------------------------------------
 void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
@@ -941,11 +877,6 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
   }
 }
 
-//-----------------------------------------------------------------------------
-void Viewer::set_landmark_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  landmark_lut_ = lut;
-  landmark_mapper_->SetLookupTable(landmark_lut_);
-}
 
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen) {

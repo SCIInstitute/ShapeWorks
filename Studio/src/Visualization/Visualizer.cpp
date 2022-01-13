@@ -30,7 +30,6 @@ Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs) {
   this->selected_point_one_ = -1;
   this->selected_point_two_ = -1;
 
-  landmark_lut_ = vtkSmartPointer<vtkLookupTable>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -74,18 +73,15 @@ void Visualizer::update_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
-  std::cerr << "Visualizer::update_landmarks\n";
-  update_landmark_lut();
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes) {
-  std::cerr << "display_shapes\n";
-  this->lightbox_->set_shapes(shapes);
-  this->lightbox_->redraw();
-  this->update_viewer_properties();
+  lightbox_->set_shapes(shapes);
+  lightbox_->redraw();
+  update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -198,37 +194,36 @@ void Visualizer::set_show_surface(bool show) { this->show_surface_ = show; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties() {
-  double size = this->preferences_.get_glyph_size();
-  double quality = this->preferences_.get_glyph_quality();
+  double size = preferences_.get_glyph_size();
+  double quality = preferences_.get_glyph_quality();
   quality = std::max<double>(quality, 3);
-  if (this->preferences_.get_glyph_auto_size()) {
-    size = this->session_->get_auto_glyph_size();
+  if (preferences_.get_glyph_auto_size()) {
+    size = session_->get_auto_glyph_size();
   }
 
-  if (this->lightbox_) {
-    foreach (ViewerHandle viewer, this->lightbox_->get_viewers()) {
+  if (lightbox_) {
+    foreach (ViewerHandle viewer, lightbox_->get_viewers()) {
       viewer->set_glyph_size_and_quality(size, quality);
-      viewer->set_show_glyphs(this->show_glyphs_);
-      viewer->set_show_surface(this->show_surface_);
-      viewer->set_color_scheme(this->preferences_.get_color_scheme());
+      viewer->set_show_glyphs(show_glyphs_);
+      viewer->set_show_surface(show_surface_);
+      viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
-    this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
-                                            this->preferences_.get_orientation_marker_corner());
-    this->update_lut();
-    update_landmark_lut();
+    lightbox_->set_orientation_marker(preferences_.get_orientation_marker_type(),
+                                      preferences_.get_orientation_marker_corner());
+    update_lut();
 
-    this->lightbox_->redraw();
+    lightbox_->redraw();
   }
-  this->current_glyph_size_ = size;
+  current_glyph_size_ = size;
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_feature_range_changed() {
   feature_manual_range_[0] = session_->get_feature_range_min();
   feature_manual_range_[1] = std::max<double>(feature_manual_range_[0], session_->get_feature_range_max());
-  this->lightbox_->update_feature_range();
-  this->lightbox_->redraw();
+  lightbox_->update_feature_range();
+  lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -313,28 +308,6 @@ void Visualizer::update_lut() {
   this->lightbox_->set_glyph_lut(this->glyph_lut_);
 }
 
-//-----------------------------------------------------------------------------
-void Visualizer::update_landmark_lut() {
-
-  auto landmarks = session_->get_project()->get_landmarks();
-  landmark_lut_->SetNumberOfTableValues(landmarks.size());
-  double range[2];
-  range[0] = 0;
-  range[1] = std::max<double>(0, static_cast<double>(landmarks.size()) - 1);
-
-  landmark_lut_->SetTableRange(range);
-  landmark_lut_->SetRange(range);
-
-  // landmark_lut_->SetIndexedLookup(true);
-  // landmark_lut_->Build();
-  for (int i = 0; i < landmarks.size(); i++) {
-    QColor color(QString::fromStdString(landmarks[i].color_));
-
-    landmark_lut_->SetTableValue(i, color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
-  }
-  landmark_lut_->Modified();
-  lightbox_->set_landmark_lut(landmark_lut_);
-}
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_selected_point_one(int id) {
