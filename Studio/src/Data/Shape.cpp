@@ -176,7 +176,6 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   int row = 0;
   for (int i = 0; i < all_points.size(); i++) {
     vnl_vector<double> points = all_points[i];
-    std::cerr << "points.size() = " << points.size() << "\n";
 
     for (int j = 0; j < static_cast<int>(points.size()) - 2; j += 3) {
       landmarks_(row, 0) = i;  // domain

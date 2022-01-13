@@ -48,6 +48,8 @@ class DataTool : public QWidget {
 
   void delete_landmarks_clicked();
 
+  void set_placing_button_clicked(int id);
+
  Q_SIGNALS:
   void import_button_clicked();
 

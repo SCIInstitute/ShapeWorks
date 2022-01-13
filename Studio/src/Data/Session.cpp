@@ -869,8 +869,12 @@ void Session::handle_ctrl_click(PickResult result) {
   if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
     Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
 
-    landmarks.conservativeResize(landmarks.rows() + 1, 5);
-    int row = landmarks.rows() - 1;
+    int row = placing_landmark_;
+    if (row == -1 || row >= landmarks.rows()) {
+      landmarks.conservativeResize(landmarks.rows() + 1, 5);
+      row = landmarks.rows() - 1;
+    }
+    //row = std::max<int>(row, landmarks.rows()-1);
     landmarks(row, 0) = result.domain_;
     landmarks(row, 1) = result.subject_;
     landmarks(row, 2) = result.pos_.x;
@@ -885,5 +889,17 @@ void Session::handle_ctrl_click(PickResult result) {
 
 //---------------------------------------------------------------------------
 void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
+
+//---------------------------------------------------------------------------
+int Session::get_active_landmark_domain() { return active_landmark_domain_; }
+
+//---------------------------------------------------------------------------
+void Session::set_placing_landmark(int id) { placing_landmark_ = id; }
+
+//---------------------------------------------------------------------------
+int Session::get_plaing_landmark() { return placing_landmark_; }
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

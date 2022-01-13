@@ -30,11 +30,12 @@ class LandmarkItemDelegatePrivate {
 };
 
 //---------------------------------------------------------------------------
-LandmarkItemDelegate::LandmarkItemDelegate(QObject* parent /*= 0 */) : QStyledItemDelegate(parent),
-                                                                       private_(new LandmarkItemDelegatePrivate) {
-  private_->button_ = new QPushButton("set");
+LandmarkItemDelegate::LandmarkItemDelegate(QObject* parent /*= 0 */)
+    : QStyledItemDelegate(parent), private_(new LandmarkItemDelegatePrivate) {
+  private_->button_ = new QPushButton("  set  ");
   private_->button_->hide();
   private_->button_->setCheckable(true);
+  private_->button_->setChecked(true);
 
   connect(&private_->mapper_, SIGNAL(mapped(int)), this, SLOT(set_button_pressed(int)));
 
@@ -62,11 +63,21 @@ void LandmarkItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
   } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
     private_->button_->setGeometry(option.rect);
     if (option.state & QStyle::State_Selected) {
-      painter->fillRect(option.rect, option.palette.highlight());
-      private_->button_->setChecked(true);
+      // painter->fillRect(option.rect, option.palette.highlight());
+      // private_->button_->setChecked(true);
     } else {
-      private_->button_->setChecked(false);
+      // private_->button_->setChecked(false);
     }
+
+    bool checked = index.model()->data(index, Qt::DisplayRole).value<bool>();
+
+    private_->button_->setText(checked ? "placing" : "  set  ");
+
+    // private_->button_->setText(QString::number(index.row()));
+
+    // private_->button_->setChecked(checked);
+    // private_->button_->setChecked(true);
+    //std::cerr << "paint row " << index.row() << ", checked = " << checked << "\n";
     QPixmap map = private_->button_->grab();
     painter->drawPixmap(option.rect.x(), option.rect.y(), map);
     return;
@@ -85,9 +96,16 @@ QWidget* LandmarkItemDelegate::createEditor(QWidget* parent, const QStyleOptionV
     QLineEdit* line_edit = new QLineEdit(parent);
     return line_edit;
   } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
-    QPushButton* button = new QPushButton("set", parent);
+    bool checked = index.model()->data(index, Qt::DisplayRole).value<bool>();
+    QPushButton* button = new QPushButton(checked ? "placing" : "  set  ", parent);
+    button->setCheckable(true);
+    button->setChecked(checked);
     private_->mapper_.setMapping(button, index.row());
     connect(button, SIGNAL(clicked()), &private_->mapper_, SLOT(map()));
+    connect(button, &QPushButton::toggled, [=](bool checked) {
+      button->setText(index.model()->data(index, Qt::DisplayRole).value<bool>() ? "placing" : "  set  ");
+    });
+
     return button;
   } else {
     return QStyledItemDelegate::createEditor(parent, option, index);
@@ -105,15 +123,14 @@ void LandmarkItemDelegate::setEditorData(QWidget* editor, const QModelIndex& ind
     QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
     line_edit->setText(model_text);
   } else if (index.column() == LandmarkColumns::COLOR_E) {
-    //Here we do nothing since our editor has already finished.
+    // Here we do nothing since our editor has already finished.
   } else {
     QStyledItemDelegate::setEditorData(editor, index);
   }
 }
 
 //---------------------------------------------------------------------------
-void LandmarkItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
-                                        const QModelIndex& index) const {
+void LandmarkItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
   if (index.column() == LandmarkColumns::NAME_E) {
     QLineEdit* line_edit = qobject_cast<QLineEdit*>(editor);
     QString editor_text = line_edit->text();
@@ -133,7 +150,7 @@ QSize LandmarkItemDelegate::sizeHint(const QStyleOptionViewItem& option, const Q
   QSize size_hint = QStyledItemDelegate::sizeHint(option, index);
   // We don't want a tall cell when the text has line breaks, so set height to 0 and rely
   // on other columns to set reasonable size.
-  //size_hint.setHeight(0);
+  // size_hint.setHeight(0);
   return size_hint;
 }
 
@@ -146,6 +163,7 @@ void LandmarkItemDelegate::updateEditorGeometry(QWidget* editor, const QStyleOpt
 //---------------------------------------------------------------------------
 void LandmarkItemDelegate::set_button_pressed(int row) {
   Q_EMIT button_clicked(row);
+  model_->update_cells();
 }
 
 //---------------------------------------------------------------------------
@@ -166,12 +184,8 @@ void LandmarkItemDelegate::cell_entered(QModelIndex index) {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkItemDelegate::set_button_text(std::string button_text) {
-  private_->button_text_ = button_text;
-}
+void LandmarkItemDelegate::set_button_text(std::string button_text) { private_->button_text_ = button_text; }
 
 //---------------------------------------------------------------------------
-void LandmarkItemDelegate::set_model(std::shared_ptr<LandmarkTableModel> model) {
-  this->model_ = model;
-}
+void LandmarkItemDelegate::set_model(std::shared_ptr<LandmarkTableModel> model) { this->model_ = model; }
 }  // namespace shapeworks

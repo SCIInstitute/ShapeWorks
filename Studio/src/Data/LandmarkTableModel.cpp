@@ -85,7 +85,11 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
         } else if (index.column() == LandmarkColumns::VISIBLE_E) {
           return QVariant();
         } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
-          return QString("");
+          if (index.row() == session_->get_plaing_landmark()) {
+            return true;
+          } else {
+            return false;
+          }
         } else if (index.column() == LandmarkColumns::COMMENT_E) {
           return QString::fromStdString(landmarks_[index.row()].comment_);
         } else if (index.column() >= LandmarkColumns::END_E) {

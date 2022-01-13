@@ -29,25 +29,28 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
   // start with these off
-  //ui_->landmarks_open_button->toggle();
+  // ui_->landmarks_open_button->toggle();
   ui_->table_open_button->toggle();
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
-  connect(ui_->new_landmark_button, &QPushButton::clicked,
-          landmark_table_model_.get(), &LandmarkTableModel::new_landmark);
-  connect(ui_->delete_landmark_button, &QPushButton::clicked,
-          this, &DataTool::delete_landmarks_clicked);
+  connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
+          &LandmarkTableModel::new_landmark);
+  connect(ui_->delete_landmark_button, &QPushButton::clicked, this, &DataTool::delete_landmarks_clicked);
 
   ui_->landmark_table->setModel(landmark_table_model_.get());
   ui_->landmark_table->horizontalHeader()->setStretchLastSection(true);
   connect(ui_->landmark_table, &QTableView::clicked, landmark_table_model_.get(), &LandmarkTableModel::handle_click);
-  connect(ui_->landmark_table, &QTableView::doubleClicked, landmark_table_model_.get(), &LandmarkTableModel::handle_double_click);
-  connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked,
-          landmark_table_model_.get(), &LandmarkTableModel::handle_header_click);
+  connect(ui_->landmark_table, &QTableView::doubleClicked, landmark_table_model_.get(),
+          &LandmarkTableModel::handle_double_click);
+  connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked, landmark_table_model_.get(),
+          &LandmarkTableModel::handle_header_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
+  delegate->set_model(landmark_table_model_);
+
+  connect(delegate, &LandmarkItemDelegate::button_clicked, this, &DataTool::set_placing_button_clicked);
 
   ui_->landmark_table->setItemDelegate(delegate);
 
@@ -126,19 +129,23 @@ void DataTool::update_notes() {
 }
 
 //---------------------------------------------------------------------------
-std::string DataTool::get_notes() {
-  return ui_->notes->toHtml().toStdString();
-}
+std::string DataTool::get_notes() { return ui_->notes->toHtml().toStdString(); }
 
 //---------------------------------------------------------------------------
-void DataTool::store_data() {
-  landmark_table_model_->store_landmarks();
-}
+void DataTool::store_data() { landmark_table_model_->store_landmarks(); }
 
 //---------------------------------------------------------------------------
-void DataTool::delete_landmarks_clicked()
-{
+void DataTool::delete_landmarks_clicked() {
   landmark_table_model_->delete_landmarks(ui_->landmark_table->selectionModel()->selectedRows());
+}
+
+//---------------------------------------------------------------------------
+void DataTool::set_placing_button_clicked(int id) {
+  if (id == session_->get_plaing_landmark()) {
+    id = -1;
+  }
+  std::cerr << "now placing " << id << "\n";
+  session_->set_placing_landmark(id);
 }
 
 //---------------------------------------------------------------------------

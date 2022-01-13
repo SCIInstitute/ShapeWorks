@@ -30,7 +30,6 @@ class LandmarkItemDelegate : public QStyledItemDelegate {
 
   void set_model(std::shared_ptr<LandmarkTableModel> model);
 
- public:
  Q_SIGNALS:
   void button_clicked(int row);
 

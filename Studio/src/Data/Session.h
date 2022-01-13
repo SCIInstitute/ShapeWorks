@@ -134,6 +134,11 @@ public:
 
   void trigger_landmarks_changed();
 
+  void set_active_landmark_domain(int id);
+  int get_active_landmark_domain();
+  void set_placing_landmark(int id);
+  int get_plaing_landmark();
+
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -191,6 +196,9 @@ private:
   std::shared_ptr<Project> project_{new Project()};
 
   double auto_glyph_size_ = -1;
+
+  int active_landmark_domain_ = -1;
+  int placing_landmark_ = -1;
 };
 
 }

@@ -115,7 +115,7 @@ class LandmarkTableModel : public QAbstractTableModel {
   QSharedPointer<Session> session_;
 
   int visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
-  std::string button_text_ = "Place";
+  std::string button_text_ = "  Place  ";
 
   int last_landmark_color_ = -1;
   std::vector<Landmark> landmarks_;
