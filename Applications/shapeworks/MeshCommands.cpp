@@ -1311,11 +1311,11 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double x = static_cast<double>(options.get("sx"));
   double y = static_cast<double>(options.get("sy"));
   double z = static_cast<double>(options.get("sz"));
-  auto pad = static_cast<Dims::SizeValueType >(options.get("pad"));
+  unsigned pad = static_cast<unsigned>(options.get("pad"));
 
   Point3 spacing({x,y,z});
   auto region = sharedData.mesh->boundingBox();
-  auto padding = Dims({pad, pad, pad});
+  Dims padding({pad, pad, pad});
 
   sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing, padding);
   return true;
