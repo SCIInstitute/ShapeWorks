@@ -8,6 +8,7 @@ class vtkSphereSource;
 namespace shapeworks {
 
 class Viewer;
+class LandmarkCallback;
 //! LandmarkWidget
 /*!
  * Widget to display and manipulate landmarks
@@ -20,6 +21,7 @@ public:
 
   void update_landmarks();
 
+  void handle_callback(vtkObject *caller);
 private:
 
   vtkSmartPointer<vtkHandleWidget> create_handle();
@@ -29,6 +31,7 @@ private:
   std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;
 
   vtkSmartPointer<vtkSphereSource> sphere_;
+  vtkSmartPointer<LandmarkCallback> callback_;
 };
 
 }
