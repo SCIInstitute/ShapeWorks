@@ -335,15 +335,8 @@ void Lightbox::check_for_first_draw() {
       this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
       this->viewers_[ready_viewer]->get_renderer()->Render();
       this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
-      // this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
       auto pos = this->viewers_[ready_viewer]->get_renderer()->GetActiveCamera()->GetPosition();
       this->initPos_ = {{pos[0], pos[1], pos[2]}};
-      /*
-            for (int i = 0; i < this->viewers_.size(); i++) {
-
-              this->viewers_[i]->get_renderer()->SetActiveCamera(this->camera_);
-            }
-       */
     }
   }
 }

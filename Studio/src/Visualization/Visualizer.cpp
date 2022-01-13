@@ -29,7 +29,6 @@ Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs) {
   this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->selected_point_one_ = -1;
   this->selected_point_two_ = -1;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +307,6 @@ void Visualizer::update_lut() {
   this->lightbox_->set_glyph_lut(this->glyph_lut_);
 }
 
-
 //-----------------------------------------------------------------------------
 void Visualizer::set_selected_point_one(int id) {
   this->selected_point_one_ = id;
@@ -335,11 +333,11 @@ void Visualizer::reset_camera() {
   this->needs_camera_reset_ = false;
   if (this->lightbox_) {
     auto trans = this->lightbox_->initPos();
-    for (auto a : this->lightbox_->get_viewers()) {
-      if (!a->is_viewer_ready()) {
+    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) {
+      if (!v->is_viewer_ready()) {
         this->needs_camera_reset_ = true;
       }
-      a->reset_camera(trans);
+      v->reset_camera(trans);
     }
   }
 
