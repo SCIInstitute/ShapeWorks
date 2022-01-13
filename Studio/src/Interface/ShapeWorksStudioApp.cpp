@@ -1775,7 +1775,7 @@ void ShapeWorksStudioApp::update_alignment_options()
   this->ui_->alignment_combo->clear();
   this->ui_->alignment_combo->addItem("Global");
   auto domain_names = this->session_->get_project()->get_domain_names();
-  for (auto name : domain_names) {
+  for (const auto &name : domain_names) {
     this->ui_->alignment_combo->addItem(QString::fromStdString(name));
   }
 }

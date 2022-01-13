@@ -2,6 +2,7 @@
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Libs/Project/ProjectUtils.h>
+#include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
@@ -175,13 +176,44 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   int row = 0;
   for (int i = 0; i < all_points.size(); i++) {
     vnl_vector<double> points = all_points[i];
+    std::cerr << "points.size() = " << points.size() << "\n";
 
-    for (int j = 0; j < static_cast<int>(points.size()) - 3; j += 3) {
+    for (int j = 0; j < static_cast<int>(points.size()) - 2; j += 3) {
       landmarks_(row, 0) = i;  // domain
       landmarks_(row, 2) = points[j];
       landmarks_(row, 3) = points[j + 1];
       landmarks_(row, 4) = points[j + 2];
+      row++;
     }
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::store_landmarks() {
+  auto filenames = subject_->get_landmarks_filenames();
+  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
+    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
+    filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+    filenames.push_back(filename);
+  }
+
+  subject_->set_landmarks_filenames(filenames);
+
+  for (int i = 0; i < filenames.size(); i++) {
+    std::ofstream out(filenames[i]);
+    if (out.bad()) {
+      return false;
+    }
+    for (int row = 0; row < landmarks_.rows(); row++) {
+      if (landmarks_(row, 0) == i) {
+        out << landmarks_(row, 2) << " ";
+        out << landmarks_(row, 3) << " ";
+        out << landmarks_(row, 4) << "\n";
+      }
+    }
+    out.close();
   }
 
   return true;

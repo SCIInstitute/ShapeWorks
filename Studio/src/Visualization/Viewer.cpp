@@ -468,31 +468,6 @@ std::string Viewer::get_displayed_feature_map() {
 //-----------------------------------------------------------------------------
 void Viewer::update_landmarks() {
   landmark_widget_->update_landmarks();
-  /*
-  auto& landmarks = shape_->landmarks();
-  int num_points = landmarks.rows();
-
-  vtkFloatArray* scalars = (vtkFloatArray*)(this->landmark_point_set_->GetPointData()->GetScalars());
-  scalars->Reset();
-  scalars->SetNumberOfTuples(num_points);
-  scalars->SetNumberOfValues(num_points);
-
-  landmark_glyph_->SetRange(landmark_lut_->GetRange());
-  landmark_mapper_->SetScalarRange(landmark_lut_->GetRange());
-  landmark_points_->Reset();
-  landmark_points_->SetNumberOfPoints(num_points);
-
-  if (num_points == 0) {
-    return;
-  }
-
-  for (int i = 0; i < num_points; i++) {
-    scalars->InsertValue(i, i);
-    landmark_points_->SetPoint(i, landmarks(i, 2), landmarks(i, 3), landmarks(i, 4));
-  }
-  landmark_point_set_->Modified();
-  landmark_points_->Modified();
-  */
 }
 
 //-----------------------------------------------------------------------------
@@ -608,6 +583,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   this->update_actors();
   this->update_glyph_properties();
+  landmark_widget_->clear_landmarks();
   this->update_landmarks();
   ren->AddViewProp(this->corner_annotation_);
 }

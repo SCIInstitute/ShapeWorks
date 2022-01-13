@@ -133,6 +133,13 @@ bool Session::save_project(std::string fname) {
     // this->session_->set_original_files(original_list);
   }
 
+  // landmarks
+  if (!project_->get_landmarks().empty()) {
+    for (int i = 0; i < shapes_.size(); i++) {
+      shapes_[i]->store_landmarks();
+    }
+  }
+
   // correspondence points
   if (this->unsaved_particle_files_ && this->particles_present()) {
     for (int i = 0; i < this->shapes_.size(); i++) {

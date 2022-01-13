@@ -68,6 +68,9 @@ class Shape {
   /// Import landmarks files
   bool import_landmarks_files(QStringList filenames);
 
+  //! Store landmarks
+  bool store_landmarks();
+
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
 

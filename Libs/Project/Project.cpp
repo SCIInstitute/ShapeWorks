@@ -302,6 +302,7 @@ void Project::store_subjects()
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
+  landmarks_columns.clear();
 
   // groomed columns
   std::vector<std::string> groomed_columns;
@@ -335,11 +336,12 @@ void Project::store_subjects()
   std::vector<std::string> local_columns;
   std::vector<std::string> world_columns;
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string column_name =
-      std::string(LOCAL_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
+    std::string column_name = std::string(LOCAL_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
     local_columns.push_back(column_name);
     column_name = std::string(WORLD_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
     world_columns.push_back(column_name);
+    column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(seg_columns[i]);
+    landmarks_columns.push_back(column_name);
   }
 
   bool groomed_present = false;

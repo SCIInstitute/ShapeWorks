@@ -71,6 +71,7 @@ void LandmarkWidget::update_landmarks() {
     xyz[0] = landmarks(i, 2);
     xyz[1] = landmarks(i, 3);
     xyz[2] = landmarks(i, 4);
+    std::cerr << "pos[" << i << "] = " << xyz[0] << "," << xyz[1] << "," << xyz[2] << "\n";
     rep->SetWorldPosition(xyz);
     double color[3];
     QColor qcolor(QString::fromStdString(definitions[i].color_));
