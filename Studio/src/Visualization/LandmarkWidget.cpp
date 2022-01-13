@@ -16,40 +16,19 @@
 
 namespace shapeworks {
 
+//-----------------------------------------------------------------------------
 class LandmarkCallback : public vtkCommand {
  public:
   LandmarkCallback() = default;
 
   static LandmarkCallback *New() { return new LandmarkCallback; }
 
-  void Execute(vtkObject *caller, unsigned long, void *user_data) override {
-    vtkHandleWidget *handle = reinterpret_cast<vtkHandleWidget *>(caller);
-    double position[3];
-
-    vtkPolygonalHandleRepresentation3D *rep =
-        vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
-
-    rep->GetWorldPosition(position);
-    // std::ostringstream text;
-    std::cerr << "cursor: " << std::fixed << std::setprecision(4) << position[0] << ", " << position[1] << ", "
-              << position[2] << "\n";
-
-    widget_->handle_callback(caller);
-
-    // int user = *(reinterpret_cast<int*>(user_data));
-    // long user =(long)(user_data);
-    // std::cerr << "user = " << user << "\n";
-    //    this->PositionActor->SetInput(text.str().c_str());
-    //      this->CursorActor->VisibilityOn();
-  }
+  void Execute(vtkObject *caller, unsigned long, void *user_data) override { widget_->update_positions(); }
 
   void setWidget(LandmarkWidget *widget) { widget_ = widget; };
 
  private:
   LandmarkWidget *widget_;
-  //    vtkPolyData* PolyData = nullptr;
-  //  vtkActor* CursorActor = nullptr;
-  //    vtkTextActor* PositionActor = nullptr;
 };
 
 //-----------------------------------------------------------------------------
@@ -60,13 +39,16 @@ LandmarkWidget::LandmarkWidget(Viewer *viewer) : viewer_(viewer) {
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::update_landmarks() {
-  sphere_->SetThetaResolution(viewer_->get_glyph_quality());
-  sphere_->SetPhiResolution(viewer_->get_glyph_quality());
-  sphere_->SetRadius(viewer_->get_glyph_size());
-  sphere_->Update();
+LandmarkWidget::~LandmarkWidget() { clear_landmarks(); }
 
+//-----------------------------------------------------------------------------
+void LandmarkWidget::update_landmarks() {
   auto shape = viewer_->get_shape();
+
+  if (!shape) {
+    clear_landmarks();
+    return;
+  }
 
   auto &landmarks = shape->landmarks();
   int num_points = landmarks.rows();
@@ -97,43 +79,54 @@ void LandmarkWidget::update_landmarks() {
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
   }
+  update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::handle_callback(vtkObject *caller)
-{
-  //vtkHandleWidget *handle = reinterpret_cast<vtkHandleWidget *>(caller);
+void LandmarkWidget::update_positions() {
   double position[3];
-
-
   auto shape = viewer_->get_shape();
-
   auto &landmarks = shape->landmarks();
 
-  for (int i=0;i<handles_.size();i++) {
+  for (int i = 0; i < handles_.size(); i++) {
     vtkPolygonalHandleRepresentation3D *rep =
         vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
-      rep->GetWorldPosition(position);
+    rep->GetWorldPosition(position);
 
-    landmarks(i,2) = position[0];
-    landmarks(i,3) = position[1];
-    landmarks(i,4) = position[2];
+    landmarks(i, 2) = position[0];
+    landmarks(i, 3) = position[1];
+    landmarks(i, 4) = position[2];
+  }
+}
+
+//-----------------------------------------------------------------------------
+void LandmarkWidget::update_glyph_properties() {
+  sphere_->SetThetaResolution(viewer_->get_glyph_quality());
+  sphere_->SetPhiResolution(viewer_->get_glyph_quality());
+  sphere_->SetRadius(viewer_->get_glyph_size());
+  sphere_->Update();
+}
+
+//-----------------------------------------------------------------------------
+void LandmarkWidget::clear_landmarks() {
+  while (!handles_.empty()) {
+    handles_[handles_.size() - 1]->SetEnabled(0);
+    handles_[handles_.size() - 1]->SetInteractor(nullptr);
+    handles_.pop_back();
   }
 }
 
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
-  std::cerr << "create handle\n";
-
   auto handle = vtkSmartPointer<vtkHandleWidget>::New();
 
   vtkPolygonalHandleRepresentation3D *rep = vtkPolygonalHandleRepresentation3D::New();
 
   static_cast<vtkPolygonalHandleRepresentation3D *>(rep)->SetHandle(sphere_->GetOutput());
 
-  auto pointPlacer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+  auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   for (const auto &actor : viewer_->get_surface_actors()) {
-    pointPlacer->AddProp(actor);
+    point_placer->AddProp(actor);
   }
   auto shape = viewer_->get_shape();
   auto meshes = viewer_->get_meshes();
@@ -141,26 +134,22 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
     for (size_t i = 0; i < meshes.meshes().size(); i++) {
       MeshHandle mesh = meshes.meshes()[i];
       vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
-
-      pointPlacer->GetPolys()->AddItem(poly_data);
+      point_placer->GetPolys()->AddItem(poly_data);
     }
   }
-  pointPlacer->SetDistanceOffset(0);
-  rep->SetPointPlacer(pointPlacer);
+  point_placer->SetDistanceOffset(0);
+  rep->SetPointPlacer(point_placer);
 
   handle->EnableAxisConstraintOff();
 
   vtkRenderWindowInteractor *iren = viewer_->get_renderer()->GetRenderWindow()->GetInteractor();
+  handle->SetDefaultRenderer(viewer_->get_renderer());
   handle->SetInteractor(iren);
   handle->SetRepresentation(rep);
+  handle->SetAllowHandleResize(false);
 
-  int foo = 24;
+  double selectedColor[3] = {1.0, 1.0, 1.0};
 
-  // Set some defaults on the handle widget
-  double color[3] = {((double)(foo % 4)) / 3.0, ((double)((foo + 3) % 7)) / 6.0, (double)(foo % 2)};
-  double selectedColor[3] = {1.0, 0.0, 0.0};
-
-  rep->GetProperty()->SetColor(color);
   rep->GetProperty()->SetLineWidth(1.0);
   rep->GetSelectedProperty()->SetColor(selectedColor);
 

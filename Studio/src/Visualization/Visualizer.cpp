@@ -68,21 +68,21 @@ void Visualizer::display_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples() {
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   foreach (ViewerHandle viewer, this->lightbox_->get_viewers()) { viewer->update_points(); }
   this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
+  std::cerr << "Visualizer::update_landmarks\n";
   update_landmark_lut();
-  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes) {
+  std::cerr << "display_shapes\n";
   this->lightbox_->set_shapes(shapes);
   this->lightbox_->redraw();
   this->update_viewer_properties();

@@ -1,5 +1,6 @@
 
 #include <vtkSmartPointer.h>
+
 #include <vector>
 
 class vtkHandleWidget;
@@ -15,18 +16,22 @@ class LandmarkCallback;
  *
  */
 class LandmarkWidget {
-public:
-
+ public:
   LandmarkWidget(Viewer* viewer);
+  ~LandmarkWidget();
 
   void update_landmarks();
 
-  void handle_callback(vtkObject *caller);
-private:
+  void update_positions();
 
+  void update_glyph_properties();
+
+  void clear_landmarks();
+
+ private:
   vtkSmartPointer<vtkHandleWidget> create_handle();
 
-  Viewer *viewer_ = nullptr;
+  Viewer* viewer_ = nullptr;
 
   std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;
 
@@ -34,4 +39,4 @@ private:
   vtkSmartPointer<LandmarkCallback> callback_;
 };
 
-}
+}  // namespace shapeworks

@@ -125,7 +125,8 @@ void Lightbox::reset_camera_clipping_range()
 void Lightbox::clear_renderers()
 {
   for (int i = 0; i < this->viewers_.size(); i++) {
-    this->viewers_[i]->get_renderer()->RemoveAllViewProps();
+    std::cerr << "clear " << i << "\n";
+    this->viewers_[i]->clear_viewer();
   }
 }
 
@@ -173,7 +174,6 @@ void Lightbox::set_render_window(vtkRenderWindow* renderWindow)
 {
   this->render_window_ = renderWindow;
   this->render_window_->AddRenderer(this->renderer_);
-
   this->render_window_->GetInteractor()->SetInteractorStyle(this->style_);
 
   auto interactor = this->renderer_->GetRenderWindow()->GetInteractor();
@@ -188,6 +188,7 @@ void Lightbox::set_render_window(vtkRenderWindow* renderWindow)
 //-----------------------------------------------------------------------------
 void Lightbox::setup_renderers()
 {
+  clear_renderers();
   for (int i = 0; i < this->viewers_.size(); i++) {
     this->render_window_->RemoveRenderer(this->viewers_[i]->get_renderer());
   }

@@ -635,7 +635,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   this->update_actors();
   this->update_glyph_properties();
-
+  this->update_landmarks();
   ren->AddViewProp(this->corner_annotation_);
 }
 
@@ -647,6 +647,7 @@ void Viewer::clear_viewer() {
   this->viewer_ready_ = false;
   this->mesh_ready_ = false;
   this->loading_displayed_ = false;
+  update_landmarks();
 }
 
 //-----------------------------------------------------------------------------
@@ -686,8 +687,8 @@ QSharedPointer<Session> Viewer::get_session() { return session_; }
 //-----------------------------------------------------------------------------
 void Viewer::update_glyph_properties() {
   //  std::cerr << "update glyph props\n";
-  this->glyphs_->SetScaleFactor(this->glyph_size_);
-  this->arrow_glyphs_->SetScaleFactor(this->glyph_size_);
+  glyphs_->SetScaleFactor(glyph_size_);
+  arrow_glyphs_->SetScaleFactor(glyph_size_);
   landmark_glyph_->SetScaleFactor(glyph_size_);
 
   this->sphere_source_->SetThetaResolution(this->glyph_quality_);
@@ -698,6 +699,7 @@ void Viewer::update_glyph_properties() {
 
   this->glyphs_->Update();
   this->arrow_glyphs_->Update();
+  landmark_widget_->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
