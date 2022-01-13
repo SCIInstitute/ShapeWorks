@@ -95,6 +95,7 @@ public Q_SLOTS:
   void handle_pca_changed();
   void handle_mca_changed(); 
   void handle_slider_update();
+  void handle_mca_slider_update();
 
   void handle_project_changed();
   void handle_points_changed();

@@ -48,7 +48,7 @@ public:
 
   /** Loads a set of point files and pre-computes some statistics. */
   int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
-
+  int ImportPointsForMca(std::vector<vnl_vector<double>> points, unsigned int dps);
   /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(const std::string &s);
 
@@ -99,7 +99,9 @@ public:
 
   /** Returns the mean shape. */
   const vnl_vector<double> &Mean() { return m_mean; }
-  const vnl_matrix<double> &GrandMean() { return grand_mean; }
+  const vnl_matrix<double> &GrandMean() { return m_grand_mean; }
+  const vnl_vector<double> &WithinMean() { return m_mean_within; }
+  const vnl_vector<double> &BetweenMean() { return m_mean_between; }
   const vnl_vector<double> &MCAMean() { return m_mcaMean; }
   const vnl_vector<double> &Group1Mean() { return m_mean1; }
   const vnl_vector<double> &Group2Mean() { return m_mean2; }
@@ -153,6 +155,7 @@ private:
   unsigned int m_numSamples2;
   unsigned int m_numSamples;
   unsigned int m_domainsPerShape;
+  unsigned int m_dps;
   unsigned int m_numDimensions;
   unsigned int m_domainNumDimensions;
   std::vector<int> m_groupIDs;
@@ -164,24 +167,28 @@ private:
   vnl_matrix<double> m_betweenEigenvectors;
   vnl_matrix<double> m_withinEigenvectors;
 
-  vnl_matrix<double> between_component_scores;
-  std::vector<vnl_matrix<double>> within_component_scores;
-  std::vector<vnl_matrix<double>> within_loading_matrix;
-  vnl_matrix<double> between_loading_matrix;
+  vnl_matrix<double> m_between_component_scores;
+  std::vector<vnl_matrix<double>> m_within_component_scores;
+  std::vector<vnl_matrix<double>> m_within_loading_matrix;
+  vnl_matrix<double> m_between_loading_matrix;
 
 
-  
+  vnl_matrix<double> m_pointsMinusMean_for_between;
+  vnl_matrix<double> m_pointsMinusMean_for_within;
+  vnl_vector<double> m_mean_within;
+  vnl_vector<double> m_mean_between;
   
   std::vector<double> m_betweenEigenvalues;
   std::vector<double> m_withinEigenvalues;
   vnl_vector<double> m_mean;
   // For MCA
-  vnl_matrix<double> grand_mean;
+  vnl_matrix<double> m_grand_mean;
   vnl_vector<double> m_mcaMean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
   vnl_matrix<double> m_pointsMinusMean;
   vnl_matrix<double> m_shapes;
+  vnl_matrix<double> m_super_matrix;
   std::vector<vnl_matrix<double>> m_shapes_mca;
   vnl_matrix<double> m_projectedPMM1;
   vnl_matrix<double> m_projectedPMM2;

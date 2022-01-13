@@ -121,6 +121,9 @@ std::string AnalysisTool::get_analysis_mode()
   if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
     return AnalysisTool::MODE_PCA_C;
   }
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->mca_tab) {
+    return AnalysisTool::MODE_MCA_C;
+  }
   if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) {
     return AnalysisTool::MODE_REGRESSION_C;
   }
@@ -321,6 +324,10 @@ void AnalysisTool::compute_mode_shape()
 {}
 
 //---------------------------------------------------------------------------
+void AnalysisTool::compute_mca_mode_shape()
+{}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options()
 {
 
@@ -350,6 +357,12 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->pca_animate_timer_.stop();
+    this->mca_animate_timer_.stop();
+    this->ui_->mcaSlider->setEnabled(false);
+    this->ui_->mcaAnimateCheckBox->setEnabled(false);
+    this->ui_->mcaModeSpinBox->setEnabled(false);
+    this->ui_->mcaLevelWithinButton->setEnabled(false);
+    this->ui_->mcaLevelBetweenButton->setEnabled(false);
   }
   else if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
     //pca mode
@@ -368,8 +381,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->mcaModeSpinBox->setEnabled(true);
     this->ui_->mcaLevelWithinButton->setEnabled(true);
     this->ui_->mcaLevelBetweenButton->setEnabled(true);
-    // TODO: needs more refinement
-
+    this->ui_->mcaLevelWithinButton->setChecked(true);
   }
   else {
     //regression mode
@@ -487,6 +499,9 @@ bool AnalysisTool::compute_stats()
 
   this->ui_->pcaModeSpinBox->setMaximum(
     std::max<double>(1, this->session_->get_shapes().size() - 1));
+  this->ui_->mcaModeSpinBox->setMaximum(
+    std::max<double>(1, this->session_->get_shapes().size() - 1));
+
 
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
@@ -537,9 +552,13 @@ bool AnalysisTool::compute_stats()
       return false;
     }
   }
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  unsigned int dps = domain_names.size();
 
   this->stats_.ImportPoints(points, group_ids);
+  this->stats_.ImportPointsForMca(points, dps);
   this->stats_.ComputeModes();
+  this->stats_.MCADecomposition();
 
   this->compute_shape_evaluations();
 
@@ -653,15 +672,18 @@ StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int l
  //TODO: for mca
  vnl_matrix<double> eigenvectors;
  std::vector<double> eigenvalues;
+ vnl_vector<double> mean;
  if(level == 1)
  {
    eigenvectors = this->stats_.WithinEigenvectors();
    eigenvalues = this->stats_.WithinEigenvalues();
+   mean = this->stats_.WithinMean();
  }
  else
  {
    eigenvectors = this->stats_.BetweenEigenvectors();
    eigenvalues = this->stats_.BetweenEigenvalues();
+   mean = this->stats_.BetweenMean();
  }
  
  if (!this->compute_stats() || eigenvectors.size() <= 1) {
@@ -696,7 +718,7 @@ StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int l
     this->ui_->mca_cumulative_explained_variance->setText("");
   }
 
-  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  this->temp_shape_ = mean + (e * (value * lambda));
   // see what this does
   return this->convert_from_combined(this->temp_shape_);
   
@@ -751,6 +773,7 @@ void AnalysisTool::store_settings()
 void AnalysisTool::shutdown()
 {
   this->pca_animate_timer_.stop();
+  this->mca_animate_timer_.stop();
 }
 
 //---------------------------------------------------------------------------
@@ -1516,8 +1539,10 @@ void AnalysisTool::set_active(bool active)
   if (!active) {
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->pca_animate_timer_.stop();
+    this->ui_->mcaAnimateCheckBox->setChecked(false);
+    this->mca_animate_timer_.stop();
   }
-  this->active_ = active;
+  this->active_ = active; //TODO: SEE usage
 }
 
 //---------------------------------------------------------------------------

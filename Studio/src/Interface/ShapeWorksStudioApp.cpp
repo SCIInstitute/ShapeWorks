@@ -214,6 +214,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           SLOT(handle_color_scheme()));
   connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
           SLOT(handle_slider_update()));
+  // connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
+  //         SLOT(handle_mca_slider_update()));
 
   connect(this->ui_->alignment_combo, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &ShapeWorksStudioApp::handle_alignment_changed);
@@ -703,6 +705,12 @@ void ShapeWorksStudioApp::handle_slider_update()
 {
   this->analysis_tool_->updateSlider();
 }
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_slider_update()
+{
+  this->analysis_tool_->updateMcaSlider();
+}
+
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update()
@@ -1397,6 +1405,14 @@ void ShapeWorksStudioApp::update_display(bool force)
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
         this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
         this->compute_mode_shape();
+        this->visualizer_->reset_camera();
+      }
+      else if (mode == AnalysisTool::MODE_MCA_C) {
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->compute_mca_mode_shape();
         this->visualizer_->reset_camera();
       }
       else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
