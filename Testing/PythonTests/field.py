@@ -41,7 +41,7 @@ success &= utils.test(multifieldvalueTest)
 
 def fieldrangeTest():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  scalarRange = range(mesh.getField("scalars"))
+  scalarRange = range(mesh.getField("scalars", Mesh.Point))
 
   return abs(scalarRange[0] - -4.21119) < 1e-4 and abs(scalarRange[1] - 4.52366) < 1e-4
 
@@ -49,13 +49,13 @@ success &= utils.test(fieldrangeTest)
 
 def missingfieldTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = range(mesh.getField("nonexistent_fieldname"))
+  field = range(mesh.getField("nonexistent_fieldname", Mesh.Point))
 
 success &= utils.expectException(missingfieldTest, ValueError)
 
 def getfieldTest1():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  field = mesh.getField("scalars")
+  field = mesh.getField("scalars", Mesh.Point)
 
   return abs(field[640] - -0.91761) < 1e-4 and abs(field[4800] - 0.56277) < 1e-4
 
@@ -63,7 +63,7 @@ success &= utils.test(getfieldTest1)
 
 def getfieldTest2():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  field = mesh.getField("scalars")
+  field = mesh.getField("scalars", Mesh.Point)
 
   return field.shape == (36599,)
 
@@ -71,7 +71,7 @@ success &= utils.test(getfieldTest2)
 
 def getfieldTest3():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
+  field = mesh.getField("Normals", Mesh.Point)
 
   return field.shape == (530, 3)
 
@@ -79,7 +79,7 @@ success &= utils.test(getfieldTest3)
 
 def getfieldTest4():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
+  field = mesh.getField("Normals", Mesh.Point)
 
   return field.strides == (12, 4)
 
@@ -87,7 +87,7 @@ success &= utils.test(getfieldTest4)
 
 def getfieldTest5():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
+  field = mesh.getField("Normals", Mesh.Point)
 
   return field.flags["OWNDATA"] == False
 
@@ -95,7 +95,7 @@ success &= utils.test(getfieldTest5)
 
 def getfieldTest6():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
+  field = mesh.getField("Normals", Mesh.Point)
 
   return field.flags["C_CONTIGUOUS"] == True and field.flags["F_CONTIGUOUS"] == False
 
@@ -103,7 +103,7 @@ success &= utils.test(getfieldTest6)
 
 def getfieldTest7():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  field = mesh.getField("scalars")
+  field = mesh.getField("scalars", Mesh.Point)
 
   return field[3456] == mesh.getFieldValue("scalars", 3456)  # (it's 0.1789221419275439)
 
@@ -111,7 +111,7 @@ success &= utils.test(getfieldTest7)
 
 def getfieldTest8():
   mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
-  field = mesh.getField("scalars")
+  field = mesh.getField("scalars", Mesh.Point)
   origval = field[6543]
   field[6543] = 42
 
@@ -121,15 +121,15 @@ success &= utils.test(getfieldTest8)
 
 def setfieldTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
-  mesh.setField("newfieldname", field)  # python doesn't own field, so it can't be transferred
+  field = mesh.getField("Normals", Mesh.Point)
+  mesh.setField("newfieldname", field, Mesh.Point)  # python doesn't own field, so it can't be transferred
 
 success &= utils.expectException(setfieldTest1, ValueError)
 
 def setfieldTest2():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
-  field = mesh.getField("Normals")
-  mesh.setField("newfieldname", field.copy())
+  field = mesh.getField("Normals", Mesh.Point)
+  mesh.setField("newfieldname", field.copy(), Mesh.Point)
 
   return "newfieldname" in mesh.getFieldNames()
 
@@ -139,7 +139,7 @@ def setfieldTest3():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
   field = np.zeros(1000)
   assert(field.flags["OWNDATA"] == True)
-  mesh.setField("newfieldname", field)
+  mesh.setField("newfieldname", field, Mesh.Point)
 
   return field.flags["OWNDATA"] == False and "newfieldname" in mesh.getFieldNames()
 

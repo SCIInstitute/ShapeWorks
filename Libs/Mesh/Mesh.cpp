@@ -799,7 +799,7 @@ Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const
   return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, const Dims padding) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, const Dims padding) const
 {
   this->updateCellLocator();
 

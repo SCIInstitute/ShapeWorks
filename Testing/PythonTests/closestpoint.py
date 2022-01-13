@@ -9,7 +9,7 @@ success = True
 def closestpointTest1():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
   mesh.computeNormals()
-  n = mesh.getField("Normals")[42]
+  n = mesh.getField("Normals", Mesh.Point)[42]
   p = mesh.getPoint(42)
   pNew = p + n
   closeToP, outside, face_id = mesh.closestPoint(pNew)
@@ -21,7 +21,7 @@ success &= utils.test(closestpointTest1)
 def closestpointTest2():
   mesh = Mesh(os.environ["DATA"] + "/sphere_highres.ply")
   mesh.computeNormals()
-  n = mesh.getField("Normals")[42]
+  n = mesh.getField("Normals", Mesh.Point)[42]
   p = mesh.getPoint(42)
   pNew = (p - n) * 1.1
   closeToP, outside, face_id = mesh.closestPoint(pNew)
