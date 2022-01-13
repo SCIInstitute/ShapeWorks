@@ -869,11 +869,25 @@ PYBIND11_MODULE(shapeworks_py, m)
   // Mesh
   py::class_<Mesh> mesh(m, "Mesh");
 
+  // Mesh::FieldType
+  py::enum_<Mesh::FieldType>(mesh, "FieldType")
+  .value("Point", Mesh::FieldType::Point)
+  .value("Face", Mesh::FieldType::Face)
+  .export_values();
+  ;
+
   // Mesh::AlignmentType
   py::enum_<Mesh::AlignmentType>(mesh, "AlignmentType")
   .value("Rigid", Mesh::AlignmentType::Rigid)
   .value("Similarity", Mesh::AlignmentType::Similarity)
   .value("Affine", Mesh::AlignmentType::Affine)
+  .export_values();
+  ;
+
+  // Mesh::DistanceMethod
+  py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
+  .value("PointToPoint", Mesh::DistanceMethod::PointToPoint)
+  .value("PointToCell", Mesh::DistanceMethod::PointToCell)
   .export_values();
   ;
 
@@ -1020,21 +1034,13 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::fixElement,
        "fix element winding of mesh")
 
-  .def("vertexDistance",
-       [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
-          auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToPoint);
-          return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
-       },
-       "computes closest distance from vertices of this mesh to target mesh, returning indices of vertices in target mesh nearest to closest points",
-       "target"_a)
-
   .def("distance",
-       [](Mesh &mesh, const Mesh &target) -> decltype(auto) {
-         auto distances_and_ids = mesh.distance(target, Mesh::DistanceMethod::PointToCell);
+       [](Mesh &mesh, const Mesh &target, const Mesh::DistanceMethod method) -> decltype(auto) {
+         auto distances_and_ids = mesh.distance(target, method);
          return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
        },
-       "computes closest distance from vertices of this mesh to target mesh, returning indices of faces in target mesh that contain closest points",
-       "target"_a)
+       "computes closest distance from vertices of this mesh to target mesh, returning indices of faces or vertices in target mesh that contain closest points",
+       "target"_a, "method"_a=Mesh::DistanceMethod::PointToCell)
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
@@ -1174,23 +1180,23 @@ PYBIND11_MODULE(shapeworks_py, m)
        "print all field names in mesh")
 
   .def("setField",
-       [](Mesh &mesh, const std::string& name, py::array& array) -> decltype(auto) {
+       [](Mesh &mesh, const std::string& name, py::array& array, const Mesh::FieldType type) -> decltype(auto) {
          auto vtkarr = pyToArr(array);
-         return mesh.setField(name, vtkarr);
+         return mesh.setField(name, vtkarr, type);
        },
        "sets the given field for points with array",
-       "name"_a, "array"_a)
+       "name"_a, "array"_a, "type"_a)
 
   .def("getField",
-       [](const Mesh &mesh, std::string name) -> decltype(auto) {
-         auto array = mesh.getField(name);
+       [](const Mesh &mesh, const std::string name, const Mesh::FieldType type) -> decltype(auto) {
+         auto array = mesh.getField(name, type);
          if (!array) {
            throw std::invalid_argument("field '" + name + "' does not exist");
          }
          return arrToPy(array, SHARE_ARRAY);
        },
        "gets the field",
-       "name"_a)
+       "name"_a, "type"_a)
 
   .def("setFieldValue",
        &Mesh::setFieldValue,

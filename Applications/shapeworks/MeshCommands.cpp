@@ -914,6 +914,8 @@ void SetField::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to set (point or face).");
 
   Command::buildParser();
 }
@@ -933,8 +935,19 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  sharedData.mesh->setField(name, sharedData.field);
+  if (typeopt == "point") {
+    sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Point);
+  }
+  else if (typeopt == "face") {
+    sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Face);
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 
@@ -948,6 +961,8 @@ void GetField::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to get (point or face).");
 
   Command::buildParser();
 }
@@ -961,8 +976,19 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  sharedData.field = sharedData.mesh->getField(name);
+  if (typeopt == "point") {
+    sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Point);
+  }
+  else if (typeopt == "face") {
+    sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Face);
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return true;
 }
 
@@ -1079,6 +1105,8 @@ void FieldRange::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1092,8 +1120,20 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
+  std::vector<double> fieldRange;
 
-  std::vector<double> fieldRange = range(sharedData.mesh->getField(name));
+  if (typeopt == "point") {
+    fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Point));
+  }
+  else if (typeopt == "face") {
+    fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Face));
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   std::cout << "[" << fieldRange[0] << "," << fieldRange[1] << "]\n";
   return sharedData.validMesh();
 }
@@ -1108,6 +1148,8 @@ void FieldMean::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1121,8 +1163,19 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  std::cout << mean(sharedData.mesh->getField(name)) << "\n";
+  if (typeopt == "point") {
+    std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
+  }
+  else if (typeopt == "face") {
+    std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 
@@ -1136,6 +1189,8 @@ void FieldStd::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1149,8 +1204,19 @@ bool FieldStd::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  std::cout << stddev(sharedData.mesh->getField(name)) << "\n";
+  if (typeopt == "point") {
+    std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
+  }
+  else if (typeopt == "face") {
+    std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 

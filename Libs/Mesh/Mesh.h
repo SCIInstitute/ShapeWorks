@@ -18,6 +18,7 @@ namespace shapeworks {
 class Mesh
 {
 public:
+  enum FieldType { Point, Face };
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
@@ -128,11 +129,11 @@ public:
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
-  Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
+  Image toImage(PhysicalRegion region = PhysicalRegion(), Point3 spacing = Point3({1., 1., 1.})) const;
 
   /// converts specified region to distance transform image (default: unit spacing) with (logical) padding
   Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(),
-                            const Point spacing = Point({1., 1., 1.}),
+                            const Point3 spacing = Point3({1., 1., 1.}),
                             const Dims padding = Dims({1, 1, 1})) const;
 
   // query functions //
@@ -166,17 +167,11 @@ public:
   /// print all field names in mesh
   std::vector<std::string> getFieldNames() const;
 
-  /// sets the given field for points with array (*does not copy array's values)
-  Mesh& setField(std::string name, Array array);
+  /// sets the given field for points or faces with array (*does not copy array's values)
+  Mesh& setField(const std::string name, Array array, const FieldType type);
 
-  /// sets the given field for faces with array (*does not copy array's values)
-  Mesh& setFieldForFaces(std::string name, Array array);
-
-  /// gets a pointer to the requested field, null if field doesn't exist
-  Field getField(const std::string& name) const;
-
-  /// gets a pointer to the requested field, null if field doesn't exist
-  Field getFieldForFaces(const std::string& name) const;
+  /// gets a pointer to the requested field of points or faces, null if field doesn't exist
+  Field getField(const std::string& name, const FieldType type) const;
 
   /// sets the given index of field to value
   void setFieldValue(const std::string& name, int idx, double value);
@@ -237,6 +232,12 @@ private:
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
 
   MeshType mesh;
+
+  /// sets the given field for faces with array (*does not copy array's values)
+  Mesh& setFieldForFaces(const std::string name, Array array);
+
+  /// gets a pointer to the requested field, null if field doesn't exist
+  Field getFieldForFaces(const std::string& name) const;
 
   /// invalidate cached cell and point locators (call when geometry changes)
   void invalidateLocators() const;

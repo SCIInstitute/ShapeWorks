@@ -182,7 +182,7 @@ void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>&
   {
     bool hasNormals = true;
     try {
-      meshes[i].get().getField("Normals");
+      meshes[i].get().getField("Normals", Mesh::Point);
     }
     catch (...) {
       hasNormals = false;
@@ -236,7 +236,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = meshes[j].get().getField("Normals");
+    auto normals = meshes[j].get().getField("Normals", Mesh::Point);
 
     if (num_normals != normals->GetNumberOfTuples())
       throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");

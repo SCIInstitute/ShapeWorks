@@ -7,8 +7,8 @@ success = True
 def distanceTest1():
   femur = Mesh(os.environ["DATA"] + "/femur.vtk")
   pelvis = Mesh(os.environ["DATA"] + "/pelvis.vtk")
-  f2p_distance_and_ids = femur.vertexDistance(pelvis)
-  p2f_distance_and_ids = pelvis.vertexDistance(femur)
+  f2p_distance_and_ids = femur.distance(pelvis, Mesh.DistanceMethod.PointToPoint)
+  p2f_distance_and_ids = pelvis.distance(femur, Mesh.DistanceMethod.PointToPoint)
   femur.setField("distance", f2p_distance_and_ids[0])
   pelvis.setField("distance", p2f_distance_and_ids[0])
   femur.setField("closestPoints", f2p_distance_and_ids[1])

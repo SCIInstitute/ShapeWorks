@@ -466,7 +466,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
   ids->SetName("ids");
 
   // Find the nearest neighbors to each point and compute distance between them
-  Point currentPoint, closestPoint;
+  Point3 currentPoint, closestPoint;
 
   switch(method)
   {
@@ -755,7 +755,7 @@ Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
   return *this;
 }
 
-Image Mesh::toImage(PhysicalRegion region, Point spacing) const
+Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const
 {
   // if no region, use mesh bounding box
   if (region == PhysicalRegion()) {
@@ -831,7 +831,7 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point spacing, cons
       for (int x = 0; x < dims[2]; x++)
       {
         auto idx = Image::ImageType::IndexType({z,y,x}); // itk images are indexed by slice,row,col
-        Point loc = Point({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
+        Point3 loc = Point3({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
 
         auto cp = closestPoint(loc, outside, distance, face_id);
 
@@ -932,16 +932,25 @@ std::vector<std::string> Mesh::getFieldNames() const
   return fields;
 }
 
-Field Mesh::getField(const std::string& name) const
+Field Mesh::getField(const std::string& name, const FieldType type) const
 {
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-    throw std::invalid_argument("Mesh has no fields.");
+  if (type == Mesh::Point)
+  {
+    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+      throw std::invalid_argument("Mesh has no fields.");
 
-  Field rawarr = mesh->GetPointData()->GetArray(name.c_str());
-  if (!rawarr)
-    throw std::invalid_argument("Mesh does not contain a point field called " + name);
+    Field rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    if (!rawarr)
+      throw std::invalid_argument("Mesh does not contain a point field called " + name);
 
-  return rawarr;
+    return rawarr;
+  }
+  else if (type == Mesh::Face)
+  {
+    return getFieldForFaces(name);
+  }
+  else
+    throw std::invalid_argument("Incorrect Mesh::FieldType.");
 }
 
 Field Mesh::getFieldForFaces(const std::string& name) const
@@ -956,23 +965,30 @@ Field Mesh::getFieldForFaces(const std::string& name) const
   return rawarr;
 }
 
-Mesh& Mesh::setField(std::string name, Array array)
+Mesh& Mesh::setField(std::string name, Array array, const FieldType type)
 {
-  if (!array)
+  if (type == Mesh::Point)
+  {
+    if (!array)
     throw std::invalid_argument("Invalid array.");
 
-  if (name.empty())
-    throw std::invalid_argument("Provide name for the new field");
+    if (name.empty())
+      throw std::invalid_argument("Provide name for the new field");
 
-  int numVertices = numPoints();
-  if (array->GetNumberOfTuples() != numVertices) {
-    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+    int numVertices = numPoints();
+    if (array->GetNumberOfTuples() != numVertices) {
+      std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+    }
+
+    array->SetName(name.c_str());
+    mesh->GetPointData()->AddArray(array);
+
+    return *this;
   }
-
-  array->SetName(name.c_str());
-  mesh->GetPointData()->AddArray(array);
-
-  return *this;
+  else if(type == Mesh::Face)
+    return setFieldForFaces(name, array);
+  else
+    throw std::invalid_argument("Incorrect Mesh::FieldType.");
 }
 
 Mesh& Mesh::setFieldForFaces(std::string name, Array array)
@@ -1029,27 +1045,28 @@ double Mesh::getFieldValue(const std::string& name, int idx) const
     throw std::invalid_argument("Requested index in field is out of range");
 }
 
-Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const{
-    if (name.empty())
-      throw std::invalid_argument("Provide name for field");
+Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
 
-    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-      throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
-    auto arr = mesh->GetPointData()->GetArray(name.c_str());
-    if (!arr)
-      throw std::invalid_argument("Field does not exist.");
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
 
-    if (arr->GetNumberOfTuples() > idx){
-      size_t compnum = arr->GetNumberOfComponents();
-      Eigen::VectorXd vec(compnum);
-      for(size_t i = 0; i < compnum; i++){
-          vec(i) = arr->GetTuple(idx)[i];
-      }
-      return vec;
+  if (arr->GetNumberOfTuples() > idx) {
+    size_t compnum = arr->GetNumberOfComponents();
+    Eigen::VectorXd vec(compnum);
+    for(size_t i = 0; i < compnum; i++) {
+        vec(i) = arr->GetTuple(idx)[i];
     }
-    else
-      throw std::invalid_argument("Requested index in field is out of range");
+    return vec;
+  }
+  else
+    throw std::invalid_argument("Requested index in field is out of range");
 }
 
 bool Mesh::compareAllPoints(const Mesh &other_mesh) const
@@ -1065,8 +1082,8 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 
   for (int i = 0; i < this->numPoints(); i++)
   {
-    Point p1(this->mesh->GetPoint(i));
-    Point p2(other_mesh.mesh->GetPoint(i));
+    Point3 p1(this->mesh->GetPoint(i));
+    Point3 p2(other_mesh.mesh->GetPoint(i));
     if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
@@ -1163,8 +1180,8 @@ bool Mesh::compareAllFields(const Mesh &other_mesh, const double eps) const
 
 bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2, const double eps) const
 {
-  auto field1 = getField(name1);
-  auto field2 = other_mesh.getField(name2.empty() ? name1 : name2);
+  auto field1 = getField(name1, Mesh::Point);
+  auto field2 = other_mesh.getField(name2.empty() ? name1 : name2, Mesh::Point);
 
   if (!field1 || !field2) {
     std::cerr << "at least one mesh missing a field\n";
@@ -1487,7 +1504,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   }
 
   // Setting scalar field
-  this->setField("inout", inout);
+  this->setField("inout", inout, Mesh::Point);
 
   return inout;
 }
@@ -1561,7 +1578,7 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
 
   // TODO: don't set local field since user can do this if needed, and the
   // function can be const. (return vector of Fields like Mesh::distance)
-  this->setField("value", values);
+  this->setField("value", values, Mesh::Point);
 
   return absvalues;
 }
@@ -1638,8 +1655,8 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
 
   // TODO: don't set field in this mesh since the user can do this if they want
   // it to be part of the mesh, and the function can therefore be const.
-  this->setField("Gradient", vf);
-  this->setFieldForFaces("vff", vff);
+  this->setField("Gradient", vf, Mesh::Point);
+  this->setField("vff", vff, Mesh::Face);
 
   return face_grad_;
 }
