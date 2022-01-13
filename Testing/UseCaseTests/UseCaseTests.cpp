@@ -86,23 +86,6 @@ TEST(UseCaseTests, left_atrium)
   run_use_case("left_atrium");
 }
 
-//---------------------------------------------------------------------------
-TEST(UseCaseTests, femur)
-{
-  run_use_case("femur");
-}
-
-//---------------------------------------------------------------------------
-TEST(UseCaseTests, femur_groom_images)
-{
-  run_use_case("femur --groom_images");
-}
-
-//---------------------------------------------------------------------------
-TEST(UseCaseTests, femur_mesh)
-{
-  run_use_case("femur_mesh");
-}
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, femur_cut)

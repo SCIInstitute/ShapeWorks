@@ -742,14 +742,13 @@ Image& Image::crop(PhysicalRegion region, const int padding)
     throw std::invalid_argument("Invalid region specified (it may lie outside physical bounds of image).");
   }
 
-  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  using FilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  
+
   IndexRegion indexRegion(physicalToLogical(region));
   indexRegion.pad(padding);
-  filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
+  filter->SetRegionOfInterest(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
-  filter->SetDirectionCollapseToIdentity();
   filter->Update();
   this->image = filter->GetOutput();
 

@@ -21,8 +21,10 @@ public:
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
+  enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
+  using MeshPoints = vtkSmartPointer<vtkPoints>;
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
@@ -38,7 +40,7 @@ public:
   MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
-  Mesh& write(const std::string &pathname);
+  Mesh& write(const std::string &pathname, bool binaryFile = false);
 
   /// determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)
   Mesh& coverage(const Mesh& otherMesh, bool allowBackIntersections = true,
@@ -115,6 +117,9 @@ public:
 
   /// computes and adds curvature (principal (default) or gaussian or mean)
   Field curvature(const CurvatureType type = Principal);
+
+  /// applies subdivision filter (butterfly (default) or loop)
+  Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
   /// rasterizes specified region to create binary image of desired dims (default: unit spacing)
   Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
@@ -226,9 +231,7 @@ public:
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
   /// Formats mesh into an IGL format
-  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
-
-
+  MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
 private:
   friend struct SharedCommandData;
@@ -249,7 +252,7 @@ private:
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
   /// Computes scalar distance field w.r.t. the boundary
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
 
   /// Computes whether point is inside or outside the boundary
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
@@ -257,12 +260,9 @@ private:
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-
 };
 
 /// stream insertion operators for Mesh
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
-
-
 
 } // shapeworks

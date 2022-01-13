@@ -54,6 +54,8 @@
 #include <vtkNew.h>
 #include <vtkSelectPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
 
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
@@ -113,7 +115,7 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
   }
 }
 
-Mesh& Mesh::write(const std::string &pathname)
+Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 {
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
@@ -124,7 +126,10 @@ Mesh& Mesh::write(const std::string &pathname)
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
-      writer->SetFileTypeToBinary();
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }
@@ -133,6 +138,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetDataModeToBinary();
+      else
+        writer->SetDataModeToAscii();
       writer->Update();
       return *this;
     }
@@ -144,6 +153,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }
@@ -166,6 +179,10 @@ Mesh& Mesh::write(const std::string &pathname)
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
+      if (binaryFile)
+        writer->SetFileTypeToBinary();
+      else
+        writer->SetFileTypeToASCII();
       writer->Update();
       return *this;
     }
@@ -643,6 +660,28 @@ Field Mesh::curvature(const CurvatureType type)
     curv->SetValue(i, C[i]);
 
   return curv;
+}
+
+Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
+{
+  if (type == Mesh::SubdivisionType::Loop)
+  {
+    vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+  else
+  {
+    vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    filter->SetInputData(this->mesh);
+    filter->SetNumberOfSubdivisions(subdivision);
+    filter->Update();
+    this->mesh = filter->GetOutput();
+  }
+
+  return *this;
 }
 
 Image Mesh::toImage(PhysicalRegion region, Point spacing) const
