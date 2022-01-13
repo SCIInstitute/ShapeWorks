@@ -491,7 +491,7 @@ int ParticleShapeStatistics::ComputeModes()
   vnl_symmetric_eigensystem<double> symEigen(vnlA);
 
   Eigen::MatrixXd eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), symEigen.D.cols());
+  Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
 
   m_eigenvectors = m_pointsMinusMean * eigenSymEigenV;
   m_eigenvalues.resize(m_numSamples);
@@ -508,7 +508,7 @@ int ParticleShapeStatistics::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
     }
 
-    m_eigenvalues[i] = eigenSymEigenD(i, i);
+    m_eigenvalues[i] = eigenSymEigenD(i);
   }
 
   float sum = 0.0;
