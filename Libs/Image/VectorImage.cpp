@@ -15,4 +15,10 @@ VectorImage::VectorImage(const Image& dt)
   this->interpolator = itk::SmartPointer<GradientInterpolator>(gradientInterpolator);
 }
 
+VectorImage::ImageIterator VectorImage::setIterator()
+{
+  ImageIterator iter(this->image, image->GetRequestedRegion());
+  return iter;
+}
+
 } // shapeworks

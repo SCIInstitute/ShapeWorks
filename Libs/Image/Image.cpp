@@ -33,6 +33,8 @@
 #include <itkConnectedComponentImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
+#include <itkAddImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -151,7 +153,7 @@ Image Image::operator+(const Image& other) const
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput1(this->image);
-  filter->SetInput2(other->image);
+  filter->SetInput2(other.image);
   filter->Update();
 
   return Image(filter->GetOutput());
@@ -238,7 +240,7 @@ Image Image::operator*(const Image &other) const
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput1(this->image);
-  filter->SetInput2(other->image);
+  filter->SetInput2(other.image);
   filter->Update();
 
   return Image(filter->GetOutput());
@@ -1010,6 +1012,12 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
+}
+
+Image::ImageIterator Image::setIterator()
+{  
+  ImageIterator iter(this->image, image->GetRequestedRegion());
+  return iter;
 }
 
 Mesh Image::toMesh(PixelType isoValue) const
