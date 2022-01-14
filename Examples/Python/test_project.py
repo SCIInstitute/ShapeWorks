@@ -114,16 +114,11 @@ def Run_Pipeline(args):
                 ref_seg, iso_value, icp_iterations)
             # rigidTransform[:,-1] = center_transform[idx][:,-1]
             # idx+=1
-            
+            rigidTransform = sw.utils.getVTKtransform(rigidTransform)
             shape_center = ref_seg.centerOfMass()
-            # input(rigidTransform)
+            # # input(rigidTransform)
             transform = np.eye(4)
-            transform[-1,0] = -1*shape_center[0]
-            transform[-1,1] = -1*shape_center[1]
-            transform[-1,2] = -1*shape_center[2]
-            rigidTransform = np.matmul(rigidTransform,transform)
-            # print(shape_center)
-            rigidTransform = rigidTransform.T
+
             Rigid_transforms.append(rigidTransform)
             # input(rigidTransform)
             print(rigidTransform)
@@ -145,13 +140,8 @@ def Run_Pipeline(args):
             shape_seg_list.append(shape_seg)
 
         center_transform = []
+        i = 0 
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-
-
-            print("Calculating the centering transform")
-            # compute the center of mass of this segmentation
-            
-
             # parameters for padding
             padding_size = 10  # number of voxels to pad for each dimension
             padding_value = 0  # the constant value used to pad the segmentations
@@ -161,13 +151,7 @@ def Run_Pipeline(args):
             # antialias for 30 iterations
             antialias_iterations = 30
             shape_seg.antialias(antialias_iterations)
-            # resample to isotropic spacing using linear interpolation
-            iso_spacing = [1, 1, 1]
-            shape_seg.resample(iso_spacing, sw.InterpolationType.Linear)
-            # make segmetnation binary again
             shape_seg.binarize()
-
-
             # Define distance transform parameters
             iso_value = 0
             sigma = 1.3
@@ -184,7 +168,7 @@ def Run_Pipeline(args):
 
         subjects = []
         number_domains = 1
-        seg_dir = "Output/ellipsoid/ellipsoid_1mode/segmentations/"
+        seg_dir = output_directory+"ellipsoid_1mode/segmentations/"
         for i in range(len(shape_seg_list)):
             print(shape_names[i])
             subject = sw.Subject()
@@ -232,6 +216,8 @@ def Run_Pipeline(args):
         optimizeCmd = 'shapeworks optimize --name test_proj_parm.xlsx'.split()
         subprocess.check_call(optimizeCmd)
 
+        AnalysisCmd = 'ShapeWorksStudio test_proj_parm.xlsx'.split()
+        subprocess.check_call(AnalysisCmd)
 
 
 
