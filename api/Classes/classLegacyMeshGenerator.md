@@ -19,7 +19,7 @@ title: LegacyMeshGenerator
 | void | **[setSampleSpacing](../Classes/classLegacyMeshGenerator.md#function-setsamplespacing)**(double spacing) |
 | void | **[setUsePowerCrust](../Classes/classLegacyMeshGenerator.md#function-setusepowercrust)**(bool enabled) |
 | void | **[setSmoothingAmount](../Classes/classLegacyMeshGenerator.md#function-setsmoothingamount)**(float amount) |
-| vtkSmartPointer< vtkPolyData > | **[buildMesh](../Classes/classLegacyMeshGenerator.md#function-buildmesh)**(const vnl_vector< double > & shape) |
+| vtkSmartPointer< vtkPolyData > | **[buildMesh](../Classes/classLegacyMeshGenerator.md#function-buildmesh)**(const Eigen::VectorXd & shape) |
 
 ## Public Functions Documentation
 
@@ -77,11 +77,11 @@ void setSmoothingAmount(
 
 ```cpp
 vtkSmartPointer< vtkPolyData > buildMesh(
-    const vnl_vector< double > & shape
+    const Eigen::VectorXd & shape
 )
 ```
 
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:14 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

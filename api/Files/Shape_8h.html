@@ -405,11 +405,11 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_global_correspondence_points</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_global_correspondence_points_for_display</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_global_correspondence_points_for_display</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_correspondence_points</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_local_correspondence_points</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_reconstructed_mesh</span><span class="p">();</span><span class="w"></span>
 
@@ -476,7 +476,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">generate_meshes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshGroup</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_list</span><span class="p">,</span><span class="w"></span>
 <span class="w">                       </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_transform</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_point_file</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_point_file</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_feature_to_points</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_feature_from_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span><span class="w"></span>
@@ -514,7 +514,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-12 at 19:06:15 +0000</p>
+<p>Updated on 2022-01-14 at 02:26:01 +0000</p>
               
             </div>
           </div>

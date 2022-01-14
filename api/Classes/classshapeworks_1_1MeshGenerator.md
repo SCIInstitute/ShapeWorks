@@ -16,7 +16,7 @@ title: shapeworks::MeshGenerator
 | | **[MeshGenerator](../Classes/classshapeworks_1_1MeshGenerator.md#function-meshgenerator)**() |
 | | **[~MeshGenerator](../Classes/classshapeworks_1_1MeshGenerator.md#function-~meshgenerator)**() |
 | MeshHandle | **[build_mesh](../Classes/classshapeworks_1_1MeshGenerator.md#function-build-mesh)**(const [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md) & item) |
-| MeshHandle | **[build_mesh_from_points](../Classes/classshapeworks_1_1MeshGenerator.md#function-build-mesh-from-points)**(const vnl_vector< double > & shape, int domain) |
+| MeshHandle | **[build_mesh_from_points](../Classes/classshapeworks_1_1MeshGenerator.md#function-build-mesh-from-points)**(const Eigen::VectorXd & shape, int domain) |
 | MeshHandle | **[build_mesh_from_image](../Classes/classshapeworks_1_1MeshGenerator.md#function-build-mesh-from-image)**(ImageType::Pointer image, float iso_value =0.0001) |
 | MeshHandle | **[build_mesh_from_file](../Classes/classshapeworks_1_1MeshGenerator.md#function-build-mesh-from-file)**(std::string filename, float iso_value =0.0001) |
 | void | **[set_mesh_reconstructors](../Classes/classshapeworks_1_1MeshGenerator.md#function-set-mesh-reconstructors)**(std::shared_ptr< [MeshReconstructors](../Classes/classshapeworks_1_1MeshReconstructors.md) > reconstructors) |
@@ -60,7 +60,7 @@ MeshHandle build_mesh(
 
 ```cpp
 MeshHandle build_mesh_from_points(
-    const vnl_vector< double > & shape,
+    const Eigen::VectorXd & shape,
     int domain
 )
 ```
@@ -136,4 +136,4 @@ static const std::string RECONSTRUCTION_MESH_WARPER_C;
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:13 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

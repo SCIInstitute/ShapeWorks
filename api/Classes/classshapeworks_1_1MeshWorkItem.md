@@ -14,7 +14,7 @@ title: shapeworks::MeshWorkItem
 |                | Name           |
 | -------------- | -------------- |
 | std::string | **[filename](../Classes/classshapeworks_1_1MeshWorkItem.md#variable-filename)**  |
-| vnl_vector< double > | **[points](../Classes/classshapeworks_1_1MeshWorkItem.md#variable-points)**  |
+| Eigen::VectorXd | **[points](../Classes/classshapeworks_1_1MeshWorkItem.md#variable-points)**  |
 | int | **[domain](../Classes/classshapeworks_1_1MeshWorkItem.md#variable-domain)**  |
 | size_t | **[memory_size](../Classes/classshapeworks_1_1MeshWorkItem.md#variable-memory-size)**  |
 
@@ -37,7 +37,7 @@ std::string filename;
 ### variable points
 
 ```cpp
-vnl_vector< double > points;
+Eigen::VectorXd points;
 ```
 
 
@@ -81,4 +81,4 @@ friend bool operator==(
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:13 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

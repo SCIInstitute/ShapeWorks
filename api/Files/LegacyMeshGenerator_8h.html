@@ -337,6 +337,7 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span><span class="cp"></span>
 
 <span class="c1">//#include &lt;SurfaceReconstructor.h&gt;</span>
 
@@ -365,7 +366,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setUsePowerCrust</span><span class="p">(</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setSmoothingAmount</span><span class="p">(</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// 0-100</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buildMesh</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buildMesh</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">//void set_surface_reconstructor(QSharedPointer&lt;SurfaceReconstructor&gt; reconstructor);</span>
 
@@ -392,7 +393,7 @@
 <span class="p">};</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-12 at 19:06:15 +0000</p>
+<p>Updated on 2022-01-14 at 02:26:01 +0000</p>
               
             </div>
           </div>

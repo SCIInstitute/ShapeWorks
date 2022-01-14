@@ -45,7 +45,7 @@ Inherits from QObject
 | void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
-| void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const vnl_vector< double > & mean) |
+| void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
@@ -278,7 +278,7 @@ void set_selected_point_two(
 
 ```cpp
 void set_mean(
-    const vnl_vector< double > & mean
+    const Eigen::VectorXd & mean
 )
 ```
 
@@ -476,4 +476,4 @@ static const std::string MODE_RECONSTRUCTION_C;
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:14 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

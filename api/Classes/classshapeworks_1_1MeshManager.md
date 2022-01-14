@@ -35,7 +35,7 @@ Inherits from QObject
 | | **[~MeshManager](../Classes/classshapeworks_1_1MeshManager.md#function-~meshmanager)**() |
 | void | **[generate_mesh](../Classes/classshapeworks_1_1MeshManager.md#function-generate-mesh)**(const [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md) item)<br>generate and cache a mesh for this shape in a different thread  |
 | MeshHandle | **[get_mesh](../Classes/classshapeworks_1_1MeshManager.md#function-get-mesh)**(const [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md) & item, bool wait =false)<br>get a mesh for a [MeshWorkItem]() |
-| MeshHandle | **[get_mesh](../Classes/classshapeworks_1_1MeshManager.md#function-get-mesh)**(const vnl_vector< double > & points, int domain)<br>get a mesh for a set of points  |
+| MeshHandle | **[get_mesh](../Classes/classshapeworks_1_1MeshManager.md#function-get-mesh)**(const Eigen::VectorXd & points, int domain)<br>get a mesh for a set of points  |
 | std::shared_ptr< [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md) > | **[get_surface_reconstructor](../Classes/classshapeworks_1_1MeshManager.md#function-get-surface-reconstructor)**(int domain)<br>return the surface reconstructor for a given domain  |
 | std::shared_ptr< [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) > | **[get_mesh_warper](../Classes/classshapeworks_1_1MeshManager.md#function-get-mesh-warper)**(int domain)<br>return the mesh warper for a given domain  |
 | std::shared_ptr< [MeshGenerator](../Classes/classshapeworks_1_1MeshGenerator.md) > | **[get_mesh_generator](../Classes/classshapeworks_1_1MeshManager.md#function-get-mesh-generator)**()<br>return the mesh generator  |
@@ -139,7 +139,7 @@ get a mesh for a [MeshWorkItem]()
 
 ```cpp
 MeshHandle get_mesh(
-    const vnl_vector< double > & points,
+    const Eigen::VectorXd & points,
     int domain
 )
 ```
@@ -184,4 +184,4 @@ clear the cache
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:13 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

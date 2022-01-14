@@ -62,7 +62,7 @@ public:
 
   MeshHandle get_mesh(const MeshWorkItem& item, bool wait = false);
 
-  MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
+  MeshHandle get_mesh(const Eigen::VectorXd& points, int domain);
 
   std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor(int domain);
 
@@ -116,4 +116,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

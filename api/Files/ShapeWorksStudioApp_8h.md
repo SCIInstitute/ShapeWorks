@@ -44,8 +44,7 @@ title: Studio/src/Interface/ShapeWorksStudioApp.h
 #include <Data/PreferencesWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 
-#include <vnl_vector.h>
-
+#include <Eigen/Eigen>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -167,7 +166,7 @@ private:
   void update_view_mode();
   void reset_num_viewers();
 
-  static bool write_particle_file(std::string filename, vnl_vector<double> particles);
+  static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
   enum VIEW_MODE {
     ORIGINAL = 0,
@@ -282,4 +281,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

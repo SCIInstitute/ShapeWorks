@@ -27,7 +27,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | std::string | **[get_error_message](../Classes/classshapeworks_1_1StudioMesh.md#function-get-error-message)**()<br>Return the error message.  |
 | void | **[apply_feature_map](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-feature-map)**(std::string name, ImageType::Pointer image)<br>Apply a feature map.  |
 | void | **[apply_scalars](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-scalars)**(MeshHandle mesh)<br>Apply scalars from another mesh, with a transform.  |
-| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-interpolate-scalars-to-mesh)**(std::string name, vnl_vector< double > positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.  |
+| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.  |
 
 ## Detailed Description
 
@@ -135,7 +135,7 @@ Apply scalars from another mesh, with a transform.
 ```cpp
 void interpolate_scalars_to_mesh(
     std::string name,
-    vnl_vector< double > positions,
+    Eigen::VectorXd positions,
     Eigen::VectorXf scalar_values
 )
 ```
@@ -144,4 +144,4 @@ Interpolation scalars at positions to this mesh.
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:14 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

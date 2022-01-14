@@ -517,7 +517,7 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">group_pvalues_valid</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_boxes</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_values</span><span class="p">();</span><span class="w"></span>
@@ -540,7 +540,7 @@
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">eval_generalization_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">empty_shape_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">temp_shape_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">temp_shape_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_animate_direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">pca_animate_timer_</span><span class="p">;</span><span class="w"></span>
@@ -567,7 +567,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-12 at 19:06:15 +0000</p>
+<p>Updated on 2022-01-14 at 02:26:01 +0000</p>
               
             </div>
           </div>

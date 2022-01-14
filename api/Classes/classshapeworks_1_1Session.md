@@ -82,7 +82,7 @@ Inherits from QObject
 | void | **[set_feature_range_min](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-min)**(double value) |
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
-| Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const vnl_vector< double > & points, int i) |
+| Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
 ## Public Attributes
 
@@ -548,7 +548,7 @@ static bool is_supported_file_format(
 
 ```cpp
 static Point3 get_point(
-    const vnl_vector< double > & points,
+    const Eigen::VectorXd & points,
     int i
 )
 ```
@@ -593,4 +593,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:14 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

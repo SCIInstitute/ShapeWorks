@@ -27,11 +27,6 @@ title: Libs/Particles/ParticleShapeStatistics.h
 ```cpp
 #pragma once
 
-#include "vnl/vnl_vector.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector_fixed.h"
-#include "vnl/algo/vnl_matrix_inverse.h"
 #include <Eigen/Eigen>
 
 #include <iostream>
@@ -61,7 +56,7 @@ public:
 
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
+  int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
   int ReadPointFiles(const std::string &s);
 
@@ -85,16 +80,16 @@ public:
   const int GroupID(unsigned int i) { return m_groupIDs[i]; }
   const std::vector<int> &GroupID() { return m_groupIDs;}
 
-  const vnl_matrix<double> &Eigenvectors() { return m_eigenvectors; }
+  const Eigen::MatrixXd &Eigenvectors() { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
 
-  const vnl_vector<double> &Mean() { return m_mean; }
-  const vnl_vector<double> &Group1Mean() { return m_mean1; }
-  const vnl_vector<double> &Group2Mean() { return m_mean2; }
+  const Eigen::VectorXd &Mean() { return m_mean; }
+  const Eigen::VectorXd &Group1Mean() { return m_mean1; }
+  const Eigen::VectorXd &Group2Mean() { return m_mean2; }
 
   // Returns group2 - group1 mean
-  const vnl_vector<double> &NormalizedGroupDifference() { return m_groupdiffnorm; }
-  const vnl_vector<double> &GroupDifference() { return m_groupdiff; }
+  const Eigen::VectorXd &NormalizedGroupDifference() { return m_groupdiffnorm; }
+  const Eigen::VectorXd &GroupDifference() { return m_groupdiff; }
 
   int ComputeMedianShape(const int ID);
 
@@ -102,11 +97,11 @@ public:
 
   Eigen::MatrixXd &PCALoadings() { return m_principals; }
 
-  const vnl_vector<double> &FishersLDA() { return m_fishersLD; }
+  const Eigen::VectorXd &FishersLDA() { return m_fishersLD; }
 
-  const vnl_matrix<double> &ShapeMatrix() { return m_shapes; }
+  const Eigen::MatrixXd &ShapeMatrix() { return m_shapes; }
 
-  const vnl_matrix<double> &RecenteredShape() { return m_pointsMinusMean; }
+  const Eigen::MatrixXd &RecenteredShape() { return m_pointsMinusMean; }
 
   std::vector<double> PercentVarByMode() { return m_percentVarByMode; }
 
@@ -120,6 +115,7 @@ public:
 
   Eigen::MatrixXd get_group1_matrix();
   Eigen::MatrixXd get_group2_matrix();
+
 private:
 
   unsigned int m_numSamples1;
@@ -129,25 +125,24 @@ private:
   unsigned int m_numDimensions;
   std::vector<int> m_groupIDs;
 
-  vnl_matrix<double> m_pooled_covariance;
-  vnl_matrix<double> m_eigenvectors;
+  Eigen::MatrixXd m_eigenvectors;
   std::vector<double> m_eigenvalues;
-  vnl_vector<double> m_mean;
-  vnl_vector<double> m_mean1;
-  vnl_vector<double> m_mean2;
-  vnl_matrix<double> m_pointsMinusMean;
-  vnl_matrix<double> m_shapes;
-  vnl_matrix<double> m_projectedPMM1;
-  vnl_matrix<double> m_projectedPMM2;
-  vnl_vector<double> m_projectedMean1;
-  vnl_vector<double> m_projectedMean2;
+  Eigen::VectorXd m_mean;
+  Eigen::VectorXd m_mean1;
+  Eigen::VectorXd m_mean2;
+  Eigen::MatrixXd m_pointsMinusMean;
+  Eigen::MatrixXd m_shapes;
+  Eigen::MatrixXd m_projectedPMM1;
+  Eigen::MatrixXd m_projectedPMM2;
+  Eigen::VectorXd m_projectedMean1;
+  Eigen::VectorXd m_projectedMean2;
   std::vector<double> m_fishersProjection;
   std::vector<double> m_percentVarByMode;
-  vnl_vector<double> m_fishersLD;
+  Eigen::VectorXd m_fishersLD;
   Eigen::MatrixXd m_principals;
 
-  vnl_vector<double> m_groupdiff;
-  vnl_vector<double> m_groupdiffnorm;
+  Eigen::VectorXd m_groupdiff;
+  Eigen::VectorXd m_groupdiffnorm;
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
   std::vector<std::string> m_pointsfiles;
@@ -164,4 +159,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

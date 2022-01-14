@@ -332,38 +332,38 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, vnl_vector&lt; double &gt; particles)</td>
+<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, Eigen::VectorXd particles)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, vnl_vector&lt; double &gt; particles)</td>
+<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, Eigen::VectorXd particles)</td>
 </tr>
 <tr>
-<td>std::vector&lt; vnl_vector&lt; double &gt; &gt;</td>
+<td>std::vector&lt; Eigen::VectorXd &gt;</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-local-particles">get_local_particles</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; vnl_vector&lt; double &gt; &gt;</td>
+<td>std::vector&lt; Eigen::VectorXd &gt;</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-world-particles">get_world_particles</a></strong>()</td>
 </tr>
 <tr>
-<td>vnl_vector&lt; double &gt;</td>
+<td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-local-particles">get_local_particles</a></strong>(int domain)</td>
 </tr>
 <tr>
-<td>vnl_vector&lt; double &gt;</td>
+<td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-world-particles">get_world_particles</a></strong>(int domain)</td>
 </tr>
 <tr>
-<td>vnl_vector&lt; double &gt;</td>
+<td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-raw-world-particles">get_raw_world_particles</a></strong>(int domain)<br>Get untransformed original world particles from optimizer.</td>
 </tr>
 <tr>
-<td>vnl_vector&lt; double &gt;</td>
+<td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-local-particles">get_combined_local_particles</a></strong>()</td>
 </tr>
 <tr>
-<td>vnl_vector&lt; double &gt;</td>
+<td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-global-particles">get_combined_global_particles</a></strong>()</td>
 </tr>
 <tr>
@@ -412,42 +412,42 @@
 <h3 id="function-set_local_particles_1">function set_local_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_world_particles_1">function set_world_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_particles">function get_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_world_particles">function get_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_particles_1">function get_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_world_particles_1">function get_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_raw_world_particles">function get_raw_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_raw_world_particles</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_raw_world_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Get untransformed original world particles from optimizer. </p>
 <h3 id="function-get_combined_local_particles">function get_combined_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_combined_local_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_local_particles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_combined_global_particles">function get_combined_global_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_combined_global_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_global_particles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_points">function get_local_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_points</span><span class="p">(</span><span class="w"></span>
@@ -476,7 +476,7 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-12 at 19:06:14 +0000</p>
+<p>Updated on 2022-01-14 at 02:26:00 +0000</p>
               
             </div>
           </div>

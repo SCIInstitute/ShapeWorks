@@ -41,9 +41,9 @@ Representation of a single shape/patient/subject.
 | void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
-| vnl_vector< double > | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
-| vnl_vector< double > | **[get_global_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
-| vnl_vector< double > | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
+| Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
+| Eigen::VectorXd | **[get_global_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
+| Eigen::VectorXd | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
 | void | **[set_id](../Classes/classshapeworks_1_1Shape.md#function-set-id)**(int id)<br>Set the id of this shape.  |
@@ -245,7 +245,7 @@ void set_particle_transform(
 ### function get_global_correspondence_points
 
 ```cpp
-vnl_vector< double > get_global_correspondence_points()
+Eigen::VectorXd get_global_correspondence_points()
 ```
 
 Get the global correspondence points. 
@@ -253,7 +253,7 @@ Get the global correspondence points.
 ### function get_global_correspondence_points_for_display
 
 ```cpp
-vnl_vector< double > get_global_correspondence_points_for_display()
+Eigen::VectorXd get_global_correspondence_points_for_display()
 ```
 
 Get the global correspondence points for display. 
@@ -261,7 +261,7 @@ Get the global correspondence points for display.
 ### function get_local_correspondence_points
 
 ```cpp
-vnl_vector< double > get_local_correspondence_points()
+Eigen::VectorXd get_local_correspondence_points()
 ```
 
 Get the local correspondence points. 
@@ -570,4 +570,4 @@ std::string get_override_feature()
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:14 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

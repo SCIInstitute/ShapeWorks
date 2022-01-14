@@ -125,7 +125,7 @@ public:
 
   double get_auto_glyph_size();
 
-  static Point3 get_point(const vnl_vector<double>& points, int i);
+  static Point3 get_point(const Eigen::VectorXd& points, int i);
 
   void clear_particles();
 
@@ -166,7 +166,7 @@ private:
 
   Preferences& preferences_;
 
-  void save_particles_file(std::string filename, const vnl_vector<double>& points);
+  void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
 
@@ -198,4 +198,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

@@ -338,7 +338,7 @@
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-importpoints">ImportPoints</a></strong>(std::vector&lt; vnl_vector&lt; double &gt;&gt; points, std::vector&lt; int &gt; group_ids)</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-importpoints">ImportPoints</a></strong>(std::vector&lt; Eigen::VectorXd &gt; points, std::vector&lt; int &gt; group_ids)</td>
 </tr>
 <tr>
 <td>int</td>
@@ -393,7 +393,7 @@
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-groupid">GroupID</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_matrix&lt; double &gt; &amp;</td>
+<td>const Eigen::MatrixXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvectors">Eigenvectors</a></strong>()</td>
 </tr>
 <tr>
@@ -401,23 +401,23 @@
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvalues">Eigenvalues</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-mean">Mean</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-group1mean">Group1Mean</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-group2mean">Group2Mean</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-normalizedgroupdifference">NormalizedGroupDifference</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-groupdifference">GroupDifference</a></strong>()</td>
 </tr>
 <tr>
@@ -433,15 +433,15 @@
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-pcaloadings">PCALoadings</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_vector&lt; double &gt; &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-fisherslda">FishersLDA</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_matrix&lt; double &gt; &amp;</td>
+<td>const Eigen::MatrixXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-shapematrix">ShapeMatrix</a></strong>()</td>
 </tr>
 <tr>
-<td>const vnl_matrix&lt; double &gt; &amp;</td>
+<td>const Eigen::MatrixXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-recenteredshape">RecenteredShape</a></strong>()</td>
 </tr>
 <tr>
@@ -518,7 +518,7 @@
 <p>Dimensionality of the domain of the particle system. </p>
 <h3 id="function-importpoints">function ImportPoints</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ImportPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_ids</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -582,27 +582,27 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GroupID</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-eigenvectors">function Eigenvectors</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Eigenvectors</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Eigenvectors</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the eigenvectors/values. </p>
 <h3 id="function-eigenvalues">function Eigenvalues</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Eigenvalues</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-mean">function Mean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Mean</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Mean</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the mean shape. </p>
 <h3 id="function-group1mean">function Group1Mean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Group1Mean</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Group1Mean</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-group2mean">function Group2Mean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Group2Mean</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Group2Mean</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-normalizedgroupdifference">function NormalizedGroupDifference</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NormalizedGroupDifference</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NormalizedGroupDifference</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-groupdifference">function GroupDifference</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GroupDifference</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GroupDifference</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-computemedianshape">function ComputeMedianShape</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ComputeMedianShape</span><span class="p">(</span><span class="w"></span>
@@ -622,15 +622,15 @@
 </code></pre></div>
 <p>Returns the component loadings </p>
 <h3 id="function-fisherslda">function FishersLDA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FishersLDA</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FishersLDA</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the Fisher linear discriminant </p>
 <h3 id="function-shapematrix">function ShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ShapeMatrix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ShapeMatrix</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the shape matrix </p>
 <h3 id="function-recenteredshape">function RecenteredShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">RecenteredShape</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">RecenteredShape</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the shape with the mean subtracted </p>
 <h3 id="function-percentvarbymode">function PercentVarByMode</h3>
@@ -671,7 +671,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-12 at 19:06:13 +0000</p>
+<p>Updated on 2022-01-14 at 02:26:00 +0000</p>
               
             </div>
           </div>

@@ -18,7 +18,7 @@ title: shapeworks::ParticleShapeStatistics
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point >> global_pts, int domainsPerShape =1) |
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) particleSystem, int domainsPerShape =1) |
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension ) |
-| int | **[ImportPoints](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-importpoints)**(std::vector< vnl_vector< double >> points, std::vector< int > group_ids) |
+| int | **[ImportPoints](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-importpoints)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids) |
 | int | **[ReadPointFiles](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-readpointfiles)**(const std::string & s) |
 | int | **[ReloadPointFiles](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-reloadpointfiles)**() |
 | int | **[WriteCSVFile](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-writecsvfile)**(const std::string & s) |
@@ -32,19 +32,19 @@ title: shapeworks::ParticleShapeStatistics
 | const int | **[NumberOfDimensions](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-numberofdimensions)**() |
 | const int | **[GroupID](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupid)**(unsigned int i) |
 | const std::vector< int > & | **[GroupID](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupid)**() |
-| const vnl_matrix< double > & | **[Eigenvectors](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvectors)**() |
+| const Eigen::MatrixXd & | **[Eigenvectors](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvectors)**() |
 | const std::vector< double > & | **[Eigenvalues](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvalues)**() |
-| const vnl_vector< double > & | **[Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-mean)**() |
-| const vnl_vector< double > & | **[Group1Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group1mean)**() |
-| const vnl_vector< double > & | **[Group2Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group2mean)**() |
-| const vnl_vector< double > & | **[NormalizedGroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-normalizedgroupdifference)**() |
-| const vnl_vector< double > & | **[GroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupdifference)**() |
+| const Eigen::VectorXd & | **[Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-mean)**() |
+| const Eigen::VectorXd & | **[Group1Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group1mean)**() |
+| const Eigen::VectorXd & | **[Group2Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group2mean)**() |
+| const Eigen::VectorXd & | **[NormalizedGroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-normalizedgroupdifference)**() |
+| const Eigen::VectorXd & | **[GroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupdifference)**() |
 | int | **[ComputeMedianShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemedianshape)**(const int ID) |
 | double | **[L1Norm](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-l1norm)**(unsigned int a, unsigned int b) |
 | Eigen::MatrixXd & | **[PCALoadings](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-pcaloadings)**() |
-| const vnl_vector< double > & | **[FishersLDA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-fisherslda)**() |
-| const vnl_matrix< double > & | **[ShapeMatrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-shapematrix)**() |
-| const vnl_matrix< double > & | **[RecenteredShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-recenteredshape)**() |
+| const Eigen::VectorXd & | **[FishersLDA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-fisherslda)**() |
+| const Eigen::MatrixXd & | **[ShapeMatrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-shapematrix)**() |
+| const Eigen::MatrixXd & | **[RecenteredShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-recenteredshape)**() |
 | std::vector< double > | **[PercentVarByMode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-percentvarbymode)**() |
 | int | **[SimpleLinearRegression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simplelinearregression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) const |
 | Eigen::VectorXd | **[get_compactness](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-compactness)**(std::function< void(float)> progress_callback) |
@@ -113,7 +113,7 @@ Dimensionality of the domain of the particle system.
 
 ```cpp
 int ImportPoints(
-    std::vector< vnl_vector< double >> points,
+    std::vector< Eigen::VectorXd > points,
     std::vector< int > group_ids
 )
 ```
@@ -253,7 +253,7 @@ inline const std::vector< int > & GroupID()
 ### function Eigenvectors
 
 ```cpp
-inline const vnl_matrix< double > & Eigenvectors()
+inline const Eigen::MatrixXd & Eigenvectors()
 ```
 
 
@@ -270,7 +270,7 @@ inline const std::vector< double > & Eigenvalues()
 ### function Mean
 
 ```cpp
-inline const vnl_vector< double > & Mean()
+inline const Eigen::VectorXd & Mean()
 ```
 
 
@@ -280,28 +280,28 @@ Returns the mean shape.
 ### function Group1Mean
 
 ```cpp
-inline const vnl_vector< double > & Group1Mean()
+inline const Eigen::VectorXd & Group1Mean()
 ```
 
 
 ### function Group2Mean
 
 ```cpp
-inline const vnl_vector< double > & Group2Mean()
+inline const Eigen::VectorXd & Group2Mean()
 ```
 
 
 ### function NormalizedGroupDifference
 
 ```cpp
-inline const vnl_vector< double > & NormalizedGroupDifference()
+inline const Eigen::VectorXd & NormalizedGroupDifference()
 ```
 
 
 ### function GroupDifference
 
 ```cpp
-inline const vnl_vector< double > & GroupDifference()
+inline const Eigen::VectorXd & GroupDifference()
 ```
 
 
@@ -343,7 +343,7 @@ Returns the component loadings
 ### function FishersLDA
 
 ```cpp
-inline const vnl_vector< double > & FishersLDA()
+inline const Eigen::VectorXd & FishersLDA()
 ```
 
 
@@ -353,7 +353,7 @@ Returns the Fisher linear discriminant
 ### function ShapeMatrix
 
 ```cpp
-inline const vnl_matrix< double > & ShapeMatrix()
+inline const Eigen::MatrixXd & ShapeMatrix()
 ```
 
 
@@ -363,7 +363,7 @@ Returns the shape matrix
 ### function RecenteredShape
 
 ```cpp
-inline const vnl_matrix< double > & RecenteredShape()
+inline const Eigen::MatrixXd & RecenteredShape()
 ```
 
 
@@ -444,4 +444,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:13 +0000
+Updated on 2022-01-14 at 02:26:00 +0000

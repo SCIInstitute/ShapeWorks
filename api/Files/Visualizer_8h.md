@@ -83,7 +83,7 @@ public:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-  void set_mean(const vnl_vector<double>& mean);
+  void set_mean(const Eigen::VectorXd& mean);
 
   void reset_camera();
 
@@ -153,7 +153,7 @@ private:
   int selected_point_one_;
   int selected_point_two_;
 
-  vnl_vector<double> cached_mean_;
+  Eigen::VectorXd cached_mean_;
   StudioParticles current_shape_;
 
   double feature_range_[2] = {0, 0};
@@ -173,4 +173,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

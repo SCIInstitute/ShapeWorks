@@ -56,6 +56,8 @@ Q_DECLARE_METATYPE(
 // vnl
 #include "vnl/vnl_vector.h"
 
+#include <Eigen/Eigen>
+
 
 namespace shapeworks {
 
@@ -63,7 +65,7 @@ class MeshWorkItem
 {
 public:
   std::string filename;
-  vnl_vector<double> points;
+  Eigen::VectorXd points;
   int domain{0};
 
   size_t memory_size{0};
@@ -115,4 +117,4 @@ Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

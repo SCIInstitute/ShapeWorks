@@ -206,7 +206,7 @@ private:
 
   bool group_pvalues_valid();
 
-  StudioParticles convert_from_combined(const vnl_vector<double>& points);
+  StudioParticles convert_from_combined(const Eigen::VectorXd& points);
 
   void update_group_boxes();
   void update_group_values();
@@ -229,7 +229,7 @@ private:
   Eigen::VectorXd eval_generalization_;
 
   vnl_vector<double> empty_shape_;
-  vnl_vector<double> temp_shape_;
+  Eigen::VectorXd temp_shape_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
@@ -259,4 +259,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000

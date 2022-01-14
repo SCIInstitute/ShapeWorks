@@ -98,7 +98,7 @@ public:
   void apply_scalars(MeshHandle mesh);
 
   void interpolate_scalars_to_mesh(std::string name,
-                                   vnl_vector<double> positions, Eigen::VectorXf scalar_values);
+                                   Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
 
 private:
 
@@ -119,4 +119,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-12 at 19:06:15 +0000
+Updated on 2022-01-14 at 02:26:01 +0000
