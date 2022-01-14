@@ -24,19 +24,19 @@
 </keep_checkpoints>
 
 <iterations_per_split>
-1000
+1500
 </iterations_per_split>
 
 <optimization_iterations>
-500
+800
 </optimization_iterations>
 
 <starting_regularization>
-1
+0.5
 </starting_regularization>
 
 <ending_regularization>
-0.1
+0.05
 </ending_regularization>
 
 <recompute_regularization_interval>
@@ -105,5 +105,5 @@ ffcs/sphere40.ffc
 </ffcs>
 
 <mesh_ffc_mode>
-0
+1
 </mesh_ffc_mode>
