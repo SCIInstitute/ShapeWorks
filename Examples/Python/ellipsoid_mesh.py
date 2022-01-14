@@ -9,7 +9,8 @@ import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-
+import subprocess
+import shutil
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -18,7 +19,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     dataset_name = "ellipsoid_1mode"
-    output_directory = "Output/ellipsoid_mesh/"
+    output_directory = "Output/ellipsoid_mesh_proj/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -95,7 +96,8 @@ def Run_Pipeline(args):
         # Make a copy of the reference segmentation 
         ref_mesh = mesh_list[ref_index]
         # Center the reference mesh at 0,0,0
-        ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
+        # ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
+        ref_mesh.write(groom_dir + 'reference.vtk')
         ref_name = mesh_names[ref_index]
         print("Reference found: " + ref_name)
 
@@ -103,12 +105,14 @@ def Run_Pipeline(args):
         Grooming Step 3: Rigid alignment
         This step rigidly aligns each shape to the selected reference. 
         """
+        Rigid_transforms = []
         for mesh, name in zip(mesh_list, mesh_names):
             print('Aligning ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
-            mesh.applyTransform(rigid_transform)
+            # mesh.applyTransform(rigid_transform)
+            Rigid_transforms.append(rigid_transform)
 
         # Save groomed meshes
         mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
@@ -127,6 +131,28 @@ def Run_Pipeline(args):
     point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
+
+
+
+    subjects = []
+    number_domains = 1
+    mesh_dir = output_directory+"/ellipsoid_1mode/meshes/"
+    for i in range(len(mesh_names)):
+        # print(shape_names[i])
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        # subject.set_segmentation_filenames([groomed_seg_files[i]])
+        subject.set_segmentation_filenames([mesh_dir+mesh_names[i]+".vtk"])
+        subject.set_groomed_filenames([mesh_files[i]])
+        transform = Rigid_transforms[i]
+        transforms = [ transform.flatten() ]
+        subject.set_groomed_transforms(transforms)
+        print(subject.get_groomed_transforms())
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles": 128,
@@ -140,7 +166,7 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": 'mesh',
+        
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -148,34 +174,46 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0
     }
-    # If running a tiny test, reduce some parameters
-    if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["initial_relative_weighting"] = 0.05
-        parameter_dictionary["relative_weighting"] = 1
-        parameter_dictionary["starting_regularization"] = 1000
-        parameter_dictionary["ending_regularization"] = 10
-        parameter_dictionary["iterations_per_split"] = 500
-        parameter_dictionary["optimization_iterations"] = 100
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
-    # Execute the optimization function
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, mesh_files, parameter_dictionary)
 
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/ellipsoid_mesh_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
+    for key in parameter_dictionary:
+            parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimze",parameters)
+    project.save("ellipsoid_mesh.xlsx")
 
-    # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
+    optimizeCmd = 'shapeworks optimize --name ellipsoid_mesh.xlsx'.split()
+    subprocess.check_call(optimizeCmd)
 
-    print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    """
-    Step 3: ANALYZE - Shape Analysis and Visualization
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    """
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    AnalysisCmd = 'ShapeWorksStudio ellipsoid_mesh.xlsx'.split()
+    subprocess.check_call(AnalysisCmd)
+    # # If running a tiny test, reduce some parameters
+    # if args.tiny_test:
+    #     parameter_dictionary["number_of_particles"] = 32
+    #     parameter_dictionary["initial_relative_weighting"] = 0.05
+    #     parameter_dictionary["relative_weighting"] = 1
+    #     parameter_dictionary["starting_regularization"] = 1000
+    #     parameter_dictionary["ending_regularization"] = 10
+    #     parameter_dictionary["iterations_per_split"] = 500
+    #     parameter_dictionary["optimization_iterations"] = 100
+    # # Run multiscale optimization unless single scale is specified
+    # if not args.use_single_scale:
+    #     parameter_dictionary["use_shape_statistics_after"] = 32
+    # # Execute the optimization function
+    # [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+    #     point_dir, mesh_files, parameter_dictionary)
+
+    # # Prepare analysis XML
+    # analyze_xml = point_dir + "/ellipsoid_mesh_analyze.xml"
+    # AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
+
+    # # If tiny test or verify, check results and exit
+    # AnalyzeUtils.check_results(args, world_point_files)
+
+    # print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    # """
+    # Step 3: ANALYZE - Shape Analysis and Visualization
+    # Now we launch studio to analyze the resulting shape model.
+    # For more information about the analysis step, see docs/workflow/analyze.md
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    # """
+    # AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
