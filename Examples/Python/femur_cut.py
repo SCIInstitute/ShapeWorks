@@ -11,6 +11,7 @@ The full images can be carried through every step of grooming.
 """
 import os
 import glob
+import subprocess
 import numpy as np
 import shapeworks as sw
 import OptimizeUtils
@@ -68,11 +69,12 @@ def Run_Pipeline(args):
         """
         Step 2: GROOMING
         The required grooming steps are:
-        1. Reflect if neccesary
-        2. Apply smoothing and remeshing
-        3. Centering
+        1. Apply smoothing and remeshing and save groomed meshes
+        2. Find reflection tansfrom
+        3. Find centering transform
         4. Select reference mesh
-        5. Rigidly align mesh to reference
+        5. Find rigid alignment transform
+        6. Combine transfroms and 
         Option to groom corresponding images (includes applying transforms)
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -91,10 +93,8 @@ def Run_Pipeline(args):
         """
         names = []
         mesh_list = []
-        reflections = [] # save in case grooming images
-        center_translations = [] # save in case grooming images
         for mesh_filename in mesh_files:
-            print('\nLoading: ' + mesh_filename)
+            print('Loading: ' + mesh_filename)
             # Get shape name
             name = os.path.basename(mesh_filename).replace('.ply', '')
             names.append(name)
@@ -102,25 +102,35 @@ def Run_Pipeline(args):
             mesh = sw.Mesh(mesh_filename)
             mesh_list.append(mesh)
             """
+            Grooming Step 1: Smooth and remeshing
+            """
+            print('Smoothing and remeshing: ' + name)
+            mesh.smooth(iterations=10).remesh(numVertices=10000, adaptivity=1.0)
+
+        # Write groomed meshes
+        print("Writing groomed meshes.")
+        groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list,
+                            names, extension='vtk', compressed=False, verbose=True)
+
+        reflections = [] 
+        center_translations = []
+        for mesh, name in zip(mesh_list, names):
+            """
             Grooming Step 1: Get reflection transform - We have left and 
             right femurs, so we reflect the non-reference side meshes 
             so that all of the femurs can be aligned.
             """
             reflection = np.eye(4) # Identity
             if ref_side in name:
-                print("Reflecting: " + name)
+                print("Finding reflection transform for: " + name)
                 reflection[0][0] = -1 # Reflect across X
                 mesh.applyTransform(reflection)
             reflections.append(reflection)
-            """
-            Grooming Step 1: Smooth and remeshing
-            """
-            print('Smoothing and remeshing: ' + name)
-            mesh.smooth(iterations=10).remesh(numVertices=10000, adaptivity=1.0)
+
             """
             Grooming Step 3: Centering
             """
-            print("Centering: " + name)
+            print("Finding centering transform for: " + name)
             translation = np.eye(4) # Identity
             translation[:3,-1] = -mesh.center() # Translate center to (0,0,0)
             mesh.applyTransform(translation)
@@ -143,17 +153,18 @@ def Run_Pipeline(args):
             Grooming Step 5: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
-            print('\nAligning ' + name + ' to ' + ref_name)
+            print('Finding alingment transfrom from ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
             rigid_transforms.append(rigid_transform)
             mesh.applyTransform(rigid_transform)
-           
-        # Write groomed meshes
-        print("\nWriting groomed meshes.")
-        mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list,
-                            names, extension='vtk', compressed=False, verbose=True)
+
+
+        # Combine transforms to pass to optimizer
+        transforms = []
+        for reflection, translation, rigid_transform in zip(reflections, center_translations, rigid_transforms):
+            transforms.append(np.matmul(np.matmul(reflection, translation), rigid_transform))
     
         """
         Groom images
@@ -202,6 +213,7 @@ def Run_Pipeline(args):
             image_files = sw.utils.save_images(groom_dir + 'images/', image_list,
                             names, extension='nrrd', compressed=True, verbose=True)
 
+
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
     Step 3: OPTIMIZE - Particle Based Optimization
@@ -222,8 +234,24 @@ def Run_Pipeline(args):
     cutting_planes = []
     cutting_plane_counts = []
     for i in range(len(mesh_files)):
-        cutting_planes.append(np.array([[-1,-1,-10], [1,-1,-10], [-1,1,-10]]))
+        cutting_planes.extend([-1,-1,-10, 1,-1,-10, -1,1,-10])
         cutting_plane_counts.append(1)
+
+    # Create spreadsheet
+    subjects = []
+    number_domains = 1
+    for i in range(len(mesh_list)):
+        print(names[i])
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        subject.set_groomed_filenames([os.getcwd() + '/' + groomed_mesh_files[i]])
+        transform = [ transforms[i].flatten() ]
+        subject.set_groomed_transforms(transform)
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
@@ -238,7 +266,6 @@ def Run_Pipeline(args):
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.01,
         "procrustes_interval" : 1,
@@ -247,37 +274,17 @@ def Run_Pipeline(args):
         "debug_projection" : 0,
         "verbosity" : 0,
         "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0,
-        "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes
+        "adaptivity_mode": 0
     }  
 
-    # If running a tiny test, reduce some parameters
-    if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 25
-        parameter_dictionary["iterations_per_split"] = 25
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 64
-    
-    # Execute the optimization function on distance transforms
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, mesh_files, parameter_dictionary)
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    # parameters.set("cutting_plane_counts",sw.Variant(cutting_plane_counts))
+    # parameters.set("cutting_planes",sw.Variant(cutting_planes))
+    project.set_parameters("optimze",parameters)
+    spreadsheet_file = output_directory + "shape_models/proj_parm.xlsx"
+    project.save(spreadsheet_file)
 
-    # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
-
-    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    """
-    Step 4: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    """
-    
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/femur_cut_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
