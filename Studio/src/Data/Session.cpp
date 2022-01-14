@@ -874,7 +874,6 @@ void Session::handle_ctrl_click(PickResult result) {
       landmarks.conservativeResize(landmarks.rows() + 1, 5);
       row = landmarks.rows() - 1;
     }
-    //row = std::max<int>(row, landmarks.rows()-1);
     landmarks(row, 0) = result.domain_;
     landmarks(row, 1) = result.subject_;
     landmarks(row, 2) = result.pos_.x;
