@@ -32,16 +32,16 @@ int main(int argc, char** argv)
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
 #ifdef _WIN32
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     STUDIO_LOG_MESSAGE("ShapeWorks Studio win32 initializing...");
     init_crash_handler();
-    ::SetErrorMode( 0 );
+    ::SetErrorMode(0);
 #endif
 
     QApplication app(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QSharedPointer<shapeworks::ShapeWorksStudioApp> studio_app =
       QSharedPointer<shapeworks::ShapeWorksStudioApp>(new shapeworks::ShapeWorksStudioApp());
@@ -52,13 +52,13 @@ int main(int argc, char** argv)
 
     if (!shapeworks::StudioLog::Instance().check_log_open()) {
       QMessageBox::warning(NULL, "ShapeWorks Studio", "Unable to open log file: " +
-                                                      shapeworks::StudioLog::Instance().get_log_filename());
+                           shapeworks::StudioLog::Instance().get_log_filename());
     }
 
     if (argc > 1) {
       QString filename = QString(argv[1]);
       if (filename.toLower().endsWith(".xlsx") || filename.toLower().endsWith(".xml")) {
-        QTimer::singleShot(0, [=]() {
+        QTimer::singleShot(0, [ = ]() {
           studio_app->open_project(filename);
         });
       }
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
           // need to rewrite as the project path will be set to the first file
           files << dir.absoluteFilePath(argv[i]);
         }
-        QTimer::singleShot(0, [=]() {
+        QTimer::singleShot(0, [ = ]() {
           studio_app->import_files(files);
         });
       }

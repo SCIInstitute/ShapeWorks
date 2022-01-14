@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def toImageTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   img = mesh.toImage()
@@ -10,7 +12,7 @@ def toImageTest1():
 
   return img == compareImg
 
-utils.test(toImageTest1)
+success &= utils.test(toImageTest1)
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
@@ -21,7 +23,7 @@ def toImageTest2():
 
   return img == compareImg
 
-utils.test(toImageTest2)
+success &= utils.test(toImageTest2)
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
@@ -31,4 +33,6 @@ def toImageTest3():
 
   return img == compareImg
 
-utils.test(toImageTest3)
+success &= utils.test(toImageTest3)
+
+sys.exit(not success)

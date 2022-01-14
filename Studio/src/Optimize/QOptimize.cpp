@@ -95,7 +95,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 
       // copy particles
       for (size_t d = 0; d < this->m_sampler->
-        GetParticleSystem()->GetNumberOfDomains(); d++) {
+           GetParticleSystem()->GetNumberOfDomains(); d++) {
 
         // blank set of points
         this->m_local_points.push_back(std::vector<itk::Point<double>>());
@@ -103,7 +103,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 
         // for each particle
         for (size_t j = 0; j < this->m_sampler->
-          GetParticleSystem()->GetNumberOfParticles(d); j++) {
+             GetParticleSystem()->GetNumberOfParticles(d); j++) {
           auto pos = this->m_sampler->GetParticleSystem()->GetPosition(j, d);
           auto pos2 = this->m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
           this->m_local_points[d].push_back(pos);
@@ -139,5 +139,44 @@ std::vector<StudioParticles> QOptimize::GetParticles()
   }
 
   return particles;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<std::vector<double>>> QOptimize::GetProcrustesTransforms()
+{
+  QMutexLocker locker(&qmutex_);
+
+  std::vector<std::vector<std::vector<double>>> transforms;
+
+  int num_domains_per_subject = this->GetDomainsPerShape();
+  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
+  transforms.resize(num_subjects);
+
+  auto ps = this->GetSampler()->GetParticleSystem();
+
+  int subject = 0;
+  int domain = 0;
+  std::vector<std::vector<double>> subject_transform;
+  for (int i = 0; i < this->m_local_points.size(); i++) {  // iterate over all domains
+
+    auto procrustes = ps->GetTransform(i);
+    std::vector<double> transform;
+    for (int i = 0; i < procrustes.cols(); i++) {
+      for (int j = 0; j < procrustes.rows(); j++) {
+        transform.push_back(procrustes(i, j));
+      }
+    }
+    subject_transform.push_back(transform);
+
+    domain++;
+    if (domain == num_domains_per_subject) {
+      transforms[subject] = subject_transform;
+      subject++;
+      domain = 0;
+      subject_transform = std::vector<std::vector<double>>();
+    }
+  }
+
+  return transforms;
 }
 }

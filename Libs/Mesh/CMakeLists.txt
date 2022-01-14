@@ -35,19 +35,22 @@ target_include_directories(Mesh PUBLIC
  )
 
 target_link_libraries(
-  Mesh 
+  Mesh
   Image
   Common
+  Optimize
   Utils
-  trimesh2 
-  vgl 
-  vgl_algo 
+  trimesh2
+  vgl
+  vgl_algo
   ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
   Particles
   TBB::tbb
+  geometry-central
   Boost::filesystem
+  acvd::acvd
   )
 
 # Install
@@ -61,6 +64,7 @@ install(TARGETS Mesh
  LIBRARY DESTINATION lib
  PUBLIC_HEADER DESTINATION include
  )
+
 
 
 ADD_EXECUTABLE(shared_boundary_extractor shared_boundary_extractor.cpp)
@@ -80,25 +84,9 @@ INSTALL(TARGETS boundary_loop_extractor RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeCurvatureAndCoordFiles ComputeCurvatureAndCoordFiles.cxx)
-#TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)
-
-#ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
-#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
-TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
-INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ReconstructSurface ReconstructSurface.cxx)
-TARGET_LINK_LIBRARIES(ReconstructSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
-INSTALL(TARGETS ReconstructSurface RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
-TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize Particles)
-INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
+# ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
+# TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
+# INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)
 
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx)

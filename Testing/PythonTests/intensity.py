@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def intensityTest():
   img = Image(os.environ["DATA"] + "/nonBinary.nrrd")
   img.applyIntensityFilter(0, 100)
@@ -10,4 +12,6 @@ def intensityTest():
 
   return img.compare(compareImg)
 
-utils.test(intensityTest)
+success &= utils.test(intensityTest)
+
+sys.exit(not success)

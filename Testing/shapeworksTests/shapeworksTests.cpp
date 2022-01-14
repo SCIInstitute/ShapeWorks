@@ -9,6 +9,16 @@ void run_use_case(const std::string& name)
   ASSERT_FALSE(system(command.c_str()));
 }
 
+TEST(shapeworksTests, meshwriteTest)
+{
+  run_use_case("meshwrite.sh");
+}
+
+TEST(shapeworksTests, meancurvatureTest)
+{
+  run_use_case("meshcurvature.sh");
+}
+
 TEST(shapeworksTests, meannormalsTest)
 {
   run_use_case("meannormals.sh");
@@ -274,9 +284,9 @@ TEST(shapeworksTests, smoothTest)
   run_use_case("smooth.sh");
 }
 
-TEST(shapeworksTests, decimateTest)
+TEST(shapeworksTests, remeshTest)
 {
-  run_use_case("decimate.sh");
+  run_use_case("remesh.sh");
 }
 
 TEST(shapeworksTests, reflectmeshTest)
@@ -299,11 +309,10 @@ TEST(shapeworksTests, scalemeshTest)
   run_use_case("scalemesh.sh");
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   run_use_case("meshfix.sh");
-// }
+TEST(shapeworksTests, fixelementTest)
+{
+  ASSERT_FALSE(system("bash fixelement.sh"));
+}
 
 TEST(shapeworksTests, clipclosedsurfaceTest)
 {
@@ -323,4 +332,9 @@ TEST(shapeworksTests, computenormalsTest)
 TEST(shapeworksTests, shapeevaluationTest)
 {
   run_use_case("shapeevaluation.sh");
+}
+
+TEST(shapeworksTests, isolateTest)
+{
+  run_use_case("isolate.sh");
 }

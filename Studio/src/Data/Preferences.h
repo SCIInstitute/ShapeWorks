@@ -28,12 +28,13 @@ public:
 
   Preferences();
 
-  enum { MAX_RECENT_FILES = 32 };
+  enum { MAX_RECENT_FILES = 64 };
 
   void restore_defaults();
 
-  void add_recent_file(QString file);
+  void add_recent_file(QString file, QString path);
   QStringList get_recent_files();
+  QStringList get_recent_paths();
 
   bool not_saved();
   void set_saved(bool saved = true);
@@ -106,6 +107,10 @@ Q_SIGNALS:
   void sliders_changed_signal();
 
 private:
+
+  void update_recent_files();
+  QStringList recent_files_;
+  QStringList recent_paths_;
 
   QSettings settings_;
   bool saved_ = true;

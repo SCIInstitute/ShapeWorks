@@ -23,13 +23,6 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		z_radius = 12
 	radii = [x_radius,y_radius,z_radius]
 
-	# If randomize center is selected
-	# Select center for ellipsoid 1
-	if randomize_center:
-		center_loc_1 = list(np.random.randint(low = 0,high=50,size=3))
-	else:
-		center_loc_1 = [0,0,0]
-
 	# if the mode of variation is rotation, then the second ellipsoid will be rotated uniformly
 	if(mode_rotation==True):
 		apply_rotation_flag = 1
@@ -46,11 +39,15 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		# Initialize file names for two domains
 		vtkFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.vtk"
 		vtkFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.vtk"
-		plyFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.ply"
-		plyFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.ply"
 
 
-		
+		# If randomize center is selected
+		# Select center for each joint
+		if randomize_center:
+			center_loc_1 = list(np.random.randint(low = 0,high=50,size=3))
+		else:
+			center_loc_1 = [0,0,0]
+			
 
 		# if mode of variation is size, then the radii of the second ellipsoid are randomized
 		if(mode_size == True):
@@ -64,11 +61,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 
 		#ellipsoid 1 
 		ellipsoid_joint1 = addEllipsoid(center_loc_1,radii_1,0,rotation_axis='Y')
-		#Write to .ply file
-		ply_writer = vtk.vtkPLYWriter()
-		ply_writer.SetInputData(ellipsoid_joint1.GetOutput())
-		ply_writer.SetFileName(plyFileName1)
-		ply_writer.Update()
+
 		#Write to .vtk file
 		vtk_writer = vtk.vtkPolyDataWriter()
 		vtk_writer.SetInputData(ellipsoid_joint1.GetOutput())
@@ -84,11 +77,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 
 		#ellipsoid 2
 		ellipsoid_joint2 = addEllipsoid(center_loc_2,radii_2,rotation,rotation_axis='Y')
-		#write to ply
-		ply_writer = vtk.vtkPLYWriter()
-		ply_writer.SetInputData(ellipsoid_joint2.GetOutput())
-		ply_writer.SetFileName(plyFileName2)
-		ply_writer.Update()
+
 		#write to vtk
 		vtk_writer = vtk.vtkPolyDataWriter()
 		vtk_writer.SetInputData(ellipsoid_joint2.GetOutput())

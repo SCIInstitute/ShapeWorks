@@ -40,7 +40,8 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            sample_idx = sw.data.sample_images(file_list, int(args.num_subsample))
+            inputImages =[sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Create distance transforms\n")
@@ -92,7 +93,7 @@ def Run_Pipeline(args):
         dt_list.append(shape_seg)
     # Save distance transforms
     dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
-                                    shape_names, extension='nrrd', compressed=False, verbose=True)
+                                    shape_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -106,7 +107,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/'
+    point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
@@ -141,7 +142,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2,
+        "verbosity": 0,
         "adaptivity_mode": 0,
         "cutting_plane_counts": cutting_plane_counts,
         "cutting_planes": cutting_planes
@@ -153,13 +154,20 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["use_shape_statistics_after"] = 16
-    # Execute the optimization function
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, dt_files, parameter_dictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+
+    # Execute the optimization function on distance transforms
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, input_files, parameter_dictionary)
+
+    # Prepare analysis XML
+    analyze_xml = point_dir + "/ellipsoid_cut_analyze.xml"
+    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
+
+    # If tiny test or verify, check results and exit
+    AnalyzeUtils.check_results(args, world_point_files)
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
@@ -169,5 +177,4 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    AnalyzeUtils.launchShapeWorksStudio(
-        point_dir, dt_files, local_point_files, world_point_files)
+    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def fillholesTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.fillHoles()
@@ -10,4 +12,6 @@ def fillholesTest():
 
   return mesh == compareMesh
 
-utils.test(fillholesTest)
+success &= utils.test(fillholesTest)
+
+sys.exit(not success)

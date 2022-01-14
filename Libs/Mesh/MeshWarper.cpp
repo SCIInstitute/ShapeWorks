@@ -3,6 +3,7 @@
 #include <igl/remove_unreferenced.h>
 
 #include <Libs/Mesh/MeshWarper.h>
+#include <Libs/Mesh/Mesh.h>
 
 #include <vtkCellLocator.h>
 #include <vtkTriangleFilter.h>
@@ -11,6 +12,7 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkKdTreePointLocator.h>
 
+#include <set>
 
 // tbb
 #include <tbb/mutex.h>
@@ -33,9 +35,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
   auto points = this->remove_bad_particles(particles);
 
-  Mesh output = MeshWarper::warp_mesh(points);
-
-  vtkSmartPointer<vtkPolyData> poly_data = output.getVTKMesh();
+  vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
 
   for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
     double* p = poly_data->GetPoint(i);
@@ -69,8 +69,8 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
 
   this->warp_available_ = true;
 
-  // TODO This is a hack for detecting if contour
-  if(reference_mesh->GetCell(0)->GetNumberOfPoints() == 2) {
+  // TODO This is temporary for detecting if contour until the contour type is fully supported
+  if (reference_mesh->GetCell(0)->GetNumberOfPoints() == 2) {
     this->is_contour_ = true;
   }
 }
@@ -97,44 +97,67 @@ bool MeshWarper::check_warp_ready()
 //---------------------------------------------------------------------------
 void MeshWarper::add_particle_vertices()
 {
-  for (int i = 0; i < this->vertices_.rows(); i++) {
-    this->update_progress(static_cast<float>(i) / this->vertices_.rows());
+  std::vector<bool> done(this->vertices_.rows(), false);
+
+  bool not_all_done = true;
+  float count = 0;
+
+  // Iteratively process the mesh: Find all new vertices that can be added without conflicting
+  // with each other.  If multiple particles (new vertices) land on the same triangle, the we will need
+  // multiple passes since we will have to make the changes and rebuild the locator.
+  while (not_all_done) {
+    not_all_done = false;
 
     this->reference_mesh_->BuildLinks();
-
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
     locator->SetCacheCellBounds(true);
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
-    double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
-    double closest_point[3];//the coordinates of the closest point will be returned here
-    double closest_point_dist2; //the squared distance to the closest point will be returned here
-    vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
-    int sub_id; //this is rarely used (in triangle strips only, I believe)
-    locator->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
+    std::vector<vtkSmartPointer<vtkIdList>> new_triangles;
+    vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
+    int next_point = this->reference_mesh_->GetNumberOfPoints();
 
-    pt[0] = closest_point[0];
-    pt[1] = closest_point[1];
-    pt[2] = closest_point[2];
+    for (int i = 0; i < this->vertices_.rows(); i++) {
+      if (done[i]) { continue; }
 
-    // grab the closest cell
-    vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
+      double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
+      double closest_point[3]; // the coordinates of the closest point will be returned here
+      double closest_point_dist2; // the squared distance to the closest point will be returned here
+      vtkIdType cell_id; // the cell id of the cell containing the closest point will be returned here
+      int sub_id; // this is rarely used (in triangle strips only, I believe)
+      locator->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
-    double point[3] = {pt[0], pt[1], pt[2]};
-    double closest[3];
-    double pcoords[3];
-    double dist2;
-    double weights[3];
-    this->reference_mesh_->GetCell(cell_id)->EvaluatePosition(point, closest, sub_id, pcoords,
-                                                              dist2, weights);
-    bool same_as_vertex = false;
+      pt[0] = closest_point[0];
+      pt[1] = closest_point[1];
+      pt[2] = closest_point[2];
 
-    if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
-      same_as_vertex = true;
-    }
+      // grab the closest cell
+      vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
 
-    if (!same_as_vertex) {
+      if (cell->GetCellType() == VTK_EMPTY_CELL) { // this one was deleted
+        not_all_done = true;
+        continue;
+      }
+
+      // mark this particle as complete
+      done[i] = true;
+
+      this->update_progress(count++ / this->vertices_.rows());
+
+      double point[3] = {pt[0], pt[1], pt[2]};
+      double closest[3];
+      double pcoords[3];
+      double dist2;
+      double weights[3];
+      this->reference_mesh_->GetCell(cell_id)->EvaluatePosition(point, closest, sub_id, pcoords,
+                                                                dist2, weights);
+
+      if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
+        // close enough to a vertex
+        continue;
+      }
+
       // now we need to check if we are along an edge already.
       bool on_edge = false;
       int v0_index = 0, v1_index = 0;
@@ -158,47 +181,73 @@ void MeshWarper::add_particle_vertices()
         v1_index = cell->GetPointId(2);
       }
 
+      auto neighbors = vtkSmartPointer<vtkIdList>::New();
+      this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
+
+      if (on_edge) { // first confirm that the other cell hasn't been deleted already
+        if (neighbors->GetNumberOfIds() == 1) {   // could be 0 for the boundary of an open mesh
+          vtkCell* other_cell = this->reference_mesh_->GetCell(neighbors->GetId(0));
+          if (other_cell->GetCellType() == VTK_EMPTY_CELL) { // this one was deleted
+            not_all_done = true;
+            continue;
+          }
+        }
+      }
+
+      // add the new vertex
+      int new_vertex = next_point++;
+      new_points->InsertNextPoint(pt);
+
       if (on_edge) {
 
-        auto neighbors = vtkSmartPointer<vtkIdList>::New();
-        this->reference_mesh_->GetCellEdgeNeighbors(cell_id, v0_index, v1_index, neighbors);
-
-        // add the new vertex
-        int new_vertex = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
-
-        if (neighbors->GetNumberOfIds() == 1) {  // could be 0 for the boundary of an open mesh
+        if (neighbors->GetNumberOfIds() == 1) {   // could be 0 for the boundary of an open mesh
           // split the neighbor cell into two triangles as well
-          this->split_cell_on_edge(neighbors->GetId(0), new_vertex, v0_index, v1_index);
+          this->split_cell_on_edge(neighbors->GetId(0), new_vertex, v0_index, v1_index, new_triangles);
         }
 
         // split the current cell into two triangles
-        this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index);
+        this->split_cell_on_edge(cell_id, new_vertex, v0_index, v1_index, new_triangles);
       }
-      else {
+      else {  // interior to a current triangle
         vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
-
-        int new_vertex = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
         list->SetNumberOfIds(3);
+
         list->SetId(0, cell->GetPointId(1));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(0));
-        this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+        new_triangles.push_back(list);
 
+        list = vtkSmartPointer<vtkIdList>::New();
+        list->SetNumberOfIds(3);
         list->SetId(0, cell->GetPointId(2));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(1));
-        this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+        new_triangles.push_back(list);
 
+        list = vtkSmartPointer<vtkIdList>::New();
+        list->SetNumberOfIds(3);
         list->SetId(0, cell->GetPointId(0));
         list->SetId(1, new_vertex);
         list->SetId(2, cell->GetPointId(2));
-        this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+        new_triangles.push_back(list);
 
         this->reference_mesh_->DeleteCell(cell_id);
       }
     }
+
+    // add new points
+    for (int i = 0; i < new_points->GetNumberOfPoints(); i++) {
+      this->reference_mesh_->GetPoints()->InsertNextPoint(new_points->GetPoint(i));
+    }
+
+    // add new triangles
+    for (int i = 0; i < new_triangles.size(); i++) {
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, new_triangles[i]);
+    }
+
+    // remove deleted triangles and clean up
+    this->reference_mesh_ = MeshWarper::recreate_mesh(this->reference_mesh_);
   }
-  this->reference_mesh_->RemoveDeletedCells();
 }
 
 //---------------------------------------------------------------------------
@@ -249,7 +298,8 @@ Eigen::MatrixXd MeshWarper::remove_bad_particles(const Eigen::MatrixXd& particle
 }
 
 //---------------------------------------------------------------------------
-void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
+void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
+                                    std::vector<vtkSmartPointer<vtkIdList>> &new_triangles)
 {
   vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
   int p0 = cell->GetPointId(0);
@@ -266,76 +316,121 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
     edge = 2;
   }
 
-  vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
-  list->SetNumberOfIds(3);
   if (edge == 0) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(1));
     list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(2));
     list->SetId(2, cell->GetPointId(0));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
   else if (edge == 1) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(0));
     list->SetId(2, cell->GetPointId(1));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(2));
     list->SetId(2, cell->GetPointId(0));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
   else if (edge == 2) {
+    vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(0));
     list->SetId(2, cell->GetPointId(1));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
 
+    list = vtkSmartPointer<vtkIdList>::New();
+    list->SetNumberOfIds(3);
     list->SetId(0, new_vertex);
     list->SetId(1, cell->GetPointId(1));
     list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    new_triangles.push_back(list);
   }
 
   this->reference_mesh_->DeleteCell(cell_id);
-
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData> mesh)
+vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> mesh)
 {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(mesh);
   triangle_filter->Update();
 
   vtkSmartPointer<vtkPolyDataConnectivityFilter>
-    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   connectivity->SetInputConnection(triangle_filter->GetOutputPort());
   connectivity->SetExtractionModeToLargestRegion();
   connectivity->Update();
 
+  return MeshWarper::clean_mesh(connectivity->GetOutput());
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData> mesh)
+{
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
   clean->ConvertStripsToPolysOff();
   clean->PointMergingOn();
-  clean->SetInputConnection(connectivity->GetOutputPort());
+  clean->SetInputData(mesh);
   clean->Update();
+  return clean->GetOutput();
+}
 
-  mesh = clean->GetOutput();
-  return mesh;
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyData> mesh)
+{
+  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
+
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> polys;
+
+  // copy points
+  for (vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++) {
+    points->InsertNextPoint(mesh->GetPoint(i));
+  }
+
+  // copy triangles
+  for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
+    vtkCell* cell = this->reference_mesh_->GetCell(i);
+
+    if (cell->GetCellType() != VTK_EMPTY_CELL) { // VTK_EMPTY_CELL means it was deleted
+
+      vtkIdType pts[3];
+      pts[0] = cell->GetPointId(0);
+      pts[1] = cell->GetPointId(1);
+      pts[2] = cell->GetPointId(2);
+      polys->InsertNextCell(3, pts);
+    }
+  }
+
+  poly_data->SetPoints(points);
+  poly_data->SetPolys(polys);
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------
 bool MeshWarper::generate_warp()
 {
   // clean mesh
-  this->reference_mesh_ = MeshWarper::clean_mesh(this->incoming_reference_mesh_);
+  this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
 
   // prep points
   this->vertices_ = this->reference_particles_;
@@ -379,7 +474,7 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   }
 
   // list of points --> list of singleton lists
-  std::vector<std::vector<int> > S;
+  std::vector<std::vector<int>> S;
   igl::matrix_to_list(b, S);
 
   // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
@@ -392,8 +487,12 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   // Throw away interior tet-vertices, keep weights and indices of boundary
   Eigen::VectorXi I, J;
   igl::remove_unreferenced(TV.rows(), TF, I, J);
-  std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) { a = I(a); });
-  std::for_each(b.data(), b.data() + b.size(), [&I](int& a) { a = I(a); });
+  std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) {
+      a = I(a);
+    });
+  std::for_each(b.data(), b.data() + b.size(), [&I](int& a) {
+      a = I(a);
+    });
   igl::slice(Eigen::MatrixXd(TV), J, 1, TV);
   igl::slice(Eigen::MatrixXd(W), J, 1, W);
   return true;
@@ -423,7 +522,6 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
 
   return poly_data;
 }
-
 } // shapeworks namespace
 
 //---------------------------------------------------------------------------

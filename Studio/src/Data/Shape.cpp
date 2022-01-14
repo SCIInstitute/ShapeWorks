@@ -15,6 +15,7 @@
 #include <Data/MeshGenerator.h>
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
+#include <Libs/Project/ProjectUtils.h>
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -163,9 +164,8 @@ void Shape::clear_reconstructed_mesh()
 bool Shape::import_global_point_files(QStringList filenames)
 {
   for (int i = 0; i < filenames.size(); i++) {
-    vnl_vector<double> points;
+    Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      std::cerr << "had an error aborting\n";
       return false;
     }
     this->global_point_filenames_.push_back(filenames[i].toStdString());
@@ -179,10 +179,9 @@ bool Shape::import_global_point_files(QStringList filenames)
 bool Shape::import_local_point_files(QStringList filenames)
 {
   for (int i = 0; i < filenames.size(); i++) {
-    vnl_vector<double> points;
+    Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      std::cerr << "had an error aborting\n";
-      return false;
+      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);
@@ -192,13 +191,13 @@ bool Shape::import_local_point_files(QStringList filenames)
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_global_correspondence_points()
+Eigen::VectorXd Shape::get_global_correspondence_points()
 {
   return this->particles_.get_combined_global_particles();
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_local_correspondence_points()
+Eigen::VectorXd Shape::get_local_correspondence_points()
 {
   return this->particles_.get_combined_local_particles();
 }
@@ -353,6 +352,29 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
+{
+  auto groom_transform = this->get_groomed_transform(domain);
+  if (!groom_transform) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    return transform;
+  }
+  return groom_transform;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (groom_transform) {
+    return true;
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_original_transform(int domain)
 {
   return this->transform_;
@@ -390,7 +412,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
+bool Shape::import_point_file(QString filename, Eigen::VectorXd& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
@@ -407,8 +429,8 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
     num_points++;
   }
   in.close();
-  points.clear();
-  points.set_size(num_points * 3);
+  points.setZero();
+  points.resize(num_points * 3);
 
   int idx = 0;
   for (int i = 0; i < num_points; i++) {
@@ -445,7 +467,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
       // first check if we have particle scalars for this feature
       auto point_features = this->get_point_features(feature);
-      if (point_features.size() > 0) { // already loaded as particle scalars
+      if (point_features.size() > 0 && display_mode == Visualizer::MODE_RECONSTRUCTION_C) { // already loaded as particle scalars
         this->set_point_features(feature, point_features);
       }
       else {
@@ -470,7 +492,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
             this->apply_feature_to_points(feature, image);
-
           } catch (itk::ExceptionObject& excep) {
             QMessageBox::warning(0, "Unable to open file",
                                  "Error opening file: \"" + filename + "\"");
@@ -491,7 +512,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+  Eigen::VectorXd all_locals = this->get_local_correspondence_points();
 
   int num_points = all_locals.size() / 3;
 
@@ -536,7 +557,7 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
   kd_tree->SetDataSet(from_mesh);
   kd_tree->BuildLocator();
 
-  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+  Eigen::VectorXd all_locals = this->get_local_correspondence_points();
 
   int num_points = all_locals.size() / 3;
 
@@ -579,25 +600,34 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
   auto transforms = this->subject_->get_groomed_transforms();
+  if (domain < 0) { // global alignment is stored at the end
+    domain = transforms.size() - 1;
+  }
   if (domain < transforms.size()) {
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    if (transforms[domain].size() == 12) {
-      double tx = transforms[domain][9];
-      double ty = transforms[domain][10];
-      double tz = transforms[domain][11];
-      transform->Translate(tx, ty, tz);
-    }
-    else if (transforms[domain].size() == 16) {
-      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-      for (int i = 0; i < 16; i++) {
-        matrix->GetData()[i] = transforms[domain][i];
-      }
-      transform->SetMatrix(matrix);
-    }
-    return transform;
+    return ProjectUtils::convert_transform(transforms[domain]);
   }
   return nullptr;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain)
+{
+  auto transforms = this->subject_->get_procrustes_transforms();
+  if (domain < transforms.size()) {
+    return ProjectUtils::convert_transform(transforms[domain]);
+  }
+  return nullptr;
+}
+
+//---------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms()
+{
+  auto lists = this->subject_->get_procrustes_transforms();
+  std::vector<vtkSmartPointer<vtkTransform>> transforms;
+  for (size_t i = 0; i < lists.size(); i++) {
+    transforms.push_back(ProjectUtils::convert_transform(lists[i]));
+  }
+  return transforms;
 }
 
 //---------------------------------------------------------------------------
@@ -628,6 +658,13 @@ StudioParticles Shape::get_particles()
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform)
+{
+  this->particles_.set_procrustes_transforms(this->get_procrustest_transforms());
+  this->particles_.set_transform(transform);
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 {
   if (domain < this->reconstruction_transforms_.size()) {
@@ -636,19 +673,20 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 
   // no transforms, just return identity
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  transform->Identity();
   return transform;
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_global_correspondence_points_for_display()
+Eigen::VectorXd Shape::get_global_correspondence_points_for_display()
 {
   auto worlds = this->particles_.get_world_particles();
   int size = 0;
   for (int i = 0; i < worlds.size(); i++) {
     size += worlds[i].size();
   }
-  vnl_vector<double> points;
-  points.set_size(size);
+  Eigen::VectorXd points;
+  points.resize(size);
 
   int idx = 0;
   for (int i = 0; i < worlds.size(); i++) {
@@ -681,29 +719,6 @@ void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransfo
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
-{
-  auto groom_transform = this->get_groomed_transform(domain);
-  if (!groom_transform) {
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    return transform;
-  }
-  return groom_transform;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::has_alignment()
-{
-  auto groom_transform = this->get_groomed_transform(0);
-  if (groom_transform) {
-    return true;
-  }
-
-  return false;
-}
-
-//---------------------------------------------------------------------------
 void Shape::load_feature_from_scalar_file(std::string filename, std::string feature_name)
 {
   QString qfilename = QString::fromStdString(filename);
@@ -729,7 +744,6 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
   }
 
   this->set_point_features(feature_name, values);
-
 }
 
 //---------------------------------------------------------------------------
@@ -743,5 +757,4 @@ string Shape::get_override_feature()
 {
   return this->override_feature_;
 }
-
 }

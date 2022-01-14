@@ -34,12 +34,19 @@ public:
   /// set display mode (original, groomed, reconstructed)
   void set_display_mode(std::string mode);
 
+  //! return the current display mode
   std::string get_display_mode();
 
   /// turn automatic centering on/off
   void set_center(bool center);
 
+  //! get centering on/off
   bool get_center();
+
+  //! set the alignment domain
+  void set_alignment_domain(int domain);
+  //! get the current alignment domain
+  int get_alignment_domain();
 
   /// turn on/off glyph display
   void set_show_glyphs(bool show);
@@ -64,7 +71,7 @@ public:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-  void set_mean(const vnl_vector<double>& mean);
+  void set_mean(const Eigen::VectorXd& mean);
 
   void reset_camera();
 
@@ -97,16 +104,33 @@ public:
   //! Get the current feature range
   double* get_feature_range();
 
+  //! Get the current raw feature range
+  double *get_feature_raw_range();
+
+  //! Return if the feature range is valid or not
+  bool get_feature_range_valid();
+
   //! Update the feature range with a given range
   void update_feature_range(double* range);
 
   //! Request the transform for a given shape and domain
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
+
+  //! Set domain opacities
+  void set_opacities(std::vector<float> opacities);
+
+  //! Get domain opacities
+  std::vector<float> get_opacities();
+
+  //! Get the current glyph size
+  double get_current_glyph_size();
 
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
   void update_viewer_properties();
+
+  void handle_feature_range_changed();
 
 private:
   ShapeHandle create_display_object(const StudioParticles& points,
@@ -117,8 +141,7 @@ private:
 
   std::string display_mode_;
   std::string feature_map_;
-
-private:
+  int alignment_domain_;
 
   bool center_;
   bool needs_camera_reset_ = true;
@@ -133,12 +156,17 @@ private:
   int selected_point_one_;
   int selected_point_two_;
 
-  vnl_vector<double> cached_mean_;
+  Eigen::VectorXd cached_mean_;
   StudioParticles current_shape_;
 
   double feature_range_[2] = {0, 0};
+  double feature_manual_range_[2] = {0, 0};
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
+
+  std::vector<float> opacities_;
+
+  double current_glyph_size_{0};
 
 };
 

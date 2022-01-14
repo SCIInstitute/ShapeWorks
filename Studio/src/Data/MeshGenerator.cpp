@@ -47,7 +47,7 @@ MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape,
+MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape,
                                                  int domain)
 {
   MeshHandle mesh(new StudioMesh);
@@ -55,6 +55,13 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
   auto& surface_reconstructors = this->reconstructors_->surface_reconstructors_;
   auto& mesh_warpers = this->reconstructors_->mesh_warpers_;
   if(mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
+    auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+    mesh->set_poly_data(poly_data);
+    return mesh;
+  }
+
+  // temporary support for contours
+  if (mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
     auto poly_data = vtkSmartPointer<vtkPolyData>::New();
     mesh->set_poly_data(poly_data);
     return mesh;
@@ -82,7 +89,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
            mesh_warpers.size() > domain && mesh_warpers[domain] &&
            mesh_warpers[domain]->get_warp_available()) {
 
-    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data_block(),
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data(),
                                                                shape.size());
     points.resize(3, shape.size() / 3);
     points.transposeInPlace();

@@ -114,6 +114,9 @@ public:
   //! Set the output transform file
   void SetOutputTransformFile(std::string output_transform_file);
 
+  //! Set whether individual transforms should be written
+  void SetOutputIndividualTransformFiles(bool value);
+
   //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
 
@@ -315,6 +318,8 @@ protected:
 
   void WriteTransformFile(int iter = -1) const;
   void WriteTransformFile(std::string iter_prefix) const;
+  void WriteTransformFiles(int iter = -1) const;
+  void WriteTransformFiles(std::string iter_prefix) const;
   void WritePointFiles(int iter = -1);
   void WritePointFiles(std::string iter_prefix);
   void WritePointFilesWithFeatures(int iter = -1);
@@ -361,6 +366,7 @@ protected:
   std::string m_prefix_transform_file;
   std::string m_output_dir;
   std::string m_output_transform_file;
+  bool m_output_transform_files = false;
   bool m_mesh_based_attributes = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;

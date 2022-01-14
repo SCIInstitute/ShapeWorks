@@ -357,7 +357,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerOfMass)
   {
-    sharedData.image.applyTransform(sharedData.image.createTransform(XFormType::CenterOfMass));
+    sharedData.image.applyTransform(sharedData.image.createCenterOfMassTransform());
     return true;
   }
   else
@@ -822,7 +822,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   else
   {
     Image target(targetDT);
-    TransformPtr transform(sharedData.image.createTransform(target, XFormType::IterativeClosestPoint, isoValue, iterations));
+    auto xform = sharedData.image.createRigidRegistrationTransform(target, isoValue, iterations);
+    TransformPtr transform(xform);
     sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;
   }
@@ -1354,5 +1355,30 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
   sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(isoValue));
   return sharedData.validMesh();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Isolate
+///////////////////////////////////////////////////////////////////////////////
+void Isolate::buildParser()
+{
+  const std::string prog = "isolate";
+  const std::string desc = "finds the largest object in a binary segmentation and removes all other objects";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool Isolate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image.isolate();
+  return true;
+}
+
 
 } // shapeworks

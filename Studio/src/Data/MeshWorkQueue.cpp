@@ -20,13 +20,19 @@ bool operator<(const MeshWorkItem& a, const MeshWorkItem& b)
         return false;
       }
 
+      /// TODO: this caching epsilon doesn't work as intended.  It's very complicated to ensure
+      /// strict weak ordering on comparison of doubles using an epsilon.
+      /// One possible approach is to round the input to multiples of the epsilon.
+      /// For now, I am just disabling it.
       double eps = 1e-3f;
       //double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
       for (unsigned i = 0; i < a.points.size(); i++) {
-        if ((a.points[i] < b.points[i]) && ((b.points[i] - a.points[i]) > eps)) {
+        //if ((a.points[i] < b.points[i]) && ((b.points[i] - a.points[i]) > eps)) {
+        if (a.points[i] < b.points[i]) {
           return true;
         }
-        else if (b.points[i] < a.points[i] && ((a.points[i] - b.points[i]) > eps)) {
+        //else if (b.points[i] < a.points[i] && ((a.points[i] - b.points[i]) > eps)) {
+        else if (b.points[i] < a.points[i]) {
           return false;
         }
       }

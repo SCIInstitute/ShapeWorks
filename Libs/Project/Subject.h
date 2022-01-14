@@ -27,7 +27,7 @@ public:
   std::vector<std::string> get_segmentation_filenames();
 
   //! Return the domain types
-  std::vector<DomainType> get_domain_types();
+  std::vector<DomainType> get_domain_types(bool groomed = false);
 
   //! Set groomed filenames
   void set_groomed_filenames(std::vector<std::string> filenames);
@@ -43,6 +43,11 @@ public:
   void set_world_particle_filenames(std::vector<std::string> filenames);
   //! Get the world particle filenames
   std::vector<std::string> get_world_particle_filenames();
+
+  //! Get the landmarks filenames (one per domain)
+  void set_landmarks_filenames(std::vector<std::string> filenames);
+  //! Set the landmarks filenames
+  std::vector<std::string> get_landmarks_filenames();
 
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
@@ -63,6 +68,13 @@ public:
   std::vector<std::vector<double>> get_groomed_transforms() const;
   //! Set the groomed transforms (one vector per domain)
   void set_groomed_transforms(std::vector<std::vector<double>> transforms);
+  //! Set the i-th groomed transform
+  void set_groomed_transform(int i, std::vector<double> transform);
+
+  //! Get the procrustes transforms (one vector per domain)
+  std::vector<std::vector<double>> get_procrustes_transforms() const;
+  //! Set the procrustes transforms (one vector per domain)
+  void set_procrustes_transforms(std::vector<std::vector<double>> transforms);
 
   //! Get the group values
   std::map<std::string, std::string> get_group_values() const;
@@ -75,6 +87,10 @@ public:
   //! Get extra values (extra columns we don't interpret)
   std::map<std::string, std::string> get_extra_values() const;
   void set_extra_values(std::map<std::string, std::string> extra_values);
+
+  //! Get all table values
+  std::map<std::string, std::string> get_table_values() const;
+  void set_table_values(std::map<std::string, std::string> table_values);
 
   //! Get the display name
   std::string get_display_name();
@@ -91,10 +107,13 @@ private:
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
+  std::vector<std::string> landmarks_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
+  std::vector<std::vector<double>> procrustes_transforms_;
 
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
+  std::map<std::string, std::string> table_values_;
 };
 }

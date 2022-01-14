@@ -11,12 +11,11 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
+#include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
-
-#include <Analysis/ShapeEvaluationWorker.h>
 
 class Ui_AnalysisTool;
 class JKQTPlotter;
@@ -29,8 +28,13 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 
 class AnalysisTool : public QWidget {
-Q_OBJECT;
+  Q_OBJECT;
 public:
+
+    enum AlignmentType {
+    Global = -2,
+    Local = -1,
+  };
 
   using PointType = itk::Point<double, 3>;
 
@@ -130,6 +134,8 @@ public Q_SLOTS:
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
+  std::string get_display_feature_map();
+
   void group_changed();
 
   bool groups_active();
@@ -148,10 +154,11 @@ public Q_SLOTS:
 
   void group_p_values_clicked();
 
-  void handle_eval_thread_complete(ShapeEvaluationWorker::JobType job_type, Eigen::VectorXd data);
-  void handle_eval_thread_progress(ShapeEvaluationWorker::JobType job_type, float progress);
+  void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
+  void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
 
   void handle_group_pvalues_complete();
+  void handle_alignment_changed(int new_alignment);
 
 signals:
 
@@ -165,7 +172,7 @@ signals:
 
 private:
 
-  void create_plot(JKQTPlotter *plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
+  void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
 
   void compute_reconstructed_domain_transforms();
 
@@ -178,10 +185,11 @@ private:
   bool group_pvalues_valid();
 
   //! Break apart combined points into per-domain
-  StudioParticles convert_from_combined(const vnl_vector<double>& points);
+  StudioParticles convert_from_combined(const Eigen::VectorXd& points);
 
   void update_group_boxes();
   void update_group_values();
+  void update_domain_alignment_box();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 
@@ -201,7 +209,7 @@ private:
   Eigen::VectorXd eval_generalization_;
 
   vnl_vector<double> empty_shape_;
-  vnl_vector<double> temp_shape_;
+  Eigen::VectorXd temp_shape_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
@@ -223,6 +231,6 @@ private:
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
 
+  AlignmentType current_alignment_{AlignmentType::Local};
 };
-
 }

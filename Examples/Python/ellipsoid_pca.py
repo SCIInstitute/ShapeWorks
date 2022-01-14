@@ -6,13 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import sys
 
 def Run_Pipeline(args):
 
     ellipsoids_dir = 'Output/ellipsoid'
-    shape_models_dir = ellipsoids_dir+'/shape_models/128'
+    shape_models_dir = ellipsoids_dir+'/shape_models/multiscale'
     if args.tiny_test:
-        shape_models_dir = ellipsoids_dir+'/shape_models/32'
+        shape_models_dir = ellipsoids_dir+'/shape_models/tiny_test_multiscale'
     if not os.path.exists(shape_models_dir):
         print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
         sys.exit(1)

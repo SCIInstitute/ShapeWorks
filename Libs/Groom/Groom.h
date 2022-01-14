@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GroomParameters.h>
+
 #include <Libs/Project/Project.h>
 #include <Libs/Image/Image.h>
 
@@ -51,16 +53,30 @@ private:
   void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
-  bool image_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool image_pipeline(std::shared_ptr<Subject> subject, size_t domain);
+
+  bool run_image_pipeline(Image& image, GroomParameters params);
 
   //! Run the mesh based pipeline on a single subject
-  bool mesh_pipeline(std::shared_ptr<Subject> subject, int domain);
+  bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
+
+  bool run_mesh_pipeline(Mesh& mesh, GroomParameters params);
 
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
 
-  Vector3 center(Image& image);
-  void isolate(Image& image);
+  bool run_alignment();
+
+  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
+
+  static std::vector<double> get_identity_transform();
+  static void add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string& reflect_axis);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image& image);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh& mesh);
+
+  Mesh get_mesh(int subject, int domain);
+
+  void fix_origin(Image& image);
 
   bool verbose_ = false;
 

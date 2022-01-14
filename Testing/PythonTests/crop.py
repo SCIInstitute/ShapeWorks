@@ -1,5 +1,8 @@
 import os
+import sys
 from shapeworks import *
+
+success = True
 
 def cropTest1():
   img = Image(os.environ["DATA"] + "/seg.ellipsoid_1.nrrd")
@@ -15,7 +18,7 @@ def cropTest1():
 
   return img.compare(compareImg)
 
-utils.test(cropTest1)
+success &= utils.test(cropTest1)
 
 def cropTest2():
   img1 = Image(os.environ["DATA"] + "/many/seg.ellipsoid_1.nrrd")
@@ -29,4 +32,19 @@ def cropTest2():
 
   return img1.compare(compareImg)
 
-utils.test(cropTest2)
+success &= utils.test(cropTest2)
+
+def cropTest3():
+  img = Image(os.environ["DATA"] + "/seg.ellipsoid_1.nrrd")
+  img.crop(img.physicalBoundingBox(0.5))
+  img.write(os.environ["DATA"] + "/ellipsoid_crop.nrrd")
+  img.resample(1.0)
+
+  cropped = Image(os.environ["DATA"] + "/ellipsoid_crop.nrrd")
+  cropped.resample(1.0)
+
+  return img.compare(cropped)
+
+success &= utils.test(cropTest3)
+
+sys.exit(not success)

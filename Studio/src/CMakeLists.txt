@@ -144,11 +144,11 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
-  Analysis/ShapeEvaluationWorker.cpp
+  Analysis/ShapeEvaluationJob.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
-  Analysis/ShapeEvaluationWorker.h
+  Analysis/ShapeEvaluationJob.h
   )
 
 SET(STUDIO_DEEPSSM_SRCS
@@ -284,7 +284,7 @@ if(WIN32)
   add_custom_command(TARGET ShapeWorksStudio
     POST_BUILD
     # copy Qt libs
-    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql
+    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql -xml -printsupport
                                 --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )

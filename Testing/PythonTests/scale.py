@@ -3,6 +3,8 @@ import sys
 from typing import Type
 from shapeworks import *
 
+success = True
+
 def scaleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.scale([1.0, 2.0, 2.0])
@@ -11,7 +13,7 @@ def scaleTest1():
 
   return img.compare(compareImg)
 
-utils.test(scaleTest1)
+success &= utils.test(scaleTest1)
 
 def scaleTest2():
   img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
@@ -21,7 +23,7 @@ def scaleTest2():
 
   return img.compare(compareImg)
 
-utils.test(scaleTest2)
+success &= utils.test(scaleTest2)
 
 def scaleTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -31,7 +33,7 @@ def scaleTest3():
 
   return mesh == compareMesh
 
-utils.test(scaleTest3)
+success &= utils.test(scaleTest3)
 
 def scaleTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -41,7 +43,7 @@ def scaleTest4():
 
   return mesh == compareMesh
 
-utils.test(scaleTest4)
+success &= utils.test(scaleTest4)
 
 def scalefailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -51,4 +53,6 @@ def scalefailTest():
 
   return img.compare(compareImg)
 
-utils.expectException(scalefailTest, TypeError)
+success &= utils.expectException(scalefailTest, TypeError)
+
+sys.exit(not success)

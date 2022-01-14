@@ -91,23 +91,33 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
                                 m_CuttingPlanes[i][j].c);
-        std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
+        if(m_verbosity >= 1) std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
       }
     }
 
+    // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
-        std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
+         if(m_verbosity >= 1) std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
       }
     }
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
+
+      // Adding free-form constraints to constraint object
+      //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+      if (m_FFCs.size() > 1) {
+          for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
+            initialize_ffcs(i);
+          }
+      }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -369,6 +379,19 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
+void Sampler::AddFreeFormConstraint(unsigned int i,
+                                    const std::vector<std::vector<Eigen::Vector3d> > boundaries,
+                                    const Eigen::Vector3d query)
+{
+  if (m_FFCs.size() < i + 1) {
+    m_FFCs.resize(i + 1);
+  }
+
+  m_FFCs[i].push_back(FFCType());
+  m_FFCs[i][m_FFCs[i].size() - 1].boundaries = boundaries;
+  m_FFCs[i][m_FFCs[i].size() - 1].query = query;
+}
+
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
@@ -380,11 +403,34 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     // (e.g. narrow band of 4 means 4 voxels (largest side)
     double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
     domain->SetImage(image, narrow_band_world);
+
+    // Adding meshes for FFCs
+    vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
+    this->m_meshes.push_back(mesh);
   }
 
   domain->SetDomainID(m_DomainList.size());
   domain->SetDomainName(name);
   m_DomainList.push_back(domain);
+}
+
+bool Sampler::initialize_ffcs(size_t dom)
+{
+  auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
+
+  for (size_t i = 0; i < m_FFCs[dom].size(); i++) {
+    if(m_verbosity >= 1) std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+    mesh->splitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
+  }
+
+  this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
+
+#if defined(VIZFFC)
+  MeshUtils mutil;
+  mutil.visualizeVectorFieldForFFCs(mesh);
+#endif
+
+  return true;
 }
 
 } // end namespace

@@ -17,8 +17,7 @@
 #include <Data/PreferencesWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 
-#include <vnl_vector.h>
-
+#include <Eigen/Eigen>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -105,7 +104,9 @@ public Q_SLOTS:
 
   void handle_display_setting_changed();
   void handle_glyph_changed();
+  void handle_opacity_changed();
 
+  void handle_alignment_changed();
   void handle_open_recent();
 
   void handle_color_scheme();
@@ -119,6 +120,8 @@ public Q_SLOTS:
   void handle_clear_cache();
 
   void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_scale();
+
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
@@ -139,7 +142,7 @@ private:
   void update_view_mode();
   void reset_num_viewers();
 
-  static bool write_particle_file(std::string filename, vnl_vector<double> particles);
+  static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
   enum VIEW_MODE {
     ORIGINAL = 0,
@@ -165,6 +168,9 @@ private:
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
 
+
+  std::string get_tool_state();
+
   void disable_all_actions();
 
   void enable_possible_actions();
@@ -188,6 +194,7 @@ private:
   void set_feature_uniform_scale(bool value);
 
   void update_recent_files();
+  void update_alignment_options();
 
   void save_project(std::string filename);
 
@@ -195,6 +202,9 @@ private:
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
   void set_message(MessageType message_type, QString message);
+
+  void create_glyph_submenu();
+  void create_iso_submenu();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -227,6 +237,8 @@ private:
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
+  std::vector<QSlider*> iso_opacity_sliders_;
+
 
   QString current_message_;
 

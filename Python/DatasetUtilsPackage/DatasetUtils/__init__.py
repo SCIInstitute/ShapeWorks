@@ -1,4 +1,13 @@
 from DatasetUtils import GirderConnector
+import hashlib
+
+def sha1(filename):
+    """ sha1 of a file """
+    hash_algo = hashlib.sha1()
+    with open(filename, "rb") as file:
+        for chunk in iter(lambda: file.read(4096), b""):
+            hash_algo.update(chunk)
+    return hash_algo.hexdigest()
 
 # Note that the loginState parameter is there for easy testing in the future.
 # The testing library can just use a login state rather than having to simulate user input to log in.
@@ -33,6 +42,10 @@ def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = T
         if fileList is not None:
             print('Downloading', len(fileList), 'specified files')
         GirderConnector.downloadDataset(accessToken, datasetName, destinationPath, fileList)
+        for f in fileList:
+            sha = sha1(destinationPath + "/" + f)
+            print(f"sha1 : {f} : {sha}")
+
 
     print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
 

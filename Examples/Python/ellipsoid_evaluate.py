@@ -13,9 +13,9 @@ import numpy as np
 
 def Run_Pipeline(args):
     ellipsoids_dir = 'Output/ellipsoid'
-    shape_models_dir = f'{ellipsoids_dir}/shape_models/128'
+    shape_models_dir = f'{ellipsoids_dir}/shape_models/multiscale'
     if args.tiny_test:
-        shape_models_dir = f'{ellipsoids_dir}/shape_models/32'
+        shape_models_dir = f'{ellipsoids_dir}/shape_models/tiny_test_multiscale'
     if not os.path.exists(shape_models_dir):
         print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
         sys.exit(1)
@@ -27,6 +27,10 @@ def Run_Pipeline(args):
 
     # get the list of all the world particles
     particleFilesList = glob.glob(shape_models_dir+"/*world.particles")
+    if(len(particleFilesList)==0):
+        print(f'Shape model file at {shape_models_dir} empty. No particle files found',file=sys.stderr)
+        print(f'Please run the ellipsoid use case first.', file=sys.stderr)
+        sys.exit(1)
     # read all he particles files into a particleSystem object
     particleSystem = sw.ParticleSystem(particleFilesList)
 
@@ -43,8 +47,8 @@ def Run_Pipeline(args):
 
     # Calculate compactness and saved the values in scree.txt
     # Get the compactness of a specific mode 
-    nCompactness = sw.ShapeEvaluation.ComputeCompactness(particleSystem=particleSystem,nModes=3)
-    print("Compactness value of the 3rd mode - ", nCompactness)
+    nCompactness = sw.ShapeEvaluation.ComputeCompactness(particleSystem=particleSystem,nModes=1)
+    print("Compactness value of the 1st mode - ", nCompactness)
 
     # Get compactness of all the modes
     allCompactness = sw.ShapeEvaluation.ComputeFullCompactness(particleSystem=particleSystem)
@@ -71,8 +75,8 @@ def Run_Pipeline(args):
 
     # Calculate generalization
     # Get the generalization of a specific mode and saves the reconstructions
-    nGeneralization = sw.ShapeEvaluation.ComputeGeneralization(particleSystem=particleSystem, nModes=3,saveTo=save_dir)
-    print("Generalization value of the 3rd mode - ", nGeneralization)
+    nGeneralization = sw.ShapeEvaluation.ComputeGeneralization(particleSystem=particleSystem, nModes=1,saveTo=save_dir)
+    print("Generalization value of the 1st mode - ", nGeneralization)
 
     #Get generalization values for all modes
     allGeneralization = sw.ShapeEvaluation.ComputeFullGeneralization(particleSystem=particleSystem)
@@ -101,8 +105,8 @@ def Run_Pipeline(args):
     save_dir = eval_dir + '/specificity/'
 
     # Calculate specificity of a given mode and saves the reconstructions
-    nSpecificity = sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particleSystem, nModes=3,saveTo=save_dir)
-    print("Specificity value of the 3rd mode - ", nSpecificity)
+    nSpecificity = sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particleSystem, nModes=1,saveTo=save_dir)
+    print("Specificity value of the 1st mode - ", nSpecificity)
 
     #Get specificity values for all modes
     allSpecificity = sw.ShapeEvaluation.ComputeFullSpecificity(particleSystem=particleSystem)
