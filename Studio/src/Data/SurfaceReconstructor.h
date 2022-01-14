@@ -72,7 +72,7 @@ public:
 
   bool get_surface_reconstruction_available();
 
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
+  vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::VectorXd& shape);
 
 private:
   ReconstructionType reconstructor_;

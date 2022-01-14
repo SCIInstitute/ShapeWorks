@@ -103,7 +103,7 @@ void LegacyMeshGenerator::setSmoothingAmount(float amount)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh(const Eigen::VectorXd& shape)
 {
   // copy shape points into point set
   int numPoints = shape.size() / 3;

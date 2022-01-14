@@ -29,7 +29,7 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
     points.resize(domain + 1);
   }
 
-  vnl_vector<double> vector(particles.size() * 3);
+  Eigen::VectorXd vector(particles.size() * 3);
   int idx = 0;
 
   for (int i = 0; i < particles.size(); i++) {
@@ -43,13 +43,13 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
 }
 
 //---------------------------------------------------------------------------
-std::vector<vnl_vector<double>> StudioParticles::get_local_particles()
+std::vector<Eigen::VectorXd> StudioParticles::get_local_particles()
 {
   return this->local_particles_;
 }
 
 //---------------------------------------------------------------------------
-std::vector<vnl_vector<double>> StudioParticles::get_world_particles()
+std::vector<Eigen::VectorXd> StudioParticles::get_world_particles()
 {
   return this->transformed_global_particles_;
 }
@@ -68,7 +68,7 @@ std::vector<itk::Point<double>> StudioParticles::get_world_points(int domain)
 
 //---------------------------------------------------------------------------
 std::vector<itk::Point<double>>
-StudioParticles::vnl_to_point_vector(const vnl_vector<double>& vnl)
+StudioParticles::vnl_to_point_vector(const Eigen::VectorXd& vnl)
 {
   std::vector<itk::Point<double>> points;
 
@@ -83,27 +83,27 @@ StudioParticles::vnl_to_point_vector(const vnl_vector<double>& vnl)
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::get_local_particles(int domain)
+Eigen::VectorXd StudioParticles::get_local_particles(int domain)
 {
   assert(domain < this->local_particles_.size());
   return this->local_particles_[domain];
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::get_world_particles(int domain)
+Eigen::VectorXd StudioParticles::get_world_particles(int domain)
 {
   assert(domain < this->global_particles_.size());
   return this->transformed_global_particles_[domain];
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::get_raw_world_particles(int domain)
+Eigen::VectorXd StudioParticles::get_raw_world_particles(int domain)
 {
   return this->global_particles_[domain];
 }
 
 //---------------------------------------------------------------------------
-void StudioParticles::set_local_particles(int domain, vnl_vector<double> particles)
+void StudioParticles::set_local_particles(int domain, Eigen::VectorXd particles)
 {
   if (domain >= local_particles_.size()) {
     local_particles_.resize(domain + 1);
@@ -113,7 +113,7 @@ void StudioParticles::set_local_particles(int domain, vnl_vector<double> particl
 }
 
 //---------------------------------------------------------------------------
-void StudioParticles::set_world_particles(int domain, vnl_vector<double> particles)
+void StudioParticles::set_world_particles(int domain, Eigen::VectorXd particles)
 {
   if (domain >= global_particles_.size()) {
     global_particles_.resize(domain + 1);
@@ -123,26 +123,27 @@ void StudioParticles::set_world_particles(int domain, vnl_vector<double> particl
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::get_combined_local_particles()
+Eigen::VectorXd StudioParticles::get_combined_local_particles()
 {
   return combine(this->local_particles_);
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::get_combined_global_particles()
+Eigen::VectorXd StudioParticles::get_combined_global_particles()
 {
   return combine(this->transformed_global_particles_);
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioParticles::combine(const std::vector<vnl_vector<double>>& vnl)
+Eigen::VectorXd StudioParticles::combine(const std::vector<Eigen::VectorXd>& vnl)
 {
-  vnl_vector<double> points;
+  Eigen::VectorXd points;
   int size = 0;
   for (int i = 0; i < vnl.size(); i++) {
     size += vnl[i].size();
   }
-  points.set_size(size);
+  points.resize(size);
+  // points.set_size(size);
   int idx = 0;
   for (int i = 0; i < vnl.size(); i++) {
     for (int j = 0; j < vnl[i].size(); j++) {
@@ -190,7 +191,7 @@ void StudioParticles::transform_global_particles()
   else {
     //std::cerr << "we do have a transform\n";
     for (int d = 0; d < this->local_particles_.size(); d++) {
-      vnl_vector<double> vnl = this->local_particles_[d];
+      Eigen::VectorXd vnl = this->local_particles_[d];
 
       for (size_t i = 0; i < vnl.size(); i += 3) {
         double pt[3];
