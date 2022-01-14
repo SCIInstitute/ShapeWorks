@@ -91,8 +91,6 @@ private:
 
   bool warp_available_ = false;
 
-  bool is_contour_ = false;
-
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh
