@@ -73,13 +73,13 @@ public:
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
   /// Get the global correspondence points
-  vnl_vector<double> get_global_correspondence_points();
+  Eigen::VectorXd get_global_correspondence_points();
 
   /// Get the global correspondence points for display
-  vnl_vector<double> get_global_correspondence_points_for_display();
+  Eigen::VectorXd get_global_correspondence_points_for_display();
 
   /// Get the local correspondence points
-  vnl_vector<double> get_local_correspondence_points();
+  Eigen::VectorXd get_local_correspondence_points();
 
   void clear_reconstructed_mesh();
 
@@ -148,7 +148,7 @@ private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
                        bool save_transform, bool wait = false);
 
-  static bool import_point_file(QString filename, vnl_vector<double>& points);
+  static bool import_point_file(QString filename, Eigen::VectorXd& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void load_feature_from_mesh(std::string feature, MeshHandle mesh);
