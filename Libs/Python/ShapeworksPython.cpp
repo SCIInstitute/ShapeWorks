@@ -35,6 +35,7 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "ReconstructSurface.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
@@ -269,12 +270,19 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("applyTransform",
        [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
-          Image::InterpolationType interp) -> decltype(auto){
+          Image::InterpolationType interp, bool meshTransform) -> decltype(auto){
+         if (meshTransform) {
+          eigen_mat = eigen_mat.inverse();
+          Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
+          Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
+          eigen_mat.col(eigen_mat.cols()-1) = lastRow;
+          eigen_mat.row(eigen_mat.rows()-1) = lastColumn;
+         }
          auto itk_xform = eigen44ToItkTransform(eigen_mat);
          return image.applyTransform(itk_xform, interp);
        },
        "applies the given transformation to the image by using the specified resampling filter (Linear or NearestNeighbor)",
-       "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+       "transform"_a, "interp"_a=Image::InterpolationType::Linear, "meshTransform"_a=false)
 
   .def("applyTransform",
        [](Image &image, ImageUtils::TPSTransform::Pointer transform,
@@ -291,7 +299,14 @@ PYBIND11_MODULE(shapeworks_py, m)
           const std::vector<unsigned>& d,
           const std::vector<double>& v,
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
-          Image::InterpolationType interp) {
+          Image::InterpolationType interp, bool meshTransform) {
+         if (meshTransform) {
+          eigen_mat = eigen_mat.inverse();
+          Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
+          Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
+          eigen_mat.col(eigen_mat.cols()-1) = lastRow;
+          eigen_mat.row(eigen_mat.rows()-1) = lastColumn;
+         }
          auto itk_xform = eigen44ToItkTransform(eigen_mat);
          return image.applyTransform(itk_xform,
                                      Point({p[0], p[1], p[2]}),
@@ -302,7 +317,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        },
        "applies the given transformation to the image by using resampling filter with new origin, dims, spacing, and sampling along given direction axes (a 3x3 row-major matrix) using the specified interpolation method (Linear or NearestNeighbor)",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
-       "interp"_a=Image::InterpolationType::NearestNeighbor)
+       "interp"_a=Image::InterpolationType::NearestNeighbor, "meshTransform"_a=false)
 
   .def("extractLabel",
        &Image::extractLabel,
@@ -932,12 +947,19 @@ PYBIND11_MODULE(shapeworks_py, m)
        "target"_a, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
 
   .def("applyTransform",
-       [](Mesh &mesh, Eigen::Matrix<double, 4, 4> &eigen_mat) -> decltype(auto){
+       [](Mesh &mesh, Eigen::Matrix<double, 4, 4> &eigen_mat, bool imageTransform) -> decltype(auto){
+         if (imageTransform) {
+          Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
+          Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
+          eigen_mat.col(eigen_mat.cols()-1) = lastRow;
+          eigen_mat.row(eigen_mat.rows()-1) = lastColumn;
+          eigen_mat = eigen_mat.inverse();
+         }
          auto vtk_xform = eigen44ToVtkTransform(eigen_mat);
          return mesh.applyTransform(vtk_xform);
        },
        "applies the given transformation to the mesh",
-       "transform"_a)
+       "transform"_a, "imageTransform"_a=false)
 
   .def("fillHoles",
        &Mesh::fillHoles,
@@ -1305,6 +1327,100 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("percentVarByMode",
        &ParticleShapeStatistics::PercentVarByMode,
        "return the variance accounted for by the principal components")
+  ;
+
+  py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
+
+  .def(py::init<>())
+
+  .def(py::init<const std::string &, const std::string &, const std::string &>())
+
+  .def("setOutPrefix",
+       &ReconstructSurface<ThinPlateSplineTransform>::setOutPrefix,
+       "prefix"_a)
+
+  .def("setOutPath",
+       &ReconstructSurface<ThinPlateSplineTransform>::setOutPath,
+       "path"_a)
+
+  .def("setModeIndex",
+       &ReconstructSurface<ThinPlateSplineTransform>::setModeIndex,
+       "modeIndex"_a)
+
+  .def("setNumOfModes",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfModes,
+       "numOfModes"_a)
+
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setNumOfParticles",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfParticles,
+       "numOfParticles"_a)
+
+  .def("setMaxStdDev",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxStdDev,
+       "maxStdDev"_a)
+
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a) 
+
+  .def("surface",
+       &ReconstructSurface<ThinPlateSplineTransform>::surface,
+       "localPointsFiles"_a)
+
+  .def("samplesAlongPCAModes",
+       &ReconstructSurface<ThinPlateSplineTransform>::samplesAlongPCAModes,
+       "worldPointsFiles"_a)
+  ;
+
+  py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
+
+  .def(py::init<>())
+
+  .def(py::init<const std::string &, const std::string &, const std::string &>())
+
+  .def("setOutPrefix",
+       &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
+       "prefix"_a)
+
+    .def("setOutPath",
+       &ReconstructSurface<RBFSSparseTransform>::setOutPath,
+       "path"_a)
+
+  .def("setModeIndex",
+       &ReconstructSurface<RBFSSparseTransform>::setModeIndex,
+       "modeIndex"_a)
+
+  .def("setNumOfModes",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfModes,
+       "numOfModes"_a)
+
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setNumOfParticles",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfParticles,
+       "numOfParticles"_a)
+
+  .def("setMaxStdDev",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxStdDev,
+       "maxStdDev"_a)
+
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
+
+  .def("surface",
+       &ReconstructSurface<RBFSSparseTransform>::surface,
+       "localPointsFiles"_a)
+
+  .def("samplesAlongPCAModes",
+       &ReconstructSurface<RBFSSparseTransform>::samplesAlongPCAModes,
+       "worldPointsFiles"_a)
   ;
 
   // Optimize (TODO)
