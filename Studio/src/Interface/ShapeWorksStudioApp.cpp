@@ -49,6 +49,9 @@ static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
 
+const QString qss_green_background = QString("background-color: %1").arg(QColor(Qt::green).name());
+const QString qss_empty;
+
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
@@ -233,6 +236,17 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
+
+  this->ui_->show_groomed_surfaces->setChecked(false);
+  this->ui_->show_reconstructed_surfaces->setChecked(false);
+  this->ui_->show_groomed_surfaces->setEnabled(false);
+  this->ui_->show_reconstructed_surfaces->setEnabled(false);
+
+  connect(this->ui_->show_groomed_surfaces, &QToolButton::clicked, this,
+          &ShapeWorksStudioApp::toggle_show_groomed_surfaces);
+
+  connect(this->ui_->show_reconstructed_surfaces, &QToolButton::clicked, this,
+          &ShapeWorksStudioApp::toggle_show_reconstructed_surfaces);  
 
   connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
@@ -1012,11 +1026,31 @@ void ShapeWorksStudioApp::update_view_mode()
   auto view_mode = this->get_view_mode();
   this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
+  this->ui_->show_groomed_surfaces->setEnabled(false);
+  this->ui_->show_reconstructed_surfaces->setEnabled(false);
+
+  bool superimpose = false;
+
+  if (view_mode == Visualizer::MODE_GROOMED_C)
+  {
+    this->ui_->show_reconstructed_surfaces->setEnabled(true);
+    if (this->ui_->show_reconstructed_surfaces->isChecked())
+      superimpose = true;
+  }
+  else if (view_mode == Visualizer::MODE_RECONSTRUCTION_C)
+  {
+    this->ui_->show_groomed_surfaces->setEnabled(true);
+    if (this->ui_->show_groomed_surfaces->isChecked())
+      superimpose = true;
+  }
+
+  // Features map
   auto feature_map = this->get_feature_map();
   this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
   if (this->visualizer_) {
     this->visualizer_->set_display_mode(view_mode);
+    this->visualizer_->set_superimpose_surfaces(superimpose);
     if (feature_map == "-none-") { feature_map = ""; }
     this->analysis_tool_->set_feature_map(feature_map);
 
@@ -1051,6 +1085,28 @@ void ShapeWorksStudioApp::update_view_mode()
     this->update_feature_map_scale();
     this->update_display(true);
   }
+}
+
+void ShapeWorksStudioApp::toggle_show_groomed_surfaces()
+{
+  if (this->ui_->show_groomed_surfaces->isChecked())
+    this->ui_->show_groomed_surfaces->setStyleSheet(qss_green_background);
+  else
+    this->ui_->show_groomed_surfaces->setStyleSheet(qss_empty);
+  if (visualizer_)
+    visualizer_->set_superimpose_surfaces(this->ui_->show_groomed_surfaces->isChecked());
+  this->update_display(true);
+}
+
+void ShapeWorksStudioApp::toggle_show_reconstructed_surfaces()
+{
+  if (this->ui_->show_reconstructed_surfaces->isChecked())
+    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_green_background);
+  else
+    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_empty);
+  if (visualizer_)
+    visualizer_->set_superimpose_surfaces(this->ui_->show_reconstructed_surfaces->isChecked());
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1776,14 +1832,46 @@ void ShapeWorksStudioApp::compute_mode_shape()
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 {
+  bool do_update_view_mode = false;
   if (view_mode != this->get_view_mode()) {
     if (!this->is_loading_) {
       this->session_->parameters().set("view_state", view_mode);
     }
-    this->update_view_mode();
-    return true;
+    do_update_view_mode = true;
   }
-  return false;
+
+  // Update toogle show button for surfaces
+  if (do_update_view_mode || this->is_loading_)
+  {
+    bool show_groomed_surfaces = false;
+    bool show_reconstructed_surfaces = false;
+
+    if (view_mode == Visualizer::MODE_GROOMED_C)
+    {
+      show_groomed_surfaces = true;
+    }
+    else if (view_mode == Visualizer::MODE_RECONSTRUCTION_C)
+    {
+      show_reconstructed_surfaces = true;
+    }
+
+    this->ui_->show_groomed_surfaces->setChecked(show_groomed_surfaces);
+    if (show_groomed_surfaces)
+      this->ui_->show_groomed_surfaces->setStyleSheet(qss_green_background);
+    else
+      this->ui_->show_groomed_surfaces->setStyleSheet(qss_empty);
+
+    this->ui_->show_reconstructed_surfaces->setChecked(show_reconstructed_surfaces);
+    if (show_reconstructed_surfaces)
+      this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_green_background);
+    else
+      this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_empty);
+  }
+  
+  if (do_update_view_mode)
+    this->update_view_mode();
+
+  return do_update_view_mode;
 }
 
 //---------------------------------------------------------------------------

@@ -43,6 +43,10 @@ public:
   //! get centering on/off
   bool get_center();
 
+  void set_superimpose_surfaces(bool superimpose) { superimpose_surfaces_ = superimpose; }
+
+  bool get_superimpose_surfaces() const { return superimpose_surfaces_; }
+
   //! set the alignment domain
   void set_alignment_domain(int domain);
   //! get the current alignment domain
@@ -145,6 +149,7 @@ private:
 
   bool center_;
   bool needs_camera_reset_ = true;
+  bool superimpose_surfaces_ = false; /** If true, superimpose groomed and reconstructed surfaces  */
 
   bool show_glyphs_;
   bool show_surface_;

@@ -91,6 +91,9 @@ public Q_SLOTS:
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
+  void toggle_show_groomed_surfaces();
+  void toggle_show_reconstructed_surfaces();
+
   void handle_pca_changed();
   void handle_slider_update();
 
