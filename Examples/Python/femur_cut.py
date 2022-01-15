@@ -71,10 +71,8 @@ def Run_Pipeline(args):
         The required grooming steps are:
         1. Apply smoothing and remeshing and save groomed meshes
         2. Find reflection tansfrom
-        3. Find centering transform
-        4. Select reference mesh
-        5. Find rigid alignment transform
-        6. Combine transfroms and 
+        3. Select reference mesh
+        4. Find rigid alignment transform
         Option to groom corresponding images (includes applying transforms)
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -115,7 +113,7 @@ def Run_Pipeline(args):
         center_translations = []
         for mesh, name in zip(mesh_list, names):
             """
-            Grooming Step 1: Get reflection transform - We have left and 
+            Grooming Step 2: Get reflection transform - We have left and 
             right femurs, so we reflect the non-reference side meshes 
             so that all of the femurs can be aligned.
             """
@@ -126,17 +124,8 @@ def Run_Pipeline(args):
                 mesh.applyTransform(reflection)
             reflections.append(reflection)
 
-            """
-            Grooming Step 3: Centering
-            """
-            print("Finding centering transform for: " + name)
-            translation = np.eye(4) # Identity
-            translation[:3,-1] = -mesh.center() # Translate center to (0,0,0)
-            mesh.applyTransform(translation)
-            center_translations.append(translation)
-
         """
-        Grooming Step 4: Select a reference
+        Grooming Step 3: Select a reference
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
@@ -149,7 +138,7 @@ def Run_Pipeline(args):
         rigid_transforms = [] # save in case grooming images
         for mesh, name in zip(mesh_list, names):
             """
-            Grooming Step 5: Rigid alignment
+            Grooming Step 4: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
             print('Finding alingment transfrom from ' + name + ' to ' + ref_name)
@@ -157,12 +146,11 @@ def Run_Pipeline(args):
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
             rigid_transforms.append(rigid_transform)
-            mesh.applyTransform(rigid_transform)
 
         # Combine transforms to pass to optimizer
         transforms = []
-        for reflection, translation, rigid_transform in zip(reflections, center_translations, rigid_transforms):
-            transforms.append(np.matmul(rigid_transform, np.matmul(translation, reflection)))
+        for reflection, rigid_transform in zip(reflections, rigid_transforms):
+            transforms.append(np.matmul(rigid_transform, reflection))
     
         """
         Groom images
@@ -171,7 +159,7 @@ def Run_Pipeline(args):
             # Load corresponding images
             print("\nGrooming images:")
             image_list = []
-            for name, reflection, translation in zip(names, reflections, center_translations):
+            for name, reflection in zip(names, reflections):
                 # Get corresponding image path
                 prefix = name.split("_")[0]
                 for index in range(len(image_files)):
@@ -183,9 +171,6 @@ def Run_Pipeline(args):
                 # Apply reflection to image
                 print("Reflecting image: " + name)
                 image.applyTransform(reflection)
-                # Apply centering to image
-                print("Centering image: " + name)
-                image.setOrigin(image.origin() + translation[:3,-1])
                 image_list.append(image)
             # Get reference image
             ref_image = image_list[ref_index].copy()
