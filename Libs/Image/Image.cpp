@@ -108,12 +108,9 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
   try {
     reader->Update();
   }
-  catch (shapeworks::Exception &exp) {
-    throw std::invalid_argument(exp.message());
+  catch (itk::ExceptionObject &exp) {
+    throw shapeworks_exception(std::string(exp.what()));
   }
-  // catch (itk::ExceptionObject &exp) {
-    // throw std::invalid_argument(std::string(exp.what()));
-  // }
 
   // reorient the image to RAI if it's not already
   ImageType::Pointer img = reader->GetOutput();

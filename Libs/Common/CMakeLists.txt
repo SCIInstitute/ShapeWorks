@@ -3,6 +3,7 @@ set(Common_sources
   Shapeworks.cpp
   ShapeworksUtils.cpp
   Region.cpp
+  Exception.cpp
   )
 set(Common_headers
   Shapeworks.h

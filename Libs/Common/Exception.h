@@ -1,17 +1,14 @@
 #pragma once
 
+#include <stdexcept>
+
 namespace shapeworks {
 
-class Exception
+class shapeworks_exception : public std::runtime_error
 {
 public:
-  Exception(const std::string &message) : errorMessage(message) {};
-  ~Exception() {}
-
-  std::string message() { return errorMessage; }
-
-private:
-  std::string errorMessage;
+  shapeworks_exception(char const* const message) throw();
+  shapeworks_exception(std::string const& message) throw();
 
 };
 
