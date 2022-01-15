@@ -85,9 +85,6 @@ def Run_Pipeline(args):
         if not os.path.exists(groom_dir):
             os.makedirs(groom_dir)
 
-        # Set reference side (arbitrary)
-        ref_side = "L" # chosen so reflection happens in tiny test 
-
         """
         To begin grooming, we loop over the files and load the meshes
         """
@@ -112,6 +109,8 @@ def Run_Pipeline(args):
         groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list,
                             names, extension='vtk', compressed=False, verbose=True)
 
+        # Set reference side (arbitrary)
+        ref_side = "L" # chosen so reflection happens in tiny test 
         reflections = [] 
         center_translations = []
         for mesh, name in zip(mesh_list, names):
@@ -160,11 +159,10 @@ def Run_Pipeline(args):
             rigid_transforms.append(rigid_transform)
             mesh.applyTransform(rigid_transform)
 
-
         # Combine transforms to pass to optimizer
         transforms = []
         for reflection, translation, rigid_transform in zip(reflections, center_translations, rigid_transforms):
-            transforms.append(np.matmul(np.matmul(reflection, translation), rigid_transform))
+            transforms.append(np.matmul(rigid_transform, np.matmul(translation, reflection)))
     
         """
         Groom images
@@ -288,3 +286,6 @@ def Run_Pipeline(args):
 
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
+
+    AnalysisCmd = ('ShapeWorksStudio ' + output_directory + "shape_models/proj_parm.xlsx").split()
+    subprocess.check_call(AnalysisCmd)
