@@ -83,9 +83,9 @@ public:
 
   void updateSlider();
   
-  void updateMcaSlider(); //TODO: Check correct usage
+  void updateMcaSlider();
 
-  void reset_stats(); //TODO: add for mca
+  void reset_stats(); //TODO: ensure proper usage with mlpca
   void enable_actions(bool newly_enabled = false);
 
   StudioParticles get_mean_shape_points();
@@ -100,7 +100,7 @@ public:
 
   ShapeHandle get_mca_mode_shape(int mode, double value, int level);
 
-  ParticleShapeStatistics get_stats(); // make changes here
+  ParticleShapeStatistics get_stats();
   void load_settings();
   void store_settings();
 

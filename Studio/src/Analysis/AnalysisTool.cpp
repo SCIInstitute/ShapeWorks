@@ -629,10 +629,6 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
   if (mode + 2 > this->stats_.Eigenvalues().size()) {
     mode = this->stats_.Eigenvalues().size() - 2;
   }
-  std::cout << "Entered PCA " << std::endl;
-  std::cout << "eigen vector size  = " << this->stats_.Eigenvectors().rows() << " X " << this->stats_.Eigenvectors().cols() << std::endl;
-  unsigned int sz = this->stats_.Mean().size();
-  std::cout << "sz " << sz << std::endl;
 
   unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
 
@@ -667,67 +663,6 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 
   return this->convert_from_combined(this->temp_shape_);
 }
-
-
-//---------------------------------------------------------------------------
-// StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int level)
-// {
-//  //TODO: for mca
-//  vnl_matrix<double> eigenvectors;
-//  std::vector<double> eigenvalues;
-//  vnl_vector<double> mean;
-//  if(level == 1)
-//  {
-//    eigenvectors = this->stats_.WithinEigenvectors();
-//    eigenvalues = this->stats_.WithinEigenvalues();
-//    mean = this->stats_.Mean();
-//  }
-//  else if (level == 2)
-//  {
-//    eigenvectors = this->stats_.BetweenEigenvectors();
-//    eigenvalues = this->stats_.BetweenEigenvalues();
-//    mean = this->stats_.Mean();
-//  }
- 
-//  if (!this->compute_stats() || eigenvectors.size() <= 1) {
-//     return StudioParticles();
-//   }
-//   if (mode + 2 > eigenvalues.size()) {
-//     mode = eigenvalues.size() - 2;
-//   }
-//   unsigned int m = eigenvectors.columns() - (mode + 1);
-//   vnl_vector<double> e = eigenvectors.get_column(m);
-//   double lambda = sqrt(eigenvalues[m]);
-//   this->mca_labels_changed(QString::number(value, 'g', 2),
-//                            QString::number(eigenvalues[m]),
-//                            QString::number(value * lambda));
-
-//   std::vector<double> vals;
-//   for (int i = eigenvalues.size() - 1; i > 0; i--) {
-//     vals.push_back(eigenvalues[i]);
-//   }
-//   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
-//   double cumulation = 0;
-//   for (size_t i = 0; i < mode + 1; ++i) {
-//     cumulation += vals[i];
-//   }
-//   if (sum > 0) {
-//     this->ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
-//     this->ui_->mca_cumulative_explained_variance->setText(
-//       QString::number(cumulation / sum * 100, 'f', 1) + "%");
-//   }
-//   else {
-//     this->ui_->mca_explained_variance->setText("");
-//     this->ui_->mca_cumulative_explained_variance->setText("");
-//   }
-
-//   this->temp_shape_mca = mean + (e * (value * lambda));
-//   // see what this does
-//   return this->convert_from_combined(this->temp_shape_mca);
-  
-// }
-
-
 
 //---------------------------------------------------------------------------
 StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int level)
@@ -1103,12 +1038,6 @@ int AnalysisTool::get_mca_level()
   if(between){
     return 2;
   }
-  // if(between){
-  //   return 2;
-  // }
-  // else{
-  //   return 1;
-  // }
 }
 
 //---------------------------------------------------------------------------

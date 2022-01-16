@@ -531,7 +531,6 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
-
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
           q * k * VDimension + (VDimension * j) + 0, i)
@@ -557,6 +556,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
         m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
+
       }
     }
   }
@@ -588,7 +588,6 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_shapes_mca.clear();
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
@@ -675,7 +674,6 @@ int ParticleShapeStatistics::ReloadPointFiles()
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
-
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
           q * k * VDimension + (VDimension * j) + 0, i)
@@ -728,10 +726,6 @@ int ParticleShapeStatistics::ComputeModes()
   vnl_matrix<double> A = m_pointsMinusMean.transpose()
                          * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
   vnl_symmetric_eigensystem<double> symEigen(A);
-
-  std::cout << " For PCA stats m_pointsMinusMean size = " << m_pointsMinusMean.rows() << " X " << m_pointsMinusMean.cols() << std::endl;
-  std::cout << " For PCA stats symEigen.V size = " << symEigen.V.rows() << " X " << symEigen.V.cols() << std::endl;
-
 
   m_eigenvectors = m_pointsMinusMean * symEigen.V;
   m_eigenvalues.resize(m_numSamples);

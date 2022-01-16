@@ -165,23 +165,17 @@ private:
   vnl_matrix<double> m_pooled_covariance;
   vnl_matrix<double> m_eigenvectors;
   std::vector<double> m_eigenvalues;
+  
   // For MCA
   vnl_matrix<double> m_betweenEigenvectors;
   vnl_matrix<double> m_withinEigenvectors;
-
-  vnl_matrix<double> m_between_component_scores;
-  std::vector<vnl_matrix<double>> m_within_component_scores;
-  std::vector<vnl_matrix<double>> m_within_loading_matrix;
-  vnl_matrix<double> m_between_loading_matrix;
-
-
+  std::vector<double> m_betweenEigenvalues;
+  std::vector<double> m_withinEigenvalues;
   vnl_matrix<double> m_pointsMinusMean_for_between;
   vnl_matrix<double> m_pointsMinusMean_for_within;
   vnl_vector<double> m_mean_within;
   vnl_vector<double> m_mean_between;
-  
-  std::vector<double> m_betweenEigenvalues;
-  std::vector<double> m_withinEigenvalues;
+
   vnl_vector<double> m_mean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
