@@ -93,6 +93,7 @@ public Q_SLOTS:
 
   void toggle_show_groomed_surfaces();
   void toggle_show_reconstructed_surfaces();
+  void reset_toggle_show_surfaces();
 
   void handle_pca_changed();
   void handle_slider_update();

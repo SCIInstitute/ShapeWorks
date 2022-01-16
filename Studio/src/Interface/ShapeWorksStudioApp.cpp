@@ -49,7 +49,7 @@ static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
 
-const QString qss_green_background = QString("background-color: %1").arg(QColor(Qt::green).name());
+const QString qss_orange_background = QString("background-color: rgb(170, 81, 0)");
 const QString qss_empty;
 
 //---------------------------------------------------------------------------
@@ -1090,7 +1090,7 @@ void ShapeWorksStudioApp::update_view_mode()
 void ShapeWorksStudioApp::toggle_show_groomed_surfaces()
 {
   if (this->ui_->show_groomed_surfaces->isChecked())
-    this->ui_->show_groomed_surfaces->setStyleSheet(qss_green_background);
+    this->ui_->show_groomed_surfaces->setStyleSheet(qss_orange_background);
   else
     this->ui_->show_groomed_surfaces->setStyleSheet(qss_empty);
   if (visualizer_)
@@ -1101,12 +1101,43 @@ void ShapeWorksStudioApp::toggle_show_groomed_surfaces()
 void ShapeWorksStudioApp::toggle_show_reconstructed_surfaces()
 {
   if (this->ui_->show_reconstructed_surfaces->isChecked())
-    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_green_background);
+    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_orange_background);
   else
     this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_empty);
   if (visualizer_)
     visualizer_->set_superimpose_surfaces(this->ui_->show_reconstructed_surfaces->isChecked());
   this->update_display(true);
+}
+
+void ShapeWorksStudioApp::reset_toggle_show_surfaces()
+{
+  this->ui_->show_groomed_surfaces->setEnabled(false);
+  this->ui_->show_reconstructed_surfaces->setEnabled(false);
+  
+  if (this->get_view_mode()==Visualizer::MODE_GROOMED_C)
+  {
+    this->ui_->show_groomed_surfaces->setStyleSheet(qss_orange_background);
+    this->ui_->show_groomed_surfaces->setChecked(true);
+  }
+  else
+  {
+    this->ui_->show_groomed_surfaces->setStyleSheet(qss_empty);
+    this->ui_->show_groomed_surfaces->setChecked(false);
+  }
+
+  if (this->get_view_mode()==Visualizer::MODE_RECONSTRUCTION_C)
+  {
+    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_orange_background);
+    this->ui_->show_reconstructed_surfaces->setChecked(true);
+  }
+  else
+  {
+    this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_empty);
+    this->ui_->show_reconstructed_surfaces->setChecked(false);
+  }
+
+  if (visualizer_)
+    this->visualizer_->set_superimpose_surfaces(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1417,6 +1448,7 @@ void ShapeWorksStudioApp::update_display(bool force)
         this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        reset_toggle_show_surfaces();
 
         this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
         this->visualizer_->set_mean(
@@ -1428,6 +1460,8 @@ void ShapeWorksStudioApp::update_display(bool force)
         this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        reset_toggle_show_surfaces();
+        
         this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
         this->compute_mode_shape();
         this->visualizer_->reset_camera();
@@ -1857,13 +1891,13 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 
     this->ui_->show_groomed_surfaces->setChecked(show_groomed_surfaces);
     if (show_groomed_surfaces)
-      this->ui_->show_groomed_surfaces->setStyleSheet(qss_green_background);
+      this->ui_->show_groomed_surfaces->setStyleSheet(qss_orange_background);
     else
       this->ui_->show_groomed_surfaces->setStyleSheet(qss_empty);
 
     this->ui_->show_reconstructed_surfaces->setChecked(show_reconstructed_surfaces);
     if (show_reconstructed_surfaces)
-      this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_green_background);
+      this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_orange_background);
     else
       this->ui_->show_reconstructed_surfaces->setStyleSheet(qss_empty);
   }

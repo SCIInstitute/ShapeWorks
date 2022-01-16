@@ -498,6 +498,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
   else
   {
     bool insert_first_groomed_surfaces = this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C;
+  
     MeshGroup groomed_meshes = shape->get_meshes(Visualizer::MODE_GROOMED_C);
     size_t nb_meshes_groom = groomed_meshes.meshes().size();
 
@@ -766,77 +767,70 @@ void Viewer::update_points()
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C)
   {
     correspondence_points = this->shape_->get_global_correspondence_points_for_display();
-
-    /*auto procruste_transfo = this->shape_->get_procrustest_transform();
-    if (procruste_transfo && this->visualizer_->get_center())
-    {
-      vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
-      procruste_transfo_inv->DeepCopy(procruste_transfo);
-      procruste_transfo_inv->Inverse();
-
-      for (int j = 0; j < correspondence_points.size(); j += 3)
-      {
-        double p[3];
-        p[0] = correspondence_points[j + 0];
-        p[1] = correspondence_points[j + 1];
-        p[2] = correspondence_points[j + 2];
-        double *pt = procruste_transfo_inv->TransformPoint(p);
-        correspondence_points[j + 0] = pt[0];
-        correspondence_points[j + 1] = pt[1];
-        correspondence_points[j + 2] = pt[2];
-      }
-    }*/
   }
   else
   {
     correspondence_points = this->shape_->get_local_correspondence_points();
   }
 
-  if (this->visualizer_->get_superimpose_surfaces() && false)
+  // Add particles pointset for superimposed surface
+  // Note that if "Align" is checked, the particles of both groomed and reconstructed will be perfectly superimposed
+  if (this->visualizer_->get_superimpose_surfaces())
   {
+    auto transform_pointset = [](Eigen::VectorXd &points, vtkSmartPointer<vtkTransform> transfo)
+    {
+      for (int j = 0; j < points.size(); j += 3)
+      {
+        double p[3];
+        p[0] = points[j + 0];
+        p[1] = points[j + 1];
+        p[2] = points[j + 2];
+        double *pt = transfo->TransformPoint(p);
+        points[j + 0] = pt[0];
+        points[j + 1] = pt[1];
+        points[j + 2] = pt[2];
+      }
+    };
+
     if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C)
     {
-      // Add reconstructed points (supperposition)
       added_points = this->shape_->get_global_correspondence_points_for_display();
 
       auto procruste_transfo = this->shape_->get_procrustest_transform();
-      if (procruste_transfo /* && this->visualizer_->get_center() */)
+      if (procruste_transfo)
       {
         vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
         procruste_transfo_inv->DeepCopy(procruste_transfo);
         procruste_transfo_inv->Inverse();
 
-        for (int j = 0; j < added_points.size(); j += 3)
-        {
-          double p[3];
-          p[0] = added_points[j + 0];
-          p[1] = added_points[j + 1];
-          p[2] = added_points[j + 2];
-          double *pt = procruste_transfo_inv->TransformPoint(p);
-          added_points[j + 0] = pt[0];
-          added_points[j + 1] = pt[1];
-          added_points[j + 2] = pt[2];
-        }
+        transform_pointset(added_points, procruste_transfo_inv);
       }
 
-      // TODO Transform
       if (this->visualizer_->get_center())
       {
         auto align_transform = this->shape_->get_alignment(this->visualizer_->get_alignment_domain());
+        
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
         transform->DeepCopy(align_transform);
         transform->Inverse();
-        for (int j = 0; j < added_points.size(); j += 3)
-        {
-          double p[3];
-          p[0] = added_points[j + 0];
-          p[1] = added_points[j + 1];
-          p[2] = added_points[j + 2];
-          double *pt = transform->TransformPoint(p);
-          added_points[j + 0] = pt[0];
-          added_points[j + 1] = pt[1];
-          added_points[j + 2] = pt[2];
-        }
+        
+        transform_pointset(added_points, transform);
+      }
+    } 
+    else if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C)
+    {
+      added_points = this->shape_->get_local_correspondence_points();
+
+      if (this->visualizer_->get_center())
+      {
+        auto align_transform = this->shape_->get_alignment(this->visualizer_->get_alignment_domain());
+        transform_pointset(added_points, align_transform);
+      }
+
+      auto procruste_transfo = this->shape_->get_procrustest_transform();
+      if (procruste_transfo)
+      {
+        transform_pointset(added_points, procruste_transfo);
       }
     }
   }
