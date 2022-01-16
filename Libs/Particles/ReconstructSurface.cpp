@@ -179,6 +179,64 @@ void ReconstructSurface<TransformType>::generateWarpedMeshes(TransformTypePtr tr
 }
 
 template<class TransformType>
+void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints)
+{
+  // source should be warped to the target
+  double rms = 0.0;
+  double rms_wo_mapping = 0.0;
+  Mesh::MeshPoints mappedCorrespondences = Mesh::MeshPoints::New();
+
+  for (unsigned int i = 0; i < sourcePoints->GetNumberOfPoints(); i++)
+  {
+    double ps[3]; // source
+    double pt[3]; // target
+    double pw[3]; // warped
+
+    sourcePoints->GetPoint(i, ps);
+    targetPoints->GetPoint(i, pt);
+
+    Point3 ps_({ps[0], ps[1], ps[2]});
+    Point3 pt_({pt[0], pt[1], pt[2]});
+    Point3 pw_({pw[0], pw[1], pw[2]});
+
+    pw_ = transform->TransformPoint(ps_);
+
+    double cur_rms = pw_.EuclideanDistanceTo(pt_);
+    double cur_rms_wo_mapping = ps_.EuclideanDistanceTo(pt_);
+
+    rms += cur_rms;
+    rms_wo_mapping += cur_rms_wo_mapping;
+
+    pw[0] = pw_[0]; pw[1] = pw_[1]; pw[2] = pw_[2];
+    mappedCorrespondences->InsertNextPoint(pw);
+  }
+
+  double maxmDist = double(-10000.0f);
+  for (unsigned int i = 0; i < mappedCorrespondences->GetNumberOfPoints(); i++)
+  {
+    double pi[3];
+    mappedCorrespondences->GetPoint(i, pi);
+    Point3 pi_({pi[0], pi[1], pi[2]});
+
+    for (unsigned int j = 0; j < mappedCorrespondences->GetNumberOfPoints(); j++)
+    {
+      double pj[3];
+      mappedCorrespondences->GetPoint(j, pj);
+      Point3 pj_({pj[0], pj[1], pj[2]});
+
+      double dist = pi_.EuclideanDistanceTo(pj_);
+      if (dist > maxmDist)
+      {
+        maxmDist = dist;
+      }
+    }
+  }
+
+  rms /= sourcePoints->GetNumberOfPoints();
+  rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
+}
+
+template<class TransformType>
 Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
 {
   if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
@@ -240,6 +298,8 @@ Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
     }
   }
   transform->SetTargetLandmarks(targetLandMarks);
+
+  checkMapping(transform, this->sparseMean, subjectPoints);
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
   denseShape->DeepCopy(this->denseMean);
