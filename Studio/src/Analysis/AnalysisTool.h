@@ -93,6 +93,8 @@ public:
 
   StudioParticles get_shape_points(int mode, double value);
   StudioParticles get_mca_shape_points(int mode, double value, int level);
+  StudioParticles get_mlca_shape_points(int mode, double value, int level);
+
 
   ShapeHandle get_mode_shape(int mode, double value);
 
@@ -152,7 +154,7 @@ public Q_SLOTS:
 
   void handle_mca_animate_state_changed();
   void handle_mca_timer();
-  void on_mca_between_radio_toggled(bool b);
+  void on_mca_between_radio_toggled();
 
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
@@ -206,7 +208,7 @@ private:
   void mca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void compute_mca_mode_shape();
-  void update_analysis_mode(); // TODO: Recehck here
+  void update_analysis_mode(); // TODO: Recheck here
 
   bool group_pvalues_valid();
 
@@ -236,6 +238,7 @@ private:
 
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
+  vnl_vector<double> temp_shape_mca;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;

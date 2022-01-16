@@ -1217,6 +1217,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
+  //TODO: add for mca vizualization - and cross-check
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->visualizer_->set_mean(
@@ -1408,6 +1409,7 @@ void ShapeWorksStudioApp::update_display(bool force)
         this->visualizer_->reset_camera();
       }
       else if (mode == AnalysisTool::MODE_MCA_C) {
+        //TODO: cross- check compatibility
         this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);

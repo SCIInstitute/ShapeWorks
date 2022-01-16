@@ -1163,7 +1163,7 @@ QWidget#specificity_panel {
 
               <widget class="QWidget" name="mca_tab">
                 <attribute name="title">
-                    <string>MCA</string>
+                    <string>Multi-Level PCA</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_20">
                     <property name="leftMargin">

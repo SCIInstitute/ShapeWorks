@@ -67,6 +67,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   //TODO: make connections for mca
   connect(this->ui_->mcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_mca_animate_state_changed()));
+  connect(this->ui_->mcaLevelBetweenButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
+  connect(this->ui_->mcaLevelWithinButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
   connect(&this->mca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_mca_timer()));
 
   // group animation
@@ -165,18 +167,10 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
   }
 }
 
-void AnalysisTool::on_mca_between_radio_toggled(bool b)
-{
-  if(b)
-  {
-    this->ui_->mcaLevelWithinButton->setChecked(false);
-    this->ui_->mcaLevelBetweenButton->setChecked(true);
-  }
-  else{
-    this->ui_->mcaLevelBetweenButton->setChecked(false);
-    this->ui_->mcaLevelWithinButton->setChecked(true);
-  }
+void AnalysisTool::on_mca_between_radio_toggled()
+{ 
   emit mca_update();
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -504,6 +498,7 @@ bool AnalysisTool::compute_stats()
 
 
   std::vector<vnl_vector<double>> points;
+  std::vector<vnl_vector<double>> local_points;
   std::vector<int> group_ids;
 
   std::string group_set = this->ui_->group_box->currentText().toStdString();
@@ -535,6 +530,7 @@ bool AnalysisTool::compute_stats()
     }
     else {
       points.push_back(shape->get_global_correspondence_points());
+      local_points.push_back(shape->get_local_correspondence_points());
       group_ids.push_back(shape->get_group_id());
     }
   }
@@ -556,9 +552,12 @@ bool AnalysisTool::compute_stats()
   unsigned int dps = domain_names.size();
 
   this->stats_.ImportPoints(points, group_ids);
-  this->stats_.ImportPointsForMca(points, dps);
+  this->stats_.ImportPointsAndComputeMlpca(points, dps);
+  // this->stats_.ImportPointsForMca(points, dps);
   this->stats_.ComputeModes();
-  this->stats_.MCADecomposition();
+  this->stats_.ComputeBetweenModesForMca();
+  this->stats_.ComputeWithinModesForMca();
+  // this->stats_.MCADecomposition();
 
   this->compute_shape_evaluations();
 
@@ -630,6 +629,10 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
   if (mode + 2 > this->stats_.Eigenvalues().size()) {
     mode = this->stats_.Eigenvalues().size() - 2;
   }
+  std::cout << "Entered PCA " << std::endl;
+  std::cout << "eigen vector size  = " << this->stats_.Eigenvectors().rows() << " X " << this->stats_.Eigenvectors().cols() << std::endl;
+  unsigned int sz = this->stats_.Mean().size();
+  std::cout << "sz " << sz << std::endl;
 
   unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
 
@@ -667,23 +670,84 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int level)
+// StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int level)
+// {
+//  //TODO: for mca
+//  vnl_matrix<double> eigenvectors;
+//  std::vector<double> eigenvalues;
+//  vnl_vector<double> mean;
+//  if(level == 1)
+//  {
+//    eigenvectors = this->stats_.WithinEigenvectors();
+//    eigenvalues = this->stats_.WithinEigenvalues();
+//    mean = this->stats_.Mean();
+//  }
+//  else if (level == 2)
+//  {
+//    eigenvectors = this->stats_.BetweenEigenvectors();
+//    eigenvalues = this->stats_.BetweenEigenvalues();
+//    mean = this->stats_.Mean();
+//  }
+ 
+//  if (!this->compute_stats() || eigenvectors.size() <= 1) {
+//     return StudioParticles();
+//   }
+//   if (mode + 2 > eigenvalues.size()) {
+//     mode = eigenvalues.size() - 2;
+//   }
+//   unsigned int m = eigenvectors.columns() - (mode + 1);
+//   vnl_vector<double> e = eigenvectors.get_column(m);
+//   double lambda = sqrt(eigenvalues[m]);
+//   this->mca_labels_changed(QString::number(value, 'g', 2),
+//                            QString::number(eigenvalues[m]),
+//                            QString::number(value * lambda));
+
+//   std::vector<double> vals;
+//   for (int i = eigenvalues.size() - 1; i > 0; i--) {
+//     vals.push_back(eigenvalues[i]);
+//   }
+//   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+//   double cumulation = 0;
+//   for (size_t i = 0; i < mode + 1; ++i) {
+//     cumulation += vals[i];
+//   }
+//   if (sum > 0) {
+//     this->ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+//     this->ui_->mca_cumulative_explained_variance->setText(
+//       QString::number(cumulation / sum * 100, 'f', 1) + "%");
+//   }
+//   else {
+//     this->ui_->mca_explained_variance->setText("");
+//     this->ui_->mca_cumulative_explained_variance->setText("");
+//   }
+
+//   this->temp_shape_mca = mean + (e * (value * lambda));
+//   // see what this does
+//   return this->convert_from_combined(this->temp_shape_mca);
+  
+// }
+
+
+
+//---------------------------------------------------------------------------
+StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int level)
 {
- //TODO: for mca
  vnl_matrix<double> eigenvectors;
  std::vector<double> eigenvalues;
- vnl_vector<double> mean;
  if(level == 1)
  {
    eigenvectors = this->stats_.WithinEigenvectors();
    eigenvalues = this->stats_.WithinEigenvalues();
-   mean = this->stats_.WithinMean();
+   std:: cout << "Entered Within Stats " << std::endl;
+   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
+
  }
- else
+ else if (level == 2)
  {
    eigenvectors = this->stats_.BetweenEigenvectors();
    eigenvalues = this->stats_.BetweenEigenvalues();
-   mean = this->stats_.BetweenMean();
+   std:: cout << "Entered Between Stats " << std::endl;
+   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
  }
  
  if (!this->compute_stats() || eigenvectors.size() <= 1) {
@@ -695,6 +759,7 @@ StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int l
   unsigned int m = eigenvectors.columns() - (mode + 1);
   vnl_vector<double> e = eigenvectors.get_column(m);
   double lambda = sqrt(eigenvalues[m]);
+  std::cout << "within lambda " << lambda << std::endl;
   this->mca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(eigenvalues[m]),
                            QString::number(value * lambda));
@@ -708,6 +773,7 @@ StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int l
   for (size_t i = 0; i < mode + 1; ++i) {
     cumulation += vals[i];
   }
+  std::cout << "sum = " << sum << std::endl;
   if (sum > 0) {
     this->ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
     this->ui_->mca_cumulative_explained_variance->setText(
@@ -718,11 +784,37 @@ StudioParticles AnalysisTool::get_mca_shape_points(int mode, double value, int l
     this->ui_->mca_cumulative_explained_variance->setText("");
   }
 
-  this->temp_shape_ = mean + (e * (value * lambda));
-  // see what this does
-  return this->convert_from_combined(this->temp_shape_);
+  if(level == 1){
+    this->temp_shape_mca = this->stats_.Mean() + (e * (value * lambda));
+    // this->temp_shape_mca = this->stats_.WithinMean() + (e * (value * lambda));
+
+  }
+  else if(level == 2){
+    std::cout << "Computing temp shape for between" << std::endl;
+    vnl_vector<double> e_between;
+    unsigned int sz = this->stats_.Mean().size();
+    unsigned int num_points = this->stats_.NumberOfPoints();
+    e_between.set_size(sz);
+    std::cout << "between eigen vector size changed" << std::endl;
+    unsigned int D = this->stats_.DomainsNumber();
+    std::cout << "D = " << D << " num_points = " << num_points << std::endl;
+    
+    for(unsigned int i = 0; i < D; i++){
+      for(unsigned int j = 0; j < num_points; j++){
+        e_between((i * num_points * 3) + (j * 3)) = e(i * 3);
+        e_between((i * num_points * 3) + (j * 3) + 1) = e(i * 3 + 1);
+        e_between((i * num_points * 3) + (j * 3) + 2) = e(i * 3 + 2);
+      }
+    }
+    std::cout << "between eig vec done " << std::endl;
+    this->temp_shape_mca = this->stats_.Mean() + (e_between * (value * lambda));
+  }
   
+  // see what this does
+  return this->convert_from_combined(this->temp_shape_mca);
 }
+
+
 
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
@@ -733,7 +825,9 @@ ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, int level)
 {
-  return this->create_shape_from_points(this->get_mca_shape_points(mode, value, level));
+  // return this->create_shape_from_points(this->get_mca_shape_points(mode, value, level));
+  return this->create_shape_from_points(this->get_mlca_shape_points(mode, value, level));
+
 }
 
 
@@ -1002,12 +1096,19 @@ double AnalysisTool::get_mca_value()
 int AnalysisTool::get_mca_level()
 {
   bool between = this->ui_->mcaLevelBetweenButton->isChecked();
+  bool within = this->ui_->mcaLevelWithinButton->isChecked();
+  if(within){
+    return 1;
+  }
   if(between){
     return 2;
   }
-  else{
-    return 1;
-  }
+  // if(between){
+  //   return 2;
+  // }
+  // else{
+  //   return 1;
+  // }
 }
 
 //---------------------------------------------------------------------------

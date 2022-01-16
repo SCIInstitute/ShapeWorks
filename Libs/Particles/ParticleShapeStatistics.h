@@ -39,9 +39,10 @@ public:
 
   int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
 
-  void MCADecomposition(); 
-  void ComputeBetweenParams(int b);
-  void ComputeWithinParams(int w);
+  void MCADecomposition();
+  void Mlpca();
+  void ComputeBetweenParams();
+  void ComputeWithinParams();
   void ComputeMCAModeStats();
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
@@ -49,6 +50,10 @@ public:
   /** Loads a set of point files and pre-computes some statistics. */
   int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
   int ImportPointsForMca(std::vector<vnl_vector<double>> points, unsigned int dps);
+  int ComputeWithinModesForMca();
+  int ComputeBetweenModesForMca();
+  int ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps);
+
   /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(const std::string &s);
 
@@ -80,6 +85,8 @@ public:
   /** Returns the number of dimensions (this is number of points times Dimension) */
   const int NumberOfDimensions() { return m_numDimensions; }
   const int DomainNumberOfDimensions() { return m_domainNumDimensions; }
+  const int DomainsNumber() { return m_dps; }
+  const int NumberOfPoints() { return m_numPoints; }
 
   /** Returns the group ids */
   const int GroupID(unsigned int i) { return m_groupIDs[i]; }
@@ -155,7 +162,12 @@ private:
   unsigned int m_numSamples2;
   unsigned int m_numSamples;
   unsigned int m_domainsPerShape;
+
   unsigned int m_dps;
+  unsigned int m_N;
+  unsigned int m_numPoints;
+
+
   unsigned int m_numDimensions;
   unsigned int m_domainNumDimensions;
   std::vector<int> m_groupIDs;

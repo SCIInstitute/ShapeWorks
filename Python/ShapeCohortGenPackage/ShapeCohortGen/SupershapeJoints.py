@@ -32,7 +32,8 @@ def generate(out_dir):
     num_domain = 5
     num_Samples = 10
     # x_pos = [-200, -100, 0.1, 100, 200] # num_domain
-    x_pos = [-100, -50, 25, 75, 100] # num_domain
+    # x_pos = [-100, -50, 25, 75, 100] # num_domain
+    x_pos = [-150, -75, 25, 100, 250]
     coeff_ar = []
     a = 0.001
     for i in range(num_Samples):
@@ -45,12 +46,19 @@ def generate(out_dir):
         n += 2
         n_ar.append(n)
     
+    sz = 30
     for i in range(num_Samples):
-        d1 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, 3, (x_pos[0], x_pos[0] * x_pos[0]* coeff_ar[i], 0))
-        d2 = Domain(4, 15, n_ar[i], n_ar[i], 1, 1, 3, (x_pos[1], x_pos[1] * x_pos[1]* coeff_ar[i], 0))
-        d3 = Domain(2, 20, n_ar[i], n_ar[i], 1, 1, 3, (x_pos[2], x_pos[2] * x_pos[2]* coeff_ar[i], 0))
-        d4 = Domain(4, 30, n_ar[i], n_ar[num_Samples-1-i], 1, 1, 3, (x_pos[3], x_pos[3] * x_pos[3]* coeff_ar[i], 0))
-        d5 = Domain(3, 15, n_ar[num_Samples-1-i], n_ar[i], 1, 1, 3, (x_pos[4], x_pos[4] * x_pos[4]* coeff_ar[i], 0))
+        d1 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[0], x_pos[0] * x_pos[0]* coeff_ar[i], 0))
+        d2 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[1], x_pos[1] * x_pos[1]* coeff_ar[i], 0))
+        d3 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[2], x_pos[2] * x_pos[2]* coeff_ar[i], 0))
+        d4 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[3], x_pos[3] * x_pos[3]* coeff_ar[i], 0))
+        d5 = Domain(3, 30, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[4], x_pos[4] * x_pos[4]* coeff_ar[i], 0))
+
+        
+        # d2 = Domain(4, 15, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[1], x_pos[1] * x_pos[1]* coeff_ar[i], 0))
+        # d3 = Domain(2, 20, n_ar[i], n_ar[i], 1, 1, sz, (x_pos[2], x_pos[2] * x_pos[2]* coeff_ar[i], 0))
+        # d4 = Domain(4, 30, n_ar[i], n_ar[num_Samples-1-i], 1, 1, sz, (x_pos[3], x_pos[3] * x_pos[3]* coeff_ar[i], 0))
+        # d5 = Domain(3, 15, n_ar[num_Samples-1-i], n_ar[i], 1, 1, sz, (x_pos[4], x_pos[4] * x_pos[4]* coeff_ar[i], 0))
         generate_supershape(meshDir, f"sample_{i+1}_d1", False, d1)
         generate_supershape(meshDir, f"sample_{i+1}_d2", False, d2)
         generate_supershape(meshDir, f"sample_{i+1}_d3", False, d3)

@@ -262,13 +262,233 @@ int ParticleShapeStatistics::ImportPointsForMca(std::vector<vnl_vector<double>> 
   {
     vnl_matrix<double> domain_shape;
     domain_shape.set_size(num_points * 3, n);
-    m_super_matrix.extract(domain_shape, k * dps, 0);
+    m_super_matrix.extract(domain_shape, k * dps, 0); // was wrong here
     m_shapes_mca.push_back(domain_shape);
   }
-
-
   //debug
   std::cout << "Import points done for MCA" << std::endl;
+  return 0;
+}
+
+
+int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
+{
+  // debug
+  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
+  unsigned int num_points = (int)(points[0].size() / (3 * dps));
+  this->m_dps = dps;
+  this->m_numPoints = num_points;
+  this->m_N = points.size();
+  std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
+
+  unsigned int n = m_N * VDimension; 
+  std::cout << " n " << n << std::endl;
+  unsigned int m = num_points * dps;
+  std::cout << "m " << m << std::endl;
+
+  m_super_matrix.set_size(m, n);
+  m_shapes_mca.clear();
+  std::cout << "cleared" <<std::endl;
+
+  for(unsigned int i = 0; i < points.size(); i++){
+    unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
+    std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
+    for(unsigned int j= 0; j < p; j++){
+      m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
+      m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
+      m_super_matrix(j, i * VDimension + 2) = points[i][j * VDimension + 2];
+    }
+  }
+  
+  std::cout << " Super matrix constructed " << std::endl;
+
+  // Step 2. Compute within covariance matrix
+
+  // 2.a Compute centered matrix for each domain
+  
+  vnl_matrix<double> z_within_centred;
+  z_within_centred.set_size(m, n);
+  z_within_centred.fill(0.0);
+
+  for(unsigned int k = 0; k < m_dps; k++){
+    // extract shape matrix of kth domain
+    vnl_matrix<double> z_k;
+    z_k.set_size(num_points, n);
+    m_super_matrix.extract(z_k, k * num_points, 0);
+
+    m_shapes_mca.push_back(z_k); // keep track of shape matriz of each domain
+    // compute column-wise mean(of each sample)
+    vnl_matrix<double> mean_k;
+    mean_k.set_size(n, 1);
+    mean_k.fill(0.0);
+    for (unsigned int j = 0; j < n; j++){
+      vnl_matrix<double> z_k_i = z_k.get_n_columns(j, 1);
+      mean_k(j, 0) = z_k_i.mean();
+    }
+
+    vnl_matrix<double> ones_m_k;
+    ones_m_k.set_size(num_points, 1);
+    ones_m_k.fill(1.0);
+
+    vnl_matrix<double> z_k_centred = z_k - (ones_m_k * mean_k.transpose());
+
+    z_within_centred.update(z_k_centred, k * num_points, 0);
+  }
+
+  vnl_matrix<double> z_within_objective;
+  unsigned int M = num_points * VDimension * m_dps;
+  z_within_objective.set_size(M, m_N);
+
+  // 2.a Compute within objective matrix
+
+  for(unsigned int i = 0; i < m_N; i++){
+    unsigned int p = num_points * m_dps;
+    for(unsigned int j = 0; j < p; j++){
+      z_within_objective(j * VDimension, i) = z_within_centred(j, i * VDimension);
+      z_within_objective(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
+      z_within_objective(j * VDimension + 2, i) = z_within_centred(j, i * VDimension + 2);
+    }
+  }
+
+  std::cout << "Within objective computed " << std::endl;
+
+  // 2..b compute within covariance matrix
+  m_pointsMinusMean_for_within.set_size(M, m_N);
+  m_pointsMinusMean_for_within.fill(0.0);
+  m_mean_within.set_size(M);
+  m_mean_within.fill(0.0);
+
+  for(unsigned int i = 0; i < M; i++){
+    vnl_matrix<double> p_i = z_within_objective.get_n_rows(i, 1);
+    m_mean_within(i) = p_i.mean();
+    for(unsigned int j = 0; j < m_N; j++){
+      m_pointsMinusMean_for_within(i, j) = z_within_objective(i, j) - m_mean_within(i);
+    }
+  }
+
+  std::cout << "Within Covariance Matrix computed " << std::endl;
+
+  // Step 3.Compute Between Covariance matrix
+
+  vnl_matrix<double> z_between_centred;
+  z_between_centred.set_size(m, n);
+
+  for (unsigned int i = 0; i < n; i++){
+    vnl_matrix<double> p_i = m_super_matrix.get_n_columns(i, 1);
+    double col_mean = p_i.mean();
+    for (unsigned int j = 0; j < m; j++){
+      z_between_centred(j, i) = m_super_matrix(j, i) - col_mean;
+    }
+  }
+
+  vnl_matrix<double> z_between;
+  z_between.set_size(m_dps, n);
+  z_between.fill(0.0);
+  for(unsigned int k = 0; k < m_dps ; k++){
+    vnl_matrix<double> z_between_k_mean;
+    z_between_k_mean.set_size(1, n);;
+    for(unsigned int i = 0; i < n; i++){
+      vnl_matrix<double> mean_temp_vec;
+      mean_temp_vec.set_size(num_points, 1);
+      z_between_centred.extract(mean_temp_vec, k * num_points, i);
+      z_between_k_mean(0, i) = mean_temp_vec.mean();
+    }
+    z_between.update(z_between_k_mean, k, 0);
+  }
+  vnl_matrix<double> z_between_objective;
+  z_between_objective.set_size(m_dps * VDimension, m_N);
+  
+  for(unsigned int k = 0; k < m_dps; k++){
+    for(unsigned int i = 0; i < m_N; i++){
+      z_between_objective(k * VDimension, i) = z_between(k, i * VDimension);
+      z_between_objective(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
+      z_between_objective(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
+    }
+  }
+
+  //3.b between covariance matrix
+
+  m_pointsMinusMean_for_between.set_size(m_dps * VDimension, m_N);
+  m_pointsMinusMean_for_between.fill(0.0);
+  m_mean_between.set_size(m_dps * VDimension);
+  m_mean_between.fill(0.0);
+
+  for(unsigned int i = 0; i < m_dps * VDimension; i++){
+    vnl_matrix<double> d_i = z_between_objective.get_n_rows(i, 1);
+    m_mean_between(i) = d_i.mean();
+    for(unsigned int j = 0; j < m_N; j++){
+      m_pointsMinusMean_for_between(i, j) = z_between_objective(i, j) - m_mean_between(i);
+    }
+  }
+
+ std::cout << "Between Covariance Matrix computed " << std::endl;
+ std::cout << "MLPCA base part done" << std::endl;
+
+}
+
+
+int ParticleShapeStatistics::ComputeWithinModesForMca()
+{
+  std::cout << "Computing stats for within modes of variation " << std::endl;
+  unsigned int m = m_pointsMinusMean_for_within.rows();
+  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
+
+  vnl_matrix<double> A = m_pointsMinusMean_for_within.transpose()
+                         * m_pointsMinusMean_for_within * (1.0 / ((double) (m_N - 1)));
+  
+  vnl_symmetric_eigensystem<double> symEigen(A);
+  std::cout << "Eigen decomp done" << std::endl;
+
+  m_withinEigenvectors = m_pointsMinusMean_for_within * symEigen.V;
+  m_withinEigenvalues.resize(m_N);
+
+  for (unsigned int i = 0; i < m_N; i++) {
+    double total = 0.0f;
+    for (unsigned int j = 0; j < m; j++) {
+      total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
+    }
+    total = sqrt(total);
+
+    for (unsigned int j = 0; j < m; j++) {
+      m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
+    }
+
+    m_withinEigenvalues[i] = symEigen.D(i, i);
+  }
+  std::cout << " Within stats done" << std::endl;
+  return 0;
+}
+
+int ParticleShapeStatistics::ComputeBetweenModesForMca()
+{
+  std::cout << "Computing stats for between modes of variation " << std::endl;
+  unsigned int m = m_pointsMinusMean_for_between.rows();
+  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
+
+  vnl_matrix<double> A = m_pointsMinusMean_for_between.transpose()
+                         * m_pointsMinusMean_for_between * (1.0 / ((double) (m_N - 1)));
+  
+  vnl_symmetric_eigensystem<double> symEigen(A);
+  std::cout << "Eigen decomp done" << std::endl;
+
+  m_betweenEigenvectors = m_pointsMinusMean_for_between * symEigen.V;
+  m_betweenEigenvalues.resize(m_N);
+
+  for (unsigned int i = 0; i < m_N; i++) {
+    double total = 0.0f;
+    for (unsigned int j = 0; j < m; j++) {
+      total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
+    }
+    total = sqrt(total);
+
+    for (unsigned int j = 0; j < m; j++) {
+      m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
+    }
+
+    m_betweenEigenvalues[i] = symEigen.D(i, i);
+  }
+
+  std::cout << " Between stats done " << std::endl;
   return 0;
 }
 
@@ -583,6 +803,10 @@ int ParticleShapeStatistics::ComputeModes()
                          * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
   vnl_symmetric_eigensystem<double> symEigen(A);
 
+  std::cout << " For PCA stats m_pointsMinusMean size = " << m_pointsMinusMean.rows() << " X " << m_pointsMinusMean.cols() << std::endl;
+  std::cout << " For PCA stats symEigen.V size = " << symEigen.V.rows() << " X " << symEigen.V.cols() << std::endl;
+
+
   m_eigenvectors = m_pointsMinusMean * symEigen.V;
   m_eigenvalues.resize(m_numSamples);
 
@@ -620,37 +844,39 @@ int ParticleShapeStatistics::ComputeModes()
   return 0;
 }
 
-void ParticleShapeStatistics::MCADecomposition()
-{
-  std::cout << "Started mca decompostion " << std::endl;
-  unsigned int m = m_super_matrix.rows();
-  vnl_matrix<double> ones_m;
-  ones_m.set_size(m, 1);
-  ones_m.fill(1.0);
-  m_grand_mean = ones_m.transpose() * m_super_matrix;
-  std::cout << " grand mean step 1 " << std::endl;
+// void ParticleShapeStatistics::MCADecomposition()
+// {
+//   std::cout << "Started mca decompostion " << std::endl;
+//   unsigned int m = m_super_matrix.rows();
+//   vnl_matrix<double> ones_m;
+//   ones_m.set_size(m, 1);
+//   ones_m.fill(1.0);
+//   m_grand_mean = ones_m.transpose() * m_super_matrix;
+//   std::cout << " grand mean step 1 " << std::endl;
 
-  m_grand_mean = m_grand_mean * (double)(1.0/m) ;
-  std::cout << " grand mean step 2 " << std::endl;
+//   m_grand_mean = m_grand_mean * (double)(1.0/m) ;
+//   std::cout << " grand mean step 2 " << std::endl;
 
-  m_grand_mean = m_grand_mean.transpose(); // 1 X N
-  std::cout << " grand mean step done " << std::endl;
+//   m_grand_mean = m_grand_mean.transpose(); // 1 X N
+//   std::cout << " grand mean step done " << std::endl;
 
 
-  ComputeBetweenParams(1);
-  std::cout << "Between params done" << std::endl;
-  ComputeWithinParams(1);
-  std::cout << "within params done" << std::endl;
-  ComputeMCAModeStats();
-  std::cout << "mca stats calculated" << std::endl;
-}
+//   ComputeBetweenParams();
+//   std::cout << "Between params done" << std::endl;
+//   ComputeWithinParams();
+//   std::cout << "within params done" << std::endl;
+//   ComputeMCAModeStats();
+//   std::cout << "mca stats calculated" << std::endl;
+// }
 
-void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
+void ParticleShapeStatistics::ComputeBetweenParams()
 {
   //centering matrix
   unsigned int m = m_super_matrix.rows(); // M inc. VDim
   unsigned int n = m_super_matrix.cols(); // N
   unsigned int m_k = (int)(m/m_dps);
+  std::cout << " within begin  m n m_k" << m << " " << n << " " << m_k << std::endl;
+
   std::cout << " Betweeen begin " << std::endl;
 
   vnl_matrix<double> centering_matrix;
@@ -667,7 +893,7 @@ void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
 
 
   vnl_matrix<double> z_sub_total = centering_matrix * m_super_matrix;
-   std::cout << " z_sub_total done  " << std::endl;
+  std::cout << " z_sub_total done  " << std::endl;
   vnl_matrix<double> z_centred_res;
   z_centred_res.set_size(m_dps, n);
   z_centred_res.fill(0.0);
@@ -676,10 +902,10 @@ void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
   {
     vnl_matrix<double> z_c_temp;
     z_c_temp.set_size(m_k , n);
-    z_sub_total.extract(z_c_temp, i * m_dps, 0);
+    z_sub_total.extract(z_c_temp, i * m_k, 0); //wrong here
     vnl_matrix<double> z_centred_k;
     z_centred_k = (ones_m_sub.transpose() * z_c_temp) * (1.0/(double)m_k);
-    z_centred_res.update(z_centred_k, i, 0);
+    z_centred_res.update(z_centred_k, i, 0); // wrong here correct now -- might be correct
   } 
   std::cout << " between objective done " << std::endl;
 
@@ -700,12 +926,12 @@ void ParticleShapeStatistics::ComputeBetweenParams(int between_components)
 
 }
 
-void ParticleShapeStatistics::ComputeWithinParams(int within_components)
+void ParticleShapeStatistics::ComputeWithinParams()
 {
   unsigned int m = m_super_matrix.rows(); // M
   unsigned int n = m_super_matrix.cols(); // N
   unsigned int m_k = (int)(m/m_dps);
-  std::cout << " within begin " << std::endl;
+  std::cout << " within begin  m n m_k" << m << " " << n << " " << m_k << std::endl;
 
   m_within_loading_matrix.clear();
   m_within_component_scores.clear();
@@ -734,120 +960,139 @@ void ParticleShapeStatistics::ComputeWithinParams(int within_components)
 
 }
 
-void ParticleShapeStatistics::ComputeMCAModeStats()
-{
-  // reconstruct in terms of MCA decomposition and apply pca on that
-  unsigned int m = m_super_matrix.rows(); // M
-  unsigned int n = m_super_matrix.cols(); // N
-  unsigned int m_k = (int)(m/m_dps);
-  vnl_matrix<double> ones_m_k;
-  ones_m_k.set_size(m_k, 1);
-  ones_m_k.fill(1.0);
-  vnl_matrix<double> mean_part = ones_m_k * m_grand_mean.transpose();
-  std::vector<vnl_matrix<double>> z_within;
-  std::vector<vnl_matrix<double>> z_between;
+// void ParticleShapeStatistics::ComputeMCAModeStats()
+// {
+//   // reconstruct in terms of MCA decomposition and apply pca on that
+//   unsigned int m = m_super_matrix.rows(); // M
+//   unsigned int n = m_super_matrix.cols(); // N
+//   unsigned int m_k = (int)(m/m_dps);
+//   vnl_matrix<double> ones_m_k;
+//   ones_m_k.set_size(m_k, 1);
+//   ones_m_k.fill(1.0);
+//   vnl_matrix<double> mean_part = ones_m_k * m_grand_mean.transpose();
+//   std::cout << "MCA Mean Part done" << std::endl;
 
-  // A. For Within
-  for(unsigned int k = 0; k < m_dps; k++)
-  {
-    vnl_matrix<double> z_k =  m_within_component_scores[k] * m_within_loading_matrix[k].transpose(); // M_k X N
-    z_k += mean_part;
-    z_within.push_back(z_k);
-  }
+//   std::vector<vnl_matrix<double>> z_within;
+//   std::vector<vnl_matrix<double>> z_between;
 
-  for(unsigned int k = 0; k < m_dps; k++)
-  {
-    vnl_matrix<double> z_k =  ones_m_k * m_between_component_scores.get_n_rows(k, 1).transpose() * m_between_loading_matrix.transpose();
-    z_k += mean_part;
-    z_between.push_back(z_k);
-  }
+//   // A. For Within
+//   for(unsigned int k = 0; k < m_dps; k++)
+//   {
+//     vnl_matrix<double> z_k =  m_within_component_scores[k] * m_within_loading_matrix[k].transpose(); // M_k X N
+//     z_k += mean_part;
+//     z_within.push_back(z_k);
+//     std::cout<< "z_within_k size : " << z_k.rows() << " X " << z_k.cols() << std::endl;
+//   }
+//   std:: cout << "size of m_between_scores " << m_between_component_scores.rows() << " X " << m_between_component_scores.cols() << std::endl;
 
-  // make overall matix now for pca on top of this
+//   for(unsigned int k = 0; k < m_dps; k++)
+//   {
+//     vnl_matrix<double> z_k =  ones_m_k * m_between_component_scores.get_n_rows(k, 1).transpose() * m_between_loading_matrix.transpose();
+//     z_k += mean_part;
+//     z_between.push_back(z_k);
+//     std::cout<< "z_between_k size : " << z_k.rows() << " X " << z_k.cols() << std::endl;
 
-  m_pointsMinusMean_for_between.set_size(m, n);
-  m_pointsMinusMean_for_between.fill(0);
+//   }
+
+//   std::cout << " Prelim steps done" << std::endl;
+//   // make overall matix now for pca on top of this
+
+//   m_pointsMinusMean_for_between.set_size(m, n);
+//   m_pointsMinusMean_for_between.fill(0.0);
   
-  m_mean_between.set_size(m);
-  m_mean_between.fill(0);
+//   m_mean_between.set_size(m);
+//   m_mean_between.fill(0.0);
 
-  m_pointsMinusMean_for_within.set_size(m, n);
-  m_pointsMinusMean_for_within.fill(0);
+//   m_pointsMinusMean_for_within.set_size(m, n);
+//   m_pointsMinusMean_for_within.fill(0.0);
   
-  m_mean_within.set_size(m);
-  m_mean_within.fill(0);
+//   m_mean_within.set_size(m);
+//   m_mean_within.fill(0.0);
 
-  for(unsigned int k = 0; k < m_dps; k++)
-  {
-    m_pointsMinusMean_for_between.update(z_between[k], k * m_dps, 0);
-    m_pointsMinusMean_for_within.update(z_within[k], k * m_dps, 0);
-  }
+//   for(unsigned int k = 0; k < m_dps; k++)
+//   {
+//     std :: cout << "k = " << k << " z_between[k].rows " << z_between[k].rows() << std::endl;
+//     m_pointsMinusMean_for_between.update(z_between[k], k * z_between[k].rows(), 0); // wrong here correct now
+//     m_pointsMinusMean_for_within.update(z_within[k], k  * z_within[k].rows(), 0);
+//   }
+//   std::cout << " points minus mean done" << std::endl;
 
-  for (unsigned int i = 0; i < n; i++)
-  {
-    m_mean_between += m_pointsMinusMean_for_between.get_column(i);
-    m_mean_within += m_pointsMinusMean_for_within.get_column(i);
-  }
+//   for (unsigned int i = 0; i < n; i++)
+//   {
+//     m_mean_between += m_pointsMinusMean_for_between.get_column(i);
+//     m_mean_within += m_pointsMinusMean_for_within.get_column(i);
+//   }
 
-  m_mean_between = m_mean_between * (1.0/n);
-  m_mean_within = m_mean_within * (1.0/(double)(n));
-  for (unsigned int j = 0; j < m; j++) {
-    for (unsigned int i = 0; i < n; i++) {
-      m_pointsMinusMean_for_between(j, i) -= m_mean_between(j);
-      m_pointsMinusMean_for_within(j, i) -= m_mean_within(j);
-    }
-  }
+//   m_mean_between = m_mean_between * (1.0/(double)n);
+//   m_mean_within = m_mean_within * (1.0/(double)(n));
+//   for (unsigned int j = 0; j < m; j++) {
+//     for (unsigned int i = 0; i < n; i++) {
+//       m_pointsMinusMean_for_between(j, i) -= m_mean_between(j);
+//       m_pointsMinusMean_for_within(j, i) -= m_mean_within(j);
+//     }
+//   }
+//   std::cout << " points minus mean DONE 2" << std::endl;
 
-  // compute pca for mca components
-  // A. for within
-  vnl_matrix<double> A = m_pointsMinusMean_for_within.transpose()
-                         * m_pointsMinusMean_for_within * (1.0 / ((double) (n - 1)));
-  vnl_symmetric_eigensystem<double> symEigen(A);
 
-  m_withinEigenvectors = m_pointsMinusMean_for_within * symEigen.V;
-  m_withinEigenvalues.resize(n);
+//   // compute pca for mca components
+//   // A. for within
+//   vnl_matrix<double> A = m_pointsMinusMean_for_within.transpose()
+//                          * m_pointsMinusMean_for_within * (1.0 / ((double) (n - 1)));
+//   vnl_symmetric_eigensystem<double> symEigen(A);
+//   std::cout << " within eigen decomp done" << std::endl;
 
-  // normalize
-  for (unsigned int i = 0; i < n; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < m; j++) {
-      total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
-    }
-    total = sqrt(total);
 
-    for (unsigned int j = 0; j < m; j++) {
-      m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
-    }
+//   m_withinEigenvectors = m_pointsMinusMean_for_within * symEigen.V;
+//   m_withinEigenvalues.resize(n);
 
-    m_withinEigenvalues[i] = symEigen.D(i, i);
-  }
+//   // normalize
+//   for (unsigned int i = 0; i < n; i++) {
+//     double total = 0.0f;
+//     for (unsigned int j = 0; j < m; j++) {
+//       total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
+//     }
+//     total = sqrt(total);
 
-  // Within done
+//     for (unsigned int j = 0; j < m; j++) {
+//       m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
+//     }
 
-  // B. for between
-  vnl_matrix<double> B = m_pointsMinusMean_for_between.transpose()
-                         * m_pointsMinusMean_for_between * (1.0 / ((double) (n - 1)));
-  vnl_symmetric_eigensystem<double> eig_sys(B);
+//     m_withinEigenvalues[i] = symEigen.D(i, i);
+//   }
+//   std::cout << " within eigen decomp done 2" << std::endl;
 
-  m_betweenEigenvectors = m_pointsMinusMean_for_between * eig_sys.V;
-  m_betweenEigenvalues.resize(n);
+//   // Within done
 
-  // normalize
-  for (unsigned int i = 0; i < n; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < m; j++) {
-      total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
-    }
-    total = sqrt(total);
+//   // B. for between
+//   vnl_matrix<double> B = m_pointsMinusMean_for_within.transpose()
+//                          * m_pointsMinusMean_for_within * (1.0 / ((double) (n - 1)));
+//   vnl_symmetric_eigensystem<double> eig_sys(B);
+//   std::cout << " @@between eigen decomp done A" << std::endl;
 
-    for (unsigned int j = 0; j < m; j++) {
-      m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
-    }
 
-    m_betweenEigenvalues[i] = eig_sys.D(i, i);
-  }
+//   m_betweenEigenvectors = m_pointsMinusMean_for_within * eig_sys.V;
+//   m_betweenEigenvalues.resize(n);
+//   std::cout << " between eigen decomp done" << std::endl;
 
-  // Within done
-}
+
+//   // normalize
+//   for (unsigned int i = 0; i < n; i++) {
+//     double total = 0.0f;
+//     for (unsigned int j = 0; j < m; j++) {
+//       total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
+//     }
+//     total = sqrt(total);
+
+//     for (unsigned int j = 0; j < m; j++) {
+//       m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
+//     }
+
+//     m_betweenEigenvalues[i] = eig_sys.D(i, i);
+//   }
+//   std::cout << " within eigen decomp done 2" << std::endl;
+
+//   // Within done
+// }
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
