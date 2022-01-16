@@ -497,6 +497,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
   }
   else
   {
+    bool insert_first_groomed_surfaces = this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C;
     MeshGroup groomed_meshes = shape->get_meshes(Visualizer::MODE_GROOMED_C);
     size_t nb_meshes_groom = groomed_meshes.meshes().size();
 
@@ -505,38 +506,72 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     this->meshes_ = MeshGroup(nb_meshes_groom + nb_meshes_reconstructed);
 
-    for (size_t i = 0; i < nb_meshes_groom; ++i)
+    auto insert_groomed = [&]()
     {
-      this->meshes_.set_mesh(i, groomed_meshes.meshes()[i]);
-
-      auto transfo = vtkSmartPointer<vtkTransform>::New();
-      if (this->visualizer_->get_center())
-        transfo = shape->get_alignment(i);
-      mesh_transforms.push_back(transfo);
-    }
-
-    for (size_t i = 0; i < nb_meshes_reconstructed; ++i)
-    {
-      this->meshes_.set_mesh(nb_meshes_groom+i, reconstructed_meshes.meshes()[i]);
-
-      auto procruste_transfo = shape->get_procrustest_transform(i);
-      if (procruste_transfo)
+      for (size_t i = 0; i < nb_meshes_groom; ++i)
       {
-        vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
-        procruste_transfo_inv->DeepCopy(procruste_transfo);
-        procruste_transfo_inv->Inverse();
-
-        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-        vtkMatrix4x4::Multiply4x4(procruste_transfo_inv->GetMatrix(), shape->get_reconstruction_transform(i)->GetMatrix(), matrix);
+        size_t idx = insert_first_groomed_surfaces ? i : nb_meshes_reconstructed + i;
+        this->meshes_.set_mesh(idx, groomed_meshes.meshes()[i]);
 
         auto transfo = vtkSmartPointer<vtkTransform>::New();
-        transfo->SetMatrix(matrix);
+        if (this->visualizer_->get_center())
+          transfo = shape->get_alignment(i);
+        if (!insert_first_groomed_surfaces)
+        {
+          auto procruste_transfo = shape->get_procrustest_transform(i);
+          if (procruste_transfo)
+          {
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            vtkMatrix4x4::Multiply4x4(procruste_transfo->GetMatrix(), transfo->GetMatrix(), matrix);
+
+            transfo = vtkSmartPointer<vtkTransform>::New();
+            transfo->SetMatrix(matrix);
+          }
+        }
         mesh_transforms.push_back(transfo);
       }
-      else
+    };
+
+    auto insert_reconstructed = [&]()
+    {
+      for (size_t i = 0; i < nb_meshes_reconstructed; ++i)
       {
-        mesh_transforms.push_back(shape->get_reconstruction_transform(i));
+        size_t idx = insert_first_groomed_surfaces ? nb_meshes_groom + i : i;
+        this->meshes_.set_mesh(idx, reconstructed_meshes.meshes()[i]);
+
+        auto transfo = vtkSmartPointer<vtkTransform>::New();
+        transfo = shape->get_reconstruction_transform(i);
+
+        if (insert_first_groomed_surfaces)
+        {
+          auto procruste_transfo = shape->get_procrustest_transform(i);
+          if (procruste_transfo)
+          {
+            vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
+            procruste_transfo_inv->DeepCopy(procruste_transfo);
+            procruste_transfo_inv->Inverse();
+
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            vtkMatrix4x4::Multiply4x4(procruste_transfo_inv->GetMatrix(), transfo->GetMatrix(), matrix);
+
+            transfo = vtkSmartPointer<vtkTransform>::New();
+            transfo->SetMatrix(matrix);
+          }
+        }
+
+        mesh_transforms.push_back(transfo);
       }
+    };
+
+    if (insert_first_groomed_surfaces)
+    {
+      insert_groomed();
+      insert_reconstructed();
+    }
+    else
+    {
+      insert_reconstructed();
+      insert_groomed();
     }
   }
 
@@ -728,10 +763,11 @@ void Viewer::update_points()
   Eigen::VectorXd correspondence_points;
   Eigen::VectorXd added_points;
 
-  if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C)
+  {
     correspondence_points = this->shape_->get_global_correspondence_points_for_display();
 
-    auto procruste_transfo = this->shape_->get_procrustest_transform();
+    /*auto procruste_transfo = this->shape_->get_procrustest_transform();
     if (procruste_transfo && this->visualizer_->get_center())
     {
       vtkSmartPointer<vtkTransform> procruste_transfo_inv = vtkSmartPointer<vtkTransform>::New();
@@ -749,12 +785,16 @@ void Viewer::update_points()
         correspondence_points[j + 1] = pt[1];
         correspondence_points[j + 2] = pt[2];
       }
-    }
+    }*/
   }
-  else {
+  else
+  {
     correspondence_points = this->shape_->get_local_correspondence_points();
-    if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C &&
-        this->visualizer_->get_superimpose_surfaces())
+  }
+
+  if (this->visualizer_->get_superimpose_surfaces() && false)
+  {
+    if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C)
     {
       // Add reconstructed points (supperposition)
       added_points = this->shape_->get_global_correspondence_points_for_display();
@@ -778,20 +818,21 @@ void Viewer::update_points()
           added_points[j + 2] = pt[2];
         }
       }
-      
 
       // TODO Transform
-      if (this->visualizer_->get_center()) {
+      if (this->visualizer_->get_center())
+      {
         auto align_transform = this->shape_->get_alignment(this->visualizer_->get_alignment_domain());
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
         transform->DeepCopy(align_transform);
         transform->Inverse();
-        for (int j = 0; j < added_points.size(); j += 3) {
+        for (int j = 0; j < added_points.size(); j += 3)
+        {
           double p[3];
           p[0] = added_points[j + 0];
           p[1] = added_points[j + 1];
           p[2] = added_points[j + 2];
-          double* pt = transform->TransformPoint(p);
+          double *pt = transform->TransformPoint(p);
           added_points[j + 0] = pt[0];
           added_points[j + 1] = pt[1];
           added_points[j + 2] = pt[2];
