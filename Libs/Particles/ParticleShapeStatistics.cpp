@@ -97,8 +97,6 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 
 int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids)
 {
-  // debug
-  std::cout << "importing points now" << std::endl;
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
 
@@ -212,10 +210,6 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
       group2_idx++;
     }
   }
-
-  //debug
-  std::cout << "Import points done" << std::endl;
-  std :: cout << "Size of initial shape matrix " << m_shapes.rows() << " X " << m_shapes.cols() << std :: endl;
   return 0;
 }
 
