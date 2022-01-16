@@ -38,6 +38,8 @@ using PointArray    = std::vector<Point3>;
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
 
+PointArray makePointArray(int size, Point3 value);
+
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;

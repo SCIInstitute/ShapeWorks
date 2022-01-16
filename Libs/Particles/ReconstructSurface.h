@@ -25,23 +25,17 @@ public:
 
   double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
 
-  void checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints);
-
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
   Mesh getMesh(PointArray localPoints);
 
-  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
-
-  Mesh::MeshPoints convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin);
+  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, const Vector& spacing, const Point3& origin);
 
   int computeMedianShape(std::vector<Eigen::MatrixXd>& shapeList);
 
   void performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices);
 
   Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
-
-  void writeMeanInfo();
 
   vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
                                             std::vector<PointArray> worldPoints,
@@ -52,6 +46,8 @@ public:
                         std::vector<std::string> distanceTransform);
 
   std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter);
+
+  void writeMeanInfo();
 
   void surface(const std::vector<std::string> localPointsFiles);
 
@@ -65,21 +61,31 @@ public:
 
   void setOutPath(std::string path) { this->outPath = path; }
 
+  void setProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
+
+  void setProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
+
+  void setPairwiseNormalsDiffForGoodBad(bool pairwiseNormalsDiffForGoodBad) { this->pairwiseNormalsDiffForGoodBad = pairwiseNormalsDiffForGoodBad; }
+
+  void setMeanBeforeWarp(bool meanBeforeWarp) { this->meanBeforeWarp = meanBeforeWarp; }
+
+  void setEnableOutput(bool enableOutput) { this->enableOutput = enableOutput; }
+
   void setModeIndex(int modeIndex) { this->modeIndex = modeIndex; }
 
   void setNumOfModes(int numOfModes) { this->numOfModes = numOfModes; }
 
+  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }
+
   void setNumOfParticles(int numOfParticles) { this->numOfParticles = numOfParticles; }
 
-  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }
+  void setNumOfClusters(int numOfClusters) { this->numOfClusters = numOfClusters; }
 
   void setMaxStdDev(float maxStdDev) { this->maxStdDev = maxStdDev; }
 
   void setMaxVarianceCaptured(float maxVarianceCaptured) { this->maxVarianceCaptured = maxVarianceCaptured; }
 
-  void setProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
-
-  void setProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
+  void setMaxAngleDegrees(float maxAngleDegrees) { this->maxAngleDegrees = maxAngleDegrees; }
 
 private:
   float normalAngle = Pi/2.0;
@@ -94,14 +100,14 @@ private:
   bool denseDone = true;
   bool doProcrustes;
   bool doProcrustesScaling;
-  bool usePairwiseNormalsDifferencesForGoodBad;
+  bool pairwiseNormalsDiffForGoodBad = false;
   bool meanBeforeWarp = true;
-  bool outputEnabled = true;
+  bool enableOutput = true;
   int modeIndex;
   int numOfModes;
   int numOfSamplesPerMode;
   int numOfParticles;
-  size_t numOfClusters;
+  int numOfClusters;
   float maxStdDev;
   float maxVarianceCaptured;
   float maxAngleDegrees;

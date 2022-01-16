@@ -290,7 +290,6 @@ Mesh MeshUtils::extractIsoSurface(Image image)
 {
   Mesh mesh(image.toMesh(0.0f));
   mesh.smooth(1);
-  mesh.remesh(mesh.numPoints());
   mesh.smooth(1);
 
   return mesh.getVTKMesh();

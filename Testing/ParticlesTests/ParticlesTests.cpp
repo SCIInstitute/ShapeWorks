@@ -72,6 +72,34 @@ TEST(ParticlesTests, specificity)
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 
+TEST(ParticlesTests, reconstructmeansurfaceTest1)
+{
+  std::vector<std::string> distanceTransforms = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.DT.nrrd"
+  };
+
+  std::vector<std::string> localParticles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
+  };
+
+  std::vector<std::string> worldParticles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.world.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.world.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.world.particles"
+  };
+
+  ReconstructSurface<RBFSSparseTransform> reconstructor;
+  reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
+  reconstructor.setOutPath(std::string(TEST_DATA_DIR));
+  reconstructor.setNumOfParticles(128);
+  reconstructor.setNumOfClusters(3);
+  reconstructor.meanSurface(distanceTransforms, localParticles, worldParticles);
+}
+
 TEST(ParticlesTests, reconstructsurfaceTest1)
 {
   std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";

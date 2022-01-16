@@ -69,7 +69,7 @@ std::vector<bool> ReconstructSurface<TransformType>::setGoodPoints(const std::st
   else
   {
     // good point file is not given if a template mesh is used instead of a mean just assume all are good
-    for(size_t i = 0; i < sparseMean->GetNumberOfPoints(); i++)
+    for(int i = 0; i < sparseMean->GetNumberOfPoints(); i++)
       goodPoints.push_back(true);
   }
   ptsIn.close();
@@ -81,6 +81,7 @@ template<class TransformType>
 std::vector<PointArray> ReconstructSurface<TransformType>::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
 {
   std::vector<PointArray> localPoints;
+  this->localPointsFiles = localPointsFiles;
 
   for (int i = 0; i < this->localPointsFiles.size(); i++)
   {
@@ -153,64 +154,6 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
 
   avgDist /= particlesIndices.size();
   return avgDist;
-}
-
-template<class TransformType>
-void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints)
-{
-  // source should be warped to the target
-  double rms = 0.0;
-  double rms_wo_mapping = 0.0;
-  Mesh::MeshPoints mappedCorrespondences = Mesh::MeshPoints::New();
-
-  for (unsigned int i = 0; i < sourcePoints->GetNumberOfPoints(); i++)
-  {
-    double ps[3]; // source
-    double pt[3]; // target
-    double pw[3]; // warped
-
-    sourcePoints->GetPoint(i, ps);
-    targetPoints->GetPoint(i, pt);
-
-    Point3 ps_({ps[0], ps[1], ps[2]});
-    Point3 pt_({pt[0], pt[1], pt[2]});
-    Point3 pw_({pw[0], pw[1], pw[2]});
-
-    pw_ = transform->TransformPoint(ps_);
-
-    double cur_rms = pw_.EuclideanDistanceTo(pt_);
-    double cur_rms_wo_mapping = ps_.EuclideanDistanceTo(pt_);
-
-    rms += cur_rms;
-    rms_wo_mapping += cur_rms_wo_mapping;
-
-    pw[0] = pw_[0]; pw[1] = pw_[1]; pw[2] = pw_[2];
-    mappedCorrespondences->InsertNextPoint(pw);
-  }
-
-  double maxmDist = double(-10000.0f);
-  for (unsigned int i = 0; i < mappedCorrespondences->GetNumberOfPoints(); i++)
-  {
-    double pi[3];
-    mappedCorrespondences->GetPoint(i, pi);
-    Point3 pi_({pi[0], pi[1], pi[2]});
-
-    for (unsigned int j = 0; j < mappedCorrespondences->GetNumberOfPoints(); j++)
-    {
-      double pj[3];
-      mappedCorrespondences->GetPoint(j, pj);
-      Point3 pj_({pj[0], pj[1], pj[2]});
-
-      double dist = pi_.EuclideanDistanceTo(pj_);
-      if (dist > maxmDist)
-      {
-        maxmDist = dist;
-      }
-    }
-  }
-
-  rms /= sourcePoints->GetNumberOfPoints();
-  rms_wo_mapping /= sourcePoints->GetNumberOfPoints();
 }
 
 template<class TransformType>
@@ -300,8 +243,6 @@ Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
   }
   transform->SetTargetLandmarks(targetLandMarks);
 
-  checkMapping(transform, this->sparseMean, subjectPoints);
-
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
   denseShape->DeepCopy(this->denseMean);
   generateWarpedMeshes(transform, denseShape);
@@ -309,31 +250,16 @@ Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
 }
 
 template<class TransformType>
-Mesh::MeshPoints ReconstructSurface<TransformType>::convertToImageCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin)
+Mesh::MeshPoints ReconstructSurface<TransformType>::convertToImageCoordinates(Mesh::MeshPoints particles, const Vector& spacing, const Point3& origin)
 {
   Mesh::MeshPoints points = Mesh::MeshPoints::New();
-  for (unsigned int i = 0; i < numParticles; i++)
+  for (unsigned int i = 0; i < particles->GetNumberOfPoints(); i++)
   {
     double p[3];
     particles->GetPoint(i, p);
     points->InsertNextPoint((p[0] - origin[0]) / ((double)spacing[0]),
                             (p[1] - origin[1]) / ((double)spacing[1]),
                             (p[2] - origin[2]) / ((double)spacing[2]));
-  }
-  return points;
-}
-
-template<class TransformType>
-Mesh::MeshPoints ReconstructSurface<TransformType>::convertToPhysicalCoordinates(Mesh::MeshPoints particles, int numParticles, const Vector& spacing, const Point3& origin)
-{
-  Mesh::MeshPoints points = Mesh::MeshPoints::New();
-  for (unsigned int i = 0; i < numParticles; i++)
-  {
-    double p[3];
-    particles->GetPoint(i, p);
-    points->InsertNextPoint(p[0] * spacing[0] + origin[0],
-                            p[1] * spacing[1] + origin[1],
-                            p[2] * spacing[2] + origin[2]);
   }
   return points;
 }
@@ -378,9 +304,7 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
 {
   unsigned int numOfShapes = worldPoints.size();
   if (this->numOfClusters > numOfShapes)
-  {
     this->numOfClusters = numOfShapes;
-  }
 
   std::vector<Eigen::MatrixXd> shapeList;
   Eigen::MatrixXd shapeVector(numberOfParticles, 3);
@@ -424,12 +348,12 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
     {
       for (unsigned int c = 0; c < countCenters; c++)
       {
-        if (s == size_t(centers[c]))
+        if (s == int(centers[c]))
         {
           distMat.row(s).fill(0.0);
           break;
         }
-        shapeVector = shapeList[s] - shapeList[size_t(centers[c])];
+        shapeVector = shapeList[s] - shapeList[int(centers[c])];
         distMat(s, c) = shapeVector.norm();
       }
       minDists(s) = distMat.row(s).minCoeff(); // need to find minimum
@@ -440,9 +364,8 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
     cumProbs.fill(0.0);
 
     for (unsigned int s = 0; s < numOfShapes; s++)
-    {
       cumProbs[s] = probs.topLeftCorner(s + 1, 0).sum();
-    }
+
     double r = double(rand() % 10000);
     r = r / 10000.0;
     for (unsigned int s = 0; s < numOfShapes; s++)
@@ -450,9 +373,7 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
       if (r < cumProbs[s])
       {
         if (probs[s] == 0.0)
-        {
           continue;
-        }
         else
         {
           centers[countCenters] = int(s);
@@ -462,9 +383,9 @@ void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<Poin
       }
     }
     std::cout << "Setting center[" << countCenters - 1 << "] to shape #" << centers[countCenters - 1] << std::endl;
-    }
-    std::cout << "KMeans++ finished...." << std::endl;
-    centroidIndices = centers;
+  }
+  std::cout << "KMeans++ finished...." << std::endl;
+  centroidIndices = centers;
 }
 
 template<class TransformType>
@@ -474,17 +395,25 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
   Point3 origin = dt.origin();
 
   VectorImage vectorImage(dt);
-  Image gradientMagImage = dt.applyGradientFilter();
+  dt.applyGradientFilter();
 
   VectorImage::ImageIterator gradIter = vectorImage.setIterator();
-  Image::ImageIterator magIter = gradientMagImage.setIterator();
+  Image::ImageIterator magIter = dt.setIterator();
 
-  Image nxImage(dt);
-  Image::ImageIterator nxIter = nxImage.setIterator();
-  Image nyImage(dt);
-  Image::ImageIterator nyIter = nyImage.setIterator();
-  Image nzImage(dt);
-  Image::ImageIterator nzIter = nzImage.setIterator();
+  Image::ImageType::Pointer nxImage = Image::ImageType::New();
+  nxImage->SetRegions(dt.getITKImage()->GetLargestPossibleRegion());
+  nxImage->Allocate();
+  Image::ImageIterator nxIter(nxImage, nxImage->GetRequestedRegion());
+
+  Image::ImageType::Pointer nyImage = Image::ImageType::New();
+  nyImage->SetRegions(dt.getITKImage()->GetLargestPossibleRegion());
+  nyImage->Allocate();
+  Image::ImageIterator nyIter(nyImage, nyImage->GetRequestedRegion());
+
+  Image::ImageType::Pointer nzImage = Image::ImageType::New();
+  nzImage->SetRegions(dt.getITKImage()->GetLargestPossibleRegion());
+  nzImage->Allocate();
+  Image::ImageIterator nzIter(nzImage, nzImage->GetRequestedRegion());
 
   for (gradIter.GoToBegin(), magIter.GoToBegin(), nxIter.GoToBegin(), nyIter.GoToBegin(), nzIter.GoToBegin();
        !gradIter.IsAtEnd();
@@ -502,27 +431,19 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
     nzIter.Set(nz);
   }
 
-  // going to vtk for probing ...
-  Image Nx(nxImage.getVTKImage());
-  Image Ny(nyImage.getVTKImage());
-  Image Nz(nzImage.getVTKImage());
-
-  vtkSmartPointer<vtkPoints> pts = convertToImageCoordinates(particles, particles->GetNumberOfPoints(), spacing, origin);
   vtkSmartPointer<vtkPolyData> polyParticles = vtkSmartPointer<vtkPolyData>::New();
+  polyParticles->SetPoints(particles);
+  vtkSmartPointer<vtkPoints> pts = convertToImageCoordinates(polyParticles->GetPoints(), spacing, origin);
   polyParticles->SetPoints(pts);
 
   Mesh particlesData(polyParticles);
-  Mesh probeX = particlesData.probeVolume(Nx);
-  Mesh probeY = particlesData.probeVolume(Ny);
-  Mesh probeZ = particlesData.probeVolume(Nz);
+  Mesh probeX = particlesData.probeVolume(Image(nxImage));
+  Mesh probeY = particlesData.probeVolume(Image(nyImage));
+  Mesh probeZ = particlesData.probeVolume(Image(nzImage));
 
   vtkFloatArray* nx = vtkFloatArray::SafeDownCast(probeX.getVTKMesh()->GetPointData()->GetScalars());
   vtkFloatArray* ny = vtkFloatArray::SafeDownCast(probeY.getVTKMesh()->GetPointData()->GetScalars());
   vtkFloatArray* nz = vtkFloatArray::SafeDownCast(probeZ.getVTKMesh()->GetPointData()->GetScalars());
-
-  vtkSmartPointer<vtkDoubleArray> pointNormalsArray = vtkSmartPointer<vtkDoubleArray>::New();
-  pointNormalsArray->SetNumberOfComponents(3);
-  pointNormalsArray->SetNumberOfTuples(particlesData.numPoints());
 
   Eigen::MatrixXd particlesNormals(particles->GetNumberOfPoints(), 3);
   for (int i = 0; i < particlesData.numPoints(); i++)
@@ -540,14 +461,7 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
     particlesNormals(i, 0) = pN[0];
     particlesNormals(i, 1) = pN[1];
     particlesNormals(i, 2) = pN[2];
-
-    pointNormalsArray->SetTuple(i, pN);
   }
-
-  particlesData.setField("Normals", pointNormalsArray);
-
-  vtkSmartPointer<vtkPoints> pts2 = convertToPhysicalCoordinates(particlesData.getVTKMesh()->GetPoints(), particlesData.numPoints(), spacing, origin);
-  polyParticles->SetPoints(pts2);
 
   return particlesNormals;
 }
@@ -556,9 +470,9 @@ template<class TransformType>
 void ReconstructSurface<TransformType>::writeMeanInfo()
 {
   Mesh denseMesh(this->denseMean);
-  denseMesh.write(this->outPath + "_dense.vtk");
+  denseMesh.write(this->outPath + "/" + "_dense.vtk");
 
-  std::ofstream sparsePtsOut((this->outPath + "_sparse.particles").c_str());
+  std::ofstream sparsePtsOut((this->outPath + "/" +"_sparse.particles").c_str());
   auto sparsePts = this->sparseMean;
   for (int i = 0; i < this->goodPoints.size(); i++)
   {
@@ -567,14 +481,14 @@ void ReconstructSurface<TransformType>::writeMeanInfo()
   }
   sparsePtsOut.close();
 
-  std::ofstream goodPtsOut((this->outPath + "_goodPoints.txt").c_str());
+  std::ofstream goodPtsOut((this->outPath + "/" +"_goodPoints.txt").c_str());
   auto goodPts = this->goodPoints;
   for (auto a : goodPts)
     goodPtsOut << a << std::endl;
   goodPtsOut.close();
 
-  std::string outfilenameGood = this->outPath  + "_good-sparse.particles";
-  std::string outfilenameBad  = this->outPath  + "_bad-sparse.particles";
+  std::string outfilenameGood = this->outPath + "/" +"_good-sparse.particles";
+  std::string outfilenameBad  = this->outPath + "/" +"_bad-sparse.particles";
   std::ofstream ofsG, ofsB;
   ofsG.open(outfilenameGood.c_str());
   ofsB.open(outfilenameBad.c_str());
@@ -612,42 +526,28 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
   try
   {
     // turn the sets of global points to one sparse global mean.
-    Point init({0.f, 0.f, 0.f});
-    std::vector<Point3> sparseMeanPoint = std::vector<Point3>(worldPoints[0]);
+    PointArray sparseMeanPoint = makePointArray(worldPoints[0].size(), Point3({0.f, 0.f, 0.f}));
     for (auto &a : worldPoints)
     {
-      for (size_t i = 0; i < a.size(); i++)
-      {
-        init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
-        Vector3 vec = toVector(init);
-        sparseMeanPoint[i] += vec;
-      }
+      for (int i = 0; i < a.size(); i++)
+        sparseMeanPoint[i] += Point3({a[i][0], a[i][1], a[i][2]});
     }
 
-    auto div = static_cast<float>(worldPoints.size());
-    for (size_t i = 0; i < sparseMeanPoint.size(); i++)
-    {
-      init[0] = sparseMeanPoint[i][0] / div;
-      init[1] = sparseMeanPoint[i][1] / div;
-      init[2] = sparseMeanPoint[i][2] / div;
-      sparseMeanPoint[i] = Point3(init);
-    }
+    for (int i = 0; i < sparseMeanPoint.size(); i++)
+      sparseMeanPoint[i] /= static_cast<float>(worldPoints.size());
+
+    this->sparseMean = Mesh::MeshPoints::New();
+    for (auto &a : sparseMeanPoint)
+      this->sparseMean->InsertNextPoint(a[0], a[1], a[2]);
 
     std::vector<Eigen::MatrixXd> normals;
     std::vector<Mesh::MeshPoints> subjectPoints;
-    this->sparseMean = Mesh::MeshPoints::New();
-    for (auto &a : sparseMeanPoint)
-    {
-      this->sparseMean->InsertNextPoint(a[0], a[1], a[2]);
-    }
-    for (size_t shape = 0; shape < localPoints.size(); shape++)
+    for (int shape = 0; shape < localPoints.size(); shape++)
     {
       subjectPoints.push_back(Mesh::MeshPoints::New());
       for (auto &a : localPoints[shape])
-      {
         subjectPoints[shape]->InsertNextPoint(a[0], a[1], a[2]);
-      }
-      //calculate the normals from the DT
+
       normals.push_back(this->computeParticlesNormals(subjectPoints[shape], Image(distanceTransform[shape])));
     }
 
@@ -655,25 +555,23 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
     // (it normals are in the same direction accross shapes) or
     // bad (there is discrepency in the normal directions across shapes)
     this->goodPoints.resize(localPoints[0].size(), true);
-    if(usePairwiseNormalsDifferencesForGoodBad)
+    if(pairwiseNormalsDiffForGoodBad)
     {
-      for (unsigned int i = 0; i < localPoints[0].size(); i++)
+      for (int i = 0; i < localPoints[0].size(); i++)
       {
-        bool isGood = true;
-
         // the normal of the first shape
-        double nx_jj = normals[0](i, 0);
-        double ny_jj = normals[0](i, 1);
-        double nz_jj = normals[0](i, 2);
+        double nx_i = normals[0](i, 0);
+        double ny_i = normals[0](i, 1);
+        double nz_i = normals[0](i, 2);
 
         // start from the second
-        for (unsigned int shapeNo_kk = 1; shapeNo_kk < localPoints.size(); shapeNo_kk++)
+        for (int j = 1; j < localPoints.size(); j++)
         {
-          double nx_kk = normals[shapeNo_kk](i, 0);
-          double ny_kk = normals[shapeNo_kk](i, 1);
-          double nz_kk = normals[shapeNo_kk](i, 2);
+          double nx_j = normals[j](i, 0);
+          double ny_j = normals[j](i, 1);
+          double nz_j = normals[j](i, 2);
 
-          this->goodPoints[i] = this->goodPoints[i] && ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+          this->goodPoints[i] = this->goodPoints[i] && ((nx_i * nx_j + ny_i * ny_j + nz_i * nz_j) >
                                                          std::cos(this->maxAngleDegrees * Pi / 180.));
         }
       }
@@ -687,21 +585,22 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
 
       thetas.resize(sparseMeanPoint.size());
       phis.resize(sparseMeanPoint.size());
-      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      for (int i = 0; i < sparseMeanPoint.size(); i++)
       {
-        thetas[j].resize(localPoints.size());
-        phis[j].resize(localPoints.size());
+        thetas[i].resize(localPoints.size());
+        phis[i].resize(localPoints.size());
       }
+
       for (int i = 0; i < localPoints.size(); i++)
       {
-        for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+        for (int j = 0; j < sparseMeanPoint.size(); j++)
         {
           double curNormal[3];
           double curNormalSph[3];
 
-          curNormal[0] = normals[i](j,0);
-          curNormal[1] = normals[i](j,1);
-          curNormal[2] = normals[i](j,2);
+          curNormal[0] = normals[i](j, 0);
+          curNormal[1] = normals[i](j, 1);
+          curNormal[2] = normals[i](j, 2);
 
           Utils::cartesian2spherical(curNormal, curNormalSph);
           phis[j][i]   = curNormalSph[1];
@@ -710,54 +609,51 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
       }
 
       // compute mean normal for every particle
-      Eigen::MatrixXd average_normals(sparseMeanPoint.size(), 3);
-      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      Eigen::MatrixXd averageNormals(sparseMeanPoint.size(), 3);
+      for (int i = 0; i < sparseMeanPoint.size(); i++)
       {
         double avgNormal_sph[3];
         double avgNormal_cart[3];
         avgNormal_sph[0] = 1;
-        avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
-        avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
+        avgNormal_sph[1] = Utils::averageThetaArc(phis[i]);
+        avgNormal_sph[2] = Utils::averageThetaArc(thetas[i]);
         Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
 
-        average_normals(j,0) = avgNormal_cart[0];
-        average_normals(j,1) = avgNormal_cart[1];
-        average_normals(j,2) = avgNormal_cart[2];
+        averageNormals(i, 0) = avgNormal_cart[0];
+        averageNormals(i, 1) = avgNormal_cart[1];
+        averageNormals(i, 2) = avgNormal_cart[2];
       }
 
-      for (size_t j = 0; j < sparseMeanPoint.size(); j++)
+      for (int i = 0; i < sparseMeanPoint.size(); i++)
       {
         double cur_cos_appex = 0;
         // the mean normal of the current particle index
-        double nx_jj = average_normals(j,0);
-        double ny_jj = average_normals(j,1);
-        double nz_jj = average_normals(j,2);
+        double nx_i = averageNormals(i, 0);
+        double ny_i = averageNormals(i, 1);
+        double nz_i = averageNormals(i, 2);
 
-        for (unsigned int shapeNo_kk = 0; shapeNo_kk < localPoints.size(); shapeNo_kk++)
+        for (int j = 0; j < localPoints.size(); j++)
         {
-          double nx_kk = normals[shapeNo_kk](j, 0);
-          double ny_kk = normals[shapeNo_kk](j, 1);
-          double nz_kk = normals[shapeNo_kk](j, 2);
+          double nx_j = normals[j](i, 0);
+          double ny_j = normals[j](i, 1);
+          double nz_j = normals[j](i, 2);
 
-          cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
+          cur_cos_appex += (nx_i * nx_j + ny_i * ny_j + nz_i * nz_j);
         }
 
         cur_cos_appex /= localPoints.size();
         cur_cos_appex *= 2.0; // due to symmetry about the mean normal
 
-        this->goodPoints[j] = cur_cos_appex > std::cos(this->maxAngleDegrees * Pi / 180.);
+        this->goodPoints[i] = cur_cos_appex > std::cos(this->maxAngleDegrees * Pi / 180.);
       }
     }
 
     // decide which correspondences will be used to build the warp
-    std::vector<int> particlesIndices;
-    particlesIndices.clear();
-    for (unsigned int kk = 0; kk < this->goodPoints.size(); kk++)
+    std::vector<int> particlesIndices; particlesIndices.clear();
+    for (int i = 0; i < this->goodPoints.size(); i++)
     {
-      if (this->goodPoints[kk])
-      {
-        particlesIndices.push_back(int(kk));
-      }
+      if (this->goodPoints[i])
+        particlesIndices.push_back(i);
     }
     std::cout << "There are " << particlesIndices.size() << " / " << this->goodPoints.size() << " good points." << std::endl;
 
@@ -793,23 +689,18 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
 
     std::vector<int> centroidIndices;
     if (this->numOfClusters > 0 && this->numOfClusters < worldPoints.size())
-    {
       this->performKMeansClustering(worldPoints, worldPoints[0].size(), centroidIndices);
-    }
     else
     {
       this->numOfClusters = distanceTransform.size();
       centroidIndices.resize(distanceTransform.size());
-      for (size_t shapeNo = 0; shapeNo < distanceTransform.size(); shapeNo++)
-      {
+      for (int shapeNo = 0; shapeNo < distanceTransform.size(); shapeNo++)
         centroidIndices[shapeNo] = int(shapeNo);
-        std::cout << centroidIndices[shapeNo] << std::endl;
-      }
     }
 
-    for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++)
+    for (int cnt = 0; cnt < centroidIndices.size(); cnt++)
     {
-      size_t shape = size_t(centroidIndices[cnt]);
+      int shape = centroidIndices[cnt];
       Image dt(distanceTransform[shape]);
       typename PointSetType::Pointer targetLandMarks = PointSetType::New();
       Point3 pt;
@@ -831,39 +722,35 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
         }
       }
       transform->SetTargetLandmarks(targetLandMarks);
-      checkMapping(transform, this->sparseMean, subjectPoints[shape]);
 
       if (cnt == 0)
       {
         meanDistanceTransformBeforeWarp = Image(dt);
-        dt.resample(); // pass interpolator
-        meanDistanceTransform = Image(dt);
+        meanDistanceTransform = dt.resample(transform, dt.origin(), dt.dims(), dt.spacing(), dt.coordsys());
       }
       else
       {
-        meanDistanceTransform = meanDistanceTransform + dt.resample(); // pass interpolator
-
+        meanDistanceTransform += dt.resample(transform, dt.origin(), dt.dims(), dt.spacing(), dt.coordsys());
         if (this->meanBeforeWarp)
-          meanDistanceTransformBeforeWarp = meanDistanceTransformBeforeWarp + dt; // check on this
+          meanDistanceTransformBeforeWarp += dt;
       }
     }
 
-    Image multiplyImage = meanDistanceTransform * (1.0/this->numOfClusters);
-    Image multiplyImageBeforeWarp = meanDistanceTransformBeforeWarp * (1.0/this->numOfClusters);
+    Image multiplyImage = meanDistanceTransform * (1.0 / this->numOfClusters);
+    Image multiplyImageBeforeWarp = meanDistanceTransformBeforeWarp * (1.0 / this->numOfClusters);
 
-    if (this->outputEnabled)
+    if (this->enableOutput)
     {
-      std::string meanDT_filename = this->outPrefix + "_meanDT.nrrd";
+      std::string meanDT_filename = this->outPrefix + "/" + "_meanDT.nrrd";
       multiplyImage.write(meanDT_filename);
       if (this->meanBeforeWarp)
       {
-        std::string meanDTBeforeWarp_filename = this->outPrefix + "_meanDT_beforeWarp.nrrd";
+        std::string meanDTBeforeWarp_filename = this->outPrefix + "/" + "_meanDT_beforeWarp.nrrd";
         multiplyImageBeforeWarp.write(meanDTBeforeWarp_filename);
       }
     }
 
     this->denseMean = MeshUtils::extractIsoSurface(multiplyImage).getVTKMesh();
-    // this->denseMean = MeshQC(this->denseMean);
   }
   catch (std::runtime_error e)
   {
@@ -887,19 +774,18 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
 template<class TransformType>
 std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter)
 {
-  // (1) define mean sparse shape:
   // run generalized procrustes on the local points to align all shapes to a common coordinate frame
   Procrustes3D::ShapeListType shapelist;
-  Procrustes3D::ShapeType     shapevector;
-  Procrustes3D::ShapeType     meanSparseShape;
-  Procrustes3D::PointType     point;
+  Procrustes3D::ShapeType shapevector;
+  Procrustes3D::ShapeType meanSparseShape;
+  Procrustes3D::PointType point;
 
   // fill the shape list
-  for (unsigned int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
+  for (int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
   {
     shapevector.clear();
     PointArray curShape = localPoints[shapeNo];
-    for(unsigned int i = 0 ; i < curShape.size(); i++)
+    for(int i = 0 ; i < curShape.size(); i++)
     {
       Point3 p = curShape[i];
 
@@ -934,15 +820,11 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
   commonCenter[1] = commonCenter_[1];
   commonCenter[2] = commonCenter_[2];
 
-  std::cout << "commonCenter(0) = " << commonCenter_[0] << ", "
-            << "commonCenter(1) = " << commonCenter_[1] << ", "
-            << "commonCenter(2) = " << commonCenter_[2] << std::endl;
-
   // compute the average sparse shape
   procrustes.ComputeMeanShape(meanSparseShape, shapelist);
   int medianShapeIndex = procrustes.ComputeMedianShape(shapelist);
 
-  this->sparseMean = vtkSmartPointer<vtkPoints>::New(); // for visualization and estimating kernel support
+  this->sparseMean = Mesh::MeshPoints::New(); // for visualization and estimating kernel support
   Point3 center({0,0,0});
   for(unsigned int i = 0; i < meanSparseShape.size(); i++)
   {
@@ -953,25 +835,20 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
     pt[2] = meanSparseShape[i](2) - commonCenter_(2);
 
     center += pt;
-    sparseMean->InsertNextPoint(pt[0], pt[1], pt[2]);
+    this->sparseMean->InsertNextPoint(pt[0], pt[1], pt[2]);
   }
 
   center /= meanSparseShape.size();
 
-  std::cout << "center(0) = " << center[0] << ", "
-            << "center(1) = " << center[1] << ", "
-            << "center(2) = " << center[2] << std::endl;
-
-  std::vector<PointArray> globalPoints;
-  globalPoints.clear();
+  std::vector<PointArray> globalPoints; globalPoints.clear();
 
   // prep aligned shapes for subsequent statistical analysis
-  for (unsigned int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
+  for (int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
   {
     shapevector = shapelist[shapeNo];
     PointArray curShape;
     curShape.clear();
-    for(unsigned int i = 0 ; i < shapevector.size(); i++)
+    for(int i = 0 ; i < shapevector.size(); i++)
     {
       Point3 pt;
 
@@ -991,8 +868,6 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
 template<class TransformType>
 void ReconstructSurface<TransformType>::surface(const std::vector<std::string> localPointsFiles)
 {
-  double maxAngleDegrees = this->normalAngle * (180.0 / Pi);
-
   this->localPointsFiles = localPointsFiles;
 
   for (unsigned int i = 0; i < this->localPointsFiles.size(); i++)
@@ -1185,7 +1060,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 template<class TransformType>
 void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles)
 {
-  double maxAngleDegrees = normalAngle * (180.0 / Pi);
+  this->maxAngleDegrees = this->normalAngle * (180.0 / Pi);
   std::vector<PointArray> worldPoints;
   this->distanceTransformFiles = distanceTransformFiles;
   std::vector<PointArray> localPoints = setLocalPointsFiles(localPointsFiles);
@@ -1206,15 +1081,9 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
 
     // finding image origin that is consistent with the given world coordinates
     // and adjusted using the origin of images and point clouds in the local space
-    Point3 originLocal;
-    Point3 originWorld;
-
-    Point3 minLocal;
-    Point3 maxLocal;
-
-    // bounding box of the global points
-    Point3 minWorld;
-    Point3 maxWorld;
+    Point3 originLocal, originWorld;
+    Point3 minLocal, maxLocal;
+    Point3 minWorld, maxWorld; // bounding box of the global points
 
     // compute center of mass for both local and global points
     Utils::computeCenterOfMassForShapeEnsemble(localPoints,  originLocal);
@@ -1259,10 +1128,10 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
 
   for (int i = 0; i < this->worldPointsFiles.size(); i++)
   {
-    std::string curfilename = worldPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_global.particles";
+    std::string curfilename = worldPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(localPointsFiles[i])) + "_global.particles";
     Utils::writeSparseShape((char*)curfilename.c_str(), worldPoints[i]);
 
-    std::string curfilename_local = localPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(this->localPointsFiles[i])) + "_local.particles";
+    std::string curfilename_local = localPointsPath + "/" + StringUtils::removeExtension(StringUtils::getFilename(localPointsFiles[i])) + "_local.particles";
     Utils::writeSparseShape((char*)curfilename_local.c_str(), localPoints[i]);
   }
 

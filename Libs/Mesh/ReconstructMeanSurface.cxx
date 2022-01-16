@@ -234,6 +234,7 @@ int DoIt(InputParams params)
 
     // compute the dense shape
     std::cout << "Reconstructing dense mean mesh with number of clusters = " << params.K << std::endl;
+    reconstructor.setNumClusters(3);
     vtkSmartPointer<vtkPolyData> denseMean = reconstructor.getDenseMean(local_pts, global_pts, distance_transforms);
 
     // write output

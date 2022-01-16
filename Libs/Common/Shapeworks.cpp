@@ -29,6 +29,15 @@ Coord toCoord(const Point &p) {
 /// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
+PointArray makePointArray(int size, Point3 value)
+{
+  PointArray arr;
+  for (int i = 0; i < size; i++)
+    arr.push_back(value);
+  
+  return arr;
+}
+
 Plane makePlane(const Point &p, const Vector3 &n)
 {
   Plane plane = Plane::New();

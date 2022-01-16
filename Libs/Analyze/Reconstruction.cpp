@@ -761,8 +761,8 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                                                    static_cast<double>(this->numClusters_));
         multiplyImageFilterBeforeWarp->Update();
 
-        std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
-        std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
+        std::string meanDT_filename           = out_prefix_ + "/" + "_meanDT.nrrd" ;;
+        std::string meanDTBeforeWarp_filename = out_prefix_ + "/" + "_meanDT_beforeWarp.nrrd" ;;
 
         if (this->output_enabled_)
         {
@@ -1221,11 +1221,11 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         vtkSmartPointer<vtkPolyData> meshIn)
 {
     //for now, write formats and read them in
-    std::string infilename_vtk = out_prefix_ + "_dense-noQC.vtk";
-    std::string infilename_ply = out_prefix_ + "_dense-noQC.ply";
+    std::string infilename_vtk = out_prefix_ + "/" + "_dense-noQC.vtk";
+    std::string infilename_ply = out_prefix_ + "/" + "_dense-noQC.ply";
 
-    std::string outfilename_vtk = out_prefix_ + "_dense-QC.vtk";
-    std::string outfilename_ply = out_prefix_ + "_dense-QC.ply";
+    std::string outfilename_vtk = out_prefix_ + "/" + "_dense-QC.vtk";
+    std::string outfilename_ply = out_prefix_ + "/" + "_dense-QC.ply";
 
     if (this->output_enabled_) {
         writeVTK((char*)infilename_vtk.c_str(), meshIn);

@@ -72,7 +72,7 @@ vtkSmartPointer<vtkImageData> Image::getVTKImage() const
 
   return connector->GetOutput();
 }
-  
+
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
@@ -1015,7 +1015,7 @@ Coord Image::physicalToLogical(const Point3 &p) const
 }
 
 Image::ImageIterator Image::setIterator()
-{  
+{ 
   ImageIterator iter(this->image, image->GetRequestedRegion());
   return iter;
 }
