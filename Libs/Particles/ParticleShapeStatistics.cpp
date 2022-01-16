@@ -220,57 +220,6 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
 }
 
 
-int ParticleShapeStatistics::ImportPointsForMca(std::vector<vnl_vector<double>> points, unsigned int dps)
-{
-  // debug
-  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
-  unsigned int num_points = (int)(points[0].size() / (3 * dps));
-  std::cout << "num_points " << num_points << std::endl;
-  this->m_dps = dps;
-  // Read the point files.  Assumes all the same size.
-  unsigned int n = points.size(); 
-  std::cout << "n " << n << std::endl;
-  unsigned int m = num_points * VDimension * dps;
-  std::cout << "m " << m << std::endl;
-  m_domainNumDimensions = points[0].size();
-  std::cout << "m_domainNumDimensions " << m_domainNumDimensions << std::endl;
-
-  m_super_matrix.set_size(m, n);
-  std::cout << "get here" << std::endl;
-  m_shapes_mca.clear();
-  std::cout << "cleared" <<std::endl;
-
-  for (unsigned int i = 0; i < n; i++) {
-    for (unsigned int k = 0; k < 1; k++) {
-      unsigned int q = points[i].size();
-      for (unsigned int j = 0; j < q; j++) {
-        m_super_matrix(q * k * VDimension + j, i) = points[i][j];
-      }
-    }
-  }
-  
-  for(int i = 0; i < m_shapes.rows(); i++){
-    for (int j = 0; j < m_shapes.cols(); j++)
-    {
-      if(m_shapes(i, j) != m_super_matrix(i, j)){
-        std::cout << "value not equal " << std :: endl;
-      }
-    }
-  }
-
-  for(int k = 0; k < dps; k++)
-  {
-    vnl_matrix<double> domain_shape;
-    domain_shape.set_size(num_points * 3, n);
-    m_super_matrix.extract(domain_shape, k * dps, 0); // was wrong here
-    m_shapes_mca.push_back(domain_shape);
-  }
-  //debug
-  std::cout << "Import points done for MCA" << std::endl;
-  return 0;
-}
-
-
 int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
 {
   // debug
@@ -528,7 +477,6 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   m_numSamples2 = 0;
   m_numSamples = pointsfiles.size() / m_domainsPerShape;
   m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
-  m_domainNumDimensions = reader1->GetOutput().size() * VDimension;
 
   // Read the group ids
   int tmpID;
@@ -566,7 +514,6 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_shapes_mca.clear();
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
@@ -584,8 +531,6 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
-      vnl_matrix<double> domain_shape;
-      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
 
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
@@ -612,13 +557,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
         m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
-
-        domain_shape(j * VDimension + 0, i) = reader->GetOutput()[j][0];
-        domain_shape(j * VDimension + 1, i) = reader->GetOutput()[j][1];
-        domain_shape(j * VDimension + 2, i) = reader->GetOutput()[j][2];
       }
-      // m_shapes_mca[k] = domain_shape;
-      m_shapes_mca.push_back(domain_shape);
     }
   }
 
@@ -646,7 +585,6 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
   // Assumes all the same size.
   m_numSamples = global_pts.size() / m_domainsPerShape;
   m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
-  m_domainNumDimensions = global_pts[0].size() * VDimension;
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);
@@ -665,8 +603,6 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
       //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
       std::vector<Point> curDomain = global_pts[i * m_domainsPerShape + k];
       unsigned int q = curDomain.size();
-      vnl_matrix<double> domain_shape;
-      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
 
       //std::cout << "q = " << q << "-------------\n";
       for (unsigned int j = 0; j < q; j++) {
@@ -684,11 +620,7 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = curDomain[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = curDomain[j][2];
 
-        domain_shape(j * VDimension + 0, i) = curDomain[j][0];
-        domain_shape(j * VDimension + 1, i) = curDomain[j][1];
-        domain_shape(j * VDimension + 2, i) = curDomain[j][2];
       }
-      m_shapes_mca.push_back(domain_shape);
     }
   }
 
@@ -743,8 +675,6 @@ int ParticleShapeStatistics::ReloadPointFiles()
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
-      vnl_matrix<double> domain_shape;
-      domain_shape.set_size(m_domainNumDimensions, m_numSamples);
 
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) += m_pointsMinusMean(
@@ -772,11 +702,7 @@ int ParticleShapeStatistics::ReloadPointFiles()
         m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
         m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
 
-        domain_shape(j * VDimension + 0, i) = reader->GetOutput()[j][0];
-        domain_shape(j * VDimension + 1, i) = reader->GetOutput()[j][1];
-        domain_shape(j * VDimension + 2, i) = reader->GetOutput()[j][2];
       }
-      m_shapes_mca[k] = domain_shape;
     }
   }
 
@@ -843,256 +769,6 @@ int ParticleShapeStatistics::ComputeModes()
 
   return 0;
 }
-
-// void ParticleShapeStatistics::MCADecomposition()
-// {
-//   std::cout << "Started mca decompostion " << std::endl;
-//   unsigned int m = m_super_matrix.rows();
-//   vnl_matrix<double> ones_m;
-//   ones_m.set_size(m, 1);
-//   ones_m.fill(1.0);
-//   m_grand_mean = ones_m.transpose() * m_super_matrix;
-//   std::cout << " grand mean step 1 " << std::endl;
-
-//   m_grand_mean = m_grand_mean * (double)(1.0/m) ;
-//   std::cout << " grand mean step 2 " << std::endl;
-
-//   m_grand_mean = m_grand_mean.transpose(); // 1 X N
-//   std::cout << " grand mean step done " << std::endl;
-
-
-//   ComputeBetweenParams();
-//   std::cout << "Between params done" << std::endl;
-//   ComputeWithinParams();
-//   std::cout << "within params done" << std::endl;
-//   ComputeMCAModeStats();
-//   std::cout << "mca stats calculated" << std::endl;
-// }
-
-void ParticleShapeStatistics::ComputeBetweenParams()
-{
-  //centering matrix
-  unsigned int m = m_super_matrix.rows(); // M inc. VDim
-  unsigned int n = m_super_matrix.cols(); // N
-  unsigned int m_k = (int)(m/m_dps);
-  std::cout << " within begin  m n m_k" << m << " " << n << " " << m_k << std::endl;
-
-  std::cout << " Betweeen begin " << std::endl;
-
-  vnl_matrix<double> centering_matrix;
-  centering_matrix.set_size(m, m);
-  centering_matrix.fill(1.0);
-  vnl_matrix<double> ones_m;
-  vnl_matrix<double> ones_m_sub;
-  ones_m.set_size(m, 1);
-  ones_m_sub.set_size(m_k, 1);
-  ones_m.fill(1.0);
-  ones_m_sub.fill(1.0);
-  centering_matrix = centering_matrix - (ones_m * ones_m.transpose()) * (1.0/(double)m);
-  std::cout << " Centering done " << std::endl;
-
-
-  vnl_matrix<double> z_sub_total = centering_matrix * m_super_matrix;
-  std::cout << " z_sub_total done  " << std::endl;
-  vnl_matrix<double> z_centred_res;
-  z_centred_res.set_size(m_dps, n);
-  z_centred_res.fill(0.0);
-
-  for(unsigned int i = 0; i < m_dps; i++)
-  {
-    vnl_matrix<double> z_c_temp;
-    z_c_temp.set_size(m_k , n);
-    z_sub_total.extract(z_c_temp, i * m_k, 0); //wrong here
-    vnl_matrix<double> z_centred_k;
-    z_centred_k = (ones_m_sub.transpose() * z_c_temp) * (1.0/(double)m_k);
-    z_centred_res.update(z_centred_k, i, 0); // wrong here correct now -- might be correct
-  } 
-  std::cout << " between objective done " << std::endl;
-
-  vnl_matrix<double> w;
-  w.set_size(m_dps, m_dps);
-  w.fill_diagonal(sqrt(m_k));
-
-  vnl_matrix<double> between_objective_matrix = w * z_centred_res; // K X N
-
-  // do svd for between
-  vnl_svd<double> between_svd(between_objective_matrix);
-
-  // compute CA loading matrix and component scores
-  vnl_matrix<double> w_inv = w * m_k;
-  m_between_component_scores = w_inv * between_svd.U();
-  m_between_loading_matrix = between_svd.V() * between_svd.W();
-  std::cout << " between DONE " << std::endl;
-
-}
-
-void ParticleShapeStatistics::ComputeWithinParams()
-{
-  unsigned int m = m_super_matrix.rows(); // M
-  unsigned int n = m_super_matrix.cols(); // N
-  unsigned int m_k = (int)(m/m_dps);
-  std::cout << " within begin  m n m_k" << m << " " << n << " " << m_k << std::endl;
-
-  m_within_loading_matrix.clear();
-  m_within_component_scores.clear();
-
-  for(unsigned int i = 0; i < m_dps; i++)
-  {
-    // compute centering matrix
-    vnl_matrix<double> centering_matrix;
-    centering_matrix.set_size(m_k, m_k);
-    centering_matrix.fill(1.0);
-    vnl_matrix<double> ones_m_k;
-    ones_m_k.set_size(m_k, 1);
-    ones_m_k.fill(1.0);
-    centering_matrix = centering_matrix -  (ones_m_k * ones_m_k.transpose()) * (1.0/(double)m_k);
-
-    vnl_matrix<double> within_objective_matrix = centering_matrix.transpose() * m_shapes_mca[i];
-    vnl_svd<double> within_svd(within_objective_matrix);
-
-    vnl_matrix<double> within_component_scores_k = within_svd.U();
-    vnl_matrix<double> within_loading_matrix_k = within_svd.V() * within_svd.W();
-
-    m_within_component_scores.push_back(within_component_scores_k);
-    m_within_loading_matrix.push_back(within_loading_matrix_k);
-  }
-  std::cout << " Within done" << std::endl;
-
-}
-
-// void ParticleShapeStatistics::ComputeMCAModeStats()
-// {
-//   // reconstruct in terms of MCA decomposition and apply pca on that
-//   unsigned int m = m_super_matrix.rows(); // M
-//   unsigned int n = m_super_matrix.cols(); // N
-//   unsigned int m_k = (int)(m/m_dps);
-//   vnl_matrix<double> ones_m_k;
-//   ones_m_k.set_size(m_k, 1);
-//   ones_m_k.fill(1.0);
-//   vnl_matrix<double> mean_part = ones_m_k * m_grand_mean.transpose();
-//   std::cout << "MCA Mean Part done" << std::endl;
-
-//   std::vector<vnl_matrix<double>> z_within;
-//   std::vector<vnl_matrix<double>> z_between;
-
-//   // A. For Within
-//   for(unsigned int k = 0; k < m_dps; k++)
-//   {
-//     vnl_matrix<double> z_k =  m_within_component_scores[k] * m_within_loading_matrix[k].transpose(); // M_k X N
-//     z_k += mean_part;
-//     z_within.push_back(z_k);
-//     std::cout<< "z_within_k size : " << z_k.rows() << " X " << z_k.cols() << std::endl;
-//   }
-//   std:: cout << "size of m_between_scores " << m_between_component_scores.rows() << " X " << m_between_component_scores.cols() << std::endl;
-
-//   for(unsigned int k = 0; k < m_dps; k++)
-//   {
-//     vnl_matrix<double> z_k =  ones_m_k * m_between_component_scores.get_n_rows(k, 1).transpose() * m_between_loading_matrix.transpose();
-//     z_k += mean_part;
-//     z_between.push_back(z_k);
-//     std::cout<< "z_between_k size : " << z_k.rows() << " X " << z_k.cols() << std::endl;
-
-//   }
-
-//   std::cout << " Prelim steps done" << std::endl;
-//   // make overall matix now for pca on top of this
-
-//   m_pointsMinusMean_for_between.set_size(m, n);
-//   m_pointsMinusMean_for_between.fill(0.0);
-  
-//   m_mean_between.set_size(m);
-//   m_mean_between.fill(0.0);
-
-//   m_pointsMinusMean_for_within.set_size(m, n);
-//   m_pointsMinusMean_for_within.fill(0.0);
-  
-//   m_mean_within.set_size(m);
-//   m_mean_within.fill(0.0);
-
-//   for(unsigned int k = 0; k < m_dps; k++)
-//   {
-//     std :: cout << "k = " << k << " z_between[k].rows " << z_between[k].rows() << std::endl;
-//     m_pointsMinusMean_for_between.update(z_between[k], k * z_between[k].rows(), 0); // wrong here correct now
-//     m_pointsMinusMean_for_within.update(z_within[k], k  * z_within[k].rows(), 0);
-//   }
-//   std::cout << " points minus mean done" << std::endl;
-
-//   for (unsigned int i = 0; i < n; i++)
-//   {
-//     m_mean_between += m_pointsMinusMean_for_between.get_column(i);
-//     m_mean_within += m_pointsMinusMean_for_within.get_column(i);
-//   }
-
-//   m_mean_between = m_mean_between * (1.0/(double)n);
-//   m_mean_within = m_mean_within * (1.0/(double)(n));
-//   for (unsigned int j = 0; j < m; j++) {
-//     for (unsigned int i = 0; i < n; i++) {
-//       m_pointsMinusMean_for_between(j, i) -= m_mean_between(j);
-//       m_pointsMinusMean_for_within(j, i) -= m_mean_within(j);
-//     }
-//   }
-//   std::cout << " points minus mean DONE 2" << std::endl;
-
-
-//   // compute pca for mca components
-//   // A. for within
-//   vnl_matrix<double> A = m_pointsMinusMean_for_within.transpose()
-//                          * m_pointsMinusMean_for_within * (1.0 / ((double) (n - 1)));
-//   vnl_symmetric_eigensystem<double> symEigen(A);
-//   std::cout << " within eigen decomp done" << std::endl;
-
-
-//   m_withinEigenvectors = m_pointsMinusMean_for_within * symEigen.V;
-//   m_withinEigenvalues.resize(n);
-
-//   // normalize
-//   for (unsigned int i = 0; i < n; i++) {
-//     double total = 0.0f;
-//     for (unsigned int j = 0; j < m; j++) {
-//       total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
-//     }
-//     total = sqrt(total);
-
-//     for (unsigned int j = 0; j < m; j++) {
-//       m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
-//     }
-
-//     m_withinEigenvalues[i] = symEigen.D(i, i);
-//   }
-//   std::cout << " within eigen decomp done 2" << std::endl;
-
-//   // Within done
-
-//   // B. for between
-//   vnl_matrix<double> B = m_pointsMinusMean_for_within.transpose()
-//                          * m_pointsMinusMean_for_within * (1.0 / ((double) (n - 1)));
-//   vnl_symmetric_eigensystem<double> eig_sys(B);
-//   std::cout << " @@between eigen decomp done A" << std::endl;
-
-
-//   m_betweenEigenvectors = m_pointsMinusMean_for_within * eig_sys.V;
-//   m_betweenEigenvalues.resize(n);
-//   std::cout << " between eigen decomp done" << std::endl;
-
-
-//   // normalize
-//   for (unsigned int i = 0; i < n; i++) {
-//     double total = 0.0f;
-//     for (unsigned int j = 0; j < m; j++) {
-//       total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
-//     }
-//     total = sqrt(total);
-
-//     for (unsigned int j = 0; j < m; j++) {
-//       m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
-//     }
-
-//     m_betweenEigenvalues[i] = eig_sys.D(i, i);
-//   }
-//   std::cout << " within eigen decomp done 2" << std::endl;
-
-//   // Within done
-// }
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {

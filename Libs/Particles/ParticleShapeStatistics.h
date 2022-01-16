@@ -39,17 +39,11 @@ public:
 
   int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
 
-  void MCADecomposition();
-  void Mlpca();
-  void ComputeBetweenParams();
-  void ComputeWithinParams();
-  void ComputeMCAModeStats();
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Loads a set of point files and pre-computes some statistics. */
   int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
-  int ImportPointsForMca(std::vector<vnl_vector<double>> points, unsigned int dps);
   int ComputeWithinModesForMca();
   int ComputeBetweenModesForMca();
   int ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps);
@@ -84,7 +78,6 @@ public:
 
   /** Returns the number of dimensions (this is number of points times Dimension) */
   const int NumberOfDimensions() { return m_numDimensions; }
-  const int DomainNumberOfDimensions() { return m_domainNumDimensions; }
   const int DomainsNumber() { return m_dps; }
   const int NumberOfPoints() { return m_numPoints; }
 
@@ -106,10 +99,8 @@ public:
 
   /** Returns the mean shape. */
   const vnl_vector<double> &Mean() { return m_mean; }
-  const vnl_matrix<double> &GrandMean() { return m_grand_mean; }
   const vnl_vector<double> &WithinMean() { return m_mean_within; }
   const vnl_vector<double> &BetweenMean() { return m_mean_between; }
-  const vnl_vector<double> &MCAMean() { return m_mcaMean; }
   const vnl_vector<double> &Group1Mean() { return m_mean1; }
   const vnl_vector<double> &Group2Mean() { return m_mean2; }
 
@@ -169,7 +160,6 @@ private:
 
 
   unsigned int m_numDimensions;
-  unsigned int m_domainNumDimensions;
   std::vector<int> m_groupIDs;
 
   vnl_matrix<double> m_pooled_covariance;
@@ -193,9 +183,6 @@ private:
   std::vector<double> m_betweenEigenvalues;
   std::vector<double> m_withinEigenvalues;
   vnl_vector<double> m_mean;
-  // For MCA
-  vnl_matrix<double> m_grand_mean;
-  vnl_vector<double> m_mcaMean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
   vnl_matrix<double> m_pointsMinusMean;

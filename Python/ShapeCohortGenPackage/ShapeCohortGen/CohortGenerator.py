@@ -1,5 +1,4 @@
-from ShapeCohortGen import Supershapes,Ellipsoids,EllipsoidJoints,CohortGenUtils,SupershapeJoints
-
+from ShapeCohortGen import Supershapes,Ellipsoids,EllipsoidJoints,CohortGenUtils
 class CohortGenerator():
 	def __init__(self,out_dir):
 		self.out_dir = out_dir
@@ -42,12 +41,6 @@ class EllipsoidJointsCohortGenerator(CohortGenerator):
 		self.meshes = EllipsoidJoints.generate(num_samples, self.out_dir, randomize_center, randomize_x_radius, randomize_y_radius, randomize_z_radius,mode_size,mode_rotation,separation)
 		return self.meshes
 
-class SupershapeJointsCohortGenerator(CohortGenerator):
-	def __init__(self, out_dir):
-		super().__init__(out_dir)
-	def generate(self):
-		self.meshes = SupershapeJoints.generate(self.out_dir)
-		return self.meshes 
 
 class Supershapes2DCohortGenerator(CohortGenerator):
 	def __init__(self, out_dir):
