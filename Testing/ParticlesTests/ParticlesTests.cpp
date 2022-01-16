@@ -35,6 +35,28 @@ const std::vector<std::string> subFilenames = {
   test_dir + "seg.ellipsoid_10.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
 };
 
+std::vector<std::string> distanceTransformsFiles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.DT.nrrd"
+};
+
+std::vector<std::string> localParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
+};
+
+std::vector<std::string> worldParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/ellipsoid_00.world.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_01.world.particles",
+  std::string(TEST_DATA_DIR) + "/ellipsoid_02.world.particles"
+};
+
+std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense_mean.vtk";
+std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
+std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
+
 TEST(ParticlesTests, pca)
 {
   ParticleSystem particleSystem(subFilenames);
@@ -72,49 +94,11 @@ TEST(ParticlesTests, specificity)
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 
-TEST(ParticlesTests, reconstructmeansurfaceTest1)
-{
-  std::vector<std::string> distanceTransforms = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.DT.nrrd"
-  };
-
-  std::vector<std::string> localParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
-  };
-
-  std::vector<std::string> worldParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.world.particles"
-  };
-
-  ReconstructSurface<RBFSSparseTransform> reconstructor;
-  reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
-  reconstructor.setOutPath(std::string(TEST_DATA_DIR));
-  reconstructor.setNumOfParticles(128);
-  reconstructor.setNumOfClusters(3);
-  reconstructor.meanSurface(distanceTransforms, localParticles, worldParticles);
-}
-
 TEST(ParticlesTests, reconstructsurfaceTest1)
 {
-  std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
-  std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
-  std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
-
-  std::vector<std::string> localParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
-  };
-
   ReconstructSurface<RBFSSparseTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
   reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
-  reconstructor.surface(localParticles);
+  reconstructor.surface(localParticlesFiles);
 
   Mesh baselineDenseMesh1(std::string(TEST_DATA_DIR) + "/RBFSSparseTransform/ellipsoid_00.dense.vtk");
   Mesh baselineDenseMesh2(std::string(TEST_DATA_DIR) + "/RBFSSparseTransform/ellipsoid_01.dense.vtk");
@@ -160,19 +144,9 @@ TEST(ParticlesTests, reconstructsurfaceTest1)
 
 TEST(ParticlesTests, reconstructsurfaceTest2)
 {
-  std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
-  std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
-  std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
-
-  std::vector<std::string> localParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.local.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.local.particles"
-  };
-
   ReconstructSurface<ThinPlateSplineTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
   reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
-  reconstructor.surface(localParticles);
+  reconstructor.surface(localParticlesFiles);
 
   Mesh baselineDenseMesh1(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_00.dense.vtk");
   Mesh baselineDenseMesh2(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/ellipsoid_01.dense.vtk");
@@ -218,23 +192,13 @@ TEST(ParticlesTests, reconstructsurfaceTest2)
 
 TEST(ParticlesTests, reconstructPCATest1)
 {
-  std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
-  std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
-  std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
-
-  std::vector<std::string> worldParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.world.particles"
-  };
-
   ReconstructSurface<RBFSSparseTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
   reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
   reconstructor.setOutPath(std::string(TEST_DATA_DIR));
   reconstructor.setNumOfParticles(128);
   reconstructor.setNumOfModes(1);
   reconstructor.setNumOfSamplesPerMode(3);
-  reconstructor.samplesAlongPCAModes(worldParticles);
+  reconstructor.samplesAlongPCAModes(worldParticlesFiles);
 
   Mesh baselineDenseMesh1(std::string(TEST_DATA_DIR) + "/RBFSSparseTransform/mode-00_sample-000_dense.vtk");
   Mesh baselineDenseMesh2(std::string(TEST_DATA_DIR) + "/RBFSSparseTransform/mode-00_sample-001_dense.vtk");
@@ -280,23 +244,13 @@ TEST(ParticlesTests, reconstructPCATest1)
 
 TEST(ParticlesTests, reconstructPCATest2)
 {
-  std::string denseFile = std::string(TEST_DATA_DIR) + "/_dense.vtk";
-  std::string sparseFile = std::string(TEST_DATA_DIR) + "/_sparse.particles";
-  std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
-
-  std::vector<std::string> worldParticles = {
-  std::string(TEST_DATA_DIR) + "/ellipsoid_00.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_01.world.particles",
-  std::string(TEST_DATA_DIR) + "/ellipsoid_02.world.particles"
-  };
-
   ReconstructSurface<ThinPlateSplineTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
   reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
   reconstructor.setOutPath(std::string(TEST_DATA_DIR));
   reconstructor.setNumOfParticles(128);
   reconstructor.setNumOfModes(1);
   reconstructor.setNumOfSamplesPerMode(3);
-  reconstructor.samplesAlongPCAModes(worldParticles);
+  reconstructor.samplesAlongPCAModes(worldParticlesFiles);
 
   Mesh baselineDenseMesh1(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/mode-00_sample-000_dense.vtk");
   Mesh baselineDenseMesh2(std::string(TEST_DATA_DIR) + "/ThinPlateSplineTransform/mode-00_sample-001_dense.vtk");
@@ -338,4 +292,59 @@ TEST(ParticlesTests, reconstructPCATest2)
 
   ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
+}
+
+TEST(ParticlesTests, reconstructmeansurfaceTest)
+{
+  ReconstructSurface<RBFSSparseTransform> reconstructor;
+  reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
+  reconstructor.setOutPath(std::string(TEST_DATA_DIR));
+  reconstructor.setNumOfParticles(128);
+  reconstructor.setNumOfClusters(3);
+  reconstructor.meanSurface(distanceTransformsFiles, localParticlesFiles, worldParticlesFiles);
+
+  std::vector<std::string> baselineLocalGoodBadParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_00.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_00.local_local-bad.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_01.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_01.local_local-bad.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_02.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_02.local_local-bad.particles"
+  };
+
+  std::vector<std::string> localGoodBadParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_00.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_00.local_local-bad.particles",
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_01.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_01.local_local-bad.particles",
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_02.local_local-good.particles",
+  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_02.local_local-bad.particles"
+  };
+
+  std::vector<std::string> baselineWorldGoodBadParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_00.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_00.local_global-bad.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_01.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_01.local_global-bad.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_02.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_02.local_global-bad.particles"
+  };
+
+  std::vector<std::string> worldGoodBadParticlesFiles = {
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_00.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_00.local_global-bad.particles",
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_01.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_01.local_global-bad.particles",
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_02.local_global-good.particles",
+  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_02.local_global-bad.particles"
+  };
+
+  ParticleSystem baselineLocalGoodBadParticles(baselineLocalGoodBadParticlesFiles);
+  ParticleSystem localGoodBadParticles(localGoodBadParticlesFiles);
+
+  ParticleSystem baselineWorldGoodBadParticles(baselineWorldGoodBadParticlesFiles);
+  ParticleSystem worldGoodBadParticles(worldGoodBadParticlesFiles);
+
+  ASSERT_TRUE(baselineLocalGoodBadParticles.EvaluationCompare(localGoodBadParticles) &&
+              baselineWorldGoodBadParticles.EvaluationCompare(worldGoodBadParticles));
 }

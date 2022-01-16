@@ -242,6 +242,7 @@ public:
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3 &p) const;
 
+  /// creates an image iterator and returns it
   ImageIterator setIterator();
 
   /// compares this with another image using the region of interest filter

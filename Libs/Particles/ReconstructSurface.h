@@ -53,7 +53,9 @@ public:
 
   void samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles);
 
-  void meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles);
+  void meanSurface(const std::vector<std::string> distanceTransformFiles,
+                   const std::vector<std::string> localPointsFiles,
+                   const std::vector<std::string> worldPointsFiles);
 
   // set operations //
 
@@ -61,9 +63,9 @@ public:
 
   void setOutPath(std::string path) { this->outPath = path; }
 
-  void setProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
+  void setDoProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
 
-  void setProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
+  void setDoProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
 
   void setPairwiseNormalsDiffForGoodBad(bool pairwiseNormalsDiffForGoodBad) { this->pairwiseNormalsDiffForGoodBad = pairwiseNormalsDiffForGoodBad; }
 

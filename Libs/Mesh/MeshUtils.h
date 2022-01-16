@@ -51,8 +51,6 @@ public:
   /// computes average normals for each point in given set of meshes
   static Field computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes);
 
-  static Mesh extractIsoSurface(Image image);
-
   /// This function visualizes vector and scalar fields for FFCs
   void visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh);
 

@@ -1,6 +1,5 @@
 #include "ReconstructSurface.h"
 #include "Procrustes3D.h"
-#include "MeshUtils.h"
 #include "VectorImage.h"
 #include "ParticleShapeStatistics.h"
 #include "StringUtils.h" 
@@ -9,7 +8,6 @@
 #include <sys/stat.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkFloatArray.h>
-#include <vtkDoubleArray.h>
 
 #ifdef _WIN32
   #include <direct.h>
@@ -131,14 +129,14 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
     points->GetPoint(particlesIndices[i], p);
 
     vtkSmartPointer<vtkIdList> result = vtkSmartPointer<vtkIdList>::New();
-    kDTree->FindClosestNPoints(K + 1, p, result); // +1 to exclude myself
+    kDTree->FindClosestNPoints(K + 1, p, result);
 
     double meanDist = 0;
     for (vtkIdType k = 0; k < K + 1; k++)
     {
       vtkIdType pid = result->GetId(k);
 
-      if (pid == particlesIndices[i]) // close to myself
+      if (pid == particlesIndices[i])
         continue;
 
       double pk[3];
@@ -472,7 +470,7 @@ void ReconstructSurface<TransformType>::writeMeanInfo()
   Mesh denseMesh(this->denseMean);
   denseMesh.write(this->outPath + "/" + "_dense.vtk");
 
-  std::ofstream sparsePtsOut((this->outPath + "/" +"_sparse.particles").c_str());
+  std::ofstream sparsePtsOut((this->outPath + "/" +" _sparse.particles").c_str());
   auto sparsePts = this->sparseMean;
   for (int i = 0; i < this->goodPoints.size(); i++)
   {
@@ -487,8 +485,8 @@ void ReconstructSurface<TransformType>::writeMeanInfo()
     goodPtsOut << a << std::endl;
   goodPtsOut.close();
 
-  std::string outfilenameGood = this->outPath + "/" +"_good-sparse.particles";
-  std::string outfilenameBad  = this->outPath + "/" +"_bad-sparse.particles";
+  std::string outfilenameGood = this->outPath + "/" + "_good-sparse.particles";
+  std::string outfilenameBad  = this->outPath + "/" + "_bad-sparse.particles";
   std::ofstream ofsG, ofsB;
   ofsG.open(outfilenameGood.c_str());
   ofsB.open(outfilenameBad.c_str());
@@ -750,7 +748,9 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
       }
     }
 
-    this->denseMean = MeshUtils::extractIsoSurface(multiplyImage).getVTKMesh();
+    Mesh mesh(multiplyImage.toMesh(0.0f));
+    mesh.smooth(2);
+    this->denseMean = mesh.getVTKMesh();
   }
   catch (std::runtime_error e)
   {
@@ -898,7 +898,7 @@ template<class TransformType>
 void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles)
 {
   int domainsPerShape = 1;
-  const unsigned int Dimension = 3;
+  const int Dimension = 3;
   ParticleShapeStatistics shapeStats;
 
   std::vector<PointArray> worldPoints = setWorldPointsFiles(worldPointsFiles);
@@ -940,9 +940,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
         numberOfModes = percentVarByMode.size();
 
       if (numberOfModes == 0)
-      {
         std::invalid_argument("No dominant modes detected");
-      }
     }
     std::cout << numberOfModes << " dominant modes is found to capture " << this->maxVarianceCaptured*100 << "% of total variation ..." << std::endl;
   }
@@ -991,13 +989,8 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
     Eigen::VectorXd curMode = eigenVectors.col(totalNumberOfModes - modeId - 1);
 
     std::vector<double> std_store;
-    std::cout << "std_store: ";
-    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
-    {
-      std_store.push_back(std_factor_store[sid]*sqrt_eigenValue);
-      std::cout << std_store[sid] << ", " ;
-    }
-    std::cout << std::endl;
+    for (int sid = 0; sid < std_factor_store.size(); sid++)
+      std_store.push_back(std_factor_store[sid] * sqrt_eigenValue);
 
     // writing stds on file
     std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
@@ -1006,21 +999,18 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
     if (!ofs)
       throw std::runtime_error("Could not open file for output: " + stdfilename);
 
-    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
+    for (int sid = 0; sid < std_factor_store.size(); sid++)
       ofs << std_factor_store[sid] << "\n" ;
     ofs.close();
 
-    for(unsigned int sampleId = 0; sampleId < std_store.size(); sampleId++)
+    for(int sampleId = 0; sampleId < std_store.size(); sampleId++)
     {
       std::string sampleStr = Utils::int2str(int(sampleId), 3);
       std::string basename = prefix + "mode-" + modeStr + "_sample-" + sampleStr ;
-
       std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
 
       // generate the sparse shape of the current sample
       double cur_std = std_store[sampleId];
-
-      std::cout << "cur_std: " << cur_std << std::endl;
 
       Eigen::VectorXd curSample = mean + cur_std * curMode;
 

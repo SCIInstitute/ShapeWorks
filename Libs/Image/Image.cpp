@@ -33,7 +33,6 @@
 #include <itkConnectedComponentImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
-#include <itkAddImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 
 #include <vtkImageImport.h>
@@ -145,18 +144,9 @@ Image& Image::operator-()
 
 Image Image::operator+(const Image& other) const
 {
-  // Image ret(*this);
-  // ret += other;
-  // return ret;
-
-  using FilterType = itk::AddImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput1(this->image);
-  filter->SetInput2(other.image);
-  filter->Update();
-
-  return Image(filter->GetOutput());
+  Image ret(*this);
+  ret += other;
+  return ret;
 }
 
 Image& Image::operator+=(const Image& other)
@@ -248,19 +238,9 @@ Image Image::operator*(const Image &other) const
 
 Image Image::operator*(const PixelType x) const
 {
-  // Image ret(*this);
-  // ret *= x;
-  // return ret;
-
-  using FilterType = itk::MultiplyImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->SetConstant(x);
-  filter->Update();
-
-  return Image(filter->GetOutput());
-
+  Image ret(*this);
+  ret *= x;
+  return ret;
 }
 
 Image& Image::operator*=(const PixelType x)

@@ -286,15 +286,6 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
   return normals;
 }
 
-Mesh MeshUtils::extractIsoSurface(Image image)
-{
-  Mesh mesh(image.toMesh(0.0f));
-  mesh.smooth(1);
-  mesh.smooth(1);
-
-  return mesh.getVTKMesh();
-}
-
 void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh){
     //std::cout << "VTK rendering" << std::endl;
 
