@@ -40,10 +40,10 @@ def Run_Pipeline(args):
     if args.tiny_test:
         args.use_single_scale = 1
         sw.portal.download_subset(args.use_case, dataset_name, output_directory)
-        # file_list_img = sorted(
-        #     glob.glob(output_directory + dataset_name + "/images/*.nrrd"))[:3]
-        # file_list_seg = sorted(
-        #     glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
+        file_list_img = sorted(
+            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))[:3]
+        file_list_seg = sorted(
+            glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
 
     # Else download the entire dataset
     else:

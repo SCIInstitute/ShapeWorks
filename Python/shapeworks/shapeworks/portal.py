@@ -117,7 +117,7 @@ def download_subset(use_case,datasetName,outputDirectory):
             if(generate_download_flag(outputDirectory_1+"/","meshes")):
                 for mesh in islice(zip(dataset.meshes), 3):
                     mesh_dir = outputDirectory_1+ "/meshes"
-                    mesh.file.download(outputDirectory)
+                    mesh[0].file.download(outputDirectory)
 
         
     
