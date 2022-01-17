@@ -108,16 +108,17 @@ def download_subset(use_case,datasetName,outputDirectory):
                 for segmentation, image in islice(zip(dataset.segmentations, dataset.images), 3):
                     seg_dir = outputDirectory_1+ "/segmentations"
                     segmentation.file.download(seg_dir)
-        if(use_case in ["femur_cut","left_atrium"]):
+        elif(use_case in ["femur_cut","left_atrium"]):
             if(generate_download_flag(outputDirectory_1+"/","images")):
-                for image in islice(zip(dataset.images), 3):
+                for image in islice(dataset.images, 3):
                     image_dir = outputDirectory_1+ "/images"
-                    image.file.download(outputDirectory)
+                    image.file.download(image_dir)
         elif(use_case in ["ellipsoid_mesh","femur_cut","lumps","thin_cavity_bean"]):
             if(generate_download_flag(outputDirectory_1+"/","meshes")):
-                for mesh in islice(zip(dataset.meshes), 3):
+                print("folder doesn't exists")
+                for mesh in islice(dataset.meshes, 3):
                     mesh_dir = outputDirectory_1+ "/meshes"
-                    mesh[0].file.download(outputDirectory)
+                    mesh.file.download(mesh_dir)
 
         
     
@@ -183,7 +184,7 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             if not download_path.exists():
                 rmtree(str(download_path))
                 
-            dataset.download(download_path)
+            dataset.download(datasetName)
 
 
 
