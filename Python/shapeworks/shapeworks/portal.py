@@ -40,12 +40,18 @@ def getLoginDetails():
     print('')
     username = input("Username: ")
     password = getpass.getpass("Password: ")
-    combined = username + ':' + password
-    PasswordHash = base64.b64encode(password.encode()).decode("ascii")
+    try:
+        with swcc_session()  as session:
+            token = session.login(username, password)
+        combined = username + ':' + password
+        PasswordHash = base64.b64encode(password.encode()).decode("ascii")
+        loginState = {'username': username, 'PasswordHash': PasswordHash}
+        saveLogin(loginState)
 
-
-    loginState = {'username': username, 'PasswordHash': PasswordHash}
-    saveLogin(loginState)
+    except Exception as e:
+        print('Incorrect username or password.')
+        quit()
+    
 
 
 def login():
@@ -53,9 +59,9 @@ def login():
     if loadLogin() is None:
         print("Getting login")
         getLoginDetails()
-    
+
+    print("Login to ShapeWorks Data Portal successful")
     loginDetails = loadLogin()
-    print(loginDetails)
     username = loginDetails['username']
     passwordHash = loginDetails['PasswordHash']
     password = base64.b64decode(passwordHash)
@@ -96,12 +102,25 @@ def download_subset(use_case,datasetName,outputDirectory):
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         dataset = Dataset.from_name(datasetName)
-        for segmentation, image in islice(zip(dataset.segmentations, dataset.images), 3):
-            print(segmentation, image)
-            segmentation.file.download(outputDirectory)
-            image.file.download(outputDirectory)
-        input("Wait")
-#     if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
+        outputDirectory_1 = outputDirectory + "/" + datasetName 
+        if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
+            if(generate_download_flag(outputDirectory_1+"/","segmentations")):
+                for segmentation, image in islice(zip(dataset.segmentations, dataset.images), 3):
+                    seg_dir = outputDirectory_1+ "/segmentations"
+                    segmentation.file.download(seg_dir)
+        if(use_case in ["femur_cut","left_atrium"]):
+            if(generate_download_flag(outputDirectory_1+"/","images")):
+                for image in islice(zip(dataset.images), 3):
+                    image_dir = outputDirectory_1+ "/images"
+                    image.file.download(outputDirectory)
+        elif(use_case in ["ellipsoid_mesh","femur_cut","lumps","thin_cavity_bean"]):
+            if(generate_download_flag(outputDirectory_1+"/","meshes")):
+                for mesh in islice(zip(dataset.meshes), 3):
+                    mesh_dir = outputDirectory_1+ "/meshes"
+                    mesh.file.download(outputDirectory)
+
+        
+    
 #         if(generate_download_flag(outputDirectory,"segmentations")):
 #             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
 #             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
@@ -152,6 +171,7 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
 
     #api as a context manager
     with swcc_session()  as session:
+        
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         # Check if the unzipped data is present and number of files are more than 3 for full use case
