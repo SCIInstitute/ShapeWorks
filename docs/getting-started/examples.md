@@ -25,12 +25,6 @@ This use case set demonstrates the [Shape Modeling Workflow](../getting-started/
 ### [Ellipsoid Mesh: Basic Example](../use-cases/mesh-based/ellipsoid_mesh.md)
 This use case uses the same dataset as the [Ellipsoid: Basic Example](../use-cases/segmentation-based/ellipsoid.md) use case, but optimization is done on meshes rather than distance transforms. 
 
-### [Femur: Shape Model on Distance Transforms from Meshes](../use-cases/mesh-based/femur.md)
-This use case demonstrates using shape modeling workflow using ShapeWorks on real-world femur dataset. The femur shapes are meshes, but they are converted to segmentations in the grooming process and distance transforms are optimized on. This use case exhibits how to handle challenges that arise when using real-world clinical data. It shows grooming imaging data (CT scans) of the hip to be tied with the groomed shape data. As femur meshes in this dataset have been segmented with various shaft lengths, this use case includes the ability for the user to select a cutting plane on a single mesh (e.g., representative sample) to remove the shaft length variability so that it is not captured in the shape model.
-
-### [Femur-Mesh: Shape Model directly from Mesh](../use-cases/mesh-based/femur-mesh.md)
-This use case uses the same dataset as the [Femur: Shape Model on Distance Transforms from Meshes](../use-cases/mesh-based/femur.md) use case, but optimization is done on meshes rather than distance transforms. No image grooming is demonstrated here.
-
 ### [Lumps: Shape Model directly from Mesh](../use-cases/mesh-based/lumps.md)
 This use case demonstrates a minimal example of running ShapeWorks directly on a mesh using a synthetic dataset. The shapes in this dataset are spheres with two lumps or nodes that vary in size. The use case demonstrates that the ShapeWorks workflow results in a correct shape model- i.e., only the position of particles on the lumps vary; the rest are constant across the shape population.
 
@@ -48,9 +42,8 @@ This use case demonstrates using ShapeWorks tools to perform optimization for N-
 ### [Ellipsoid: Shape Model with Cutting Planes](../use-cases/constraint-based/ellipsoid-cutting-planes.md)
 This use case demonstrates using multiple cutting planes to constrain the distribution of particles on ellipsoids that are already aligned. Cutting planes can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without affecting the input data. 
 
-### [Femur:Shape Model with Cutting Planes](../use-cases/constraint-based/femur-cutting-planes.md)
-This use case is similar to [Femur: Shape Model on Distance Transforms from Meshes](../use-cases/mesh-based/femur.md), but it uses cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths. Cutting planes are used in optimization to remove this variability so that it is not captured in the shape model. Cutting planes can limit the statistical analysis to the standard anatomical regions across all samples.
-
+### [Femur: Shape Model from Meshes with Cutting Planes](../use-cases/constraint-based/femur-cutting-planes.md)
+This use case demonstrates using shape modeling workflow using ShapeWorks on real-world femur dataset. It involves performing grooming on femur meshes and corresponding imaging data (CT scans) of the hip. The femur meshes in this dataset have been segmented with various shaft lengths, so cutting planes are used in optimization to remove this variability, preventing it from being captured in the shape model. Cutting planes can limit the statistical analysis to the standard anatomical regions across all samples.
 
 ## Statistics Based Use Cases
 ### [Femur: Group Difference Statistics in Python](../use-cases/stats-based/femur-pvalues.md)

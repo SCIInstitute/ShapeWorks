@@ -112,12 +112,6 @@ function install_conda() {
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
     if ! conda install --yes \
-      xorg-libx11=1.6.12 \
-      xorg-libsm=1.2.3 \
-      libxrandr-devel-cos6-x86_64=1.5.1 \
-      libxinerama-devel-cos6-x86_64=1.1.3 \
-      libxcursor-devel-cos6-x86_64=1.1.14 \
-      libxi-devel-cos6-x86_64=1.7.8 \
       openmp=8.0.1 \
       ncurses=6.2 \
       libuuid=2.32.1

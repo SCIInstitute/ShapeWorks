@@ -673,7 +673,7 @@ void Viewer::update_points()
     return;
   }
 
-  vnl_vector<double> correspondence_points;
+  Eigen::VectorXd correspondence_points;
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
     correspondence_points = this->shape_->get_global_correspondence_points_for_display();
   }

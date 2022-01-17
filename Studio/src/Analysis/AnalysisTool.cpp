@@ -435,7 +435,7 @@ bool AnalysisTool::compute_stats()
   this->ui_->pcaModeSpinBox->setMaximum(
     std::max<double>(1, this->session_->get_shapes().size() - 1));
 
-  std::vector<vnl_vector<double>> points;
+  std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
   std::string group_set = this->ui_->group_box->currentText().toStdString();
@@ -559,9 +559,9 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
     mode = this->stats_.Eigenvalues().size() - 2;
   }
 
-  unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
+  unsigned int m = this->stats_.Eigenvectors().cols() - (mode + 1);
 
-  vnl_vector<double> e = this->stats_.Eigenvectors().get_column(m);
+  Eigen::VectorXd e = this->stats_.Eigenvectors().col(m);
 
   double lambda = sqrt(this->stats_.Eigenvalues()[m]);
 
@@ -1167,9 +1167,9 @@ void AnalysisTool::initialize_mesh_warper()
     auto meshes = mesh_group.meshes();
     for (int i = 0; i < mesh_group.meshes().size(); i++) {
 
-      vnl_vector<double> particles = median_shape->get_particles().get_local_particles(i);
+      Eigen::VectorXd particles = median_shape->get_particles().get_local_particles(i);
       Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
-        (double*) particles.data_block(), particles.size());
+        (double*) particles.data(), particles.size());
       points.resize(3, points.size() / 3);
       points.transposeInPlace();
 
@@ -1301,7 +1301,7 @@ bool AnalysisTool::get_active()
 }
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
+StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points)
 {
   StudioParticles particles;
   if (this->session_->get_shapes().empty()) {
@@ -1312,7 +1312,7 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
   auto worlds = base.get_world_particles();
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
-    vnl_vector<double> new_world(worlds[d].size());
+    Eigen::VectorXd new_world(worlds[d].size());
     for (int i = 0; i < worlds[d].size(); i++) {
       new_world[i] = points[idx++];
     }
@@ -1359,6 +1359,7 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
                                QString x_label, QString y_label)
 {
   JKQTPDatastore* ds = plot->getDatastore();
+  ds->clear();
 
   QVector<double> x, y;
   for (int i = 0; i < data.size(); i++) {

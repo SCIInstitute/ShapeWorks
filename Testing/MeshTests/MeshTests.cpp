@@ -9,6 +9,26 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, writeTest1)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  ellipsoid.write(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.vtk", true);
+
+  Mesh ellipsoidBinary(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.vtk");
+
+  ASSERT_TRUE(ellipsoid == ellipsoidBinary);
+}
+
+TEST(MeshTests, writeTest2)
+{
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  ellipsoid.write(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.ply", true);
+
+  Mesh ellipsoidBinary(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.ply");
+
+  ASSERT_TRUE(ellipsoid == ellipsoidBinary);
+}
+
 TEST(MeshTests, subdivisionTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
