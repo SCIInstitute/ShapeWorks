@@ -35,6 +35,10 @@ class DataTool : public QWidget {
 
   void update_table();
 
+  void update_landmark_table();
+
+  void landmark_domain_changed();
+
   void update_notes();
 
   std::string get_notes();
@@ -54,6 +58,8 @@ class DataTool : public QWidget {
   void import_button_clicked();
 
  private:
+  void update_domain_box();
+
   Preferences& preferences_;
 
   Ui_DataTool* ui_;

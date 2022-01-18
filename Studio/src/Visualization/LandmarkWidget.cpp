@@ -62,18 +62,24 @@ void LandmarkWidget::update_landmarks() {
     handles_.pop_back();
   }
   auto session = viewer_->get_session();
-  auto definitions = session->get_project()->get_landmarks();
+  auto definitions = session->get_project()->get_all_landmark_definitions();
+  auto domain_names = session->get_project()->get_domain_names();
 
   for (int i = 0; i < num_points; i++) {
     vtkPolygonalHandleRepresentation3D *rep =
         vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
     double xyz[3];
+    int domain_id = landmarks(i, 0);
+    int point_id = landmarks(i, 1);
     xyz[0] = landmarks(i, 2);
     xyz[1] = landmarks(i, 3);
     xyz[2] = landmarks(i, 4);
     rep->SetWorldPosition(xyz);
+
+    assign_handle_to_domain(handles_[i], domain_id);
+
+    QColor qcolor(QString::fromStdString(definitions[domain_id][point_id].color_));
     double color[3];
-    QColor qcolor(QString::fromStdString(definitions[i].color_));
     color[0] = qcolor.red() / 255.0;
     color[1] = qcolor.green() / 255.0;
     color[2] = qcolor.blue() / 255.0;
@@ -161,6 +167,28 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
   handle->AddObserver(vtkCommand::InteractionEvent, callback_);
   handle->EnabledOn();
   return handle;
+}
+
+//-----------------------------------------------------------------------------
+void LandmarkWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id) {
+  vtkPolygonalHandleRepresentation3D *rep =
+      vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
+
+  auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+  auto actors = viewer_->get_surface_actors();
+  if (domain_id < actors.size()) {
+    point_placer->AddProp(actors[domain_id]);
+  }
+
+  auto shape = viewer_->get_shape();
+  auto meshes = viewer_->get_meshes();
+  if (meshes.valid() && domain_id < meshes.meshes().size()) {
+    MeshHandle mesh = meshes.meshes()[domain_id];
+    vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+    point_placer->GetPolys()->AddItem(poly_data);
+  }
+  point_placer->SetDistanceOffset(0);
+  rep->SetPointPlacer(point_placer);
 }
 
 //-----------------------------------------------------------------------------

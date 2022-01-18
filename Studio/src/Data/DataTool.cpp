@@ -28,6 +28,8 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
+  connect(ui_->domainBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &DataTool::landmark_domain_changed);
+
   // start with these off
   // ui_->landmarks_open_button->toggle();
   ui_->table_open_button->toggle();
@@ -117,10 +119,42 @@ void DataTool::update_table() {
   ui_->table->horizontalHeader()->setStretchLastSection(false);
   ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+  update_landmark_table();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::update_landmark_table() {
+  update_domain_box();
   landmark_table_model_->update_table();
   ui_->landmark_table->resizeColumnsToContents();
 }
 
+//---------------------------------------------------------------------------
+void DataTool::landmark_domain_changed()
+{
+  landmark_table_model_->set_active_domain(ui_->domainBox->currentIndex());
+  landmark_table_model_->update_table();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::update_domain_box() {
+  auto domain_names = session_->get_project()->get_domain_names();
+  ui_->domainWidget->setVisible(domain_names.size() > 1);
+
+  int currentIndex = ui_->domainBox->currentIndex();
+  if (domain_names.size() != ui_->domainBox->count()) {
+    ui_->domainBox->clear();
+    for (auto&& item : domain_names) {
+      ui_->domainBox->addItem(QString::fromStdString(item));
+    }
+  }
+  if (currentIndex < 0) {
+    currentIndex = 0;
+  }
+  if (currentIndex < ui_->domainBox->count()) {
+    ui_->domainBox->setCurrentIndex(currentIndex);
+  }
+}
 //---------------------------------------------------------------------------
 void DataTool::update_notes() {
   if (session_) {
@@ -141,10 +175,9 @@ void DataTool::delete_landmarks_clicked() {
 
 //---------------------------------------------------------------------------
 void DataTool::set_placing_button_clicked(int id) {
-  if (id == session_->get_plaing_landmark()) {
+  if (id == session_->get_placing_landmark()) {
     id = -1;
   }
-  std::cerr << "now placing " << id << "\n";
   session_->set_placing_landmark(id);
 }
 

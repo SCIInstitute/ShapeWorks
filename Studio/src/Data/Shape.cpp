@@ -169,6 +169,8 @@ bool Shape::import_landmarks_files(QStringList filenames) {
       throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
     total_count += points.size() / 3;
+
+
     all_points.push_back(points);
   }
 
@@ -177,8 +179,10 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   for (int i = 0; i < all_points.size(); i++) {
     vnl_vector<double> points = all_points[i];
 
+    int point_id = 0;
     for (int j = 0; j < static_cast<int>(points.size()) - 2; j += 3) {
       landmarks_(row, 0) = i;  // domain
+      landmarks_(row, 1) = point_id++;
       landmarks_(row, 2) = points[j];
       landmarks_(row, 3) = points[j + 1];
       landmarks_(row, 4) = points[j + 2];

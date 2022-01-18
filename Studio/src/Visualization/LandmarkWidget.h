@@ -31,6 +31,8 @@ class LandmarkWidget {
  private:
   vtkSmartPointer<vtkHandleWidget> create_handle();
 
+  void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);
+
   Viewer* viewer_ = nullptr;
 
   std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;

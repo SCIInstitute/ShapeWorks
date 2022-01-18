@@ -16,7 +16,6 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 LandmarkTableModel::LandmarkTableModel(QObject* parent) : QAbstractTableModel(parent) {
   visible_ = QIcon(QString::fromUtf8(":/Studio/Images/Visible.png"));
-
   visible_off_ = QIcon(QString::fromUtf8(":/Studio/Images/VisibleOff.png"));
 }
 
@@ -28,7 +27,6 @@ LandmarkTableModel::~LandmarkTableModel() {
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_project(std::shared_ptr<Project> project) {
   project_ = project;
-  landmarks_ = project->get_landmarks();
   update_cells();
 }
 
@@ -39,11 +37,14 @@ void LandmarkTableModel::set_session(QSharedPointer<Session> session) {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::store_landmarks() { this->project_->set_landmarks(landmarks_); }
+void LandmarkTableModel::store_landmarks() { this->project_->set_landmarks(active_domain_, landmarks_); }
+
+//---------------------------------------------------------------------------
+void LandmarkTableModel::set_active_domain(int domain) { active_domain_ = domain; }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::new_landmark() {
-  project_->new_landmark();
+  project_->new_landmark(active_domain_);
   update_table();
 }
 
@@ -85,7 +86,7 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
         } else if (index.column() == LandmarkColumns::VISIBLE_E) {
           return QVariant();
         } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
-          if (index.row() == session_->get_plaing_landmark()) {
+          if (index.row() == session_->get_placing_landmark()) {
             return true;
           } else {
             return false;
@@ -195,17 +196,18 @@ Qt::ItemFlags LandmarkTableModel::flags(const QModelIndex& index) const {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::update_table() {
-  this->update_visibility();
+  update_visibility();
 
-  // Column resize doesn't work properly without this call
-  if (this->project_) {
-    this->landmarks_ = project_->get_landmarks();
+  if (project_) {
+    landmarks_ = project_->get_landmarks(active_domain_);
   }
-  this->update_cells();
+  update_cells();
 }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::update_cells() {
+  landmarks_ = project_->get_landmarks(active_domain_);
+
   this->update_visibility();
 
   int rows = this->rowCount(QModelIndex());
@@ -217,14 +219,10 @@ void LandmarkTableModel::update_cells() {
 }
 
 //---------------------------------------------------------------------------
-int LandmarkTableModel::get_active_index() const {}
-
-//---------------------------------------------------------------------------
 void LandmarkTableModel::handle_selected(const QItemSelection& selected) {
   if (selected.isEmpty()) {
     return;
   }
-  // this->private_->set_active_index(selected.indexes().back().row());
 }
 
 //---------------------------------------------------------------------------
@@ -288,6 +286,16 @@ void LandmarkTableModel::handle_header_click(int index) {
 }
 
 //---------------------------------------------------------------------------
+std::string LandmarkTableModel::get_active_domain_name() {
+  auto domain_names = project_->get_domain_names();
+  std::string domain_name = "";
+  if (domain_names.size() > 1 && active_domain_ < domain_names.size()) {
+    domain_name = domain_names[active_domain_];
+  }
+  return domain_name;
+}
+
+//---------------------------------------------------------------------------
 void LandmarkTableModel::update_visibility() {
   int num_visible = 0;
   for (size_t i = 0; i < landmarks_.size(); i++) {
@@ -327,7 +335,7 @@ void LandmarkTableModel::remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int 
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
-  std::vector<Landmark> keep;
+  std::vector<LandmarkDefinition> keep;
   std::vector<int> indices_to_keep;
 
   for (int i = 0; i < landmarks_.size(); i++) {

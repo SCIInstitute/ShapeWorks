@@ -134,7 +134,7 @@ bool Session::save_project(std::string fname) {
   }
 
   // landmarks
-  if (!project_->get_landmarks().empty()) {
+  if (!project_->get_all_landmark_definitions().empty()) {
     for (int i = 0; i < shapes_.size(); i++) {
       shapes_[i]->store_landmarks();
     }
@@ -866,21 +866,42 @@ void Session::set_feature_range_max(double value) {
 
 //---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
+
   if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
     Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
 
-    int row = placing_landmark_;
-    if (row == -1 || row >= landmarks.rows()) {
+    std::cerr << "ctrl_click: subject = " << result.subject_ << ", placing_landmark = " << placing_landmark_ << "\n";
+    // find the row that matches the placing_landmark and domain
+    int row = -1;
+    int point_id = 0;
+    for (int i = 0; i < landmarks.rows(); i++) {
+      if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
+          row = i;
+          point_id = placing_landmark_;
+      }
+    }
+
+    if (row == -1) { // not found
+      for (int i = 0; i < landmarks.rows(); i++) {
+        if (landmarks(i, 0) == result.domain_) {
+          point_id = std::max<int>(point_id,landmarks(i,1)+1);
+        }
+      }
+    }
+
+    if (row == -1) {
       landmarks.conservativeResize(landmarks.rows() + 1, 5);
       row = landmarks.rows() - 1;
     }
     landmarks(row, 0) = result.domain_;
-    landmarks(row, 1) = result.subject_;
+    landmarks(row, 1) = point_id;
     landmarks(row, 2) = result.pos_.x;
     landmarks(row, 3) = result.pos_.y;
     landmarks(row, 4) = result.pos_.z;
-    if (row >= project_->get_landmarks().size()) {
-      project_->new_landmark();
+    std::cerr << "point_id = " << point_id << "\n";
+    std::cerr << "current def size = " << project_->get_landmarks(result.domain_).size() << "\n";
+    if (point_id >= project_->get_landmarks(result.domain_).size()) {
+      project_->new_landmark(result.domain_);
     }
   }
   emit landmarks_changed();
@@ -899,6 +920,6 @@ int Session::get_active_landmark_domain() { return active_landmark_domain_; }
 void Session::set_placing_landmark(int id) { placing_landmark_ = id; }
 
 //---------------------------------------------------------------------------
-int Session::get_plaing_landmark() { return placing_landmark_; }
+int Session::get_placing_landmark() { return placing_landmark_; }
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

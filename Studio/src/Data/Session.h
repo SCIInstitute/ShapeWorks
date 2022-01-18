@@ -137,7 +137,7 @@ public:
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
   void set_placing_landmark(int id);
-  int get_plaing_landmark();
+  int get_placing_landmark();
 
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);

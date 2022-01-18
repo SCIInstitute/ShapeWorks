@@ -20,9 +20,11 @@ class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
 //! Landmark class containing properties of each landmark
-class Landmark {
+class LandmarkDefinition {
 public:
   std::string domain_;
+  int domain_id_ = -1;
+  int landmark_id = -1;
   std::string name_;
   bool visible_ = true;
   std::string color_;
@@ -112,16 +114,22 @@ public:
   //! Get the version of the currently loaded project
   int get_version() const;
 
-  //! Return the set of landmarks for this project
-  std::vector<Landmark> get_landmarks();
+  //! Return the set of landmarks definitions for a particular domain
+  std::vector<LandmarkDefinition> get_landmarks(int domain_id);
+
+  //! Return all landmark definitions
+  std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
 
   //! Set landmarks for this project
-  void set_landmarks(std::vector<Landmark> landmarks);
+  void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
 
   //! Add a new landmark
-  void new_landmark();
+  void new_landmark(int domain_id);
 
 private:
+
+  void load_landmark_definitions();
+  void store_landmark_definitions();
 
   void set_default_landmark_colors();
 
@@ -176,8 +184,8 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
-  std::string get_next_landmark_name();
-  std::string get_next_landmark_color();
+  std::string get_next_landmark_name(int domain_id);
+  std::string get_next_landmark_color(int domain_id);
 
   int num_domains_per_subject_ = 1;
 
@@ -205,6 +213,8 @@ private:
   bool feature_names_read_done_{false};
 
   std::vector<std::string> input_prefixes_;
+
+  std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
 
   const int supported_version_{2};
   int version_{2};
