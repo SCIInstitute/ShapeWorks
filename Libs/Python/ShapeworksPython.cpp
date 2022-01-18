@@ -1435,6 +1435,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("SetUpOtimize",
+       &Optimize::SetUpOtimize,
+       "projectFile"_a)
+
   .def("Run",
        &Optimize::Run)
 
