@@ -9,6 +9,7 @@ target_link_libraries(shapeworks_py PUBLIC
   Image
   Mesh
   Optimize
+  Project
   Particles
   ${ITK_LIBRARIES}
   Eigen3::Eigen
