@@ -471,7 +471,7 @@ bool Groom::run_alignment() {
       size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
       size_t domain = num_domains;  // end
-      assign_transforms(transforms, domain);
+      assign_transforms(transforms, domain, true /* global */);
 
     } else if (global_landmarks) {
 
@@ -480,7 +480,7 @@ bool Groom::run_alignment() {
       size_t reference = Groom::find_reference_landmarks(landmarks);
       auto transforms = Groom::get_landmark_transforms(landmarks, reference);
       size_t domain = num_domains;  // end
-      assign_transforms(transforms, domain);
+      assign_transforms(transforms, domain, true /* global */);
 
     } else {  // just center
 
@@ -499,14 +499,19 @@ bool Groom::run_alignment() {
 }
 
 //---------------------------------------------------------------------------
-void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain)
+void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global)
 {
   auto subjects = this->project_->get_subjects();
 
   for (size_t i = 0; i < subjects.size(); i++) {
     auto subject = subjects[i];
 
-    auto list = subjects[i]->get_groomed_transforms()[domain];
+    int base_domain = domain;
+    if (global) {
+      base_domain = 0;
+    }
+
+    auto list = subjects[i]->get_groomed_transforms()[base_domain];
     vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
     transform->PostMultiply();
     transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
