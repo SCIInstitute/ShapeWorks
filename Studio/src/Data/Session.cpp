@@ -936,7 +936,6 @@ int Session::get_placing_landmark() { return placing_landmark_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
-  std::cerr << "set mode to : " << mode << "\n";
   landmark_drag_mode_ = mode;
   emit landmarks_changed();
 }

@@ -91,7 +91,6 @@ void LandmarkWidget::update_landmarks() {
     if (!session->get_landmark_drag_mode()) {
       enabled = false;
     }
-    std::cerr << "enabled = " << enabled << "\n";
     handles_[i]->SetShowInactive(1);
     if (enabled && visible) {
       handles_[i]->SetEnabled(1);

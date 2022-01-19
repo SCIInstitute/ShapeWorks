@@ -170,7 +170,6 @@ bool Shape::import_landmarks_files(QStringList filenames) {
     }
     total_count += points.size() / 3;
 
-
     all_points.push_back(points);
   }
 
