@@ -105,8 +105,11 @@ class Viewer {
 
   MeshGroup get_meshes();
 
- private:
   vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
+
+  vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
+
+ private:
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 

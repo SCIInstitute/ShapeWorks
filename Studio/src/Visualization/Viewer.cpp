@@ -466,9 +466,7 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_landmarks() {
-  landmark_widget_->update_landmarks();
-}
+void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
@@ -781,7 +779,6 @@ void Viewer::update_actors() {
     }
   }
 
-
   if (this->show_surface_ && this->meshes_.valid()) {
     for (int i = 0; i < this->number_of_domains_; i++) {
       this->surface_actors_[i]->GetProperty()->BackfaceCullingOff();
@@ -836,14 +833,18 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
   for (int i = 0; i < surface_actors_.size(); i++) {
     if (prop_picker->GetActor() == surface_actors_[i]) {
       double* pos = prop_picker->GetPickPosition();
-      result.pos_ = Shape::Point(pos[0], pos[1], pos[2]);
+
+      auto transform = get_landmark_transform(i);
+      double xyzt[3];
+      transform->Inverse();
+      transform->TransformPoint(pos, xyzt);
+      result.pos_ = Shape::Point(xyzt[0], xyzt[1], xyzt[2]);
       result.domain_ = i;
       return result;
     }
   }
   return result;
 }
-
 
 //-----------------------------------------------------------------------------
 void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
@@ -852,7 +853,6 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
     this->glyph_mapper_->SetLookupTable(this->lut_);
   }
 }
-
 
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen) {
@@ -966,6 +966,11 @@ void Viewer::initialize_surfaces() {
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int domain) {
   return this->visualizer_->get_transform(this->shape_, alignment_domain, domain);
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
+  return this->visualizer_->get_transform(this->shape_, visualizer_->get_alignment_domain(), domain);
 }
 
 //-----------------------------------------------------------------------------

@@ -74,7 +74,13 @@ void LandmarkWidget::update_landmarks() {
     xyz[0] = landmarks(i, 2);
     xyz[1] = landmarks(i, 3);
     xyz[2] = landmarks(i, 4);
-    rep->SetWorldPosition(xyz);
+
+    // if (viewer_->get_)
+    double xyzt[3];
+    auto transform = viewer_->get_landmark_transform(domain_id);
+    transform->TransformPoint(xyz, xyzt);
+
+    rep->SetWorldPosition(xyzt);
 
     assign_handle_to_domain(handles_[i], domain_id);
 
@@ -84,7 +90,6 @@ void LandmarkWidget::update_landmarks() {
     color[1] = qcolor.green() / 255.0;
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
-
 
     bool enabled = true;
     bool visible = definitions[domain_id][point_id].visible_;
@@ -100,25 +105,37 @@ void LandmarkWidget::update_landmarks() {
       handles_[i]->SetShowInactive(1);
       handles_[i]->SetEnabled(0);
     }
-
   }
   update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
 void LandmarkWidget::update_positions() {
-  double position[3];
   auto shape = viewer_->get_shape();
   auto &landmarks = shape->landmarks();
 
   for (int i = 0; i < handles_.size(); i++) {
     vtkPolygonalHandleRepresentation3D *rep =
         vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
+
+    double position[3];
     rep->GetWorldPosition(position);
 
-    landmarks(i, 2) = position[0];
-    landmarks(i, 3) = position[1];
-    landmarks(i, 4) = position[2];
+    int domain_id = landmarks(i, 0);
+
+    auto transform = viewer_->get_landmark_transform(domain_id);
+
+    double xyzt[3];
+    //auto inverse = vtkSmartPointer<vtkTransform>::New();
+    //inverse->DeepCopy(transform);
+    //inverse->Inverse();
+    //inverse->TransformPoint(position, xyzt);
+    transform->Inverse();
+    transform->TransformPoint(position, xyzt);
+
+    landmarks(i, 2) = xyzt[0];
+    landmarks(i, 3) = xyzt[1];
+    landmarks(i, 4) = xyzt[2];
   }
 }
 
