@@ -19,7 +19,7 @@ def initImageTest2():
 
   return img
 
-success &= utils.expectException(initImageTest2, ValueError)
+success &= utils.expectException(initImageTest2, RuntimeError)
 
 # load from a numpy array of the correct type
 def initImageTest3a():

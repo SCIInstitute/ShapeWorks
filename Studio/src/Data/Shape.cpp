@@ -134,7 +134,7 @@ void Shape::clear_reconstructed_mesh() {
 //---------------------------------------------------------------------------
 bool Shape::import_global_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
-    vnl_vector<double> points;
+    Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
       return false;
     }
@@ -148,7 +148,7 @@ bool Shape::import_global_point_files(QStringList filenames) {
 //---------------------------------------------------------------------------
 bool Shape::import_local_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
-    vnl_vector<double> points;
+    Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
       throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
@@ -161,10 +161,10 @@ bool Shape::import_local_point_files(QStringList filenames) {
 
 //---------------------------------------------------------------------------
 bool Shape::import_landmarks_files(QStringList filenames) {
-  std::vector<vnl_vector<double>> all_points;
+  std::vector<Eigen::VectorXd> all_points;
   int total_count = 0;
   for (int i = 0; i < filenames.size(); i++) {
-    vnl_vector<double> points;
+    Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
       throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
     }
@@ -176,7 +176,7 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   landmarks_.resize(total_count, 5);
   int row = 0;
   for (int i = 0; i < all_points.size(); i++) {
-    vnl_vector<double> points = all_points[i];
+    Eigen::VectorXd points = all_points[i];
 
     int point_id = 0;
     for (int j = 0; j < static_cast<int>(points.size()) - 2; j += 3) {
@@ -220,13 +220,18 @@ bool Shape::store_landmarks() {
 
   return true;
 }
+
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_global_correspondence_points() {
+Eigen::VectorXd Shape::get_global_correspondence_points()
+{
   return this->particles_.get_combined_global_particles();
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_local_correspondence_points() { return this->particles_.get_combined_local_particles(); }
+Eigen::VectorXd Shape::get_local_correspondence_points()
+{
+  return this->particles_.get_combined_local_particles();
+}
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return this->id_; }
@@ -393,7 +398,8 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, vnl_vector<double>& points) {
+bool Shape::import_point_file(QString filename, Eigen::VectorXd& points)
+{
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
     return false;
@@ -410,8 +416,8 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points) {
     num_points++;
   }
   in.close();
-  points.clear();
-  points.set_size(num_points * 3);
+  points.setZero();
+  points.resize(num_points * 3);
 
   int idx = 0;
   for (int i = 0; i < num_points; i++) {
@@ -487,7 +493,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+  Eigen::VectorXd all_locals = this->get_local_correspondence_points();
 
   int num_points = all_locals.size() / 3;
 
@@ -530,7 +536,7 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
   kd_tree->SetDataSet(from_mesh);
   kd_tree->BuildLocator();
 
-  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+  Eigen::VectorXd all_locals = this->get_local_correspondence_points();
 
   int num_points = all_locals.size() / 3;
 
@@ -636,14 +642,15 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_global_correspondence_points_for_display() {
+Eigen::VectorXd Shape::get_global_correspondence_points_for_display()
+{
   auto worlds = this->particles_.get_world_particles();
   int size = 0;
   for (int i = 0; i < worlds.size(); i++) {
     size += worlds[i].size();
   }
-  vnl_vector<double> points;
-  points.set_size(size);
+  Eigen::VectorXd points;
+  points.resize(size);
 
   int idx = 0;
   for (int i = 0; i < worlds.size(); i++) {

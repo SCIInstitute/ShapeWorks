@@ -26,6 +26,7 @@ using Matrix44      = itk::Matrix<double, 4, 4>;
 using Matrix33      = itk::Matrix<double, 3, 3>;
 using IPoint3       = itk::Point<int, 3>;
 using FPoint3       = itk::Point<float, 3>;
+using Covariant     = itk::CovariantVector<float, 3>;
 using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
