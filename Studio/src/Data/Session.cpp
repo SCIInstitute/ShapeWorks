@@ -885,7 +885,6 @@ void Session::handle_ctrl_click(PickResult result) {
   if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
     Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
 
-    std::cerr << "ctrl_click: subject = " << result.subject_ << ", placing_landmark = " << placing_landmark_ << "\n";
     // find the row that matches the placing_landmark and domain
     int row = -1;
     int point_id = 0;
@@ -913,8 +912,6 @@ void Session::handle_ctrl_click(PickResult result) {
     landmarks(row, 2) = result.pos_.x;
     landmarks(row, 3) = result.pos_.y;
     landmarks(row, 4) = result.pos_.z;
-    std::cerr << "point_id = " << point_id << "\n";
-    std::cerr << "current def size = " << project_->get_landmarks(result.domain_).size() << "\n";
     if (point_id >= project_->get_landmarks(result.domain_).size()) {
       project_->new_landmark(result.domain_);
     }
@@ -936,5 +933,15 @@ void Session::set_placing_landmark(int id) { placing_landmark_ = id; }
 
 //---------------------------------------------------------------------------
 int Session::get_placing_landmark() { return placing_landmark_; }
+
+//---------------------------------------------------------------------------
+void Session::set_landmark_drag_mode(bool mode) {
+  std::cerr << "set mode to : " << mode << "\n";
+  landmark_drag_mode_ = mode;
+  emit landmarks_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_landmark_drag_mode() { return landmark_drag_mode_; }
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

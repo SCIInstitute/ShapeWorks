@@ -142,6 +142,9 @@ public:
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
+  void set_landmark_drag_mode(bool mode);
+  bool get_landmark_drag_mode();
+
   void handle_clear_cache();
   void handle_new_mesh();
   void handle_message(QString s);
@@ -199,6 +202,7 @@ private:
 
   int active_landmark_domain_ = -1;
   int placing_landmark_ = -1;
+  bool landmark_drag_mode_ = false;
 };
 
 }

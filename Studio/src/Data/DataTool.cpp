@@ -30,6 +30,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->domainBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &DataTool::landmark_domain_changed);
 
+
   // start with these off
   // ui_->landmarks_open_button->toggle();
   ui_->table_open_button->toggle();
@@ -67,6 +68,7 @@ DataTool::~DataTool() {}
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  connect(ui_->landmark_drag_mode, &QCheckBox::stateChanged, session_.data(), &Session::set_landmark_drag_mode);
   landmark_table_model_->set_project(session->get_project());
   landmark_table_model_->set_session(session);
   update_table();

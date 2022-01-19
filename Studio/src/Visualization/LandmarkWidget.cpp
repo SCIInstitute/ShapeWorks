@@ -85,11 +85,23 @@ void LandmarkWidget::update_landmarks() {
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
 
-    if (!definitions[domain_id][point_id].visible_) {
+
+    bool enabled = true;
+    bool visible = definitions[domain_id][point_id].visible_;
+    if (!session->get_landmark_drag_mode()) {
+      enabled = false;
+    }
+    std::cerr << "enabled = " << enabled << "\n";
+    handles_[i]->SetShowInactive(1);
+    if (enabled && visible) {
+      handles_[i]->SetEnabled(1);
+    } else if (!visible) {
       handles_[i]->SetEnabled(0);
     } else {
-      handles_[i]->SetEnabled(1);
+      handles_[i]->SetShowInactive(1);
+      handles_[i]->SetEnabled(0);
     }
+
   }
   update_glyph_properties();
 }
