@@ -69,6 +69,8 @@ class Viewer {
 
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
+  void set_show_landmarks(bool show);
+  bool get_show_landmarks();
 
   void update_points();
   void update_glyph_properties();
@@ -137,6 +139,7 @@ class Viewer {
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
+  bool show_landmarks_ = true;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;

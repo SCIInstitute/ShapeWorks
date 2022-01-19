@@ -247,6 +247,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   //glyph options signals/slots
   connect(this->ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
+  connect(ui_->landmarks_visible_button, &QToolButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(this->ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(this->glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(this->glyph_quality_slider_, SIGNAL(valueChanged(int)), this,
@@ -1195,6 +1196,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 {
   this->visualizer_->set_show_surface(this->ui_->surface_visible_button->isChecked());
   this->visualizer_->set_show_glyphs(this->ui_->glyphs_visible_button->isChecked());
+  visualizer_->set_show_landmarks(ui_->landmarks_visible_button->isChecked());
   this->preferences_.set_glyph_size(this->glyph_size_slider_->value() / 10.0);
   this->preferences_.set_glyph_quality(this->glyph_quality_slider_->value());
   this->preferences_.set_glyph_auto_size(this->glyph_auto_size_->isChecked());

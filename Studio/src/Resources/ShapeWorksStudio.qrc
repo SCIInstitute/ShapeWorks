@@ -51,5 +51,7 @@
         <file>Images/log_warning.png</file>
         <file>Images/log_error.png</file>
         <file>Images/Brush.png</file>
+        <file>Images/flag_on.png</file>
+        <file>Images/flag_off.png</file>
     </qresource>
 </RCC>

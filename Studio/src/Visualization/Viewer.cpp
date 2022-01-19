@@ -660,6 +660,14 @@ void Viewer::set_show_surface(bool show) {
   this->update_actors();
 }
 
+void Viewer::set_show_landmarks(bool show) {
+  show_landmarks_ = show;
+  update_landmarks();
+}
+
+//-----------------------------------------------------------------------------
+bool Viewer::get_show_landmarks() { return show_landmarks_; }
+
 //-----------------------------------------------------------------------------
 void Viewer::update_points() {
   if (!this->shape_) {

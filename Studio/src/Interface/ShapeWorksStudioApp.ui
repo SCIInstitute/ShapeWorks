@@ -112,6 +112,36 @@
            </widget>
           </item>
           <item>
+           <widget class="QToolButton" name="landmarks_visible_button">
+            <property name="maximumSize">
+             <size>
+              <width>23</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Show landmarks</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../Resources/ShapeWorksStudio.qrc">
+              <normaloff>:/Studio/Images/flag_off.png</normaloff>
+              <activeon>:/Studio/Images/flag_on.png</activeon>:/Studio/Images/flag_off.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::DelayedPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="glyphs_visible_button">
             <property name="toolTip">
              <string>Show glyphs</string>

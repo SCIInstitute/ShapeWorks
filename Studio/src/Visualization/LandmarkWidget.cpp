@@ -45,7 +45,7 @@ LandmarkWidget::~LandmarkWidget() { clear_landmarks(); }
 void LandmarkWidget::update_landmarks() {
   auto shape = viewer_->get_shape();
 
-  if (!shape) {
+  if (!shape || !viewer_->get_show_landmarks()) {
     clear_landmarks();
     return;
   }

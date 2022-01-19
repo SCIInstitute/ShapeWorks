@@ -186,10 +186,13 @@ ShapeHandle Visualizer::create_display_object(const StudioParticles& points, con
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_show_glyphs(bool show) { this->show_glyphs_ = show; }
+void Visualizer::set_show_glyphs(bool show) { show_glyphs_ = show; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_show_surface(bool show) { this->show_surface_ = show; }
+void Visualizer::set_show_surface(bool show) { show_surface_ = show; }
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_show_landmarks(bool show) { show_landmarks_ = show; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties() {
@@ -205,6 +208,7 @@ void Visualizer::update_viewer_properties() {
       viewer->set_glyph_size_and_quality(size, quality);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
+      viewer->set_show_landmarks(show_landmarks_);
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
