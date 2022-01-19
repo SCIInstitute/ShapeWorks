@@ -415,13 +415,15 @@ std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitio
 
 //---------------------------------------------------------------------------
 void Project::set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks) {
+  while (domain_id > landmark_definitions_.size()) {
+    landmark_definitions_.push_back(std::vector<LandmarkDefinition>());
+  }
   landmark_definitions_[domain_id] = landmarks;
   store_landmark_definitions();
 }
 
 //---------------------------------------------------------------------------
 void Project::new_landmark(int domain_id) {
-  std::cerr << "new landmark for domain_id = " << domain_id << "\n";
   auto landmarks = get_landmarks(domain_id);
   LandmarkDefinition landmark;
   landmark.domain_id_ = domain_id;
@@ -485,7 +487,6 @@ void Project::store_landmark_definitions() {
   for (int domain_id = 0; domain_id < landmark_definitions_.size(); domain_id++) {
     auto landmarks = landmark_definitions_[domain_id];
     for (int i = 0; i < landmarks.size(); i++) {
-      std::cerr << "storing landmark definition" << i << " for domain " << domain_id << "\n";
       ws.cell(xlnt::cell_reference(1, row)).value(domain_names[domain_id]);
       ws.cell(xlnt::cell_reference(2, row)).value(landmarks[i].name_);
       ws.cell(xlnt::cell_reference(3, row)).value(landmarks[i].visible_ ? "true" : "false");

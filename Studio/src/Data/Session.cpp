@@ -392,6 +392,9 @@ bool Session::load_xl_project(QString filename) {
   std::vector<std::string> local_point_files;
   std::vector<std::string> global_point_files;
 
+  auto domain_names = project_->get_domain_names();
+
+  // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
     shape->set_mesh_manager(this->mesh_manager_);
@@ -399,7 +402,7 @@ bool Session::load_xl_project(QString filename) {
 
     auto locals = subjects[i]->get_local_particle_filenames();
     auto worlds = subjects[i]->get_world_particle_filenames();
-    auto landmarks = subjects[i]->get_landmarks_filenames();
+    auto landmark_files = subjects[i]->get_landmarks_filenames();
 
     if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
       return false;
@@ -407,10 +410,23 @@ bool Session::load_xl_project(QString filename) {
     if (!shape->import_global_point_files(StudioUtils::to_string_list(worlds))) {
       return false;
     }
-    if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmarks))) {
+    if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmark_files))) {
       return false;
     }
 
+    // add to landmark definitions if landmark files contain more landmarks than the project definitions
+    auto landmarks = shape->landmarks();
+    for (int row = 0; row < landmarks.rows(); row++) {
+      int domain_id = landmarks(row, 0);
+      int point_id = landmarks(row, 1);
+      auto landmark_definitions = project_->get_landmarks(domain_id);
+      while (point_id >= landmark_definitions.size()) {
+        project_->new_landmark(domain_id);
+        landmark_definitions = project_->get_landmarks(domain_id);
+      }
+    }
+    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    }
     this->shapes_ << shape;
   }
 
@@ -431,7 +447,7 @@ void Session::set_project_path(QString relative_path) {
     // segmentations
     auto paths = subject->get_segmentation_filenames();
     std::vector<std::string> new_paths;
-    for (auto path : paths) {
+    for (const auto& path : paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
@@ -440,7 +456,7 @@ void Session::set_project_path(QString relative_path) {
     // groomed
     paths = subject->get_groomed_filenames();
     new_paths.clear();
-    for (auto path : paths) {
+    for (const auto& path : paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
@@ -449,7 +465,7 @@ void Session::set_project_path(QString relative_path) {
     // local particles
     paths = subject->get_local_particle_filenames();
     new_paths.clear();
-    for (auto path : paths) {
+    for (const auto& path : paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
@@ -458,7 +474,7 @@ void Session::set_project_path(QString relative_path) {
     // world particles
     paths = subject->get_world_particle_filenames();
     new_paths.clear();
-    for (auto path : paths) {
+    for (const auto& path : paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
@@ -866,7 +882,6 @@ void Session::set_feature_range_max(double value) {
 
 //---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
-
   if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
     Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
 
@@ -876,15 +891,15 @@ void Session::handle_ctrl_click(PickResult result) {
     int point_id = 0;
     for (int i = 0; i < landmarks.rows(); i++) {
       if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
-          row = i;
-          point_id = placing_landmark_;
+        row = i;
+        point_id = placing_landmark_;
       }
     }
 
-    if (row == -1) { // not found
+    if (row == -1) {  // not found
       for (int i = 0; i < landmarks.rows(); i++) {
         if (landmarks(i, 0) == result.domain_) {
-          point_id = std::max<int>(point_id,landmarks(i,1)+1);
+          point_id = std::max<int>(point_id, landmarks(i, 1) + 1);
         }
       }
     }

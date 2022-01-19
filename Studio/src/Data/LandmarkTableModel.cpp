@@ -81,8 +81,19 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
         if (index.column() == LandmarkColumns::NAME_E) {
           return QString::fromStdString(landmarks_[index.row()].name_);
         } else if (index.column() == LandmarkColumns::POSITION_E) {
-          /// TODO : placeholder
-          return "1/100";
+          auto shapes = session_->get_shapes();
+          int denominator = shapes.size();
+          int numerator = 0;
+          for (int i=0;i<shapes.size();i++) {
+            auto landmarks = shapes[i]->landmarks();
+            for (int j=0;j<landmarks.rows();j++) {
+              if (landmarks(j,0) == active_domain_ && landmarks(j,1) == index.row()) {
+                numerator++;
+              }
+            }
+          }
+          return QString::number(numerator) + "/" + QString::number(denominator);
+
         } else if (index.column() == LandmarkColumns::VISIBLE_E) {
           return QVariant();
         } else if (index.column() == LandmarkColumns::SET_BUTTON_E) {
