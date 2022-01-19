@@ -374,12 +374,11 @@ void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
 
   auto shapes = session_->get_shapes();
 
-  for (int i = 0; i < list.size(); i++) {
+  for (int i = static_cast<int>(list.size())-1; i >= 0; i--) {
     for (int j = 0; j < shapes.size(); j++) {
       auto& landmarks = shapes[j]->landmarks();
       for (int row = 0; row < landmarks.rows(); row++) {
         if (landmarks(row, 0) == active_domain_ && landmarks(row, 1) == list[i].row()) {
-          std::cerr << "Removing point s:" << j << ", d:" << landmarks(row, 0) << ", p:" << landmarks(row, 1) << "\n";
           remove_eigen_row(landmarks, row);
         }
       }

@@ -126,12 +126,12 @@ void LandmarkWidget::update_positions() {
     auto transform = viewer_->get_landmark_transform(domain_id);
 
     double xyzt[3];
-    //auto inverse = vtkSmartPointer<vtkTransform>::New();
-    //inverse->DeepCopy(transform);
-    //inverse->Inverse();
-    //inverse->TransformPoint(position, xyzt);
-    transform->Inverse();
-    transform->TransformPoint(position, xyzt);
+    auto inverse = vtkSmartPointer<vtkTransform>::New();
+    inverse->DeepCopy(transform);
+    inverse->Inverse();
+    inverse->TransformPoint(position, xyzt);
+    //transform->Inverse();
+    //transform->TransformPoint(position, xyzt);
 
     landmarks(i, 2) = xyzt[0];
     landmarks(i, 3) = xyzt[1];

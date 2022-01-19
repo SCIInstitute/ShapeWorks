@@ -834,9 +834,10 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
     if (prop_picker->GetActor() == surface_actors_[i]) {
       double* pos = prop_picker->GetPickPosition();
 
-      auto transform = get_landmark_transform(i);
-      double xyzt[3];
+      auto transform = vtkSmartPointer<vtkTransform>::New();
+      transform->DeepCopy(get_landmark_transform(i));
       transform->Inverse();
+      double xyzt[3];
       transform->TransformPoint(pos, xyzt);
       result.pos_ = Shape::Point(xyzt[0], xyzt[1], xyzt[2]);
       result.domain_ = i;
