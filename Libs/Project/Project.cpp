@@ -351,7 +351,10 @@ void Project::store_subjects() {
     }
 
     // landmarks
-    this->set_list(landmarks_columns, i, subject->get_landmarks_filenames());
+    auto landmark_files = subject->get_landmarks_filenames();
+    if (landmark_files.size() > 0) {
+      this->set_list(landmarks_columns, i, landmark_files);
+    }
 
     // features
     auto features = subject->get_feature_filenames();
