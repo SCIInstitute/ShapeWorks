@@ -1,28 +1,23 @@
-#include <iostream>
-
-#include <QFileDialog>
-#include <QThread>
-#include <QMessageBox>
-#include <QTemporaryDir>
-#include <QIntValidator>
-
-#include <Optimize/OptimizeTool.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-
 #include <Data/Preferences.h>
-#include <Data/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-
+#include <Data/ShapeWorksWorker.h>
+#include <Libs/Optimize/OptimizeParameters.h>
+#include <Optimize/OptimizeTool.h>
 #include <Optimize/QOptimize.h>
-
 #include <ui_OptimizeTool.h>
+
+#include <QFileDialog>
+#include <QIntValidator>
+#include <QMessageBox>
+#include <QTemporaryDir>
+#include <QThread>
+#include <iostream>
 
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
-{
+OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_OptimizeTool;
   this->ui_->setupUi(this);
 
@@ -31,38 +26,32 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
   this->ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
-  this->ui_->initial_relative_weighting->setToolTip(
-    "Relative weighting of correspondence term during initialization");
-  this->ui_->relative_weighting->setToolTip(
-    "Relative weighting of correspondence term during optimization");
-  this->ui_->starting_regularization->setToolTip(
-    "Starting regularization of correspondence covariance matrix");
-  this->ui_->ending_regularization->setToolTip(
-    "Ending regularization of correspondence covariance matrix");
+  this->ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
+  this->ui_->relative_weighting->setToolTip("Relative weighting of correspondence term during optimization");
+  this->ui_->starting_regularization->setToolTip("Starting regularization of correspondence covariance matrix");
+  this->ui_->ending_regularization->setToolTip("Ending regularization of correspondence covariance matrix");
   this->ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
   this->ui_->optimization_iterations->setToolTip("Number of optimizations to run");
   this->ui_->use_geodesic_distance->setToolTip(
-    "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
-    "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
+      "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
+      "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
   this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
-  this->ui_->procrustes_interval->setToolTip(
-    "How often to run procrustes during optimization (0 = disabled)");
+  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
   this->ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
   this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
-  this->ui_->multiscale_particles->setToolTip(
-    "Start multiscale optimization after this many particles");
-  this->ui_->narrow_band->setToolTip("Narrow band around distance transforms.  "
-                                     "This value should only be changed if an error occurs "
-                                     "during optimization suggesting that it should be increased.  "
-                                     "It has no effect on the optimization");
+  this->ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
+  this->ui_->narrow_band->setToolTip(
+      "Narrow band around distance transforms.  "
+      "This value should only be changed if an error occurs "
+      "during optimization suggesting that it should be increased.  "
+      "It has no effect on the optimization");
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
 
-  QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(),
-                                                            1000, this);
+  QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
 
   ui_->number_of_particles->setValidator(above_zero);
   ui_->initial_relative_weighting->setValidator(double_validator);
@@ -89,31 +78,24 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
   line_edits_.push_back(ui_->narrow_band);
 
   for (QLineEdit* line_edit : line_edits_) {
-    connect(line_edit, &QLineEdit::textChanged,
-            this, &OptimizeTool::update_run_button);
+    connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
   }
 }
 
 //---------------------------------------------------------------------------
-OptimizeTool::~OptimizeTool()
-{}
+OptimizeTool::~OptimizeTool() {}
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_error(QString msg)
-{
+void OptimizeTool::handle_error(QString msg) {
   emit error_message(msg);
   this->update_run_button();
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_warning(QString msg)
-{
-  emit warning_message(msg);
-}
+void OptimizeTool::handle_warning(QString msg) { emit warning_message(msg); }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_progress(int val, QString progress_message)
-{
+void OptimizeTool::handle_progress(int val, QString progress_message) {
   if (!this->optimization_is_running_) {
     return;
   }
@@ -126,8 +108,7 @@ void OptimizeTool::handle_progress(int val, QString progress_message)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_optimize_complete()
-{
+void OptimizeTool::handle_optimize_complete() {
   this->optimization_is_running_ = false;
 
   auto particles = this->optimize_->GetParticles();
@@ -147,8 +128,7 @@ void OptimizeTool::handle_optimize_complete()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_optimize_failed()
-{
+void OptimizeTool::handle_optimize_failed() {
   this->optimization_is_running_ = false;
   emit progress(100);
 
@@ -159,8 +139,7 @@ void OptimizeTool::handle_optimize_failed()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_run_optimize_button_clicked()
-{
+void OptimizeTool::on_run_optimize_button_clicked() {
   if (this->optimization_is_running_) {
     this->optimization_is_running_ = false;
     this->shutdown_threads();
@@ -184,19 +163,16 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->session_->clear_particles();
 
   this->handle_progress(1, "");
-  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
-    this->session_->get_project());
+  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(this->session_->get_project());
 
   this->optimize_parameters_->set_load_callback(
-    std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
+      std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
   this->optimize_->SetFileOutputEnabled(false);
 
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->optimize_parameters_,
-    this->session_,
-    std::vector<std::vector<itk::Point<double>>>(),
-    std::vector<std::vector<itk::Point<double>>>(),
-    std::vector<std::string>());
+  ShapeworksWorker* worker =
+      new ShapeworksWorker(ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->optimize_parameters_,
+                           this->session_, std::vector<std::vector<itk::Point<double>>>(),
+                           std::vector<std::vector<itk::Point<double>>>(), std::vector<std::string>());
 
   QThread* thread = new QThread;
   worker->moveToThread(thread);
@@ -215,27 +191,19 @@ void OptimizeTool::on_run_optimize_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_message(QString s)
-{
-  emit message(s);
-}
+void OptimizeTool::handle_message(QString s) { emit message(s); }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_restoreDefaults_clicked()
-{
+void OptimizeTool::on_restoreDefaults_clicked() {
   this->session_->get_project()->clear_parameters(Parameters::OPTIMIZE_PARAMS);
   this->load_params();
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::set_session(QSharedPointer<Session> session)
-{
-  this->session_ = session;
-}
+void OptimizeTool::set_session(QSharedPointer<Session> session) { this->session_ = session; }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::load_params()
-{
+void OptimizeTool::load_params() {
   this->setup_domain_boxes();
   auto params = OptimizeParameters(this->session_->get_project());
 
@@ -244,7 +212,6 @@ void OptimizeTool::load_params()
   auto domain_names = this->session_->get_project()->get_domain_names();
   for (int i = 0; i < domain_names.size(); i++) {
     if (i < this->particle_boxes_.size()) {
-
       int particles = 128;
       if (i < params.get_number_of_particles().size()) {
         particles = params.get_number_of_particles()[i];
@@ -254,15 +221,12 @@ void OptimizeTool::load_params()
     }
   }
 
-  this->ui_->initial_relative_weighting->setText(
-    QString::number(params.get_initial_relative_weighting()));
+  this->ui_->initial_relative_weighting->setText(QString::number(params.get_initial_relative_weighting()));
   this->ui_->relative_weighting->setText(QString::number(params.get_relative_weighting()));
-  this->ui_->starting_regularization->setText(
-    QString::number(params.get_starting_regularization()));
+  this->ui_->starting_regularization->setText(QString::number(params.get_starting_regularization()));
   this->ui_->ending_regularization->setText(QString::number(params.get_ending_regularization()));
   this->ui_->iterations_per_split->setText(QString::number(params.get_iterations_per_split()));
-  this->ui_->optimization_iterations->setText(
-    QString::number(params.get_optimization_iterations()));
+  this->ui_->optimization_iterations->setText(QString::number(params.get_optimization_iterations()));
 
   this->ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
   this->ui_->use_normals->setChecked(params.get_use_normals()[0]);
@@ -281,8 +245,7 @@ void OptimizeTool::load_params()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::store_params()
-{
+void OptimizeTool::store_params() {
   auto params = OptimizeParameters(this->session_->get_project());
 
   std::vector<int> num_particles;
@@ -327,20 +290,15 @@ void OptimizeTool::store_params()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::enable_actions()
-{
-  this->update_run_button();
+void OptimizeTool::enable_actions() { this->update_run_button(); }
+
+//---------------------------------------------------------------------------
+void OptimizeTool::disable_actions() {
+  // this->ui_->run_optimize_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::disable_actions()
-{
-  //this->ui_->run_optimize_button->setEnabled(false);
-}
-
-//---------------------------------------------------------------------------
-void OptimizeTool::shutdown_threads()
-{
+void OptimizeTool::shutdown_threads() {
   std::cerr << "Shut Down Optimization Threads\n";
   if (!this->optimize_) {
     return;
@@ -352,8 +310,7 @@ void OptimizeTool::shutdown_threads()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::update_ui_elements()
-{
+void OptimizeTool::update_ui_elements() {
   this->ui_->normals_strength->setEnabled(this->ui_->use_normals->isChecked());
   this->ui_->procrustes_scaling->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->procrustes_interval->setEnabled(this->ui_->procrustes->isChecked());
@@ -361,27 +318,22 @@ void OptimizeTool::update_ui_elements()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::activate()
-{
-  this->enable_actions();
-}
+void OptimizeTool::activate() { this->enable_actions(); }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_load_progress(int count)
-{
+void OptimizeTool::handle_load_progress(int count) {
   if (!this->optimization_is_running_) {
     return;
   }
 
   double value = static_cast<double>(count) / this->session_->get_shapes().size() * 100.0f;
-  if (value < 100) { // cannot emit 100 or the main interface will think the job is done
+  if (value < 100) {  // cannot emit 100 or the main interface will think the job is done
     emit progress(static_cast<int>(value));
   }
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeTool::validate_inputs()
-{
+bool OptimizeTool::validate_inputs() {
   bool all_valid = true;
 
   std::vector<QLineEdit*> combined = this->line_edits_;
@@ -402,25 +354,21 @@ bool OptimizeTool::validate_inputs()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::update_run_button()
-{
+void OptimizeTool::update_run_button() {
   bool inputs_valid = this->validate_inputs();
 
   this->ui_->run_optimize_button->setEnabled(inputs_valid && this->session_->get_groomed_present());
 
   if (this->optimization_is_running_) {
     this->ui_->run_optimize_button->setText("Abort Optimize");
-  }
-  else {
+  } else {
     this->ui_->run_optimize_button->setText("Run Optimize");
   }
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::setup_domain_boxes()
-{
-  qDeleteAll(
-    this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+void OptimizeTool::setup_domain_boxes() {
+  qDeleteAll(this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
   this->particle_boxes_.clear();
 
   QLineEdit* last_box = this->ui_->number_of_particles;
@@ -428,8 +376,7 @@ void OptimizeTool::setup_domain_boxes()
   if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
     this->ui_->particle_stack->setCurrentIndex(0);
     this->ui_->domain_widget->setMaximumSize(1, 1);
-  }
-  else {
+  } else {
     this->ui_->domain_widget->setMaximumSize(9999, 9999);
     auto domain_names = this->session_->get_project()->get_domain_names();
     QGridLayout* layout = new QGridLayout;
@@ -441,8 +388,7 @@ void OptimizeTool::setup_domain_boxes()
       last_box = box;
       box->setAlignment(Qt::AlignHCenter);
       box->setValidator(above_zero);
-      connect(box, &QLineEdit::textChanged,
-              this, &OptimizeTool::update_run_button);
+      connect(box, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
 
       this->particle_boxes_.push_back(box);
       layout->addWidget(box, i, 1);
