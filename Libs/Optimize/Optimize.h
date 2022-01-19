@@ -64,7 +64,7 @@ public:
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
-  bool SetUpOtimize(ProjectHandle projectFile);
+  bool SetUpOptimize(ProjectHandle projectFile);
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }

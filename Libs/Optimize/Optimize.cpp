@@ -2319,7 +2319,7 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
-bool Optimize::SetUpOtimize(ProjectHandle projectFile)
+bool Optimize::SetUpOptimize(ProjectHandle projectFile)
 {
   
   OptimizeParameters param(projectFile);

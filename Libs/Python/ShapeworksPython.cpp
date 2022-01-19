@@ -1435,9 +1435,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
-  .def("SetUpOtimize",
-       &Optimize::SetUpOtimize,
-       "projectFile"_a)
+  .def("SetUpOptimize",
+       [](Optimize& optimize, const std::vector<Project> projectFile) -> decltype(auto) {
+          // std::vector<std::shared_ptr<Project>> sharedprojectFile;
+         return optimize.SetUpOptimize(projectFile);
+       },
+       "projectFile"_a )
 
   .def("Run",
        &Optimize::Run)
