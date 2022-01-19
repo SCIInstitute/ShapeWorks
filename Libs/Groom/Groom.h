@@ -1,10 +1,8 @@
 #pragma once
 
 #include <GroomParameters.h>
-
-#include <Libs/Project/Project.h>
 #include <Libs/Image/Image.h>
-
+#include <Libs/Project/Project.h>
 #include <tbb/atomic.h>
 #include <tbb/mutex.h>
 
@@ -17,9 +15,7 @@ namespace shapeworks {
  *
  */
 class Groom {
-
-public:
-
+ public:
   Groom(ProjectHandle project);
 
   //! Run the grooming
@@ -34,18 +30,22 @@ public:
   //! Return if grooming was aborted
   bool get_aborted();
 
-protected:
+  //! Util to compute square distance between paired landmarks
+  static double compute_landmark_distance(vtkSmartPointer<vtkPoints> one, vtkSmartPointer<vtkPoints> two);
 
+  //! Util to compute landmark transform
+  static vtkSmartPointer<vtkMatrix4x4> compute_landmark_transform(vtkSmartPointer<vtkPoints> source,
+                                                                  vtkSmartPointer<vtkPoints> target);
+
+ protected:
   //! call to be overridden by subclasses
-  virtual void update_progress()
-  {};
+  virtual void update_progress(){};
 
   tbb::atomic<float> progress_ = 0;
   tbb::atomic<int> total_ops_ = 0;
   tbb::atomic<int> progress_counter_ = 0;
 
-private:
-
+ private:
   //! Return the number of operations that will be performed
   int get_total_ops();
 
@@ -67,14 +67,25 @@ private:
 
   bool run_alignment();
 
+  void assign_transforms(std::vector<std::vector<double>> transforms, int domain);
+
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
+  static std::vector<std::vector<double>> get_landmark_transforms(
+      const std::vector<vtkSmartPointer<vtkPoints>> landmarks, size_t reference);
 
   static std::vector<double> get_identity_transform();
   static void add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string& reflect_axis);
   static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Image& image);
   static void add_center_transform(vtkSmartPointer<vtkTransform> transform, const Mesh& mesh);
+  static void add_center_transform(vtkSmartPointer<vtkTransform> transform, vtkSmartPointer<vtkPoints> points);
+
+  std::vector<vtkSmartPointer<vtkPoints>> get_combined_points();
 
   Mesh get_mesh(int subject, int domain);
+
+  vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
+
+  int find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> landmarks);
 
   void fix_origin(Image& image);
 
@@ -87,6 +98,5 @@ private:
   bool abort_ = false;
 
   tbb::mutex mutex_;
-
 };
-}
+}  // namespace shapeworks

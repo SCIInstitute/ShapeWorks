@@ -399,7 +399,6 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points) {
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  auto test = filename.toStdString();
   int num_points = 0;
   while (in.good()) {
     double x, y, z;
