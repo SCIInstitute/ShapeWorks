@@ -455,7 +455,6 @@ int OptimizeParameters::get_geodesic_cache_multiplier()
 void OptimizeParameters::set_geodesic_cache_multiplier(int value)
 {
   this->params_.set("geodesic_cache_multiplier", value);
-
 }
 
 //---------------------------------------------------------------------------
@@ -480,5 +479,17 @@ int OptimizeParameters::get_verbosity()
 void OptimizeParameters::set_verbosity(int value)
 {
   this->params_.set("verbosity", value);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_landmarks()
+{
+  return params_.get("use_landmarks", false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_landmarks(bool value)
+{
+  this->params_.set("use_landmarks", value);
 }
 

@@ -72,6 +72,9 @@ public:
   int get_verbosity();
   void set_verbosity(int value);
 
+  bool get_use_landmarks();
+  void set_use_landmarks(bool value);
+
   void set_abort_load(bool value);
 
   void set_load_callback(const std::function<void(int)>& f);
