@@ -54,6 +54,8 @@ class DataTool : public QWidget {
 
   void set_placing_button_clicked(int id);
 
+  void handle_landmark_mode_changed();
+
  Q_SIGNALS:
   void import_button_clicked();
 

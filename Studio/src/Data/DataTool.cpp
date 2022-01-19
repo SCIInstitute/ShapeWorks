@@ -25,11 +25,11 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->table_open_button, &QPushButton::toggled, ui_->table_content, &QWidget::setVisible);
   connect(ui_->landmarks_open_button, &QPushButton::toggled, ui_->landmarks_content, &QWidget::setVisible);
+  connect(ui_->landmarks_open_button, &QPushButton::toggled, this, &DataTool::handle_landmark_mode_changed);
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
   connect(ui_->domainBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &DataTool::landmark_domain_changed);
-
 
   // start with these off
   // ui_->landmarks_open_button->toggle();
@@ -132,8 +132,7 @@ void DataTool::update_landmark_table() {
 }
 
 //---------------------------------------------------------------------------
-void DataTool::landmark_domain_changed()
-{
+void DataTool::landmark_domain_changed() {
   landmark_table_model_->set_active_domain(ui_->domainBox->currentIndex());
   landmark_table_model_->update_table();
 }
@@ -181,6 +180,13 @@ void DataTool::set_placing_button_clicked(int id) {
     id = -1;
   }
   session_->set_placing_landmark(id);
+}
+
+//---------------------------------------------------------------------------
+void DataTool::handle_landmark_mode_changed() {
+  if (session_) {
+    session_->set_landmarks_active(ui_->landmarks_open_button->isChecked());
+  }
 }
 
 //---------------------------------------------------------------------------

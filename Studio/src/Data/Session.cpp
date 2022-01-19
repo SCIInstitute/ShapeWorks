@@ -882,6 +882,13 @@ void Session::set_feature_range_max(double value) {
 
 //---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
+  std::string tool_state = parameters().get("tool_state", Session::DATA_C);
+
+  if (tool_state != Session::DATA_C || !landmarks_active_) {
+    // do nothing if we are not in the data tool with landmarks active
+    return;
+  }
+
   if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
     Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
 
@@ -933,6 +940,9 @@ void Session::set_placing_landmark(int id) { placing_landmark_ = id; }
 
 //---------------------------------------------------------------------------
 int Session::get_placing_landmark() { return placing_landmark_; }
+
+//---------------------------------------------------------------------------
+void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {

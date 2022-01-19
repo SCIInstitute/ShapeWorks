@@ -138,6 +138,7 @@ public:
   int get_active_landmark_domain();
   void set_placing_landmark(int id);
   int get_placing_landmark();
+  void set_landmarks_active(bool active);
 
 public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -203,6 +204,7 @@ private:
   int active_landmark_domain_ = -1;
   int placing_landmark_ = -1;
   bool landmark_drag_mode_ = false;
+  bool landmarks_active_ = false;
 };
 
 }
