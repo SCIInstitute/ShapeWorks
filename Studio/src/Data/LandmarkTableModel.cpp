@@ -120,16 +120,24 @@ bool LandmarkTableModel::setData(const QModelIndex& index, const QVariant& value
     }
     if (index.column() == LandmarkColumns::VISIBLE_E) {
       landmarks_[index.row()].visible_ = value.toBool();
+      store_landmarks();
       update_visibility();
+      session_->trigger_landmarks_changed();
       return false;
     }
     if (index.column() == LandmarkColumns::COLOR_E) {
       QColor color = value.value<QColor>();
       landmarks_[index.row()].color_ = color.name().toStdString();
+      store_landmarks();
+      session_->trigger_landmarks_changed();
     } else if (index.column() == LandmarkColumns::NAME_E) {
       landmarks_[index.row()].name_ = value.toString().toStdString();
+      store_landmarks();
+      session_->trigger_landmarks_changed();
     } else if (index.column() == LandmarkColumns::COMMENT_E) {
       landmarks_[index.row()].comment_ = value.toString().toStdString();
+      store_landmarks();
+      session_->trigger_landmarks_changed();
     } else if (index.column() == LandmarkColumns::POSITION_E) {
       return false;
     }
@@ -241,6 +249,8 @@ void LandmarkTableModel::toggle_visible() {
   }
 
   update_visibility();
+  store_landmarks();
+  session_->trigger_landmarks_changed();
   Q_EMIT dataChanged(index(0, 0), index(0, landmarks_.size()));
 }
 
@@ -356,7 +366,18 @@ void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
   for (int i = 0; i < list.size(); i++) {
     for (int j = 0; j < shapes.size(); j++) {
       auto& landmarks = shapes[j]->landmarks();
-      remove_eigen_row(landmarks, list[i].row());
+      for (int row = 0; row < landmarks.rows(); row++) {
+        if (landmarks(row, 0) == active_domain_ && landmarks(row, 1) == list[i].row()) {
+          std::cerr << "Removing point s:" << j << ", d:" << landmarks(row, 0) << ", p:" << landmarks(row, 1) << "\n";
+          remove_eigen_row(landmarks, row);
+        }
+      }
+      // now renumber any later
+      for (int row = 0; row < landmarks.rows(); row++) {
+        if (landmarks(row, 0) == active_domain_ && landmarks(row, 1) > list[i].row()) {
+          landmarks(row, 1) = landmarks(row, 1) - 1;
+        }
+      }
     }
   }
 

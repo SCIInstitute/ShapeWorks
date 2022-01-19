@@ -84,6 +84,12 @@ void LandmarkWidget::update_landmarks() {
     color[1] = qcolor.green() / 255.0;
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
+
+    if (!definitions[domain_id][point_id].visible_) {
+      handles_[i]->SetEnabled(0);
+    } else {
+      handles_[i]->SetEnabled(1);
+    }
   }
   update_glyph_properties();
 }
