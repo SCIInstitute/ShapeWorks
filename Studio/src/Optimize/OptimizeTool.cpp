@@ -18,31 +18,32 @@ using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
-  this->ui_ = new Ui_OptimizeTool;
-  this->ui_->setupUi(this);
+  ui_ = new Ui_OptimizeTool;
+  ui_->setupUi(this);
 
-  connect(this->ui_->use_normals, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
-  connect(this->ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
-  connect(this->ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->use_normals, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
-  this->ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
-  this->ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
-  this->ui_->relative_weighting->setToolTip("Relative weighting of correspondence term during optimization");
-  this->ui_->starting_regularization->setToolTip("Starting regularization of correspondence covariance matrix");
-  this->ui_->ending_regularization->setToolTip("Ending regularization of correspondence covariance matrix");
-  this->ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
-  this->ui_->optimization_iterations->setToolTip("Number of optimizations to run");
-  this->ui_->use_geodesic_distance->setToolTip(
+  ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
+  ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
+  ui_->relative_weighting->setToolTip("Relative weighting of correspondence term during optimization");
+  ui_->starting_regularization->setToolTip("Starting regularization of correspondence covariance matrix");
+  ui_->ending_regularization->setToolTip("Ending regularization of correspondence covariance matrix");
+  ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
+  ui_->optimization_iterations->setToolTip("Number of optimizations to run");
+  ui_->use_geodesic_distance->setToolTip(
       "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
       "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
-  this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
-  this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
-  this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
-  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
-  this->ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
-  this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
-  this->ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
-  this->ui_->narrow_band->setToolTip(
+  ui_->use_normals->setToolTip("Use surface normals as part of optimization");
+  ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
+  ui_->procrustes->setToolTip("Use procrustes registration during optimization");
+  ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
+  ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
+  ui_->multiscale->setToolTip("Use multiscale optimization mode");
+  ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
+  ui_->use_landmarks->setToolTip("Use landmarks as initial particles");
+  ui_->narrow_band->setToolTip(
       "Narrow band around distance transforms.  "
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
@@ -207,7 +208,7 @@ void OptimizeTool::load_params() {
   this->setup_domain_boxes();
   auto params = OptimizeParameters(this->session_->get_project());
 
-  this->ui_->number_of_particles->setText(QString::number(params.get_number_of_particles()[0]));
+  ui_->number_of_particles->setText(QString::number(params.get_number_of_particles()[0]));
 
   auto domain_names = this->session_->get_project()->get_domain_names();
   for (int i = 0; i < domain_names.size(); i++) {
@@ -221,25 +222,25 @@ void OptimizeTool::load_params() {
     }
   }
 
-  this->ui_->initial_relative_weighting->setText(QString::number(params.get_initial_relative_weighting()));
-  this->ui_->relative_weighting->setText(QString::number(params.get_relative_weighting()));
-  this->ui_->starting_regularization->setText(QString::number(params.get_starting_regularization()));
-  this->ui_->ending_regularization->setText(QString::number(params.get_ending_regularization()));
-  this->ui_->iterations_per_split->setText(QString::number(params.get_iterations_per_split()));
-  this->ui_->optimization_iterations->setText(QString::number(params.get_optimization_iterations()));
+  ui_->initial_relative_weighting->setText(QString::number(params.get_initial_relative_weighting()));
+  ui_->relative_weighting->setText(QString::number(params.get_relative_weighting()));
+  ui_->starting_regularization->setText(QString::number(params.get_starting_regularization()));
+  ui_->ending_regularization->setText(QString::number(params.get_ending_regularization()));
+  ui_->iterations_per_split->setText(QString::number(params.get_iterations_per_split()));
+  ui_->optimization_iterations->setText(QString::number(params.get_optimization_iterations()));
 
-  this->ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
-  this->ui_->use_normals->setChecked(params.get_use_normals()[0]);
-  this->ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
+  ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
+  ui_->use_normals->setChecked(params.get_use_normals()[0]);
+  ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
 
-  this->ui_->procrustes->setChecked(params.get_use_procrustes());
-  this->ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
-  this->ui_->procrustes_interval->setText(QString::number(params.get_procrustes_interval()));
+  ui_->procrustes->setChecked(params.get_use_procrustes());
+  ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
+  ui_->procrustes_interval->setText(QString::number(params.get_procrustes_interval()));
 
-  this->ui_->multiscale->setChecked(params.get_use_multiscale());
-  this->ui_->multiscale_particles->setText(QString::number(params.get_multiscale_particles()));
-
-  this->ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
+  ui_->multiscale->setChecked(params.get_use_multiscale());
+  ui_->multiscale_particles->setText(QString::number(params.get_multiscale_particles()));
+  ui_->use_landmarks->setChecked(params.get_use_landmarks());
+  ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
 
   this->update_ui_elements();
 }
@@ -249,7 +250,7 @@ void OptimizeTool::store_params() {
   auto params = OptimizeParameters(this->session_->get_project());
 
   std::vector<int> num_particles;
-  num_particles.push_back(this->ui_->number_of_particles->text().toInt());
+  num_particles.push_back(ui_->number_of_particles->text().toInt());
 
   auto domain_names = this->session_->get_project()->get_domain_names();
   if (domain_names.size() > 1) {
@@ -262,29 +263,30 @@ void OptimizeTool::store_params() {
   }
 
   params.set_number_of_particles(num_particles);
-  params.set_initial_relative_weighting(this->ui_->initial_relative_weighting->text().toDouble());
-  params.set_relative_weighting(this->ui_->relative_weighting->text().toDouble());
-  params.set_starting_regularization(this->ui_->starting_regularization->text().toDouble());
-  params.set_ending_regularization(this->ui_->ending_regularization->text().toDouble());
-  params.set_iterations_per_split(this->ui_->iterations_per_split->text().toDouble());
-  params.set_optimization_iterations(this->ui_->optimization_iterations->text().toDouble());
+  params.set_initial_relative_weighting(ui_->initial_relative_weighting->text().toDouble());
+  params.set_relative_weighting(ui_->relative_weighting->text().toDouble());
+  params.set_starting_regularization(ui_->starting_regularization->text().toDouble());
+  params.set_ending_regularization(ui_->ending_regularization->text().toDouble());
+  params.set_iterations_per_split(ui_->iterations_per_split->text().toDouble());
+  params.set_optimization_iterations(ui_->optimization_iterations->text().toDouble());
 
-  params.set_use_geodesic_distance(this->ui_->use_geodesic_distance->isChecked());
-  params.set_use_normals({this->ui_->use_normals->isChecked()});
-  params.set_normals_strength(this->ui_->normals_strength->text().toDouble());
+  params.set_use_geodesic_distance(ui_->use_geodesic_distance->isChecked());
+  params.set_use_normals({ui_->use_normals->isChecked()});
+  params.set_normals_strength(ui_->normals_strength->text().toDouble());
 
-  params.set_use_procrustes(this->ui_->procrustes->isChecked());
-  params.set_use_procrustes_scaling(this->ui_->procrustes_scaling->isChecked());
-  params.set_procrustes_interval(this->ui_->procrustes_interval->text().toDouble());
+  params.set_use_procrustes(ui_->procrustes->isChecked());
+  params.set_use_procrustes_scaling(ui_->procrustes_scaling->isChecked());
+  params.set_procrustes_interval(ui_->procrustes_interval->text().toDouble());
 
-  params.set_use_multiscale(this->ui_->multiscale->isChecked());
-  params.set_multiscale_particles(this->ui_->multiscale_particles->text().toDouble());
+  params.set_use_multiscale(ui_->multiscale->isChecked());
+  params.set_multiscale_particles(ui_->multiscale_particles->text().toDouble());
+  params.set_use_landmarks(ui_->use_landmarks->isChecked());
 
   // always use preference value
   params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
   params.set_optimize_output_prefix(this->preferences_.get_optimize_file_template().toStdString());
 
-  params.set_narrow_band(this->ui_->narrow_band->text().toDouble());
+  params.set_narrow_band(ui_->narrow_band->text().toDouble());
 
   params.save_to_project();
 }
@@ -294,7 +296,7 @@ void OptimizeTool::enable_actions() { this->update_run_button(); }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::disable_actions() {
-  // this->ui_->run_optimize_button->setEnabled(false);
+  // ui_->run_optimize_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -311,10 +313,10 @@ void OptimizeTool::shutdown_threads() {
 
 //---------------------------------------------------------------------------
 void OptimizeTool::update_ui_elements() {
-  this->ui_->normals_strength->setEnabled(this->ui_->use_normals->isChecked());
-  this->ui_->procrustes_scaling->setEnabled(this->ui_->procrustes->isChecked());
-  this->ui_->procrustes_interval->setEnabled(this->ui_->procrustes->isChecked());
-  this->ui_->multiscale_particles->setEnabled(this->ui_->multiscale->isChecked());
+  ui_->normals_strength->setEnabled(ui_->use_normals->isChecked());
+  ui_->procrustes_scaling->setEnabled(ui_->procrustes->isChecked());
+  ui_->procrustes_interval->setEnabled(ui_->procrustes->isChecked());
+  ui_->multiscale_particles->setEnabled(ui_->multiscale->isChecked());
 }
 
 //---------------------------------------------------------------------------
@@ -357,27 +359,27 @@ bool OptimizeTool::validate_inputs() {
 void OptimizeTool::update_run_button() {
   bool inputs_valid = this->validate_inputs();
 
-  this->ui_->run_optimize_button->setEnabled(inputs_valid && this->session_->get_groomed_present());
+  ui_->run_optimize_button->setEnabled(inputs_valid && this->session_->get_groomed_present());
 
   if (this->optimization_is_running_) {
-    this->ui_->run_optimize_button->setText("Abort Optimize");
+    ui_->run_optimize_button->setText("Abort Optimize");
   } else {
-    this->ui_->run_optimize_button->setText("Run Optimize");
+    ui_->run_optimize_button->setText("Run Optimize");
   }
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::setup_domain_boxes() {
-  qDeleteAll(this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+  qDeleteAll(ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
   this->particle_boxes_.clear();
 
-  QLineEdit* last_box = this->ui_->number_of_particles;
+  QLineEdit* last_box = ui_->number_of_particles;
 
   if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
-    this->ui_->particle_stack->setCurrentIndex(0);
-    this->ui_->domain_widget->setMaximumSize(1, 1);
+    ui_->particle_stack->setCurrentIndex(0);
+    ui_->domain_widget->setMaximumSize(1, 1);
   } else {
-    this->ui_->domain_widget->setMaximumSize(9999, 9999);
+    ui_->domain_widget->setMaximumSize(9999, 9999);
     auto domain_names = this->session_->get_project()->get_domain_names();
     QGridLayout* layout = new QGridLayout;
     QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
@@ -394,26 +396,27 @@ void OptimizeTool::setup_domain_boxes() {
       layout->addWidget(box, i, 1);
     }
 
-    delete this->ui_->domain_widget->layout();
-    this->ui_->domain_widget->setLayout(layout);
-    this->ui_->particle_stack->setCurrentIndex(1);
+    delete ui_->domain_widget->layout();
+    ui_->domain_widget->setLayout(layout);
+    ui_->particle_stack->setCurrentIndex(1);
   }
 
-  QWidget::setTabOrder(last_box, this->ui_->initial_relative_weighting);
-  QWidget::setTabOrder(this->ui_->initial_relative_weighting, this->ui_->relative_weighting);
-  QWidget::setTabOrder(this->ui_->relative_weighting, this->ui_->starting_regularization);
-  QWidget::setTabOrder(this->ui_->starting_regularization, this->ui_->ending_regularization);
-  QWidget::setTabOrder(this->ui_->ending_regularization, this->ui_->iterations_per_split);
-  QWidget::setTabOrder(this->ui_->iterations_per_split, this->ui_->optimization_iterations);
-  QWidget::setTabOrder(this->ui_->optimization_iterations, this->ui_->use_geodesic_distance);
-  QWidget::setTabOrder(this->ui_->use_geodesic_distance, this->ui_->use_normals);
-  QWidget::setTabOrder(this->ui_->use_normals, this->ui_->normals_strength);
-  QWidget::setTabOrder(this->ui_->normals_strength, this->ui_->procrustes);
-  QWidget::setTabOrder(this->ui_->procrustes, this->ui_->procrustes_scaling);
-  QWidget::setTabOrder(this->ui_->procrustes_scaling, this->ui_->procrustes_interval);
-  QWidget::setTabOrder(this->ui_->procrustes_interval, this->ui_->multiscale);
-  QWidget::setTabOrder(this->ui_->multiscale, this->ui_->multiscale_particles);
-  QWidget::setTabOrder(this->ui_->multiscale_particles, this->ui_->narrow_band);
-  QWidget::setTabOrder(this->ui_->narrow_band, this->ui_->run_optimize_button);
-  QWidget::setTabOrder(this->ui_->run_optimize_button, this->ui_->restoreDefaults);
+  QWidget::setTabOrder(last_box, ui_->initial_relative_weighting);
+  QWidget::setTabOrder(ui_->initial_relative_weighting, ui_->relative_weighting);
+  QWidget::setTabOrder(ui_->relative_weighting, ui_->starting_regularization);
+  QWidget::setTabOrder(ui_->starting_regularization, ui_->ending_regularization);
+  QWidget::setTabOrder(ui_->ending_regularization, ui_->iterations_per_split);
+  QWidget::setTabOrder(ui_->iterations_per_split, ui_->optimization_iterations);
+  QWidget::setTabOrder(ui_->optimization_iterations, ui_->use_geodesic_distance);
+  QWidget::setTabOrder(ui_->use_geodesic_distance, ui_->use_normals);
+  QWidget::setTabOrder(ui_->use_normals, ui_->normals_strength);
+  QWidget::setTabOrder(ui_->normals_strength, ui_->procrustes);
+  QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_scaling);
+  QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_interval);
+  QWidget::setTabOrder(ui_->procrustes_interval, ui_->multiscale);
+  QWidget::setTabOrder(ui_->multiscale, ui_->multiscale_particles);
+  QWidget::setTabOrder(ui_->multiscale_particles, ui_->use_landmarks);
+  QWidget::setTabOrder(ui_->use_landmarks, ui_->narrow_band);
+  QWidget::setTabOrder(ui_->narrow_band, ui_->run_optimize_button);
+  QWidget::setTabOrder(ui_->run_optimize_button, ui_->restoreDefaults);
 }

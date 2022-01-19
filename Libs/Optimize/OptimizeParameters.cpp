@@ -282,15 +282,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     throw std::invalid_argument("No subjects to optimize");
   }
 
-  // landmarks/point files
-  std::vector<std::string> point_files;
-
-  for (auto s : subjects) {
-    auto landmarks = s->get_landmarks_filenames();
-    point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
-  }
-  if (point_files.size() > 0) {
-    optimize->SetPointFiles(point_files);
+  if (get_use_landmarks()) {
+    // landmarks/point files
+    std::vector<std::string> point_files;
+    for (auto s : subjects) {
+      auto landmarks = s->get_landmarks_filenames();
+      point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
+    }
+    if (point_files.size() > 0) {
+      optimize->SetPointFiles(point_files);
+    }
   }
 
   // passing cutting plane constraints
