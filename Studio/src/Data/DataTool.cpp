@@ -31,6 +31,10 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->domainBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &DataTool::landmark_domain_changed);
 
+#ifdef __APPLE__
+  ui_->landmark_help->setText("Place landmarks using ⌘+click");
+#endif
+
   // start with these off
   ui_->landmarks_open_button->toggle();
   //ui_->table_open_button->toggle();

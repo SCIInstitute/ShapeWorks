@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1244</height>
+    <height>1272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -533,6 +533,27 @@ QWidget#specificity_panel {
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="landmark_drag_mode">
+           <property name="text">
+            <string>Drag to Move</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="new_landmark_button">
+           <property name="text">
+            <string>New</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="delete_landmark_button">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0" colspan="2">
           <widget class="QWidget" name="domainWidget" native="true">
            <layout class="QHBoxLayout" name="horizontalLayout">
@@ -561,24 +582,13 @@ QWidget#specificity_panel {
            </layout>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="delete_landmark_button">
+         <item row="4" column="0" colspan="2">
+          <widget class="QLabel" name="landmark_help">
            <property name="text">
-            <string>Delete</string>
+            <string>Place landmarks using ctrl+click</string>
            </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QPushButton" name="new_landmark_button">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="landmark_drag_mode">
-           <property name="text">
-            <string>Drag to Move</string>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
