@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <Libs/Project/Project.h>
 
 namespace shapeworks {
