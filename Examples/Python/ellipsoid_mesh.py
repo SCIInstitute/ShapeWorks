@@ -180,40 +180,12 @@ def Run_Pipeline(args):
     parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimze",parameters)
     project.save("ellipsoid_mesh.xlsx")
+    
 
-    optimizeCmd = 'shapeworks optimize --name ellipsoid_mesh.xlsx'.split()
-    subprocess.check_call(optimizeCmd)
+    opt = sw.Optimize()
+    opt.SetUpOptimize(project)
+    opt.Run()
+    project.save("ellipsoid_mesh.xlsx")
 
     AnalysisCmd = 'ShapeWorksStudio ellipsoid_mesh.xlsx'.split()
     subprocess.check_call(AnalysisCmd)
-    # # If running a tiny test, reduce some parameters
-    # if args.tiny_test:
-    #     parameter_dictionary["number_of_particles"] = 32
-    #     parameter_dictionary["initial_relative_weighting"] = 0.05
-    #     parameter_dictionary["relative_weighting"] = 1
-    #     parameter_dictionary["starting_regularization"] = 1000
-    #     parameter_dictionary["ending_regularization"] = 10
-    #     parameter_dictionary["iterations_per_split"] = 500
-    #     parameter_dictionary["optimization_iterations"] = 100
-    # # Run multiscale optimization unless single scale is specified
-    # if not args.use_single_scale:
-    #     parameter_dictionary["use_shape_statistics_after"] = 32
-    # # Execute the optimization function
-    # [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-    #     point_dir, mesh_files, parameter_dictionary)
-
-    # # Prepare analysis XML
-    # analyze_xml = point_dir + "/ellipsoid_mesh_analyze.xml"
-    # AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
-
-    # # If tiny test or verify, check results and exit
-    # AnalyzeUtils.check_results(args, world_point_files)
-
-    # print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    # """
-    # Step 3: ANALYZE - Shape Analysis and Visualization
-    # Now we launch studio to analyze the resulting shape model.
-    # For more information about the analysis step, see docs/workflow/analyze.md
-    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    # """
-    # AnalyzeUtils.launch_shapeworks_studio(analyze_xml)

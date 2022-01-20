@@ -211,14 +211,13 @@ def Run_Pipeline(args):
             parameters.set(key,sw.Variant([parameter_dictionary[key]]))
         parameters.set("domain_type",sw.Variant('image'))
         project.set_parameters("optimze",parameters)
+        project.set_filename("test_proj_parm.xlsx")
         project.save("test_proj_parm.xlsx")
 
-        # optimizeCmd = 'shapeworks optimize --name test_proj_parm.xlsx'.split()
-        # subprocess.check_call(optimizeCmd)
         opt = sw.Optimize()
-        # opt.LoadParameterFile(project)
-        opt.SetUpOtimize(project)
+        opt.SetUpOptimize(project)
         opt.Run()
+        project.save("test_proj_parm.xlsx")
 
         AnalysisCmd = 'ShapeWorksStudio test_proj_parm.xlsx'.split()
         subprocess.check_call(AnalysisCmd)
