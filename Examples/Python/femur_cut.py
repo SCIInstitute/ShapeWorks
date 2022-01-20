@@ -151,50 +151,6 @@ def Run_Pipeline(args):
         transforms = []
         for reflection, rigid_transform in zip(reflections, rigid_transforms):
             transforms.append(np.matmul(rigid_transform, reflection))
-    
-        """
-        Groom images
-        """
-        if args.groom_images:
-            # Load corresponding images
-            print("\nGrooming images:")
-            image_list = []
-            for name, reflection in zip(names, reflections):
-                # Get corresponding image path
-                prefix = name.split("_")[0]
-                for index in range(len(image_files)):
-                    if prefix in image_files[index]:
-                        corresponding_image_file = image_files[index]
-                        break
-                print('\nLoading image: ' + corresponding_image_file)
-                image = sw.Image(corresponding_image_file)
-                # Apply reflection to image
-                print("Reflecting image: " + name)
-                image.applyTransform(reflection)
-                image_list.append(image)
-            # Get reference image
-            ref_image = image_list[ref_index].copy()
-            ref_image.resample([1,1,1], sw.InterpolationType.Linear).write(groom_dir + 'reference.nrrd')
-            # Get bounding box
-            bounding_box = sw.MeshUtils.boundingBox(mesh_list)
-            for image, name, rigid_transform in zip(image_list, names, rigid_transforms):
-                # Align image
-                print("\nAligning image: " + name)
-                image.applyTransform(rigid_transform,
-                                     ref_image.origin(),  ref_image.dims(),
-                                     ref_image.spacing(), ref_image.coordsys(),
-                                     sw.InterpolationType.Linear, meshTransform=True)
-                # Crop image
-                print('Cropping image: ' + name)
-                try:
-                    image.crop(bounding_box)
-                except:
-                    print(image)
-                    input(bounding_box)
-            # Write images
-            print("\nWriting groomed images.")
-            image_files = sw.utils.save_images(groom_dir + 'images/', image_list,
-                            names, extension='nrrd', compressed=True, verbose=True)
 
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
@@ -212,13 +168,6 @@ def Run_Pipeline(args):
     point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
-
-    # Cutting planes
-    cutting_planes = []
-    cutting_plane_counts = []
-    for i in range(len(mesh_files)):
-        cutting_planes.extend([-1,-1,-10, 1,-1,-10, -1,1,-10])
-        cutting_plane_counts.append(1)
 
     # Create spreadsheet
     subjects = []
@@ -263,8 +212,6 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
-    # parameters.set("cutting_plane_counts",sw.Variant(cutting_plane_counts))
-    # parameters.set("cutting_planes",sw.Variant(cutting_planes))
     project.set_parameters("optimze",parameters)
     spreadsheet_file = output_directory + "shape_models/proj_parm.xlsx"
     project.save(spreadsheet_file)
