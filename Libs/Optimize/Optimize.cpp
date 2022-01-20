@@ -2055,7 +2055,6 @@ void Optimize::UpdateProject()
 
   for (size_t i = 0; i < transforms.size(); i++) {
     if (subjects.size() > i) {
-      std::cerr << "setting procrustes for " << i << "\n";
       subjects[i]->set_procrustes_transforms(transforms[i]);
     }
   }
