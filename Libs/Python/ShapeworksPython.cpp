@@ -1435,6 +1435,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("SetUpOptimize",
+       &Optimize::SetUpOptimize,
+       "projectFile"_a )
+
   .def("Run",
        &Optimize::Run)
 
@@ -1447,9 +1451,9 @@ PYBIND11_MODULE(shapeworks_py, m)
 
 
   // Project 
-  py::class_<Project>(m, "Project")
-
-  .def(py::init<>())
+  // py::class_<Project>(m, "Project")
+  py::class_<Project, std::shared_ptr<Project> /* <- holder type */> proj(m, "Project");
+  proj.def(py::init<>())
 
   .def("load",
       &Project::load,
