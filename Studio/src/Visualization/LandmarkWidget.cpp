@@ -3,6 +3,7 @@
 #include <Visualization/Viewer.h>
 #include <vtkActor.h>
 #include <vtkCommand.h>
+#include <vtkFollower.h>
 #include <vtkHandleWidget.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkPolygonalHandleRepresentation3D.h>
@@ -75,12 +76,15 @@ void LandmarkWidget::update_landmarks() {
     xyz[1] = landmarks(i, 3);
     xyz[2] = landmarks(i, 4);
 
-    // if (viewer_->get_)
     double xyzt[3];
     auto transform = viewer_->get_landmark_transform(domain_id);
     transform->TransformPoint(xyz, xyzt);
 
     rep->SetWorldPosition(xyzt);
+
+    rep->SetLabelVisibility(session->get_show_landmarks());
+    rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
+    rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
     assign_handle_to_domain(handles_[i], domain_id);
 
@@ -194,10 +198,6 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
 
   rep->GetProperty()->SetLineWidth(1.0);
   rep->GetSelectedProperty()->SetColor(selectedColor);
-
-  // const char *label = "foo";
-  // rep->SetLabelVisibility(1);
-  // rep->SetLabelText(label);
   rep->Delete();
 
   handle->AddObserver(vtkCommand::InteractionEvent, callback_);

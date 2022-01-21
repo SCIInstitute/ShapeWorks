@@ -73,6 +73,7 @@ DataTool::~DataTool() {}
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   connect(ui_->landmark_drag_mode, &QCheckBox::stateChanged, session_.data(), &Session::set_landmark_drag_mode);
+  connect(ui_->show_landmark_labels, &QCheckBox::stateChanged, session_.data(), &Session::set_show_landmarks);
   landmark_table_model_->set_project(session->get_project());
   landmark_table_model_->set_session(session);
   update_table();

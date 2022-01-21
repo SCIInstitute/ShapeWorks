@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1272</height>
+    <height>1294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -589,6 +589,13 @@ QWidget#specificity_panel {
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="show_landmark_labels">
+           <property name="text">
+            <string>Show Labels</string>
            </property>
           </widget>
          </item>

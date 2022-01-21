@@ -162,8 +162,7 @@ bool Session::save_project(std::string fname) {
 }
 
 //---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const Eigen::VectorXd& points)
-{
+void Session::save_particles_file(std::string filename, const Eigen::VectorXd& points) {
   std::ofstream out(filename);
   size_t newline = 1;
   for (int i = 0; i < points.size(); i++) {
@@ -827,8 +826,7 @@ std::vector<DomainType> Session::get_domain_types() {
 }
 
 //---------------------------------------------------------------------------
-Point3 Session::get_point(const Eigen::VectorXd& points, int i)
-{
+Point3 Session::get_point(const Eigen::VectorXd& points, int i) {
   if ((i * 3) + 2 > points.size() - 1) {
     return Point3();
   }
@@ -945,6 +943,15 @@ int Session::get_placing_landmark() { return placing_landmark_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_landmarks(bool show) {
+  show_landmark_labels_ = show;
+  emit landmarks_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_show_landmarks() { return show_landmark_labels_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
