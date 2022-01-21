@@ -96,14 +96,18 @@ void LandmarkWidget::update_landmarks() {
     if (!session->get_landmark_drag_mode()) {
       enabled = false;
     }
-    handles_[i]->SetShowInactive(1);
-    if (enabled && visible) {
+
+    if (!visible) {
+      handles_[i]->SetShowInactive(0);
       handles_[i]->SetEnabled(1);
-    } else if (!visible) {
       handles_[i]->SetEnabled(0);
     } else {
       handles_[i]->SetShowInactive(1);
+      handles_[i]->SetEnabled(1);
       handles_[i]->SetEnabled(0);
+      if (enabled) {
+        handles_[i]->SetEnabled(1);
+      }
     }
   }
   update_glyph_properties();
@@ -130,8 +134,6 @@ void LandmarkWidget::update_positions() {
     inverse->DeepCopy(transform);
     inverse->Inverse();
     inverse->TransformPoint(position, xyzt);
-    //transform->Inverse();
-    //transform->TransformPoint(position, xyzt);
 
     landmarks(i, 2) = xyzt[0];
     landmarks(i, 3) = xyzt[1];
