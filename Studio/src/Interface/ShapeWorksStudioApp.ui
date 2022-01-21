@@ -113,12 +113,6 @@
           </item>
           <item>
            <widget class="QToolButton" name="landmarks_visible_button">
-            <property name="maximumSize">
-             <size>
-              <width>23</width>
-              <height>16777215</height>
-             </size>
-            </property>
             <property name="toolTip">
              <string>Show landmarks</string>
             </property>
