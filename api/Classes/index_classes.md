@@ -218,6 +218,7 @@ title: Classes
     * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
+    * **class [shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)** 
 * **namespace [std](../Namespaces/namespacestd.md)** 
 * **namespace [utils](../Namespaces/namespaceutils.md)** 
 * **class [vec2d](../Classes/classvec2d.md)** 
@@ -230,4 +231,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-01-14 at 16:56:18 +0000
+Updated on 2022-01-22 at 00:21:05 +0000

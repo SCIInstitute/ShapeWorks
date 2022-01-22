@@ -57,6 +57,8 @@ title: Libs/Optimize/Optimize.h
 
 namespace shapeworks {
 
+class Project;
+
 class MatrixContainer {
   public:
   Eigen::MatrixXd matrix_;
@@ -75,6 +77,8 @@ public:
   bool Run();
 
   bool LoadParameterFile(std::string filename);
+
+  void SetProject(std::shared_ptr<Project> project);
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -263,6 +267,10 @@ protected:
 
   virtual void UpdateExportablePoints();
 
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
+
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
 
@@ -370,6 +378,8 @@ protected:
   std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }
@@ -378,4 +388,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-01-14 at 16:56:17 +0000
+Updated on 2022-01-22 at 00:21:05 +0000

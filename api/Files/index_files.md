@@ -29,6 +29,7 @@ title: Files
         * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
         * **file [Libs/Analyze/Vis.h](../Files/Vis_8h.md#file-vis.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
+        * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
         * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
         * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
         * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
@@ -219,4 +220,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-01-14 at 16:56:18 +0000
+Updated on 2022-01-22 at 00:21:05 +0000

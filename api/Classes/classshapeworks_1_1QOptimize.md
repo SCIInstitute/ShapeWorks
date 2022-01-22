@@ -30,7 +30,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetLocalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getlocalpoints)**() override<br>Return the local points.  |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetGlobalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getglobalpoints)**() override<br>Return the global points.  |
 | std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > | **[GetParticles](../Classes/classshapeworks_1_1QOptimize.md#function-getparticles)**() |
-| std::vector< std::vector< std::vector< double > > > | **[GetProcrustesTransforms](../Classes/classshapeworks_1_1QOptimize.md#function-getprocrustestransforms)**() |
+| virtual std::vector< std::vector< std::vector< double > > > | **[GetProcrustesTransforms](../Classes/classshapeworks_1_1QOptimize.md#function-getprocrustestransforms)**() override |
 | virtual void | **[UpdateExportablePoints](../Classes/classshapeworks_1_1QOptimize.md#function-updateexportablepoints)**() override |
 
 ## Protected Functions
@@ -58,6 +58,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | virtual | **[~Optimize](../Classes/classshapeworks_1_1Optimize.md#function-~optimize)**()<br>Destructor.  |
 | bool | **[Run](../Classes/classshapeworks_1_1Optimize.md#function-run)**()<br>Run the optimization.  |
 | bool | **[LoadParameterFile](../Classes/classshapeworks_1_1Optimize.md#function-loadparameterfile)**(std::string filename)<br>Load a parameter file.  |
+| void | **[SetProject](../Classes/classshapeworks_1_1Optimize.md#function-setproject)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project)<br>Set the Projects.  |
 | void | **[SetIterationCallbackFunction](../Classes/classshapeworks_1_1Optimize.md#function-setiterationcallbackfunction)**(const std::function< void(void)> & f) |
 | void | **[AbortOptimization](../Classes/classshapeworks_1_1Optimize.md#function-abortoptimization)**()<br>Abort optimization.  |
 | bool | **[GetAborted](../Classes/classshapeworks_1_1Optimize.md#function-getaborted)**()<br>Return if the optimization was aborted.  |
@@ -180,6 +181,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[WriteModes](../Classes/classshapeworks_1_1Optimize.md#function-writemodes)**() |
 | void | **[PrintStartMessage](../Classes/classshapeworks_1_1Optimize.md#function-printstartmessage)**(std::string str, unsigned int vlevel =0) const |
 | void | **[PrintDoneMessage](../Classes/classshapeworks_1_1Optimize.md#function-printdonemessage)**(unsigned int vlevel =0) const |
+| void | **[UpdateProject](../Classes/classshapeworks_1_1Optimize.md#function-updateproject)**() |
 | std::string | **[GetCheckpointDir](../Classes/classshapeworks_1_1Optimize.md#function-getcheckpointdir)**() |
 
 **Protected Attributes inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
@@ -269,6 +271,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | std::function< void(void)> | **[m_iter_callback](../Classes/classshapeworks_1_1Optimize.md#variable-m-iter-callback)**  |
 | bool | **[show_visualizer](../Classes/classshapeworks_1_1Optimize.md#variable-show-visualizer)**  |
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) | **[visualizer](../Classes/classshapeworks_1_1Optimize.md#variable-visualizer)**  |
+| std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[project_](../Classes/classshapeworks_1_1Optimize.md#variable-project-)**  |
 
 
 ## Public Signals Documentation
@@ -333,8 +336,11 @@ std::vector< StudioParticles > GetParticles()
 ### function GetProcrustesTransforms
 
 ```cpp
-std::vector< std::vector< std::vector< double > > > GetProcrustesTransforms()
+virtual std::vector< std::vector< std::vector< double > > > GetProcrustesTransforms() override
 ```
+
+
+**Reimplements**: [shapeworks::Optimize::GetProcrustesTransforms](../Classes/classshapeworks_1_1Optimize.md#function-getprocrustestransforms)
 
 
 ### function UpdateExportablePoints
@@ -375,4 +381,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-01-14 at 16:56:16 +0000
+Updated on 2022-01-22 at 00:21:04 +0000
