@@ -358,9 +358,9 @@ void Project::store_subjects()
 
     // segmentations
     auto seg_files = subject->get_segmentation_filenames();
-    int count = 0;
-    while (seg_files.size() > seg_columns.size()) {
-      seg_columns.push_back(this->get_new_file_column(SHAPE_PREFIX, count++));
+    if (seg_files.size() > seg_columns.size()) {
+      seg_columns.push_back(std::string(SHAPE_PREFIX) + "1");
+
     }
     this->set_list(seg_columns, i, seg_files);
 
@@ -822,7 +822,7 @@ std::vector<std::string> Project::get_domain_names()
   /// the user has to specify somewhere how many domains there are (if more than one)
 
   // default 1
-  std::vector<std::string> list{"file"};
+  std::vector<std::string> list{"1"};
   return list;
 }
 

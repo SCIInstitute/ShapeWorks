@@ -9,6 +9,7 @@ target_link_libraries(shapeworks_py PUBLIC
   Image
   Mesh
   Optimize
+  Project
   Particles
   Project
   ${ITK_LIBRARIES}
