@@ -35,6 +35,10 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "Project.h"
+#include "Subject.h"
+#include "Variant.h"
+#include "Parameters.h"
 #include "ReconstructSurface.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
@@ -1442,6 +1446,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("SetUpOptimize",
+       &Optimize::SetUpOptimize,
+       "projectFile"_a )
+
   .def("Run",
        &Optimize::Run)
 
@@ -1452,4 +1460,304 @@ PYBIND11_MODULE(shapeworks_py, m)
        &optimize_get_particle_system)
   ;
 
+
+  // Project 
+  // py::class_<Project>(m, "Project")
+  py::class_<Project, std::shared_ptr<Project> /* <- holder type */> proj(m, "Project");
+  proj.def(py::init<>())
+
+  .def("load",
+      &Project::load,
+      "Load from XLSX file",
+      "filename"_a)
+
+  .def("save",
+      &Project::save,
+      "Save to XLSX file",
+      "filename"_a)
+
+  .def("get_filename",
+      &Project::get_filename,
+      "Return the filename")
+
+  .def("set_filename",
+      &Project::set_filename,
+      "Set project filename",
+      "filename"_a)
+
+  .def("get_headers",
+      &Project::get_headers,
+      "Return the headers of the subject sheet")
+
+  .def("get_string_column",
+      &Project::get_string_column,
+      "Return a column by name",
+      "name"_a)
+
+  .def("get_number_of_subjects",
+      &Project::get_number_of_subjects,
+      "Return the number of subjects in the project")
+
+  .def("get_number_of_domains_per_subject",
+      &Project::get_number_of_domains_per_subject,
+      "Return the number of domains")
+
+  .def("get_domain_names",
+      &Project::get_domain_names,
+      "Return the domain names (e.g. femur, pelvis, etc)")
+
+  .def("get_subjects",
+      &Project::get_subjects,
+      "Return the list of Subjects")
+
+  .def("get_segmentations_present",
+      &Project::get_segmentations_present,
+      "Return if segmentations are present")
+
+  .def("get_groomed_present",
+      &Project::get_groomed_present,
+      "Return if groomed files are present")
+
+  .def("get_particles_present",
+      &Project::get_particles_present,
+      "Return if particle files are present")
+
+  .def("get_images_present",
+      &Project::get_images_present)
+
+  .def("get_feature_names",
+      &Project::get_feature_names)
+
+  .def("get_group_names",
+      &Project::get_group_names)
+
+  .def("get_group_values",
+      &Project::get_group_values,
+      "group_names"_a)
+
+  .def("get_parameters",
+      &Project::get_parameters,
+      "name"_a,"domain_name"_a="")
+
+  .def("set_parameters",
+      &Project::set_parameters,
+      "name"_a,"params"_a,"domain_name"_a="")
+
+  .def("clear_parameters",
+      &Project::clear_parameters,
+      "name"_a)
+
+  .def("store_subjects",
+      &Project::store_subjects)
+
+  .def("get_supported_version",
+      &Project::get_supported_version)
+
+  .def("get_version",
+      &Project::get_version)
+
+  .def("set_subjects",
+       [](Project &project, std::vector<Subject> subjects) -> decltype(auto) {
+            std::vector<std::shared_ptr<Subject>> sharedSubjects;
+            for (auto sub : subjects) {
+               std::shared_ptr<Subject> s = std::make_shared<Subject>(sub);
+               sharedSubjects.push_back(s);
+            }
+            return project.set_subjects(sharedSubjects);
+       },
+       "subjects"_a)
+  ; // Project
+
+  // Subject 
+  py::class_<Subject>(m, "Subject")
+
+  .def(py::init<>())
+
+  .def("set_segmentation_filenames",
+      &Subject::set_segmentation_filenames,
+      "Set segmentatation filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_segmentations_filenames",
+      &Subject::get_segmentation_filenames,
+      "Get segmentation filenames")
+
+  .def("get_domain_types",
+      &Subject::get_domain_types,
+      "Return the domain types")
+
+  .def("set_groomed_filenames",
+      &Subject::set_groomed_filenames,
+      "Set groomed filenames",
+      "filenames"_a)
+
+  .def("get_groomed_filenames",
+      &Subject::get_groomed_filenames,
+      "Get groomed filenames")
+
+  .def("set_local_particle_filenames",
+      &Subject::set_local_particle_filenames,
+      "Set local particle filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_local_particle_filenames",
+      &Subject::get_local_particle_filenames,
+      "Get local particle filenames")
+
+  .def("set_world_particle_filenames",
+      &Subject::set_world_particle_filenames,
+      "Set the world particle filenames",
+      "filenames"_a)
+
+  .def("get_world_particle_filenames",
+     &Subject::get_world_particle_filenames,
+     "Get the world particle filenames")
+
+  .def("set_landmarks_filenames",
+      &Subject::set_landmarks_filenames,
+      "Set the landmarks filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_landmarks_filenames",
+      &Subject::get_landmarks_filenames,
+      "Get the landmarks filenames (one per domain)")
+
+  .def("set_number_of_domains",
+      &Subject::set_number_of_domains,
+      "Set the number of domains",
+      "number_of_domains"_a)
+
+  .def("get_number_of_domains",
+      &Subject::get_number_of_domains,
+      "Get the number of domains")
+
+  .def("set_image_filenames",
+      &Subject::set_image_filenames,
+      "Set image filenames",
+      "filenames"_a)
+
+  .def("get_image_filenames",
+      &Subject::get_image_filenames,
+      "Get image filenames")
+
+  .def("get_feature_filenames",
+      &Subject::get_feature_filenames,
+      "Get the feature map filenames")
+
+  .def("set_feature_filenames",
+      &Subject::set_feature_filenames,
+      "Set the feature map filenames",
+      "filenames"_a)
+
+  .def("get_groomed_transforms",
+      &Subject::get_groomed_transforms,
+      "Get the groomed transforms (one vector per domain)")
+
+  .def("set_groomed_transforms",
+      &Subject::set_groomed_transforms,
+      "Set the groomed transforms (one vector per domain)",
+      "transforms"_a)
+
+  .def("get_procrustes_transforms",
+      &Subject::get_procrustes_transforms,
+      "Get the procrustes transforms (one vector per domain)")
+
+  .def("set_procrustes_transforms",
+      &Subject::set_procrustes_transforms,
+      "Set the procrustes transforms (one vector per domain)",
+      "transforms"_a)
+
+  .def("get_group_values",
+      &Subject::get_group_values,
+      "Get the group values")
+
+  .def("get_group_value",
+      &Subject::get_group_value,
+      "Get a specific group value",
+      "group_name"_a)
+
+  .def("set_group_values",
+      &Subject::set_group_values,
+      "Set a specific group value"
+      "group_values"_a)
+
+  .def("get_extra_values",
+      &Subject::get_extra_values,
+      "Get extra values (extra columns we don't interpret)")
+
+  .def("set_extra_values",
+      &Subject::set_extra_values,
+      "Set extra values",
+      "extra_values"_a)
+
+  .def("get_display_name",
+      &Subject::get_display_name,
+      "Get the display name")
+
+  .def("set_display_name",
+      &Subject::set_display_name,
+      "Set the display name",
+      "display_name"_a)
+  ;//Subject
+
+  // Parameters 
+  py::class_<Parameters>(m, "Parameters")
+
+  .def(py::init<>())
+
+  .def("get",
+      &Parameters::get,
+      "get a parameter based on a key, return default if it doesn't exist",
+      "key"_a,"Variant"_a)
+
+  .def("key_exists",
+      &Parameters::key_exists,
+      "return if a key exists or not",
+      "key"_a)
+
+  .def("set",
+      &Parameters::set,
+      "set a parameter based on a key",
+      "key"_a,"Variant"_a)
+
+  .def("remove_entry",
+      &Parameters::remove_entry,
+      "remove an entry",
+      "key"_a)
+
+  .def("set_map",
+      &Parameters::set_map,
+      "set underlying map",
+      "map"_a)
+
+  .def("get_map",
+      &Parameters::get_map,
+      "get underlying map")
+
+  .def("reset_parameters",
+      &Parameters::reset_parameters,
+      "reset parameters to blank")
+  ;//Parameters
+
+  py::class_<Variant>(m, "Variant")
+
+  .def(py::init<>())
+
+  .def(py::init< std::vector<int> >())
+
+  .def(py::init< std::vector<double> >())
+
+  .def(py::init< std::vector<bool> > ())
+
+  .def(py::init< const std::string& > ())
+
+  .def(py::init< int> ())
+
+  .def(py::init< double> ())
+
+  .def(py::init< const char*> ())
+
+  .def(py::init< bool> ())
+
+  ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)

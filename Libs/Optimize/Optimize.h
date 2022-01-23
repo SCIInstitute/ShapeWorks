@@ -24,7 +24,7 @@
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
-
+#include <Libs/Project/Project.h>
 
 
 namespace shapeworks {
@@ -63,6 +63,8 @@ public:
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+
+  bool SetUpOptimize(ProjectHandle projectFile);
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }

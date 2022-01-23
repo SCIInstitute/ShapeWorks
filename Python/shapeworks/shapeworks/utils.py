@@ -214,3 +214,25 @@ def expectException(name, etype):
     except Exception as e:
         print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
         return False
+
+def getVTKtransform(itkTransform):
+    
+    flippedITKtransform = np.copy(itkTransform)
+    lastColumn = itkTransform[:,-1]
+    lastRow = itkTransform[-1,:]
+    flippedITKtransform[:,-1] = lastRow
+    flippedITKtransform[-1,:] = lastColumn
+    vtkTransform = np.linalg.inv(flippedITKtransform)
+
+    return vtkTransform
+
+def getITKtransform(vtkTransform):
+    
+    inverseVTKtransform = np.linalg.inv(vtkTransform)
+    itkTransform = np.copy(inverseVTKtransform)
+    lastColumn = inverseVTKtransform[:,-1]
+    lastRow = inverseVTKtransform[-1,:]
+    itkTransform[:,-1] = lastRow
+    itkTransform[-1,:] = lastColumn
+
+    return itkTransform
