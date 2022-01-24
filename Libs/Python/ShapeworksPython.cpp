@@ -1224,10 +1224,10 @@ PYBIND11_MODULE(shapeworks_py, m)
                "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file",
                "filename"_a,"mesh"_a)
 
-  .def_static("sharedBoundaryExtractor",
+  .def("sharedBoundaryExtractor",
               &MeshUtils::sharedBoundaryExtractor,
               "extract the shared boundary for the given left and right meshes and save the individual meshes",
-              "mesh_l"_a,"mesh_r"_a,"filename_l"_a,"filename_r"_a,"filename_shared"_a,"tol"_a = 1e-3)
+              "mesh_l"_a,"mesh_r"_a,"tol"_a = 1e-3)
 
   .def_static("generateNormals",
               &MeshUtils::generateNormals,

@@ -436,7 +436,8 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
   // std::make_tuple(out_V,out_F);
 }
 
-int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
+// int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
+std::tuple<Mesh, Mesh, Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r, double tol)
 {
   
 
@@ -467,9 +468,22 @@ int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string fil
   // std::tie(bridge_V, bridge_F) = move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r);
   move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r,bridge_V,bridge_F);
 
-  igl::writePLY(filename_l, bridge_V, bridge_F);
-  igl::writePLY(filename_r, rem_V_r, rem_F_r);
-  igl::writePLY(filename_shared, shared_V_r, shared_F_r);
+  
+  std::shared_ptr<Mesh> igl_l;
+  igl_l->getIGLMesh(bridge_V,bridge_F);
+  Mesh out_l(igl_l->getVTKMesh());
+  
+  std::shared_ptr<Mesh> igl_r;
+  igl_r->getIGLMesh(rem_V_r,rem_F_r);
+  Mesh out_r(igl_r->getVTKMesh());
+
+  std::shared_ptr<Mesh> igl_s;
+  igl_s->getIGLMesh(shared_V_r,shared_F_r);
+  Mesh out_s(igl_s->getVTKMesh());
+
+  // igl::writePLY(filename_r, rem_V_r, rem_F_r);
+  // igl::writePLY(filename_shared, shared_V_r, shared_F_r);
+  return std::make_tuple(out_l,out_r,out_s);
 
 }
 
