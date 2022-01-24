@@ -673,16 +673,16 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
  {
    eigenvectors = this->stats_.WithinEigenvectors();
    eigenvalues = this->stats_.WithinEigenvalues();
-   std:: cout << "Entered Within Stats " << std::endl;
-   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
+  //  std:: cout << "Entered Within Stats " << std::endl;
+  //  std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
 
  }
  else if (level == 2)
  {
    eigenvectors = this->stats_.BetweenEigenvectors();
    eigenvalues = this->stats_.BetweenEigenvalues();
-   std:: cout << "Entered Between Stats " << std::endl;
-   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
+  //  std:: cout << "Entered Between Stats " << std::endl;
+  //  std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
  }
  
  if (!this->compute_stats() || eigenvectors.size() <= 1) {
@@ -694,7 +694,7 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
   unsigned int m = eigenvectors.columns() - (mode + 1);
   vnl_vector<double> e = eigenvectors.get_column(m);
   double lambda = sqrt(eigenvalues[m]);
-  std::cout << "within lambda " << lambda << std::endl;
+  // std::cout << "within lambda " << lambda << std::endl;
   this->mca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(eigenvalues[m]),
                            QString::number(value * lambda));
@@ -708,7 +708,7 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
   for (size_t i = 0; i < mode + 1; ++i) {
     cumulation += vals[i];
   }
-  std::cout << "sum = " << sum << std::endl;
+  // std::cout << "sum = " << sum << std::endl;
   if (sum > 0) {
     this->ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
     this->ui_->mca_cumulative_explained_variance->setText(
@@ -725,14 +725,14 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
 
   }
   else if(level == 2){
-    std::cout << "Computing temp shape for between" << std::endl;
+    // std::cout << "Computing temp shape for between" << std::endl;
     vnl_vector<double> e_between;
     unsigned int sz = this->stats_.Mean().size();
     unsigned int num_points = this->stats_.NumberOfPoints();
     e_between.set_size(sz);
-    std::cout << "between eigen vector size changed" << std::endl;
+    // std::cout << "between eigen vector size changed" << std::endl;
     unsigned int D = this->stats_.DomainsNumber();
-    std::cout << "D = " << D << " num_points = " << num_points << std::endl;
+    // std::cout << "D = " << D << " num_points = " << num_points << std::endl;
     
     for(unsigned int i = 0; i < D; i++){
       for(unsigned int j = 0; j < num_points; j++){
@@ -741,7 +741,7 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
         e_between((i * num_points * 3) + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
-    std::cout << "between eig vec done " << std::endl;
+    // std::cout << "between eig vec done " << std::endl;
     this->temp_shape_mca = this->stats_.Mean() + (e_between * (value * lambda));
   }
   

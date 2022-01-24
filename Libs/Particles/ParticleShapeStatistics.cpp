@@ -217,25 +217,25 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
 int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
 {
   // debug
-  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
+  // std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
   unsigned int num_points = (int)(points[0].size() / (3 * dps));
   this->m_dps = dps;
   this->m_numPoints = num_points;
   this->m_N = points.size();
-  std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
+  // std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
 
   unsigned int n = m_N * VDimension; 
-  std::cout << " n " << n << std::endl;
+  // std::cout << " n " << n << std::endl;
   unsigned int m = num_points * dps;
-  std::cout << "m " << m << std::endl;
+  // std::cout << "m " << m << std::endl;
 
   m_super_matrix.set_size(m, n);
   m_shapes_mca.clear();
-  std::cout << "cleared" <<std::endl;
+  // std::cout << "cleared" <<std::endl;
 
   for(unsigned int i = 0; i < points.size(); i++){
     unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
-    std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
+    // std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
     for(unsigned int j= 0; j < p; j++){
       m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
       m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
@@ -243,7 +243,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
   
-  std::cout << " Super matrix constructed " << std::endl;
+  // std::cout << " Super matrix constructed " << std::endl;
 
   // Step 2. Compute within covariance matrix
 
@@ -293,7 +293,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
-  std::cout << "Within objective computed " << std::endl;
+  // std::cout << "Within objective computed " << std::endl;
 
   // 2..b compute within covariance matrix
   m_pointsMinusMean_for_within.set_size(M, m_N);
@@ -365,22 +365,22 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
   }
 
  std::cout << "Between Covariance Matrix computed " << std::endl;
- std::cout << "MLPCA base part done" << std::endl;
+//  std::cout << "MLPCA base part done" << std::endl;
 
 }
 
 
 int ParticleShapeStatistics::ComputeWithinModesForMca()
 {
-  std::cout << "Computing stats for within modes of variation " << std::endl;
+  // std::cout << "Computing stats for within modes of variation " << std::endl;
   unsigned int m = m_pointsMinusMean_for_within.rows();
-  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
+  // std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
 
   vnl_matrix<double> A = m_pointsMinusMean_for_within.transpose()
                          * m_pointsMinusMean_for_within * (1.0 / ((double) (m_N - 1)));
   
   vnl_symmetric_eigensystem<double> symEigen(A);
-  std::cout << "Eigen decomp done" << std::endl;
+  // std::cout << "Eigen Decomp done" << std::endl;
 
   m_withinEigenvectors = m_pointsMinusMean_for_within * symEigen.V;
   m_withinEigenvalues.resize(m_N);
@@ -398,21 +398,21 @@ int ParticleShapeStatistics::ComputeWithinModesForMca()
 
     m_withinEigenvalues[i] = symEigen.D(i, i);
   }
-  std::cout << " Within stats done" << std::endl;
+  // std::cout << " Within stats done" << std::endl;
   return 0;
 }
 
 int ParticleShapeStatistics::ComputeBetweenModesForMca()
 {
-  std::cout << "Computing stats for between modes of variation " << std::endl;
+  // std::cout << "Computing stats for between modes of variation " << std::endl;
   unsigned int m = m_pointsMinusMean_for_between.rows();
-  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
+  // std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
 
   vnl_matrix<double> A = m_pointsMinusMean_for_between.transpose()
                          * m_pointsMinusMean_for_between * (1.0 / ((double) (m_N - 1)));
   
   vnl_symmetric_eigensystem<double> symEigen(A);
-  std::cout << "Eigen decomp done" << std::endl;
+  // std::cout << "Eigen decomp done" << std::endl;
 
   m_betweenEigenvectors = m_pointsMinusMean_for_between * symEigen.V;
   m_betweenEigenvalues.resize(m_N);
@@ -431,7 +431,7 @@ int ParticleShapeStatistics::ComputeBetweenModesForMca()
     m_betweenEigenvalues[i] = symEigen.D(i, i);
   }
 
-  std::cout << " Between stats done " << std::endl;
+  // std::cout << " Between stats done " << std::endl;
   return 0;
 }
 
