@@ -1,15 +1,20 @@
-// Qt includes
-#include <Data/LandmarkTableModel.h>
-#include <Project.h>
-
-#include <Eigen/Core>
+// qt
 #include <QBrush>
 #include <QColor>
 #include <QColorDialog>
 #include <QDebug>
 #include <QIcon>
+
+// std
 #include <iostream>
 #include <sstream>
+
+// eigen
+#include <Eigen/Core>
+
+// shapeworks
+#include <Data/LandmarkTableModel.h>
+#include <Project.h>
 
 namespace shapeworks {
 
@@ -20,20 +25,15 @@ LandmarkTableModel::LandmarkTableModel(QObject* parent) : QAbstractTableModel(pa
 }
 
 //---------------------------------------------------------------------------
-LandmarkTableModel::~LandmarkTableModel() {
-  // Landmarks vector gets destroyed automatically
-}
-
-//---------------------------------------------------------------------------
-void LandmarkTableModel::set_project(std::shared_ptr<Project> project) {
-  project_ = project;
-  update_cells();
-}
+LandmarkTableModel::~LandmarkTableModel() {}
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_session(QSharedPointer<Session> session) {
   session_ = session;
   connect(session_.data(), &Session::landmarks_changed, this, &LandmarkTableModel::update_table);
+  project_ = session->get_project();
+  active_domain_ = 0;  // reset back to 0
+  update_cells();
 }
 
 //---------------------------------------------------------------------------
@@ -84,10 +84,10 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
           auto shapes = session_->get_shapes();
           int denominator = shapes.size();
           int numerator = 0;
-          for (int i=0;i<shapes.size();i++) {
+          for (int i = 0; i < shapes.size(); i++) {
             auto landmarks = shapes[i]->landmarks();
-            for (int j=0;j<landmarks.rows();j++) {
-              if (landmarks(j,0) == active_domain_ && landmarks(j,1) == index.row()) {
+            for (int j = 0; j < landmarks.rows(); j++) {
+              if (landmarks(j, 0) == active_domain_ && landmarks(j, 1) == index.row()) {
                 numerator++;
               }
             }
@@ -123,7 +123,6 @@ QVariant LandmarkTableModel::data(const QModelIndex& index, int role) const {
 
 //---------------------------------------------------------------------------
 bool LandmarkTableModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-  // qDebug() << "setData: " << index << ", " << value;
   // Called only after enter is pressed or focus changed
   if (index.isValid() && role == Qt::EditRole) {
     if (index.row() >= static_cast<int>(landmarks_.size())) {
@@ -238,13 +237,6 @@ void LandmarkTableModel::update_cells() {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::handle_selected(const QItemSelection& selected) {
-  if (selected.isEmpty()) {
-    return;
-  }
-}
-
-//---------------------------------------------------------------------------
 void LandmarkTableModel::toggle_visible() {
   // Run from interface thread
   bool visible = true;
@@ -307,16 +299,6 @@ void LandmarkTableModel::handle_header_click(int index) {
 }
 
 //---------------------------------------------------------------------------
-std::string LandmarkTableModel::get_active_domain_name() {
-  auto domain_names = project_->get_domain_names();
-  std::string domain_name = "";
-  if (domain_names.size() > 1 && active_domain_ < domain_names.size()) {
-    domain_name = domain_names[active_domain_];
-  }
-  return domain_name;
-}
-
-//---------------------------------------------------------------------------
 void LandmarkTableModel::update_visibility() {
   int num_visible = 0;
   for (size_t i = 0; i < landmarks_.size(); i++) {
@@ -336,9 +318,6 @@ void LandmarkTableModel::update_visibility() {
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_placing_landmark(int row) {}
-
-//---------------------------------------------------------------------------
-void LandmarkTableModel::set_button_text(std::string text) { button_text_ = text; }
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::remove_eigen_row(Eigen::MatrixXd& matrix, unsigned int row_to_remove) {
@@ -374,7 +353,7 @@ void LandmarkTableModel::delete_landmarks(const QModelIndexList& list) {
 
   auto shapes = session_->get_shapes();
 
-  for (int i = static_cast<int>(list.size())-1; i >= 0; i--) {
+  for (int i = static_cast<int>(list.size()) - 1; i >= 0; i--) {
     for (int j = 0; j < shapes.size(); j++) {
       auto& landmarks = shapes[j]->landmarks();
       for (int row = 0; row < landmarks.rows(); row++) {

@@ -20,46 +20,59 @@ enum LandmarkVisibility { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E };
 class LandmarkTableModel : public QAbstractTableModel {
   Q_OBJECT
 
-  friend class LandmarkTableModelPrivate;
-
  public:
+  //! Constructor
   LandmarkTableModel(QObject *parent = 0);
 
+  //! Destructor
   virtual ~LandmarkTableModel();
 
-  void set_project(std::shared_ptr<Project> project);
+  //! Attach to a session
   void set_session(QSharedPointer<Session> session);
+
+  //! Store landmarks back to project
   void store_landmarks();
+
+  //! Set the currently active domain
   void set_active_domain(int domain);
 
-  int rowCount(const QModelIndex &index) const override;
-  int columnCount(const QModelIndex &index) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-  // Update entire table including dimensions.  Scroll to active index.
-  // Stops any editing that the user may be doing on the table.  Clears currently selected cells.
+  //! Update the table of landmarks from the project
   void update_table();
 
-  // Update only table cells, not table dimensions.
+  //! Update table cells
   void update_cells();
 
-  // Remove measurements with specified row indices.
+  //! Remove landmarks with specified row indices.
   void remove_rows(const std::vector<int> &rows);
 
-  // Handler for when table cells are selected.
-  void handle_selected(const QItemSelection &selected);
-
-  // Toggle tri-state button for visibility in horizontal header
+  //! Toggle tri-state button for visibility in horizontal header
   void toggle_visible();
 
+  //! Set the currently placing landmark
   void set_placing_landmark(int row);
-  void set_button_text(std::string text);
 
   //! delete the selected landmarks
   void delete_landmarks(const QModelIndexList &list);
+
+  //------------------  QAbstractTableModel implementation ------------------
+
+  //! QAbstractTableModel::rowCount implementation
+  int rowCount(const QModelIndex &index) const override;
+
+  //! QAbstractTableModel::columnCount implementation
+  int columnCount(const QModelIndex &index) const override;
+
+  //! QAbstractTableModel::data implementation
+  QVariant data(const QModelIndex &index, int role) const override;
+
+  //! QAbstractTableModel::setData implementation
+  bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+  //! QAbstractTableModel::headerData implementation
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+  //! QAbstractTableModel::flags implementation
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
 
  public Q_SLOTS:
 
@@ -76,10 +89,11 @@ class LandmarkTableModel : public QAbstractTableModel {
   void handle_header_click(int index);
 
  private:
-  std::string get_active_domain_name();
-
+  //! Update visibility of status based on each landmark
   void update_visibility();
-  void remove_eigen_row(Eigen::MatrixXd &matrix, unsigned int row_to_remove);
+
+  //! Utility to remove a row from an Eigen::MatrixXd
+  static void remove_eigen_row(Eigen::MatrixXd &matrix, unsigned int row_to_remove);
 
   std::shared_ptr<Project> project_;
   QSharedPointer<Session> session_;
@@ -87,7 +101,6 @@ class LandmarkTableModel : public QAbstractTableModel {
   int visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
   std::string button_text_ = "  Place  ";
 
-  int last_landmark_color_ = -1;
   std::vector<LandmarkDefinition> landmarks_;
 
   QIcon visible_;

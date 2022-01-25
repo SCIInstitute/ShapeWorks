@@ -404,7 +404,7 @@ int Project::get_version() const { return this->version_; }
 //---------------------------------------------------------------------------
 std::vector<LandmarkDefinition> Project::get_landmarks(int domain_id) {
   load_landmark_definitions();
-  if (domain_id < 0 || domain_id > landmark_definitions_.size()) {
+  if (domain_id < 0 || domain_id >= landmark_definitions_.size()) {
     return std::vector<LandmarkDefinition>();
   }
   return landmark_definitions_[domain_id];
