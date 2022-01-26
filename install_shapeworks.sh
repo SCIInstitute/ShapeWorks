@@ -165,8 +165,8 @@ function install_conda() {
 
   if ! pip install nbstripout==0.5.0;    then return 1; fi # to stripout notebooks output before committing  
   if ! pip install pyvista==0.30.1;      then return 1; fi # for visualizations on notebooks
-  if ! pip install pyqt5==5.15.6;        then return 1; fi # for jupyter notebook visualization
-  if ! pip install pyvistaqt==0.6.0;     then return 1; fi # for jupyter notebook visualization
+#  if ! pip install pyqt5==5.15.6;        then return 1; fi # for jupyter notebook visualization
+#  if ! pip install pyvistaqt==0.6.0;     then return 1; fi # for jupyter notebook visualization
   if ! pip install ipyvtklink==0.2.1;    then return 1; fi # for visualizations on notebooks
   if ! pip install ipyvtk_simple==0.1.4; then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets==7.6.3;    then return 1; fi # for visualizations on notebooks
