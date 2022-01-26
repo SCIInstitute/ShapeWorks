@@ -657,19 +657,21 @@ void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<d
 
 //---------------------------------------------------------------------------
 double Session::update_auto_glyph_size() {
-  this->auto_glyph_size_ = 1;
-  if (this->shapes_.empty()) {
-    return this->auto_glyph_size_;
+  auto_glyph_size_ = 1;
+  if (shapes_.empty()) {
+    return auto_glyph_size_;
   }
 
   double max_range = std::numeric_limits<double>::min();
   int num_particles = 0;
-  for (auto& shape : this->shapes_) {
+
+  for (auto& shape : shapes_) {
+
     Eigen::VectorXd points = shape->get_global_correspondence_points();
     if (points.size() == 0) {
-      return this->auto_glyph_size_;
+      continue;
     }
-    num_particles = points.size() / 3;
+    num_particles = (points.size() / 3);
     double max_x = std::numeric_limits<double>::lowest();
     double min_x = std::numeric_limits<double>::max();
     double max_y = max_x;
@@ -685,7 +687,6 @@ double Session::update_auto_glyph_size() {
       max_z = std::max<double>(max_z, p1[2]);
       min_z = std::min<double>(min_z, p1[2]);
     }
-
     double range_x = max_x - min_x;
     double range_y = max_y - min_y;
     double range_z = max_z - min_z;
@@ -693,9 +694,12 @@ double Session::update_auto_glyph_size() {
     max_range = std::max<double>({max_range, range_x, range_y, range_z});
   }
 
-  this->auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
-  this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
-  this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
+  if (num_particles == 0) {
+    return auto_glyph_size_;
+  }
+  auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
+  auto_glyph_size_ = std::max<double>(0.1, auto_glyph_size_);
+  auto_glyph_size_ = std::min<double>(10.0, auto_glyph_size_);
 
   return this->auto_glyph_size_;
 }
@@ -923,6 +927,7 @@ void Session::handle_ctrl_click(PickResult result) {
       project_->new_landmark(result.domain_);
     }
   }
+  update_auto_glyph_size();
   emit landmarks_changed();
 }
 

@@ -990,28 +990,28 @@ void ShapeWorksStudioApp::handle_project_changed() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed() {
   bool update = false;
-  if (!this->time_since_last_update_.isValid()) {
+  if (!time_since_last_update_.isValid()) {
     update = true;
   } else {
-    auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 25 + (this->last_render_ * 2)) {
+    auto time_since = time_since_last_update_.elapsed();
+    if (time_since > 25 + (last_render_ * 2)) {
       update = true;
     }
   }
 
   if (update) {
-    double cur_size = this->visualizer_->get_current_glyph_size();
-    double new_size = this->session_->update_auto_glyph_size();
+    double cur_size = visualizer_->get_current_glyph_size();
+    double new_size = session_->update_auto_glyph_size();
     double percent_diff = cur_size / new_size * 100.0;
     if (percent_diff < 90 || percent_diff > 110) {
-      this->handle_glyph_changed();
+      handle_glyph_changed();
     }
 
     QElapsedTimer render_time;
     render_time.start();
-    this->visualizer_->update_samples();
-    this->last_render_ = render_time.elapsed();
-    this->time_since_last_update_.start();
+    visualizer_->update_samples();
+    last_render_ = render_time.elapsed();
+    time_since_last_update_.start();
   }
 }
 
@@ -1080,24 +1080,24 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_glyph_changed() {
-  this->visualizer_->set_show_surface(this->ui_->surface_visible_button->isChecked());
-  this->visualizer_->set_show_glyphs(this->ui_->glyphs_visible_button->isChecked());
+  visualizer_->set_show_surface(ui_->surface_visible_button->isChecked());
+  visualizer_->set_show_glyphs(ui_->glyphs_visible_button->isChecked());
   visualizer_->set_show_landmarks(ui_->landmarks_visible_button->isChecked());
-  this->preferences_.set_glyph_size(this->glyph_size_slider_->value() / 10.0);
-  this->preferences_.set_glyph_quality(this->glyph_quality_slider_->value());
-  this->preferences_.set_glyph_auto_size(this->glyph_auto_size_->isChecked());
-  this->glyph_size_slider_->setEnabled(!this->glyph_auto_size_->isChecked());
-  if (this->glyph_auto_size_->isChecked()) {
-    auto glyph_size = this->session_->get_auto_glyph_size();
+  preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
+  preferences_.set_glyph_quality(glyph_quality_slider_->value());
+  preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());
+  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
+  if (glyph_auto_size_->isChecked()) {
+    auto glyph_size = session_->get_auto_glyph_size();
     if (glyph_size > 0) {
-      this->glyph_size_slider_->setValue(glyph_size * 10.0);
+      glyph_size_slider_->setValue(glyph_size * 10.0);
     }
   }
 
-  this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
-  // this->update_display(true);
-  this->visualizer_->update_viewer_properties();
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+  // update_display(true);
+  visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
@@ -1738,8 +1738,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
     return;
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
-  auto basename =
-    filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
+  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
     auto col = values.col(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
@@ -1802,8 +1801,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::VectorXd particles)
-{
+bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::VectorXd particles) {
   std::ofstream out(filename);
   if (!out) {
     return false;
