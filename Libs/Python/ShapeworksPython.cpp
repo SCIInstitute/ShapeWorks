@@ -1314,9 +1314,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        "returns the number of features of the particle system")
 
   .def("eigenVectors",
-       [](ParticleShapeStatistics &stats) -> decltype(auto) {
-         return vnlToEigen(stats.Eigenvectors());
-       })
+       &ParticleShapeStatistics::Eigenvectors,
+       "returns the eigenvectors")
 
   .def("eigenValues",
        &ParticleShapeStatistics::Eigenvalues,
