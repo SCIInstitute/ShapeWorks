@@ -31,6 +31,7 @@
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
+#include <Libs/Project/Project.h>
 
 // pybind
 #include <pybind11/embed.h>
@@ -227,6 +228,8 @@ bool Optimize::Run()
       this->m_iter_callback = nullptr;
       py::finalize_interpreter();
   }
+
+  UpdateProject();
 
   return true;
 }
@@ -2002,6 +2005,61 @@ void Optimize::UpdateExportablePoints()
   }
 }
 
+
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<std::vector<double>>> Optimize::GetProcrustesTransforms()
+{
+  std::vector<std::vector<std::vector<double>>> transforms;
+
+  int num_domains_per_subject = this->GetDomainsPerShape();
+  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
+  transforms.resize(num_subjects);
+
+  auto ps = this->GetSampler()->GetParticleSystem();
+
+  int subject = 0;
+  int domain = 0;
+  std::vector<std::vector<double>> subject_transform;
+  for (int i = 0; i < this->m_local_points.size(); i++) {  // iterate over all domains
+
+    auto procrustes = ps->GetTransform(i);
+    std::vector<double> transform;
+    for (int i = 0; i < procrustes.cols(); i++) {
+      for (int j = 0; j < procrustes.rows(); j++) {
+        transform.push_back(procrustes(i, j));
+      }
+    }
+    subject_transform.push_back(transform);
+
+    domain++;
+    if (domain == num_domains_per_subject) {
+      transforms[subject] = subject_transform;
+      subject++;
+      domain = 0;
+      subject_transform = std::vector<std::vector<double>>();
+    }
+  }
+
+  return transforms;
+}
+//---------------------------------------------------------------------------
+void Optimize::UpdateProject()
+{
+  if (!project_) {
+    return;
+  }
+
+  auto transforms = GetProcrustesTransforms();
+  auto& subjects = project_->get_subjects();
+
+  for (size_t i = 0; i < transforms.size(); i++) {
+    if (subjects.size() > i) {
+      subjects[i]->set_procrustes_transforms(transforms[i]);
+    }
+  }
+}
+
 //---------------------------------------------------------------------------
 void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
 { this->m_pairwise_potential_type = pairwise_potential_type; }
@@ -2315,6 +2373,12 @@ bool Optimize::LoadParameterFile(std::string filename)
     return false;
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetProject(std::shared_ptr<Project> project)
+{
+  project_ = project;
 }
 
 //---------------------------------------------------------------------------
