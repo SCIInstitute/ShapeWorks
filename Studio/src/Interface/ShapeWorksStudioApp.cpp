@@ -325,12 +325,13 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
     filename = filename + ".xlsx";
   }
 
-  this->preferences_.add_recent_file(filename, QDir::currentPath());
-  this->update_recent_files();
 
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   this->save_project(filename.toStdString());
+
+  this->preferences_.add_recent_file(filename, QDir::currentPath());
+  this->update_recent_files();
 
   this->enable_possible_actions();
   return false;
