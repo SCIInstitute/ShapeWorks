@@ -26,6 +26,7 @@ class Ui_ShapeWorksStudioApp;
 
 namespace shapeworks {
 class Lightbox;
+class DataTool;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
@@ -66,8 +67,6 @@ public Q_SLOTS:
   void on_action_import_triggered();
 
   void on_vertical_scroll_bar_valueChanged();
-  void on_add_button_clicked();
-  void on_delete_button_clicked();
 
   void on_action_import_mode_triggered();
   void on_action_groom_mode_triggered();
@@ -212,6 +211,7 @@ private:
   QActionGroup* action_group_;
 
   QSharedPointer<Lightbox> lightbox_;
+  QSharedPointer<DataTool> data_tool_;
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
