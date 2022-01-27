@@ -417,6 +417,17 @@ std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitio
 }
 
 //---------------------------------------------------------------------------
+bool Project::get_landmarks_present()
+{
+  for (const auto& def : landmark_definitions_) {
+    if (!def.empty()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
 void Project::set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks) {
   while (domain_id > landmark_definitions_.size()) {
     landmark_definitions_.push_back(std::vector<LandmarkDefinition>());

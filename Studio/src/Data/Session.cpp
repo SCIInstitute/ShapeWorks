@@ -134,7 +134,7 @@ bool Session::save_project(std::string fname) {
   }
 
   // landmarks
-  if (!project_->get_all_landmark_definitions().empty()) {
+  if (project_->get_landmarks_present()) {
     for (int i = 0; i < shapes_.size(); i++) {
       shapes_[i]->store_landmarks();
     }
