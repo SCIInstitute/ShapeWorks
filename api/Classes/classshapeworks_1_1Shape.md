@@ -36,8 +36,10 @@ Representation of a single shape/patient/subject.
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_reconstructed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-reconstructed-meshes)**(bool wait =false)<br>Retrieve the reconstructed meshes.  |
 | void | **[reset_groomed_mesh](../Classes/classshapeworks_1_1Shape.md#function-reset-groomed-mesh)**()<br>Reset the groomed mesh so that it will be re-created.  |
-| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(QStringList filenames)<br>Import global correspondence point file.  |
-| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point file.  |
+| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(QStringList filenames)<br>Import global correspondence point files.  |
+| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point files.  |
+| bool | **[import_landmarks_files](../Classes/classshapeworks_1_1Shape.md#function-import-landmarks-files)**(QStringList filenames)<br>Import landmarks files.  |
+| bool | **[store_landmarks](../Classes/classshapeworks_1_1Shape.md#function-store-landmarks)**()<br>Store landmarks.  |
 | void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
@@ -81,6 +83,7 @@ Representation of a single shape/patient/subject.
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
 | void | **[set_override_feature](../Classes/classshapeworks_1_1Shape.md#function-set-override-feature)**(std::string feature) |
 | std::string | **[get_override_feature](../Classes/classshapeworks_1_1Shape.md#function-get-override-feature)**() |
+| Eigen::MatrixXd & | **[landmarks](../Classes/classshapeworks_1_1Shape.md#function-landmarks)**() |
 
 ## Public Functions Documentation
 
@@ -205,7 +208,7 @@ bool import_global_point_files(
 )
 ```
 
-Import global correspondence point file. 
+Import global correspondence point files. 
 
 ### function import_local_point_files
 
@@ -215,7 +218,25 @@ bool import_local_point_files(
 )
 ```
 
-Import local correspondence point file. 
+Import local correspondence point files. 
+
+### function import_landmarks_files
+
+```cpp
+bool import_landmarks_files(
+    QStringList filenames
+)
+```
+
+Import landmarks files. 
+
+### function store_landmarks
+
+```cpp
+bool store_landmarks()
+```
+
+Store landmarks. 
 
 ### function set_particles
 
@@ -568,6 +589,13 @@ std::string get_override_feature()
 ```
 
 
+### function landmarks
+
+```cpp
+Eigen::MatrixXd & landmarks()
+```
+
+
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:32 +0000

@@ -388,11 +388,19 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-set-show-landmarks">set_show_landmarks</a></strong>(bool show)<br>turn on/off landmark display</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-display-samples">display_samples</a></strong>()<br>update the display using the current settings</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-samples">update_samples</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-landmarks">update_landmarks</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -498,6 +506,10 @@
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-glyph-size">get_current_glyph_size</a></strong>()<br>Get the current glyph size.</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-handle-ctrl-click">handle_ctrl_click</a></strong>(<a href="classshapeworks_1_1PickResult.html">PickResult</a> result)<br>Handle ctrl click.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -599,12 +611,21 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>turn on/off surface display </p>
+<h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>turn on/off landmark display </p>
 <h3 id="function-display_samples">function display_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_samples</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>update the display using the current settings </p>
 <h3 id="function-update_samples">function update_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_samples</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update_landmarks">function update_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-display_sample">function display_sample</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_sample</span><span class="p">(</span><span class="w"></span>
@@ -724,6 +745,12 @@
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_current_glyph_size</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get the current glyph size. </p>
+<h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Handle ctrl click. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-mode_original_c">variable MODE_ORIGINAL_C</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
@@ -735,7 +762,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_RECONSTRUCTION_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:05 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
               
             </div>
           </div>

@@ -18,6 +18,7 @@ title: Libs/Project/Project.h
 
 |                | Name           |
 | -------------- | -------------- |
+| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 
 
@@ -46,6 +47,18 @@ namespace shapeworks {
 
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
+
+class LandmarkDefinition {
+public:
+  std::string domain_;
+  int domain_id_ = -1;
+  int landmark_id = -1;
+  std::string name_;
+  bool visible_ = true;
+  std::string color_;
+  std::string comment_;
+};
+
 
 
 class Project {
@@ -102,7 +115,20 @@ public:
 
   int get_version() const;
 
+  std::vector<LandmarkDefinition> get_landmarks(int domain_id);
+
+  std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
+
+  void new_landmark(int domain_id);
+
 private:
+
+  void load_landmark_definitions();
+  void store_landmark_definitions();
+
+  void set_default_landmark_colors();
 
   int get_or_create_worksheet(std::string name);
   std::string get_new_file_column(std::string name, int idx);
@@ -155,6 +181,9 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
+  std::string get_next_landmark_name(int domain_id);
+  std::string get_next_landmark_color(int domain_id);
+
   int num_domains_per_subject_ = 1;
 
   std::unique_ptr<xlnt::workbook> wb_;
@@ -164,6 +193,9 @@ private:
   bool loaded_{false};
 
   std::string filename_;
+
+  std::vector<std::string> default_landmark_colors_;
+
 
   bool segmentations_present_{false};
   bool groomed_present_{false};
@@ -179,6 +211,8 @@ private:
 
   std::vector<std::string> input_prefixes_;
 
+  std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
+
   const int supported_version_{2};
   int version_{2};
 };
@@ -188,4 +222,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:33 +0000

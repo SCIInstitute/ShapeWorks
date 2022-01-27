@@ -342,19 +342,17 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span><span class="cp"></span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span><span class="cp"></span>
-
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/MeshGroup.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/MeshManager.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/StudioMesh.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/StudioParticles.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Subject.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/MeshManager.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/MeshGroup.h&gt;</span><span class="cp"></span>
-
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
@@ -363,11 +361,11 @@
 <span class="k">using</span><span class="w"> </span><span class="n">ShapeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">class</span> <span class="nc">Shape</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">class</span> <span class="nc">Point</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">   </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point</span><span class="p">(){};</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">_x</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">_y</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">_z</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="n">_x</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="n">_y</span><span class="p">),</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">_z</span><span class="p">){};</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">};</span><span class="w"></span>
 
@@ -399,6 +397,10 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_global_point_files</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_local_point_files</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_landmarks_files</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">store_landmarks</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particles</span><span class="p">(</span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">get_particles</span><span class="p">();</span><span class="w"></span>
@@ -471,10 +473,11 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_override_feature</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_override_feature</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">landmarks</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">generate_meshes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshGroup</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_list</span><span class="p">,</span><span class="w"></span>
-<span class="w">                       </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_transform</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">generate_meshes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshGroup</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_list</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_transform</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_point_file</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
@@ -510,11 +513,13 @@
 <span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">corner_annotations_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">landmarks_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:05 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
               
             </div>
           </div>

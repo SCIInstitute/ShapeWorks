@@ -387,11 +387,19 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(QStringList filenames)<br>Import global correspondence point file.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(QStringList filenames)<br>Import global correspondence point files.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(QStringList filenames)<br>Import local correspondence point file.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(QStringList filenames)<br>Import local correspondence point files.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-landmarks-files">import_landmarks_files</a></strong>(QStringList filenames)<br>Import landmarks files.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-store-landmarks">store_landmarks</a></strong>()<br>Store landmarks.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -565,6 +573,10 @@
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-override-feature">get_override_feature</a></strong>()</td>
 </tr>
+<tr>
+<td>Eigen::MatrixXd &amp;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-landmarks">landmarks</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -634,13 +646,23 @@
 <span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Import global correspondence point file. </p>
+<p>Import global correspondence point files. </p>
 <h3 id="function-import_local_point_files">function import_local_point_files</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_local_point_files</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Import local correspondence point file. </p>
+<p>Import local correspondence point files. </p>
+<h3 id="function-import_landmarks_files">function import_landmarks_files</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_landmarks_files</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Import landmarks files. </p>
+<h3 id="function-store_landmarks">function store_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Store landmarks. </p>
 <h3 id="function-set_particles">function set_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
@@ -820,8 +842,11 @@
 <h3 id="function-get_override_feature">function get_override_feature</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_override_feature</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-landmarks">function landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:04 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
               
             </div>
           </div>

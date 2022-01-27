@@ -133,6 +133,7 @@ title: Classes
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
+    * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
@@ -148,6 +149,10 @@ title: Classes
     * **class [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) 
     * **class [Job](../Classes/classshapeworks_1_1Job.md)** 
     * **class [KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)** 
+    * **class [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark. 
+    * **class [LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)** 
+    * **class [LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)** 
+    * **class [LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget](). 
     * **class [Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display. 
     * **class [LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window. 
     * **class [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)** 
@@ -177,6 +182,7 @@ title: Classes
     * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** 
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
+    * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
@@ -231,4 +237,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:33 +0000

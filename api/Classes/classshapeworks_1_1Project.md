@@ -42,6 +42,10 @@ Representation of a project.  [More...](#detailed-description)
 | void | **[store_subjects](../Classes/classshapeworks_1_1Project.md#function-store-subjects)**()<br>Store from subject list to spreadsheet.  |
 | int | **[get_supported_version](../Classes/classshapeworks_1_1Project.md#function-get-supported-version)**() const<br>Get the supported version (this version of the code)  |
 | int | **[get_version](../Classes/classshapeworks_1_1Project.md#function-get-version)**() const<br>Get the version of the currently loaded project.  |
+| std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > | **[get_landmarks](../Classes/classshapeworks_1_1Project.md#function-get-landmarks)**(int domain_id)<br>Return the set of landmarks definitions for a particular domain.  |
+| std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > | **[get_all_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-get-all-landmark-definitions)**()<br>Return all landmark definitions.  |
+| void | **[set_landmarks](../Classes/classshapeworks_1_1Project.md#function-set-landmarks)**(int domain_id, std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > landmarks)<br>Set landmarks for this project.  |
+| void | **[new_landmark](../Classes/classshapeworks_1_1Project.md#function-new-landmark)**(int domain_id)<br>Add a new landmark.  |
 
 ## Detailed Description
 
@@ -272,6 +276,45 @@ int get_version() const
 
 Get the version of the currently loaded project. 
 
+### function get_landmarks
+
+```cpp
+std::vector< LandmarkDefinition > get_landmarks(
+    int domain_id
+)
+```
+
+Return the set of landmarks definitions for a particular domain. 
+
+### function get_all_landmark_definitions
+
+```cpp
+std::vector< std::vector< LandmarkDefinition > > get_all_landmark_definitions()
+```
+
+Return all landmark definitions. 
+
+### function set_landmarks
+
+```cpp
+void set_landmarks(
+    int domain_id,
+    std::vector< LandmarkDefinition > landmarks
+)
+```
+
+Set landmarks for this project. 
+
+### function new_landmark
+
+```cpp
+void new_landmark(
+    int domain_id
+)
+```
+
+Add a new landmark. 
+
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

@@ -25,11 +25,18 @@ summary: 3D Viewer
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
 | void | **[set_glyph_size_and_quality](../Classes/classshapeworks_1_1Viewer.md#function-set-glyph-size-and-quality)**(double size, double quality) |
+| double | **[get_glyph_size](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-size)**() |
+| double | **[get_glyph_quality](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-quality)**() |
+| void | **[set_session](../Classes/classshapeworks_1_1Viewer.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
+| QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1Viewer.md#function-get-session)**() |
 | void | **[set_show_glyphs](../Classes/classshapeworks_1_1Viewer.md#function-set-show-glyphs)**(bool show) |
 | void | **[set_show_surface](../Classes/classshapeworks_1_1Viewer.md#function-set-show-surface)**(bool show) |
+| void | **[set_show_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-set-show-landmarks)**(bool show) |
+| bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-get-show-landmarks)**() |
 | void | **[update_points](../Classes/classshapeworks_1_1Viewer.md#function-update-points)**() |
 | void | **[update_glyph_properties](../Classes/classshapeworks_1_1Viewer.md#function-update-glyph-properties)**() |
 | int | **[handle_pick](../Classes/classshapeworks_1_1Viewer.md#function-handle-pick)**(int * click_pos) |
+| [PickResult](../Classes/classshapeworks_1_1PickResult.md) | **[handle_ctrl_click](../Classes/classshapeworks_1_1Viewer.md#function-handle-ctrl-click)**(int * click_pos) |
 | void | **[set_selected_point](../Classes/classshapeworks_1_1Viewer.md#function-set-selected-point)**(int id) |
 | void | **[set_lut](../Classes/classshapeworks_1_1Viewer.md#function-set-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_loading_screen](../Classes/classshapeworks_1_1Viewer.md#function-set-loading-screen)**(vtkSmartPointer< vtkImageData > loading_screen) |
@@ -40,6 +47,11 @@ summary: 3D Viewer
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-update-feature-range)**(double * range) |
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
 | QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
+| void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
+| std::vector< vtkSmartPointer< vtkActor > > | **[get_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-actors)**() |
+| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-transform)**(int alignment_domain, int domain) |
+| vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
 
 ## Detailed Description
 
@@ -118,6 +130,36 @@ void set_glyph_size_and_quality(
 ```
 
 
+### function get_glyph_size
+
+```cpp
+double get_glyph_size()
+```
+
+
+### function get_glyph_quality
+
+```cpp
+double get_glyph_quality()
+```
+
+
+### function set_session
+
+```cpp
+void set_session(
+    QSharedPointer< Session > session
+)
+```
+
+
+### function get_session
+
+```cpp
+QSharedPointer< Session > get_session()
+```
+
+
 ### function set_show_glyphs
 
 ```cpp
@@ -133,6 +175,22 @@ void set_show_glyphs(
 void set_show_surface(
     bool show
 )
+```
+
+
+### function set_show_landmarks
+
+```cpp
+void set_show_landmarks(
+    bool show
+)
+```
+
+
+### function get_show_landmarks
+
+```cpp
+bool get_show_landmarks()
 ```
 
 
@@ -154,6 +212,15 @@ void update_glyph_properties()
 
 ```cpp
 int handle_pick(
+    int * click_pos
+)
+```
+
+
+### function handle_ctrl_click
+
+```cpp
+PickResult handle_ctrl_click(
     int * click_pos
 )
 ```
@@ -241,6 +308,46 @@ QSharedPointer< Shape > get_shape()
 ```
 
 
+### function update_landmarks
+
+```cpp
+void update_landmarks()
+```
+
+
+### function get_surface_actors
+
+```cpp
+std::vector< vtkSmartPointer< vtkActor > > get_surface_actors()
+```
+
+
+### function get_meshes
+
+```cpp
+MeshGroup get_meshes()
+```
+
+
+### function get_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_transform(
+    int alignment_domain,
+    int domain
+)
+```
+
+
+### function get_landmark_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_landmark_transform(
+    int domain
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:32 +0000

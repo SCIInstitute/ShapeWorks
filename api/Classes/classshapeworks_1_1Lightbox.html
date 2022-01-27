@@ -388,11 +388,19 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Lightbox.html#function-handle-pick">handle_pick</a></strong>(int * click_pos, bool one)</td>
+<td><strong><a href="classshapeworks_1_1Lightbox.html#function-handle-pick">handle_pick</a></strong>(int * click_pos, bool one, bool ctrl)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Lightbox.html#function-handle-hover">handle_hover</a></strong>(int * click_pos)</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Lightbox.html#function-set-glyph-lut">set_glyph_lut</a></strong>(vtkSmartPointer&lt; vtkLookupTable &gt; lut)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Lightbox.html#function-set-session">set_session</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -499,12 +507,23 @@
 <h3 id="function-handle_pick">function handle_pick</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_pick</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ctrl</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-handle_hover">function handle_hover</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_hover</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_session">function set_session</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_visualizer">function set_visualizer</h3>
@@ -543,7 +562,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:04 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
               
             </div>
           </div>

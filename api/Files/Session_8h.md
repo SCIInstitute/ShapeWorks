@@ -27,22 +27,20 @@ title: Studio/src/Data/Session.h
 ```cpp
 #pragma once
 
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <map>
+#include <Data/MeshManager.h>
+#include <Data/Preferences.h>
+#include <Data/StudioParticles.h>
+#include <Libs/Project/Project.h>
+#include <Shapeworks.h>
+#include <Visualization/Viewer.h>
+#include <itkMatrixOffsetTransformBase.h>
 
 #include <QSharedPointer>
 #include <QVector>
-
-#include <itkMatrixOffsetTransformBase.h>
-
-#include <Shapeworks.h>
-#include <Libs/Project/Project.h>
-
-#include <Data/Preferences.h>
-#include <Data/StudioParticles.h>
-#include <Data/MeshManager.h>
+#include <cstdlib>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace shapeworks {
 
@@ -55,10 +53,9 @@ using TransformType = vtkSmartPointer<vtkTransform>;
 
 
 class Session : public QObject {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
-
+ public:
   Session(QWidget* parent, Preferences& prefs);
 
   ~Session();
@@ -81,8 +78,7 @@ public:
 
   void load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape);
 
-  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world,
-                        int domains_per_shape);
+  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
 
@@ -114,8 +110,7 @@ public:
 
   static bool is_supported_file_format(std::string filename);
 
-  QSharedPointer<MeshManager> get_mesh_manager()
-  { return this->mesh_manager_; }
+  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
 
@@ -137,24 +132,40 @@ public:
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
 
-public Q_SLOTS:
+  void handle_ctrl_click(PickResult result);
+
+  void trigger_landmarks_changed();
+
+  void set_active_landmark_domain(int id);
+  int get_active_landmark_domain();
+  void set_placing_landmark(int id);
+  int get_placing_landmark();
+  void set_landmarks_active(bool active);
+  void set_show_landmarks(bool show);
+  bool get_show_landmarks();
+
+ public Q_SLOTS:
   void set_feature_auto_scale(bool value);
+
+  void set_landmark_drag_mode(bool mode);
+  bool get_landmark_drag_mode();
 
   void handle_clear_cache();
   void handle_new_mesh();
   void handle_message(QString s);
   void handle_thread_complete();
 
-signals:
+ signals:
   void data_changed();
   void points_changed();
+  void landmarks_changed();
   void update_display();
   void new_mesh();
   void message(QString);
   void error(QString);
   void feature_range_changed();
 
-public:
+ public:
   // constants
   const static std::string DATA_C;
   const static std::string GROOM_C;
@@ -162,8 +173,7 @@ public:
   const static std::string ANALYSIS_C;
   const static std::string DEEPSSM_C;
 
-private:
-
+ private:
   Preferences& preferences_;
 
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
@@ -190,12 +200,18 @@ private:
   std::shared_ptr<Project> project_{new Project()};
 
   double auto_glyph_size_ = -1;
+
+  int active_landmark_domain_ = -1;
+  int placing_landmark_ = -1;
+  bool landmark_drag_mode_ = false;
+  bool landmarks_active_ = false;
+  bool show_landmark_labels_ = false;
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:33 +0000

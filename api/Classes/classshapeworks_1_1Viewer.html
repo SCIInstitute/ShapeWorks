@@ -351,12 +351,36 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-glyph-size-and-quality">set_glyph_size_and_quality</a></strong>(double size, double quality)</td>
 </tr>
 <tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-glyph-size">get_glyph_size</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-glyph-quality">get_glyph_quality</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-session">set_session</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session)</td>
+</tr>
+<tr>
+<td>QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-session">get_session</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-show-glyphs">set_show_glyphs</a></strong>(bool show)</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-show-surface">set_show_surface</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-show-landmarks">set_show_landmarks</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-show-landmarks">get_show_landmarks</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -369,6 +393,10 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-pick">handle_pick</a></strong>(int * click_pos)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1PickResult.html">PickResult</a></td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-ctrl-click">handle_ctrl_click</a></strong>(int * click_pos)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -409,6 +437,26 @@
 <tr>
 <td>QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-shape">get_shape</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-landmarks">update_landmarks</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-surface-actors">get_surface_actors</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-meshes">get_meshes</a></strong>()</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-transform">get_transform</a></strong>(int alignment_domain, int domain)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-landmark-transform">get_landmark_transform</a></strong>(int domain)</td>
 </tr>
 </tbody>
 </table>
@@ -451,6 +499,20 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">quality</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_glyph_size">function get_glyph_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_glyph_size</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_glyph_quality">function get_glyph_quality</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_glyph_quality</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_session">function set_session</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_session">function get_session</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_session</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-set_show_glyphs">function set_show_glyphs</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_glyphs</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
@@ -461,6 +523,14 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-update_points">function update_points</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -469,6 +539,11 @@
 </code></pre></div>
 <h3 id="function-handle_pick">function handle_pick</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">handle_pick</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PickResult</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -514,8 +589,28 @@
 <h3 id="function-get_shape">function get_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-update_landmarks">function update_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_surface_actors">function get_surface_actors</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_meshes">function get_meshes</h3>
+<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_transform">function get_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_landmark_transform">function get_landmark_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmark_transform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:05 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
               
             </div>
           </div>

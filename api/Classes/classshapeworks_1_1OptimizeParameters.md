@@ -54,6 +54,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_narrow_band](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-narrow-band)**(double value) |
 | int | **[get_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-verbosity)**() |
 | void | **[set_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-verbosity)**(int value) |
+| bool | **[get_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-landmarks)**() |
+| void | **[set_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-landmarks)**(bool value) |
 | void | **[set_abort_load](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-abort-load)**(bool value) |
 | void | **[set_load_callback](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-load-callback)**(const std::function< void(int)> & f) |
 
@@ -388,6 +390,22 @@ void set_verbosity(
 ```
 
 
+### function get_use_landmarks
+
+```cpp
+bool get_use_landmarks()
+```
+
+
+### function set_use_landmarks
+
+```cpp
+void set_use_landmarks(
+    bool value
+)
+```
+
+
 ### function set_abort_load
 
 ```cpp
@@ -408,4 +426,4 @@ void set_load_callback(
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

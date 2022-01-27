@@ -390,9 +390,12 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">redraw</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pick</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pick</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ctrl</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_hover</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_visualizer</span><span class="p">(</span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span><span class="p">);</span><span class="w"></span>
 
@@ -467,11 +470,13 @@
 <span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="o">::</span><span class="n">none</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">current_orientation_marker_corner_</span><span class="w"></span>
 <span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="o">::</span><span class="n">upper_right</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:05 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
               
             </div>
           </div>

@@ -13,6 +13,7 @@ title: shapeworks
 | -------------- | -------------- |
 | class | **[shapeworks::AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)**  |
 | class | **[shapeworks::Command](../Classes/classshapeworks_1_1Command.md)**  |
+| class | **[shapeworks::DataTool](../Classes/classshapeworks_1_1DataTool.md)**  |
 | class | **[shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM.  |
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
@@ -28,6 +29,10 @@ title: shapeworks
 | class | **[shapeworks::IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image)  |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
 | class | **[shapeworks::KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)**  |
+| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark.  |
+| class | **[shapeworks::LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)**  |
+| class | **[shapeworks::LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)**  |
+| class | **[shapeworks::LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget]().  |
 | class | **[shapeworks::Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display.  |
 | class | **[shapeworks::LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window.  |
 | class | **[shapeworks::MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)**  |
@@ -57,6 +62,7 @@ title: shapeworks
 | class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)**  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
 | class | **[shapeworks::PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space  |
+| class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 | class | **[shapeworks::ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)**  |
 | class | **[shapeworks::PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)**  |
@@ -105,6 +111,8 @@ title: shapeworks
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6} |
 | enum class char | **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image = 'I', Mesh = 'M', Contour = 'C'} |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
+| enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
+| enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
 | enum class| **[MessageType](../Namespaces/namespaceshapeworks.md#enum-messagetype)** { normal, warning, error, debug} |
 | using itk::Index< 3 > | **[Coord](../Namespaces/namespaceshapeworks.md#using-coord)** <br>Simple names for common types used in the framework.  |
 | using itk::Size< 3 > | **[Dims](../Namespaces/namespaceshapeworks.md#using-dims)**  |
@@ -369,6 +377,32 @@ handy way to specify an axis
 
 
 ways of tranferring Arrays to Python, copy being the least efficient but most conservative 
+
+### enum LandmarkColumns
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| VISIBLE_E | |   |
+| COLOR_E | |   |
+| NAME_E | |   |
+| POSITION_E | |   |
+| SET_BUTTON_E | |   |
+| COMMENT_E | |   |
+| END_E | |   |
+
+
+
+
+### enum LandmarkVisibility
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| ALL_VISIBLE_E | |   |
+| NONE_VISIBLE_E | |   |
+| SOME_VISIBLE_E | |   |
+
+
+
 
 ### enum MessageType
 
@@ -2226,4 +2260,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

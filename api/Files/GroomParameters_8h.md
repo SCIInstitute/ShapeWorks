@@ -108,6 +108,7 @@ public:
 
   bool get_use_icp();
   bool get_use_center();
+  bool get_use_landmarks();
 
   bool get_crop();
   void set_crop(bool crop);
@@ -160,6 +161,7 @@ public:
 
   const static std::string GROOM_ALIGNMENT_CENTER_C;
   const static std::string GROOM_ALIGNMENT_ICP_C;
+  const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 private:
 
@@ -173,4 +175,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:32 +0000

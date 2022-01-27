@@ -38,8 +38,10 @@ Inherits from QObject
 | int | **[get_alignment_domain](../Classes/classshapeworks_1_1Visualizer.md#function-get-alignment-domain)**()<br>get the current alignment domain  |
 | void | **[set_show_glyphs](../Classes/classshapeworks_1_1Visualizer.md#function-set-show-glyphs)**(bool show)<br>turn on/off glyph display  |
 | void | **[set_show_surface](../Classes/classshapeworks_1_1Visualizer.md#function-set-show-surface)**(bool show)<br>turn on/off surface display  |
+| void | **[set_show_landmarks](../Classes/classshapeworks_1_1Visualizer.md#function-set-show-landmarks)**(bool show)<br>turn on/off landmark display  |
 | void | **[display_samples](../Classes/classshapeworks_1_1Visualizer.md#function-display-samples)**()<br>update the display using the current settings  |
 | void | **[update_samples](../Classes/classshapeworks_1_1Visualizer.md#function-update-samples)**() |
+| void | **[update_landmarks](../Classes/classshapeworks_1_1Visualizer.md#function-update-landmarks)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
 | void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
@@ -66,6 +68,7 @@ Inherits from QObject
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
+| void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Visualizer.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result)<br>Handle ctrl click.  |
 
 ## Public Attributes
 
@@ -214,6 +217,16 @@ void set_show_surface(
 
 turn on/off surface display 
 
+### function set_show_landmarks
+
+```cpp
+void set_show_landmarks(
+    bool show
+)
+```
+
+turn on/off landmark display 
+
 ### function display_samples
 
 ```cpp
@@ -226,6 +239,13 @@ update the display using the current settings
 
 ```cpp
 void update_samples()
+```
+
+
+### function update_landmarks
+
+```cpp
+void update_landmarks()
 ```
 
 
@@ -451,6 +471,16 @@ double get_current_glyph_size()
 
 Get the current glyph size. 
 
+### function handle_ctrl_click
+
+```cpp
+void handle_ctrl_click(
+    PickResult result
+)
+```
+
+Handle ctrl click. 
+
 ## Public Attributes Documentation
 
 ### variable MODE_ORIGINAL_C
@@ -476,4 +506,4 @@ static const std::string MODE_RECONSTRUCTION_C;
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:32 +0000

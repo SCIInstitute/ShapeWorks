@@ -27,6 +27,8 @@ title: Libs/Optimize/OptimizeParameters.h
 ```cpp
 #pragma once
 
+#include <functional>
+
 #include <Libs/Project/Project.h>
 
 namespace shapeworks {
@@ -99,6 +101,9 @@ public:
   int get_verbosity();
   void set_verbosity(int value);
 
+  bool get_use_landmarks();
+  void set_use_landmarks(bool value);
+
   void set_abort_load(bool value);
 
   void set_load_callback(const std::function<void(int)>& f);
@@ -122,4 +127,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:33 +0000

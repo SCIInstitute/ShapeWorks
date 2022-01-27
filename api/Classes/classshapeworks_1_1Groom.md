@@ -24,6 +24,8 @@ Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
 | void | **[set_skip_grooming](../Classes/classshapeworks_1_1Groom.md#function-set-skip-grooming)**(bool skip)<br>Set if grooming steps should be skipped.  |
 | void | **[abort](../Classes/classshapeworks_1_1Groom.md#function-abort)**()<br>Set abort as soon as possible.  |
 | bool | **[get_aborted](../Classes/classshapeworks_1_1Groom.md#function-get-aborted)**()<br>Return if grooming was aborted.  |
+| double | **[compute_landmark_distance](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-distance)**(vtkSmartPointer< vtkPoints > one, vtkSmartPointer< vtkPoints > two)<br>Util to compute square distance between paired landmarks.  |
+| vtkSmartPointer< vtkMatrix4x4 > | **[compute_landmark_transform](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-transform)**(vtkSmartPointer< vtkPoints > source, vtkSmartPointer< vtkPoints > target)<br>Util to compute landmark transform.  |
 
 ## Protected Functions
 
@@ -94,6 +96,28 @@ bool get_aborted()
 
 Return if grooming was aborted. 
 
+### function compute_landmark_distance
+
+```cpp
+static double compute_landmark_distance(
+    vtkSmartPointer< vtkPoints > one,
+    vtkSmartPointer< vtkPoints > two
+)
+```
+
+Util to compute square distance between paired landmarks. 
+
+### function compute_landmark_transform
+
+```cpp
+static vtkSmartPointer< vtkMatrix4x4 > compute_landmark_transform(
+    vtkSmartPointer< vtkPoints > source,
+    vtkSmartPointer< vtkPoints > target
+)
+```
+
+Util to compute landmark transform. 
+
 ## Protected Functions Documentation
 
 ### function update_progress
@@ -132,4 +156,4 @@ tbb::atomic< int > progress_counter_ = 0;
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

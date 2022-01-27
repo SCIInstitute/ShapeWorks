@@ -325,6 +325,14 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-set-landmark-drag-mode">set_landmark_drag_mode</a></strong>(bool mode)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-get-landmark-drag-mode">get_landmark_drag_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#slot-handle-clear-cache">handle_clear_cache</a></strong>()</td>
 </tr>
 <tr>
@@ -357,6 +365,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-points-changed">points_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-landmarks-changed">landmarks_changed</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -550,6 +562,42 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-feature-range-max">set_feature_range_max</a></strong>(double value)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-handle-ctrl-click">handle_ctrl_click</a></strong>(<a href="classshapeworks_1_1PickResult.html">PickResult</a> result)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-landmarks-changed">trigger_landmarks_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-active-landmark-domain">set_active_landmark_domain</a></strong>(int id)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-active-landmark-domain">get_active_landmark_domain</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-placing-landmark">set_placing_landmark</a></strong>(int id)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-placing-landmark">get_placing_landmark</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-landmarks-active">set_landmarks_active</a></strong>(bool active)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-landmarks">set_show_landmarks</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-landmarks">get_show_landmarks</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
 </tr>
@@ -601,6 +649,14 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="slot-set_landmark_drag_mode">slot set_landmark_drag_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmark_drag_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-get_landmark_drag_mode">slot get_landmark_drag_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmark_drag_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="slot-handle_clear_cache">slot handle_clear_cache</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_clear_cache</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -622,6 +678,9 @@
 <p>signal that the data has changed </p>
 <h3 id="signal-points_changed">signal points_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">points_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-landmarks_changed">signal landmarks_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">landmarks_changed</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="signal-update_display">signal update_display</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_display</span><span class="p">()</span><span class="w"></span>
@@ -815,6 +874,43 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-trigger_landmarks_changed">function trigger_landmarks_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_landmarks_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_active_landmark_domain">function set_active_landmark_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_landmark_domain</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_active_landmark_domain">function get_active_landmark_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_active_landmark_domain</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_placing_landmark">function set_placing_landmark</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_placing_landmark</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_placing_landmark">function get_placing_landmark</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_placing_landmark</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_landmarks_active">function set_landmarks_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks_active</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
@@ -843,7 +939,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:04 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
               
             </div>
           </div>

@@ -338,12 +338,12 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Lightbox.h&gt;</span><span class="cp"></span>
+
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Lightbox.h&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
@@ -353,9 +353,9 @@
 
 
 <span class="k">class</span> <span class="nc">Visualizer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">Visualizer</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="o">~</span><span class="n">Visualizer</span><span class="p">();</span><span class="w"></span>
 
@@ -378,9 +378,13 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_surface</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_samples</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_samples</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_landmarks</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_sample</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
 
@@ -420,7 +424,7 @@
 
 <span class="w">  </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_feature_range</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="nf">get_feature_raw_range</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_feature_raw_range</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_range_valid</span><span class="p">();</span><span class="w"></span>
 
@@ -434,15 +438,16 @@
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_current_glyph_size</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="nl">Q_SLOTS</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="nl">Q_SLOTS</span><span class="p">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_viewer_properties</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_feature_range_changed</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">create_display_object</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">create_display_object</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_measurements</span><span class="p">();</span><span class="w"></span>
@@ -454,8 +459,9 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">center_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">needs_camera_reset_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_glyphs_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_surface_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_glyphs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_surface_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmarks_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="n">lightbox_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">SessionHandle</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
@@ -475,13 +481,12 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">current_glyph_size_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
-
 <span class="p">};</span><span class="w"></span>
 
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:05 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
               
             </div>
           </div>

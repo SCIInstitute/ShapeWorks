@@ -28,8 +28,6 @@ Inherits from QMainWindow
 | void | **[on_action_quit_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-quit-triggered)**() |
 | void | **[on_action_import_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-triggered)**() |
 | void | **[on_vertical_scroll_bar_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-vertical-scroll-bar-valuechanged)**() |
-| void | **[on_add_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-add-button-clicked)**() |
-| void | **[on_delete_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-delete-button-clicked)**() |
 | void | **[on_action_import_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-mode-triggered)**() |
 | void | **[on_action_groom_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-groom-mode-triggered)**() |
 | void | **[on_action_optimize_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-optimize-mode-triggered)**() |
@@ -173,20 +171,6 @@ void on_action_import_triggered()
 
 ```cpp
 void on_vertical_scroll_bar_valueChanged()
-```
-
-
-### slot on_add_button_clicked
-
-```cpp
-void on_add_button_clicked()
-```
-
-
-### slot on_delete_button_clicked
-
-```cpp
-void on_delete_button_clicked()
 ```
 
 
@@ -626,4 +610,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:32 +0000

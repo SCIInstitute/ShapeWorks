@@ -38,8 +38,10 @@ Inherits from QObject
 | void | **[set_start_row](../Classes/classshapeworks_1_1Lightbox.md#function-set-start-row)**(int row) |
 | ViewerList | **[get_viewers](../Classes/classshapeworks_1_1Lightbox.md#function-get-viewers)**() |
 | void | **[redraw](../Classes/classshapeworks_1_1Lightbox.md#function-redraw)**() |
-| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one) |
+| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl) |
+| void | **[handle_hover](../Classes/classshapeworks_1_1Lightbox.md#function-handle-hover)**(int * click_pos) |
 | void | **[set_glyph_lut](../Classes/classshapeworks_1_1Lightbox.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
+| void | **[set_session](../Classes/classshapeworks_1_1Lightbox.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Lightbox.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | bool | **[render_window_ready](../Classes/classshapeworks_1_1Lightbox.md#function-render-window-ready)**() |
 | void | **[clear_renderers](../Classes/classshapeworks_1_1Lightbox.md#function-clear-renderers)**() |
@@ -179,7 +181,17 @@ void redraw()
 ```cpp
 void handle_pick(
     int * click_pos,
-    bool one
+    bool one,
+    bool ctrl
+)
+```
+
+
+### function handle_hover
+
+```cpp
+void handle_hover(
+    int * click_pos
 )
 ```
 
@@ -189,6 +201,15 @@ void handle_pick(
 ```cpp
 void set_glyph_lut(
     vtkSmartPointer< vtkLookupTable > lut
+)
+```
+
+
+### function set_session
+
+```cpp
+void set_session(
+    QSharedPointer< Session > session
 )
 ```
 
@@ -270,4 +291,4 @@ void update_feature_range()
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

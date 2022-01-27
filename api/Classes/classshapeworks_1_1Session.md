@@ -20,6 +20,8 @@ Inherits from QObject
 |                | Name           |
 | -------------- | -------------- |
 | void | **[set_feature_auto_scale](../Classes/classshapeworks_1_1Session.md#slot-set-feature-auto-scale)**(bool value) |
+| void | **[set_landmark_drag_mode](../Classes/classshapeworks_1_1Session.md#slot-set-landmark-drag-mode)**(bool mode) |
+| bool | **[get_landmark_drag_mode](../Classes/classshapeworks_1_1Session.md#slot-get-landmark-drag-mode)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1Session.md#slot-handle-clear-cache)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Session.md#slot-handle-new-mesh)**() |
 | void | **[handle_message](../Classes/classshapeworks_1_1Session.md#slot-handle-message)**(QString s) |
@@ -31,6 +33,7 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[data_changed](../Classes/classshapeworks_1_1Session.md#signal-data-changed)**()<br>signal that the data has changed  |
 | void | **[points_changed](../Classes/classshapeworks_1_1Session.md#signal-points-changed)**() |
+| void | **[landmarks_changed](../Classes/classshapeworks_1_1Session.md#signal-landmarks-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[message](../Classes/classshapeworks_1_1Session.md#signal-message)**(QString ) |
@@ -81,6 +84,15 @@ Inherits from QObject
 | void | **[set_feature_range](../Classes/classshapeworks_1_1Session.md#function-set-feature-range)**(double min, double max) |
 | void | **[set_feature_range_min](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-min)**(double value) |
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
+| void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Session.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result) |
+| void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
+| void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
+| int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
+| void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
+| int | **[get_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-get-placing-landmark)**() |
+| void | **[set_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-set-landmarks-active)**(bool active) |
+| void | **[set_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-set-show-landmarks)**(bool show) |
+| bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-get-show-landmarks)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -112,6 +124,22 @@ The [Session](../Classes/classshapeworks_1_1Session.md) class encapsulates every
 void set_feature_auto_scale(
     bool value
 )
+```
+
+
+### slot set_landmark_drag_mode
+
+```cpp
+void set_landmark_drag_mode(
+    bool mode
+)
+```
+
+
+### slot get_landmark_drag_mode
+
+```cpp
+bool get_landmark_drag_mode()
 ```
 
 
@@ -159,6 +187,13 @@ signal that the data has changed
 
 ```cpp
 void points_changed()
+```
+
+
+### signal landmarks_changed
+
+```cpp
+void landmarks_changed()
 ```
 
 
@@ -535,6 +570,79 @@ void set_feature_range_max(
 ```
 
 
+### function handle_ctrl_click
+
+```cpp
+void handle_ctrl_click(
+    PickResult result
+)
+```
+
+
+### function trigger_landmarks_changed
+
+```cpp
+void trigger_landmarks_changed()
+```
+
+
+### function set_active_landmark_domain
+
+```cpp
+void set_active_landmark_domain(
+    int id
+)
+```
+
+
+### function get_active_landmark_domain
+
+```cpp
+int get_active_landmark_domain()
+```
+
+
+### function set_placing_landmark
+
+```cpp
+void set_placing_landmark(
+    int id
+)
+```
+
+
+### function get_placing_landmark
+
+```cpp
+int get_placing_landmark()
+```
+
+
+### function set_landmarks_active
+
+```cpp
+void set_landmarks_active(
+    bool active
+)
+```
+
+
+### function set_show_landmarks
+
+```cpp
+void set_show_landmarks(
+    bool show
+)
+```
+
+
+### function get_show_landmarks
+
+```cpp
+bool get_show_landmarks()
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -593,4 +701,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:04 +0000
+Updated on 2022-01-27 at 02:24:31 +0000

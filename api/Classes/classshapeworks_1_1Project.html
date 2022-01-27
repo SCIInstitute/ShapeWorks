@@ -418,6 +418,22 @@
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-version">get_version</a></strong>() const<br>Get the version of the currently loaded project.</td>
 </tr>
+<tr>
+<td>std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-landmarks">get_landmarks</a></strong>(int domain_id)<br>Return the set of landmarks definitions for a particular domain.</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-all-landmark-definitions">get_all_landmark_definitions</a></strong>()<br>Return all landmark definitions.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-set-landmarks">set_landmarks</a></strong>(int domain_id, std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; landmarks)<br>Set landmarks for this project.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-new-landmark">new_landmark</a></strong>(int domain_id)<br>Add a new landmark.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
@@ -543,8 +559,31 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_version</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Get the version of the currently loaded project. </p>
+<h3 id="function-get_landmarks">function get_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Return the set of landmarks definitions for a particular domain. </p>
+<h3 id="function-get_all_landmark_definitions">function get_all_landmark_definitions</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_all_landmark_definitions</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return all landmark definitions. </p>
+<h3 id="function-set_landmarks">function set_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set landmarks for this project. </p>
+<h3 id="function-new_landmark">function new_landmark</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Add a new landmark. </p>
 <hr />
-<p>Updated on 2022-01-22 at 00:21:04 +0000</p>
+<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
               
             </div>
           </div>

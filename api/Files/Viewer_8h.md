@@ -17,6 +17,7 @@ title: Studio/src/Visualization/Viewer.h
 
 |                | Name           |
 | -------------- | -------------- |
+| class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]() |
 
 
@@ -27,10 +28,11 @@ title: Studio/src/Visualization/Viewer.h
 ```cpp
 #pragma once
 
-#include <QSharedPointer>
+#include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
 
-#include <Data/Shape.h>
+#include <QPointF>
+#include <QSharedPointer>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -47,6 +49,8 @@ class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
 class vtkReverseSense;
+class vtkHandleWidget;
+class vtkPolygonalSurfacePointPlacer;
 
 namespace shapeworks {
 
@@ -54,15 +58,22 @@ class Shape;
 class Viewer;
 class Visualizer;
 class StudioInteractorStyle;
+class LandmarkWidget;
+class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
 typedef QVector<ViewerHandle> ViewerList;
 
+class PickResult {
+ public:
+  Shape::Point pos_;
+  int domain_ = -1;
+  int subject_ = -1;
+};
+
 
 class Viewer {
-
-public:
-
+ public:
   Viewer();
   ~Viewer() = default;
 
@@ -75,17 +86,28 @@ public:
   void reset_camera(std::array<double, 3> c);
 
   void set_glyph_size_and_quality(double size, double quality);
+  double get_glyph_size();
+  double get_glyph_quality();
+  void set_session(QSharedPointer<Session> session);
+  QSharedPointer<Session> get_session();
+
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
+  void set_show_landmarks(bool show);
+  bool get_show_landmarks();
 
   void update_points();
   void update_glyph_properties();
 
   int handle_pick(int* click_pos);
 
+  PickResult handle_ctrl_click(int* click_pos);
+
+
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
+
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -103,9 +125,17 @@ public:
 
   QSharedPointer<Shape> get_shape();
 
-private:
+  void update_landmarks();
+
+  std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
+
+  MeshGroup get_meshes();
 
   vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
+
+  vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
+
+ private:
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -113,12 +143,10 @@ private:
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Shape::Point>& points,
-                                 vtkSmartPointer<vtkFloatArray> magnitudes,
+  void compute_point_differences(const std::vector<Shape::Point>& points, vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
-  void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
-                                   vtkSmartPointer<vtkFloatArray> vectors);
+  void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
   void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
@@ -135,6 +163,7 @@ private:
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
+  bool show_landmarks_ = true;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
@@ -186,11 +215,14 @@ private:
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
+
+  std::shared_ptr<LandmarkWidget> landmark_widget_;
+  QSharedPointer<Session> session_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-01-22 at 00:21:05 +0000
+Updated on 2022-01-27 at 02:24:33 +0000
