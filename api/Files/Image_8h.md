@@ -52,6 +52,7 @@ public:
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
 
   // constructors and assignment operators //
+  Image(const Dims dims);
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
@@ -240,4 +241,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2022-01-28 at 07:11:44 +0000
+Updated on 2022-01-28 at 21:13:53 +0000

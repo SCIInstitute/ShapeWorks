@@ -272,6 +272,9 @@ title: shapeworks
 | bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Vector3 & axis)<br>Ensure an axis is valid.  |
 | bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Axis & axis) |
 | double | **[degToRad](../Namespaces/namespaceshapeworks.md#function-degtorad)**(const double deg)<br>convert degrees to radians  |
+| double | **[mean](../Namespaces/namespaceshapeworks.md#function-mean)**(const Field field)<br>incrementally compute (single-component) mean of field  |
+| double | **[stddev](../Namespaces/namespaceshapeworks.md#function-stddev)**(const Field field)<br>compute (single-component) standard deviation of field  |
+| std::vector< double > | **[range](../Namespaces/namespaceshapeworks.md#function-range)**(const Field field)<br>compute (single-component) range of field  |
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>P | **[operator+](../Namespaces/namespaceshapeworks.md#function-operator+)**(const P & p, const P & q) |
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>P | **[operator-](../Namespaces/namespaceshapeworks.md#function-operator-)**(const P & p, const P & q) |
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Vector, P>::value ||                                                  std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>P | **[operator*](../Namespaces/namespaceshapeworks.md#function-operator*)**(const P & p, const P & q) |
@@ -296,7 +299,7 @@ title: shapeworks
 | void | **[verifyOrderAndPacking](../Namespaces/namespaceshapeworks.md#function-verifyorderandpacking)**(const py::array & np_array)<br>verify py::array has expected order and is densely packed, throw if not  |
 | void | **[setOwnership](../Namespaces/namespaceshapeworks.md#function-setownership)**(py::array & array, bool owns)<br>sets the OWNDATA flag of the given array to `owns` |
 | Image::ImageType::Pointer | **[wrapNumpyArr](../Namespaces/namespaceshapeworks.md#function-wrapnumpyarr)**(py::array & np_array)<br>helper function for Image.init and Image.assign  |
-| Array | **[pyToArr](../Namespaces/namespaceshapeworks.md#function-pytoarr)**(py::array & np_array)<br>converts py::array to vtkDataArray, taking ownership of data  |
+| Array | **[pyToArr](../Namespaces/namespaceshapeworks.md#function-pytoarr)**(py::array & np_array, bool take_ownership =true)<br>converts py::array to vtkDataArray, optionally taking ownership of data  |
 | py::array | **[arrToPy](../Namespaces/namespaceshapeworks.md#function-arrtopy)**(Array & array, ArrayTransferOptions xfer =COPY_ARRAY)<br>convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer  |
 | Eigen::MatrixXd | **[itkTransformToEigen](../Namespaces/namespaceshapeworks.md#function-itktransformtoeigen)**(TransformPtr itk_xform) |
 | TransformPtr | **[eigen44ToItkTransform](../Namespaces/namespaceshapeworks.md#function-eigen44toitktransform)**(const Eigen::Matrix< double, 4, 4 > & eigen_mat) |
@@ -1836,6 +1839,36 @@ double degToRad(
 
 convert degrees to radians 
 
+### function mean
+
+```cpp
+double mean(
+    const Field field
+)
+```
+
+incrementally compute (single-component) mean of field 
+
+### function stddev
+
+```cpp
+double stddev(
+    const Field field
+)
+```
+
+compute (single-component) standard deviation of field 
+
+### function range
+
+```cpp
+std::vector< double > range(
+    const Field field
+)
+```
+
+compute (single-component) range of field 
+
 ### function operator+
 
 ```cpp
@@ -2111,11 +2144,12 @@ helper function for Image.init and Image.assign
 
 ```cpp
 Array pyToArr(
-    py::array & np_array
+    py::array & np_array,
+    bool take_ownership =true
 )
 ```
 
-converts py::array to vtkDataArray, taking ownership of data 
+converts py::array to vtkDataArray, optionally taking ownership of data 
 
 ### function arrToPy
 
@@ -2260,4 +2294,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-01-28 at 07:11:43 +0000
+Updated on 2022-01-28 at 21:13:52 +0000

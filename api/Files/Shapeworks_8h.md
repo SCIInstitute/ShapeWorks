@@ -32,6 +32,8 @@ title: Libs/Common/Shapeworks.h
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
+#include <vtkPolyData.h>
+#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -50,6 +52,11 @@ using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
+
+// While doubles are the most commonly stored items, vtkDataArray can store any
+// type, yet has a default interface that conveniently stores and retrieves
+// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray
+// explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
 
@@ -106,6 +113,12 @@ bool axis_is_valid(const Vector3 &axis);
 bool axis_is_valid(const Axis &axis);
 
 double degToRad(const double deg);
+
+double mean(const Field field);
+
+double stddev(const Field field);
+
+std::vector<double> range(const Field field);
 
 class Image;
 
@@ -272,4 +285,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 -------------------------------
 
-Updated on 2022-01-28 at 07:11:44 +0000
+Updated on 2022-01-28 at 21:13:53 +0000

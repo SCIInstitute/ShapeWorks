@@ -321,6 +321,10 @@
 <tbody>
 <tr>
 <td>enum</td>
+<td Face="Face" Point_="Point,"><strong><a href="classshapeworks_1_1Mesh.html#enum-fieldtype">FieldType</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
 <td Affine="Affine" Rigid_="Rigid," Similarity_="Similarity,"><strong><a href="classshapeworks_1_1Mesh.html#enum-alignmenttype">AlignmentType</a></strong></td>
 </tr>
 <tr>
@@ -455,8 +459,8 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-fixelement">fixElement</a></strong>()<br>fix element winding of mesh</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-distance">distance</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, const DistanceMethod method =PointToPoint)<br>computes surface to surface distance, compute method: PointToPoint (default) or PointToCell</td>
+<td>std::vector&lt; Field &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-distance">distance</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, const DistanceMethod method =PointToCell) const</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -468,27 +472,27 @@
 </tr>
 <tr>
 <td>Point3</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point)<br>returns closest point on a face in the mesh to the given point in space</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point, bool &amp; outside, double &amp; distance, vtkIdType &amp; face_id) const</td>
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpointid">closestPointId</a></strong>(const Point3 point)<br>returns closest point id in this mesh to the given point in space</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpointid">closestPointId</a></strong>(const Point3 point) const<br>returns closest point id in this mesh to the given point in space</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(int source, int target)<br>computes geodesic distance between two vertices (specified by their indices) on mesh</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(int source, int target) const<br>computes geodesic distance between two vertices (specified by their indices) on mesh</td>
 </tr>
 <tr>
 <td>Field</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const Point3 landmark)<br>computes geodesic distance between a point (landmark) and each vertex on mesh</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const Point3 landmark) const<br>computes geodesic distance between a point (landmark) and each vertex on mesh</td>
 </tr>
 <tr>
 <td>Field</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const std::vector&lt; Point3 &gt; curve)<br>computes geodesic distance between a set of points (curve) and each vertex on mesh</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-geodesicdistance">geodesicDistance</a></strong>(const std::vector&lt; Point3 &gt; curve) const<br>computes geodesic distance between a set of points (curve) and each vertex on mesh</td>
 </tr>
 <tr>
 <td>Field</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-curvature">curvature</a></strong>(const CurvatureType type =Principal)<br>computes and adds curvature (principal (default) or gaussian or mean)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-curvature">curvature</a></strong>(const CurvatureType type =Principal) const<br>computes curvature using principal (default) or gaussian or mean algorithms</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -496,11 +500,11 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a></td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-toimage">toImage</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), Point spacing =Point({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-toimage">toImage</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), Point3 spacing =Point3({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a></td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-todistancetransform">toDistanceTransform</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), Point spacing =Point({1., 1., 1.})) const<br>converts specified region to distance transform image (default: unit spacing)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-todistancetransform">toDistanceTransform</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding</td>
 </tr>
 <tr>
 <td>Point3</td>
@@ -540,15 +544,11 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfield">setField</a></strong>(std::string name, Array array)<br>sets the given field for points with array (*does not copy array's values)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfield">setField</a></strong>(const std::string name, Array array, const FieldType type)<br>sets the given field for points or faces with array (*does not copy array's values)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-setfieldforfaces">setFieldForFaces</a></strong>(std::string name, Array array)<br>sets the given field for faces with array (*does not copy array's values)</td>
-</tr>
-<tr>
-<td>template &lt;typename T > <br>vtkSmartPointer&lt; T &gt;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfield">getField</a></strong>(const std::string &amp; name) const<br>gets a pointer to the requested field, null if field doesn't exist</td>
+<td>Field</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfield">getField</a></strong>(const std::string &amp; name, const FieldType type) const<br>gets a pointer to the requested field of points or faces, null if field doesn't exist</td>
 </tr>
 <tr>
 <td>void</td>
@@ -560,19 +560,7 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getmultifieldvalue">getMultiFieldValue</a></strong>(const std::string &amp; name, int idx) const<br>gets the multi value at the given index of field</td>
-</tr>
-<tr>
-<td>std::vector&lt; double &gt;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldrange">getFieldRange</a></strong>(const std::string &amp; name) const<br>returns the range of the given field (NOTE: returns range of first component of vector fields)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldmean">getFieldMean</a></strong>(const std::string &amp; name) const<br>returns the mean the given field</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getfieldstd">getFieldStd</a></strong>(const std::string &amp; name) const<br>returns the standard deviation of the given field</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getmultifieldvalue">getMultiFieldValue</a></strong>(const std::string &amp; name, int idx) const<br>gets the multi value at the given index of [vertex] field</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -604,11 +592,11 @@
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcvalue">getFFCValue</a></strong>(Eigen::Vector3d query)<br>Gets values and gradients for FFCs.</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcvalue">getFFCValue</a></strong>(Eigen::Vector3d query) const<br>Gets values for FFCs.</td>
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcgradient">getFFCGradient</a></strong>(Eigen::Vector3d query)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcgradient">getFFCGradient</a></strong>(Eigen::Vector3d query) const<br>Gets gradients for FFCs.</td>
 </tr>
 <tr>
 <td>MeshPoints</td>
@@ -640,6 +628,28 @@
 </code></pre></div>
 <p>This class encapsulates a <a href="classshapeworks_1_1Mesh.html">Mesh</a> and operations that can be performed on meshes </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="enum-fieldtype">enum FieldType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Point</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Face</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3 id="enum-alignmenttype">enum AlignmentType</h3>
 <table>
 <thead>
@@ -891,12 +901,12 @@
 </code></pre></div>
 <p>fix element winding of mesh </p>
 <h3 id="function-distance">function distance</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="n">PointToPoint</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="n">PointToCell</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>computes surface to surface distance, compute method: PointToPoint (default) or PointToCell </p>
+<p>Computes distance from each vertex to closest cell or point in target mesh, specified as PointToCell (default) or PointToPoint. Returns Fields containing distance to target and ids of the associated cells or points. </p>
 <h3 id="function-clipclosedsurface">function clipClosedSurface</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clipClosedSurface</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="w"></span>
@@ -909,41 +919,49 @@
 <p>computes and adds oriented point and cell normals </p>
 <h3 id="function-closestpoint">function closestPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">closestPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outside</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vtkIdType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>returns closest point on a face in the mesh to the given point in space </p>
+<p>Returns closest point on this mesh to the given point in space. In addition, returns by reference:</p>
+<ul>
+<li>whether the point in space is outside the mesh or not</li>
+<li>the distance of the point in space from this mesh</li>
+<li>the face_id containing the closest point </li>
+</ul>
 <h3 id="function-closestpointid">function closestPointId</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">closestPointId</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>returns closest point id in this mesh to the given point in space </p>
 <h3 id="function-geodesicdistance">function geodesicDistance</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>computes geodesic distance between two vertices (specified by their indices) on mesh </p>
 <h3 id="function-geodesicdistance_1">function geodesicDistance</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">landmark</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>computes geodesic distance between a point (landmark) and each vertex on mesh </p>
 <h3 id="function-geodesicdistance_2">function geodesicDistance</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">curve</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>computes geodesic distance between a set of points (curve) and each vertex on mesh </p>
 <h3 id="function-curvature">function curvature</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">curvature</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">CurvatureType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Principal</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>computes and adds curvature (principal (default) or gaussian or mean) </p>
+<p>computes curvature using principal (default) or gaussian or mean algorithms </p>
 <h3 id="function-applysubdivisionfilter">function applySubdivisionFilter</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applySubdivisionFilter</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Butterfly</span><span class="p">,</span><span class="w"></span>
@@ -954,17 +972,18 @@
 <h3 id="function-toimage">function toImage</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"></span>
-<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>rasterizes specified region to create binary image of desired dims (default: unit spacing) </p>
 <h3 id="function-todistancetransform">function toDistanceTransform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toDistanceTransform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"></span>
-<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">}),</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">padding</span><span class="w"> </span><span class="o">=</span><span class="n">Dims</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">})</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>converts specified region to distance transform image (default: unit spacing) </p>
+<p>converts specified region to distance transform image (default: unit spacing) with (logical) padding </p>
 <h3 id="function-center">function center</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
@@ -1007,25 +1026,19 @@
 <p>print all field names in mesh </p>
 <h3 id="function-setfield">function setField</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setField</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>sets the given field for points with array (*does not copy array's values) </p>
-<h3 id="function-setfieldforfaces">function setFieldForFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setFieldForFaces</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>sets the given field for faces with array (*does not copy array's values) </p>
+<p>sets the given field for points or faces with array (*does not copy array's values) </p>
 <h3 id="function-getfield">function getField</h3>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getField</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">getField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>gets a pointer to the requested field, null if field doesn't exist </p>
+<p>gets a pointer to the requested field of points or faces, null if field doesn't exist </p>
 <h3 id="function-setfieldvalue">function setFieldValue</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setFieldValue</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
@@ -1047,25 +1060,7 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>gets the multi value at the given index of field </p>
-<h3 id="function-getfieldrange">function getFieldRange</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getFieldRange</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p>returns the range of the given field (NOTE: returns range of first component of vector fields) </p>
-<h3 id="function-getfieldmean">function getFieldMean</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldMean</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p>returns the mean the given field </p>
-<h3 id="function-getfieldstd">function getFieldStd</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldStd</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p>returns the standard deviation of the given field </p>
+<p>gets the multi value at the given index of [vertex] field </p>
 <h3 id="function-compareallpoints">function compareAllPoints</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllPoints</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="w"></span>
@@ -1119,14 +1114,15 @@
 <h3 id="function-getffcvalue">function getFFCValue</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>Gets values and gradients for FFCs. </p>
+<p>Gets values for FFCs. </p>
 <h3 id="function-getffcgradient">function getFFCGradient</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getFFCGradient</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
+<p>Gets gradients for FFCs. </p>
 <h3 id="function-getiglmesh">function getIGLMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshPoints</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"></span>
@@ -1143,7 +1139,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
+<p>Updated on 2022-01-28 at 21:13:53 +0000</p>
               
             </div>
           </div>

@@ -1275,7 +1275,9 @@ shapeworks  distance [args]...
 
 **--name=STRING:** Filename of other mesh.
 
-**--method=CHOICE:** Method used to compute distance [default: point-to-point]. (choose from 'point-to-point', 'point-to-cell')
+**--method=CHOICE:** Method used to compute distance (point-to-point or point-to-cell) [default: point-to-cell]. (choose from 'point-to-point', 'point-to-cell')
+
+**--ids=BOOL:** Set shared field to the ids of the closest points/cells instead of the distances [default: false].
 
 **--summary=BOOL:** Print largest distance of any point in mesh to target [default: true].  
   
@@ -1299,7 +1301,9 @@ shapeworks  field-mean [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of scalar field.  
+**--name=STRING:** Name of scalar field.
+
+**--type=CHOICE:** Type of field to fetch (point or face). (choose from 'point', 'face')  
   
 <a href="#top">Back to Top</a>
   
@@ -1341,7 +1345,9 @@ shapeworks  field-range [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of scalar field.  
+**--name=STRING:** Name of scalar field.
+
+**--type=CHOICE:** Type of field to fetch (point or face). (choose from 'point', 'face')  
   
 <a href="#top">Back to Top</a>
   
@@ -1363,7 +1369,9 @@ shapeworks  field-std [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of scalar field.  
+**--name=STRING:** Name of scalar field.
+
+**--type=CHOICE:** Type of field to fetch (point or face). (choose from 'point', 'face')  
   
 <a href="#top">Back to Top</a>
   
@@ -1475,7 +1483,9 @@ shapeworks  get-field [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of scalar field.  
+**--name=STRING:** Name of scalar field.
+
+**--type=CHOICE:** Type of field to get (point or face). (choose from 'point', 'face')  
   
 <a href="#top">Back to Top</a>
   
@@ -1645,7 +1655,7 @@ shapeworks  mesh-to-dt [args]...
 
 **--sz=DOUBLE:** Spacing of output image in z-direction [default: unit spacing].
 
-**--pad=DOUBLE:** Pad the region to extract [default: 0.0].  
+**--pad=INT:** Number of pixels to pad the output region [default: 1].  
   
 <a href="#top">Back to Top</a>
   
@@ -1841,7 +1851,9 @@ shapeworks  set-field [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of scalar field.  
+**--name=STRING:** Name of scalar field.
+
+**--type=CHOICE:** Type of field to set (point or face). (choose from 'point', 'face')  
   
 <a href="#top">Back to Top</a>
   

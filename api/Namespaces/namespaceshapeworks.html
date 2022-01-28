@@ -1343,6 +1343,18 @@
 <td><strong><a href="namespaceshapeworks.html#function-degtorad">degToRad</a></strong>(const double deg)<br>convert degrees to radians</td>
 </tr>
 <tr>
+<td>double</td>
+<td><strong><a href="namespaceshapeworks.html#function-mean">mean</a></strong>(const Field field)<br>incrementally compute (single-component) mean of field</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="namespaceshapeworks.html#function-stddev">stddev</a></strong>(const Field field)<br>compute (single-component) standard deviation of field</td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#function-range">range</a></strong>(const Field field)<br>compute (single-component) range of field</td>
+</tr>
+<tr>
 <td>template &lt;typename P ,typename  =std::enable_if_t&lt;std::is_same<Image, P>::value</td>
 <td></td>
 </tr>
@@ -1440,7 +1452,7 @@
 </tr>
 <tr>
 <td>Array</td>
-<td><strong><a href="namespaceshapeworks.html#function-pytoarr">pyToArr</a></strong>(py::array &amp; np_array)<br>converts py::array to vtkDataArray, taking ownership of data</td>
+<td><strong><a href="namespaceshapeworks.html#function-pytoarr">pyToArr</a></strong>(py::array &amp; np_array, bool take_ownership =true)<br>converts py::array to vtkDataArray, optionally taking ownership of data</td>
 </tr>
 <tr>
 <td>py::array</td>
@@ -2573,6 +2585,24 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>convert degrees to radians </p>
+<h3 id="function-mean">function mean</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>incrementally compute (single-component) mean of field </p>
+<h3 id="function-stddev">function stddev</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">stddev</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>compute (single-component) standard deviation of field </p>
+<h3 id="function-range">function range</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">range</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>compute (single-component) range of field </p>
 <h3 id="function-operator_2">function operator+</h3>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
 <span class="k">typename</span><span class="w">  </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;&gt;</span><span class="w"></span>
@@ -2750,10 +2780,11 @@
 <p>helper function for Image.init and Image.assign </p>
 <h3 id="function-pytoarr">function pyToArr</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Array</span><span class="w"> </span><span class="n">pyToArr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">array</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">np_array</span><span class="w"></span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">array</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">np_array</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">take_ownership</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>converts py::array to vtkDataArray, taking ownership of data </p>
+<p>converts py::array to vtkDataArray, optionally taking ownership of data </p>
 <h3 id="function-arrtopy">function arrToPy</h3>
 <div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">array</span><span class="w"> </span><span class="n">arrToPy</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"></span>
@@ -2839,7 +2870,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-01-28 at 07:11:43 +0000</p>
+<p>Updated on 2022-01-28 at 21:13:52 +0000</p>
               
             </div>
           </div>

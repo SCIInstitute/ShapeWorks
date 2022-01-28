@@ -334,6 +334,8 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkTransform.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPlane.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkDoubleArray.h&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
@@ -352,6 +354,11 @@
 <span class="k">using</span><span class="w"> </span><span class="n">Point</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">Point3</span><span class="p">;</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">Matrix</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">Matrix33</span><span class="p">;</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">Plane</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+
+<span class="c1">// While doubles are the most commonly stored items, vtkDataArray can store any</span>
+<span class="c1">// type, yet has a default interface that conveniently stores and retrieves</span>
+<span class="c1">// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray</span>
+<span class="c1">// explicitly using `dynamic_cast&lt;vtkDoubleArray*&gt;(vtk_data_array)`.</span>
 <span class="k">using</span><span class="w"> </span><span class="n">Array</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">Field</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">Array</span><span class="p">;</span><span class="w"></span>
 
@@ -408,6 +415,12 @@
 <span class="kt">bool</span><span class="w"> </span><span class="nf">axis_is_valid</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="o">&amp;</span><span class="n">axis</span><span class="p">);</span><span class="w"></span>
 
 <span class="kt">double</span><span class="w"> </span><span class="nf">degToRad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">deg</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">double</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">double</span><span class="w"> </span><span class="nf">stddev</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">range</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="p">;</span><span class="w"></span>
 
@@ -571,7 +584,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
+<p>Updated on 2022-01-28 at 21:13:53 +0000</p>
               
             </div>
           </div>

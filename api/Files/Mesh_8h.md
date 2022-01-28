@@ -31,13 +31,14 @@ title: Libs/Mesh/Mesh.h
 #include "ImageUtils.h"
 
 class vtkCellLocator;
-#include <vtkPointData.h>
+class vtkKdTreePointLocator;
 
 namespace shapeworks {
 
 class Mesh
 {
 public:
+  enum FieldType { Point, Face };
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
@@ -92,29 +93,31 @@ public:
 
   Mesh& fixElement();
 
-  Mesh& distance(const Mesh &target, const DistanceMethod method = PointToPoint);
+  std::vector<Field> distance(const Mesh &target, const DistanceMethod method = PointToCell) const;
 
   Mesh& clipClosedSurface(const Plane plane);
 
   Mesh& computeNormals();
 
-  Point3 closestPoint(const Point3 point);
+  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
 
-  int closestPointId(const Point3 point);
+  int closestPointId(const Point3 point) const;
 
-  double geodesicDistance(int source, int target);
+  double geodesicDistance(int source, int target) const;
 
-  Field geodesicDistance(const Point3 landmark);
+  Field geodesicDistance(const Point3 landmark) const;
 
-  Field geodesicDistance(const std::vector<Point3> curve);
+  Field geodesicDistance(const std::vector<Point3> curve) const;
 
-  Field curvature(const CurvatureType type = Principal);
+  Field curvature(const CurvatureType type = Principal) const;
 
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
-  Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
+  Image toImage(PhysicalRegion region = PhysicalRegion(), Point3 spacing = Point3({1., 1., 1.})) const;
 
-  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
+  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(),
+                            const Point3 spacing = Point3({1., 1., 1.}),
+                            const Dims padding = Dims({1, 1, 1})) const;
 
   // query functions //
 
@@ -138,34 +141,15 @@ public:
 
   std::vector<std::string> getFieldNames() const;
 
-  Mesh& setField(std::string name, Array array);
+  Mesh& setField(const std::string name, Array array, const FieldType type);
 
-  Mesh& setFieldForFaces(std::string name, Array array);
-
-  template<typename T>
-  vtkSmartPointer<T> getField(const std::string& name) const
-  {
-    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-      throw std::invalid_argument("Mesh has no fields.");
-
-    auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
-    return rawarr;
-  }
+  Field getField(const std::string& name, const FieldType type) const;
 
   void setFieldValue(const std::string& name, int idx, double value);
 
   double getFieldValue(const std::string& name, int idx) const;
 
   Eigen::VectorXd getMultiFieldValue(const std::string& name, int idx) const;
-
-  std::vector<double> getFieldRange(const std::string& name) const;
-
-  double getFieldMean(const std::string& name) const;
-
-  double getFieldStd(const std::string& name) const;
-
-  // fields of mesh faces //
-  // todo: add support for fields of mesh faces (ex: their normals)
 
   // mesh comparison //
 
@@ -189,8 +173,9 @@ public:
 
   bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
-  double getFFCValue(Eigen::Vector3d query);
-  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
+  double getFFCValue(Eigen::Vector3d query) const;
+
+  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
@@ -200,17 +185,28 @@ private:
 
   static MeshType read(const std::string& pathname);
 
-  MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
+  MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
 
   MeshType mesh;
 
-  vtkSmartPointer<vtkCellLocator> locator;
+  Mesh& setFieldForFaces(const std::string name, Array array);
+
+  Field getFieldForFaces(const std::string& name) const;
+
+  void invalidateLocators() const;
+
+  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
+  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
+  void updateCellLocator() const;
+
+  mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
+  void updatePointLocator() const;
 
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);  // fixme: sets value, returns absvalues, not sure why
 
-  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh); // similar issues to above
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
@@ -224,4 +220,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2022-01-28 at 07:11:44 +0000
+Updated on 2022-01-28 at 21:13:53 +0000

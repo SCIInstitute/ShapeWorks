@@ -27,6 +27,7 @@ title: shapeworks::Image
 
 |                | Name           |
 | -------------- | -------------- |
+| | **[Image](../Classes/classshapeworks_1_1Image.md#function-image)**(const Dims dims) |
 | | **[Image](../Classes/classshapeworks_1_1Image.md#function-image)**(const std::string & pathname) |
 | | **[Image](../Classes/classshapeworks_1_1Image.md#function-image)**(ImageType::Pointer imagePtr) |
 | | **[Image](../Classes/classshapeworks_1_1Image.md#function-image)**(const vtkSmartPointer< vtkImageData > vtkImage) |
@@ -157,6 +158,15 @@ using shapeworks::Image::StatsPtr =  itk::StatisticsImageFilter<ImageType>::Poin
 
 
 ## Public Functions Documentation
+
+### function Image
+
+```cpp
+Image(
+    const Dims dims
+)
+```
+
 
 ### function Image
 
@@ -959,4 +969,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-01-28 at 07:11:44 +0000
+Updated on 2022-01-28 at 21:13:53 +0000
