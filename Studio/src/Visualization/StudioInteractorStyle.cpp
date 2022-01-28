@@ -1,71 +1,61 @@
-#include <vtkObjectFactory.h>
-#include <vtkRenderer.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
+#include <vtkObjectFactory.h>
+#include <vtkRenderer.h>
 
 namespace shapeworks {
 
 vtkStandardNewMacro(StudioInteractorStyle);
 
 //-----------------------------------------------------------------------------
-StudioInteractorStyle::StudioInteractorStyle()
-{}
+StudioInteractorStyle::StudioInteractorStyle() {}
 
 //-----------------------------------------------------------------------------
-StudioInteractorStyle::~StudioInteractorStyle()
-{}
+StudioInteractorStyle::~StudioInteractorStyle() {}
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnLeftButtonDown()
-{
-   if ( this->Interactor->GetControlKey() )
-   {
+void StudioInteractorStyle::OnLeftButtonDown() {
+  if (this->Interactor->GetControlKey()) {
     int* clickPos = this->GetInteractor()->GetEventPosition();
-    this->lightbox_->handle_pick( clickPos, true, true );
+    this->lightbox_->handle_pick(clickPos, true, true);
     return;
-   }
+  }
 
-// forward events
+  // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
-  //this->GetCurrentRenderer()->ResetCameraClippingRange();
+  // this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnRightButtonDown()
-{
-/*
-   int* clickPos = this->GetInteractor()->GetEventPosition();
-   this->lightbox_->handle_pick( clickPos );
- */
-// forward events
+void StudioInteractorStyle::OnRightButtonDown() {
+  /*
+     int* clickPos = this->GetInteractor()->GetEventPosition();
+     this->lightbox_->handle_pick( clickPos );
+   */
+  // forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
-  //this->GetCurrentRenderer()->ResetCameraClippingRange();
+  // this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::set_lightbox(Lightbox* lightbox)
-{
-  this->lightbox_ = lightbox;
-}
+void StudioInteractorStyle::set_lightbox(Lightbox* lightbox) { this->lightbox_ = lightbox; }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseWheelForward()
-{
+void StudioInteractorStyle::OnMouseWheelForward() {
   // do nothing so that it will be passed on to Qt
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseWheelBackward()
-{
+void StudioInteractorStyle::OnMouseWheelBackward() {
   // do nothing so that it will be passed on to Qt
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnKeyDown()
-{
+void StudioInteractorStyle::OnKeyDown() {
   int* click_pos = this->GetInteractor()->GetEventPosition();
 
   char keycode = this->GetInteractor()->GetKeyCode();
+  std::string keysym = GetInteractor()->GetKeySym();
 
   switch (keycode) {
     case '1':
@@ -81,6 +71,10 @@ void StudioInteractorStyle::OnKeyDown()
       break;
   }
 
+  if (keysym == "Up" | keysym == "Down") {
+    lightbox_->handle_key(click_pos, keysym);
+  }
+
   this->GetInteractor()->Render();
 
   // forward events
@@ -88,8 +82,7 @@ void StudioInteractorStyle::OnKeyDown()
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Dolly()
-{
+void StudioInteractorStyle::Dolly() {
   if (this->CurrentRenderer == NULL) {
     return;
   }
@@ -102,24 +95,21 @@ void StudioInteractorStyle::Dolly()
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Rotate()
-{
+void StudioInteractorStyle::Rotate() {
   vtkInteractorStyleTrackballCamera::Rotate();
   this->lightbox_->reset_camera_clipping_range();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseMove()
-{
+void StudioInteractorStyle::OnMouseMove() {
   int* clickPos = this->GetInteractor()->GetEventPosition();
-  this->lightbox_->handle_hover( clickPos );
+  this->lightbox_->handle_hover(clickPos);
 
   vtkInteractorStyleTrackballCamera::OnMouseMove();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Dolly(double factor)
-{
+void StudioInteractorStyle::Dolly(double factor) {
   if (this->CurrentRenderer == NULL) {
     return;
   }
@@ -127,8 +117,7 @@ void StudioInteractorStyle::Dolly(double factor)
   vtkCamera* camera = this->CurrentRenderer->GetActiveCamera();
   if (camera->GetParallelProjection()) {
     camera->SetParallelScale(camera->GetParallelScale() / factor);
-  }
-  else {
+  } else {
     camera->Dolly(factor);
     if (this->AutoAdjustCameraClippingRange) {
       this->lightbox_->reset_camera_clipping_range();
@@ -141,4 +130,4 @@ void StudioInteractorStyle::Dolly(double factor)
 
   this->Interactor->Render();
 }
-}
+}  // namespace shapeworks

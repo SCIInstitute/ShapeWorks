@@ -59,6 +59,8 @@ public:
 
   void handle_hover(int* click_pos);
 
+  void handle_key(int* click_pos, std::string key);
+
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
   void set_session(QSharedPointer<Session> session);
 
@@ -83,6 +85,8 @@ public:
   void set_orientation_marker_viewport();
 
   void update_feature_range();
+
+
 
 public Q_SLOTS:
   void handle_timer_callback();

@@ -13,6 +13,7 @@
 #include <vtkHandleWidget.h>
 #include <vtkImageData.h>
 #include <vtkImageSlice.h>
+#include <vtkImageSliceMapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
@@ -30,7 +31,6 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
-#include <vtkImageSliceMapper.h>
 
 namespace shapeworks {
 
@@ -182,6 +182,7 @@ Viewer::Viewer() {
   corner_annotation_->SetMaximumLineHeight(0.03);
 
   image_slice_ = vtkSmartPointer<vtkImageSlice>::New();
+  slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -580,7 +581,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       }
     }
 
-
     display_vector_field();
   }
 
@@ -807,32 +807,49 @@ void Viewer::update_actors() {
     }
   }
 
-  if (image_slice_) {
+  if (image_volume_) {
+    //    renderer_->RemoveAllViewProps();
     renderer_->AddViewProp(image_slice_);
+
+    double origin[3];
+    image_volume_->GetOrigin(origin);
+    int dims[3];
+    image_volume_->GetDimensions(dims);
+    std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
+    double spaces[3];
+    int max_slice_num = dims[2];
+    image_volume_->GetSpacing(spaces);
+    std::cout << "spaces: " << spaces[0] << "\t" << spaces[1] << "\t" << spaces[2] << "\n";
+    std::cout << "max slice number: " << max_slice_num << "\n";
+
+    double center_x = (spaces[0] * dims[0] / 2) + origin[0];
+    double center_y = (spaces[1] * dims[1] / 2) + origin[1];
+
+    renderer_->GetActiveCamera()->SetPosition(center_x, center_y, spaces[2] * (max_slice_num + 1));
+    renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
+    renderer_->GetActiveCamera()->SetFocalPoint(center_x, center_y, 0);
+    renderer_->GetActiveCamera()->SetParallelScale(spaces[1] * dims[1]);
+    renderer_->GetActiveCamera()->SetParallelProjection(1);
   }
 
   update_opacities();
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_image_volume()
-{
-  std::cerr << "update_image_volume\n";
+void Viewer::update_image_volume() {
   auto image_volume_name = visualizer_->get_image_volume();
   if (image_volume_name != "") {
-    std::cerr << "not null, netting name tp " << image_volume_name <<"\n";
-    auto volume_ = shape_->get_image_volume(image_volume_name);
-    if (!volume_) {
-      std::cerr << "error loading image volume\n";
+    auto volume = shape_->get_image_volume(image_volume_name);
+    if (!volume) {
+      return;
     }
-    std::cerr << "volume = " << image_volume_ << "\n";
-    image_volume_ = vtkSmartPointer<vtkImageData>::New();
-    image_volume_->DeepCopy(volume_);
-    slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
+    image_volume_ = volume;
     slice_mapper_->SetInputData(image_volume_);
     image_slice_->SetMapper(slice_mapper_);
-  }
 
+    auto transform = get_transform(visualizer_->get_alignment_domain(), 0);
+    image_slice_->SetUserTransform(transform);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1018,6 +1035,21 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int do
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), domain);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::handle_key(int* click_pos, std::string key) {
+  if (image_volume_) {
+    if (key == "Up") {
+      image_slice_number_++;
+      slice_mapper_->SetSliceNumber(image_slice_number_);
+      renderer_->GetRenderWindow()->Render();
+    } else if (key == "Down") {
+      image_slice_number_--;
+      slice_mapper_->SetSliceNumber(image_slice_number_);
+      renderer_->GetRenderWindow()->Render();
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

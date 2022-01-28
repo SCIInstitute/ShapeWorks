@@ -114,6 +114,8 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
 
+  void handle_key(int * click_pos, std::string key);
+
  private:
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
@@ -182,9 +184,12 @@ class Viewer {
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 
+  // image support
   vtkSmartPointer<vtkImageSlice> image_slice_;
   vtkSmartPointer<vtkImageSliceMapper> slice_mapper_;
   vtkSmartPointer<vtkImageData> image_volume_;
+  int image_slice_number_ = 0;
+
 
   bool arrows_visible_ = false;
 
