@@ -2,6 +2,7 @@
 
 #include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
+#include <Visualization/SliceView.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -82,11 +83,9 @@ class Viewer {
 
   PickResult handle_ctrl_click(int* click_pos);
 
-
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
-
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -114,10 +113,11 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
 
-  void handle_key(int * click_pos, std::string key);
+  vtkSmartPointer<vtkTransform> get_image_transform();
+
+  void handle_key(int* click_pos, std::string key);
 
  private:
-
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void initialize_surfaces();
@@ -184,13 +184,6 @@ class Viewer {
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 
-  // image support
-  vtkSmartPointer<vtkImageSlice> image_slice_;
-  vtkSmartPointer<vtkImageSliceMapper> slice_mapper_;
-  vtkSmartPointer<vtkImageData> image_volume_;
-  int image_slice_number_ = 0;
-
-
   bool arrows_visible_ = false;
 
   ColorSchemes color_schemes_;
@@ -208,5 +201,8 @@ class Viewer {
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   QSharedPointer<Session> session_;
+
+  // slice viewer
+  SliceView slice_view_{this};
 };
 }  // namespace shapeworks

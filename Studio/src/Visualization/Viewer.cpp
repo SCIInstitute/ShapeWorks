@@ -12,8 +12,6 @@
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
 #include <vtkImageData.h>
-#include <vtkImageSlice.h>
-#include <vtkImageSliceMapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
@@ -181,8 +179,6 @@ Viewer::Viewer() {
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
 
-  image_slice_ = vtkSmartPointer<vtkImageSlice>::New();
-  slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -781,7 +777,6 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(glyph_actor_);
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
-  renderer_->RemoveActor(image_slice_);
 
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
@@ -807,30 +802,8 @@ void Viewer::update_actors() {
     }
   }
 
-  if (image_volume_) {
-    //    renderer_->RemoveAllViewProps();
-    renderer_->AddViewProp(image_slice_);
-
-    double origin[3];
-    image_volume_->GetOrigin(origin);
-    int dims[3];
-    image_volume_->GetDimensions(dims);
-    std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
-    double spaces[3];
-    int max_slice_num = dims[2];
-    image_volume_->GetSpacing(spaces);
-    std::cout << "spaces: " << spaces[0] << "\t" << spaces[1] << "\t" << spaces[2] << "\n";
-    std::cout << "max slice number: " << max_slice_num << "\n";
-
-    double center_x = (spaces[0] * dims[0] / 2) + origin[0];
-    double center_y = (spaces[1] * dims[1] / 2) + origin[1];
-
-    renderer_->GetActiveCamera()->SetPosition(center_x, center_y, spaces[2] * (max_slice_num + 1));
-    renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
-    renderer_->GetActiveCamera()->SetFocalPoint(center_x, center_y, 0);
-    renderer_->GetActiveCamera()->SetParallelScale(spaces[1] * dims[1]);
-    renderer_->GetActiveCamera()->SetParallelProjection(1);
-  }
+  slice_view_.update_renderer();
+  slice_view_.update_camera();
 
   update_opacities();
 }
@@ -843,12 +816,7 @@ void Viewer::update_image_volume() {
     if (!volume) {
       return;
     }
-    image_volume_ = volume;
-    slice_mapper_->SetInputData(image_volume_);
-    image_slice_->SetMapper(slice_mapper_);
-
-    auto transform = get_transform(visualizer_->get_alignment_domain(), 0);
-    image_slice_->SetUserTransform(transform);
+    slice_view_.set_volume(volume);
   }
 }
 
@@ -1038,18 +1006,14 @@ vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_image_transform()
+{
+  return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), 0);
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::handle_key(int* click_pos, std::string key) {
-  if (image_volume_) {
-    if (key == "Up") {
-      image_slice_number_++;
-      slice_mapper_->SetSliceNumber(image_slice_number_);
-      renderer_->GetRenderWindow()->Render();
-    } else if (key == "Down") {
-      image_slice_number_--;
-      slice_mapper_->SetSliceNumber(image_slice_number_);
-      renderer_->GetRenderWindow()->Render();
-    }
-  }
+  slice_view_.handle_key(key);
 }
 
 //-----------------------------------------------------------------------------
