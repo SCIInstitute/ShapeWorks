@@ -59,8 +59,6 @@ call .\Installation\conda_env_setup.bat
 REM installs for jupyter notebooks
 call pip install nbstripout==0.5.0
 call pip install pyvista==0.30.1
-call pip install pyqt5==5.15.6
-call pip install pyvistaqt==0.6.0
 call pip install ipyvtklink==0.2.1
 call pip install ipyvtk_simple==0.1.4
 call pip install ipywidgets==7.6.5
