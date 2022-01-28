@@ -89,6 +89,9 @@ public:
   //! Get feature names
   std::vector<std::string> get_feature_names();
 
+  //! Get image names
+  std::vector<std::string> get_image_names();
+
   //! Get group names
   std::vector<std::string> get_group_names();
 

@@ -210,6 +210,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
+  connect(ui_->image_combo_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &ShapeWorksStudioApp::update_image_selection);
+
   connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
 
   // glyph options signals/slots
@@ -324,7 +327,6 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
   if (!StringUtils::hasSuffix(filename.toStdString(), ".xlsx")) {
     filename = filename + ".xlsx";
   }
-
 
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
@@ -544,8 +546,6 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table() {
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
-
   auto project = this->session_->get_project();
 
   this->data_tool_->update_table();
@@ -562,6 +562,18 @@ void ShapeWorksStudioApp::update_table() {
   }
   this->ui_->features->setCurrentText(current_feature);
   this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
+
+  /// fill in image combo
+  auto current_image = ui_->image_combo_->currentText();
+  ui_->image_combo_->clear();
+  ui_->image_combo_->addItem("-none-");
+  auto image_names = project->get_image_names();
+  for (const std::string& name : image_names) {
+    QString item = QString::fromStdString(name);
+    item = item.replace("feature_", "");
+    this->ui_->image_combo_->addItem(item);
+  }
+  this->ui_->image_combo_->setCurrentText(current_image);
 }
 
 //---------------------------------------------------------------------------
@@ -1861,6 +1873,11 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_image_selection(const QString& image_name) {
+  this->set_image_name(image_name.toStdString());
+}
+
+//---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
   if (feature_map != this->get_feature_map()) {
     if (!this->is_loading_) {
@@ -1874,6 +1891,21 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
 
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_feature_map() { return this->session_->parameters().get("feature_map", ""); }
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::set_image_name(std::string image_name) {
+  if (image_name != this->get_image_name()) {
+    if (!this->is_loading_) {
+      this->session_->parameters().set("image_name", image_name);
+    }
+    this->update_view_mode();
+    return true;
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::string ShapeWorksStudioApp::get_image_name() { return this->session_->parameters().get("image_name", ""); }
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {

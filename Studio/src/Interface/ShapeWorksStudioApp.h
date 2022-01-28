@@ -121,6 +121,8 @@ public Q_SLOTS:
   void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
 
+  void update_image_selection(const QString& image_name);
+
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
@@ -188,6 +190,9 @@ private:
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
+
+  bool set_image_name(std::string image_name);
+  std::string get_image_name();
 
   bool get_feature_uniform_scale();
   void set_feature_uniform_scale(bool value);
