@@ -469,7 +469,7 @@
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTree</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTree</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>A tree data container, templated over node type, whose nodes are associated with bounding boxes in a rectangular domain, and that has 2^D branches at each node, where D is the dimensionality of the domain. In 2D this is a quad-tree, and in 3D this is an octree, etc. The tree is constructed by specifying a region and a tree depth, then calling <a href="classitk_1_1PowerOfTwoPointTree.html#function-constructtree">ConstructTree()</a>. This class was designed for use as a quad/octree binning structure for itkParticleNeighborhood classes. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
@@ -506,7 +506,7 @@
 </code></pre></div>
 <p>Types defined by the NodeType. </p>
 <h3 id="typedef-pointiteratorlisttype">typedef PointIteratorListType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">PointListType</span><span class="o">::</span><span class="n">const_iterator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTree</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointIteratorListType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">PointListType</span><span class="o">::</span><span class="n">const_iterator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTree</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointIteratorListType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
@@ -650,7 +650,7 @@
 </code></pre></div>
 <p>Find one of the nodes that overlaps the specified region and appends all of its points to the specified list. The method is used by FindPointsInRegion and is called recursively. </p>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:43 +0000</p>
               
             </div>
           </div>

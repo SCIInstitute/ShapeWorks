@@ -328,11 +328,11 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Data/Preferences.h&quot;</span><span class="cp"></span>
 
-<span class="k">class</span> <span class="nc">Ui_PreferencesWindow</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">QAbstractButton</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_PreferencesWindow</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QAbstractButton</span><span class="p">;</span><span class="w"></span>
 
 
-<span class="k">class</span> <span class="nc">PreferencesWindow</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PreferencesWindow</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="n">Q_OBJECT</span><span class="w"></span>
 
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
@@ -342,7 +342,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="n">QCloseEvent</span><span class="w"> </span><span class="o">*</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="nl">Q_SLOTS</span><span class="p">:</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_mesh_cache_enabled_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_mesh_cache_memory_valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_color_scheme_currentIndexChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
@@ -359,7 +359,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_preferences</span><span class="p">();</span><span class="w"></span>
 
 <span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">clear_cache</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_cache</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">slider_update</span><span class="p">();</span><span class="w"></span>
 
@@ -370,7 +370,7 @@
 <span class="p">};</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:45 +0000</p>
               
             </div>
           </div>

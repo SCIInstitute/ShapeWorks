@@ -355,15 +355,15 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">Shape</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">Session</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span><span class="w"></span>
 <span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SessionHandle</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">using</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
 
-<span class="k">class</span> <span class="nc">Session</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
@@ -455,7 +455,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span><span class="w"></span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="nl">Q_SLOTS</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmark_drag_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
@@ -467,7 +467,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="nl">signals</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">data_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">data_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">points_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">landmarks_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">();</span><span class="w"></span>
@@ -522,7 +522,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:45 +0000</p>
               
             </div>
           </div>

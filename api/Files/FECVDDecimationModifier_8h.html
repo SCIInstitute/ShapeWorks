@@ -330,10 +330,10 @@
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">class</span> <span class="nc">FECVDDecimationModifier</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FECVDDecimationModifier</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">class</span> <span class="nc">Cluster</span><span class="w"></span>
+<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">Cluster</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">        </span><span class="n">Cluster</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_sgamma</span><span class="p">(</span><span class="n">vec3d</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span><span class="w"> </span><span class="n">m_srho</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
@@ -347,17 +347,17 @@
 
 <span class="w">    </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">struct</span> <span class="nc">EDGE</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">EDGE</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">    </span><span class="c1">// the indices of the two faces sharing this edge</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">node</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">    </span><span class="c1">// the nodes of the edge</span>
 <span class="w">    </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// a node which contains a list of clusters it belongs to</span>
-<span class="w">    </span><span class="k">class</span> <span class="nc">NODE</span><span class="w"></span>
+<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">NODE</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="k">enum</span> <span class="p">{</span><span class="n">MAX_CLUSTERS</span><span class="o">=</span><span class="mi">23</span><span class="p">};</span><span class="w"></span>
+<span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">MAX_CLUSTERS</span><span class="o">=</span><span class="mi">23</span><span class="p">};</span><span class="w"></span>
 <span class="w">    </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">        </span><span class="n">NODE</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">nc</span><span class="p">(</span><span class="mi">0</span><span class="p">){}</span><span class="w"></span>
 
@@ -402,7 +402,7 @@
 <span class="p">};</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

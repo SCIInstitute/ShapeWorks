@@ -348,14 +348,14 @@
 <span class="c1">//</span>
 <span class="c1">// TODO: generalize Image class instead of this:</span>
 <span class="c1">//       https://github.com/SCIInstitute/ShapeWorks/issues/1053</span>
-<span class="k">class</span> <span class="nc">VectorImage</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorImage</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">GradientImageFilter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GradientImageFilter</span><span class="o">::</span><span class="n">OutputImageType</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">GradientInterpolator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorLinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">VectorImage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dt_img</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">VectorImage</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"></span>
@@ -371,7 +371,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

@@ -385,14 +385,14 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span><span class="cp"></span>
 
 <span class="c1">// tools for finding intersections</span>
-<span class="k">struct</span> <span class="nc">Ray</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Ray</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">origin</span><span class="p">;</span><span class="w">         </span><span class="c1">// origin of ray</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">direction</span><span class="p">;</span><span class="w">      </span><span class="c1">// direction of ray (must be unit vector!)</span>
 <span class="p">};</span><span class="w"></span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span> <span class="nc">Intersection</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Intersection</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">point</span><span class="p">;</span><span class="w">          </span><span class="c1">// point of intersection</span>
 <span class="w">    </span><span class="kt">float</span><span class="w">   </span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">           </span><span class="c1">// natural coordinates</span>
@@ -401,7 +401,7 @@
 <span class="p">};</span><span class="w"></span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span> <span class="nc">Triangle</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Triangle</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span><span class="w"></span>
@@ -410,7 +410,7 @@
 <span class="p">};</span><span class="w"></span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span> <span class="nc">Quad</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Quad</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span><span class="w"></span>
@@ -429,7 +429,7 @@
 <span class="kt">bool</span><span class="w"> </span><span class="nf">FastIntersectQuad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

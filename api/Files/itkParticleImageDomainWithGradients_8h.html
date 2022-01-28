@@ -354,14 +354,14 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ParticleImageDomainWithGradients</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleImageDomainWithGradients</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">FixedArray</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VnlVectorType</span><span class="p">;</span><span class="w"></span>
@@ -437,7 +437,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

@@ -324,8 +324,8 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-connectpipelines">function ConnectPipelines</h3>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ITK_Exporter</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="k">typename</span> <span class="nc">VTK_Importer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">VTK_Importer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="w"></span>
@@ -335,7 +335,7 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ITK_Exporter</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">VTK_Importer</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"> </span><span class="n">VTK_Importer</span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="p">)</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateInformationCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateInformationCallback</span><span class="p">());</span><span class="w"></span>
@@ -353,7 +353,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:45 +0000</p>
               
             </div>
           </div>

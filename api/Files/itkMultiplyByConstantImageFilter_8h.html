@@ -371,8 +371,8 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">Functor</span><span class="w"> </span><span class="p">{</span><span class="w">  </span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">class</span> <span class="nc">TInput</span><span class="p">,</span><span class="w"> </span><span class="k">class</span> <span class="nc">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">class</span> <span class="nc">TOutput</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">MultiplyByConstant</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TInput</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TOutput</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiplyByConstant</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">MultiplyByConstant</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_Constant</span><span class="p">(</span><span class="n">NumericTraits</span><span class="o">&lt;</span><span class="n">TConstant</span><span class="o">&gt;::</span><span class="n">One</span><span class="p">)</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
@@ -398,21 +398,21 @@
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TInputImage</span><span class="p">,</span><span class="w"> </span><span class="k">class</span> <span class="nc">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">class</span> <span class="nc">TOutputImage</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="nl">MultiplyByConstantImageFilter</span> <span class="p">:</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TInputImage</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">MultiplyByConstantImageFilter</span><span class="w"> </span><span class="o">:</span><span class="w"></span>
 <span class="w">      </span><span class="k">public</span><span class="w"></span>
 <span class="n">UnaryFunctorImageFilter</span><span class="o">&lt;</span><span class="n">TInputImage</span><span class="p">,</span><span class="n">TOutputImage</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                        </span><span class="n">Functor</span><span class="o">::</span><span class="n">MultiplyByConstant</span><span class="o">&lt;</span><span class="w"> </span>
-<span class="w">   </span><span class="k">typename</span> <span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="k">typename</span> <span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">   </span><span class="k">typename</span><span class="w"> </span><span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="k">typename</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">MultiplyByConstantImageFilter</span><span class="w">                 </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">UnaryFunctorImageFilter</span><span class="o">&lt;</span><span class="w"></span>
 <span class="w">    </span><span class="n">TInputImage</span><span class="p">,</span><span class="n">TOutputImage</span><span class="p">,</span><span class="w"> </span>
 <span class="w">    </span><span class="n">Functor</span><span class="o">::</span><span class="n">MultiplyByConstant</span><span class="o">&lt;</span><span class="w"> </span>
-<span class="w">      </span><span class="k">typename</span> <span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="k">typename</span> <span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w">   </span><span class="o">&gt;</span><span class="w">             </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">typename</span><span class="w"> </span><span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="k">typename</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w">   </span><span class="o">&gt;</span><span class="w">             </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">                            </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">                      </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
 
@@ -438,12 +438,12 @@
 <span class="cp">#ifdef ITK_USE_CONCEPT_CHECKING</span>
 
 <span class="w">  </span><span class="n">itkConceptMacro</span><span class="p">(</span><span class="n">InputConvertibleToOutputCheck</span><span class="p">,</span><span class="w"></span>
-<span class="w">                  </span><span class="p">(</span><span class="n">Concept</span><span class="o">::</span><span class="n">Convertible</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"></span>
-<span class="w">                   </span><span class="k">typename</span> <span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">));</span><span class="w"></span>
+<span class="w">                  </span><span class="p">(</span><span class="n">Concept</span><span class="o">::</span><span class="n">Convertible</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="k">typename</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">));</span><span class="w"></span>
 <span class="w">  </span><span class="n">itkConceptMacro</span><span class="p">(</span><span class="n">Input1Input2OutputMultiplyOperatorCheck</span><span class="p">,</span><span class="w"></span>
-<span class="w">                  </span><span class="p">(</span><span class="n">Concept</span><span class="o">::</span><span class="n">MultiplyOperator</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"></span>
+<span class="w">                  </span><span class="p">(</span><span class="n">Concept</span><span class="o">::</span><span class="n">MultiplyOperator</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"></span>
 <span class="w">                   </span><span class="n">TConstant</span><span class="p">,</span><span class="w"></span>
-<span class="w">                   </span><span class="k">typename</span> <span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">));</span><span class="w"></span>
+<span class="w">                   </span><span class="k">typename</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">));</span><span class="w"></span>
 <span class="cp">#endif</span>
 
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
@@ -454,7 +454,7 @@
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Constant: &quot;</span><span class="w"> </span>
-<span class="w">       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">NumericTraits</span><span class="o">&lt;</span><span class="n">TConstant</span><span class="o">&gt;::</span><span class="n">PrintType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetConstant</span><span class="p">())</span><span class="w"></span>
+<span class="w">       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">NumericTraits</span><span class="o">&lt;</span><span class="n">TConstant</span><span class="o">&gt;::</span><span class="n">PrintType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetConstant</span><span class="p">())</span><span class="w"></span>
 <span class="w">       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 
@@ -470,7 +470,7 @@
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

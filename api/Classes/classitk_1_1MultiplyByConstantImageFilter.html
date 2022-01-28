@@ -388,10 +388,10 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TInputImage</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">TConstant</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">TOutputImage</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">MultiplyByConstantImageFilter</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TInputImage</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TConstant</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">MultiplyByConstantImageFilter</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Multiply input pixels by a constant. </p>
 <p><strong>See</strong>: UnaryFunctorImageFilter </p>
@@ -404,7 +404,7 @@
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">UnaryFunctorImageFilter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TInputImage</span><span class="p">,</span><span class="n">TOutputImage</span><span class="p">,</span><span class="w"> </span><span class="n">Functor</span><span class="o">::</span><span class="n">MultiplyByConstant</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">MultiplyByConstantImageFilter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TInputImage</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"> </span><span class="n">TOutputImage</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">UnaryFunctorImageFilter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TInputImage</span><span class="p">,</span><span class="n">TOutputImage</span><span class="p">,</span><span class="w"> </span><span class="n">Functor</span><span class="o">::</span><span class="n">MultiplyByConstant</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TInputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TOutputImage</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">MultiplyByConstantImageFilter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TInputImage</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"> </span><span class="n">TOutputImage</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">MultiplyByConstantImageFilter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TInputImage</span><span class="p">,</span><span class="w"> </span><span class="n">TConstant</span><span class="p">,</span><span class="w"> </span><span class="n">TOutputImage</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
@@ -449,7 +449,7 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:30 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:43 +0000</p>
               
             </div>
           </div>

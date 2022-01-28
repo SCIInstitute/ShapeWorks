@@ -511,12 +511,12 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span> <span class="nc">TTransformType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span><span class="w"></span>
-<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span> <span class="nc">TInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span><span class="w"></span>
-<span class="k">typename</span> <span class="nc">TCoordRep</span><span class="w">  </span><span class="o">=</span><span class="kt">double</span><span class="p">,</span><span class="w"></span>
-<span class="k">typename</span> <span class="nc">PixelType</span><span class="w">  </span><span class="o">=</span><span class="kt">float</span><span class="p">,</span><span class="w"></span>
-<span class="k">typename</span> <span class="nc">ImageType</span><span class="w">  </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">Reconstruction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TTransformType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span><span class="w"></span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w">  </span><span class="o">=</span><span class="kt">double</span><span class="p">,</span><span class="w"></span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">PixelType</span><span class="w">  </span><span class="o">=</span><span class="kt">float</span><span class="p">,</span><span class="w"></span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="w">  </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Reconstruction</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-gradientfiltertype">typedef GradientFilterType</h3>
@@ -699,7 +699,7 @@
 </code></pre></div>
 <h3 id="function-setorigin">function setOrigin</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setOrigin</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">origin</span><span class="w"></span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">origin</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-enablepairwisenormalsdifferencesforgoodbad">function EnablePairwiseNormalsDifferencesForGoodBad</h3>
@@ -709,7 +709,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DisablePairwiseNormalsDifferencesForGoodBad</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

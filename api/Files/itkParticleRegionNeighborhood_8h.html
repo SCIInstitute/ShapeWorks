@@ -359,7 +359,7 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">=</span><span class="mi">3</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="nl">ParticleRegionNeighborhood</span> <span class="p">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleRegionNeighborhood</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleRegionNeighborhood</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
@@ -374,10 +374,10 @@
 
 <span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">PointContainerType</span><span class="w"> </span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointContainerType</span><span class="w"> </span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">PowerOfTwoPointTree</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointTreeType</span><span class="p">;</span><span class="w"></span>
 
@@ -408,10 +408,10 @@
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleRegionNeighborhood</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">struct</span> <span class="nc">IteratorNodePair</span><span class="w"></span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">IteratorNodePair</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">PointTreeType</span><span class="o">::</span><span class="n">NodePointerType</span><span class="w"> </span><span class="n">NodePointerType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">PointTreeType</span><span class="o">::</span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">IteratorType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointTreeType</span><span class="o">::</span><span class="n">NodePointerType</span><span class="w"> </span><span class="n">NodePointerType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointTreeType</span><span class="o">::</span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">IteratorType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="n">IteratorNodePair</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
 <span class="w">    </span><span class="o">~</span><span class="n">IteratorNodePair</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
@@ -437,8 +437,8 @@
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainer</span><span class="o">&lt;</span><span class="n">IteratorNodePair</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IteratorMapType</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">PointTreeType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Tree</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">IteratorMapType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_IteratorMap</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointTreeType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Tree</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">IteratorMapType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_IteratorMap</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_TreeLevels</span><span class="p">;</span><span class="w"></span>
 
 
@@ -464,7 +464,7 @@
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

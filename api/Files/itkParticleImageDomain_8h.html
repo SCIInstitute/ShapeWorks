@@ -369,15 +369,15 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ParticleImageDomain</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleRegionDomain</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleImageDomain</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleRegionDomain</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">ParticleImageDomain</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">Image</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleRegionDomain</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleRegionDomain</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
@@ -421,12 +421,12 @@
 <span class="w">      </span><span class="o">++</span><span class="n">it</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">l0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">l0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">m_Index</span><span class="p">,</span><span class="w"> </span><span class="n">l0</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
 <span class="w">        </span><span class="n">m_Index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">u0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">u0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">m_Index</span><span class="p">,</span><span class="w"> </span><span class="n">u0</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Cast points to higher precision if needed.  Parent class uses doubles</span>
@@ -459,27 +459,27 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">GetSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">GetSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">GetSpacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="nf">GetSpacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">GetIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="nf">GetIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Index</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetValidLocationNear</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetValidLocationNear</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// todo why is this function ignoring the argument? Also see Optimize::AddSinglePoint</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_ZeroCrossingPoint</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">Sample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">Sample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">IsInsideBuffer</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="n">p</span><span class="p">);</span><span class="w"></span>
@@ -489,7 +489,7 @@
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">bestRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxdim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -504,13 +504,13 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">bestRadius</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">m_VDBImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// Updates zero crossing points. Raster scans candidate zero crossing points, and finds one that does not violate any constraints.</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
 <span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetConstraints</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">IsAnyViolated</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="p">)){</span><span class="w"></span>
@@ -562,21 +562,21 @@
 <span class="k">private</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">m_ZeroCrossingPoint</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">m_Index</span><span class="p">;</span><span class="w"> </span><span class="c1">// Index defining the corner of the region</span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">m_Index</span><span class="p">;</span><span class="w"> </span><span class="c1">// Index defining the corner of the region</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceArea</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// Computes possible zero crossing points. Later on, one can find the ones that do not violate constraints.</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetupImageForCrossingPointUpdate</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">){</span><span class="w"></span>
-<span class="w">      </span><span class="k">typename</span> <span class="nc">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">zc</span><span class="w"> </span><span class="o">=</span><span class="w"></span>
+<span class="w">      </span><span class="k">typename</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">zc</span><span class="w"> </span><span class="o">=</span><span class="w"></span>
 <span class="w">              </span><span class="n">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">::</span><span class="n">New</span><span class="p">();</span><span class="w"></span>
 <span class="w">      </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">SetInput</span><span class="p">(</span><span class="n">I</span><span class="p">);</span><span class="w"></span>
 <span class="w">      </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">Update</span><span class="p">();</span><span class="w"></span>
-<span class="w">      </span><span class="k">typename</span> <span class="nc">itk</span><span class="o">::</span><span class="n">ImageRegionConstIteratorWithIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">zcIt</span><span class="p">(</span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">(),</span><span class="w"></span>
+<span class="w">      </span><span class="k">typename</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ImageRegionConstIteratorWithIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">zcIt</span><span class="p">(</span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">(),</span><span class="w"></span>
 <span class="w">                                                                         </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">());</span><span class="w"></span>
 
 <span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">zcIt</span><span class="p">.</span><span class="n">GoToReverseBegin</span><span class="p">();</span><span class="w"> </span><span class="o">!</span><span class="n">zcIt</span><span class="p">.</span><span class="n">IsAtReverseEnd</span><span class="p">();</span><span class="w"> </span><span class="o">--</span><span class="n">zcIt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -610,7 +610,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

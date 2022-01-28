@@ -361,7 +361,7 @@
 <span class="p">{</span><span class="w"></span>
 
 <span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ParticleEnsembleEntropyFunction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleEnsembleEntropyFunction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
@@ -370,14 +370,14 @@
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_vector_type</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="p">;</span><span class="w"></span>
 
@@ -472,9 +472,9 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetRecomputeCovarianceInterval</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">typename</span> <span class="nc">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PointsUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PointsUpdate</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_MinimumVariance</span><span class="p">;</span><span class="w"></span>
@@ -493,7 +493,7 @@
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="k">typename</span> <span class="nc">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">)</span><span class="n">copy</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">)</span><span class="n">copy</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
@@ -515,7 +515,7 @@
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEnsembleEntropyFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeCovarianceMatrix</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_PointsUpdate</span><span class="p">;</span><span class="w"></span>
@@ -549,7 +549,7 @@
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

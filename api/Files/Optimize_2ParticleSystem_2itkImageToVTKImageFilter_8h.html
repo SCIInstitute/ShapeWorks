@@ -363,8 +363,8 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TInputImage</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ImageToVTKImageFilter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ProcessObject</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TInputImage</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageToVTKImageFilter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ProcessObject</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ImageToVTKImageFilter</span><span class="w">       </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
@@ -377,10 +377,10 @@
 <span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ImageToVTKImageFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ProcessObject</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">TInputImage</span><span class="w"> </span><span class="n">InputImageType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">InputImageType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w">  </span><span class="n">InputImagePointer</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">InputImageType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w">  </span><span class="n">InputImagePointer</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">VTKImageExport</span><span class="o">&lt;</span><span class="w"> </span><span class="n">InputImageType</span><span class="o">&gt;</span><span class="w">        </span><span class="n">ExporterFilterType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ExporterFilterType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">   </span><span class="n">ExporterFilterPointer</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ExporterFilterType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">   </span><span class="n">ExporterFilterPointer</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">*</span><span class="w">  </span><span class="nf">GetOutput</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 
@@ -413,7 +413,7 @@
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

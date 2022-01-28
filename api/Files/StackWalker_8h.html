@@ -360,11 +360,11 @@
 <span class="cp">#endif</span>
 <span class="cp">#endif  </span><span class="c1">// _MSC_VER &lt; 1300</span>
 
-<span class="k">class</span> <span class="nc">StackWalkerInternal</span><span class="p">;</span><span class="w">  </span><span class="c1">// forward</span>
-<span class="k">class</span> <span class="nc">StackWalker</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StackWalkerInternal</span><span class="p">;</span><span class="w">  </span><span class="c1">// forward</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StackWalker</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span> <span class="nc">StackWalkOptions</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nc">StackWalkOptions</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// No addition info will be retrived </span>
 <span class="w">    </span><span class="c1">// (only the address is available)</span>
@@ -430,11 +430,11 @@
 <span class="c1">// in older compilers in order to use it... starting with VC7 we can declare it as &quot;protected&quot;</span>
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
 <span class="cp">#endif</span>
-<span class="w">    </span><span class="k">enum</span> <span class="p">{</span><span class="w"> </span><span class="n">STACKWALK_MAX_NAMELEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="p">};</span><span class="w"> </span><span class="c1">// max name length for found symbols</span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">STACKWALK_MAX_NAMELEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="p">};</span><span class="w"> </span><span class="c1">// max name length for found symbols</span>
 
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1">// Entry for each Callstack-Entry</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span> <span class="nc">CallstackEntry</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">CallstackEntry</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">DWORD64</span><span class="w"> </span><span class="n">offset</span><span class="p">;</span><span class="w">  </span><span class="c1">// if 0, we have no valid entry</span>
 <span class="w">    </span><span class="n">CHAR</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="n">STACKWALK_MAX_NAMELEN</span><span class="p">];</span><span class="w"></span>
@@ -451,7 +451,7 @@
 <span class="w">    </span><span class="n">CHAR</span><span class="w"> </span><span class="n">loadedImageName</span><span class="p">[</span><span class="n">STACKWALK_MAX_NAMELEN</span><span class="p">];</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="n">CallstackEntry</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span> <span class="nc">CallstackEntryType</span><span class="w"> </span><span class="p">{</span><span class="n">firstEntry</span><span class="p">,</span><span class="w"> </span><span class="n">nextEntry</span><span class="p">,</span><span class="w"> </span><span class="n">lastEntry</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nc">CallstackEntryType</span><span class="w"> </span><span class="p">{</span><span class="n">firstEntry</span><span class="p">,</span><span class="w"> </span><span class="n">nextEntry</span><span class="p">,</span><span class="w"> </span><span class="n">lastEntry</span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnSymInit</span><span class="p">(</span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">szSearchPath</span><span class="p">,</span><span class="w"> </span><span class="n">DWORD</span><span class="w"> </span><span class="n">symOptions</span><span class="p">,</span><span class="w"> </span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">szUserName</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnLoadModule</span><span class="p">(</span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">mod</span><span class="p">,</span><span class="w"> </span><span class="n">DWORD64</span><span class="w"> </span><span class="n">baseAddr</span><span class="p">,</span><span class="w"> </span><span class="n">DWORD</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">DWORD</span><span class="w"> </span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">symType</span><span class="p">,</span><span class="w"> </span><span class="n">LPCSTR</span><span class="w"> </span><span class="n">pdbName</span><span class="p">,</span><span class="w"> </span><span class="n">ULONGLONG</span><span class="w"> </span><span class="n">fileVersion</span><span class="p">);</span><span class="w"></span>
@@ -528,7 +528,7 @@
 <span class="cp">#endif </span><span class="c1">// win32</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:45 +0000</p>
               
             </div>
           </div>

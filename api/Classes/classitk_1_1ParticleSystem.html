@@ -748,7 +748,7 @@
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="mi">3</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>A facade class managing interactions with a particle system. </p>
 <p>A particle system consists of a set of particle locations and domains in which those locations are defined. For example, a particle system may simply be a set of points in 3D Euclidean space that are constrained to a specified bounding box. A more complex example is a set of 3D points constrained to a given surface. The itkParticleSystem class is also designed to manage multiple sets of points across multiple domains. For example, one may create a system of dozens of point sets that are each defined in different spaces. The itkParticleSystem class can also maintain a set of transformations associated with each domain that map that particular domain into another coordinate frame, for example, a common coordinate frame. </p>
@@ -995,11 +995,11 @@
 </code></pre></div>
 <p>Add a domain to the particle system. This method also allocates space for a list of positions that are contained within the domain, and a default neighborhood calculator. The final, optional argument indicates the calling thread id. </p>
 <h3 id="function-getdomainsbegin">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-getdomain">function GetDomain</h3>
@@ -1130,7 +1130,7 @@
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getpositions">function GetPositions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return the array of particle positions. </p>
 <h3 id="function-getpositions_1">function GetPositions</h3>
@@ -1249,11 +1249,11 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleSystem</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-getdomainsbegin_1">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend_1">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span> <span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-gettransformsbegin_1">function GetTransformsBegin</h3>
@@ -1293,7 +1293,7 @@
 </code></pre></div>
 <p>API for the single transform case. </p>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:43 +0000</p>
               
             </div>
           </div>

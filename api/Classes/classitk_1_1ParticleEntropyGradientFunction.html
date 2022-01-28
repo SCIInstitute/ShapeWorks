@@ -602,9 +602,9 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TGradientNumericType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TGradientNumericType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
 <span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. </p>
 <p>The following description is an excerpt from</p>
@@ -708,7 +708,7 @@
 <h3 id="function-estimatesigma">function EstimateSigma</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EstimateSigma</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">neighborhood</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">neighborhood</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">weights</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
@@ -776,7 +776,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeAngularWeights</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span> <span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
@@ -821,7 +821,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">SigmaCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:31 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:43 +0000</p>
               
             </div>
           </div>

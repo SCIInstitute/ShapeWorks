@@ -349,13 +349,13 @@
 <span class="k">using</span><span class="w"> </span><span class="n">ThinPlateSplineTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">RBFSSparseTransform</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">TransformType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ReconstructSurface</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReconstructSurface</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span> <span class="nc">TransformType</span><span class="o">::</span><span class="n">PointSetType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointIdType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span> <span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointIdentifier</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">PointSetType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointIdType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointIdentifier</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">ReconstructSurface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">ReconstructSurface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">denseFile</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sparseFile</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">goodPointsFile</span><span class="p">);</span><span class="w"></span>
@@ -417,7 +417,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

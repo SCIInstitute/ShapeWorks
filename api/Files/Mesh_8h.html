@@ -341,18 +341,18 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ImageUtils.h&quot;</span><span class="cp"></span>
 
-<span class="k">class</span> <span class="nc">vtkCellLocator</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCellLocator</span><span class="p">;</span><span class="w"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPointData.h&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">Mesh</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">enum</span> <span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Rigid</span><span class="p">,</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span><span class="w"> </span><span class="n">Affine</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">enum</span> <span class="nc">DistanceMethod</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">PointToPoint</span><span class="p">,</span><span class="w"> </span><span class="n">PointToCell</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">enum</span> <span class="nc">CurvatureType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Principal</span><span class="p">,</span><span class="w"> </span><span class="n">Gaussian</span><span class="p">,</span><span class="w"> </span><span class="n">Mean</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">enum</span> <span class="nc">SubdivisionType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="n">Loop</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Rigid</span><span class="p">,</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span><span class="w"> </span><span class="n">Affine</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">DistanceMethod</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">PointToPoint</span><span class="p">,</span><span class="w"> </span><span class="n">PointToCell</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">CurvatureType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Principal</span><span class="p">,</span><span class="w"> </span><span class="n">Gaussian</span><span class="p">,</span><span class="w"> </span><span class="n">Mean</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">SubdivisionType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="n">Loop</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MeshType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MeshPoints</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
@@ -453,7 +453,7 @@
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setFieldForFaces</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getField</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mesh</span><span class="o">-&gt;</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetNumberOfArrays</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
@@ -506,7 +506,7 @@
 <span class="w">  </span><span class="n">MeshPoints</span><span class="w"> </span><span class="nf">getIGLMesh</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"> </span><span class="c1">// Copied directly from VtkMeshWrapper. this-&gt;poly_data_ becomes this-&gt;mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
 
 <span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedCommandData</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">Mesh</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mesh</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// only for use by SharedCommandData since a Mesh should always be valid, never &quot;empty&quot;</span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">MeshType</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span><span class="w"></span>
@@ -532,7 +532,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

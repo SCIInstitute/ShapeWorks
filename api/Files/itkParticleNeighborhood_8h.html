@@ -364,7 +364,7 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">=</span><span class="mi">3</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="nl">ParticleNeighborhood</span> <span class="p">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
@@ -404,7 +404,7 @@
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">itkExceptionMacro</span><span class="p">(</span><span class="s">&quot;No algorithm for finding neighbors has been specified.&quot;</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">  </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">  </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">itkExceptionMacro</span><span class="p">(</span><span class="s">&quot;No algorithm for finding neighbors has been specified.&quot;</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -429,8 +429,8 @@
 <span class="w">  </span><span class="n">ParticleNeighborhood</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
 
-<span class="w">  </span><span class="k">typename</span> <span class="nc">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_PointContainer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span> <span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Domain</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_PointContainer</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Domain</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
@@ -447,7 +447,7 @@
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:32 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>

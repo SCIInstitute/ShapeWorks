@@ -355,21 +355,21 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/BarGraph.h&gt;</span><span class="cp"></span>
 
-<span class="k">class</span> <span class="nc">Ui_AnalysisTool</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">JKQTPlotter</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_AnalysisTool</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JKQTPlotter</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">Session</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">Lightbox</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span> <span class="nc">GroupPvalueJob</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GroupPvalueJob</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">AnalysisTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 <span class="k">public</span><span class="o">:</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">enum</span> <span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">Global</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-2</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">Local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="p">};</span><span class="w"></span>
@@ -435,7 +435,7 @@
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_SINGLE_SAMPLE_C</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="nl">Q_SLOTS</span><span class="p">:</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// analysis mode</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_tabWidget_currentChanged</span><span class="p">();</span><span class="w"></span>
@@ -495,7 +495,7 @@
 
 <span class="nl">signals</span><span class="p">:</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">pca_update</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
@@ -567,7 +567,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-01-27 at 02:24:33 +0000</p>
+<p>Updated on 2022-01-28 at 07:11:44 +0000</p>
               
             </div>
           </div>
