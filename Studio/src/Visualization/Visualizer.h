@@ -100,6 +100,12 @@ class Visualizer : public QObject {
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
+  //! Set the currently selected image volume
+  void set_image_volume(const std::string& image_volume);
+
+  //! Get the currently selected image volume
+  const std::string& get_image_volume() const;
+
   //! clear out the viewers
   void clear_viewers();
 
@@ -148,6 +154,7 @@ class Visualizer : public QObject {
 
   std::string display_mode_;
   std::string feature_map_;
+  std::string image_volume_;
   int alignment_domain_;
 
   bool center_;

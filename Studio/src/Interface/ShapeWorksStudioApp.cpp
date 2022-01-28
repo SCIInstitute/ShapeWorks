@@ -892,7 +892,14 @@ void ShapeWorksStudioApp::update_view_mode() {
     if (feature_map == "-none-") {
       feature_map = "";
     }
-    this->analysis_tool_->set_feature_map(feature_map);
+    analysis_tool_->set_feature_map(feature_map);
+
+    auto image_volume_name = get_image_name();
+    if (image_volume_name == "-none-") {
+      image_volume_name = "";
+    }
+
+    visualizer_->set_image_volume(image_volume_name);
 
     std::string feature_map_override = "";
     if (this->get_tool_state() == Session::DEEPSSM_C) {
@@ -906,22 +913,22 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     if (feature_map_override != "") {
-      this->ui_->features->hide();
-      this->ui_->feature_line->setText(QString::fromStdString(feature_map_override));
-      this->ui_->feature_line->setVisible(true);
+      ui_->features->hide();
+      ui_->feature_line->setText(QString::fromStdString(feature_map_override));
+      ui_->feature_line->setVisible(true);
       feature_map = feature_map_override;
     } else {
-      this->ui_->features->show();
-      this->ui_->feature_line->hide();
+      ui_->features->show();
+      ui_->feature_line->hide();
     }
 
-    auto feature_maps = this->session_->get_project()->get_feature_names();
-    this->ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "");
+    auto feature_maps = session_->get_project()->get_feature_names();
+    ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "");
 
-    this->visualizer_->set_feature_map(feature_map);
-    this->visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
-    this->update_feature_map_scale();
-    this->update_display(true);
+    visualizer_->set_feature_map(feature_map);
+    visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
+    update_feature_map_scale();
+    update_display(true);
   }
 }
 

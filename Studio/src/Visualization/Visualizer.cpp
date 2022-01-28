@@ -330,10 +330,7 @@ void Visualizer::compute_measurements() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_mean(const Eigen::VectorXd& mean)
-{
-  this->cached_mean_ = mean;
-}
+void Visualizer::set_mean(const Eigen::VectorXd& mean) { this->cached_mean_ = mean; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera() {
@@ -359,6 +356,12 @@ void Visualizer::set_feature_map(const std::string& feature_map) {
   this->feature_map_ = feature_map;
   this->reset_feature_range();
 }
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_image_volume(const string& image_volume) { image_volume_ = image_volume; }
+
+//-----------------------------------------------------------------------------
+const string& Visualizer::get_image_volume() const { return image_volume_; }
 
 //-----------------------------------------------------------------------------
 bool Visualizer::get_center() { return this->center_; }

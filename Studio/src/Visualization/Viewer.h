@@ -23,6 +23,9 @@ class vtkTransform;
 class vtkReverseSense;
 class vtkHandleWidget;
 class vtkPolygonalSurfacePointPlacer;
+class vtkImageSlice;
+class vtkImageSliceMapper;
+class vtkImageData;
 
 namespace shapeworks {
 
@@ -130,6 +133,8 @@ class Viewer {
 
   void update_actors();
 
+  void update_image_volume();
+
   bool showing_feature_map();
   std::string get_displayed_feature_map();
 
@@ -176,6 +181,10 @@ class Viewer {
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
+
+  vtkSmartPointer<vtkImageSlice> image_slice_;
+  vtkSmartPointer<vtkImageSliceMapper> slice_mapper_;
+  vtkSmartPointer<vtkImageData> image_volume_;
 
   bool arrows_visible_ = false;
 

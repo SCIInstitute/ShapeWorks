@@ -12,6 +12,7 @@
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
 #include <vtkImageData.h>
+#include <vtkImageSlice.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
@@ -29,6 +30,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
+#include <vtkImageSliceMapper.h>
 
 namespace shapeworks {
 
@@ -178,6 +180,8 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+
+  image_slice_ = vtkSmartPointer<vtkImageSlice>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -192,7 +196,7 @@ void Viewer::set_color_scheme(int scheme) {
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
-                                 color_schemes_[scheme].background.b);
+                           color_schemes_[scheme].background.b);
 
   double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
                     color_schemes_[scheme].background.b) /
@@ -575,8 +579,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         mapper->ScalarVisibilityOff();
       }
     }
+
+
     display_vector_field();
   }
+
+  update_image_volume();
 
   update_actors();
   update_glyph_properties();
@@ -597,9 +605,7 @@ void Viewer::clear_viewer() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::reset_camera(std::array<double, 3> c) {
-  renderer_->ResetCamera();
-}
+void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
 
 //-----------------------------------------------------------------------------
 void Viewer::set_renderer(vtkSmartPointer<vtkRenderer> renderer) { renderer_ = renderer; }
@@ -775,6 +781,7 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(glyph_actor_);
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
+  renderer_->RemoveActor(image_slice_);
 
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
@@ -799,7 +806,33 @@ void Viewer::update_actors() {
       renderer_->AddActor(surface_actors_[i]);
     }
   }
+
+  if (image_slice_) {
+    renderer_->AddViewProp(image_slice_);
+  }
+
   update_opacities();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_image_volume()
+{
+  std::cerr << "update_image_volume\n";
+  auto image_volume_name = visualizer_->get_image_volume();
+  if (image_volume_name != "") {
+    std::cerr << "not null, netting name tp " << image_volume_name <<"\n";
+    auto volume_ = shape_->get_image_volume(image_volume_name);
+    if (!volume_) {
+      std::cerr << "error loading image volume\n";
+    }
+    std::cerr << "volume = " << image_volume_ << "\n";
+    image_volume_ = vtkSmartPointer<vtkImageData>::New();
+    image_volume_->DeepCopy(volume_);
+    slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
+    slice_mapper_->SetInputData(image_volume_);
+    image_slice_->SetMapper(slice_mapper_);
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -884,8 +917,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object) {
   if (num_points <= 0) {
     exclusion_sphere_points_->Reset();
   } else {
-    vtkUnsignedLongArray* scalars =
-        (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
+    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
     scalars->Reset();
     scalars->SetNumberOfTuples(num_points);
 
