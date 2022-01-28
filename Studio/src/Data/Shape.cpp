@@ -1,6 +1,7 @@
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <Libs/Image/Image.h>
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
@@ -222,16 +223,10 @@ bool Shape::store_landmarks() {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points()
-{
-  return this->particles_.get_combined_global_particles();
-}
+Eigen::VectorXd Shape::get_global_correspondence_points() { return this->particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points()
-{
-  return this->particles_.get_combined_local_particles();
-}
+Eigen::VectorXd Shape::get_local_correspondence_points() { return this->particles_.get_combined_local_particles(); }
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return this->id_; }
@@ -398,8 +393,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, Eigen::VectorXd& points)
-{
+bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
     return false;
@@ -482,6 +476,24 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       }
     }
   }
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_name) {
+  auto filenames = this->subject_->get_feature_filenames();
+  if (filenames.find(image_volume_name) != filenames.end()) {
+    auto filename = filenames[image_volume_name];
+
+    if (image_volume_filename_ != filename) {
+      Image image(filename);
+      image_volume_ = vtkSmartPointer<vtkImageData>::New();
+      image_volume_->DeepCopy(image.getVTKImage());
+      image_volume_filename_ = filename;
+    }
+
+    return image_volume_;
+  }
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -642,8 +654,7 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points_for_display()
-{
+Eigen::VectorXd Shape::get_global_correspondence_points_for_display() {
   auto worlds = this->particles_.get_world_particles();
   int size = 0;
   for (int i = 0; i < worlds.size(); i++) {

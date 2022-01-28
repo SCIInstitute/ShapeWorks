@@ -138,6 +138,8 @@ class Shape {
 
   void load_feature(std::string display_mode, std::string feature);
 
+  vtkSmartPointer<vtkImageData> get_image_volume(std::string image_volume_name);
+
   Eigen::VectorXf get_point_features(std::string feature);
 
   void set_point_features(std::string feature, Eigen::VectorXf values);
@@ -189,5 +191,8 @@ class Shape {
   QSharedPointer<MeshManager> mesh_manager_;
 
   Eigen::MatrixXd landmarks_;
+
+  vtkSmartPointer<vtkImageData> image_volume_;
+  std::string image_volume_filename_;
 };
 }  // namespace shapeworks
