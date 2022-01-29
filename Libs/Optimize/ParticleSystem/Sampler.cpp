@@ -36,6 +36,7 @@ Sampler::Sampler()
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
+  // TODO: Initialize Mlpca optimization function
 
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
@@ -45,6 +46,7 @@ Sampler::Sampler()
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  // TODO: set sahpe matrix here for ensemble entropy function
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
@@ -242,7 +244,7 @@ void Sampler::Execute()
     this->AllocateDataCaches();
     this->SetAdaptivityMode(m_AdaptivityMode);
     this->SetCorrespondenceMode(m_CorrespondenceMode);
-    this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+    this->GetOptimizer()->SetGradientFunction(m_LinkingFunction); // Main Gradient Function set here
     m_LinkingFunction->SetAOn();
     m_LinkingFunction->SetBOn();
 
@@ -260,7 +262,12 @@ void Sampler::Execute()
   if (this->GetInitializing() == true) return;
 
   //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
-  this->GetOptimizer()->StartOptimization();
+  if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::MlpcaBasedEntropy){
+    this->GetOptimizer()->StartMlpcaOptimization();
+  }
+  else{
+    this->GetOptimizer()->StartOptimization();
+  }
 }
 
 void Sampler::ReadTransforms()

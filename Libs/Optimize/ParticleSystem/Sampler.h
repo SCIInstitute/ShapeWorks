@@ -16,6 +16,7 @@
 #include "CorrespondenceMode.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
+#include "itkParticleEnsembleMlpcaEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
@@ -258,6 +259,11 @@ public:
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
+    else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEntropy) {
+      m_LinkingFunction->SetFunctionB(m_MlpcaBasedEntropyFunction);
+      // TODO: check correct usage here
+    }
+    //TODO: For mlpca-optimize
 
     m_CorrespondenceMode = mode;
   }
@@ -517,6 +523,7 @@ protected:
   itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::Pointer m_MlpcaBasedEntropyFunction;
 
   bool initialize_ffcs(size_t dom);
 

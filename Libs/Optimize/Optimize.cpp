@@ -1013,8 +1013,10 @@ void Optimize::RunOptimize()
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
+  
+  // TODO: add mlpca terms here
 
-  m_sampler->SetCorrespondenceOn();
+  m_sampler->SetCorrespondenceOn(); //  B - ON
 
   if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(),

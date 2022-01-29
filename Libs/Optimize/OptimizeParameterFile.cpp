@@ -1299,7 +1299,8 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
 
   dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
-    SetExplanatory(evars);
+    SetExplanatory(evars); 
+    // TODO: like this, we can set individual partical system here for mlpca
 
   optimize->SetUseRegression(true);
   if (optimize->GetTimePtsPerSubject() > 1) {

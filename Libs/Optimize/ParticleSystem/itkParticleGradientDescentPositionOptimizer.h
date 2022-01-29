@@ -81,7 +81,14 @@ public:
   {
     this->StartAdaptiveGaussSeidelOptimization();
   }
+
+  void StartMlpcaOptimization()
+  {
+    this->StartMlpcaBasedAdaptiveGaussSeidelOptimization();
+  }
   void StartAdaptiveGaussSeidelOptimization();
+
+  void StartMlpcaBasedAdaptiveGaussSeidelOptimization();
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
                                       const double& maximumUpdateAllowed);
