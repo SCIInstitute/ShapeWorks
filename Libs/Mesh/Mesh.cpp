@@ -45,6 +45,9 @@
 #include <vtkImageStencil.h>
 #include <vtkDoubleArray.h>
 #include <vtkKdTreePointLocator.h>
+#include <vtkPointLocator.h>
+#include <vtkIncrementalOctreePointLocator.h>
+#include <vtkIncrementalPointLocator.h>
 #include <vtkCellLocator.h>
 #include <vtkGenericCell.h>
 #include <vtkPlaneCollection.h>
@@ -56,6 +59,9 @@
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkLoopSubdivisionFilter.h>
 #include <vtkButterflySubdivisionFilter.h>
+#include <vtkPointData.h>
+#include <vtkCellData.h>
+#include <vtkVector.h>
 
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <geometrycentral/surface/surface_mesh.h>
@@ -217,6 +223,7 @@ Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double 
   vtkOut.SetOptions(ops);
 
   this->mesh = vtkOut.ExportToVTK(*surf1);
+  this->invalidateLocators();
 
   return *this;
 }
@@ -238,6 +245,8 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
 
   // must regenerate normals after smoothing
   computeNormals();
+
+  this->invalidateLocators();
   return *this;
 }
 
@@ -251,8 +260,11 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   smoother->SetPassBand(passband);
   smoother->Update();
   this->mesh = smoother->GetOutput();
+
   // must regenerate normals after smoothing
   computeNormals();
+
+  this->invalidateLocators();
   return *this;
 }
 
@@ -289,6 +301,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
   // must regenerate normals after smoothing
   computeNormals();
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -321,6 +334,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
 
+  this->invalidateLocators();
   return invertNormals().applyTransform(transform);
 }
 
@@ -338,6 +352,7 @@ Mesh &Mesh::applyTransform(const MeshTransform transform)
   resampler->Update();
   this->mesh = resampler->GetOutput();
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -357,6 +372,7 @@ Mesh &Mesh::fillHoles()
   // Restore the original normals
   mesh->GetPointData()->SetNormals(origNormal);
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -368,6 +384,7 @@ Mesh &Mesh::probeVolume(const Image &image)
   probeFilter->Update();
   this->mesh = probeFilter->GetPolyDataOutput();
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -379,6 +396,7 @@ Mesh &Mesh::clip(const Plane plane)
   clipper->Update();
   this->mesh = clipper->GetOutput();
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -428,27 +446,33 @@ Mesh& Mesh::fixElement()
   FEVTKExport vtkOut;
   this->mesh = vtkOut.ExportToVTK(*meshFix);
 
+  this->invalidateLocators();
   return *this;
 }
 
-Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
+std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod method) const
 {
   if (target.numPoints() == 0 || numPoints() == 0)
     throw std::invalid_argument("meshes must have points");
 
-  // allocate Array to store distances from each point to target
+  // allocate Arrays to store distances and ids from each point to target
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("distance");
+  vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetNumberOfTuples(numPoints());
+  ids->SetName("ids");
 
   // Find the nearest neighbors to each point and compute distance between them
-  Point currentPoint, closestPoint;
+  Point3 currentPoint, closestPoint;
 
   switch(method)
   {
     case PointToPoint:
     {
+      // build point locator for target mesh
       vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
       targetPointLocator->SetDataSet(target.mesh);
       targetPointLocator->BuildLocator();
@@ -458,6 +482,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
         mesh->GetPoint(i, currentPoint.GetDataPointer());
         vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint.GetDataPointer());
         target.mesh->GetPoint(closestPointId, closestPoint.GetDataPointer());
+        ids->SetValue(i, closestPointId);
         distance->SetValue(i, length(currentPoint - closestPoint));
       }
     }
@@ -465,6 +490,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 
     case PointToCell:
     {
+      // build cell locator for target mesh
       vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
       targetCellLocator->SetDataSet(target.mesh);
       targetCellLocator->BuildLocator();
@@ -477,7 +503,10 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
       for (int i = 0; i < numPoints(); i++)
       {
         mesh->GetPoint(i, currentPoint.GetDataPointer());
-        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
+        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(),
+                                            closestPoint.GetDataPointer(),
+                                            cell, cellId, subId, dist2);
+        ids->SetValue(i, cellId);
         distance->SetValue(i, std::sqrt(dist2));
       }
     }
@@ -486,12 +515,12 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
     default:
       throw std::invalid_argument("invalid distance method");
   }
-
-  // add distance field to this mesh
-  this->setField("distance", distance);
-
-  return *this;
+  
+  return std::vector<Field>{ distance, ids };
 }
+
+// TODO^2: do the same thing for the other couple functions below that set a field and return the other field (they shouldn't be setting a field)
+// (search for setField and you'll see the 2-3 places it needs to be done)
 
 Mesh& Mesh::clipClosedSurface(const Plane plane)
 {
@@ -505,6 +534,7 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
   clipper->Update();
   this->mesh = clipper->GetOutput();
 
+  this->invalidateLocators();
   return *this;
 }
 
@@ -523,33 +553,74 @@ Mesh& Mesh::computeNormals()
   return *this;
 }
 
-Point3 Mesh::closestPoint(const Point3 point)
+void Mesh::invalidateLocators() const
 {
-  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
-  targetCellLocator->SetDataSet(this->mesh);
-  targetCellLocator->BuildLocator();
+  this->cellLocator = nullptr;
+  this->pointLocator = nullptr;
+}
+
+void Mesh::updatePointLocator() const
+{
+  if (!this->pointLocator)
+  {
+    this->pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    this->pointLocator->SetDataSet(this->mesh);
+    this->pointLocator->BuildLocator();
+  }
+}
+
+void Mesh::updateCellLocator() const
+{
+  if (!this->cellLocator)
+  {
+    this->cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+    this->cellLocator->SetDataSet(this->mesh);
+    this->cellLocator->BuildLocator();
+  }
+}
+
+Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const
+{
+  this->updateCellLocator();
 
   double dist2;
   Point3 closestPoint;
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
-  vtkIdType cellId;
   int subId;
 
-  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(), cell, cellId, subId, dist2);
+  cellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint.GetDataPointer(),
+                                cell, face_id, subId, dist2);
+
+  // distance from point to closest point
+  distance = sqrt(dist2);
+
+  // compute face normal: (p2-p1) x (p0-p1)
+  double pt0[3], pt1[3], pt2[3];
+  cell->GetPoints()->GetPoint(0, pt0);
+  cell->GetPoints()->GetPoint(1, pt1);
+  cell->GetPoints()->GetPoint(2, pt2);
+  vtkVector3d v0(pt2[0] - pt1[0], pt2[1] - pt1[1], pt2[2] - pt1[2]);
+  vtkVector3d v1(pt0[0] - pt1[0], pt0[1] - pt1[1], pt0[2] - pt1[2]);
+  auto norm = v0.Cross(v1);
+
+  // use dot product to determine whether point is outside mesh
+  vtkVector3d pvec(point[0] - closestPoint[0],
+                   point[1] - closestPoint[1],
+                   point[2] - closestPoint[2]);
+  outside = pvec.Dot(norm) > 0.0;
+
   return closestPoint;
 }
 
-int Mesh::closestPointId(const Point3 point)
+int Mesh::closestPointId(const Point3 point) const
 {
-  vtkSmartPointer<vtkKdTreePointLocator> pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  pointLocator->SetDataSet(this->mesh);
-  pointLocator->BuildLocator();
+  this->updatePointLocator();
 
   vtkIdType closestPointId = pointLocator->FindClosestPoint(point.GetDataPointer());
   return closestPointId;
 }
 
-double Mesh::geodesicDistance(int source, int target)
+double Mesh::geodesicDistance(int source, int target) const
 {
   if (source < 0 || target < 0 || numPoints() < source || numPoints() < target) {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
@@ -559,7 +630,7 @@ double Mesh::geodesicDistance(int source, int target)
   return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
 }
 
-Field Mesh::geodesicDistance(const Point3 landmark)
+Field Mesh::geodesicDistance(const Point3 landmark) const
 {
   vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
@@ -576,7 +647,7 @@ Field Mesh::geodesicDistance(const Point3 landmark)
   return distance;
 }
 
-Field Mesh::geodesicDistance(const std::vector<Point3> curve)
+Field Mesh::geodesicDistance(const std::vector<Point3> curve) const
 {
   vtkSmartPointer<vtkDoubleArray> minDistance = vtkSmartPointer<vtkDoubleArray>::New();
   minDistance->SetNumberOfComponents(1);
@@ -597,7 +668,7 @@ Field Mesh::geodesicDistance(const std::vector<Point3> curve)
   return minDistance;
 }
 
-Field Mesh::curvature(const CurvatureType type)
+Field Mesh::curvature(const CurvatureType type) const
 {
   Eigen::MatrixXd V = points();
 	Eigen::MatrixXi F = faces();
@@ -684,7 +755,7 @@ Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
   return *this;
 }
 
-Image Mesh::toImage(PhysicalRegion region, Point spacing) const
+Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const
 {
   // if no region, use mesh bounding box
   if (region == PhysicalRegion()) {
@@ -728,12 +799,49 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
   return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(PhysicalRegion region, Point spacing) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, const Dims padding) const
 {
-  // TODO: convert directly to DT (github #810)
-  Image image(toImage(region, spacing));
-  image.antialias(50, 0.00).computeDT();
-  return image;
+  this->updateCellLocator();
+
+  // if no region, use mesh bounding box
+  if (region == PhysicalRegion()) {
+    region = boundingBox();
+  }
+
+  // compute dims
+  auto dims = toDims(region.size() / spacing) + Dims({padding[0]*2, padding[1]*2, padding[2]*2});
+
+  // allocate output image, setting origin and spacing
+  Image img(dims);
+  img.setSpacing(toVector(spacing));
+  auto origin = region.min - spacing * toPoint(padding);
+  img.setOrigin(origin);
+
+  auto itkimg = img.getITKImage();
+
+  bool outside;
+  double distance;
+  vtkIdType face_id;
+
+  // for each pixel, set value to be its distance to the mesh
+  for (int z = 0; z < dims[0]; z++)
+  {
+    for (int y = 0; y < dims[1]; y++)
+    {
+      for (int x = 0; x < dims[2]; x++)
+      {
+        auto idx = Image::ImageType::IndexType({z,y,x}); // itk images are indexed by slice,row,col
+        Point3 loc = Point3({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
+
+        auto cp = closestPoint(loc, outside, distance, face_id);
+
+        // NOTE: distance is positive inside, negative outside
+        itkimg->SetPixel(idx, outside ? -distance : distance);
+      }
+    }
+  }
+
+  return img;
 }
 
 Point3 Mesh::center() const
@@ -824,23 +932,63 @@ std::vector<std::string> Mesh::getFieldNames() const
   return fields;
 }
 
-Mesh& Mesh::setField(std::string name, Array array)
+Field Mesh::getField(const std::string& name, const FieldType type) const
 {
-  if (!array)
+  if (type == Mesh::Point)
+  {
+    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+      throw std::invalid_argument("Mesh has no fields.");
+
+    Field rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    if (!rawarr)
+      throw std::invalid_argument("Mesh does not contain a point field called " + name);
+
+    return rawarr;
+  }
+  else if (type == Mesh::Face)
+  {
+    return getFieldForFaces(name);
+  }
+  else
+    throw std::invalid_argument("Incorrect Mesh::FieldType.");
+}
+
+Field Mesh::getFieldForFaces(const std::string& name) const
+{
+  if (mesh->GetCellData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no face fields.");
+
+  Field rawarr = mesh->GetCellData()->GetArray(name.c_str());
+  if (!rawarr)
+    throw std::invalid_argument("Mesh does not contain a cell field called " + name);
+
+  return rawarr;
+}
+
+Mesh& Mesh::setField(std::string name, Array array, const FieldType type)
+{
+  if (type == Mesh::Point)
+  {
+    if (!array)
     throw std::invalid_argument("Invalid array.");
 
-  if (name.empty())
-    throw std::invalid_argument("Provide name for the new field");
+    if (name.empty())
+      throw std::invalid_argument("Provide name for the new field");
 
-  int numVertices = numPoints();
-  if (array->GetNumberOfTuples() != numVertices) {
-    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+    int numVertices = numPoints();
+    if (array->GetNumberOfTuples() != numVertices) {
+      std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+    }
+
+    array->SetName(name.c_str());
+    mesh->GetPointData()->AddArray(array);
+
+    return *this;
   }
-
-  array->SetName(name.c_str());
-  mesh->GetPointData()->AddArray(array);
-
-  return *this;
+  else if(type == Mesh::Face)
+    return setFieldForFaces(name, array);
+  else
+    throw std::invalid_argument("Incorrect Mesh::FieldType.");
 }
 
 Mesh& Mesh::setFieldForFaces(std::string name, Array array)
@@ -859,7 +1007,7 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
   }
 
   array->SetName(name.c_str());
-  mesh->GetCellData()->SetAttribute(array, 0);
+  mesh->GetCellData()->AddArray(array);
 
   return *this;
 }
@@ -897,88 +1045,28 @@ double Mesh::getFieldValue(const std::string& name, int idx) const
     throw std::invalid_argument("Requested index in field is out of range");
 }
 
-Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const{
-    if (name.empty())
-      throw std::invalid_argument("Provide name for field");
+Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
 
-    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-      throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
-    auto arr = mesh->GetPointData()->GetArray(name.c_str());
-    if (!arr)
-      throw std::invalid_argument("Field does not exist.");
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
 
-    if (arr->GetNumberOfTuples() > idx){
-      size_t compnum = arr->GetNumberOfComponents();
-      Eigen::VectorXd vec(compnum);
-      for(size_t i = 0; i < compnum; i++){
-          vec(i) = arr->GetTuple(idx)[i];
-      }
-      return vec;
+  if (arr->GetNumberOfTuples() > idx) {
+    size_t compnum = arr->GetNumberOfComponents();
+    Eigen::VectorXd vec(compnum);
+    for(size_t i = 0; i < compnum; i++) {
+        vec(i) = arr->GetTuple(idx)[i];
     }
-    else
-      throw std::invalid_argument("Requested index in field is out of range");
-}
-
-std::vector<double> Mesh::getFieldRange(const std::string& name) const
-{
-  if (name.empty())
-    throw std::invalid_argument("Provide name for field");
-
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-    throw std::invalid_argument("Mesh has no fields for which to compute range.");
-
-  std::vector<double> range(2);
-
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
-  if (!arr)
-    throw std::invalid_argument("Field does not exist.");
-
-  arr->GetRange(&range[0]);
-
-  return range;
-}
-
-double Mesh::getFieldMean(const std::string& name) const
-{
-  if (name.empty())
-    throw std::invalid_argument("Provide name for field");
-
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
-
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
-  if (!arr)
-    throw std::invalid_argument("Field does not exist.");
-
-  double mean{0.0};
-  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
-    // maybe compute running mean to avoid overflow? mean = (mean+value)/(i+1)
-    mean += arr->GetTuple1(i);
+    return vec;
   }
-
-  return mean / arr->GetNumberOfTuples();
-}
-
-double Mesh::getFieldStd(const std::string& name) const
-{
-  if (name.empty())
-    throw std::invalid_argument("Provide name for field");
-
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
-
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
-  if (!arr)
-    throw std::invalid_argument("Field does not exist.");
-
-  double mean = getFieldMean(name);
-  double squaredDiff{0.0};
-  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
-    squaredDiff += pow(arr->GetTuple1(i) - mean, 2);
-  }
-
-  return sqrt(squaredDiff / arr->GetNumberOfTuples());
+  else
+    throw std::invalid_argument("Requested index in field is out of range");
 }
 
 bool Mesh::compareAllPoints(const Mesh &other_mesh) const
@@ -994,8 +1082,8 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 
   for (int i = 0; i < this->numPoints(); i++)
   {
-    Point p1(this->mesh->GetPoint(i));
-    Point p2(other_mesh.mesh->GetPoint(i));
+    Point3 p1(this->mesh->GetPoint(i));
+    Point3 p2(other_mesh.mesh->GetPoint(i));
     if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
@@ -1092,8 +1180,8 @@ bool Mesh::compareAllFields(const Mesh &other_mesh, const double eps) const
 
 bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2, const double eps) const
 {
-  auto field1 = getField<vtkDataArray>(name1);
-  auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
+  auto field1 = getField(name1, Mesh::Point);
+  auto field2 = other_mesh.getField(name2.empty() ? name1 : name2, Mesh::Point);
 
   if (!field1 || !field2) {
     std::cerr << "at least one mesh missing a field\n";
@@ -1143,7 +1231,7 @@ bool Mesh::compare(const Mesh& other, const double eps) const
   return true;
 }
 
-MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations) const
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
   return createMeshTransform(mat);
@@ -1166,6 +1254,7 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os;
 }
 
+// TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
 bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query,
                      size_t dom, size_t num)
 {
@@ -1180,9 +1269,12 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
 
     // Creating cutting loop
     vtkPoints* selectionPoints = vtkPoints::New();
-    vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-    locator->SetDataSet(this->mesh);
     std::vector<size_t> boundaryVerts;
+
+    // the locator is continuously rebuilt during this function, so don't use the cached version
+    vtkSmartPointer<vtkKdTreePointLocator> tmp_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    tmp_locator->SetDataSet(this->mesh);
+    tmp_locator->BuildLocator();
 
     // Create path creator
     vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra =
@@ -1193,7 +1285,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
     for (size_t i = 0; i < boundaries[bound].size(); i++) {
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
-      vtkIdType ptid = locator->FindClosestPoint(ptdob);
+      vtkIdType ptid = tmp_locator->FindClosestPoint(ptdob);
       mesh->GetPoint(ptid, ptdob);
 
       // Add first point in boundary
@@ -1255,18 +1347,16 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
 
   } // Per boundary for loop end
 
-  locator = vtkSmartPointer<vtkCellLocator>::New();
-  locator->SetDataSet(this->mesh);
-  locator->BuildLocator();
+
 
   // Write mesh for debug purposes
 //    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
 //    this->write(fnin);
 
+  this->invalidateLocators();
   return true;
 }
 
-// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
   double closest[3];
@@ -1278,14 +1368,15 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   return bary;
 }
 
-double Mesh::getFFCValue(Eigen::Vector3d query){
-  locator->BuildLocatorIfNeeded();
+double Mesh::getFFCValue(Eigen::Vector3d query) const
+{
+  this->updateCellLocator();
 
   double closestPoint[3];
   vtkIdType cellId;
   int subId;
   double dist;
-  locator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
 
   auto cell = this->mesh->GetCell(cellId);
 
@@ -1305,14 +1396,15 @@ double Mesh::getFFCValue(Eigen::Vector3d query){
   return (bary * values.transpose()).mean();
 }
 
-Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query){
-  locator->BuildLocatorIfNeeded();
+Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const
+{
+  this->updateCellLocator();
 
   double closestPoint[3];
   vtkIdType cellId;
   int subId;
   double dist;
-  locator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
 
   double* gradAr = mesh->GetCellData()->GetArray("vff")->GetTuple3(cellId);
   Eigen::Vector3d grad(gradAr[0], gradAr[1], gradAr[2]);
@@ -1356,22 +1448,19 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   auto arr = mesh->GetPointData()->GetArray("inout"); // Check if an inout already exists
 
   // Create half-mesh tree
-  vtkSmartPointer<vtkKdTreePointLocator> kdhalf =
+  vtkSmartPointer<vtkKdTreePointLocator> kdhalf_locator =
     vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kdhalf->SetDataSet(halfmesh);
-  kdhalf->BuildLocator();
+  kdhalf_locator->SetDataSet(halfmesh);
+  kdhalf_locator->BuildLocator();
 
   // Create full-mesh tree
-  vtkSmartPointer<vtkKdTreePointLocator> kdmesh =
-    vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kdmesh->SetDataSet(this->mesh);
-  kdmesh->BuildLocator();
+  updatePointLocator();
 
   // Checking which mesh is closer to the query point. Recall that the query point must not necessarely lie on the mesh, so we check both the half mesh and the full mesh.
   double querypt[3] = {query[0], query[1], query[2]};
 
-  vtkIdType halfi = kdhalf->FindClosestPoint(querypt);
-  vtkIdType fulli = kdmesh->FindClosestPoint(querypt);
+  vtkIdType halfi = kdhalf_locator->FindClosestPoint(querypt);
+  vtkIdType fulli = this->pointLocator->FindClosestPoint(querypt);
 
   double halfp[3];
   this->mesh->GetPoint(halfi, halfp);
@@ -1390,7 +1479,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   for (vtkIdType i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
     this->mesh->GetPoint(i, fullp);
 
-    halfi = kdhalf->FindClosestPoint(fullp);
+    halfi = kdhalf_locator->FindClosestPoint(fullp);
     halfmesh->GetPoint(halfi, halfp);
     //std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] << " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
     bool ptinhalfmesh;
@@ -1415,7 +1504,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   }
 
   // Setting scalar field
-  this->setField("inout", inout);
+  this->setField("inout", inout, Mesh::Point);
 
   return inout;
 }
@@ -1427,7 +1516,6 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
                                              vtkSmartPointer<vtkDoubleArray> inout,
                                              Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom)
 {
-
   auto arr = mesh->GetPointData()->GetArray("value"); // Check if a value field already exists
 
   values->SetNumberOfComponents(1);
@@ -1488,8 +1576,9 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
 
   //std::cout << "Setting field" << std::endl;
 
-  // Setting scalar field for value
-  this->setField("value", values);
+  // TODO: don't set local field since user can do this if needed, and the
+  // function can be const. (return vector of Fields like Mesh::distance)
+  this->setField("value", values, Mesh::Point);
 
   return absvalues;
 }
@@ -1564,9 +1653,10 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
     vf->SetTuple3(i, grads(i, 0), grads(i, 1), grads(i, 2));
   }
 
-  this->setField("Gradient", vf);
-
-  this->mesh->GetCellData()->AddArray(vff);
+  // TODO: don't set field in this mesh since the user can do this if they want
+  // it to be part of the mesh, and the function can therefore be const.
+  this->setField("Gradient", vf, Mesh::Point);
+  this->setField("vff", vff, Mesh::Face);
 
   return face_grad_;
 }
@@ -1584,6 +1674,8 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
   cleanFilter->Update();
 
   this->mesh = cleanFilter->GetOutput();
+
+  this->invalidateLocators();
   return *this;
 }
 
