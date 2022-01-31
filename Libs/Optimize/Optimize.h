@@ -29,6 +29,8 @@
 
 namespace shapeworks {
 
+class Project;
+
 class MatrixContainer {
   public:
   Eigen::MatrixXd matrix_;
@@ -65,6 +67,10 @@ public:
   bool LoadParameterFile(std::string filename);
 
   bool SetUpOptimize(ProjectHandle projectFile);
+
+  //! Set the Projects
+  void SetProject(std::shared_ptr<Project> project);
+
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -336,6 +342,10 @@ protected:
 
   virtual void UpdateExportablePoints();
 
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
+
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
 
@@ -443,6 +453,8 @@ protected:
   std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }

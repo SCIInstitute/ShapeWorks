@@ -44,10 +44,14 @@
         <file>Images/IsosurfaceVisible.png</file>
         <file>Images/IsosurfaceVisibleOff.png</file>
         <file>Images/Visible.png</file>
+        <file>Images/VisibleGray.png</file>
         <file>Images/VisibleOff.png</file>
         <file>Images/spinner.png</file>
         <file>Images/log_normal.png</file>
         <file>Images/log_warning.png</file>
         <file>Images/log_error.png</file>
+        <file>Images/Brush.png</file>
+        <file>Images/flag_on.png</file>
+        <file>Images/flag_off.png</file>
     </qresource>
 </RCC>

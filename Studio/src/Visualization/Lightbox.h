@@ -55,9 +55,12 @@ public:
 
   void redraw();
 
-  void handle_pick(int* click_pos, bool one);
+  void handle_pick(int* click_pos, bool one, bool ctrl);
+
+  void handle_hover(int* click_pos);
 
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
+  void set_session(QSharedPointer<Session> session);
 
   void set_visualizer(Visualizer* visualizer);
 
@@ -132,5 +135,7 @@ private:
     = Preferences::OrientationMarkerType::none;
   Preferences::OrientationMarkerCorner current_orientation_marker_corner_
     = Preferences::OrientationMarkerCorner::upper_right;
+
+  QSharedPointer<Session> session_;
 };
 }
