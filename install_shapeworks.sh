@@ -130,6 +130,7 @@ function install_conda() {
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.2.1.post1;                    then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
+  if ! pip install itk-elastix==0.13.0;                 then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
