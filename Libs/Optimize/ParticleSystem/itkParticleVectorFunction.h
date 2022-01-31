@@ -63,7 +63,17 @@ public:
                               double &maxtimestep) const = 0;
   virtual VectorType Evaluate(unsigned int , unsigned int, const ParticleSystemType *,
                               double &maxtimestep, double &energy) const = 0;
+  // virtual VectorType EvaluateWithin(unsigned int , unsigned int, const ParticleSystemType *,
+  //                             double &maxtimestep) const = 0;
+  // virtual VectorType EvaluateWithin(unsigned int , unsigned int, const ParticleSystemType *,
+  //                             double &maxtimestep, double &energy) const = 0;
+  // virtual VectorType EvaluateBetween(unsigned int , unsigned int, const ParticleSystemType *,
+  //                             double &maxtimestep) const = 0;
+  // virtual VectorType EvaluateBetween(unsigned int , unsigned int, const ParticleSystemType *,
+  //                             double &maxtimestep, double &energy) const = 0;
   virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const =0;
+  // virtual double EnergyWithin(unsigned int, unsigned int, const ParticleSystemType *) const =0;
+  // virtual double EnergyBetween(unsigned int, unsigned int, const ParticleSystemType *) const =0;
 
 
   /** May be called by the solver class. */

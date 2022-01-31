@@ -219,8 +219,21 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
   // mesh based attributes
   bool use_mesh_based_attributes = false;
+  bool use_mlpca_optimization = false;
   std::vector<bool> use_xyz;
   std::vector<bool> use_normals;
+
+  elem = docHandle->FirstChild("mlpca_optimize").Element();
+  if (elem) { use_mlpca_optimization = (bool) atoi(elem->GetText()); }
+  if(use_mlpca_optimization == true){
+    //TODO: ensure we have more than one domain
+    if(optimize->GetDomainsPerShape() == 1){
+      std::cerr << " m_domains_per_shape should be greater than one for mlpca optimization" << std::endl;
+      return false;
+    }
+  }
+  optimize->SetMlpcaBasedOptimization(use_mlpca_optimization);
+  std::cout << "Mlpca param set" <<std::endl;
 
   elem = docHandle->FirstChild("mesh_based_attributes").Element();
   if (elem) { use_mesh_based_attributes = (bool) atoi(elem->GetText()); }
@@ -258,7 +271,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
       }
     }
   }
-
+  optimize->SetMlpcaBasedOptimization(use_mlpca_optimization);
   optimize->SetUseMeshBasedAttributes(use_mesh_based_attributes);
   optimize->SetUseXYZ(use_xyz);
   optimize->SetUseNormals(use_normals);

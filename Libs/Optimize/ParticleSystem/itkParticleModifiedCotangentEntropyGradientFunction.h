@@ -86,6 +86,24 @@ public:
     }
     virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
                                 double&, double & ) const;
+    // virtual VectorType EvaluateWithin(unsigned int, unsigned int,
+    //                             const ParticleSystemType *, double &, double&) const;
+
+    // virtual VectorType EvaluateWithin(unsigned int a,  unsigned int b,
+    //                             const ParticleSystemType *c, double &d) const
+    // {
+    //     itkExceptionMacro("This method not implemented");
+    //     return VectorType();
+    // }
+    // virtual VectorType EvaluateBetween(unsigned int, unsigned int,
+    //                             const ParticleSystemType *, double &, double&) const;
+
+    // virtual VectorType EvaluateBetween(unsigned int a,  unsigned int b,
+    //                             const ParticleSystemType *c, double &d) const
+    // {
+    //     itkExceptionMacro("This method not implemented");
+    //     return VectorType();
+    // }
 
     virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *) {}
 
@@ -95,6 +113,18 @@ public:
         this->Evaluate(a, b, c, d, e);
         return e;
     }
+    // virtual double EnergyWithin(unsigned int a, unsigned int b,
+    //                       const ParticleSystemType *c) const
+    // {
+    //     itkExceptionMacro("This method not implemented");
+    //     return 0.0;
+    // }
+    // virtual double EnergyBetween(unsigned int a, unsigned int b,
+    //                       const ParticleSystemType *c) const
+    // {
+    //     itkExceptionMacro("This method not implemented");
+    //     return 0.0;
+    // }
 
     /** */
     virtual void AfterIteration()  {  }

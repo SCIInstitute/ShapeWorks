@@ -117,11 +117,39 @@ public:
     itkExceptionMacro("This method not implemented");
     return VectorType();
   }
+  // virtual VectorType EvaluateBetween(unsigned int, unsigned int, const ParticleSystemType *,
+  //                             double &) const;
+
+  // virtual VectorType EvaluateBetween(unsigned int, unsigned int, const ParticleSystemType *,
+  //                             double &, double &) const
+  // {
+  //   itkExceptionMacro("This method not implemented");
+  //   return VectorType();
+  // }
+  // virtual VectorType EvaluateWithin(unsigned int, unsigned int, const ParticleSystemType *,
+  //                             double &) const;
+
+  // virtual VectorType EvaluateWithin(unsigned int, unsigned int, const ParticleSystemType *,
+  //                             double &, double &) const
+  // {
+  //   itkExceptionMacro("This method not implemented");
+  //   return VectorType();
+  // }
   virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const
   {
     itkExceptionMacro("This method not implemented");
     return 0.0;
   }
+  // virtual double EnergyBetween(unsigned int, unsigned int, const ParticleSystemType *) const
+  // {
+  //   itkExceptionMacro("This method not implemented");
+  //   return 0.0;
+  // }
+  // virtual double EnergyWithin(unsigned int, unsigned int, const ParticleSystemType *) const
+  // {
+  //   itkExceptionMacro("This method not implemented");
+  //   return 0.0;
+  // }
 
   virtual void ResetBuffers()
   {

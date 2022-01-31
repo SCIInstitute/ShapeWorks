@@ -24,6 +24,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleDualVectorFunction.h"
 #include <algorithm>
 #include <limits>
 
@@ -69,7 +70,7 @@ public:
 
   /** Type of the gradient function. */
   typedef ParticleVectorFunction<VDimension> GradientFunctionType;
-  
+  typedef ParticleDualVectorFunction<VDimension> DualGradientFunctionType;
   /** Numerical vector type. */
   typedef typename GradientFunctionType::VectorType VectorType;
 
@@ -82,13 +83,13 @@ public:
     this->StartAdaptiveGaussSeidelOptimization();
   }
 
-  void StartMlpcaOptimization()
+  void StartMlpcaOptimization(bool flag_b)
   {
-    this->StartMlpcaBasedAdaptiveGaussSeidelOptimization();
+    this->StartMlpcaBasedAdaptiveGaussSeidelOptimization(flag_b);
   }
   void StartAdaptiveGaussSeidelOptimization();
 
-  void StartMlpcaBasedAdaptiveGaussSeidelOptimization();
+  void StartMlpcaBasedAdaptiveGaussSeidelOptimization(bool flag_b);
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
                                       const double& maximumUpdateAllowed);

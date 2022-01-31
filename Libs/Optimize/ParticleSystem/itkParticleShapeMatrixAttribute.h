@@ -97,7 +97,7 @@ public:
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
-            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticles[i] = ps->GetNumberOfParticles(i);}
+            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)
@@ -115,7 +115,7 @@ public:
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
-            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticles[i] = ps->GetNumberOfParticles(i);}
+            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)
@@ -163,13 +163,13 @@ public:
     void SetDomainsPerShape(int i)
     { 
       m_DomainsPerShape = i; 
-      m_numberOfParticles.resize(m_DomainsPerShape);  
+      m_numberOfParticlesAll.resize(m_DomainsPerShape);  
     }
     int GetDomainsPerShape() const
     { return m_DomainsPerShape; }
 
     std::vector<int> GetAllNumberOfParticles() const
-    { return m_numberOfParticles; }
+    { return m_numberOfParticlesAll; }
 
 
     virtual void BeforeIteration() {}
@@ -194,7 +194,7 @@ protected:
     {   Superclass::PrintSelf(os,indent);  }
 
     int m_DomainsPerShape;
-    std::vector<int> m_numberOfParticles;
+    std::vector<int> m_numberOfParticlesAll;
 private:
     ParticleShapeMatrixAttribute(const Self&); //purposely not implemented
     void operator=(const Self&); //purposely not implemented

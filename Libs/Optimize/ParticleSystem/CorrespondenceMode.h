@@ -9,6 +9,6 @@ namespace shapeworks {
     EnsembleMixedEffectsEntropy = 4,
     MeshBasedGeneralEntropy = 5,
     MeshBasedGeneralMeanEnergy = 6,
-    MlpcaBasedEntropy = 7
+    MlpcaBasedEnsembleEntropy = 7
   };
 }

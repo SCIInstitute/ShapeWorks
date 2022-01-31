@@ -259,8 +259,9 @@ public:
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEntropy) {
-      m_LinkingFunction->SetFunctionB(m_MlpcaBasedEntropyFunction);
+    else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy) {
+      m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
+      m_MlpcaBasedEnsembleEntropyFunction->UseEntropy();
       // TODO: check correct usage here
     }
     //TODO: For mlpca-optimize
@@ -332,6 +333,10 @@ public:
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
+
+  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>* GetEnsembleMlpcaEntropyFunction()
+  { return m_MlpcaBasedEnsembleEntropyFunction.GetPointer(); }
+
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
@@ -513,6 +518,7 @@ protected:
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::Pointer m_MlpcaBasedEnsembleEntropyFunction;
 
   itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
@@ -523,7 +529,7 @@ protected:
   itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
-  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::Pointer m_MlpcaBasedEntropyFunction;
+
 
   bool initialize_ffcs(size_t dom);
 

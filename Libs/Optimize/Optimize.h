@@ -120,6 +120,10 @@ public:
   //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
 
+  void SetMlpcaBasedOptimization(bool use_mlpca_optimization);
+
+  bool GetMlpcaBasedOptimization();
+
   //! Get if mesh based attributes are being used
   bool GetUseMeshBasedAttributes();
 
@@ -364,6 +368,7 @@ protected:
   std::string m_output_transform_file;
   bool m_output_transform_files = false;
   bool m_mesh_based_attributes = false;
+  bool m_use_mlpca_optimization = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
   std::vector<int> m_attributes_per_domain;

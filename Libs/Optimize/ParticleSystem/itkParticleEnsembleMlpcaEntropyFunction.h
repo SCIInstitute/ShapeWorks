@@ -46,13 +46,21 @@ public:
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */  
+  
   virtual VectorType Evaluate(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const;
   virtual VectorType Evaluate(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
-    double e;
-    return this->Evaluate(a,b,c,d,e);
+    itkExceptionMacro("This method not implemented");
+    return VectorType();
+  }
+  
+  virtual double Energy(unsigned int a, unsigned int b,
+                        const ParticleSystemType *c) const
+  {
+    itkExceptionMacro("This method not implemented");
+    return 0.0;
   }
   
   virtual VectorType EvaluateWithin(unsigned int, unsigned int,
@@ -73,14 +81,6 @@ public:
     return this->EvaluateBetween(a,b,c,d,e);
   }
   
-  virtual double Energy(unsigned int a, unsigned int b,
-                        const ParticleSystemType *c) const
-  {
-    double e, d;
-    this->Evaluate(a,b,c,d,e);
-    return e;
-  }
-
   virtual double EnergyWithin(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
@@ -180,10 +180,16 @@ public:
   {
     typename ParticleEnsembleMlpcaEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleMlpcaEntropyFunction<VDimension>::New();
 
-    copy->m_PointsUpdate = this->m_PointsUpdate;
+    // copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_PointsUpdateAllBetween = this->m_PointsUpdateAllBetween;
+    copy->m_PointsUpdateAllWithin = this->m_PointsUpdateAllWithin;
     copy->m_MinimumVariance = this->m_MinimumVariance;
-    copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
-    copy->m_CurrentEnergy = this->m_CurrentEnergy;
+    copy->m_MinimumWithinEigenValue = this->m_MinimumWithinEigenValue;
+    copy->m_MinimumBetweenEigenValue = this->m_MinimumBetweenEigenValue;
+    copy->m_CurrentBetweenEnergy = this->m_CurrentBetweenEnergy;
+    copy->m_CurrentWithinEnergy = this->m_CurrentWithinEnergy;
+    // copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
+    // copy->m_CurrentEnergy = this->m_CurrentEnergy;
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
@@ -193,8 +199,23 @@ public:
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
-    copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
-    copy->m_points_mean = this->m_points_mean;
+    // copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
+    // copy->m_points_mean = this->m_points_mean;
+    copy->m_InverseCovMatricesAllBetween = this->m_InverseCovMatricesAllBetween;
+    copy->m_points_meanAllBetween = this->m_points_meanAllBetween;
+
+    copy->m_InverseCovMatricesAllWithin = this->m_InverseCovMatricesAllWithin;
+    copy->m_points_meanAllWithin = this->m_points_meanAllWithin;
+
+    copy->m_within_loadings = this->m_within_loadings;
+    copy->m_within_scores = this->m_within_scores;
+    copy->m_between_scores = this->m_between_scores;
+    copy->m_between_loadings= this->m_between_loadings;
+
+    copy->m_grand_mean = this->m_grand_mean;
+    copy->m_super_matrix = this->m_super_matrix;
+
+
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
@@ -207,14 +228,16 @@ protected:
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
     m_MinimumVariance = 1.0e-5;
-    m_MinimumEigenValue = 0.0;
+    // m_MinimumEigenValue = 0.0;
+    m_MinimumWithinEigenValue = 0.0;
+    m_MinimumBetweenEigenValue = 0.0;
     m_MinimumVarianceDecayConstant = 1.0;//log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10); 
-    m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
-    m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
+    // m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10); 
+    // m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
+    // m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
 
     m_super_matrix = std::make_shared<vnl_matrix_type>(10, 10); 
     m_within_loadings = std::make_shared<std::vector<vnl_matrix_type>>();
@@ -222,21 +245,29 @@ protected:
     m_between_scores = std::make_shared<std::vector<vnl_matrix_type>>();
     m_between_loadings = std::make_shared<vnl_matrix_type>(10, 10);
     m_grand_mean = std::make_shared<vnl_matrix_type>(10, 1);
-    
+
+    m_PointsUpdateAllWithin = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_InverseCovMatricesAllWithin = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_points_meanAllWithin = std::make_shared<std::vector<vnl_matrix_type>>();
+
+    m_PointsUpdateAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_InverseCovMatricesAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_points_meanAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
+
   }
   virtual ~ParticleEnsembleMlpcaEntropyFunction() {}
   void operator=(const ParticleEnsembleMlpcaEntropyFunction &);
   ParticleEnsembleMlpcaEntropyFunction(const ParticleEnsembleMlpcaEntropyFunction &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
-  std::shared_ptr<std::vector<vnl_matrix_type>> m_shape_matrices;
+  // std::shared_ptr<std::vector<vnl_matrix_type>> m_shape_matrices;
 
   virtual void ComputeCovarianceMatricesWithinResiduals();
   virtual void ComputeCovarianceMatricesBetweenResiduals();
-  virtual void ComputeMlpcaTerms(); // TODO: ML-PCA terms calculate
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
+  virtual void ComputeMlpcaTerms();
+  // std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
   double m_MinimumVariance;
-  double m_MinimumEigenValue;
+  // double m_MinimumEigenValue;
   double m_CurrentEnergy;
   bool m_HoldMinimumVariance;
   double m_MinimumVarianceDecayConstant;
@@ -249,8 +280,16 @@ protected:
   double m_CurrentWithinEnergy;
   double m_CurrentBetweenEnergy;
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation
+  // std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation
+  // std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation
+
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_InverseCovMatricesAllWithin;
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_points_meanAllWithin;
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdateAllWithin; // gradient of Cov matrix of all organs
+
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_InverseCovMatricesAllBetween;
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_points_meanAllBetween;
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdateAllBetween;
 
   std::shared_ptr<vnl_matrix_type> m_super_matrix; // M X 3N matrix
   std::shared_ptr<vnl_matrix_type> m_between_loadings;

@@ -253,7 +253,7 @@ namespace itk
 
   template <class TGradientNumericType, unsigned int VDimension>
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
-    ::StartMlpcaBasedAdaptiveGaussSeidelOptimization()
+    ::StartMlpcaBasedAdaptiveGaussSeidelOptimization(bool flag_b)
   {
     /// uncomment this to run single threaded
     //tbb::task_scheduler_init init(1);
@@ -293,7 +293,8 @@ namespace itk
       }
       minimumTimeStep = dampening;
 
-      maxchange = 0.0;
+      maxchange_within = 0.0;
+      maxchange_between = 0.0;
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
@@ -317,10 +318,14 @@ namespace itk
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
-          typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
+          typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
 
           // must clone this as we are in a thread and the gradient function is not thread-safe
-          localGradientFunction = m_GradientFunction->Clone();
+          localGradientFunction_ = m_GradientFunction->Clone();
+          // typename DualGradientFunctionType::Pointer localGradientFunction = dynamic_cast<typename DualGradientFunctionType::Pointer> (localGradientFunction_.GetPointer());
+
+          itk::ParticleDualVectorFunction<VDimension>* localGradientFunction = dynamic_cast <itk::ParticleDualVectorFunction<VDimension>*> (localGradientFunction_.GetPointer());
+
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
@@ -331,6 +336,7 @@ namespace itk
             if (m_TimeSteps[dom][k] < minimumTimeStep) {
               m_TimeSteps[dom][k] = minimumTimeStep;
             }
+            std::cout << "------optimizing within now-----" << std::endl;
             // Compute gradient update.
             double within_energy = 0.0;
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
@@ -348,7 +354,7 @@ namespace itk
             double newenergy_within, within_gradmag;
             while (true) {
               // Step A scale the projected gradient by the current time step
-              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k]; // TODO: check time steps proper usage
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
@@ -399,7 +405,7 @@ namespace itk
 
 
             // 2. Optimize between part
-            if(localGradientFunction->GetBOn()){
+            if(flag_b == true){
               // Ensure this check to avoid repeating the surface energy calculation when correspondence is turned off
               std::cout << "------optimizing between now-----" << std::endl;
               double between_energy = 0.0;
@@ -463,7 +469,8 @@ namespace itk
               }
             } // end while(true)
 
-            } // end between optimize
+            } 
+            // end between optimize
 
           } // for each particle
         }// for each domain
@@ -487,7 +494,7 @@ namespace itk
       }
       else if (m_verbosity > 1) {
         if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
-          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " << minimumTimeStep << std::endl;
+          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange_within = " << maxchange_within << "maxchange_between "<< maxchange_between << ", minimumTimeStep = " << minimumTimeStep << std::endl;
         }
       }
 
@@ -496,8 +503,8 @@ namespace itk
       // Check for convergence.  Optimization is considered to have converged if
       // max number of iterations is reached or maximum distance moved by any
       // particle is less than the specified precision.
-      if (maxchange < m_Tolerance) {
-        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
+      if (maxchange_within + maxchange_between < m_Tolerance) { //TODO:ensure proper usage here
+        std::cerr << "Iteration " << m_NumberOfIterations << " maxchange_within = " << maxchange_within << "maxchange_between "<< maxchange_between << std::endl;
         m_StopOptimization = true;
       }
 

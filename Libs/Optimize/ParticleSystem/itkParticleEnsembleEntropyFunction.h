@@ -77,6 +77,37 @@ public:
     return e;
   }
   
+  // virtual double EnergyWithin(unsigned int a, unsigned int b,
+  //                         const ParticleSystemType *c) const
+  //   {
+  //           itkExceptionMacro("This method not implemented");
+  //           return 0.0;
+  //   }
+  // virtual double EnergyBetween(unsigned int a, unsigned int b,
+  //                           const ParticleSystemType *c) const
+  //   {
+  //           itkExceptionMacro("This method not implemented");
+  //           return 0.0;
+  //   }
+  // virtual VectorType EvaluateWithin(unsigned int, unsigned int,
+  //                               const ParticleSystemType *, double &, double&) const;
+
+  // virtual VectorType EvaluateWithin(unsigned int a,  unsigned int b,
+  //                               const ParticleSystemType *c, double &d) const
+  //   {
+  //       itkExceptionMacro("This method not implemented");
+  //       return VectorType();
+  //   }
+  // virtual VectorType EvaluateBetween(unsigned int, unsigned int,
+  //                               const ParticleSystemType *, double &, double&) const;
+
+  // virtual VectorType EvaluateBetween(unsigned int a,  unsigned int b,
+  //                               const ParticleSystemType *c, double &d) const
+  //   {
+  //       itkExceptionMacro("This method not implemented");
+  //       return VectorType();
+  //   }
+
   /** Write the first n modes to +- 3 std dev and the mean of the model
       described by the covariance matrix.  The string argument is a prefix to
       the file names. */

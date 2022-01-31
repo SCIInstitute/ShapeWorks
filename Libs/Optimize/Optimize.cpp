@@ -444,6 +444,20 @@ void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetMlpcaBasedOptimization(bool use_mlpca_optimization)
+{
+  this->m_use_mlpca_optimization = use_mlpca_optimization;
+}
+
+//---------------------------------------------------------------------------
+bool Optimize::GetMlpcaBasedOptimization()
+{
+  return this->m_use_mlpca_optimization;
+}
+
+
+
+//---------------------------------------------------------------------------
 bool Optimize::GetUseMeshBasedAttributes()
 {
   return this->m_mesh_based_attributes;
@@ -687,7 +701,10 @@ void Optimize::Initialize()
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
-    if (m_mesh_based_attributes) {
+    if(m_use_mlpca_optimization){
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy); // TODO: ensure proper usage here
+    }
+    else if (m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
     }
     else {
@@ -695,6 +712,9 @@ void Optimize::Initialize()
     }
 
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                     m_ending_regularization,
+                                                                     m_iterations_per_split);
+    m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                      m_ending_regularization,
                                                                      m_iterations_per_split);
 
@@ -1013,12 +1033,21 @@ void Optimize::RunOptimize()
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
+
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
   
   // TODO: add mlpca terms here
 
   m_sampler->SetCorrespondenceOn(); //  B - ON
 
-  if ((m_attributes_per_domain.size() > 0 &&
+  if (m_use_mlpca_optimization == true){
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy);
+  }
+  else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(),
                          m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
