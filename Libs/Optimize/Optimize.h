@@ -66,7 +66,6 @@ public:
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
-
   bool SetUpOptimize(ProjectHandle projectFile);
 
   //! Set the Projects
