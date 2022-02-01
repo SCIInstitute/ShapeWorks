@@ -9,6 +9,18 @@
 
 namespace shapeworks {
 
+namespace visualization {
+Q_NAMESPACE
+
+enum AxisType {
+  X = 1,
+  Y = 2,
+  Z = 3,
+};
+Q_ENUM_NS(AxisType)
+QString toString(AxisType axis);
+}  // namespace visualization
+
 class Visualizer;
 
 typedef QSharedPointer<Visualizer> VisualizerHandle;
@@ -106,6 +118,12 @@ class Visualizer : public QObject {
   //! Get the currently selected image volume
   const std::string& get_image_volume() const;
 
+  //! Set image axis
+  void set_image_axis(visualization::AxisType axis);
+
+  //! Get the image axis
+  visualization::AxisType get_image_axis();
+
   //! clear out the viewers
   void clear_viewers();
 
@@ -155,6 +173,7 @@ class Visualizer : public QObject {
   std::string display_mode_;
   std::string feature_map_;
   std::string image_volume_;
+  visualization::AxisType image_axis_ = visualization::AxisType::Z;
   int alignment_domain_;
 
   bool center_;

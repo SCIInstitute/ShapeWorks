@@ -136,6 +136,10 @@ class Session : public QObject {
   void set_show_landmarks(bool show);
   bool get_show_landmarks();
 
+
+  bool set_image_name(std::string image_name);
+  std::string get_image_name();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 

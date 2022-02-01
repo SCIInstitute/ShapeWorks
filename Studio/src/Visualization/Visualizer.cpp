@@ -9,9 +9,17 @@
 #include <vtkTransformPolyDataFilter.h>
 
 #include <QColor>
+#include <QMetaEnum>
 #include <QThread>
 
 namespace shapeworks {
+
+//-----------------------------------------------------------------------------
+QString visualization::toString(AxisType axis) {
+  const QMetaEnum meta = QMetaEnum::fromType<AxisType>();
+  return meta.valueToKey(axis);
+}
+//-----------------------------------------------------------------------------
 
 const std::string Visualizer::MODE_ORIGINAL_C("Original");
 const std::string Visualizer::MODE_GROOMED_C("Groomed");
@@ -358,12 +366,16 @@ void Visualizer::set_feature_map(const std::string& feature_map) {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_image_volume(const string& image_volume) {
-  image_volume_ = image_volume;
-}
+void Visualizer::set_image_volume(const string& image_volume) { image_volume_ = image_volume; }
 
 //-----------------------------------------------------------------------------
 const string& Visualizer::get_image_volume() const { return image_volume_; }
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_image_axis(visualization::AxisType axis) { image_axis_ = axis; }
+
+//-----------------------------------------------------------------------------
+visualization::AxisType Visualizer::get_image_axis() { return image_axis_; }
 
 //-----------------------------------------------------------------------------
 bool Visualizer::get_center() { return this->center_; }
@@ -452,4 +464,5 @@ double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; 
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
+
 }  // namespace shapeworks

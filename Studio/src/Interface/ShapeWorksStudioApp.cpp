@@ -212,6 +212,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   connect(ui_->image_combo_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_image_selection);
+  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &ShapeWorksStudioApp::update_image_selection);
 
   connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
 
@@ -900,6 +902,7 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     visualizer_->set_image_volume(image_volume_name);
+
 
     std::string feature_map_override = "";
     if (this->get_tool_state() == Session::DEEPSSM_C) {
