@@ -358,7 +358,9 @@ void Visualizer::set_feature_map(const std::string& feature_map) {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_image_volume(const string& image_volume) { image_volume_ = image_volume; }
+void Visualizer::set_image_volume(const string& image_volume) {
+  image_volume_ = image_volume;
+}
 
 //-----------------------------------------------------------------------------
 const string& Visualizer::get_image_volume() const { return image_volume_; }

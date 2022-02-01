@@ -1,59 +1,60 @@
 #include <Visualization/Lightbox.h>
-#include <Visualization/StudioInteractorStyle.h>
+#include <Visualization/StudioSliceInteractorStyle.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 
 namespace shapeworks {
 
-vtkStandardNewMacro(StudioInteractorStyle);
+vtkStandardNewMacro(StudioSliceInteractorStyle);
 
 //-----------------------------------------------------------------------------
-StudioInteractorStyle::StudioInteractorStyle() {}
+StudioSliceInteractorStyle::StudioSliceInteractorStyle() {}
 
 //-----------------------------------------------------------------------------
-StudioInteractorStyle::~StudioInteractorStyle() {}
+StudioSliceInteractorStyle::~StudioSliceInteractorStyle() {}
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnLeftButtonDown() {
+void StudioSliceInteractorStyle::OnLeftButtonDown() {
+  /*
   if (this->Interactor->GetControlKey()) {
     int* clickPos = this->GetInteractor()->GetEventPosition();
     this->lightbox_->handle_pick(clickPos, true, true);
     return;
   }
+  */
 
-  std::cerr << "regular left button down\n";
-
+  std::cerr << "slice left button down\n";
   // forward events
-  vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+  vtkInteractorStyleImage::OnLeftButtonDown();
   // this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnRightButtonDown() {
+void StudioSliceInteractorStyle::OnRightButtonDown() {
   /*
      int* clickPos = this->GetInteractor()->GetEventPosition();
      this->lightbox_->handle_pick( clickPos );
    */
   // forward events
-  vtkInteractorStyleTrackballCamera::OnRightButtonDown();
+  vtkInteractorStyleImage::OnRightButtonDown();
   // this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::set_lightbox(Lightbox* lightbox) { this->lightbox_ = lightbox; }
-
+void StudioSliceInteractorStyle::set_lightbox(Lightbox* lightbox) { this->lightbox_ = lightbox; }
+/*
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseWheelForward() {
+void StudioSliceInteractorStyle::OnMouseWheelForward() {
   // do nothing so that it will be passed on to Qt
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseWheelBackward() {
+void StudioSliceInteractorStyle::OnMouseWheelBackward() {
   // do nothing so that it will be passed on to Qt
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnKeyDown() {
+void StudioSliceInteractorStyle::OnKeyDown() {
   int* click_pos = this->GetInteractor()->GetEventPosition();
 
   char keycode = this->GetInteractor()->GetKeyCode();
@@ -84,7 +85,7 @@ void StudioInteractorStyle::OnKeyDown() {
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Dolly() {
+void StudioSliceInteractorStyle::Dolly() {
   if (this->CurrentRenderer == NULL) {
     return;
   }
@@ -97,13 +98,13 @@ void StudioInteractorStyle::Dolly() {
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Rotate() {
+void StudioSliceInteractorStyle::Rotate() {
   vtkInteractorStyleTrackballCamera::Rotate();
   this->lightbox_->reset_camera_clipping_range();
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::OnMouseMove() {
+void StudioSliceInteractorStyle::OnMouseMove() {
   int* clickPos = this->GetInteractor()->GetEventPosition();
   this->lightbox_->handle_hover(clickPos);
 
@@ -111,7 +112,7 @@ void StudioInteractorStyle::OnMouseMove() {
 }
 
 //-----------------------------------------------------------------------------
-void StudioInteractorStyle::Dolly(double factor) {
+void StudioSliceInteractorStyle::Dolly(double factor) {
   if (this->CurrentRenderer == NULL) {
     return;
   }
@@ -132,4 +133,5 @@ void StudioInteractorStyle::Dolly(double factor) {
 
   this->Interactor->Render();
 }
+*/
 }  // namespace shapeworks

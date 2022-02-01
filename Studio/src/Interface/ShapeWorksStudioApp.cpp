@@ -1249,6 +1249,8 @@ void ShapeWorksStudioApp::update_display(bool force) {
     }
   }
 
+  lightbox_->update_interactor_style();
+
   if ((force || change) && !this->is_loading_) {  // do not override if loading
     this->reset_num_viewers();
   }
@@ -1684,7 +1686,10 @@ void ShapeWorksStudioApp::handle_color_scheme() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_auto_view_button_clicked() { this->visualizer_->reset_camera(); }
+void ShapeWorksStudioApp::on_auto_view_button_clicked() {
+  // this->visualizer_->reset_camera();
+  lightbox_->reset_camera();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {

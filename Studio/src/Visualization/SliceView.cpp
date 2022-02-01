@@ -32,9 +32,10 @@ bool SliceView::is_image_loaded() { return volume_ != nullptr; }
 //-----------------------------------------------------------------------------
 void SliceView::update_renderer() {
   auto renderer = viewer_->get_renderer();
-  renderer->RemoveViewProp(image_slice_);
   if (is_image_loaded()) {
     renderer->AddActor(image_slice_);
+  } else {
+    renderer->RemoveViewProp(image_slice_);
   }
 }
 
@@ -64,6 +65,7 @@ void SliceView::update_camera() {
   renderer->GetActiveCamera()->SetFocalPoint(center_x, center_y, 0);
   renderer->GetActiveCamera()->SetParallelScale(spaces[1] * dims[1]);
   renderer->GetActiveCamera()->SetParallelProjection(1);
+  renderer->ResetCamera();
 }
 
 //-----------------------------------------------------------------------------

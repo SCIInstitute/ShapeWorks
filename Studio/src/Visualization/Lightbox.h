@@ -1,17 +1,16 @@
 #pragma once
 
-#include <QSharedPointer>
-#include <QVector>
-#include <QTimer>
-
-#include <vtkSmartPointer.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkPoints.h>
-#include <vtkCamera.h>
 #include <Data/Preferences.h>
-
 #include <Visualization/Viewer.h>
+#include <vtkActor.h>
+#include <vtkCamera.h>
+#include <vtkPoints.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkSmartPointer.h>
+
+#include <QSharedPointer>
+#include <QTimer>
+#include <QVector>
 
 class vtkOrientationMarkerWidget;
 
@@ -20,6 +19,7 @@ namespace shapeworks {
 class StudioMesh;
 class Shape;
 class StudioInteractorStyle;
+class StudioSliceInteractorStyle;
 class Visualizer;
 
 class Lightbox;
@@ -30,8 +30,9 @@ typedef QSharedPointer<Lightbox> LightboxHandle;
  * The LightBox class displays multiple Viewers in a tiled display
  */
 class Lightbox : public QObject {
-Q_OBJECT;
-public:
+  Q_OBJECT;
+
+ public:
   Lightbox();
   ~Lightbox();
 
@@ -66,8 +67,7 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
-  bool render_window_ready()
-  { return render_window_ != NULL; }
+  bool render_window_ready() { return render_window_ != NULL; }
 
   void clear_renderers();
 
@@ -79,20 +79,18 @@ public:
 
   void reset_camera_clipping_range();
 
-  void set_orientation_marker(Preferences::OrientationMarkerType type,
-                              Preferences::OrientationMarkerCorner corner);
+  void set_orientation_marker(Preferences::OrientationMarkerType type, Preferences::OrientationMarkerCorner corner);
 
   void set_orientation_marker_viewport();
 
   void update_feature_range();
 
+  void update_interactor_style();
 
-
-public Q_SLOTS:
+ public Q_SLOTS:
   void handle_timer_callback();
 
-private:
-
+ private:
   vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();
 
   void check_for_first_draw();
@@ -122,6 +120,7 @@ private:
   bool first_draw_ = true;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
+  vtkSmartPointer<StudioSliceInteractorStyle> slice_style_;
 
   Visualizer* visualizer_{nullptr};
 
@@ -135,11 +134,10 @@ private:
 
   vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;
 
-  Preferences::OrientationMarkerType current_orientation_marker_type_
-    = Preferences::OrientationMarkerType::none;
-  Preferences::OrientationMarkerCorner current_orientation_marker_corner_
-    = Preferences::OrientationMarkerCorner::upper_right;
+  Preferences::OrientationMarkerType current_orientation_marker_type_ = Preferences::OrientationMarkerType::none;
+  Preferences::OrientationMarkerCorner current_orientation_marker_corner_ =
+      Preferences::OrientationMarkerCorner::upper_right;
 
   QSharedPointer<Session> session_;
 };
-}
+}  // namespace shapeworks

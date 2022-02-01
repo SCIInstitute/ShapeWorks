@@ -668,6 +668,7 @@ void Viewer::set_show_surface(bool show) {
   update_actors();
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::set_show_landmarks(bool show) {
   show_landmarks_ = show;
   update_landmarks();
@@ -773,6 +774,8 @@ void Viewer::update_actors() {
   if (!visible_) {
     return;
   }
+
+  std::cerr << "Viewer::update_actors\n";
 
   renderer_->RemoveActor(glyph_actor_);
   renderer_->RemoveActor(arrow_glyph_actor_);

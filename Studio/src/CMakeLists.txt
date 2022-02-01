@@ -196,6 +196,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/StudioInteractorStyle.cpp
+  Visualization/StudioSliceInteractorStyle.cpp
   Visualization/SliceView.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
