@@ -18,16 +18,13 @@ StudioInteractorStyle::~StudioInteractorStyle()
 //-----------------------------------------------------------------------------
 void StudioInteractorStyle::OnLeftButtonDown()
 {
-/*
-   std::cerr << "left button down\n";
-   if ( this->Interactor->GetAltKey() )
-   //if ( 1 )
+   if ( this->Interactor->GetControlKey() )
    {
-    std::cerr << "ctrl down too\n";
     int* clickPos = this->GetInteractor()->GetEventPosition();
-    this->lightbox_->handle_pick( clickPos );
+    this->lightbox_->handle_pick( clickPos, true, true );
+    return;
    }
- */
+
 // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
   //this->GetCurrentRenderer()->ResetCameraClippingRange();
@@ -72,11 +69,11 @@ void StudioInteractorStyle::OnKeyDown()
 
   switch (keycode) {
     case '1':
-      this->lightbox_->handle_pick(click_pos, true);
+      this->lightbox_->handle_pick(click_pos, true, false);
       break;
 
     case '2':
-      this->lightbox_->handle_pick(click_pos, false);
+      this->lightbox_->handle_pick(click_pos, false, false);
       break;
 
     case 'r':
@@ -109,6 +106,15 @@ void StudioInteractorStyle::Rotate()
 {
   vtkInteractorStyleTrackballCamera::Rotate();
   this->lightbox_->reset_camera_clipping_range();
+}
+
+//-----------------------------------------------------------------------------
+void StudioInteractorStyle::OnMouseMove()
+{
+  int* clickPos = this->GetInteractor()->GetEventPosition();
+  this->lightbox_->handle_hover( clickPos );
+
+  vtkInteractorStyleTrackballCamera::OnMouseMove();
 }
 
 //-----------------------------------------------------------------------------

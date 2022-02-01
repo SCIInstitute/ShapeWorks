@@ -1,18 +1,16 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QSharedPointer>
-#include <QString>
-
+#include <Data/MeshGroup.h>
+#include <Data/MeshManager.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioParticles.h>
 #include <Libs/Project/Subject.h>
-#include <Data/MeshManager.h>
-#include <Data/MeshGroup.h>
-
 #include <itkMatrixOffsetTransformBase.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 namespace shapeworks {
 
@@ -22,12 +20,12 @@ using ShapeList = QVector<ShapeHandle>;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
-
-public:
-
+ public:
   //! TODO: replace this wherever it is used
   class Point {
-public:
+   public:
+    Point(){};
+    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
     double x, y, z;
   };
 
@@ -61,11 +59,17 @@ public:
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
-  /// Import global correspondence point file
+  /// Import global correspondence point files
   bool import_global_point_files(QStringList filenames);
 
-  /// Import local correspondence point file
+  /// Import local correspondence point files
   bool import_local_point_files(QStringList filenames);
+
+  /// Import landmarks files
+  bool import_landmarks_files(QStringList filenames);
+
+  //! Store landmarks
+  bool store_landmarks();
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
@@ -143,10 +147,11 @@ public:
   void set_override_feature(std::string feature);
   std::string get_override_feature();
 
-private:
+  Eigen::MatrixXd& landmarks();
 
-  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
-                       bool save_transform, bool wait = false);
+ private:
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
+                       bool wait = false);
 
   static bool import_point_file(QString filename, Eigen::VectorXd& points);
 
@@ -182,5 +187,7 @@ private:
   QStringList corner_annotations_;
 
   QSharedPointer<MeshManager> mesh_manager_;
+
+  Eigen::MatrixXd landmarks_;
 };
-}
+}  // namespace shapeworks
