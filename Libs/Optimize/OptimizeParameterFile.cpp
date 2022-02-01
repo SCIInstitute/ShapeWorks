@@ -233,7 +233,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
     }
   }
   optimize->SetMlpcaOptimize(use_mlpca_optimize);
-  std::cout << "Mlpca param set" << use_mlpca_optimize << std::endl;
+  std::cout << "******Mlpca param set ***** " << use_mlpca_optimize << std::endl;
 
   elem = docHandle->FirstChild("mesh_based_attributes").Element();
   if (elem) { use_mesh_based_attributes = (bool) atoi(elem->GetText()); }

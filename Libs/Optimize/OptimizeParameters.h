@@ -48,6 +48,9 @@ public:
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 
+  bool get_mlpca_optimize();
+  void set_mlpca_optimize(bool value);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 

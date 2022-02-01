@@ -1051,7 +1051,6 @@ void Optimize::RunOptimize()
     m_optimization_iterations -
     m_optimization_iterations_completed);
   
-  // TODO: add mlpca terms here
 
   m_sampler->SetCorrespondenceOn(); //  B - ON
 
