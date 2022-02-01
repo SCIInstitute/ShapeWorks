@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkFloatArray.h>
+#include <vtkPointData.h>
 
 #ifdef _WIN32
   #include <direct.h>
