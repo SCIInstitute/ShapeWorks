@@ -528,7 +528,7 @@ template<class TransformType>
 void ReconstructSurface<TransformType>::writeMeanInfo()
 {
   Mesh denseMesh(this->denseMean);
-  denseMesh.write(this->outPath + "/" + "_dense.vtk");
+  denseMesh.write(this->outPath + "/" + "_dense_rcout.vtk");
 
   std::ofstream sparsePtsOut((this->outPath + "/" +" _sparse.particles").c_str());
   auto sparsePts = this->sparseMean;

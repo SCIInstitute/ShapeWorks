@@ -14,10 +14,12 @@ TEST(pythonTests, reconstructsurfaceTest)
   run_use_case("reconstructsurface.py");
 }
 
-TEST(pythonTests, reconstructpcaTest)
+/* FIXME
+   TEST(pythonTests, reconstructpcaTest)
 {
   run_use_case("reconstructpca.py");
 }
+*/
 
 TEST(pythonTests, transformTest)
 {
