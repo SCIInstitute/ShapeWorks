@@ -2,7 +2,7 @@
 #include "Procrustes3D.h"
 #include "VectorImage.h"
 #include "ParticleShapeStatistics.h"
-#include "StringUtils.h" 
+#include "StringUtils.h"
 #include "Utils.h"
 
 #include <sys/stat.h>
@@ -68,46 +68,12 @@ std::vector<bool> ReconstructSurface<TransformType>::setGoodPoints(const std::st
   else
   {
     // good point file is not given if a template mesh is used instead of a mean just assume all are good
-    for(int i = 0; i < sparseMean->GetNumberOfPoints(); i++)
+    for(size_t i = 0; i < sparseMean->GetNumberOfPoints(); i++)
       goodPoints.push_back(true);
   }
   ptsIn.close();
 
   return goodPoints;
-}
-
-template<class TransformType>
-std::vector<PointArray> ReconstructSurface<TransformType>::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
-{
-  std::vector<PointArray> localPoints;
-  this->localPointsFiles = localPointsFiles;
-
-  for (int i = 0; i < this->localPointsFiles.size(); i++)
-  {
-    PointArray curShape;
-    Utils::readSparseShape(curShape, const_cast<char*>(this->localPointsFiles[i].c_str()));
-
-    localPoints.push_back(curShape);
-  }
-
-  return localPoints;
-}
-
-template<class TransformType>
-std::vector<PointArray> ReconstructSurface<TransformType>::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
-{
-  std::vector<PointArray> worldPoints;
-  this->worldPointsFiles = worldPointsFiles;
-
-  for (int i = 0; i < this->worldPointsFiles.size(); i++)
-  {
-    PointArray curShape;
-    Utils::readSparseShape(curShape, const_cast<char*>(this->worldPointsFiles[i].c_str()));
-
-    worldPoints.push_back(curShape);
-  }
-
-  return worldPoints;
 }
 
 template<class TransformType>
@@ -130,14 +96,14 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
     points->GetPoint(particlesIndices[i], p);
 
     vtkSmartPointer<vtkIdList> result = vtkSmartPointer<vtkIdList>::New();
-    kDTree->FindClosestNPoints(K + 1, p, result);
+    kDTree->FindClosestNPoints(K + 1, p, result); // +1 to exclude myself
 
     double meanDist = 0;
     for (vtkIdType k = 0; k < K + 1; k++)
     {
       vtkIdType pid = result->GetId(k);
 
-      if (pid == particlesIndices[i])
+      if (pid == particlesIndices[i]) // close to myself
         continue;
 
       double pk[3];
@@ -153,30 +119,6 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
 
   avgDist /= particlesIndices.size();
   return avgDist;
-}
-
-template<class TransformType>
-void ReconstructSurface<TransformType>::generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh)
-{
-  vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
-  vertices->DeepCopy(outputMesh->GetPoints());
-
-  unsigned int numPointsToTransform = vertices->GetNumberOfPoints();
-  for (unsigned int i = 0; i < numPointsToTransform; i++)
-  {
-    double meshPoint[3];
-    vertices->GetPoint(i, meshPoint);
-
-    Point3 pm_({meshPoint[0], meshPoint[1], meshPoint[2]});
-
-    Point3 pw_;
-    pw_ = transform->TransformPoint(pm_);
-
-    vertices->SetPoint(i, pw_[0], pw_[1], pw_[2]);
-  }
-
-  outputMesh->SetPoints(vertices);
-  outputMesh->Modified();
 }
 
 template<class TransformType>
@@ -238,7 +180,31 @@ void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform,
 }
 
 template<class TransformType>
-Mesh ReconstructSurface<TransformType>::getMesh(PointArray localPoints)
+void ReconstructSurface<TransformType>::generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh)
+{
+  vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
+  vertices->DeepCopy(outputMesh->GetPoints());
+
+  unsigned int numPointsToTransform = vertices->GetNumberOfPoints();
+  for (unsigned int i = 0; i < numPointsToTransform; i++)
+  {
+    double meshPoint[3];
+    vertices->GetPoint(i, meshPoint);
+
+    Point3 pm_({meshPoint[0], meshPoint[1], meshPoint[2]});
+
+    Point3 pw_;
+    pw_ = transform->TransformPoint(pm_);
+
+    vertices->SetPoint(i, pw_[0], pw_[1], pw_[2]);
+  }
+
+  outputMesh->SetPoints(vertices);
+  outputMesh->Modified();
+}
+
+template<class TransformType>
+Mesh ReconstructSurface<TransformType>::getMesh(std::vector<Point3> localPoints)
 {
   if (!this->denseDone) { return vtkSmartPointer<vtkPolyData>::New(); }
 
@@ -359,7 +325,7 @@ int ReconstructSurface<TransformType>::computeMedianShape(std::vector<Eigen::Mat
 }
 
 template<class TransformType>
-void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices)
+void ReconstructSurface<TransformType>::performKMeansClustering(std::vector<std::vector<Point3>> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices)
 {
   unsigned int numOfShapes = worldPoints.size();
   if (this->numOfClusters > numOfShapes)
@@ -564,9 +530,9 @@ void ReconstructSurface<TransformType>::writeMeanInfo()
 }
 
 template<class TransformType>
-vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints, std::vector<std::string> distanceTransform)
+vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std::vector<std::vector<Point3>> localPoints, std::vector<std::vector<Point3>> worldPoints, std::vector<std::string> distanceTransform)
 {
-  if (!this->denseDone || !localPoints.empty() || !distanceTransform.empty() || !worldPoints.empty()) 
+  if (!this->denseDone || !localPoints.empty() || !distanceTransform.empty() || !worldPoints.empty())
   {
     this->denseDone = false;
     if (localPoints.empty() || distanceTransform.empty() || worldPoints.empty() || localPoints.size() != distanceTransform.size())
@@ -580,12 +546,12 @@ vtkSmartPointer<vtkPolyData> ReconstructSurface<TransformType>::getDenseMean(std
 }
 
 template<class TransformType>
-void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray> localPoints, std::vector<PointArray> worldPoints, std::vector<std::string> distanceTransform)
+void ReconstructSurface<TransformType>::computeDenseMean(std::vector<std::vector<Point3>> localPoints, std::vector<std::vector<Point3>> worldPoints, std::vector<std::string> distanceTransform)
 {
   try
   {
     // turn the sets of global points to one sparse global mean.
-    PointArray sparseMeanPoint = makePointArray(worldPoints[0].size(), Point3({0.f, 0.f, 0.f}));
+    std::vector<Point3> sparseMeanPoint = std::vector<Point3>(worldPoints[0].size(), Point3({0.f, 0.f, 0.f}));
     for (auto &a : worldPoints)
     {
       for (int i = 0; i < a.size(); i++)
@@ -833,7 +799,7 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<PointArray>
 }
 
 template<class TransformType>
-std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter)
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::computeSparseMean(std::vector<std::vector<Point3>> localPoints, Point3 commonCenter)
 {
   // run generalized procrustes on the local points to align all shapes to a common coordinate frame
   Procrustes3D::ShapeListType shapelist;
@@ -845,7 +811,7 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
   for (int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
   {
     shapevector.clear();
-    PointArray curShape = localPoints[shapeNo];
+    std::vector<Point3> curShape = localPoints[shapeNo];
     for(int i = 0 ; i < curShape.size(); i++)
     {
       Point3 p = curShape[i];
@@ -901,13 +867,13 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
 
   center /= meanSparseShape.size();
 
-  std::vector<PointArray> globalPoints; globalPoints.clear();
+  std::vector<std::vector<Point3>> globalPoints; globalPoints.clear();
 
   // prep aligned shapes for subsequent statistical analysis
   for (int shapeNo = 0; shapeNo < localPoints.size(); shapeNo++)
   {
     shapevector = shapelist[shapeNo];
-    PointArray curShape;
+    std::vector<Point3> curShape;
     curShape.clear();
     for(int i = 0 ; i < shapevector.size(); i++)
     {
@@ -927,6 +893,40 @@ std::vector<PointArray> ReconstructSurface<TransformType>::computeSparseMean(std
 }
 
 template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setLocalPointsFiles(const std::vector<std::string> localPointsFiles)
+{
+  std::vector<std::vector<Point3>> localPoints;
+  this->localPointsFiles = localPointsFiles;
+
+  for (int i = 0; i < this->localPointsFiles.size(); i++)
+  {
+    std::vector<Point3> curShape;
+    Utils::readSparseShape(curShape, const_cast<char*>(this->localPointsFiles[i].c_str()));
+
+    localPoints.push_back(curShape);
+  }
+
+  return localPoints;
+}
+
+template<class TransformType>
+std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::setWorldPointsFiles(const std::vector<std::string> worldPointsFiles)
+{
+  std::vector<std::vector<Point3>> worldPoints;
+  this->worldPointsFiles = worldPointsFiles;
+
+  for (int i = 0; i < this->worldPointsFiles.size(); i++)
+  {
+    std::vector<Point3> curShape;
+    Utils::readSparseShape(curShape, const_cast<char*>(this->worldPointsFiles[i].c_str()));
+
+    worldPoints.push_back(curShape);
+  }
+
+  return worldPoints;
+}
+
+template<class TransformType>
 void ReconstructSurface<TransformType>::surface(const std::vector<std::string> localPointsFiles)
 {
   this->localPointsFiles = localPointsFiles;
@@ -936,7 +936,7 @@ void ReconstructSurface<TransformType>::surface(const std::vector<std::string> l
     std::string basename = StringUtils::getFilename(this->localPointsFiles[i]);
     std::cout << "Processing: " << this->localPointsFiles[i].c_str() << std::endl;
 
-    PointArray curSparse;
+    std::vector<Point3> curSparse;
     Utils::readSparseShape(curSparse, const_cast<char*> (this->localPointsFiles[i].c_str()));
 
     Mesh curDense = getMesh(curSparse);
@@ -962,7 +962,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
   const int Dimension = 3;
   ParticleShapeStatistics shapeStats;
 
-  std::vector<PointArray> worldPoints = setWorldPointsFiles(worldPointsFiles);
+  std::vector<std::vector<Point3>> worldPoints = setWorldPointsFiles(worldPointsFiles);
 
   // perform PCA on the global points that were used to compute the dense mean mesh
   shapeStats.DoPCA(worldPoints, domainsPerShape);
@@ -1001,7 +1001,9 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
         numberOfModes = percentVarByMode.size();
 
       if (numberOfModes == 0)
+      {
         std::invalid_argument("No dominant modes detected");
+      }
     }
     std::cout << numberOfModes << " dominant modes is found to capture " << this->maxVarianceCaptured*100 << "% of total variation ..." << std::endl;
   }
@@ -1024,7 +1026,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
   std::string prefix = shapeworks::StringUtils::getFilename(this->outPrefix);
   if(!prefix.empty())
     prefix = prefix + "_";
-  
+
   for (int modeId = 0; modeId < totalNumberOfModes; modeId++)
   {
     if (singleModeToBeGen && (modeId != this->modeIndex))
@@ -1050,8 +1052,13 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
     Eigen::VectorXd curMode = eigenVectors.col(totalNumberOfModes - modeId - 1);
 
     std::vector<double> std_store;
-    for (int sid = 0; sid < std_factor_store.size(); sid++)
-      std_store.push_back(std_factor_store[sid] * sqrt_eigenValue);
+    std::cout << "std_store: ";
+    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
+    {
+      std_store.push_back(std_factor_store[sid]*sqrt_eigenValue);
+      std::cout << std_store[sid] << ", " ;
+    }
+    std::cout << std::endl;
 
     // writing stds on file
     std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
@@ -1060,24 +1067,27 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
     if (!ofs)
       throw std::runtime_error("Could not open file for output: " + stdfilename);
 
-    for (int sid = 0; sid < std_factor_store.size(); sid++)
+    for (unsigned int sid = 0; sid < std_factor_store.size(); sid++)
       ofs << std_factor_store[sid] << "\n" ;
     ofs.close();
 
-    for(int sampleId = 0; sampleId < std_store.size(); sampleId++)
+    for(unsigned int sampleId = 0; sampleId < std_store.size(); sampleId++)
     {
       std::string sampleStr = Utils::int2str(int(sampleId), 3);
       std::string basename = prefix + "mode-" + modeStr + "_sample-" + sampleStr ;
+
       std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
 
       // generate the sparse shape of the current sample
       double cur_std = std_store[sampleId];
 
+      std::cout << "cur_std: " << cur_std << std::endl;
+
       Eigen::VectorXd curSample = mean + cur_std * curMode;
 
       // fill-in the vtkpoints structure to perform warping for dense reconstruction of the current sample
       vtkSmartPointer< vtkPoints > curSamplePts = vtkSmartPointer< vtkPoints >::New();
-      PointArray curSparse;
+      std::vector<Point3> curSparse;
       for(unsigned int i = 0; i < this->numOfParticles; i++)
       {
         double pt[3];
@@ -1112,9 +1122,9 @@ template<class TransformType>
 void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::string> distanceTransformFiles, const std::vector<std::string> localPointsFiles, const std::vector<std::string> worldPointsFiles)
 {
   this->maxAngleDegrees = this->normalAngle * (180.0 / Pi);
-  std::vector<PointArray> worldPoints;
+  std::vector<std::vector<Point3>> worldPoints;
   this->distanceTransformFiles = distanceTransformFiles;
-  std::vector<PointArray> localPoints = setLocalPointsFiles(localPointsFiles);
+  std::vector<std::vector<Point3>> localPoints = setLocalPointsFiles(localPointsFiles);
 
   if(worldPointsFiles.size() == 0)
   {
@@ -1214,7 +1224,7 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
     ofsG.open(outfilenameGood.c_str());
     ofsB.open(outfilenameBad.c_str());
 
-    PointArray currShapeLocal = localPoints[shapeNo];
+    std::vector<Point3> currShapeLocal = localPoints[shapeNo];
     for (unsigned int i = 0 ; i < this->numOfParticles; i++)
     {
       auto pt = currShapeLocal[i];
@@ -1232,7 +1242,7 @@ void ReconstructSurface<TransformType>::meanSurface(const std::vector<std::strin
     ofsG.open(outfilenameGood.c_str());
     ofsB.open(outfilenameBad.c_str());
 
-    PointArray currShapeWorld = worldPoints[shapeNo];
+    std::vector<Point3> currShapeWorld = worldPoints[shapeNo];
     for (unsigned int i = 0; i < this->numOfParticles; i++)
     {
       auto pt = currShapeWorld[i];

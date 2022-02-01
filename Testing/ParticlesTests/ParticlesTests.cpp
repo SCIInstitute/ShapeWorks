@@ -190,7 +190,6 @@ TEST(ParticlesTests, reconstructsurfaceTestThinPlateSpline)
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
-/* FIXME
 TEST(ParticlesTests, reconstructPCATest1)
 {
   ReconstructSurface<RBFSSparseTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
@@ -239,8 +238,19 @@ TEST(ParticlesTests, reconstructPCATest1)
   ParticleSystem baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystem denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
-              baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
+  bool success = true;
+  std::cerr << "\nUNIT_TEST: verifying sparseParticles: " << std::endl;
+  success &= baselineSparseParticles.EvaluationCompare(sparseParticles);
+  std::cerr << "\nUNIT_TEST: verifying  denseParticles: " << std::endl;
+  success &= baselineDenseParticles.EvaluationCompare(denseParticles);
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh1: " << std::endl;
+  success &= baselineDenseMesh1 == denseMesh1;
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh2: " << std::endl;
+  success &= baselineDenseMesh2 == denseMesh2;
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh3: " << std::endl;
+  success &= baselineDenseMesh3 == denseMesh3;
+
+  ASSERT_TRUE(success);
 }
 
 TEST(ParticlesTests, reconstructPCATest2)
@@ -291,10 +301,20 @@ TEST(ParticlesTests, reconstructPCATest2)
   ParticleSystem baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystem denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
-              baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
+  bool success = true;
+  std::cerr << "\nUNIT_TEST: verifying sparseParticles: " << std::endl;
+  success &= baselineSparseParticles.EvaluationCompare(sparseParticles);
+  std::cerr << "\nUNIT_TEST: verifying  denseParticles: " << std::endl;
+  success &= baselineDenseParticles.EvaluationCompare(denseParticles);
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh1: " << std::endl;
+  success &= baselineDenseMesh1 == denseMesh1;
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh2: " << std::endl;
+  success &= baselineDenseMesh2 == denseMesh2;
+  std::cerr << "\nUNIT_TEST: verifying  denseMesh3: " << std::endl;
+  success &= baselineDenseMesh3 == denseMesh3;
+
+  ASSERT_TRUE(success);
 }
-*/
 
 TEST(ParticlesTests, reconstructmeansurfaceTest)
 {
