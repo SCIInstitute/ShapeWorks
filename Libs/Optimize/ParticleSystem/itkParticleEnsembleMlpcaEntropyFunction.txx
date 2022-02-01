@@ -113,7 +113,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         {
             gramMat_k = points_minus_mean_k.transpose()* points_minus_mean_k; // Y^TY where Y = z_k - grand mean part - within part --> N X N
 
-            vnl_svd <double> svd(gramMat_k);
+            vnl_svd<double> svd(gramMat_k);
             vnl_matrix_type UG = svd.U(); // ---> N X N
             W_k = svd.W(); // ---> N X N
 
@@ -149,8 +149,11 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         m_MinimumWithinEigenValue += MinimumWithinEigenValue_k;
         m_CurrentWithinEnergy += CurrentWithinEnergy_k;
 
-        m_PointsUpdateAllWithin->push_back(PointsUpdate_k);
-        m_InverseCovMatricesAllWithin->push_back(InverseCovMatrix_k);
+        m_PointsUpdateAllWithin->at(k) = PointsUpdate_k;
+        m_InverseCovMatricesAllWithin->at(k) = InverseCovMatrix_k;
+        m_points_meanAllWithin->at(k) = points_mean_k;
+        
+
 
     }// end of all domains/organs calculation
     m_CurrentWithinEnergy /= 2.0;
@@ -258,7 +261,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         {
             gramMat_k = points_minus_mean_k.transpose()* points_minus_mean_k; // Y^TY where Y = z_k - grand mean part - within part --> N X N
 
-            vnl_svd <double> svd(gramMat_k);
+            vnl_svd<double> svd(gramMat_k);
             vnl_matrix_type UG = svd.U(); // ---> N X N
             W_k = svd.W(); // ---> N X N
 
@@ -294,8 +297,9 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         m_MinimumBetweenEigenValue += MinimumBetweenEigenValue_k;
         m_CurrentBetweenEnergy += MinimumBetweenEigenValue_k;
 
-        m_PointsUpdateAllBetween->push_back(PointsUpdate_k);
-        m_InverseCovMatricesAllBetween->push_back(InverseCovMatrix_k);
+        m_PointsUpdateAllBetween->at(k) = PointsUpdate_k;
+        m_InverseCovMatricesAllBetween->at(k) = InverseCovMatrix_k;
+        m_points_meanAllBetween->at(k) = points_mean_k;
 
     }// end of all domains/organs calculation
     m_CurrentBetweenEnergy /= 2.0;
@@ -309,20 +313,62 @@ void
 ParticleEnsembleMlpcaEntropyFunction<VDimension>
 ::ComputeMlpcaTerms()
 {
+    std::cout << "computing mlpca terms" << std::endl;
     const unsigned int dps = m_ShapeMatrix->GetDomainsPerShape();
     const unsigned int N  = m_ShapeMatrix->cols(); // num_samples 
+    std::cout << "N = " << N << std::endl;
+    m_dps = dps;
+    m_within_loadings->clear();
+    m_within_scores->clear();
+    m_between_scores->clear();
+    m_InverseCovMatricesAllBetween->clear();
+    m_InverseCovMatricesAllWithin->clear();
+    m_points_meanAllBetween->clear();
+    m_points_meanAllWithin->clear();
+    m_PointsUpdateAllBetween->clear();
+    m_PointsUpdateAllWithin->clear();    
+    for(unsigned int i = 0; i < dps; i++){
+      vnl_matrix_type within_loadings;
+      vnl_matrix_type within_scores;
+      vnl_matrix_type points_update_within;
+      vnl_matrix_type points_update_between;
+      vnl_matrix_type points_mean_within;
+      vnl_matrix_type points_mean_between;
+      vnl_matrix_type between_scores;
+      vnl_matrix_type inv_cov_matrix_within;
+      vnl_matrix_type inv_cov_matrix_between;
+
+      m_within_loadings->push_back(within_loadings);
+      m_within_scores->push_back(within_scores);
+      m_between_scores->push_back(between_scores);
+
+      m_InverseCovMatricesAllBetween->push_back(inv_cov_matrix_between);
+      m_InverseCovMatricesAllWithin->push_back(inv_cov_matrix_within);
+
+      m_points_meanAllBetween->push_back(points_mean_between);
+      m_points_meanAllWithin->push_back(points_mean_within);
+      
+      m_PointsUpdateAllBetween->push_back(points_update_between);
+      m_PointsUpdateAllWithin->push_back(points_update_within);
+    }
+
     std::vector<int> num_particles = m_ShapeMatrix->GetAllNumberOfParticles();
     unsigned int total_particles = std::accumulate(num_particles.begin(), num_particles.end(), 0);
-    unsigned int total_particles_ = (int)(m_ShapeMatrix->rows() / dps * VDimension);
+    unsigned int total_particles_ = (int)(m_ShapeMatrix->rows() / (VDimension));
+    std::cout << "total particles" << total_particles << "total_particles_" << total_particles_ << std::endl;
     if(total_particles != total_particles_){
         std::cout << "Particles inconsistent while building ShapeMatrix for within and Between"<< std::endl;
     }
+    for(int y = 0; y < num_particles.size(); y++){
+        std::cout << " y " << num_particles[y] << " ";
+    }
+    std::cout << std::endl << "dps = " << dps << std::endl;
 
     // Part A: Build the Super Matrix(with Points Transpose -- needed for within and between calculation) from m_ShapeMatrix
 
     unsigned int n = N * VDimension; //3N
     std::cout << " n " << n << std::endl;
-    unsigned int m = total_particles * dps; //MK
+    unsigned int m = total_particles * dps * VDimension; //MK
     std::cout << "m " << m << std::endl;
 
     m_super_matrix->set_size(m, n);
@@ -354,8 +400,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     }
     std::cout << "----Grand Mean Computed----" << std::endl;
     // 1. Within terms
-    m_within_loadings->clear();
-    m_within_scores->clear();
+    // m_within_loadings->clear();
+    // m_within_scores->clear();
 
     for(unsigned int k = 0; k < dps; k++){
 
@@ -366,38 +412,55 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         ones_m_k.set_size(num_particles[k], 1);
         ones_m_k.fill(1.0);
         centering_matrix = centering_matrix - (ones_m_k * ones_m_k.transpose()) * (1.0 / ((double)num_particles[k]));
-
+        std::cout << "within centering done" << std::endl;
         vnl_matrix_type z_k;
         z_k.set_size(num_particles[k], VDimension * N);
+        z_k.fill(0.0);
         unsigned int row = 0;
         for(unsigned int x = 0; x < k; x++){ row += num_particles[k];} // k * num_particles[k]
         m_super_matrix->extract(z_k, row, 0); // Get shape matrix of the kth organ
-
+        std::cout << "z_k size " << z_k.rows() << " X " << z_k.cols() << std::endl;
+        std::cout << "within extract  for z_k done" << std::endl;
 
         vnl_matrix_type z_within_k = centering_matrix.transpose() * z_k; // m  X 3N
+        std::cout << "z_within_k size " << z_within_k.rows() << " X " << z_within_k.cols() << std::endl;
         
         // Compute Svd obejctive --> 3m X N
         vnl_matrix_type z_within_k_objective;
         z_within_k_objective.set_size(VDimension * num_particles[k], N);
+        z_within_k_objective.fill(0.0);
+        std::cout << "within obj cleared" << std::endl;
 
-        for(unsigned int i = 0 ; i < N; i++){
-            for(unsigned int j = 0; num_particles[k]; j++){
-                z_within_k_objective(j * VDimension, i) = z_within_k(j, i * VDimension);
-                z_within_k_objective(j * VDimension + 1, i) = z_within_k(j, i * VDimension + 1);
-                z_within_k_objective(j * VDimension + 2, i) = z_within_k(j, i * VDimension + 2);
+        for(unsigned int i = 0; i < N; i++){
+            for(unsigned int j = 0; j < num_particles[k]; j++){
+                unsigned int r = j * VDimension;
+                std::cout << "row = " << r << std::endl;
+                z_within_k_objective.put(j * VDimension, i, z_within_k.get(j, i * VDimension));
+                z_within_k_objective.put(j * VDimension + 1, i, z_within_k.get(j, i * VDimension + 1));
+                z_within_k_objective.put(j * VDimension + 2, i, z_within_k.get(j, i * VDimension + 2));
             }
         }
+        // std::cout << "*********z_within_k_objective******";
+        // for(int p = 0; p < z_within_k_objective.rows(); p++){
+        //     for(int q = 0; q < z_within_k_objective.cols(); q++){
+        //         std::cout << z_within_k_objective.get(p, q) << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+        std::cout << "within svd objective made" << std::endl;
 
         // Do within SVD
-        vnl_svd <double> svd_within(z_within_k_objective);
-        m_within_scores->push_back(svd_within.U()); // --> 3m X N 
-        m_within_loadings->push_back(svd_within.V() * svd_within.W()); // ----> N X N  X  N X N ===> N X N 
+        vnl_svd<double> svd_within(z_within_k_objective);
+        std::cout << "within svd of " << k << "done" << std::endl; 
+        m_within_scores->at(k) = svd_within.U(); // --> 3m X N 
+        m_within_loadings->at(k) = svd_within.V() * svd_within.W(); // ----> N X N  X  N X N ===> N X N 
+        std::cout << "pushed loadings and score for k = " << k << std::endl;
     }
     
     std::cout << "-----Within Terms computed----" << std::endl;
 
     // 2. Between terms
-    m_between_scores->clear();
+    // m_between_scores->clear();
     m_between_loadings->clear();
     unsigned int M = total_particles;
     vnl_matrix_type between_centering_matrix; // Build centering matrix for between
@@ -408,7 +471,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     ones_m.fill(1.0);
     between_centering_matrix = between_centering_matrix - (ones_m * ones_m.transpose()) * (1.0 / ((double) M));
     vnl_matrix_type z_centered = between_centering_matrix * super_matrix; // M * 3N
-
+    std::cout << "Between centering done" << std::endl;
     vnl_matrix_type z_between;
     z_between.set_size(dps, VDimension * N);
     z_between.fill(0.0);
@@ -418,43 +481,52 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         unsigned int row = 0;
         for(unsigned int x = 0; x < k; x++){ row += num_particles[k];} // k * num_particles[k]
         z_centered.extract(z_centered_k, row, 0); // extract sub-matrix for kth organ from centred matrix and Center that suub-matrix(bor between)
+        std::cout << "z_centred_between extracted" << std::endl;
         vnl_matrix_type ones_m_k;
         ones_m_k.set_size(num_particles[k], 1);
         ones_m_k.fill(1.0);
         vnl_matrix_type z_temp = (ones_m_k.transpose() * z_centered_k) * (1.0 / ((double) num_particles[k])); // --> 1 X 3N
         z_between.update(z_temp, k, 0);
+        std::cout << "z_between updated" << std::endl;
     }
 
     // tranform K X 3N --> 3K X N
-    vnl_matrix_type z_between_objective;
-    z_between_objective.set_size(VDimension * dps, N); // ---> 3K X N 
-    z_between_objective.fill(0.0);
+    vnl_matrix_type z_between_objective_temp;
+    z_between_objective_temp.set_size(VDimension * dps, N); // ---> 3K X N 
+    z_between_objective_temp.fill(0.0);
     for(unsigned int k = 0; k < dps; k++){
         for(unsigned int i = 0; i < N; i++){
-            z_between_objective(k * VDimension, i) = z_between(k, i * VDimension);
-            z_between_objective(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
-            z_between_objective(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
+            z_between_objective_temp.put(k * VDimension, i, z_between(k, i * VDimension));
+            z_between_objective_temp.put(k * VDimension + 1, i, z_between(k, i * VDimension + 1));
+            z_between_objective_temp.put(k * VDimension + 2, i, z_between(k, i * VDimension + 2));
         }
     }
+    std::cout << "z_between objective_temp done" << std::endl;
 
     vnl_matrix_type avg_matrix;
+    avg_matrix.clear();
     avg_matrix.set_size(VDimension * dps, VDimension * dps);
     avg_matrix.set_identity();
 
     for (unsigned int k = 0; k < dps; k++){
-        avg_matrix(k * VDimension, k * VDimension) = sqrt(num_particles[k]);
-        avg_matrix(k * VDimension + 1, k * VDimension + 1) = sqrt(num_particles[k]);
-        avg_matrix(k * VDimension + 2, k * VDimension + 2) = sqrt(num_particles[k]);
+        avg_matrix.put(k * VDimension, k * VDimension, sqrt(num_particles[k]));
+        avg_matrix.put(k * VDimension + 1, k * VDimension + 1, sqrt(num_particles[k]));
+        avg_matrix.put(k * VDimension + 2, k * VDimension + 2, sqrt(num_particles[k]));
     }
 
-    z_between_objective = avg_matrix * z_between_objective; //---> 3K X N
-    vnl_svd <double> svd_between(z_between_objective); // Do Between svd
+    vnl_matrix_type z_between_objective = avg_matrix * z_between_objective_temp; //---> 3K X N
+    std::cout<< "z_between_objective made" << std::endl;
+    vnl_svd<double> svd_between(z_between_objective); // Do Between svd
+    std::cout << "svd done of between" << std::endl;
+    m_between_loadings->set_size(N, N);
+    m_between_loadings->fill(0.0);
     m_between_loadings->update(svd_between.V() * svd_between.W());  // ----> N X N    X  N X N  --> N X N   
+    std::cout << "between loadings updated" << std::endl;
     
     for (unsigned int k = 0; k < dps; k++){
-        avg_matrix(k * VDimension, k * VDimension) = 1 / sqrt(num_particles[k]);
-        avg_matrix(k * VDimension + 1, k * VDimension + 1) = 1 / sqrt(num_particles[k]);
-        avg_matrix(k * VDimension + 2, k * VDimension + 2) = 1 / sqrt(num_particles[k]);
+        avg_matrix.put(k * VDimension, k * VDimension, 1 / sqrt(num_particles[k]));
+        avg_matrix.put(k * VDimension + 1, k * VDimension + 1, 1 / sqrt(num_particles[k]));
+        avg_matrix.put(k * VDimension + 2, k * VDimension + 2, 1 / sqrt(num_particles[k]));
     }
 
 
@@ -462,9 +534,10 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
     for(unsigned int k = 0; k < dps; k++){
         vnl_matrix_type temp_score; 
-        temp_score.set_size(VDimension, N); // --->3 X N
+        temp_score.set_size(VDimension, N);
+        temp_score.fill(0.0); // --->3 X N
         between_scores.extract(temp_score, k * VDimension, 0);
-        m_between_scores->push_back(temp_score); // ---> 3 X N
+        m_between_scores->at(k) = temp_score; // ---> 3 X N
     }
     std::cout << "----ML-PCA terms calculated-----" << std::endl;
 }
@@ -478,6 +551,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 {
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
+    std::cout << " Evaluating within Function" << std::endl;
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
     maxdt  = m_MinimumWithinEigenValue;
@@ -491,6 +565,9 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
     vnl_matrix_type Xi(3,1,0.0);
     vnl_matrix_type within_part = m_within_scores->at(dom) * m_within_loadings->at(dom).transpose(); //-->3m X N
+    std::cout << " In eval within func within part calculated" << std::endl;
+    std::cout << "within part sizee :  " << within_part.rows() << " X " << within_part.cols() << std::endl;
+
 
     Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - within_part(idx*VDimension, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension, 0);
     Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - within_part(idx*VDimension + 1, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension + 1, 0);
@@ -502,6 +579,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         tmp1.set_identity();
     else
         tmp1 = m_InverseCovMatricesAllWithin->at(dom).extract(3,3, idx*VDimension, idx*VDimension);
+    std::cout << " tmp1 extracted" << std::endl;
 
     vnl_matrix_type tmp = Xi.transpose()*tmp1;
 
@@ -513,6 +591,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     {
         gradE[i] = m_PointsUpdateAllWithin->at(dom).get(idx*VDimension + i, d / DomainsPerShape);
     }
+    std::cout << "grade e done " << std::endl;
 
 
     return system->TransformVector(gradE,

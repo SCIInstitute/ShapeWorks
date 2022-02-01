@@ -120,9 +120,9 @@ public:
   //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
 
-  void SetMlpcaBasedOptimization(bool use_mlpca_optimization);
+  // void SetMlpcaBasedOptimization(bool use_mlpca_optimization);
 
-  bool GetMlpcaBasedOptimization();
+  // bool GetMlpcaBasedOptimization();
 
   //! Get if mesh based attributes are being used
   bool GetUseMeshBasedAttributes();
@@ -204,6 +204,7 @@ public:
   void SetUseRegression(bool use_regression);
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
+  void SetMlpcaOptimize(bool use_mlpca_optimize);
 
   //! For good/bad analysis, set the normal angle to use (TODO: details)
   void SetNormalAngle(double normal_angle);
@@ -356,6 +357,7 @@ protected:
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
+  bool m_use_mlpca_optimize = false;
   bool m_use_mixed_effects = false;
 
   // IO Parameters
@@ -368,7 +370,6 @@ protected:
   std::string m_output_transform_file;
   bool m_output_transform_files = false;
   bool m_mesh_based_attributes = false;
-  bool m_use_mlpca_optimization = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
   std::vector<int> m_attributes_per_domain;

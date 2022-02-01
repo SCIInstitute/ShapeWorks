@@ -48,7 +48,13 @@ public:
       domain. */  
   
   virtual VectorType Evaluate(unsigned int, unsigned int,
-                              const ParticleSystemType *, double &, double&) const;
+                              const ParticleSystemType *, double &, double&) const
+  
+  {
+    itkExceptionMacro("This method not implemented");
+    return VectorType();
+  }
+                        
   virtual VectorType Evaluate(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
@@ -104,7 +110,14 @@ public:
   
   /**Access the shape matrix. */
   void SetShapeMatrix( ShapeMatrixType *s)
-  {    m_ShapeMatrix = s;  }
+  {    
+    m_ShapeMatrix = s;
+    m_dps = m_ShapeMatrix->GetDomainsPerShape(); 
+    std::cout <<" dps of entropy function set to be" << m_dps << std::endl;
+    
+  
+  }
+
   ShapeMatrixType *GetShapeMatrix()
   {   return  m_ShapeMatrix.GetPointer();  }
   const ShapeMatrixType *GetShapeMatrix() const
@@ -198,6 +211,7 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
+    copy->m_dps = this->m_dps;
 
     // copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     // copy->m_points_mean = this->m_points_mean;
@@ -273,6 +287,7 @@ protected:
   double m_MinimumVarianceDecayConstant;
   int m_RecomputeCovarianceInterval;
   int m_Counter;
+  int m_dps;
   bool m_UseMeanEnergy;
 
   double m_MinimumWithinEigenValue;

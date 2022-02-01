@@ -236,37 +236,48 @@ public:
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode)
-  {
+  { 
+    std::cout << "inside correspondence mode and mode is " << std::endl;
     if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
+      std::cout << "mode IS --> A " << std::endl;
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseMeanEnergy();
     }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
+      std::cout << "mode IS --> B " << std::endl;
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
+      std::cout << "mode IS --> C " << std::endl;
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
     }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
+      std::cout << "mode IS -->  D" << std::endl;
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
     else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
+      std::cout << "mode IS --> E " << std::endl;
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
     }
     else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
+      std::cout << "mode IS -->  F" << std::endl;
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
     else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy) {
+      std::cout << "mode IS --> G " << std::endl;
+      std::cout << "Linking set to mlpca ensemble entropy BEFORE" << std::endl;
       m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
       m_MlpcaBasedEnsembleEntropyFunction->UseEntropy();
+      std::cout << "Linking set to mlpca ensemble entropy 2" << std::endl;
       // TODO: check correct usage here
     }
-    //TODO: For mlpca-optimize
 
     m_CorrespondenceMode = mode;
+    std::cout << "Linking set to mlpca ensemble entropy" << std::endl;
+
   }
 
   void RegisterGeneralShapeMatrices()

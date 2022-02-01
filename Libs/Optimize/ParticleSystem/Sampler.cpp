@@ -38,7 +38,7 @@ Sampler::Sampler()
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
   // TODO: Initialize Mlpca optimization function
   m_MlpcaBasedEnsembleEntropyFunction = itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::New();
-
+  std::cout << "sampler constructor " << std::endl;
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
   m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
@@ -84,6 +84,7 @@ void Sampler::AllocateDataCaches()
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
+  std::cout << "cache done " << std::endl;
 }
 
 void Sampler::AllocateDomainsAndNeighborhoods()
@@ -244,8 +245,11 @@ void Sampler::Execute()
 
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
+    std::cout << "data cache allocation set " << std::endl;
     this->SetAdaptivityMode(m_AdaptivityMode);
+    std::cout << "Adap mode set " << std::endl;
     this->SetCorrespondenceMode(m_CorrespondenceMode);
+    std::cout << "correspondence mode set " << std::endl;
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction); // Main Gradient Function set here
     m_LinkingFunction->SetAOn();
     m_LinkingFunction->SetBOn();
@@ -265,9 +269,11 @@ void Sampler::Execute()
 
   //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy){
+    std::cout << "Inside MLPCA sampler execute" << std::endl;
     this->GetOptimizer()->StartMlpcaOptimization(m_LinkingFunction->GetBOn());
   }
   else{
+    std::cout << "Inside General sampler execute" << std::endl;
     this->GetOptimizer()->StartOptimization();
   }
 }

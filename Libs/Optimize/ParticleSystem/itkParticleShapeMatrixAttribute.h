@@ -89,7 +89,7 @@ public:
 
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
-            numRows += VDimension * ps->GetNumberOfParticles(i);
+          {  numRows += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
 
         if (numRows > this->rows())
             this->ResizeMatrix(numRows, this->cols());
@@ -97,7 +97,7 @@ public:
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
-            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
+            {k += VDimension * ps->GetNumberOfParticles(i);}
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)
@@ -115,7 +115,7 @@ public:
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
-            {k += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
+            {k += VDimension * ps->GetNumberOfParticles(i);}
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)

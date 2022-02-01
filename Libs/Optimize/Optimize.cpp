@@ -290,6 +290,7 @@ void Optimize::SetParameters()
   this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
   this->InitializeSampler();
+  std::cout << "Sampler initialized" << std::endl;
   this->PrintDoneMessage();
 
   if (m_use_normals.size() > 0) {
@@ -443,17 +444,17 @@ void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
   }
 }
 
-//---------------------------------------------------------------------------
-void Optimize::SetMlpcaBasedOptimization(bool use_mlpca_optimization)
-{
-  this->m_use_mlpca_optimization = use_mlpca_optimization;
-}
+// //---------------------------------------------------------------------------
+// void Optimize::SetMlpcaBasedOptimization(bool use_mlpca_optimization)
+// {
+//   this->m_use_mlpca_optimization = use_mlpca_optimization;
+// }
 
-//---------------------------------------------------------------------------
-bool Optimize::GetMlpcaBasedOptimization()
-{
-  return this->m_use_mlpca_optimization;
-}
+// //---------------------------------------------------------------------------
+// bool Optimize::GetMlpcaBasedOptimization()
+// {
+//   return this->m_use_mlpca_optimization;
+// }
 
 
 
@@ -585,6 +586,11 @@ void Optimize::InitializeSampler()
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetHoldMinimumVariance(false);
+
+  std::cout << "mlpca initialized" << std::endl;
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
     m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
@@ -613,6 +619,9 @@ void Optimize::InitializeSampler()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()
+    ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  std::cout << "mlpca initialized 2" << std::endl;
 
 
   // These flags must be set before Initialize, since Initialize need to know which domains are fixed ahead of time
@@ -620,6 +629,7 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
   m_sampler->Initialize();
+  std::cout << "Sampler Init 1 done" << std::endl;
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 
@@ -701,7 +711,8 @@ void Optimize::Initialize()
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
-    if(m_use_mlpca_optimization){
+    if(m_use_mlpca_optimize){
+      std::cout << "correspondence mode set in opt init" << std::endl;
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy); // TODO: ensure proper usage here
     }
     else if (m_mesh_based_attributes) {
@@ -1044,7 +1055,7 @@ void Optimize::RunOptimize()
 
   m_sampler->SetCorrespondenceOn(); //  B - ON
 
-  if (m_use_mlpca_optimization == true){
+  if (m_use_mlpca_optimize == true){
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy);
   }
   else if ((m_attributes_per_domain.size() > 0 &&
@@ -2116,6 +2127,9 @@ void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor)
 //---------------------------------------------------------------------------
 void Optimize::SetUseRegression(bool use_regression)
 { this->m_use_regression = use_regression; }
+
+void Optimize::SetMlpcaOptimize(bool use_mlpca_optimize)
+{ this->m_use_mlpca_optimize = use_mlpca_optimize; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseMixedEffects(bool use_mixed_effects)
