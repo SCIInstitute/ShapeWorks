@@ -178,7 +178,6 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1009,15 +1008,12 @@ vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Viewer::get_image_transform()
-{
+vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), 0);
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_key(int* click_pos, std::string key) {
-  slice_view_.handle_key(key);
-}
+void Viewer::handle_key(int* click_pos, std::string key) { slice_view_.handle_key(key); }
 
 //-----------------------------------------------------------------------------
 bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {

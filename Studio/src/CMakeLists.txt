@@ -198,6 +198,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
   Visualization/SliceView.cpp
+  Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
   Visualization/StudioVtkOutputWindow.cpp

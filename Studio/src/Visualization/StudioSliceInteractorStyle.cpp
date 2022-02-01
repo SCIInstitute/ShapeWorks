@@ -41,6 +41,25 @@ void StudioSliceInteractorStyle::OnRightButtonDown() {
 }
 
 //-----------------------------------------------------------------------------
+void StudioSliceInteractorStyle::OnKeyDown()
+{
+  std::cerr << "slice interactor, keydown\n";
+  int* click_pos = this->GetInteractor()->GetEventPosition();
+
+  char keycode = this->GetInteractor()->GetKeyCode();
+  std::string keysym = GetInteractor()->GetKeySym();
+  if (keysym == "Up" | keysym == "Down") {
+    lightbox_->handle_key(click_pos, keysym);
+  }
+
+  this->GetInteractor()->Render();
+
+  // forward events
+  vtkInteractorStyleTrackballCamera::OnKeyDown();
+
+}
+
+//-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::set_lightbox(Lightbox* lightbox) { this->lightbox_ = lightbox; }
 /*
 //-----------------------------------------------------------------------------
