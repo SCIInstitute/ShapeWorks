@@ -1248,7 +1248,15 @@ PYBIND11_MODULE(shapeworks_py, m)
                "filename"_a,"mesh"_a)
 
   .def("sharedBoundaryExtractor",
-              &MeshUtils::sharedBoundaryExtractor,
+              // MeshUtils::sharedBoundaryExtractor,
+              [](const Mesh &mesh_l,const Mesh &mesh_r,float tol){
+               // Mesh &m1;
+              //  // Mesh &m2;
+              //  // Mesh &m3;
+               auto output = MeshUtils::sharedBoundaryExtractor(mesh_l,mesh_r,tol);
+               return output;
+              },
+     // py::overload_cast<Mesh,Mesh,Mesh>(&MeshUtils::sharedBoundaryExtractor),
               "extract the shared boundary for the given left and right meshes and save the individual meshes",
               "mesh_l"_a,"mesh_r"_a,"tol"_a = 1e-3)
 

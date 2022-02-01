@@ -47,7 +47,7 @@ public:
   static int boundaryLoopExtractor(std::string filename,Mesh mesh);
 
   /// shared boundary extractor for the left and right mesh
-  std::tuple<Mesh,Mesh,Mesh> sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r,double tol);
+  static std::vector<Mesh> sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r,double tol);
 
   /// generates and adds normals for points and faces for each mesh in given set of meshes
   static void generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen = false);

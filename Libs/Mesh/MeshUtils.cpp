@@ -438,11 +438,11 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
 }
 
 // int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
-std::tuple<Mesh, Mesh, Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r, double tol)
+std::vector<Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r, double tol)
 {
   
 
-
+  std::vector<Mesh> output_meshes;
   Eigen::MatrixXd V_l, V_r;
   Eigen::MatrixXi F_l, F_r;
   V_l = mesh_l.points();
@@ -484,8 +484,12 @@ std::tuple<Mesh, Mesh, Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_
 
   // igl::writePLY(filename_r, rem_V_r, rem_F_r);
   // igl::writePLY(filename_shared, shared_V_r, shared_F_r);
-  return std::make_tuple(out_l,out_r,out_s);
-
+  output_meshes.push_back(out_l);
+  output_meshes.push_back(out_r);
+  output_meshes.push_back(out_s);
+  // auto eq =  std::make_tuple(out_l,out_r,out_s);
+  // return eq;
+  return output_meshes;
 }
 
 
