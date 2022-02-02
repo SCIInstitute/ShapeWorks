@@ -161,4 +161,18 @@ MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
   return xform;
 }
 
+std::string axisToString(Axis axis)
+{
+  switch (axis) {
+    case Axis::X:
+      return "X";
+    case Axis::Y:
+      return "Y";
+    case Axis::Z:
+      return "Z";
+    case Axis::invalid:
+      return "Invalid";
+  }
+}
+
 }; //shapeworks
