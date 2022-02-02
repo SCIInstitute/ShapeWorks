@@ -141,7 +141,7 @@ class Session : public QObject {
   std::string get_image_name();
 
   // image axis
-  void set_image_axis(Axis axis);
+  void set_image_axis(QString axis);
   Axis get_image_axis();
 
   void set_loading(bool loading);

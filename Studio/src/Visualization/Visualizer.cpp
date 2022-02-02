@@ -9,16 +9,10 @@
 #include <vtkTransformPolyDataFilter.h>
 
 #include <QColor>
-#include <QMetaEnum>
 #include <QThread>
 
 namespace shapeworks {
 
-//-----------------------------------------------------------------------------
-QString visualization::toString(AxisType axis) {
-  const QMetaEnum meta = QMetaEnum::fromType<AxisType>();
-  return meta.valueToKey(axis);
-}
 //-----------------------------------------------------------------------------
 
 const std::string Visualizer::MODE_ORIGINAL_C("Original");
@@ -372,10 +366,10 @@ void Visualizer::set_image_volume(const string& image_volume) { image_volume_ = 
 const string& Visualizer::get_image_volume() const { return image_volume_; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_image_axis(visualization::AxisType axis) { image_axis_ = axis; }
+void Visualizer::set_image_axis(Axis axis) { image_axis_ = axis; }
 
 //-----------------------------------------------------------------------------
-visualization::AxisType Visualizer::get_image_axis() { return image_axis_; }
+Axis Visualizer::get_image_axis() { return image_axis_; }
 
 //-----------------------------------------------------------------------------
 bool Visualizer::get_center() { return this->center_; }

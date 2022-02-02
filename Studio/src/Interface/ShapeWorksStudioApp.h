@@ -121,7 +121,7 @@ public Q_SLOTS:
   void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
 
-  void update_image_selection(const QString& image_name);
+  void image_combo_changed(const QString& image_name);
 
   void show_splash_screen();
   void about();

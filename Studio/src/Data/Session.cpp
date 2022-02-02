@@ -978,15 +978,24 @@ std::string Session::get_image_name()
 }
 
 //---------------------------------------------------------------------------
-void Session::set_image_axis(Axis axis)
+void Session::set_image_axis(QString axis)
 {
-  params_.set("image_axis", axisToString(axis));
+  if (axis == get_image_axis() || is_loading()) {
+    return;
+  }
+  std::cerr << "set image axis to : " << axis.toStdString() << "\n";
+  params_.set("image_axis", axis.toStdString());
+  Q_EMIT update_view_mode();
 }
 
 //---------------------------------------------------------------------------
 Axis Session::get_image_axis()
 {
   std::string axis_string = params_.get("image_axis", "Z");
+  Axis axis = toAxis(axis_string);
+  if (axis == Axis::invalid) {
+    axis = Axis::Z;
+  }
   return toAxis(axis_string);
 }
 

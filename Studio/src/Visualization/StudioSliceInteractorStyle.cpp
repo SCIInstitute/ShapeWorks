@@ -43,7 +43,6 @@ void StudioSliceInteractorStyle::OnRightButtonDown() {
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::OnKeyDown()
 {
-  std::cerr << "slice interactor, keydown\n";
   int* click_pos = this->GetInteractor()->GetEventPosition();
 
   char keycode = this->GetInteractor()->GetKeyCode();

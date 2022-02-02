@@ -475,6 +475,7 @@ MeshGroup Viewer::get_meshes() { return meshes_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape) {
+  std::cerr << "Viewer::display_shape\n";
   visible_ = true;
 
   shape_ = shape;
@@ -770,11 +771,10 @@ void Viewer::update_points() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_actors() {
+  std::cerr << "Viewer::update_actors\n";
   if (!visible_) {
     return;
   }
-
-  std::cerr << "Viewer::update_actors\n";
 
   renderer_->RemoveActor(glyph_actor_);
   renderer_->RemoveActor(arrow_glyph_actor_);
@@ -805,6 +805,7 @@ void Viewer::update_actors() {
   }
 
   slice_view_.update_renderer();
+  std::cerr << "about to call update_camera\n";
   slice_view_.update_camera();
 
   update_opacities();
@@ -815,10 +816,8 @@ void Viewer::update_image_volume() {
   auto image_volume_name = visualizer_->get_image_volume();
   if (image_volume_name != "") {
     auto volume = shape_->get_image_volume(image_volume_name);
-    if (!volume) {
-      return;
-    }
     slice_view_.set_volume(volume);
+    slice_view_.set_orientation(visualizer_->get_image_axis());
   }
 }
 

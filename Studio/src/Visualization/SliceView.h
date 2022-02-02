@@ -27,6 +27,8 @@ class SliceView {
 
   void set_volume(vtkSmartPointer<vtkImageData> volume);
 
+  void set_orientation(int orientation);
+
   bool is_image_loaded();
 
   void update_renderer();

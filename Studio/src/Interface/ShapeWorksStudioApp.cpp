@@ -211,9 +211,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::update_feature_map_selection);
 
   connect(ui_->image_combo_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &ShapeWorksStudioApp::update_image_selection);
-  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &ShapeWorksStudioApp::update_image_selection);
+          &ShapeWorksStudioApp::image_combo_changed);
 
   connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
 
@@ -565,6 +563,8 @@ void ShapeWorksStudioApp::update_table() {
   this->ui_->features->setCurrentText(current_feature);
   this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
 
+  ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
+
   /// fill in image combo
   auto current_image = ui_->image_combo_->currentText();
   ui_->image_combo_->clear();
@@ -766,9 +766,9 @@ void ShapeWorksStudioApp::handle_clear_cache() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session() {
   // project initializations
-  this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
-  this->session_->set_parent(this);
-  this->setWindowTitle(this->session_->get_display_name());
+  session_ = QSharedPointer<Session>::create(this, preferences_);
+  session_->set_parent(this);
+  setWindowTitle(this->session_->get_display_name());
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered, this,
           &ShapeWorksStudioApp::handle_error);
@@ -790,6 +790,8 @@ void ShapeWorksStudioApp::new_session() {
           &Session::set_feature_range_min);
   connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(),
           &Session::set_feature_range_max);
+
+  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(), &Session::set_image_axis);
 
   this->data_tool_->update_notes();
 
@@ -883,6 +885,7 @@ std::string ShapeWorksStudioApp::get_tool_state() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
+  std::cerr << "update view mode, yo!\n";
   auto view_mode = this->get_view_mode();
   this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
@@ -902,6 +905,8 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     visualizer_->set_image_volume(image_volume_name);
+    std::cerr << "going to set image axis to: " << session_->get_image_axis() << "\n";
+    visualizer_->set_image_axis(session_->get_image_axis());
 
 
     std::string feature_map_override = "";
@@ -931,6 +936,7 @@ void ShapeWorksStudioApp::update_view_mode() {
     visualizer_->set_feature_map(feature_map);
     visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
     update_feature_map_scale();
+    std::cerr << "calling force update display!\n";
     update_display(true);
   }
 }
@@ -1888,7 +1894,7 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_image_selection(const QString& image_name) {
+void ShapeWorksStudioApp::image_combo_changed(const QString& image_name) {
   session_->set_image_name(image_name.toStdString());
 }
 
