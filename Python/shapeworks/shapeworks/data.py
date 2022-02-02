@@ -5,7 +5,6 @@ Common utility functions
 """
 import os
 import re
-import itk
 import numpy as np
 from sklearn.cluster import SpectralClustering
 import xml.etree.ElementTree as ET
