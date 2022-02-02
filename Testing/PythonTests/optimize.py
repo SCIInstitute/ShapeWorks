@@ -8,6 +8,7 @@ opt = shapeworks.Optimize()
 opt.LoadParameterFile("simple.xml")
 
 def callback():
+
     print("python callback")
     if opt.GetOptimizing():
         print("optimizing!")
@@ -17,6 +18,7 @@ def callback():
     print(type(particles))
     print(f"shape: {particles.shape}")
     print(particles)
+
 
 def before_evaluate():
     print("python: before_evaluate")
@@ -39,3 +41,5 @@ def before_evaluate():
 opt.SetIterationCallbackFunction(callback)
 opt.SetBeforeEvaluateCallbackFunction(before_evaluate)
 opt.Run()
+
+# TODO: check results are what would be expected (save a file with them?)

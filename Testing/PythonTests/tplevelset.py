@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def tplevelsetTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   featureImg = Image(os.environ["DATA"] + "/curvature1.nrrd")
@@ -12,10 +14,7 @@ def tplevelsetTest1():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(tplevelsetTest1)
 
 def tplevelsetTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -27,7 +26,16 @@ def tplevelsetTest2():
 
   return img.compare(compareImg)
 
-val = tplevelsetTest2()
+success &= utils.test(tplevelsetTest2)
 
-if val is False:
-  sys.exit(1)
+def tplevelsetfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.applyTPLevelSetFilter()
+
+  compareImg = Image(os.environ["DATA"] + "/tplevelsetfail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(tplevelsetfailTest, TypeError)
+
+sys.exit(not success)

@@ -1,21 +1,26 @@
 cmake_minimum_required(VERSION 3.11)
-set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
-find_package(Python3 3.7 EXACT REQUIRED)
-
 
 ##########################################
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 0 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 3 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.1.0-dev")
+SET(SHAPEWORKS_VERSION_STRING "6.3.0-dev")
 
 
-#
-# ShapeWorks options
-#
+
+# First, check that files were checked out properly using git-lfs
+file(MD5 "${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd" HASH)
+if (NOT "${HASH}" STREQUAL "bb94438a695c749b264180019abbbb97")
+  message( FATAL_ERROR "MD5 hash of '${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd' is incorrect.  This most likely means that git-lfs was not installed when ShapeWorks was cloned." )
+endif()
+
+set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+find_package(Python3 3.7 EXACT REQUIRED)
+
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
@@ -59,7 +64,10 @@ if(LINUX)
   # We need RPATH rather than RUNPATH since RUNPATH
   # though recommended, is not used for transitive dependencies
   SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+  SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
+
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 
 # put executables in bin directory (under build dir) so they are easy to find
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -74,17 +82,21 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
-endif(msvc)
+endif(MSVC)
 
 # GUI
 if (SHAPEWORKS_GUI)
     
-  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
   set(SHAPEWORKS_QT_FOUND 1)
   else()
   set(SHAPEWORKS_QT_FOUND 0)
   endif()
+
+  find_package(JKQTCommonSharedLib REQUIRED)
+  find_package(JKQTMathTextSharedLib REQUIRED)
+  find_package(JKQTPlotterSharedLib REQUIRED)
 
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -137,9 +149,16 @@ ENDIF()
 
 ### XLNT
 find_package (XLNT REQUIRED)
+add_definitions(-DXLNT_STATIC=1)
+
+### ACVD
+find_package (ACVD REQUIRED)
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
+
+find_package(Boost REQUIRED COMPONENTS
+             filesystem)
 
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
@@ -168,7 +187,6 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/robin_hood")
 
 SET(PYBIND11_PYTHON_VERSION 3.7)
 find_package(pybind11 2.5.0 REQUIRED)
-add_subdirectory(Python/shapeworks)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
@@ -221,9 +239,10 @@ if(BUILD_DOCUMENTATION)
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
-  add_subdirectory(docs/Doxygen)
+  add_subdirectory(docs/doxygen)
 endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 

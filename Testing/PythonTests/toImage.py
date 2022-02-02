@@ -2,41 +2,37 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def toImageTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage([1.0, 1.0, 1.0])
+  img = mesh.toImage()
 
   compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
   return img == compareImg
 
-val = toImageTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(toImageTest1)
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(spacing=[2.0, 2.0, 1.0])
+  bbox = mesh.boundingBox().pad(2.0) # changing spacing means we need to pad more to compensate
+  img = mesh.toImage(bbox, spacing=[2.0, 2.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage2.nrrd")
 
   return img == compareImg
 
-val = toImageTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(toImageTest2)
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(size=[40, 145, 131])
+  img = mesh.toImage(region=mesh.boundingBox(), spacing=[2.29, 0.462, 1])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage3.nrrd")
 
   return img == compareImg
 
-val = toImageTest3()
+success &= utils.test(toImageTest3)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

@@ -3,12 +3,13 @@ set(Common_sources
   Shapeworks.cpp
   ShapeworksUtils.cpp
   Region.cpp
-  Conversion.cpp
+  Exception.cpp
   )
 set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
+  Exception.h
   )
 add_library(Common STATIC
   ${Common_sources}
@@ -17,8 +18,8 @@ target_include_directories(Common PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Common
-  Image
-  Mesh
+  ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES}
   )
 
 # Install

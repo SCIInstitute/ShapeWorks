@@ -2,11 +2,13 @@
 set(Utils_sources
   Utils.cpp
   StringUtils.cpp
+  EigenUtils.cpp
   )
 
 set(Utils_headers
   Utils.h
   StringUtils.h
+  EigenUtils.h
   )
 
 add_library(Utils STATIC
@@ -22,6 +24,7 @@ target_include_directories(Utils PUBLIC
 target_link_libraries(Utils PUBLIC
   Eigen3::Eigen 
   ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
 # Install

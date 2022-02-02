@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def warpTest():
   img = Image(os.environ["DATA"] + "/input.nrrd")
   transform = ImageUtils.createWarpTransform(os.environ["DATA"] + "/source.particles", os.environ["DATA"] + "/target.particles", 1)
@@ -11,7 +13,16 @@ def warpTest():
 
   return img.compare(compareImg)
 
-val = warpTest()
+success &= utils.test(warpTest)
 
-if val is False:
-  sys.exit(1)
+def warpfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  transform = ImageUtils.createWarpTransform(os.environ["DATA"] + "/source.particles")
+
+  compareImg = Image(os.environ["DATA"] + "/warpfail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(warpfailTest, TypeError)
+
+sys.exit(not success)

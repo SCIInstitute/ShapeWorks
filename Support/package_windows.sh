@@ -34,12 +34,18 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-cp -r ../build/bin/RelWithDebInfo bin
+BUILD="/c/build"
+CONDA_LOC="/c/Miniconda3/envs/shapeworks"
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/bin/Release
+
+
+cp -r $BUILD/bin/Release bin
+rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
 # Run auto-documentation
 cd $ROOT
-PATH=../build/bin/Release:bin:$PATH
+PATH=$BUILD/bin/Release:bin:$PATH
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
@@ -57,7 +63,6 @@ cp -a Documentation bin/
 rm bin/*Tests.exe
 
 windeployqt "bin/ShapeWorksStudio.exe"
-windeployqt "bin/ShapeWorksView2.exe"
 ../NSISPortable/App/NSIS/makensis.exe shapeworks.nsi
 mkdir artifacts
 cp *.exe artifacts

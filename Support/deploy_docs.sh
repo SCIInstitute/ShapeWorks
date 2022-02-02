@@ -16,6 +16,10 @@ INSTALL_DIR=$1
 # Update auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
 
+# Check pip status
+echo "pip list:"
+pip list
+
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
@@ -25,7 +29,8 @@ else
     exit 1
 fi
 
-python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+# install doxybook2
+${GITHUB_WORKSPACE}/Support/build_docs.sh $INSTALL_DIR
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -36,10 +41,14 @@ git reset --hard HEAD
 git remote rm origin
 git remote add origin "${remote_repo}"
 
+# remove local gh-pages branch, if any
 git branch -D gh-pages
-git checkout gh-pages
+# get remote gh-pages branch
+git checkout --track origin/gh-pages
 git pull --rebase
 git checkout master
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
 
       

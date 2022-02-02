@@ -1,6 +1,201 @@
 # Release Notes
 
-## ShapeWorks 6.0 - 2020-03-10
+
+## ShapeWorks 6.2.1 - 2022-01-07
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * Added new `isolate` functionality that isolates the largest object in a segmentation
+    * Added remeshing using ACVD library
+    * Added option to save mesh file as binary (default is ASCII)
+    * Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. 
+  * **ShapeWorks Front-end**
+    * Studio: Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)
+    * Studio: Added reflection, remeshing, image cropping, image resampling to grooming
+    * Studio: New UI for grooming
+  * **User's Support**
+    * Updated `ellipsoid_mesh` use case to demonstrate mesh grooming
+    * Combined the functionality of the three femur use cases - `femur`,`femur_mesh`,`femur_cut` into one use case. The `femur_cut` use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.
+### Fixes
+  * Studio: Fixed display names in the corner (removing long paths)
+  * Studio: Fixed recomputation of shape statistics upon re-running shape model and removing shapes
+
+## ShapeWorks 6.2 - 2021-11-16
+
+![](../img/about/release6.2.png)
+
+### What is new?
+
+#### ShapeWorks Back-end
+
+* **New `Mesh` grooming tools:**  
+The following grooming tools are supported from all three different interfaces - command line, C++ and Python:  
+    - `curvature`: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field that contains a scalar value for each mesh vertex. See [mesh-curvature]( ../tools/ShapeWorksCommands.md#mesh-curvature) to know about function parameters. 
+    - `fixElement`: fixes element winding of a given triangular mesh as a quality control step for preparing meshes for shape modeling. See [fix-element](../tools/ShapeWorksCommands.md#fix-element) to know about function parameters.  
+    - `geodesicDistance`: the computation of geodesic distances enables feature-based correspondences. Read this [paper](https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf) for more details. Below are exemplar usage scenarios.    
+        - `geodesicDistance (pointA, pointB)`: computes geodesic distance between 2 points on a triangular mesh. See [geodesic-distance](../tools/ShapeWorksCommands.md#geodesic-distance) to know about function parameters.  
+        - `geodesicDistance (landmark)`: computes geodesic distances between all points on a triangular mesh to a given point (landmark). See [geodesic-distance-landmark](../tools/ShapeWorksCommands.md#geodesic-distance-landmark) to know about function parameters.   
+        - `geodesicDistance (curve)`: computes geodesic distances between all points on mesh and set of points (curve)   
+    `computeMeanNormals`: computes the average surface normal for each mesh vertex in a given set of triangular meshes with vertex-wise correspondences and returns a field containing a normal vector for each mesh vertex. See [mean-normals](../tools/ShapeWorksCommands.md#mean-normals) to know about function parameters. 
+
+* **New `Mesh` query/operator tools:**  
+The following tools are supported from all three different interfaces - command line, C++ and Python:    
+    - `operator+=`: appends a mesh to an existing mesh. The result of this operator is a single mesh with a single vertex and face lists.
+    - `closestPoint`: returns the closest point on a face in the mesh to a given point in space. See [closest-point](../tools/ShapeWorksCommands.md#closest-point) to know about function parameters. 
+    - `closestPointId`: returns closest point id in the mesh to a given point in space   
+    - `points`: returns matrix with number of points with (x,y,z) coordinates of each point   
+    - `faces`: returns matrix with number of faces with indices of the three points from which each face is composed   
+    - `getFace`: return indices of the three points with which the face at the given index is composed   
+
+* **`Mesh` fields:** Added support for passing multi-valued fields in addition to scalar fields. Previously field operations such as `getField`, `setField` supported only single-value components. Now, these operations can be used for multi-valued components as well. This is useful for associated surface meshes with positional (i.e., spatially varying) features, e.g., application-specific features such as cortical thickness and bone density, and computationally driven features such as geodesics to anatomical landmarks, curvatures, and surface normals.   
+
+* **Free-form constraints (FFCs):** FFCs support has been added. Added a unit test for FFCs, a typical sphere unit test with a constraint that cuts the sphere like a tennis ball grove. Also added a unit test with two domains, both spheres in different locations. The first sphere has one cutting plane and 25 sphere constraints, and the second sphere has one cutting plane and one free form constraint. See [Free-Form Constraints](../new/free-form-constraints.md) for more details.
+
+#### ShapeWorks Front-end
+
+* **Multiple domains in Studio:** Support for multiple alignment strategies is now present in Studio. It allows analysis with and without articulation with a choice of reference domain or global alignment. See [Multiple Domain Alignments](../studio/multiple-domains.md#multiple-domain-alignments)
+
+* **New analysis features in Studio:** Shape evaluation charts for compactness, specificity, and generalization have been added. See for [Metrics Panel](../studio/getting-started-with-studio.md#metrics-panel) more details.
+
+* **Usability features in Studio:** New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See [New in ShapeWorks Studio 6.2](../new/new-studio.md#usability-features) for more details.
+
+#### User's Support
+
+* **Shape cohort generation:** Added segmentation and image generation for 2D contour supershapes. See this [Jupyter Notebook](../notebooks/getting-started-with-data-augmentation.ipynb) for more details.
+
+* **Analyzing the group differences:** A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. See [Femur: Group Difference Statistics in Python](../use-cases/stats-based/femur-pvalues.md) for more details.   
+
+* **Sub-sampling for multiple domains:** We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.
+
+* **API reference in Documentation:** Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out [Groups](http://sciinstitute.github.io/ShapeWorks/api/Modules/index_groups.html), [Classes](http://sciinstitute.github.io/ShapeWorks/api/Classes/index_classes.html), [Namespaces](http://sciinstitute.github.io/ShapeWorks/api/Namespaces/index_namespaces.html), [Files](http://sciinstitute.github.io/ShapeWorks/api/Files/index_files.html) for more details.
+
+#### Deep Learning
+
+* **DeepSSM in Studio:** The ability to run DeepSSM has been added to Studio. See [DeepSSM in Studio](../studio/deepssm-in-studio.md) for more details.
+
+### Improvements
+
+#### ShapeWorks Back-end
+
+* **Safe construction of `Image` instances in Python:** Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using `pyvista` is now transparent and copy-free (note: copying is still supported if necessary). A [Jupyter Notebook](../notebooks/array-passing-without-copying.ipynb) was added to demonstrate `Image` initialization and passing.
+
+* **Efficient data sharing between Python and C++:** Added efficient sharing of large data between Python and C++ (for both `Mesh` fields and `Image` data) that enables Python tools which access `Mesh` fields or `Image` data for visualization and analysis, or wish to create an Image or add fields from NumPy to a `Mesh`, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. 
+
+* **Improved Python APIs:** `Coordsys` of images in Python can now be set using `setCoordsys`. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks `Mesh` in Python to vtk mesh by creating a `PolyData` instead of performing IO operations.
+
+* **Transforms in `Image` and `Mesh` API:** Separate transforms such as center of mass, rigid registration and thin plate spiline can be created. They are passed efficiently and transparently between Python and C++. These transform functions create and accept numpy arrays instead of using proprietary transform type in the Python API. A jupyter notebook was to demonstrate this for [images](../notebooks/create-and-apply-image-transforms.ipynb) and [meshes](../notebooks/create-and-apply-mesh-transforms.ipynb). 
+
+* **Optimizer exports alignment transforms:** Write individual procrustes transforms. The ShapeWorks `Optimizer` can now export individual procrustes transform files if requested. Use the xml tag `<write_transform_files> 1 </write_transform_files>` to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See [Optimize](../workflow/optimize.md) for more details.
+
+* **Improved testing:** More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (`verify.log`) is written that contains the use case outputs and summary.
+
+#### User's Support
+
+* **Use cases:** Added `--mesh_mode` option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes, and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See [Use Case Documentation](../use-cases/use-cases.md#use-cases-arguments) for more details. 
+
+* **Improved use cases documentation:** Restructured use cases documentation to reduce repetition and better highlight the focus and differences of each demonstration. Added relevant documentation links for every step and parameter in use case descriptions. Reorganized use case documentation based on category (i.e., mesh-based, constraint-based, etc.). See [Getting Started with Use Cases](../use-cases/use-cases.md) for information on running use cases and [Examples](../getting-started/examples.md) for an overview of released use cases. More explanation of interpreting modes of variation in [Shapes. What & From Where?](../getting-started/shapes.md).
+
+* **Restructured `ellipsoid_evaluate` use case:** The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See [Ellipsoid: Shape Evaluation in Python](../use-cases/stats-based/ellipsoid-evaluate.md) for more details.
+
+
+### Fixes
+
+#### ShapeWorks Back-end
+
+* **Memory leak:** Fixed memory leak issues in `FEMesh` operations
+
+#### ShapeWorks Front-end
+
+* **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) was fully compatible with all tools. 
+
+## ShapeWorks 6.1 - 2021-06-28
+
+![](../img/about/release6.1.png)
+
+
+### What is new?
+
+
+#### ShapeWorks Back-end
+
+* **Improved shape models for convoluted structures:** Geodesic distance-based repulsion is now supported for mesh domains. This improves results on structures with thin and/or convoluted features at the cost of increased memory and runtime. Refer to the `thin_cavity_bean` use case for an example.
+* **Optimizing shape models on contours:** N-dimensional contour domains are now supported in ShapeWorks. Refer to the `supershapes_1mode_contour` use case for an example.
+* **Robust and scalable primitive-based constrained surface sampling:** Constraints are now implemented by turning the problem into an unconstrained optimization using the augmented lagrangian inequality formulation. The new implementation supports both cutting planes and spheres. It also supports multiple constraints per domain/shape with different types.
+* **Consolidated library for shape statistics:** The `shapeworks` computational library is updated to include refactored code for shape statistics, including functions to read particle files and compute eigenvectors, eigenvalues, and PCA loadings. 
+
+
+#### ShapeWorks Front-end
+
+* **Grooming support for meshes in Studio:** Multiple grooming features for mesh domains are added to Studio, including two methods for mesh smoothing, hole filling, mesh centering, and iterative closest point for rigid pre-alignment with automated reference shape selection.
+* **Multiple domains support in Studio:** Multiple domains are added to Studio where shape models are optimized in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for an arbitrary number of domains as long as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).
+* **Python APIs for shape statistics:** Python APIs for principal component analysis (PCA) are added for shape statistics. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. See `ellipsoid_pca` for a demonstrating example.
+
+
+<!--#### Deep Learning & Shape Modeling-->
+
+
+#### User's Support
+
+* **Multi-domain shape cohort generation:** Ellipsoid joint generation is added to ShapeWorks' cohort generator python module. Shape cohorts with multiple domains can be generated with options to control the distance separating the domains and modes of variations (size/rotation). These cohorts can be used for troubleshooting multiple domain shape modeling workflows.
+
+* **New use cases:** A new use case (`ellipsoid_pca`) demonstrating the usage of the new PCA tools is added. The `thin_cavity_bean` use case is added to demonstrate geodesic distance-based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted structures. The `supershapes_1mode_contour` use case is added to demonstrate shape modeling using contour domains. Another two new use cases, `ellipsoid_multiple_domain` and `ellipsoid_multiple_domain_mesh`, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.
+
+
+### Improvements
+
+
+#### ShapeWorks Back-end
+
+* **Particle splitting is agnostic to constraints:** Particle splitting and constraints will no longer require that no particle violates constraints. It will work even if a particle violates a constraint. Multiple unit tests are added.
+* **Mesh reconstruction for multiple meshes:** The warp-mesh command is extended to work with multiple meshes at the same time with the same reference mesh and points.
+* **Improvements to the `Image` and `Mesh` libraries:** Exact specification of crop regions and clip plane for both images and meshes are enabled.
+* Better error detection and handling.
+* More robust automated testing to ensure improvements do not break existing functionality.
+
+ 
+#### ShapeWorks Front-end
+
+* **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
+* **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
+* **Improved ShapeWorks Python module library coverage:** The entire ShapeWorks library framework now accessible via Python bindings. 
+* **Python types support in ShapeWorks Python module:** ShapeWorks Python module uses generic Python types (e.g., numpy, arrays, lists) rather than opaque wrappers for parameters to/from ShapeWorks objects. It is now possible to instantiate shapeworks.Image from a numpy array. One can now request raw image data as a numpy array. 
+* **Safe dot-chain operations in ShapeWorks Python module:**  The “dot chain” operations are now safely enabled (e.g., `img.translate([tx, ty, tz]).rotate(45, shapeworks::Z).scale([sx, sy, sz))`)
+* **`RunUseCase` improvements:** `RunUseCase` no longer requires `--use_case` before the use case name. This makes it simpler to use since omitting a use case name immediately prints help, which itself shows the list of use cases as a required argument rather than listing them with the other optional args. `RunUseCase` no longer accepts paths to shapeworks executables or Python modules. All of these are in the user's conda environment, or set using the `devenv` for testing by developers.
+
+
+#### Deep Learning & Shape Modeling
+
+* **Refactored DeepSSM:** Defined a config file for DeepSSM parameters that are used in training and testing. This will be helpful for parameter tuning, model comparison, and adding additional functionality and parameters to DeepSSM.
+* **DeepSSM with fine-tuning:** A fine-tuning option has been added to DeepSSM. This allows the model to learn the mapping between the PCA space to the correspondence point space, improving accuracy.
+* **Improved DeepSSM evaluation:** DeepSSM evaluation has been adapted to use ShapeWorks mesh warp function and Python binding mesh distance function.
+* **DeepSSM on both GPU and CPU:** The DeepSSM use case has been adapted to run on both GPU and CPU. It is considerably faster on GPU but no longer exits when running on CPU.
+
+
+#### User's Support
+
+* **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
+* **Improved notebooks:** Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. 
+* **Improved installation:** Users no longer are required to modify PATHs or pass parameters to find executables or import the ShapeWorks Python module. Installation works even if non-standard installation directories are used and it works on all platforms.
+* **New shapeworks environments can now be created using `install_shapeworks [name]`:** This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.
+* **Clean installation for ShapeWorks Python module:** ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. 
+
+### Fixes
+
+#### ShapeWorks Back-end
+
+* **Image to Array:** ShapeWorks image functionality is fixed such that an image can be successfully converted to a numpy array and back to a ShapeWorks image. 
+
+#### ShapeWorks Front-end
+
+* **Notebook visualization:** Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks are now updated to no longer use ITK Widgets for visualization and instead use the more robust and stable PyVista library. 
+* **Use case file writing:** RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. 
+
+#### Deep Learning & Shape Modeling
+
+* **DeepSSM evaluation:** The DeepSSM evaluation step in the use case is updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
+
+
+## ShapeWorks 6.0 - 2020-03-30
 
 ![](../img/about/release6.0.png)
 
@@ -8,7 +203,7 @@
 
 #### User's Support
 
-* **New discussion forum:** We started an online discussion forum ([shapeworks.discourse.group](shapeworks.discourse.group)). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. 
+* **New discussion forum:** We started an online discussion forum ([shapeworks.discourse.group](https://shapeworks.discourse.group/)). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. 
 * **Tiny tests for use cases:** All use cases now have a tiny test that can be run using the `--tiny_test` option. When the tiny test is run, only the data necessary for the test is downloaded rather than all of the data.
 * **Running use cases on subsets:** All of the use cases (mesh or segmentation based) can now be run on a subset of the data using the `--use_subsample` option. Note that the entire dataset is downloaded in this case so that a subset that is representative of the entire dataset can be selected.
 * **Generating shape cohorts:** Example shape cohorts with analytic correspondences can now be generated using the ShapeWorks package `GenerateShapeCohort`. Currently, cohorts of parameterized ellipsoids or supershapes can be generated. Options are available to specify the degree to which the cohort is groomed (i.e., a cohort can be generated to be in alignment or misaligned in various ways). These cohorts can help with troubleshooting the shape modeling workflow.
@@ -28,9 +223,9 @@
 
 #### All-in-one Studio Front-end
 
-* **Mesh support in Studio:** Added support for mesh inputs with minimal grooming. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
-* **New and faster surface reconstruction:** Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
-* **Feature maps support for meshes:** Added support for loading and displaying scalar values from mesh inputs. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **Mesh support in Studio:** Added support for mesh inputs with minimal grooming. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **New and faster surface reconstruction:** Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **Feature maps support for meshes:** Added support for loading and displaying scalar values from mesh inputs. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
 * **User help in Studio:** Added user interface tooltips and Help->Keyboard shortcuts.
 * **Detailed optimization progress:** Added particle count, initialization/optimization phase, and iteration count on the status bar in addition to the progress bar. (user feature request)
 * **Enabled aborting grooming:** Added ability to abort grooming step.
@@ -104,7 +299,7 @@
 
 * **Revamped documentation:** [New documentation](http://sciinstitute.github.io/ShapeWorks) to support both end-users and open-source developer community in one easily navigable place. This documentation includes background information about statistical shape modeling, the scientific premise of ShapeWorks, and how to get started. It also demonstrates the latest software features, exemplar use cases, and instructions to build/install ShapeWorks.
 
-* **Optimized shape models for use cases:** All datasets on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/) now have the shape model output from running the use cases with a corresponding `analyze.xml` for launching Studio. Users can `cd` to where the data is extracted and call `ShapeWorksStudio analyze.xml` to visualize these shape models.
+* **Optimized shape models for use cases:** All datasets on the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/) now have the shape model output from running the use cases with a corresponding `analyze.xml` for launching Studio. Users can `cd` to where the data is extracted and call `ShapeWorksStudio analyze.xml` to visualize these shape models.
 
 
 #### ShapeWorks Back-end
@@ -115,9 +310,9 @@
 
 #### All-in-one Studio Front-end
 
-* **Feature maps support:** Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps) for more details.
+* **Feature maps support:** Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps) for more details.
 
-* **New interface for group analysis:** Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences) for more details.
+* **New interface for group analysis:** Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See [New in ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences) for more details.
 
 * **User notes in Studio:** Studio stores/loads a rich text notes section in the spreadsheet.
 
@@ -162,7 +357,7 @@
 ## ShapeWorks 5.4.1 - 2020-06-15
 
 ### Fixes
-* **ShapeWorksStudio:** Fixed crash when importing data on a new/blank project.	
+* **ShapeWorks Studio:** Fixed crash when importing data on a new/blank project.	
 
 -------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.4.0 - 2020-06-10
@@ -178,7 +373,7 @@
 ### Improvements
 
 * **Improved scalability for Studio:** Files now loaded on-demand as necessary.
-* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datasets guidelines](../dev/datasets.md) for more details. Visit our [ShapeWorks Portal](http://cibc1.sci.utah.edu:8080) to register and download datasets to run [use cases](../use-cases/use-cases.md).
+* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datasets guidelines](../dev/datasets.md) for more details. Visit our [ShapeWorks Portal](https://girder.shapeworks-cloud.org) to register and download datasets to run [use cases](../use-cases/use-cases.md).
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
 * **Improved use case documentation:** Better documentation for the [RunUseCase](../use-cases/use-cases.md) input arguments.
 * **Documentation for running existing shape models:** Added [instructions](../use-cases/use-cases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.

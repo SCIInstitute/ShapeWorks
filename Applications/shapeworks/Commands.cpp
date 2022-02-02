@@ -4,7 +4,16 @@
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
 #include <Libs/Utils/StringUtils.h>
+#include <ShapeworksUtils.h>
+#include <boost/filesystem.hpp>
 #include <limits>
+
+#ifdef _WIN32
+#include <direct.h>
+  #define chdir _chdir
+#else
+  #include <unistd.h>
+#endif
 
 namespace shapeworks {
 
@@ -37,6 +46,29 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
+// Seed
+///////////////////////////////////////////////////////////////////////////////
+void Seed::buildParser()
+{
+  const std::string prog = "seed";
+  const std::string desc = "sets the seed for random number generation (useful for debugging)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--value").action("store").type("int").set_default(std::chrono::system_clock::now().time_since_epoch().count()).help("Value of seed.");
+
+  Command::buildParser();
+}
+
+bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData)
+{
+  int value = static_cast<int>(options.get("value"));
+
+  ShapeworksUtils::setRngSeed(value);
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Optimize
 ///////////////////////////////////////////////////////////////////////////////
 void OptimizeCommand::buildParser()
@@ -60,21 +92,30 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  bool is_project = StringUtils::hasSuffix(projectFile, "xlsx");
+  bool isProject = StringUtils::hasSuffix(projectFile, "xlsx");
 
   Optimize app;
-  if (is_project) {
+  if (isProject) {
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
+      const auto oldBasePath = boost::filesystem::current_path();
+      auto base = StringUtils::getPath(projectFile);
+      if (base != projectFile) {
+        chdir(base.c_str());
+        project->set_filename(StringUtils::getFilename(projectFile));
+      }
+
       // set up Optimize class based on project parameters
       OptimizeParameters params(project);
       params.set_up_optimize(&app);
+      app.SetProject(project);
 
       bool success = app.Run();
 
+      chdir(reinterpret_cast<const char*>(oldBasePath.c_str()));
       if (success) {
         project->save(projectFile);
       }
@@ -119,6 +160,13 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   try {
     ProjectHandle project = std::make_shared<Project>();
     project->load(projectFile);
+
+    auto base = StringUtils::getPath(projectFile);
+    if (base != projectFile) {
+      chdir(base.c_str());
+      project->set_filename(StringUtils::getFilename(projectFile));
+    }
+
     Groom app(project);
     bool success = app.run();
     if (success) {

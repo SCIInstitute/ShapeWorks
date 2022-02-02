@@ -2,7 +2,9 @@ import os
 import sys
 from shapeworks import *
 
-def invertNormalsTest():
+success = True
+
+def invertnormalsTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.invertNormals()
 
@@ -10,7 +12,6 @@ def invertNormalsTest():
 
   return mesh == compareMesh
 
-val = invertNormalsTest()
+success &= utils.test(invertnormalsTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

@@ -12,7 +12,7 @@ _CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.ut
 _VERSION = 'v2'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
-serverAddress = 'http://cibc1.sci.utah.edu:8080/'
+serverAddress = 'https://girder.shapeworks-cloud.org/'
 
 
 def printDataPortalWelcome():
@@ -48,7 +48,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-
+    print(f"Using Server: {serverAddress}")
     accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once
@@ -62,20 +62,31 @@ def _loginAndGetAccessToken():
 
 
 def _promptLogin():
-    print('New ShapeWorks Portal users: Register an account at ' + serverAddress + '#?dialog=register')
-    print('Returning ShapeWorks Portal users: Enter your username and password')
-
-    basicAuthToken = None
-    while basicAuthToken is None:
-        print('')
-        username = input("Username: ")
-        password = getpass.getpass("Password: ")
-        combined = username + ':' + password
+    username = ""
+    if 'SW_PORTAL_LOGIN' in os.environ:
+        print('Using portal login from $SW_PORTAL_LOGIN')
+        combined = os.environ['SW_PORTAL_LOGIN']
+        username = combined.split(":")[0]
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
         try:
             basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
         except ValueError as e:
-            print('Incorrect username or password.')
+            print('SW_PORTAL_LOGIN failed.')
+            quit()
+    else:
+        print('New ShapeWorks Portal users: Register an account at ' + serverAddress + '#?dialog=register')
+        print('\nReturning ShapeWorks Portal users: Enter your username and password:')
+        basicAuthToken = None
+        while basicAuthToken is None:
+            print('')
+            username = input("Username: ")
+            password = getpass.getpass("Password: ")
+            combined = username + ':' + password
+            usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
+            try:
+                basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
+            except ValueError as e:
+                print('Incorrect username or password.')
     try:
         apiKey = GirderAPI.getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
     except ValueError as e:

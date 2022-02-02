@@ -2,6 +2,7 @@
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 #include "MeshUtils.h"
+#include "Exception.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -29,6 +30,10 @@
 #include <itkIntensityWindowingImageFilter.h>
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
+#include <itkOrientImageFilter.h>
+#include <itkConnectedComponentImageFilter.h>
+#include <itkRelabelComponentImageFilter.h>
+#include <itkThresholdImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -39,6 +44,16 @@
 #include <cmath>
 
 namespace shapeworks {
+
+Image::Image(const Dims dims) : image(ImageType::New())
+{
+  ImageType::RegionType region;
+  region.SetSize(dims);
+  region.SetIndex(Coord({0,0,0}));
+
+  image->SetRegions(region);
+  image->Allocate();
+}
 
 Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
 {
@@ -104,10 +119,25 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
     reader->Update();
   }
   catch (itk::ExceptionObject &exp) {
-    throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
+    throw shapeworks_exception(std::string(exp.what()));
   }
 
-  return reader->GetOutput();
+  // reorient the image to RAI if it's not already
+  ImageType::Pointer img = reader->GetOutput();
+  if (itk::SpatialOrientationAdapter().FromDirectionCosines(img->GetDirection()) !=
+      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI) {
+    using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
+    Orienter::Pointer orienter = Orienter::New();
+    orienter->UseImageDirectionOn();
+    // set orientation to RAI
+    orienter->SetDesiredCoordinateOrientation(
+      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    orienter->SetInput(img);
+    orienter->Update();
+    img = orienter->GetOutput();
+  }
+
+  return img;
 }
 
 Image& Image::operator-()
@@ -298,6 +328,8 @@ Image& Image::write(const std::string &filename, bool compressed)
 
 Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 {
+  if (layers < 0) { throw std::invalid_argument("layers must be >= 0"); }
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -464,6 +496,29 @@ Image& Image::pad(int padx, int pady, int padz, PixelType value)
   upperExtendRegion[1] = pady;
   upperExtendRegion[2] = padz;
 
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(IndexRegion &region, PixelType value)
+{
+  auto bbox = logicalBoundingBox();
+  
+  // compute positive numbers to pad in each direction
+  ImageType::SizeType lowerExtendRegion;
+  lowerExtendRegion[0] = std::max(Coord::IndexValueType(0), -region.min[0]);
+  lowerExtendRegion[1] = std::max(Coord::IndexValueType(0), -region.min[1]);
+  lowerExtendRegion[2] = std::max(Coord::IndexValueType(0), -region.min[2]);
+
+  ImageType::SizeType upperExtendRegion;
+  upperExtendRegion[0] = std::max(Coord::IndexValueType(0), region.max[0] - bbox.max[0]);
+  upperExtendRegion[1] = std::max(Coord::IndexValueType(0), region.max[1] - bbox.max[1]);
+  upperExtendRegion[2] = std::max(Coord::IndexValueType(0), region.max[2] - bbox.max[2]);
+
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value)
+{
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -487,8 +542,7 @@ Image& Image::translate(const Vector3 &v)
 
 Image& Image::scale(const Vector3 &s)
 {
-  if (s[0] == 0 || s[1] == 0 || s[2] == 0)
-    throw std::invalid_argument("Invalid scale point");
+  if (s[0] == 0 || s[1] == 0 || s[2] == 0) { throw std::invalid_argument("Invalid scale point"); }
 
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
   recenter();
@@ -528,42 +582,6 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   setOrigin(origOrigin);           // restore origin
   
   return *this;
-}
-
-TransformPtr Image::createTransform(XFormType type)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      transform = createRigidRegistrationTransform(*this, 0.0, 20);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
-}
-
-TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
-{
-  TransformPtr transform;
-
-  switch (type) {
-    case CenterOfMass:
-      transform = createCenterOfMassTransform();
-      break;
-    case IterativeClosestPoint:
-      transform = createRigidRegistrationTransform(target, isoValue, iterations);
-      break;
-    default:
-      throw std::invalid_argument("Unknown Image::TranformType");
-  }
-
-  return transform;
 }
 
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
@@ -629,6 +647,8 @@ Image& Image::computeDT(PixelType isoValue)
 
 Image& Image::applyCurvatureFilter(unsigned iterations)
 {
+  if (iterations < 0) { throw std::invalid_argument("iterations must be >= 0"); }
+
   using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -726,46 +746,39 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image& Image::crop(const Region &region)
+Image& Image::crop(PhysicalRegion region, const int padding)
 {
-  if (!region.valid())
-    std::cerr << "Invalid region specified." << std::endl;
+  region.shrink(physicalBoundingBox()); // clip region to fit inside image
+  if (!region.valid()) {
+    throw std::invalid_argument("Invalid region specified (it may lie outside physical bounds of image).");
+  }
 
-  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  using FilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  Region(region).shrink(Region(dims())); // clip region to fit inside image
-  filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
+  IndexRegion indexRegion(physicalToLogical(region));
+  indexRegion.pad(padding);
+  filter->SetRegionOfInterest(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
-  filter->SetDirectionCollapseToIdentity();
   filter->Update();
   this->image = filter->GetOutput();
 
   return *this;
 }
 
-Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
+Image& Image::clip(const Plane plane, const PixelType val)
 {
-  // clipping plane normal n = (p1-o) x (p2-o)
-  Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
-  Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
-
-  return clip(crossProduct(v1, v2), o, val);
-}
-
-Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
-{
-  if (!axis_is_valid(n)) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
+  if (!axis_is_valid(getNormal(plane))) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
 
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
   {
-    Vector pq(logicalToPhysical(iter.GetIndex()) - q);
+    Vector pq(logicalToPhysical(iter.GetIndex()) - getOrigin(plane));
 
     // if n dot pq is < 0, point q is on the back side of the plane.
-    if (n * pq < 0.0)
+    if (getNormal(plane) * pq < 0.0)
       iter.Set(val);
-      
+
     ++iter;
   }
 
@@ -774,8 +787,7 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 
 Image& Image::reflect(const Axis &axis)
 {
-  if (!axis_is_valid(axis))
-    throw std::invalid_argument("Invalid axis");
+  if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
@@ -805,8 +817,7 @@ Image& Image::setOrigin(Point3 origin)
 
 Image& Image::setSpacing(Vector3 spacing)
 {
-  if (spacing[0] <= 0 || spacing[1] <= 0 || spacing[2] <= 0)
-    { throw std::invalid_argument("Spacing cannot b <= 0"); }
+  if (spacing[0]<= 0 || spacing[1] <= 0 || spacing[2] <= 0) { throw std::invalid_argument("Spacing cannot b <= 0"); }
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -816,6 +827,55 @@ Image& Image::setSpacing(Vector3 spacing)
   filter->ChangeSpacingOn();
   filter->Update();
   this->image = filter->GetOutput();
+
+  return *this;
+}
+
+Image& Image::setCoordsys(ImageType::DirectionType coordsys)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputDirection(coordsys);
+  filter->ChangeDirectionOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
+Image &Image::isolate()
+{
+  typedef itk::Image<unsigned char, 3> IsolateType;
+  typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
+  ToIntType::Pointer filter = ToIntType::New();
+  filter->SetInput(this->image);
+  filter->Update();
+
+  // Find the connected components in this image.
+  auto cc = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
+  cc->SetInput(filter->GetOutput());
+  cc->FullyConnectedOn();
+  cc->Update();
+
+  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
+  relabel->SetInput(cc->GetOutput());
+  relabel->SortByObjectSizeOn();
+  relabel->Update();
+
+  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
+  thresh->SetInput(relabel->GetOutput());
+  thresh->SetOutsideValue(0);
+  thresh->ThresholdBelow(0);
+  thresh->ThresholdAbove(1);
+  thresh->Update();
+
+  auto cast = itk::CastImageFilter<IsolateType, ImageType>::New();
+  cast->SetInput(thresh->GetOutput());
+  cast->Update();
+
+  this->image = cast->GetOutput();
 
   return *this;
 }
@@ -879,9 +939,22 @@ Image::PixelType Image::std()
   return sqrt(filter->GetVariance());
 }
 
-Region Image::boundingBox(PixelType isoValue) const
+IndexRegion Image::logicalBoundingBox() const
 {
-  Region bbox;
+  IndexRegion region(Coord({0, 0, 0}), toCoord(dims() - Dims({1,1,1})));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox() const
+{
+  
+  PhysicalRegion region(origin(), origin() + dotProduct(toVector(dims() - Dims({1,1,1})), spacing()));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox(PixelType isoValue) const
+{
+  PhysicalRegion bbox;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
@@ -889,12 +962,22 @@ Region Image::boundingBox(PixelType isoValue) const
     PixelType val = imageIterator.Get();
 
     if (val >= isoValue)
-      bbox.expand(imageIterator.GetIndex());
+      bbox.expand(logicalToPhysical(imageIterator.GetIndex()));
 
     ++imageIterator;
   }
-
+  
   return bbox;
+}
+
+PhysicalRegion Image::logicalToPhysical(const IndexRegion region) const
+{
+  return PhysicalRegion(logicalToPhysical(region.min), logicalToPhysical(region.max));
+}
+
+IndexRegion Image::physicalToLogical(const PhysicalRegion region) const
+{
+  return IndexRegion(physicalToLogical(region.min), physicalToLogical(region.max));
 }
 
 Point3 Image::logicalToPhysical(const Coord &v) const
@@ -909,16 +992,16 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
+Mesh Image::toMesh(PixelType isoValue) const
 {
-  auto vtkImage = image.getVTKImage();
+  auto vtkImage = getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkImage);
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  return targetContour->GetOutput();
+  return Mesh(targetContour->GetOutput());
 }
 
 TransformPtr Image::createCenterOfMassTransform()
@@ -930,10 +1013,27 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
-  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  if (!target_dt.image) {
+    throw std::invalid_argument("Invalid target. Expected distance transform image");
+  }
+
+  Mesh sourceContour = toMesh(isoValue);
+  Mesh targetContour = target_dt.toMesh(isoValue);
+
+  try {
+    auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
+    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  }
+  catch (std::invalid_argument) {
+    std::cerr << "failed to create ICP transform.\n";
+    if (sourceContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for source\n";
+    }
+    if (targetContour.numPoints() == 0) {
+      std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for target\n";
+    }
+  }
+  return AffineTransform::New();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)

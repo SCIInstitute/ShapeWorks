@@ -28,6 +28,7 @@ COMMAND_DECLARE(TopologyPreservingFilter, ImageCommand);
 COMMAND_DECLARE(IntensityFilter, ImageCommand);
 COMMAND_DECLARE(Blur, ImageCommand);
 COMMAND_DECLARE(BoundingBoxImage, ImageCommand);
+COMMAND_DECLARE(ImageBounds, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
 COMMAND_DECLARE(ICPRigid, ImageCommand);
 COMMAND_DECLARE(ClipImage, ImageCommand);
@@ -42,6 +43,8 @@ COMMAND_DECLARE(SubtractImage, ImageCommand);
 COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
+COMMAND_DECLARE(SetRegion, ImageCommand);
+COMMAND_DECLARE(Isolate, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -55,7 +58,9 @@ COMMAND_DECLARE(WriteMesh, MeshCommand);
 COMMAND_DECLARE(MeshInfo, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
-COMMAND_DECLARE(Decimate, MeshCommand);
+COMMAND_DECLARE(SmoothSinc, MeshCommand);
+COMMAND_DECLARE(Remesh, MeshCommand);
+COMMAND_DECLARE(RemeshPercent, MeshCommand);
 COMMAND_DECLARE(InvertNormals, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(TransformMesh, MeshCommand);
@@ -65,24 +70,32 @@ COMMAND_DECLARE(ClipMesh, MeshCommand);
 COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
 COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
+COMMAND_DECLARE(MeshBounds, MeshCommand);
 COMMAND_DECLARE(Distance, MeshCommand);
-COMMAND_DECLARE(GenerateNormals, MeshCommand);
+COMMAND_DECLARE(ComputeNormals, MeshCommand);
+COMMAND_DECLARE(SetField, MeshCommand);
+COMMAND_DECLARE(GetField, MeshCommand);
 COMMAND_DECLARE(SetFieldValue, MeshCommand);
 COMMAND_DECLARE(GetFieldValue, MeshCommand);
 COMMAND_DECLARE(FieldRange, MeshCommand);
 COMMAND_DECLARE(FieldMean, MeshCommand);
 COMMAND_DECLARE(FieldStd, MeshCommand);
 COMMAND_DECLARE(FieldNames, MeshCommand);
-COMMAND_DECLARE(FixMesh, MeshCommand);
+COMMAND_DECLARE(FixElement, MeshCommand);
 COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
+COMMAND_DECLARE(ClosestPoint, MeshCommand);
+COMMAND_DECLARE(GeodesicDistance, MeshCommand);
+COMMAND_DECLARE(GeodesicDistanceToLandmark, MeshCommand);
+COMMAND_DECLARE(MeanNormals, MeshCommand);
+COMMAND_DECLARE(Curvature, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
+COMMAND_DECLARE(WarpMesh, MeshCommand);
 
-// Optimize Commands
+// Misc Commands
+COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
-
-// Groom Commands
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 } // shapeworks

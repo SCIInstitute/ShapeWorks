@@ -11,7 +11,6 @@ target_include_directories(Analyze PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Analyze PUBLIC
   Mesh
-  Alignment
   Utils)
 
 # set
@@ -23,7 +22,3 @@ install(TARGETS Analyze
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include
   )
-
-ADD_EXECUTABLE(MeshFromDT MeshFromDT.cpp)
-TARGET_LINK_LIBRARIES(MeshFromDT ${VTK_LIBRARIES} ${ITK_LIBRARIES} Analyze tinyxml Utils)
-INSTALL(TARGETS MeshFromDT RUNTIME DESTINATION bin)

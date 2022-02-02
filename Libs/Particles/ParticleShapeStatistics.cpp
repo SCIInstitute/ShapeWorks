@@ -1,28 +1,17 @@
 
 #include "ParticleShapeStatistics.h"
-#include <Libs/Particles/ShapeEvaluation.h>
-#include "tinyxml.h"
+#include "ShapeEvaluation.h"
 
-int ParticleShapeStatistics
-::SimpleLinearRegression(const std::vector<double>& y,
+#include <vnl/algo/vnl_symmetric_eigensystem.h>
+#include <tinyxml.h>
+
+namespace shapeworks{
+
+int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y,
                          const std::vector<double>& x,
                          double& a, double& b) const
 {
   if (x.size() != y.size()) return -1;
-
-  //  std::cout << "y = ";
-  //  for (unsigned int i = 0; i < y.size(); i++)
-  //    {
-  //    std::cout << y[i] << "\t";
-  //    }
-  //  std::cout << std::endl;
-
-  //  std::cout << "x = ";
-  //  for (unsigned int i = 0; i < y.size(); i++)
-  //    {
-  //    std::cout << x[i] << "\t";
-  //    }
-  //  std::cout << std::endl;
 
   double xmean = 0.0;
   double ymean = 0.0;
@@ -94,8 +83,7 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
   return norm;
 }
 
-int ParticleShapeStatistics::ImportPoints(
-  std::vector<vnl_vector<double >> points, std::vector<int> group_ids)
+int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids)
 {
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
@@ -139,15 +127,15 @@ int ParticleShapeStatistics::ImportPoints(
   //std::cerr << "m_numSamples1 = " << m_numSamples1 << "\n";
   //std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
   m_pointsMinusMean.fill(0);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
-  m_mean1.set_size(m_numDimensions);
+  m_mean1.resize(m_numDimensions);
   m_mean1.fill(0);
-  m_mean2.set_size(m_numDimensions);
+  m_mean2.resize(m_numDimensions);
   m_mean2.fill(0);
 
   // Compile the "meta shapes"
@@ -186,21 +174,37 @@ int ParticleShapeStatistics::ImportPoints(
   m_groupdiff = m_mean2 - m_mean1;
 
   // copy to Eigen matrix
-  //this->m_Matrix.resize(m_numSamples, num_points * 3);
   this->m_Matrix.resize(num_points * 3, m_numSamples);
+  this->m_group_1_matrix.resize(num_points * 3, m_numSamples1);
+  this->m_group_2_matrix.resize(num_points * 3, m_numSamples2);
+  int group1_idx = 0;
+  int group2_idx = 0;
   for (unsigned int i = 0; i < m_numSamples; i++) {
     unsigned int q = points[i].size();
     for (unsigned int j = 0; j < q; j++) {
       this->m_Matrix(j, i) = points[i][j];
+
+      if (m_groupIDs[i] == 1) {
+        this->m_group_1_matrix(j,group1_idx) = points[i][j];
+      }
+      else
+      {
+        this->m_group_2_matrix(j,group2_idx) = points[i][j];
+      }
+    }
+    if (m_groupIDs[i] == 1) {
+      group1_idx++;
+    } else {
+      group2_idx++;
     }
   }
 
   return 0;
 }
 
-int ParticleShapeStatistics::ReadPointFiles(const char* fname)
+int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 {
-  TiXmlDocument doc(fname);
+  TiXmlDocument doc(s.c_str());
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
   TiXmlHandle docHandle(&doc);
@@ -269,14 +273,14 @@ int ParticleShapeStatistics::ReadPointFiles(const char* fname)
     }
   };
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
-  m_mean1.set_size(m_numDimensions);
+  m_mean1.resize(m_numDimensions);
   m_mean1.fill(0);
-  m_mean2.set_size(m_numDimensions);
+  m_mean2.resize(m_numDimensions);
   m_mean2.fill(0);
 
   // Compile the "meta shapes"
@@ -333,12 +337,9 @@ int ParticleShapeStatistics::ReadPointFiles(const char* fname)
   m_groupdiff = m_mean2 - m_mean1;
 
   return 0;
-} // end ReadPointFiles
+}
 
-
-
-int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_pts,
-                                   int domainsPerShape)
+int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
 
@@ -346,9 +347,9 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_p
   m_numSamples = global_pts.size() / m_domainsPerShape;
   m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
 
-  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
-  m_shapes.set_size(m_numDimensions, m_numSamples);
-  m_mean.set_size(m_numDimensions);
+  m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
+  m_shapes.resize(m_numDimensions, m_numSamples);
+  m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
   std::cout << "VDimension = " << VDimension << "-------------\n";
@@ -360,7 +361,7 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_p
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
-      std::vector<PointType> curDomain = global_pts[i * m_domainsPerShape + k];
+      std::vector<Point> curDomain = global_pts[i * m_domainsPerShape + k];
       unsigned int q = curDomain.size();
 
       //std::cout << "q = " << q << "-------------\n";
@@ -395,10 +396,28 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_p
 
   ComputeModes();
   return 0;
-} // end DoPCA
+}
 
+int ParticleShapeStatistics::DoPCA(ParticleSystem particleSystem, int domainsPerShape)
+{
+  Eigen::MatrixXd p = particleSystem.Particles();
 
-/** Reloads a set of point files and recomputes some statistics. */
+  std::vector<std::vector<Point>> particlePoints;
+
+  for (int i=0; i<p.cols(); i++) {
+    std::vector<Point> particle;
+    for (int j=0; j<p.rows()/3; j++) {
+      Point point;
+      for (int k=0; k<3; k++) {
+        point[k] = p.coeff(j*3+k, i);
+      }
+      particle.push_back(point);
+    }
+    particlePoints.push_back(particle);
+  }
+
+  return DoPCA(particlePoints, domainsPerShape);
+}
 
 int ParticleShapeStatistics::ReloadPointFiles()
 {
@@ -465,13 +484,17 @@ int ParticleShapeStatistics::ReloadPointFiles()
 
 int ParticleShapeStatistics::ComputeModes()
 {
-  // COMPUTE MODES
-  vnl_matrix<double> A = m_pointsMinusMean.transpose()
-                         * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
-  vnl_symmetric_eigensystem<double> symEigen(A);
+  Eigen::MatrixXd A = m_pointsMinusMean.transpose()
+                      * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
 
-  m_eigenvectors = m_pointsMinusMean * symEigen.V;
-  m_eigenvalues.set_size(m_numSamples);
+  vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
+  vnl_symmetric_eigensystem<double> symEigen(vnlA);
+
+  Eigen::MatrixXd eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
+  Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
+
+  m_eigenvectors = m_pointsMinusMean * eigenSymEigenV;
+  m_eigenvalues.resize(m_numSamples);
 
   // normalize those eigenvectors
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -485,7 +508,7 @@ int ParticleShapeStatistics::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
     }
 
-    m_eigenvalues(i) = symEigen.D(i, i);
+    m_eigenvalues[i] = eigenSymEigenD(i);
   }
 
   float sum = 0.0;
@@ -505,19 +528,16 @@ int ParticleShapeStatistics::ComputeModes()
   }
 
   return 0;
-}  // end ComputeModes();
-
+}
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
-  m_principals.set_size(m_numSamples, m_numSamples);
+  m_principals.resize(m_numSamples, m_numSamples);
 
   for (unsigned int n = 0; n < m_numSamples; n++) {
     for (unsigned int s = 0; s < m_numSamples; s++) {
-      double p = dot_product<double>(m_eigenvectors.get_column((m_numSamples - 1) - n),
-                                     m_pointsMinusMean.get_column(s));
-
+      double p = m_eigenvectors.col((m_numSamples - 1) - n).dot(m_pointsMinusMean.col(s));
       m_principals(s, n) = p; // each row is a sample, columns index PC
 
     }
@@ -528,13 +548,13 @@ int ParticleShapeStatistics::PrincipalComponentProjections()
 
 int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 {
-  m_projectedMean1.set_size(numModes);
-  m_projectedMean2.set_size(numModes);
+  m_projectedMean1.resize(numModes);
+  m_projectedMean2.resize(numModes);
   m_projectedMean1.fill(0.0);
   m_projectedMean2.fill(0.0);
 
-  m_projectedPMM1.set_size(numModes, m_numSamples1);
-  m_projectedPMM2.set_size(numModes, m_numSamples2);
+  m_projectedPMM1.resize(numModes, m_numSamples1);
+  m_projectedPMM2.resize(numModes, m_numSamples2);
 
   unsigned int s1 = 0;
   unsigned int s2 = 0;
@@ -542,8 +562,7 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
     s1 = 0;
     s2 = 0;
     for (unsigned int s = 0; s < m_numSamples; s++) {
-      double p = dot_product<double>(m_eigenvectors.get_column((m_numSamples - 1) - n),
-                                     m_pointsMinusMean.get_column(s));
+      double p = m_eigenvectors.col((m_numSamples - 1) - n).dot(m_pointsMinusMean.col(s));
 
       if (m_groupIDs[s] == 1) {
         m_projectedPMM1(n, s1) = p;
@@ -577,22 +596,22 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
     }
   }
 
-  vnl_matrix<double> cov1 = (m_projectedPMM1 * m_projectedPMM1.transpose())
+  Eigen::MatrixXd cov1 = (m_projectedPMM1 * m_projectedPMM1.transpose())
                             / ((double) (m_numSamples1) - 1.0);
-  vnl_matrix<double> cov2 = (m_projectedPMM2 * m_projectedPMM2.transpose())
+  Eigen::MatrixXd cov2 = (m_projectedPMM2 * m_projectedPMM2.transpose())
                             / ((double) (m_numSamples2) - 1.0);
 
-  vnl_vector<double> mdiff = m_projectedMean1 - m_projectedMean2;
-  vnl_matrix<double> covsuminv = vnl_matrix_inverse<double>(cov1 + cov2);
+  Eigen::VectorXd mdiff = m_projectedMean1 - m_projectedMean2;
+  Eigen::MatrixXd covsuminv = (cov1 + cov2).inverse();
 
   // w is fishers linear discriminant (normal to the hyperplane)
-  vnl_vector<double> w = covsuminv * mdiff;
+  Eigen::VectorXd w = covsuminv * mdiff;
 
   // Normalize to distance between means
-  double mag = mdiff.magnitude();
-  m_fishersLD = (w * mag) / sqrt(dot_product<double>(w, w));
+  double mag = mdiff.size();
+  m_fishersLD = (w * mag) / sqrt(w.dot(w));
 
-  vnl_vector<double> wext(m_numSamples);
+  Eigen::VectorXd wext(m_numSamples);
   for (unsigned int i = 0; i < m_numSamples; i++) {
     if (i >= numModes) wext[i] = 0.0;
     else wext[i] = m_fishersLD[i];// * m_eigenvalues[(m_numSamples - 1) - i];
@@ -600,13 +619,13 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 
   // Rotate the LD back into the full dimensional space
   // Rearrange the eigenvectors:
-  vnl_matrix<double> tmpeigs = m_eigenvectors;
-  tmpeigs.fliplr();
 
-  vnl_vector<double> bigLD = wext.post_multiply(tmpeigs.transpose());
+  Eigen::MatrixXd tmpeigs = m_eigenvectors;
+  tmpeigs.rowwise().reverse();
 
-  // Create a file of vectors in the VDimensionD space from bigLD that KWMeshvisu can
-  // read
+  Eigen::MatrixXd bigLD = wext * tmpeigs.transpose();
+
+  // Create a file of vectors in the VDimensionD space from bigLD that KWMeshvisu can read
 
   // Open the output file.
   std::ofstream out("LinearDiscriminantsVectors.txt");
@@ -618,7 +637,7 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
   // Write points.
   for (unsigned int i = 0; i < m_numDimensions;) {
     for (unsigned int j = 0; j < VDimension; j++) {
-      out << -bigLD[i] << " ";
+      out << -bigLD(i) << " ";
       i++;
     }
     out << std::endl;
@@ -628,11 +647,11 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile2(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -652,11 +671,11 @@ int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group,LDA,PV";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -678,34 +697,32 @@ int ParticleShapeStatistics::WriteCSVFile(const char* fn)
   return 0;
 }
 
-double ParticleShapeStatistics::get_compactness(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->compactness_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
 }
 
-double ParticleShapeStatistics::get_specificity(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->specificity_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
-double ParticleShapeStatistics::get_generalization(const int num_modes)
+Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
-  this->compute_evaluation(num_modes);
-  return this->generalization_;
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
-void ParticleShapeStatistics::compute_evaluation(int num_modes)
+Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()
 {
-  if (!this->evaluation_ready_ || num_modes != this->evaluation_modes_) {
-    auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-    this->compactness_ = shapeworks::ShapeEvaluation::ComputeCompactness(ps, num_modes);
-    this->specificity_ = shapeworks::ShapeEvaluation::ComputeSpecificity(ps, num_modes);
-    this->generalization_ = shapeworks::ShapeEvaluation::ComputeGeneralization(ps, num_modes);
-    this->evaluation_ready_ = true;
-    this->evaluation_modes_ = num_modes;
-  }
-
+  return this->m_group_1_matrix;
 }
 
+Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
+{
+  return this->m_group_2_matrix;
+}
+
+} // shapeworks

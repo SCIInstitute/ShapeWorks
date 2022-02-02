@@ -1,4 +1,4 @@
-# ShapeWorks Studio
+# Getting Started With ShapeWorks Studio
 
 ShapeWorks Studio provides an all-in-one GUI based interface to the
 ShapeWorks toolkit.  In Studio, you can Groom, Optimize and Analyze
@@ -62,9 +62,11 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 
 ### Metrics Panel
 
-The Metrics panel shows the Explained Variance chart.  This chart shows how much of the population's variance is explained, cumulatively by each mode.  You can hover over each bar to see the individual values.
+The Metrics panel shows the Compactness, Specificity, and Generalization charts.  These are interactive charts with hover menus and the ability to zoom, pan, etc.
 
 ![ShapeWorks Studio Analysis Metrics Panel](../img/studio/studio_analyze_metrics.png)
+
+See [Shape Model Evaluation](../new/ssm-eval.md) for more information about shape evaluation.
 
 ### Surface Reconstruction Panel
 
@@ -113,7 +115,7 @@ Each button has tooltips with descriptions.  The controls from left to right are
 
 * Autoview / reset view
 * Glyph visibility with dropdown for glyph size and detail
-* Isosurface visibility
+* Isosurface visibility with dropdown for surface opacity (of each domain)
 * View mode (original/groomed/reconstructed)
 * Center (whether to center each object based on center of mass)
 * Number of views in lightbox (1,2,4,9,16,25,36,49,64)
@@ -122,7 +124,7 @@ Additionally, when feature volumes or meshes with scalars are loaded, the extend
 
 ![ShapeWorks Studio Viewer Extended Controls](../img/studio/studio_viewer_controls_extended.png)
 
-This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.
+This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.  Additionally, the auto range can be turned off and specified range can be set.
 
 ## Keyboard Shortcuts
 
@@ -183,7 +185,7 @@ Users input shapes (either binary segmentations or meshes) in the first sheet (o
 
 | Prefix | Description |
 | --- | ----------- |
-| segmentation_&lt;name&gt; | An input segmentation with a given name |
+| shape_&lt;name&gt; | An input shape (segmentation/mesh) with a given name.<br>* Specify multiple shape_&lt;name&gt; columns to input multiple anatomies for each subject |
 | group_&lt;name&gt; | An group column with categorical types |
 | feature_&lt;name&gt; | A feature volume (such as an MRI or CT) |
 
@@ -192,14 +194,12 @@ Many other columns will be filled in automatically by the ShapeWorks tools.
 
 A more complete example is provided in Examples/Studio/FeatureMap/feature_map_example.xlsx :
 
-![ShapeWorks Studio FeatureMap Example](../img/studio/studio_feature_map_example.png)
+![ShapeWorks Studio FeatureMap Example](../img/studio/studio_feature_map_example.png){: width="300" }
 
 After completing groom and optimize steps, this worksheet will look like this:
 
 ![ShapeWorks Studio FeatureMap Example Complete](../img/studio/studio_feature_map_example_complete.png)
 
 There will also be new worksheets with parameters from those tools and other studio settings.
-
-
 
 

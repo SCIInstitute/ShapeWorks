@@ -33,30 +33,6 @@ std::vector<std::string> Subject::get_groomed_filenames()
 }
 
 //---------------------------------------------------------------------------
-void Subject::set_local_particle_filename(std::string filename)
-{
-  this->local_particle_filename_ = filename;
-}
-
-//---------------------------------------------------------------------------
-std::string Subject::get_local_particle_filename()
-{
-  return this->local_particle_filename_;
-}
-
-//---------------------------------------------------------------------------
-void Subject::set_global_particle_filename(std::string filename)
-{
-  this->global_particle_filename_ = filename;
-}
-
-//---------------------------------------------------------------------------
-std::string Subject::get_global_particle_filename()
-{
-  return this->global_particle_filename_;
-}
-
-//---------------------------------------------------------------------------
 std::vector<std::string> Subject::get_segmentation_filenames()
 {
   return this->segmentation_filenames_;
@@ -99,6 +75,27 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 }
 
 //---------------------------------------------------------------------------
+void Subject::set_groomed_transform(int i, std::vector<double> transform)
+{
+  if (i >= this->groomed_transforms_.size()) {
+    this->groomed_transforms_.resize(i + 1);
+  }
+  this->groomed_transforms_[i] = transform;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>> Subject::get_procrustes_transforms() const
+{
+  return this->procrustes_transforms_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_procrustes_transforms(std::vector<std::vector<double>> transforms)
+{
+  this->procrustes_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
 std::map<std::string, std::string> Subject::get_group_values() const
 {
   return this->group_values_;
@@ -117,11 +114,11 @@ std::string Subject::get_group_value(std::string group_name)
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Subject::get_domain_types()
+std::vector<DomainType> Subject::get_domain_types(bool groomed)
 {
   std::vector<DomainType> domain_types;
   auto list = this->segmentation_filenames_;
-  if (this->segmentation_filenames_.empty()) {
+  if (this->segmentation_filenames_.empty() || groomed) {
     list = this->groomed_filenames_;
   }
   for (auto name: list) {
@@ -156,4 +153,76 @@ std::map<std::string, std::string> Subject::get_extra_values() const
 void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 {
   this->extra_values_ = extra_values;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_table_values() const
+{
+  return this->table_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_table_values(std::map<std::string, std::string> table_values)
+{
+  this->table_values_ = table_values;
+}
+
+//---------------------------------------------------------------------------
+std::string Subject::get_display_name()
+{
+  return this->display_name_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_display_name(std::string display_name)
+{
+  this->display_name_ = display_name;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_local_particle_filenames(std::vector<std::string> filenames)
+{
+  this->local_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_local_particle_filenames()
+{
+  return this->local_particle_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_world_particle_filenames(std::vector<std::string> filenames)
+{
+  this->world_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_world_particle_filenames()
+{
+  return this->world_particle_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_landmarks_filenames(std::vector<std::string> filenames)
+{
+  this->landmarks_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_landmarks_filenames()
+{
+  return this->landmarks_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_image_filenames(std::vector<std::string> filenames)
+{
+  this->image_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_image_filenames()
+{
+  return this->image_filenames_;
 }

@@ -29,6 +29,8 @@
 
 namespace shapeworks {
 
+class Project;
+
 class MatrixContainer {
 public:
   Eigen::MatrixXd matrix_;
@@ -63,6 +65,9 @@ public:
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+
+  //! Set the Projects
+  void SetProject(std::shared_ptr<Project> project);
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -115,6 +120,9 @@ public:
 
   //! Set the output transform file
   void SetOutputTransformFile(std::string output_transform_file);
+
+  //! Set whether individual transforms should be written
+  void SetOutputIndividualTransformFiles(bool value);
 
   //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
@@ -208,7 +216,7 @@ public:
   void SetLogEnergy(bool log_energy);
 
   //! Set the shape input images
-  void AddImage(ImageType::Pointer image);
+  void AddImage(ImageType::Pointer image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -329,6 +337,8 @@ protected:
 
   void WriteTransformFile(int iter = -1) const;
   void WriteTransformFile(std::string iter_prefix) const;
+  void WriteTransformFiles(int iter = -1) const;
+  void WriteTransformFiles(std::string iter_prefix) const;
   void WritePointFiles(int iter = -1);
   void WritePointFiles(std::string iter_prefix);
   void WritePointFilesWithFeatures(int iter = -1);
@@ -346,6 +356,10 @@ protected:
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
   virtual void UpdateExportablePoints();
+
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
 
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
@@ -375,6 +389,7 @@ protected:
   std::string m_prefix_transform_file;
   std::string m_output_dir;
   std::string m_output_transform_file;
+  bool m_output_transform_files = false;
   bool m_mesh_based_attributes = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
@@ -454,6 +469,8 @@ protected:
 
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }

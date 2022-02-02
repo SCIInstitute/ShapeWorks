@@ -2,6 +2,8 @@
 
 If you encounter problems, have questions, or need help, please contact `<shapeworks-dev-support@sci.utah.edu>`.
 
+!!! note "After you finish building..."
+    While user installations have everything you need in the PATH, developer builds like these need those additions. Please See [Adding Environment Variables for Development](../dev/paths.md) for instructions on the simple **devenv** script that takes care of everything.
 
 ## Minimum Requirements
 
@@ -41,8 +43,9 @@ We use Anaconda (conda) to install many dependencies required for both building 
 
 To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
 ```
-$ source conda_installs.sh
+$ source install_shapeworks.sh [environment name]`  
 ```
+**Note:** By default this creates an environment named **shapeworks**, but you can specify a different name and it's okay to have multiple environments.  
 
 ShapeWorks uses *[git-lfs](https://github.com/git-lfs/git-lfs/)* to store image data for testing.  If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:  
 ```
@@ -93,7 +96,9 @@ Download and install [[Anaconda]](https://www.anaconda.com/).
 !!! important
     It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 
-Using the *Anaconda Prompt*, run `conda_installs.bat`  
+Using the *Anaconda Prompt*, run `install_shapeworks.bat [environment name]`  
+**Note:** By default this creates an environment named **shapeworks**, but you can specify a different name and it's okay to have multiple environments.  
+
 
 #### Qt5  
 Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).   
@@ -162,10 +167,12 @@ Optional:
     - You might need to build using `cmake --build . -j 16` to pass parallel flags to dependent projects (e.g., vtk) 
 - **XCode project:** `open ShapeWorks.xcodeproj` and build from there.  
 
-#### Before running Examples/Python scripts
+#### Before running Examples/Python scripts and Examples/Python/notebooks
+Developer environment should be set by using the `devenv.sh` script by running this:
 
-Add the ShapeWorks and dependency binaries to the path:  
- `$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH`  
+```
+$ source devenv.sh [build_directory]
+```
 
 #### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
@@ -181,7 +188,17 @@ open ShapeWorks.xcodeproj
 
 ### Windows
 
-Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  
+Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019). Like with all the other platforms, after running `build_dependencies.sh` a suggested cmake command is printed. Create a build directory and use it.  
+
+#### Examples
+An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks (note that by default a Visual Studio project will be created):  
+```
+> conda activate shapeworks
+> ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+> mkdir build
+> cd build
+> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+```
 
 #### Options
 Required:  
@@ -202,12 +219,8 @@ Optional:
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 ```
 
-#### Examples
-An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks:  
-```
-> conda activate shapeworks
-> ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
-> mkdir build
-> cd build
-> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
-```
+After cmake the Visual Studio solution can be opened with `start ShapeWorks.sln` from the build directory.
+
+!!! important "RelWithDebInfo only"
+    Currently it's only possible to build **RelWithDebInfo** on Windows.
+    

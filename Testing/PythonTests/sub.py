@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def subTest1():
   img1 = Image(os.environ["DATA"] + "/img1.nrrd")
   img2 = Image(os.environ["DATA"] + "/img2.nrrd")
@@ -11,10 +13,7 @@ def subTest1():
 
   return img.compare(compareImg)
 
-val = subTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(subTest1)
 
 def subTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -24,10 +23,7 @@ def subTest2():
 
   return img.compare(compareImg)
 
-val = subTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(subTest2)
 
 def subTest3():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -38,7 +34,17 @@ def subTest3():
 
   return img.compare(compareImg)
 
-val = subTest3()
+success &= utils.test(subTest3)
 
-if val is False:
-  sys.exit(1)
+def subfailTest():
+  img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img2 = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = img1 - img2
+
+  compareImg = Image(os.environ["DATA"] + "/subfail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(subfailTest, ValueError)
+
+sys.exit(not success)

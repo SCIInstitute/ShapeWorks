@@ -48,7 +48,8 @@ cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
-cp conda_installs.sh package/${VERSION}
+cp -a Installation "package/${VERSION}"
+cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -79,7 +80,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
 
-    # copy platform plugins for View2
+    # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
@@ -93,10 +94,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
     cd ../lib
     # Copy libraries from anaconda
-    conda_libs="libpython"
+    conda_libs="libpython libboost_filesystem"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* .
+        cp ${CONDA_PREFIX}/lib/${clib}* ../bin/ShapeWorksStudio.app/Contents/Frameworks
     done
+    # remove static libs
+    rm *.a ../bin/ShapeWorksStudio.app/Contents/Frameworks/*.a
+    
     # Fix transitive loaded libs
     for i in *.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
@@ -106,14 +111,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf libpython"
+    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
 
+    # remove static libs
+    rm lib/*.a
+    
     cd bin
-    linuxdeployqt ShapeWorksView2 -verbose=2
     linuxdeployqt ShapeWorksStudio -verbose=2
+    cd ..
+    
+    rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
+    rm bin/vdb_print
+    rm -rf geometry-central doc
 fi
 
 # Run auto-documentation
@@ -134,7 +146,7 @@ cp -a Documentation "${ROOT}/package/${VERSION}"
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 if [ $? -ne 0 ]; then
     echo "Failed to zip artifact"
     exit 1
@@ -145,7 +157,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cp ${ROOT}/docs/users/Mac_README.txt ${VERSION}/README.txt
     pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
     plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
-    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
+    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg --scripts ${ROOT}/Support/osxscripts
 fi
 
 cd $ROOT

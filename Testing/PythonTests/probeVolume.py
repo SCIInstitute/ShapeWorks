@@ -2,7 +2,9 @@ import os
 import sys
 from shapeworks import *
 
-def probeVolumeTest():
+success = True
+
+def probevolumeTest():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   img = Image(os.environ["DATA"] + "/femurVtkDT.nrrd")
   mesh.probeVolume(img)
@@ -11,7 +13,6 @@ def probeVolumeTest():
 
   return mesh == compareMesh
 
-val = probeVolumeTest()
+success &= utils.test(probevolumeTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

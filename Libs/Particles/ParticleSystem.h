@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <Eigen/Core>
+
 #include "itkParticlePositionReader.h"
+#include "Shapeworks.h"
 
 namespace shapeworks {
 
@@ -32,6 +34,10 @@ public:
   {
     return P.rows();
   }
+
+  bool ExactCompare(const ParticleSystem& other) const;
+
+  bool EvaluationCompare(const ParticleSystem& other) const;
 
 private:
   friend struct SharedCommandData;

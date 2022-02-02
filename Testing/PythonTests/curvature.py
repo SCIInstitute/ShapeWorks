@@ -1,6 +1,9 @@
 import os
 import sys
+from typing import Type
 from shapeworks import *
+
+success = True
 
 def curvatureTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -10,10 +13,7 @@ def curvatureTest1():
 
   return img.compare(compareImg)
 
-val = curvatureTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(curvatureTest1)
 
 def curvatureTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,7 +23,16 @@ def curvatureTest2():
 
   return img.compare(compareImg)
 
-val = curvatureTest2()
+success &= utils.test(curvatureTest2)
 
-if val is False:
-  sys.exit(1)
+def curvaturefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.applyCurvatureFilter(-5)
+
+  compareImg = Image(os.environ["DATA"] + "/curvaturefail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(curvaturefailTest, TypeError)
+
+sys.exit(not success)

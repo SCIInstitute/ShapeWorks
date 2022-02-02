@@ -17,7 +17,7 @@ std::map<std::string, std::string> Parameters::get_map()
 //---------------------------------------------------------------------------
 Variant Parameters::get(std::string key, Variant default_value)
 {
-  if (this->map_.find(key) == this->map_.end()) {
+  if (!this->key_exists(key)) {
     return Variant(default_value);
   }
   return Variant(this->map_[key]);
@@ -33,4 +33,16 @@ void Parameters::set(std::string key, Variant value)
 void Parameters::remove_entry(std::string key)
 {
   this->map_.erase(key);
+}
+
+//---------------------------------------------------------------------------
+void Parameters::reset_parameters()
+{
+  this->map_.clear();
+}
+
+//---------------------------------------------------------------------------
+bool Parameters::key_exists(std::string key)
+{
+  return this->map_.find(key) != this->map_.end();
 }

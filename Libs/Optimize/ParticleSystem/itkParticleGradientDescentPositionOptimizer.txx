@@ -168,7 +168,9 @@ namespace itk
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(k, dom));
+              if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
+                AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed);
+              }
 
               gradmag = gradient.magnitude();
 
@@ -252,6 +254,39 @@ namespace itk
 
     } // end while stop optimization
   }
+
+template<class TGradientNumericType, unsigned int VDimension>
+void
+ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
+  VectorType& gradient, const PointType& pt, const size_t& dom, const double& maximumUpdateAllowed)
+{
+  // Step B 2: Augmented lagrangian constraint method
+  double gradmag = gradient.magnitude();
+
+  if (gradmag > maximumUpdateAllowed) {
+    gradient = gradient * maximumUpdateAllowed / gradmag;
+    gradmag = gradient.magnitude();
+  }
+
+  PointType upd_pt;
+  for (size_t n = 0; n < VDimension; n++) {
+    upd_pt[n] = pt[n] - gradient[n];
+  }
+
+  double c = 1e0;
+  double multiplier = 2;
+  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
+  VectorType constraint_energy = m_ParticleSystem->GetDomain(
+    dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, pt, c);
+  if (constraint_energy.magnitude() > multiplier * gradmag) {
+    constraint_energy *= multiplier * gradmag / constraint_energy.magnitude();
+  }
+  //m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(pt);
+  for (size_t n = 0; n < VDimension; n++) {
+    gradient[n] += constraint_energy[n];
+  }
+  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
+}
 
 } // end namespace
 

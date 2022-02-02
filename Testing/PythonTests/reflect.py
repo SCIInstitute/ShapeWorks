@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def reflectTest1():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img.reflect(Axis.Z)
@@ -10,10 +12,7 @@ def reflectTest1():
 
   return img.compare(compareImg)
 
-val = reflectTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(reflectTest1)
 
 def reflectTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
@@ -23,10 +22,7 @@ def reflectTest2():
 
   return img.compare(compareImg)
 
-val = reflectTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(reflectTest2)
 
 def reflectTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -36,10 +32,7 @@ def reflectTest3():
 
   return mesh == compareMesh
 
-val = reflectTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(reflectTest3)
 
 def reflectTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -49,7 +42,16 @@ def reflectTest4():
 
   return mesh == compareMesh
 
-val = reflectTest4()
+success &= utils.test(reflectTest4)
 
-if val is False:
-  sys.exit(1)
+def reflectfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.reflect()
+
+  compareImg = Image(os.environ["DATA"] + "/reflectfail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(reflectfailTest, TypeError)
+
+sys.exit(not success)

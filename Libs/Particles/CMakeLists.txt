@@ -1,30 +1,43 @@
-set(sources
-        ParticleSystem.cpp
-        ParticleShapeStatistics.cpp
-        itkParticlePositionReader.cpp
-        itkParticlePositionWriter.cpp
-        ShapeEvaluation.cpp)
-set(headers
-        ParticleSystem.h
-        ParticleShapeStatistics.h
-        itkParticlePositionReader.h
-        itkParticlePositionWriter.h
-        EvaluationUtil.h
-        ShapeEvaluation.h)
+# Particles library
+
+set(Particles_sources
+ ParticleSystem.cpp
+ ParticleShapeStatistics.cpp
+ ShapeEvaluation.cpp
+ ReconstructSurface.cpp
+ )
+
+set(Particles_headers
+ ParticleSystem.h
+ ParticleShapeStatistics.h
+ itkParticlePositionReader.h
+ itkParticlePositionWriter.h
+ EvaluationUtil.h
+ ShapeEvaluation.h
+ ReconstructSurface.h
+ )
 
 add_library(Particles STATIC
-  ${sources}
-  ${headers})
+  ${Particles_sources}
+  ${Particles_headers}
+  )
+
 target_include_directories(Particles PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+  )
+
 target_link_libraries(Particles PUBLIC
+  Mesh
   tinyxml
-  Eigen3::Eigen)
+  Eigen3::Eigen
+  )
 
 # set
 set_target_properties(Particles PROPERTIES PUBLIC_HEADER
-  "${Particles_headers}")
+  "${Particles_headers}"
+  )
+
 install(TARGETS Particles
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib

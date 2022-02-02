@@ -15,6 +15,13 @@ namespace shapeworks {
 
 class Mesh;
 
+/**
+ * \class Image
+ * \ingroup Group-Image
+ *
+ * This class represents a 3D image volume and operations that can be performed on images.
+ *
+ */
 class Image
 {
 public:
@@ -25,6 +32,7 @@ public:
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
 
   // constructors and assignment operators //
+  Image(const Dims dims);
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
@@ -87,11 +95,14 @@ public:
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
-  /// pads an image in all directions with constant value
+  /// pads an image by same number of voxels in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);
 
   /// pads an image by desired number of voxels in each direction with constant value
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
+
+  /// pads an image to include the given region with constant value
+  Image& pad(IndexRegion &region, PixelType value = 0.0);
 
   /// helper to simply translate image
   Image& translate(const Vector3 &v);
@@ -105,11 +116,11 @@ public:
   /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
   Image& rotate(const double angle, Axis axis);
 
-  /// creates a transform based on transform type
-  TransformPtr createTransform(XFormType type = CenterOfMass);
+  /// creates a transform that translates center of mass to center of image
+  TransformPtr createCenterOfMassTransform();
 
-  /// creates a transform based on transform type
-  TransformPtr createTransform(const Image &target, XFormType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
+  /// creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations
+  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
@@ -132,7 +143,7 @@ public:
   /// denoises an image using curvature driven flow using curvature flow image filter
   Image& applyCurvatureFilter(unsigned iterations = 10);
 
-  /// computes gradient magnitude of an image region at each pixel using gradient magnitude filter
+  /// computes gradient magnitude at each pixel using gradient magnitude filter
   Image& applyGradientFilter();
 
   /// computes sigmoid function pixel-wise using sigmoid image filter
@@ -150,14 +161,11 @@ public:
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
 
-  /// crops the image down to the given region
-  Image& crop(const Region &region);
+  /// crops the image down to the given region, with optional padding added
+  Image& crop(PhysicalRegion region, const int padding = 0);
 
-  /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
-  Image& clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
-
-  /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
-  Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
+  /// clips an image using a cutting plane
+  Image& clip(const Plane plane, const PixelType val = 0.0);
 
   /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
@@ -167,6 +175,12 @@ public:
 
   /// sets the image spacing to the given value
   Image& setSpacing(Vector3 spacing);
+
+  /// sets the coordinate system in which this image lives in physical space
+  Image& setCoordsys(ImageType::DirectionType coordsys);
+
+  /// isolate the largest object in a binary segmentation
+  Image& isolate();
 
   // query functions //
 
@@ -203,8 +217,20 @@ public:
   /// standard deviation of image
   PixelType std();
 
-  /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Region boundingBox(PixelType isovalue = 1.0) const;
+  /// bounding box of complete image in logical (index) space
+  IndexRegion logicalBoundingBox() const;
+
+  /// bounding box of complete image in physical space
+  PhysicalRegion physicalBoundingBox() const;
+
+  /// bounding box of largest region of data >= the given isoValue in physical space
+  PhysicalRegion physicalBoundingBox(PixelType isovalue) const;
+
+  /// converts a bounding box in logical (index) space to this image's index coordinates
+  PhysicalRegion logicalToPhysical(IndexRegion region) const;
+
+  /// converts a bounding box in physical space to this image's logical (index) coordinates
+  IndexRegion physicalToLogical(PhysicalRegion region) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;
@@ -223,7 +249,7 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// converts image to mesh (note: definition in Conversion.cpp)
+  /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
 private:
@@ -237,14 +263,11 @@ private:
   /// clones the underlying ImageType (ITK) data
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
 
-  /// generates the Transform necessary to move the contents of this binary image to the center
-  TransformPtr createCenterOfMassTransform();
-
-  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
-  TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
-
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  /// pad image by the given dims (always positive) in each direction
+  Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
   StatsPtr statsFilter();
 

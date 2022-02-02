@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def binarizeTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.binarize()
@@ -10,10 +12,7 @@ def binarizeTest1():
 
   return img.compare(compareImg)
 
-val = binarizeTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(binarizeTest1)
 
 def binarizeTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,7 +22,6 @@ def binarizeTest2():
 
   return img.compare(compareImg)
 
-val = binarizeTest2()
+success &= utils.test(binarizeTest2)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

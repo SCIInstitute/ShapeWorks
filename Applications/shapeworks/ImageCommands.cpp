@@ -128,7 +128,9 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   if (centerOfMass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingBox)
-    std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
+    std::cout << "physical bounding box: " << sharedData.image.physicalBoundingBox() << std::endl;
+  if (boundingBox)
+    std::cout << "logical bounding box:  " << sharedData.image.logicalBoundingBox() << std::endl;
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
               << sharedData.image.coordsys();
@@ -164,16 +166,8 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
   int layers = static_cast<int>(options.get("layers"));
 
-  if (layers < 0)
-  {
-    std::cerr << "layers must be >= 0\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.antialias(iterations, maxRMSErr, layers);
-    return true;
-  }
+  sharedData.image.antialias(iterations, maxRMSErr, layers);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -363,7 +357,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerOfMass)
   {
-    sharedData.image.applyTransform(sharedData.image.createTransform(XFormType::CenterOfMass));
+    sharedData.image.applyTransform(sharedData.image.createCenterOfMassTransform());
     return true;
   }
   else
@@ -405,16 +399,8 @@ bool ScaleImage::execute(const optparse::Values &options, SharedCommandData &sha
   double sy = static_cast<double>(options.get("sy"));
   double sz = static_cast<double>(options.get("sz"));
 
-  if (sx == 0 || sy == 0 || sz == 0)
-  {
-    std::cerr << "Error: cannot scale by 0 in any dimension\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.scale(makeVector({sx, sy, sz}));
-    return true;
-  }
+  sharedData.image.scale(makeVector({sx, sy, sz}));
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -450,12 +436,8 @@ bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedD
   double degrees = static_cast<double>(options.get("degrees"));
 
   Vector3 axis(makeVector({rx, ry, rz}));
-  if (!axis_is_valid(axis))
-  {
-    std::cerr << "Must specify a valid axis\n";
-    return false;
-  }
-  else if (radians == 0.0 && degrees == 0.0)
+
+  if (radians == 0.0 && degrees == 0.0)
   {
     std::cerr << "Must specify a rotation angle\n";
     return false;
@@ -840,7 +822,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   else
   {
     Image target(targetDT);
-    TransformPtr transform(sharedData.image.createTransform(target, XFormType::IterativeClosestPoint, isoValue, iterations));
+    auto xform = sharedData.image.createRigidRegistrationTransform(target, isoValue, iterations);
+    TransformPtr transform(xform);
     sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;
   }
@@ -852,11 +835,10 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBoxImage::buildParser()
 {
   const std::string prog = "bounding-box-image";
-  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
+  const std::string desc = "compute largest physical bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
   parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: %default].");
 
   Command::buildParser();
@@ -865,12 +847,76 @@ void BoundingBoxImage::buildParser()
 bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  int padding = static_cast<int>(options.get("padding"));
   double isoValue = static_cast<double>(options.get("isovalue"));
 
   sharedData.region = ImageUtils::boundingBox(filenames, isoValue);
-  sharedData.region.pad(padding);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ImageBounds
+///////////////////////////////////////////////////////////////////////////////
+void ImageBounds::buildParser()
+{
+  const std::string prog = "image-bounds";
+  const std::string desc = "return bounds of image, optionally with an isovalue to restrict region";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue").action("store").type("double").help("Isovalue [default: entire image].");
+
+  Command::buildParser();
+}
+
+bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  auto isovalue = options.get("isovalue");
+
+  if (isovalue.isValid())
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox(static_cast<double>(isovalue));
+  }
+  else
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox();
+  }
+
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetRegion
+///////////////////////////////////////////////////////////////////////////////
+void SetRegion::buildParser()
+{
+  const std::string prog = "set-region";
+  const std::string desc = "set the current (physical) region to the specified min/max in each direction, for use with downstreams commands such as crop (note: could instead use the image-bounds command with an isovalue)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--xmin").action("store").type("double").help("Minimum X.");
+  parser.add_option("--xmax").action("store").type("double").help("Maximum X.");
+  parser.add_option("--ymin").action("store").type("double").help("Minimum Y.");
+  parser.add_option("--ymax").action("store").type("double").help("Maximum Y.");
+  parser.add_option("--zmin").action("store").type("double").help("Minimum Z.");
+  parser.add_option("--zmax").action("store").type("double").help("Maximum Z.");
+
+  Command::buildParser();
+}
+
+bool SetRegion::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double xmin = static_cast<double>(options.get("xmin"));
+  double ymin = static_cast<double>(options.get("ymin"));
+  double zmin = static_cast<double>(options.get("zmin"));
+  double xmax = static_cast<double>(options.get("xmax"));
+  double ymax = static_cast<double>(options.get("ymax"));
+  double zmax = static_cast<double>(options.get("zmax"));
+
+  sharedData.region = PhysicalRegion(Point({xmin, ymin, zmin}),
+                                     Point({xmax, ymax, zmax}));
+  std::cout << "region: " << sharedData.region << std::endl;
+
   return true;
 }
 
@@ -880,15 +926,8 @@ bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandDat
 void CropImage::buildParser()
 {
   const std::string prog = "crop";
-  const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
+  const std::string desc = "crop image down to the current region of physical space (from bounding-box or set-region commands)";
   parser.prog(prog).description(desc);
-
-  parser.add_option("--xmin").action("store").type("unsigned").set_default(0).help("Minimum X.");
-  parser.add_option("--xmax").action("store").type("unsigned").set_default(0).help("Maximum X.");
-  parser.add_option("--ymin").action("store").type("unsigned").set_default(0).help("Minimum Y.");
-  parser.add_option("--ymax").action("store").type("unsigned").set_default(0).help("Maximum Y.");
-  parser.add_option("--zmin").action("store").type("unsigned").set_default(0).help("Minimum Z.");
-  parser.add_option("--zmax").action("store").type("unsigned").set_default(0).help("Maximum Z.");
 
   Command::buildParser();
 }
@@ -901,24 +940,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  unsigned xmin = static_cast<unsigned>(options.get("xmin"));
-  unsigned ymin = static_cast<unsigned>(options.get("ymin"));
-  unsigned zmin = static_cast<unsigned>(options.get("zmin"));
-  unsigned xmax = static_cast<unsigned>(options.get("xmax"));
-  unsigned ymax = static_cast<unsigned>(options.get("ymax"));
-  unsigned zmax = static_cast<unsigned>(options.get("zmax"));
-
-  if (xmin == 0 && ymin == 0 && zmin == 0 &&
-      xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
-  else
-  {
-    Region region(sharedData.image.dims());
-    if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
-    if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
-    if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
-    sharedData.image.crop(region);
-  }
+  sharedData.image.crop(sharedData.region);
   return true;
 }
 
@@ -957,7 +979,7 @@ bool ClipImage::execute(const optparse::Values &options, SharedCommandData &shar
   Point p2({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
   Point p3({static_cast<double>(options.get("z1")), static_cast<double>(options.get("z2")), static_cast<double>(options.get("z3"))});
 
-  sharedData.image.clip(p1, p2, p3, static_cast<double>(options.get("value")));
+  sharedData.image.clip(makePlane(p1, p2, p3), static_cast<double>(options.get("value")));
   return true;
 }
 
@@ -986,16 +1008,8 @@ bool ReflectImage::execute(const optparse::Values &options, SharedCommandData &s
   std::string axis_str(static_cast<std::string>(options.get("axis")));
   Axis axis(toAxis(axis_str));
 
-  if (!axis_is_valid(axis))
-  {
-    std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.reflect(axis);
-    return true;
-  }
+  sharedData.image.reflect(axis);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1341,5 +1355,30 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
   sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(isoValue));
   return sharedData.validMesh();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Isolate
+///////////////////////////////////////////////////////////////////////////////
+void Isolate::buildParser()
+{
+  const std::string prog = "isolate";
+  const std::string desc = "finds the largest object in a binary segmentation and removes all other objects";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool Isolate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image.isolate();
+  return true;
+}
+
 
 } // shapeworks

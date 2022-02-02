@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def sigmoidTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applySigmoidFilter()
@@ -10,10 +12,7 @@ def sigmoidTest1():
 
   return img.compare(compareImg)
 
-val = sigmoidTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(sigmoidTest1)
 
 def sigmoidTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def sigmoidTest2():
 
   return img.compare(compareImg)
 
-val = sigmoidTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(sigmoidTest2)
 
 def sigmoidTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,10 +32,7 @@ def sigmoidTest3():
 
   return img.compare(compareImg)
 
-val = sigmoidTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(sigmoidTest3)
 
 def sigmoidTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -49,7 +42,6 @@ def sigmoidTest4():
 
   return img.compare(compareImg)
 
-val = sigmoidTest4()
+success &= utils.test(sigmoidTest4)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def blurTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.gaussianBlur()
@@ -10,10 +12,7 @@ def blurTest1():
 
   return img.compare(compareImg)
 
-val = blurTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(blurTest1)
 
 def blurTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def blurTest2():
 
   return img.compare(compareImg)
 
-val = blurTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(blurTest2)
 
 def blurTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,7 +32,6 @@ def blurTest3():
 
   return img.compare(compareImg)
 
-val = blurTest3()
+success &= utils.test(blurTest3)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)
