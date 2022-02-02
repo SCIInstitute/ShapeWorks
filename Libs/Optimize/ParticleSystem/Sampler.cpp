@@ -6,7 +6,7 @@
 #include "Sampler.h"
 #include "ContourDomain.h"
 
-namespace shapeworks {initialize_ffcs
+namespace shapeworks {
 
 Sampler::Sampler()
 {
