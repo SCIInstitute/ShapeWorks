@@ -290,7 +290,7 @@ PYBIND11_MODULE(shapeworks_py, m)
        [](Image &image, Eigen::Matrix<double, 4, 4> &eigen_mat,
           Image::InterpolationType interp, bool meshTransform) -> decltype(auto){
          if (meshTransform) {
-          eigen_mat = eigen_mat.inverse();
+          eigen_mat = eigen_mat.inverse().eval();
           Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
           Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
           eigen_mat.col(eigen_mat.cols()-1) = lastRow;
@@ -319,7 +319,7 @@ PYBIND11_MODULE(shapeworks_py, m)
           const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
           Image::InterpolationType interp, bool meshTransform) {
          if (meshTransform) {
-          eigen_mat = eigen_mat.inverse();
+          eigen_mat = eigen_mat.inverse().eval();
           Eigen::VectorXd lastColumn = eigen_mat.col(eigen_mat.cols()-1);
           Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
           eigen_mat.col(eigen_mat.cols()-1) = lastRow;
@@ -978,7 +978,7 @@ PYBIND11_MODULE(shapeworks_py, m)
           Eigen::VectorXd lastRow = eigen_mat.row(eigen_mat.rows()-1);
           eigen_mat.col(eigen_mat.cols()-1) = lastRow;
           eigen_mat.row(eigen_mat.rows()-1) = lastColumn;
-          eigen_mat = eigen_mat.inverse();
+          eigen_mat = eigen_mat.inverse().eval();
          }
          auto vtk_xform = eigen44ToVtkTransform(eigen_mat);
          return mesh.applyTransform(vtk_xform);
