@@ -191,8 +191,6 @@ private:
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
 
-  bool set_image_name(std::string image_name);
-  std::string get_image_name();
 
   bool get_feature_uniform_scale();
   void set_feature_uniform_scale(bool value);
@@ -250,7 +248,6 @@ private:
   std::string current_display_mode_;
 
   bool block_update_{false};
-  bool is_loading_{false};
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;

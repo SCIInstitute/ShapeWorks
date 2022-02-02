@@ -779,8 +779,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
   connect(this->session_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
+  connect(this->session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
   connect(this->session_.data(), &Session::message, this, &ShapeWorksStudioApp::handle_message);
-  connect(this->session_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
@@ -896,7 +896,7 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
     analysis_tool_->set_feature_map(feature_map);
 
-    auto image_volume_name = get_image_name();
+    auto image_volume_name = session_->get_image_name();
     if (image_volume_name == "-none-") {
       image_volume_name = "";
     }
@@ -985,7 +985,7 @@ void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed() {
-  if (this->is_loading_) {
+  if (session_->is_loading()) {
     return;
   }
 
@@ -1152,7 +1152,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
     return;
   }
 
-  if (this->block_update_ || this->is_loading_) {
+  if (this->block_update_ || session_->is_loading()) {
     return;
   }
 
@@ -1254,7 +1254,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   lightbox_->update_interactor_style();
 
-  if ((force || change) && !this->is_loading_) {  // do not override if loading
+  if ((force || change) && !session_->is_loading()) {  // do not override if loading
     this->reset_num_viewers();
   }
 
@@ -1276,7 +1276,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   this->handle_progress(-1);  // busy
   QApplication::processEvents();
 
-  this->is_loading_ = true;
+  session_->set_loading(true);
 
   try {
     if (!this->session_->load_project(filename)) {
@@ -1343,7 +1343,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   this->on_zoom_slider_valueChanged();
 
-  this->is_loading_ = false;
+  session_->set_loading(false);
 
   this->handle_project_changed();
 
@@ -1606,7 +1606,7 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode) {
   if (view_mode != this->get_view_mode()) {
-    if (!this->is_loading_) {
+    if (!session_->is_loading()) {
       this->session_->parameters().set("view_state", view_mode);
     }
     this->update_view_mode();
@@ -1889,13 +1889,13 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_image_selection(const QString& image_name) {
-  this->set_image_name(image_name.toStdString());
+  session_->set_image_name(image_name.toStdString());
 }
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
   if (feature_map != this->get_feature_map()) {
-    if (!this->is_loading_) {
+    if (!session_->is_loading()) {
       this->session_->parameters().set("feature_map", feature_map);
     }
     this->update_view_mode();
@@ -1907,20 +1907,6 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_feature_map() { return this->session_->parameters().get("feature_map", ""); }
 
-//---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::set_image_name(std::string image_name) {
-  if (image_name != this->get_image_name()) {
-    if (!this->is_loading_) {
-      this->session_->parameters().set("image_name", image_name);
-    }
-    this->update_view_mode();
-    return true;
-  }
-  return false;
-}
-
-//---------------------------------------------------------------------------
-std::string ShapeWorksStudioApp::get_image_name() { return this->session_->parameters().get("image_name", ""); }
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {
@@ -1929,7 +1915,7 @@ bool ShapeWorksStudioApp::get_feature_uniform_scale() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
-  if (!this->is_loading_) {
+  if (!session_->is_loading()) {
     this->session_->parameters().set("feature_uniform_scale", value);
     this->update_view_mode();
   }

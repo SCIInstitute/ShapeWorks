@@ -961,22 +961,45 @@ bool Session::get_show_landmarks() { return show_landmark_labels_; }
 //---------------------------------------------------------------------------
 bool Session::set_image_name(std::string image_name)
 {
-  /*
-  if (image_name != this->get_image_name()) {
-    if (!this->is_loading_) {
-      this->session_->parameters().set("image_name", image_name);
+  if (image_name != get_image_name()) {
+    if (!is_loading()) {
+      params_.set("image_name", image_name);
     }
-    this->update_view_mode();
+    Q_EMIT update_view_mode();
     return true;
   }
   return false;
-  */
 }
 
 //---------------------------------------------------------------------------
 std::string Session::get_image_name()
 {
+  return params_.get("image_name", "");
+}
 
+//---------------------------------------------------------------------------
+void Session::set_image_axis(Axis axis)
+{
+  params_.set("image_axis", axisToString(axis));
+}
+
+//---------------------------------------------------------------------------
+Axis Session::get_image_axis()
+{
+  std::string axis_string = params_.get("image_axis", "Z");
+  return toAxis(axis_string);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_loading(bool loading)
+{
+  is_loading_ = loading;
+}
+
+//---------------------------------------------------------------------------
+bool Session::is_loading()
+{
+  return is_loading_;
 }
 
 //---------------------------------------------------------------------------
