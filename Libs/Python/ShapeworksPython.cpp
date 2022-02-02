@@ -2,12 +2,6 @@
 
 #include <Libs/Optimize/Optimize.h>
 
-Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
-{
-  shapeworks::MatrixContainer container = opt->GetParticleSystem();
-  return container.matrix_;
-}
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/operators.h>
@@ -1460,7 +1454,37 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Optimize::SetIterationCallbackFunction)
 
   .def("GetParticleSystem",
-       &optimize_get_particle_system)
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetParticleSystem();
+          return container.matrix_;
+     }
+     )
+
+  .def("SetBeforeEvaluateCallbackFunction",
+      &Optimize::SetBeforeEvaluateCallbackFunction)
+
+  .def("GetCorrespondenceUpdateMatrix",
+      [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetCorrespondenceUpdateMatrix();
+          return container.matrix_;})
+
+  .def("SetCorrespondenceUpdateMatrix",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetCorrespondenceUpdateMatrix(container);
+          }
+     )
+
+  .def("GetOptimizing",
+       &Optimize::GetOptimizing)
+
+  .def("GetShapeGradientMatrix",
+      [](Optimize *opt){
+            shapeworks::MatrixContainer container = opt->GetShapeGradientMatrix();
+            return container.matrix_;
+      }
+      )
   ;
 
 } // PYBIND11_MODULE(shapeworks_py)
