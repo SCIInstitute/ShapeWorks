@@ -41,7 +41,7 @@ decompress_file() {
 	    7z -spf x "$1"
 	fi
     else
-	if tar -tzf "$2" >/dev/null ; then
+	if tar -tzf "$1" >/dev/null ; then
 	    tar --use-compress-program=pigz -xf "$1"
 	fi
     fi
