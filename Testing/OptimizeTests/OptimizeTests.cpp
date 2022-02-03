@@ -40,7 +40,7 @@ static void prep_distance_transform(std::string input, std::string output) {
 }
 
 //---------------------------------------------------------------------------
-static bool check_contstraint_violations(Optimize &app) {
+static bool check_constraint_violations(Optimize &app, double slack) {
   // Check that points don't violate the constraints
   size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
   size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
@@ -66,8 +66,6 @@ static bool check_contstraint_violations(Optimize &app) {
 
       auto violation_report_data =
           app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
-
-      double slack = 8.5e-1;
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
@@ -333,7 +331,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 1.5e-1);
 
   auto end = shapeworks::ShapeworksUtils::now();
   std::cout << "Time taken to run cutting_plane optimize test: "
@@ -368,11 +366,12 @@ TEST(OptimizeTests, sphereConstraint) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 15.0e-1);
 
   ASSERT_TRUE(good);
 }
 
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, sphereCuttingPlaneConstraint) {
   setupenv(std::string(TEST_DATA_DIR) + "/sphere_cutting_plane_constraint");
 
@@ -404,7 +403,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 8.5e-1);
 
   ASSERT_TRUE(good);
 }
@@ -438,7 +437,7 @@ TEST(OptimizeTests, ffc_test) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 3.0e-1);
 
   ASSERT_TRUE(good);
 }
@@ -469,7 +468,7 @@ TEST(OptimizeTests, MultiDomainConstraint) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 7.5e-1);
 
   ASSERT_TRUE(good);
 }
@@ -630,6 +629,6 @@ TEST(OptimizeTests, mesh_ffc_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_contstraint_violations(app);
+  bool good = check_constraint_violations(app, 3.0e-1);
   ASSERT_TRUE(good);
 }
