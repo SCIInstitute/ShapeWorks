@@ -37,11 +37,11 @@ compress_file() {
 
 decompress_file() {
     if [[ "$PLATFORM" == "windows" ]]; then
-	if [ 7z t $1 ]; then
+	if 7z t $1 ; then
 	    7z -spf x $1
 	fi
     else
-	if [ tar -tzf $2 >/dev/null ]; then
+	if tar -tzf $2 >/dev/null ; then
 	    tar --use-compress-program=pigz -xf "$1"
 	fi
     fi
