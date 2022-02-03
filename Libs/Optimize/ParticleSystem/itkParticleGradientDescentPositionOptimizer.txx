@@ -655,7 +655,7 @@ namespace itk
             if (m_TimeStepsWithin[dom][k] < minimumTimeStepWithin) {
               m_TimeStepsWithin[dom][k] = minimumTimeStepWithin;
             }
-            std::cout << "------optimizing within now-----" << std::endl;
+            // std::cout << "------optimizing within now-----" << std::endl;
             // Compute gradient update.
             double within_energy = 0.0;
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
@@ -739,7 +739,7 @@ namespace itk
 
       // 2. Optimize in Parallel for Between
       if(flag_b){
-      // m_GradientFunction->BeforeIteration(); // Compute the MLPCA params before each iteration
+      m_GradientFunction->BeforeIteration(); // Compute the MLPCA params before each iteration
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {
