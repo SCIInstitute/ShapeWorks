@@ -217,25 +217,25 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
 int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
 {
   // debug
-  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
+  // std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
   unsigned int num_points = (int)(points[0].size() / (3 * dps));
   this->m_dps = dps;
   this->m_numPoints = num_points;
   this->m_N = points.size();
-  std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
+  // std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
 
   unsigned int n = m_N * VDimension; 
-  std::cout << " n " << n << std::endl;
+  // std::cout << " n " << n << std::endl;
   unsigned int m = num_points * dps;
-  std::cout << "m " << m << std::endl;
+  // std::cout << "m " << m << std::endl;
 
   m_super_matrix.set_size(m, n);
   m_shapes_mca.clear();
-  std::cout << "cleared" <<std::endl;
+  // std::cout << "cleared" <<std::endl;
 
   for(unsigned int i = 0; i < points.size(); i++){
     unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
-    std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
+    // std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
     for(unsigned int j= 0; j < p; j++){
       m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
       m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
@@ -243,7 +243,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
   
-  std::cout << " Super matrix constructed " << std::endl;
+  // std::cout << " Super matrix constructed " << std::endl;
 
   // Step 2. Compute within covariance matrix
 
@@ -281,7 +281,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
   vnl_matrix<double> z_within_objective;
   unsigned int M = num_points * VDimension * m_dps;
   z_within_objective.set_size(M, m_N);
-
+  this->m_MatrixWithin.resize(M, m_N);
   // 2.a Compute within objective matrix
 
   for(unsigned int i = 0; i < m_N; i++){
@@ -290,10 +290,15 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
       z_within_objective(j * VDimension, i) = z_within_centred(j, i * VDimension);
       z_within_objective(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
       z_within_objective(j * VDimension + 2, i) = z_within_centred(j, i * VDimension + 2);
+
+      //Copy to Eigen matrix for Evaluation Computation
+      this->m_MatrixWithin(j * VDimension, i) = z_within_centred(j, i * VDimension);
+      this->m_MatrixWithin(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
+      this->m_MatrixWithin(j * VDimension + 2, i) = z_within_centred(j, i * VDimension + 2);
     }
   }
 
-  std::cout << "Within objective computed " << std::endl;
+  // std::cout << "Within objective computed " << std::endl;
 
   // 2..b compute within covariance matrix
   m_pointsMinusMean_for_within.set_size(M, m_N);
@@ -309,7 +314,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
-  std::cout << "Within Covariance Matrix computed " << std::endl;
+  // std::cout << "Within Covariance Matrix computed " << std::endl;
 
   // Step 3.Compute Between Covariance matrix
 
@@ -340,14 +345,20 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
   }
   vnl_matrix<double> z_between_objective;
   z_between_objective.set_size(m_dps * VDimension, m_N);
-  
+  this->m_MatrixBetween.resize(m_dps * VDimension, m_N);
   for(unsigned int k = 0; k < m_dps; k++){
     for(unsigned int i = 0; i < m_N; i++){
       z_between_objective(k * VDimension, i) = z_between(k, i * VDimension);
       z_between_objective(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
       z_between_objective(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
+
+      //Copy to eigen matrix for Evaluation computation
+      this->m_MatrixBetween(k * VDimension, i) = z_between(k, i * VDimension);
+      this->m_MatrixBetween(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
+      this->m_MatrixBetween(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
     }
   }
+  
 
   //3.b between covariance matrix
 
@@ -364,8 +375,8 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
- std::cout << "Between Covariance Matrix computed " << std::endl;
- std::cout << "MLPCA base part done" << std::endl;
+//  std::cout << "Between Covariance Matrix computed " << std::endl;
+//  std::cout << "MLPCA base part done" << std::endl;
 
 }
 
@@ -932,6 +943,18 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(floa
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
   return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
+}
+
+Eigen::VectorXd ParticleShapeStatistics::get_compactness_within_subspace(std::function<void(float)> progress_callback)
+{
+  // auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactnessInWithinSubspace(this->m_MatrixWithin, progress_callback);
+}
+
+Eigen::VectorXd ParticleShapeStatistics::get_compactness_between_subspace(std::function<void(float)> progress_callback)
+{
+  // auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::ShapeEvaluation::ComputeFullCompactnessInBetweenSubspace(this->m_MatrixBetween, progress_callback);
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)

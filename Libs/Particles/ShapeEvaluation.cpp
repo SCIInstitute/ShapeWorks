@@ -54,6 +54,74 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   return cumsum;
 }
 
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactnessInWithinSubspace(const Eigen::MatrixXd &WithinMatrix, std::function<void(float)> progress_callback)
+{
+  const int N = WithinMatrix.cols();
+  const int D = WithinMatrix.rows();
+  const int num_modes = N-1; // the number of modes is one less than the number of samples
+
+  if (num_modes < 1) {
+    return Eigen::VectorXd();
+  }
+  Eigen::MatrixXd Y = WithinMatrix;
+
+  // Compute Within subspace here
+  
+  const Eigen::VectorXd mu = Y.rowwise().mean();
+  Y.colwise() -= mu;
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
+  const auto S = svd.singularValues().array().pow(2) / (N * D);
+
+  // Compute cumulative sum
+  Eigen::VectorXd cumsum(num_modes);
+  cumsum(0) = S(0);
+  for (int i = 1; i < num_modes; i++) {
+    if (progress_callback) {
+      progress_callback(static_cast<float>(i) / static_cast<float>(N));
+    }
+    cumsum(i) = cumsum(i-1) + S(i);
+  }
+  cumsum /= S.sum();
+  return cumsum;
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactnessInBetweenSubspace(const Eigen::MatrixXd &BetweenMatrix, std::function<void(float)> progress_callback)
+{
+  const int N = BetweenMatrix.cols();
+  const int D = BetweenMatrix.rows();
+  const int num_modes = N-1; // the number of modes is one less than the number of samples
+
+  if (num_modes < 1) {
+    return Eigen::VectorXd();
+  }
+  Eigen::MatrixXd Y = BetweenMatrix;
+
+  // Compute Within subspace here
+  
+  const Eigen::VectorXd mu = Y.rowwise().mean();
+  Y.colwise() -= mu;
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
+  const auto S = svd.singularValues().array().pow(2) / (N * D);
+
+  // Compute cumulative sum
+  Eigen::VectorXd cumsum(num_modes);
+  cumsum(0) = S(0);
+  for (int i = 1; i < num_modes; i++) {
+    if (progress_callback) {
+      progress_callback(static_cast<float>(i) / static_cast<float>(N));
+    }
+    cumsum(i) = cumsum(i-1) + S(i);
+  }
+  cumsum /= S.sum();
+  return cumsum;
+}
+
+
 //---------------------------------------------------------------------------
 double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
                                                           const std::string &saveTo)

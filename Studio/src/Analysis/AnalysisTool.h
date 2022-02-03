@@ -79,13 +79,13 @@ public:
 
   int get_sample_number();
 
-  bool compute_stats(); // TODO : Make changes here
+  bool compute_stats();
 
   void updateSlider();
   
   void updateMcaSlider();
 
-  void reset_stats(); //TODO: ensure proper usage with mlpca
+  void reset_stats();
   void enable_actions(bool newly_enabled = false);
 
   StudioParticles get_mean_shape_points();
@@ -234,6 +234,8 @@ private:
 
   Eigen::VectorXd eval_specificity_;
   Eigen::VectorXd eval_compactness_;
+  Eigen::VectorXd eval_compactness_between_;
+  Eigen::VectorXd eval_compactness_within_;
   Eigen::VectorXd eval_generalization_;
 
   vnl_vector<double> empty_shape_;

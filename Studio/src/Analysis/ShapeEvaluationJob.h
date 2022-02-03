@@ -13,7 +13,7 @@ class ShapeEvaluationJob : public Job
 public:
 
   enum class JobType {
-    CompactnessType, SpecificityType, GeneralizationType
+    CompactnessType, SpecificityType, GeneralizationType, WithinSubspaceCompactness, BetweenSubspaceCompactness
   };
 
   ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats);

@@ -85,6 +85,7 @@ public:
 
   void StartMlpcaOptimization(bool flag_b)
   {
+    this->m_mlpca_optimize = true;
     this->StartMlpcaBasedAdaptiveGaussSeidelOptimization(flag_b);
   }
   void StartAdaptiveGaussSeidelOptimization();
@@ -156,6 +157,10 @@ private:
   double m_Tolerance;
   double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
+  std::vector< std::vector<double> > m_TimeStepsWithin;
+  std::vector< std::vector<double> > m_TimeStepsBetween;
+  bool m_mlpca_optimize;
+
   unsigned int m_verbosity;
 
   void ResetTimeStepVectors();

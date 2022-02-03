@@ -62,6 +62,34 @@ namespace itk
         m_TimeSteps[i][j] = 1.0;
       }
     }
+
+    if(m_mlpca_optimize == true){
+      while (m_TimeStepsWithin.size() != m_ParticleSystem->GetNumberOfDomains())
+      {
+        std::vector<double> tmp1;
+        m_TimeStepsWithin.push_back(tmp1);
+        std::vector<double> tmp2;
+        m_TimeStepsBetween.push_back(tmp2);
+      }
+
+      for (unsigned int i = 0; i < m_ParticleSystem->GetNumberOfDomains(); i++)
+      {
+        unsigned int np = m_ParticleSystem->GetPositions(i)->GetSize();
+        if (m_TimeStepsWithin[i].size() != np)
+        {
+          // resize and initialize everything to 1.0
+          m_TimeStepsWithin[i].resize(np);
+          m_TimeStepsBetween[i].resize(np);
+        }
+        for (unsigned int j = 0; j < np; j++)
+        {
+          m_TimeStepsWithin[i][j] = 1.0;
+          m_TimeStepsBetween[i][j] = 1.0;
+        }
+      }
+
+
+    }
   }
 
   template <class TGradientNumericType, unsigned int VDimension>
@@ -559,7 +587,11 @@ namespace itk
     typedef typename DomainType::VnlVectorType NormalType;
 
     ResetTimeStepVectors();
-    double minimumTimeStep = 1.0;
+    // double minimumTimeStep = 1.0;
+    double minimumTimeStepWithin = 1.0;
+    double minimumTimeStepBetween = 1.0;
+
+
 
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
@@ -576,7 +608,8 @@ namespace itk
       if (m_NumberOfIterations > startDampening) {
         dampening = exp(-double(m_NumberOfIterations - startDampening) * 5.0 / double(m_MaximumNumberOfIterations - startDampening));
       }
-      minimumTimeStep = dampening;
+      minimumTimeStepWithin = dampening;
+      minimumTimeStepBetween = dampening;
 
       maxchange_within = 0.0;
       maxchange_between = 0.0;
@@ -619,34 +652,34 @@ namespace itk
           // Iterate over each particle position
           for (auto k=0; k<m_ParticleSystem->GetPositions(dom)->GetSize(); k++)
           {
-            if (m_TimeSteps[dom][k] < minimumTimeStep) {
-              m_TimeSteps[dom][k] = minimumTimeStep;
+            if (m_TimeStepsWithin[dom][k] < minimumTimeStepWithin) {
+              m_TimeStepsWithin[dom][k] = minimumTimeStepWithin;
             }
             std::cout << "------optimizing within now-----" << std::endl;
             // Compute gradient update.
             double within_energy = 0.0;
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
 
-            std::cout << "Before Evaluated done" << std::endl;
+            // std::cout << "Before Evaluated done" << std::endl;
 
             // maximumUpdateAllowed is set based on some fraction of the distance between particles
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed_within;
             // VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
             VectorType original_within_gradient = localGradientFunction->EvaluateWithin(k, dom, m_ParticleSystem, maximumUpdateAllowed_within, within_energy);
-            std::cout << " Orig Within grad done " << std::endl;
+            // std::cout << " Orig Within grad done " << std::endl;
 
             PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
             // Step 1 Project the gradient vector onto the tangent plane
             VectorType original_within_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_within_gradient, pt, k);
-            std::cout << "Orig within projection done " << std::endl;
+            // std::cout << "Orig within projection done " << std::endl;
             // Update with within gradient
             double newenergy_within, within_gradmag;
             while (true) {
               // Step A scale the projected gradient by the current time step
-              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k]; // TODO: check time steps proper usage
-              std::cout << "Within new gradient done " << std::endl;
+              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeStepsWithin[dom][k]; // TODO: check time steps proper usage
+              // std::cout << "Within new gradient done " << std::endl;
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
@@ -659,38 +692,38 @@ namespace itk
               if (within_gradmag > maximumUpdateAllowed_within) {
                 within_gradient = within_gradient * maximumUpdateAllowed_within / within_gradmag;
                 within_gradmag = within_gradient.magnitude();
-                std::cout << " within grad mag value changed" << std::endl;
+                // std::cout << " within grad mag value changed" << std::endl;
 
               }
 
               // Step D compute the new point position
               PointType newpoint_after_within_update = domain->UpdateParticlePosition(pt, k, within_gradient);
-              std::cout << " New point after within update done" << std::endl;
+              // std::cout << " New point after within update done" << std::endl;
 
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint_after_within_update, k, dom);
-              std::cout << " Position set" << std::endl;
+              // std::cout << " Position set" << std::endl;
 
               // Step G compute the new energy of the particle system
               newenergy_within = localGradientFunction->EnergyWithin(k, dom, m_ParticleSystem);
-              std::cout << " Updated WITHIN ENERGY _____ " << std::endl;
+              // std::cout << " Updated WITHIN ENERGY _____ " << std::endl;
 
 
               if (newenergy_within < within_energy) // good move, increase timestep for next time
               {
-                m_TimeSteps[dom][k] *= factor;
+                m_TimeStepsWithin[dom][k] *= factor;
                 if (within_gradmag > maxchange_within) maxchange_within = within_gradmag;
                 break;
               }
               else
               {// bad move, reset point position and back off on timestep
-                if (m_TimeSteps[dom][k] > minimumTimeStep)
+                if (m_TimeStepsWithin[dom][k] > minimumTimeStepWithin)
                 {
                   domain->ApplyConstraints(pt, k);
                   m_ParticleSystem->SetPosition(pt, k, dom);
                   domain->InvalidateParticlePosition(k);
 
-                  m_TimeSteps[dom][k] /= factor;
+                  m_TimeStepsWithin[dom][k] /= factor;
                 }
                 else // keep the move with timestep 1.0 anyway
                 {
@@ -699,14 +732,14 @@ namespace itk
                 }
               }
             } // end while(true)
-            std::cout << " Within while done" << std::endl;
+            // std::cout << " Within while done" << std::endl;
           } // for each particle
         }// for each domain
       });
 
       // 2. Optimize in Parallel for Between
       if(flag_b){
-      m_GradientFunction->BeforeIteration(); // Compute the MLPCA params before each iteration
+      // m_GradientFunction->BeforeIteration(); // Compute the MLPCA params before each iteration
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {
@@ -737,23 +770,21 @@ namespace itk
           // Iterate over each particle position
           for (auto k=0; k<m_ParticleSystem->GetPositions(dom)->GetSize(); k++)
           {
-            if (m_TimeSteps[dom][k] < minimumTimeStep) {
-              m_TimeSteps[dom][k] = minimumTimeStep;
+            if (m_TimeStepsBetween[dom][k] < minimumTimeStepBetween) {
+              m_TimeStepsBetween[dom][k] = minimumTimeStepBetween;
             }
-            std::cout << "------optimizing BETWEEN now-----" << std::endl;
+            // std::cout << "------optimizing BETWEEN now-----" << std::endl;
             // Compute gradient update.
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
-            std::cout << "Before Evaluated Between done" << std::endl;
+            // std::cout << "Before Evaluated Between done" << std::endl;
 
             {
               // Ensure this check to avoid repeating the surface energy calculation when correspondence is turned off
-              std::cout << "------optimizing between now-----" << std::endl;
+              // std::cout << "------optimizing between now-----" << std::endl;
               double between_energy = 0.0;
               double maximumUpdateAllowed_between;
               VectorType original_between_gradient = localGradientFunction->EvaluateBetween(k, dom, m_ParticleSystem, maximumUpdateAllowed_between, between_energy);
-              std::cout << "B1" << std::endl;
               PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
-              std::cout << "B2" << std::endl;
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_between_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_between_gradient, pt, k);
@@ -761,7 +792,7 @@ namespace itk
               double newenergy_between, between_gradmag;
               while (true) {
               // Step A scale the projected gradient by the current time step
-              VectorType between_gradient = original_between_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+              VectorType between_gradient = original_between_gradient_projectedOntoTangentSpace * m_TimeStepsBetween[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
@@ -769,7 +800,6 @@ namespace itk
               }
 
               between_gradmag = between_gradient.magnitude();
-              std::cout << "B3" << std::endl;
 
 
               // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
@@ -786,24 +816,23 @@ namespace itk
 
               // Step G compute the new energy of the particle system
               newenergy_between = localGradientFunction->EnergyBetween(k, dom, m_ParticleSystem);
-              std::cout << "B5" << std::endl;
 
 
               if (newenergy_between < between_energy) // good move, increase timestep for next time
               {
-                m_TimeSteps[dom][k] *= factor;
+                m_TimeStepsBetween[dom][k] *= factor;
                 if (between_gradmag > maxchange_between) maxchange_between = between_gradmag;
                 break;
               }
               else
               {// bad move, reset point position and back off on timestep
-                if (m_TimeSteps[dom][k] > minimumTimeStep)
+                if (m_TimeStepsBetween[dom][k] > minimumTimeStepBetween)
                 {
                   domain->ApplyConstraints(pt, k);
                   m_ParticleSystem->SetPosition(pt, k, dom);
                   domain->InvalidateParticlePosition(k);
 
-                  m_TimeSteps[dom][k] /= factor;
+                  m_TimeStepsBetween[dom][k] /= factor;
                 }
                 else // keep the move with timestep 1.0 anyway
                 {
@@ -836,7 +865,7 @@ namespace itk
       }
       else if (m_verbosity > 1) {
         if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
-          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange_within = " << maxchange_within << "maxchange_between "<< maxchange_between << ", minimumTimeStep = " << minimumTimeStep << std::endl;
+          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange_within = " << maxchange_within << "maxchange_between "<< maxchange_between << ", minimumTimeStepWithin = " << minimumTimeStepWithin << "minimumTimeStepBetween = " << minimumTimeStepBetween << std::endl;
         }
       }
 

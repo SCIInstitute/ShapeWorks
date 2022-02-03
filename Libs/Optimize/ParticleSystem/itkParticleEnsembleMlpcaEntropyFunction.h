@@ -69,37 +69,37 @@ public:
     return 0.0;
   }
   
-  virtual VectorType EvaluateWithin(unsigned int, unsigned int,
+  virtual VectorType EvaluateWithinResiduals(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const;
-  virtual VectorType EvaluateWithin(unsigned int a,  unsigned int b, 
+  virtual VectorType EvaluateWithinResiduals(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
     double e;
-    return this->EvaluateWithin(a,b,c,d,e);
+    return this->EvaluateWithinResiduals(a,b,c,d,e);
   }
   
-  virtual VectorType EvaluateBetween(unsigned int, unsigned int,
+  virtual VectorType EvaluateBetweenResiduals(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const;
-  virtual VectorType EvaluateBetween(unsigned int a,  unsigned int b, 
+  virtual VectorType EvaluateBetweenResiduals(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
     double e;
-    return this->EvaluateBetween(a,b,c,d,e);
+    return this->EvaluateBetweenResiduals(a,b,c,d,e);
   }
   
-  virtual double EnergyWithin(unsigned int a, unsigned int b,
+  virtual double EnergyWithinResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
     double e, d;
-    this->EvaluateWithin(a,b,c,d,e);
+    this->EvaluateWithinResiduals(a,b,c,d,e);
     return e;
   }
 
-  virtual double EnergyBetween(unsigned int a, unsigned int b,
+  virtual double EnergyBetweenResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
     double e, d;
-    this->EvaluateBetween(a,b,c,d,e);
+    this->EvaluateBetweenResiduals(a,b,c,d,e);
     return e;
   }
   

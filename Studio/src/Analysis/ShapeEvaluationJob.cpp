@@ -20,6 +20,12 @@ void ShapeEvaluationJob::run()
   case JobType::CompactnessType:
     emit result_ready(this->job_type_, this->stats_.get_compactness(callback));
     break;
+  case JobType::BetweenSubspaceCompactness:
+    emit result_ready(this->job_type_, this->stats_.get_compactness_between_subspace(callback));
+    break;
+  case JobType::WithinSubspaceCompactness:
+    emit result_ready(this->job_type_, this->stats_.get_compactness_within_subspace(callback));
+    break;
   case JobType::GeneralizationType:
     emit result_ready(this->job_type_, this->stats_.get_generalization(callback));
     break;

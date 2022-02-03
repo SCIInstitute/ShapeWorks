@@ -217,7 +217,7 @@ public:
         {   
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
             // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-            ansB = mlpca_function_b->EnergyWithin(idx, d, system);
+            ansB = mlpca_function_b->EnergyBetweenResiduals(idx, d, system);
         }
 
         if( m_RelativeEnergyScaling == 0)
@@ -259,7 +259,7 @@ public:
         {   
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
             // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-            ansB = mlpca_function_b->EnergyBetween(idx, d, system);
+            ansB = mlpca_function_b->EnergyWithinResiduals(idx, d, system);
         }
 
         if( m_RelativeEnergyScaling == 0)
@@ -380,9 +380,9 @@ public:
         // evaluate individual functions: A = surface energy, B = correspondence
         if (m_AOn == true)
         {
-            std::cout << " inside A within " << std::endl;
+            // std::cout << " inside A within " << std::endl;
             ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
-            std::cout << " inside A within eval done" << std::endl;
+            // std::cout << " inside A within eval done" << std::endl;
 
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
@@ -390,11 +390,11 @@ public:
 
         if (m_BOn == true)
         {   
-            std::cout << " inside B within eval " << std::endl;
+            // std::cout << " inside B within eval " << std::endl;
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
             // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-            ansB = mlpca_function_b->EvaluateWithin(idx, d, system, maxB, energyB);
-            std::cout << " inside B within eval done" << std::endl;
+            ansB = mlpca_function_b->EvaluateBetweenResiduals(idx, d, system, maxB, energyB);
+            // std::cout << " inside B within eval done" << std::endl;
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageWithinGradMagB = m_AverageWithinGradMagB + ansB.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageWithinEnergyB = m_AverageWithinEnergyB + energyB;
         }
@@ -482,11 +482,11 @@ public:
         
         if (m_BOn == true)
         {   
-            std::cout << " inside B between eval " << std::endl;
+            // std::cout << " inside B between eval " << std::endl;
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
             // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-            ansB = mlpca_function_b->EvaluateBetween(idx, d, system, maxB, energyB);
-            std::cout << " inside B between eval done" << std::endl;
+            ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
+            // std::cout << " inside B between eval done" << std::endl;
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenEnergyB = m_AverageBetweenEnergyB + energyB;
         }

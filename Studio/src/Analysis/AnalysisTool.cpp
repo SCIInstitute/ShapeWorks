@@ -817,7 +817,8 @@ void AnalysisTool::compute_shape_evaluations()
   if (this->evals_ready_) {
     return;
   }
-
+  auto domain_names_ = this->session_->get_project()->get_domain_names();
+  unsigned int dps = domain_names_.size();
   // reset
   this->eval_compactness_ = Eigen::VectorXd();
   this->eval_specificity_ = Eigen::VectorXd();
@@ -837,9 +838,28 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->generalization_progress->setValue(0);
   this->ui_->specificity_progress->setValue(0);
 
+  if(dps > 1){
+    this->eval_compactness_within_ = Eigen::VectorXd();
+    this->eval_compactness_between_ = Eigen::VectorXd();
+    this->ui_->compactness_graph_within->setMinimumSize(this->ui_->graph_->minimumSize());
+    this->ui_->compactness_graph_between->setMinimumSize(this->ui_->graph_->minimumSize());
+    this->ui_->compactness_progress_widget_within->show();
+    this->ui_->compactness_progress_widget_between->show();
+    this->ui_->compactness_progress_within->setValue(0);
+    this->ui_->compactness_progress_between->setValue(0);
+  }
+
   auto job_types = {ShapeEvaluationJob::JobType::CompactnessType,
                     ShapeEvaluationJob::JobType::GeneralizationType,
                     ShapeEvaluationJob::JobType::SpecificityType};
+  if(dps > 1){
+    job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+                 ShapeEvaluationJob::JobType::WithinSubspaceCompactness,
+                 ShapeEvaluationJob::JobType::BetweenSubspaceCompactness,
+                 ShapeEvaluationJob::JobType::GeneralizationType,
+                 ShapeEvaluationJob::JobType::SpecificityType};
+    std::cout << "--------Starting Evaluation Job for MLPCA-------" << std::endl;
+  }
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, this->stats_);
@@ -1470,6 +1490,20 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
     this->ui_->compactness_graph->show();
     this->ui_->compactness_progress_widget->hide();
     break;
+  case ShapeEvaluationJob::JobType::WithinSubspaceCompactness:
+    this->eval_compactness_within_ = data;
+    this->create_plot(this->ui_->compactness_graph_within, data, "Within Subspace Compactness", "Number of Modes",
+                      "Explained Variance");
+    this->ui_->compactness_graph_within->show();
+    this->ui_->compactness_progress_widget_within->hide();
+    break;
+  case ShapeEvaluationJob::JobType::BetweenSubspaceCompactness:
+    this->eval_compactness_between_ = data;
+    this->create_plot(this->ui_->compactness_graph_between, data, "Between Subspace Compactness", "Number of Modes",
+                      "Explained Variance");
+    this->ui_->compactness_graph_between->show();
+    this->ui_->compactness_progress_widget_between->hide();
+    break;
   case ShapeEvaluationJob::JobType::SpecificityType:
     this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes",
                       "Specificity");
@@ -1484,6 +1518,7 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
     this->ui_->generalization_graph->show();
     this->ui_->generalization_progress_widget->hide();
     break;
+
   }
 }
 
@@ -1494,6 +1529,12 @@ void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_t
   switch (job_type) {
   case ShapeEvaluationJob::JobType::CompactnessType:
     this->ui_->compactness_progress->setValue(progress * 100);
+    break;
+  case ShapeEvaluationJob::JobType::WithinSubspaceCompactness:
+    this->ui_->compactness_progress_within->setValue(progress * 100);
+    break;
+  case ShapeEvaluationJob::JobType::BetweenSubspaceCompactness:
+    this->ui_->compactness_progress_between->setValue(progress * 100);
     break;
   case ShapeEvaluationJob::JobType::SpecificityType:
     this->ui_->specificity_progress->setValue(progress * 100);
