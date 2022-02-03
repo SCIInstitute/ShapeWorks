@@ -64,15 +64,15 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
 
   // connect percent controls
-  connect(ui_->remesh_percent_slider, &QSlider::valueChanged,
-          [=](int value) { ui_->remesh_percent_spinbox->setValue(value); });
-  connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+  connect(ui_->remesh_percent_slider, &QSlider::valueChanged, this,
+          [this](int value) { ui_->remesh_percent_spinbox->setValue(value); });
+  connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) { ui_->remesh_percent_slider->setValue(static_cast<int>(value)); });
 
   // connect gradation controls
-  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged,
+  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged, this,
           [=](int value) { ui_->remesh_gradation_spinbox->setValue(value / 50.0); });
-  connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+  connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) {
             ui_->remesh_gradation_slider->setValue(static_cast<int>(value * 50.0));
           });

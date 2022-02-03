@@ -216,10 +216,11 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
         print("Generating image " + str(index) + " out of " + str(len(segs)))
         name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
         img = Image(seg)
+        origin = img.origin()
         img_array = blur(img.toArray(), blur_factor)
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = np.float32(img_array)
-        img = Image(np.float32(img_array))
+        img = Image(np.float32(img_array)).setOrigin(origin)
         img.write(name,compressed=True)
         index += 1
     return get_files(imgDir)

@@ -37,9 +37,13 @@ compress_file() {
 
 decompress_file() {
     if [[ "$PLATFORM" == "windows" ]]; then
-	7z -spf x $1
+	if 7z t "$1" ; then
+	    7z -spf x "$1"
+	fi
     else
-	tar --use-compress-program=pigz -xf "$1"
+	if tar -tzf "$1" >/dev/null ; then
+	    tar --use-compress-program=pigz -xf "$1"
+	fi
     fi
 }
 
@@ -56,6 +60,6 @@ CONDA_FILE="conda-${PLATFORM}-${CONDA_HASH}.${SUFFIX}"
 DEP_HASH=`sha1sum build_dependencies.sh | awk '{ print $1 }'`
 DEP_HASH="${CONDA_HASH}_${DEP_HASH}"
 echo "DEP_HASH = ${DEP_HASH}"
-DEP_FILE="dep-${PLATFORM}-${DEP_HASH}.${SUFFIX}"
+DEP_FILE="dep-${PLATFORM}-${DEP_HASH}-${BUILD_TYPE}.${SUFFIX}"
 
 CCACHE_FILE="${PLATFORM}-ccache.${SUFFIX}"

@@ -16,6 +16,7 @@
 
 #include <vtkSmartPointer.h>
 #include <QSharedPointer>
+#include <Eigen/Eigen>
 
 //#include <SurfaceReconstructor.h>
 
@@ -44,7 +45,7 @@ public:
   void setUsePowerCrust( bool enabled );
   void setSmoothingAmount( float amount ); // 0-100
 
-  vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
+  vtkSmartPointer<vtkPolyData> buildMesh( const Eigen::VectorXd& shape );
 
   //void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 

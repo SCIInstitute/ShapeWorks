@@ -110,7 +110,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
+void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions,
                                              Eigen::VectorXf scalar_values)
 {
 

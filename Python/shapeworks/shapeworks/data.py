@@ -5,7 +5,6 @@ Common utility functions
 """
 import os
 import re
-import itk
 import numpy as np
 from sklearn.cluster import SpectralClustering
 import xml.etree.ElementTree as ET
@@ -44,18 +43,18 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["ellipsoid_mesh","femur","femur_cut","lumps","thin_cavity_bean"]):
+    elif(use_case in ["femur_cut","lumps","thin_cavity_bean"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-    if(use_case in ["femur","femur_cut","left_atrium"]):
+    elif(use_case in ["ellipsoid_mesh"]):
+        if(generate_download_flag(outputDirectory,"meshes")):
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:3]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
+    if(use_case in ["femur_cut","left_atrium"]):
         if(generate_download_flag(outputDirectory,"images")):
             imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
-    elif(use_case=="femur_mesh"):
-        if(generate_download_flag(outputDirectory,"groomed/meshes/")):
-            meshFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)meshes(?:/|\\\).*ply$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     elif(use_case=="deep_ssm"):
         if(generate_download_flag(outputDirectory,"groomed/images/")):
             imageFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)images(?:/|\\\).*nrrd$",files)])[:7]
@@ -199,7 +198,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
         for j in range(i, len(inMeshList)):
             mesh1 = inMeshList[i]
             mesh2 = inMeshList[j]
-            dist = mesh1.distance(mesh2).getFieldMean("distance")
+            dist = sw.mean(mesh1.distance(mesh2).getField("distance", sw.Mesh.FieldType.Point))
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
