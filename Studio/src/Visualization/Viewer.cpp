@@ -771,7 +771,7 @@ void Viewer::update_points() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_actors() {
-  std::cerr << "Viewer::update_actors\n";
+
   if (!visible_) {
     return;
   }

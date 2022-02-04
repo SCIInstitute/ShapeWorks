@@ -90,10 +90,8 @@ void SliceView::update_renderer() {
 
 //-----------------------------------------------------------------------------
 void SliceView::update_camera() {
-  std::cerr << "SliceView::update_camera\n";
   auto renderer = viewer_->get_renderer();
   if (!is_image_loaded()) {
-    std::cerr << "no image loaded!\n";
     renderer->GetActiveCamera()->SetParallelProjection(0);
     return;
   }
@@ -106,16 +104,16 @@ void SliceView::update_camera() {
   volume_->GetDimensions(dims);
   volume_->GetSpacing(spacing);
   // int max_slice_num = slice_mapper_->GetSliceNumberMaxValue();
-  std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
-  std::cout << "spaces: " << spacing[0] << "\t" << spacing[1] << "\t" << spacing[2] << "\n";
-  std::cout << "slice range: " << slice_mapper_->GetSliceNumberMinValue() << " to "
-            << slice_mapper_->GetSliceNumberMaxValue() << "\n";
+//  std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
+//  std::cout << "spaces: " << spacing[0] << "\t" << spacing[1] << "\t" << spacing[2] << "\n";
+//  std::cout << "slice range: " << slice_mapper_->GetSliceNumberMinValue() << " to "
+//            << slice_mapper_->GetSliceNumberMaxValue() << "\n";
 
   int max_slice_num = slice_mapper_->GetSliceNumberMinValue();
   image_slice_number_ = (slice_mapper_->GetSliceNumberMaxValue() - slice_mapper_->GetSliceNumberMinValue()) / 2;
   slice_mapper_->SetSliceNumber(image_slice_number_);
 
-  std::cerr << "orientation = " << orientation << "\n";
+//  std::cerr << "orientation = " << orientation << "\n";
   if (orientation == 0) {
     renderer->GetActiveCamera()->SetPosition(spacing[0] * (max_slice_num + 1), spacing[1] * dims[1] / 2,
                                              spacing[2] * dims[2] / 2);

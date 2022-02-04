@@ -45,7 +45,7 @@ void StudioSliceInteractorStyle::OnKeyDown()
 {
   int* click_pos = this->GetInteractor()->GetEventPosition();
 
-  char keycode = this->GetInteractor()->GetKeyCode();
+  //char keycode = this->GetInteractor()->GetKeyCode();
   std::string keysym = GetInteractor()->GetKeySym();
   if (keysym == "Up" | keysym == "Down") {
     lightbox_->handle_key(click_pos, keysym);
@@ -56,6 +56,13 @@ void StudioSliceInteractorStyle::OnKeyDown()
   // forward events
   vtkInteractorStyleTrackballCamera::OnKeyDown();
 
+}
+
+//-----------------------------------------------------------------------------
+void StudioSliceInteractorStyle::WindowLevel()
+{
+  std::cerr << "window level!\n";
+  vtkInteractorStyleImage::WindowLevel();
 }
 
 //-----------------------------------------------------------------------------

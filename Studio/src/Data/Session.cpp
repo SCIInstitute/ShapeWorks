@@ -959,14 +959,13 @@ bool Session::get_show_landmarks() { return show_landmark_labels_; }
 
 //---------------------------------------------------------------------------
 bool Session::set_image_name(std::string image_name) {
-  if (image_name != get_image_name()) {
-    if (!is_loading()) {
-      params_.set("image_name", image_name);
-    }
-    Q_EMIT update_view_mode();
-    return true;
+  if (image_name == get_image_name() || is_loading()) {
+    return false;
   }
-  return false;
+  std::cerr << "SET IMAGE TO: " << image_name << "\n";
+  params_.set("image_name", image_name);
+  Q_EMIT update_view_mode();
+  return true;
 }
 
 //---------------------------------------------------------------------------

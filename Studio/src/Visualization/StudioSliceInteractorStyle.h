@@ -25,6 +25,8 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
 
   void OnKeyDown() override;
 
+  void WindowLevel() override;
+
   /*
   void OnMouseWheelForward() override;
   void OnMouseWheelBackward() override;

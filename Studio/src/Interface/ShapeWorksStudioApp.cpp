@@ -574,6 +574,7 @@ void ShapeWorksStudioApp::update_table() {
     ui_->image_combo_->addItem(item);
   }
   ui_->image_combo_->setCurrentText(current_image);
+  ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
@@ -890,7 +891,7 @@ std::string ShapeWorksStudioApp::get_tool_state() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
-  std::cerr << "update view mode, yo!\n";
+
   auto view_mode = get_view_mode();
   ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
@@ -1352,6 +1353,8 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   update_display(true);
 
   on_zoom_slider_valueChanged();
+
+  //update_table();
 
   session_->set_loading(false);
 
