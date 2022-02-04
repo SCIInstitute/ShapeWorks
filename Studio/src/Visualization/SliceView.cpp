@@ -2,6 +2,7 @@
 #include <vtkCamera.h>
 #include <vtkCellData.h>
 #include <vtkCutter.h>
+#include <vtkImageProperty.h>
 #include <vtkImageSlice.h>
 #include <vtkImageSliceMapper.h>
 #include <vtkNamedColors.h>
@@ -11,7 +12,6 @@
 #include <vtkRenderer.h>
 #include <vtkStripper.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkImageProperty.h>
 
 // shapeworks
 #include <Visualization/SliceView.h>
@@ -106,16 +106,16 @@ void SliceView::update_camera() {
   volume_->GetDimensions(dims);
   volume_->GetSpacing(spacing);
   // int max_slice_num = slice_mapper_->GetSliceNumberMaxValue();
-//  std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
-//  std::cout << "spaces: " << spacing[0] << "\t" << spacing[1] << "\t" << spacing[2] << "\n";
-//  std::cout << "slice range: " << slice_mapper_->GetSliceNumberMinValue() << " to "
-//            << slice_mapper_->GetSliceNumberMaxValue() << "\n";
+  //  std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
+  //  std::cout << "spaces: " << spacing[0] << "\t" << spacing[1] << "\t" << spacing[2] << "\n";
+  //  std::cout << "slice range: " << slice_mapper_->GetSliceNumberMinValue() << " to "
+  //            << slice_mapper_->GetSliceNumberMaxValue() << "\n";
 
   int max_slice_num = slice_mapper_->GetSliceNumberMinValue();
   image_slice_number_ = (slice_mapper_->GetSliceNumberMaxValue() - slice_mapper_->GetSliceNumberMinValue()) / 2;
   slice_mapper_->SetSliceNumber(image_slice_number_);
 
-//  std::cerr << "orientation = " << orientation << "\n";
+  //  std::cerr << "orientation = " << orientation << "\n";
   if (orientation == 0) {
     renderer->GetActiveCamera()->SetPosition(spacing[0] * (max_slice_num + 1), spacing[1] * dims[1] / 2,
                                              spacing[2] * dims[2] / 2);
@@ -157,12 +157,10 @@ void SliceView::handle_key(std::string key) {
     slice_mapper_->SetSliceNumber(image_slice_number_);
     viewer_->get_renderer()->GetRenderWindow()->Render();
   }
-  std::cerr << "slice number: " << image_slice_number_ << "\n";
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_window_and_level(double window, double level)
-{
+void SliceView::set_window_and_level(double window, double level) {
   image_slice_->GetProperty()->SetColorWindow(window);
   image_slice_->GetProperty()->SetColorLevel(level);
 }

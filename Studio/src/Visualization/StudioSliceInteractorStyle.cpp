@@ -1,8 +1,8 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioSliceInteractorStyle.h>
+#include <vtkImageProperty.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
-#include <vtkImageProperty.h>
 
 namespace shapeworks {
 
@@ -42,11 +42,10 @@ void StudioSliceInteractorStyle::OnRightButtonDown() {
 }
 
 //-----------------------------------------------------------------------------
-void StudioSliceInteractorStyle::OnKeyDown()
-{
+void StudioSliceInteractorStyle::OnKeyDown() {
   int* click_pos = this->GetInteractor()->GetEventPosition();
 
-  //char keycode = this->GetInteractor()->GetKeyCode();
+  // char keycode = this->GetInteractor()->GetKeyCode();
   std::string keysym = GetInteractor()->GetKeySym();
   if (keysym == "Up" | keysym == "Down") {
     lightbox_->handle_key(click_pos, keysym);
@@ -56,17 +55,13 @@ void StudioSliceInteractorStyle::OnKeyDown()
 
   // forward events
   vtkInteractorStyleTrackballCamera::OnKeyDown();
-
 }
 
 //-----------------------------------------------------------------------------
-void StudioSliceInteractorStyle::WindowLevel()
-{
+void StudioSliceInteractorStyle::WindowLevel() {
   vtkInteractorStyleImage::WindowLevel();
-
   double window = CurrentImageProperty->GetColorWindow();
   double level = CurrentImageProperty->GetColorLevel();
-  std::cerr << "window level: " << window << ", " << level << "\n";
   lightbox_->set_shared_window_and_level(window, level);
 }
 

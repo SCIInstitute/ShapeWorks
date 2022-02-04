@@ -85,7 +85,6 @@ void Lightbox::handle_new_mesh() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::reset_camera() {
-  std::cerr << "Lightbox::reset_camera\n";
   viewers_[0]->get_renderer()->ResetCameraClippingRange();
   viewers_[0]->get_renderer()->ResetCamera();
   viewers_[0]->get_renderer()->GetRenderWindow()->Render();

@@ -962,7 +962,6 @@ bool Session::set_image_name(std::string image_name) {
   if (image_name == get_image_name() || is_loading()) {
     return false;
   }
-  std::cerr << "SET IMAGE TO: " << image_name << "\n";
   params_.set("image_name", image_name);
   Q_EMIT update_view_mode();
   return true;
@@ -976,7 +975,6 @@ void Session::set_image_axis(QString axis) {
   if (axis == get_image_axis() || is_loading()) {
     return;
   }
-  std::cerr << "set image axis to : " << axis.toStdString() << "\n";
   params_.set("image_axis", axis.toStdString());
   Q_EMIT update_view_mode();
 }

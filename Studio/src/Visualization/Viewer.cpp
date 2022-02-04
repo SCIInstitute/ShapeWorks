@@ -475,7 +475,6 @@ MeshGroup Viewer::get_meshes() { return meshes_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape) {
-  std::cerr << "Viewer::display_shape\n";
   visible_ = true;
 
   shape_ = shape;

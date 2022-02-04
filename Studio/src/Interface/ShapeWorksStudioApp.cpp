@@ -911,7 +911,6 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     visualizer_->set_image_volume(image_volume_name);
-    std::cerr << "going to set image axis to: " << session_->get_image_axis() << "\n";
     visualizer_->set_image_axis(session_->get_image_axis());
 
     std::string feature_map_override = "";
@@ -941,7 +940,6 @@ void ShapeWorksStudioApp::update_view_mode() {
     visualizer_->set_feature_map(feature_map);
     visualizer_->set_uniform_feature_range(get_feature_uniform_scale());
     update_feature_map_scale();
-    std::cerr << "calling force update display!\n";
     update_display(true);
   }
 }
