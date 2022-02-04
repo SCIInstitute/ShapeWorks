@@ -148,7 +148,8 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
         transformed.applyTransform(transform);
 
         // compute distance
-        double distance = transformed.distance(meshes[pair.second]).getFieldMean("distance");
+        auto distances = transformed.distance(meshes[pair.second])[0];
+        double distance = mean(distances);
         {
           // lock and store results
           tbb::mutex::scoped_lock lock(mutex);
@@ -181,7 +182,7 @@ void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>&
   {
     bool hasNormals = true;
     try {
-      meshes[i].get().getField<vtkDataArray>("Normals");
+      meshes[i].get().getField("Normals", Mesh::Point);
     }
     catch (...) {
       hasNormals = false;
@@ -235,7 +236,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = meshes[j].get().getField<vtkDataArray>("Normals");
+    auto normals = meshes[j].get().getField("Normals", Mesh::Point);
 
     if (num_normals != normals->GetNumberOfTuples())
       throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");
