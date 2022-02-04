@@ -179,6 +179,8 @@ public:
 
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
+  vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
@@ -220,4 +222,4 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 -------------------------------
 
-Updated on 2022-02-03 at 23:25:53 +0000
+Updated on 2022-02-04 at 06:14:24 +0000

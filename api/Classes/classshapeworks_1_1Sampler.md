@@ -108,6 +108,7 @@ title: shapeworks::Sampler
 | virtual void | **[Execute](../Classes/classshapeworks_1_1Sampler.md#function-execute)**() |
 | std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > | **[ComputeCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-computecuttingplanes)**() |
 | Eigen::Vector3d | **[ComputePlaneNormal](../Classes/classshapeworks_1_1Sampler.md#function-computeplanenormal)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c) |
+| std::vector< std::vector< [FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md) > > | **[GetFFCs](../Classes/classshapeworks_1_1Sampler.md#function-getffcs)**() |
 
 ## Protected Functions
 
@@ -855,6 +856,13 @@ inline Eigen::Vector3d ComputePlaneNormal(
 ```
 
 
+### function GetFFCs
+
+```cpp
+inline std::vector< std::vector< FFCType > > GetFFCs()
+```
+
+
 ## Protected Functions Documentation
 
 ### function GenerateData
@@ -1107,4 +1115,4 @@ itk::ParticleMeshBasedGeneralEntropyGradientFunction< Dimension >::Pointer m_Mes
 
 -------------------------------
 
-Updated on 2022-02-03 at 23:25:52 +0000
+Updated on 2022-02-04 at 06:14:23 +0000

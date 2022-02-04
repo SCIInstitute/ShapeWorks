@@ -603,6 +603,10 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getiglmesh">getIGLMesh</a></strong>(Eigen::MatrixXd &amp; V, Eigen::MatrixXi &amp; F) const<br>Formats mesh into an IGL format.</td>
 </tr>
 <tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-clipbyfield">clipByField</a></strong>(const std::string &amp; name, double value)<br>Clips the mesh according to a field value.</td>
+</tr>
+<tr>
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>getSupportedTypes</td>
 </tr>
@@ -1130,6 +1134,13 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Formats mesh into an IGL format. </p>
+<h3 id="function-clipbyfield">function clipByField</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clipByField</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Clips the mesh according to a field value. </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -1139,7 +1150,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-02-03 at 23:25:53 +0000</p>
+<p>Updated on 2022-02-04 at 06:14:24 +0000</p>
               
             </div>
           </div>

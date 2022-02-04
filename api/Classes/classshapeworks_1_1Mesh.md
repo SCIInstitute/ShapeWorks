@@ -91,6 +91,7 @@ title: shapeworks::Mesh
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query) const<br>Gets values for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
+| vtkSmartPointer< vtkPolyData > | **[clipByField](../Classes/classshapeworks_1_1Mesh.md#function-clipbyfield)**(const std::string & name, double value)<br>Clips the mesh according to a field value.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>getSupportedTypes  |
 
 ## Friends
@@ -800,6 +801,17 @@ MeshPoints getIGLMesh(
 
 Formats mesh into an IGL format. 
 
+### function clipByField
+
+```cpp
+vtkSmartPointer< vtkPolyData > clipByField(
+    const std::string & name,
+    double value
+)
+```
+
+Clips the mesh according to a field value. 
+
 ### function getSupportedTypes
 
 ```cpp
@@ -819,4 +831,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-02-03 at 23:25:53 +0000
+Updated on 2022-02-04 at 06:14:24 +0000
