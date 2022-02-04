@@ -56,6 +56,7 @@ void SliceView::set_volume(vtkSmartPointer<vtkImageData> volume) {
 
   cut_mapper_->SetInputConnection(stripper_->GetOutputPort());
   cut_mapper_->SetScalarVisibility(false);
+  cut_mapper_->SetResolveCoincidentTopologyToPolygonOffset();
 
   cut_actor_->SetMapper(cut_mapper_);
 
@@ -134,15 +135,6 @@ void SliceView::update_camera() {
     renderer->GetActiveCamera()->SetFocalPoint(spacing[0] * dims[0] / 2, spacing[1] * dims[1] / 2, 0);
     renderer->GetActiveCamera()->SetParallelScale(spacing[1] * dims[1]);
   }
-  /*
-    double center_x = (spacing[0] * dims[0] / 2) + origin[0];
-    double center_y = (spacing[1] * dims[1] / 2) + origin[1];
-
-    renderer->GetActiveCamera()->SetPosition(center_x, center_y, spacing[2] * (max_slice_num + 1));
-    renderer->GetActiveCamera()->SetViewUp(0, 1, 0);
-    renderer->GetActiveCamera()->SetFocalPoint(center_x, center_y, 0);
-    renderer->GetActiveCamera()->SetParallelScale(spacing[1] * dims[1]);
-    */
 
   renderer->GetActiveCamera()->SetParallelProjection(1);
   renderer->ResetCamera();
