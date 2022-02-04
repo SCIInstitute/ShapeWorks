@@ -666,7 +666,6 @@ double Session::update_auto_glyph_size() {
   int num_particles = 0;
 
   for (auto& shape : shapes_) {
-
     Eigen::VectorXd points = shape->get_global_correspondence_points();
     if (points.size() == 0) {
       continue;
@@ -959,8 +958,7 @@ void Session::set_show_landmarks(bool show) {
 bool Session::get_show_landmarks() { return show_landmark_labels_; }
 
 //---------------------------------------------------------------------------
-bool Session::set_image_name(std::string image_name)
-{
+bool Session::set_image_name(std::string image_name) {
   if (image_name != get_image_name()) {
     if (!is_loading()) {
       params_.set("image_name", image_name);
@@ -972,14 +970,10 @@ bool Session::set_image_name(std::string image_name)
 }
 
 //---------------------------------------------------------------------------
-std::string Session::get_image_name()
-{
-  return params_.get("image_name", "");
-}
+std::string Session::get_image_name() { return params_.get("image_name", ""); }
 
 //---------------------------------------------------------------------------
-void Session::set_image_axis(QString axis)
-{
+void Session::set_image_axis(QString axis) {
   if (axis == get_image_axis() || is_loading()) {
     return;
   }
@@ -989,8 +983,7 @@ void Session::set_image_axis(QString axis)
 }
 
 //---------------------------------------------------------------------------
-Axis Session::get_image_axis()
-{
+Axis Session::get_image_axis() {
   std::string axis_string = params_.get("image_axis", "Z");
   Axis axis = toAxis(axis_string);
   if (axis == Axis::invalid) {
@@ -1000,16 +993,34 @@ Axis Session::get_image_axis()
 }
 
 //---------------------------------------------------------------------------
-void Session::set_loading(bool loading)
-{
-  is_loading_ = loading;
+void Session::set_image_3d_mode(bool mode) {
+  if (mode == get_image_3d_mode() || is_loading()) {
+    return;
+  }
+  params_.set("image_3d_mode", mode);
+  Q_EMIT update_view_mode();
 }
 
 //---------------------------------------------------------------------------
-bool Session::is_loading()
-{
-  return is_loading_;
+bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_share_width_and_level(bool enabled) {
+  if (enabled == get_image_share_width_and_level() || is_loading()) {
+    return;
+  }
+  params_.set("image_share_width_and_level", enabled);
+  Q_EMIT update_view_mode();
 }
+
+//---------------------------------------------------------------------------
+bool Session::get_image_share_width_and_level() { return params_.get("image_share_width_and_level", true); }
+
+//---------------------------------------------------------------------------
+void Session::set_loading(bool loading) { is_loading_ = loading; }
+
+//---------------------------------------------------------------------------
+bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {

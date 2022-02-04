@@ -144,6 +144,14 @@ class Session : public QObject {
   void set_image_axis(QString axis);
   Axis get_image_axis();
 
+  // image view 3d mode
+  void set_image_3d_mode(bool mode);
+  bool get_image_3d_mode();
+
+  // image sync/share window width and level
+  void set_image_share_width_and_level(bool enabled);
+  bool get_image_share_width_and_level();
+
   void set_loading(bool loading);
   bool is_loading();
 

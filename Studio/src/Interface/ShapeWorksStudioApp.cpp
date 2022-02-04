@@ -770,130 +770,133 @@ void ShapeWorksStudioApp::new_session() {
   session_->set_parent(this);
   setWindowTitle(this->session_->get_display_name());
 
-  connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered, this,
+  connect(session_->get_mesh_manager().data(), &MeshManager::error_encountered, this,
           &ShapeWorksStudioApp::handle_error);
-  connect(this->session_->get_mesh_manager().data(), &MeshManager::progress, this,
-          &ShapeWorksStudioApp::handle_progress);
-  connect(this->session_->get_mesh_manager().data(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
+  connect(session_->get_mesh_manager().data(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
+  connect(session_->get_mesh_manager().data(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
 
-  connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
-  connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
-  connect(this->session_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
-  connect(this->session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
-  connect(this->session_.data(), &Session::message, this, &ShapeWorksStudioApp::handle_message);
-  connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
-  connect(this->session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
+  connect(session_.data(), &Session::data_changed, this, &ShapeWorksStudioApp::handle_project_changed);
+  connect(session_.data(), &Session::points_changed, this, &ShapeWorksStudioApp::handle_points_changed);
+  connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
+  connect(session_.data(), &Session::message, this, &ShapeWorksStudioApp::handle_message);
+  connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+  connect(session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
-  connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
-  connect(this->ui_->feature_auto_scale, &QCheckBox::toggled, this->session_.data(), &Session::set_feature_auto_scale);
-  connect(this->ui_->feature_min, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(),
+  connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
+  connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
+  connect(ui_->feature_min, qOverload<double>(&QDoubleSpinBox::valueChanged), session_.data(),
           &Session::set_feature_range_min);
-  connect(this->ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), this->session_.data(),
+  connect(ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), session_.data(),
           &Session::set_feature_range_max);
 
-  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(), &Session::set_image_axis);
+  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(),
+          &Session::set_image_axis);
+  connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
+  connect(ui_->image_share_width_and_level_, &QCheckBox::clicked, session_.data(),
+          &Session::set_image_share_width_and_level);
 
-  this->data_tool_->update_notes();
+  data_tool_->update_notes();
 
-  this->visualizer_->clear_viewers();
+  visualizer_->clear_viewers();
 
-  this->data_tool_->set_session(this->session_);
-  this->analysis_tool_->set_session(this->session_);
-  this->visualizer_->set_session(this->session_);
-  this->groom_tool_->set_session(this->session_);
-  this->optimize_tool_->set_session(this->session_);
-  this->deepssm_tool_->set_session(this->session_);
-  this->create_iso_submenu();
+  data_tool_->set_session(session_);
+  analysis_tool_->set_session(session_);
+  visualizer_->set_session(session_);
+  groom_tool_->set_session(session_);
+  optimize_tool_->set_session(session_);
+  deepssm_tool_->set_session(session_);
+  create_iso_submenu();
 
-  this->update_table();
-  this->update_alignment_options();
-  this->update_from_preferences();
+  update_table();
+  update_alignment_options();
+  update_from_preferences();
 
-  this->lightbox_->clear_renderers();
-  this->analysis_tool_->reset_stats();
-  this->ui_->action_import_mode->setChecked(true);
-  this->ui_->action_groom_mode->setChecked(false);
-  this->ui_->action_optimize_mode->setChecked(false);
-  this->ui_->action_analysis_mode->setChecked(false);
-  this->ui_->stacked_widget->setCurrentWidget(this->data_tool_.data());
-  this->ui_->controlsDock->setWindowTitle("Data");
-  this->preferences_.set_saved();
-  this->enable_possible_actions();
-  this->update_display(true);
-  this->visualizer_->update_viewer_properties();
+  lightbox_->clear_renderers();
+  analysis_tool_->reset_stats();
+  ui_->action_import_mode->setChecked(true);
+  ui_->action_groom_mode->setChecked(false);
+  ui_->action_optimize_mode->setChecked(false);
+  ui_->action_analysis_mode->setChecked(false);
+  ui_->stacked_widget->setCurrentWidget(data_tool_.data());
+  ui_->controlsDock->setWindowTitle("Data");
+  preferences_.set_saved();
+  enable_possible_actions();
+  update_display(true);
+  visualizer_->update_viewer_properties();
 
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_tool_mode() {
-  std::string tool_state = this->session_->parameters().get("tool_state", Session::DATA_C);
+  std::string tool_state = session_->parameters().get("tool_state", Session::DATA_C);
 
-  this->analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
+  analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
-  for (int i = 0; i < this->ui_->stacked_widget->count(); i++) {
-    this->ui_->stacked_widget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  for (int i = 0; i < ui_->stacked_widget->count(); i++) {
+    ui_->stacked_widget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
 
   if (tool_state == Session::ANALYSIS_C) {
-    this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
-    this->ui_->controlsDock->setWindowTitle("Analysis");
-    this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-    this->on_actionShow_Tool_Window_triggered();
-    this->update_display(true);
-    this->ui_->action_analysis_mode->setChecked(true);
+    ui_->stacked_widget->setCurrentWidget(analysis_tool_.data());
+    ui_->controlsDock->setWindowTitle("Analysis");
+    set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+    on_actionShow_Tool_Window_triggered();
+    update_display(true);
+    ui_->action_analysis_mode->setChecked(true);
   } else if (tool_state == Session::GROOM_C) {
-    this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
-    this->groom_tool_->activate();
-    this->ui_->controlsDock->setWindowTitle("Groom");
-    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
-    this->ui_->action_groom_mode->setChecked(true);
+    ui_->stacked_widget->setCurrentWidget(groom_tool_.data());
+    groom_tool_->activate();
+    ui_->controlsDock->setWindowTitle("Groom");
+    set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    ui_->action_groom_mode->setChecked(true);
   } else if (tool_state == Session::OPTIMIZE_C) {
-    this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
-    this->optimize_tool_->activate();
-    this->ui_->controlsDock->setWindowTitle("Optimize");
-    if (this->session_->groomed_present()) {
-      this->set_view_mode(Visualizer::MODE_GROOMED_C);
+    ui_->stacked_widget->setCurrentWidget(optimize_tool_.data());
+    optimize_tool_->activate();
+    ui_->controlsDock->setWindowTitle("Optimize");
+    if (session_->groomed_present()) {
+      set_view_mode(Visualizer::MODE_GROOMED_C);
     }
-    this->update_display();
-    this->ui_->action_optimize_mode->setChecked(true);
+    update_display();
+    ui_->action_optimize_mode->setChecked(true);
   } else if (tool_state == Session::DEEPSSM_C) {
-    this->ui_->stacked_widget->setCurrentWidget(this->deepssm_tool_.data());
-    this->ui_->controlsDock->setWindowTitle("DeepSSM");
-    this->update_display();
-    this->ui_->action_deepssm_mode->setChecked(true);
-    this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+    ui_->stacked_widget->setCurrentWidget(deepssm_tool_.data());
+    ui_->controlsDock->setWindowTitle("DeepSSM");
+    update_display();
+    ui_->action_deepssm_mode->setChecked(true);
+    set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
   } else {  // DATA
-    this->ui_->stacked_widget->setCurrentWidget(this->data_tool_.data());
-    // this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
-    this->ui_->controlsDock->setWindowTitle("Data");
-    this->ui_->action_import_mode->setChecked(true);
+    ui_->stacked_widget->setCurrentWidget(data_tool_.data());
+    // ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
+    ui_->controlsDock->setWindowTitle("Data");
+    ui_->action_import_mode->setChecked(true);
   }
 
-  this->ui_->stacked_widget->widget(this->ui_->stacked_widget->currentIndex())
+  ui_->stacked_widget->widget(ui_->stacked_widget->currentIndex())
       ->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-  this->ui_->stacked_widget->adjustSize();
+  ui_->stacked_widget->adjustSize();
 
-  this->on_actionShow_Tool_Window_triggered();
+  on_actionShow_Tool_Window_triggered();
 }
 
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_tool_state() {
-  std::string tool_state = this->session_->parameters().get("tool_state", Session::DATA_C);
+  std::string tool_state = session_->parameters().get("tool_state", Session::DATA_C);
   return tool_state;
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
   std::cerr << "update view mode, yo!\n";
-  auto view_mode = this->get_view_mode();
-  this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
+  auto view_mode = get_view_mode();
+  ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
-  auto feature_map = this->get_feature_map();
-  this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
+  auto feature_map = get_feature_map();
+  ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
-  if (this->visualizer_) {
-    this->visualizer_->set_display_mode(view_mode);
+  if (visualizer_) {
+    visualizer_->set_display_mode(view_mode);
     if (feature_map == "-none-") {
       feature_map = "";
     }
@@ -908,11 +911,10 @@ void ShapeWorksStudioApp::update_view_mode() {
     std::cerr << "going to set image axis to: " << session_->get_image_axis() << "\n";
     visualizer_->set_image_axis(session_->get_image_axis());
 
-
     std::string feature_map_override = "";
-    if (this->get_tool_state() == Session::DEEPSSM_C) {
-      if (this->deepssm_tool_->get_display_feature() != "") {
-        feature_map_override = this->deepssm_tool_->get_display_feature();
+    if (get_tool_state() == Session::DEEPSSM_C) {
+      if (deepssm_tool_->get_display_feature() != "") {
+        feature_map_override = deepssm_tool_->get_display_feature();
       }
     } else if (this->get_tool_state() == Session::ANALYSIS_C) {
       if (this->analysis_tool_->get_display_feature_map() != feature_map) {
@@ -1912,7 +1914,6 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
 
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_feature_map() { return this->session_->parameters().get("feature_map", ""); }
-
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {
