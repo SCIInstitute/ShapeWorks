@@ -479,7 +479,7 @@ void Lightbox::update_interactor_style() {
   auto current_style = this->render_window_->GetInteractor()->GetInteractorStyle();
   vtkInteractorObserver* new_style = nullptr;
 
-  if (visualizer_->get_image_volume() != "") {
+  if (visualizer_->get_image_volume() != "" && !session_->get_image_3d_mode()) {
     new_style = slice_style_;
   } else {
     new_style = style_;

@@ -805,7 +805,6 @@ void Viewer::update_actors() {
   }
 
   slice_view_.update_renderer();
-  std::cerr << "about to call update_camera\n";
   slice_view_.update_camera();
 
   update_opacities();
