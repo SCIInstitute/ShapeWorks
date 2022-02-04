@@ -149,8 +149,8 @@ class Session : public QObject {
   bool get_image_3d_mode();
 
   // image sync/share window width and level
-  void set_image_share_width_and_level(bool enabled);
-  bool get_image_share_width_and_level();
+  void set_image_share_window_and_level(bool enabled);
+  bool get_image_share_window_and_level();
 
   void set_loading(bool loading);
   bool is_loading();

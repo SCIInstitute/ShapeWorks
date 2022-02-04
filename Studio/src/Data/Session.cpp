@@ -76,7 +76,7 @@ void Session::calculate_reconstructed_samples() {
     return;
   }
   // this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (auto shape : this->shapes_) {
+  for (auto shape : qAsConst(this->shapes_)) {
     auto pts = shape->get_local_correspondence_points();
     if (!(pts.size() == 0)) {
       /// TODO: fix
@@ -1004,16 +1004,15 @@ void Session::set_image_3d_mode(bool mode) {
 bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); }
 
 //---------------------------------------------------------------------------
-void Session::set_image_share_width_and_level(bool enabled) {
-  if (enabled == get_image_share_width_and_level() || is_loading()) {
+void Session::set_image_share_window_and_level(bool enabled) {
+  if (enabled == get_image_share_window_and_level() || is_loading()) {
     return;
   }
-  params_.set("image_share_width_and_level", enabled);
-  Q_EMIT update_view_mode();
+  params_.set("image_share_window_and_level", enabled);
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_image_share_width_and_level() { return params_.get("image_share_width_and_level", true); }
+bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
 
 //---------------------------------------------------------------------------
 void Session::set_loading(bool loading) { is_loading_ = loading; }

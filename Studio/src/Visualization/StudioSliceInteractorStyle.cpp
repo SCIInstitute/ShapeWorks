@@ -2,6 +2,7 @@
 #include <Visualization/StudioSliceInteractorStyle.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
+#include <vtkImageProperty.h>
 
 namespace shapeworks {
 
@@ -61,8 +62,12 @@ void StudioSliceInteractorStyle::OnKeyDown()
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::WindowLevel()
 {
-  std::cerr << "window level!\n";
   vtkInteractorStyleImage::WindowLevel();
+
+  double window = CurrentImageProperty->GetColorWindow();
+  double level = CurrentImageProperty->GetColorLevel();
+  std::cerr << "window level: " << window << ", " << level << "\n";
+  lightbox_->set_shared_window_and_level(window, level);
 }
 
 //-----------------------------------------------------------------------------

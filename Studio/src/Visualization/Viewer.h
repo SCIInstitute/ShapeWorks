@@ -117,6 +117,8 @@ class Viewer {
 
   void handle_key(int* click_pos, std::string key);
 
+  void set_window_and_level(double window, double level);
+
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 

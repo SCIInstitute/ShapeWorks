@@ -578,7 +578,7 @@ void ShapeWorksStudioApp::update_table() {
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
-  ui_->image_share_width_and_level_->setChecked(session_->get_image_share_width_and_level());
+  ui_->image_share_window_and_level_->setChecked(session_->get_image_share_window_and_level());
 }
 
 //---------------------------------------------------------------------------
@@ -796,8 +796,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(),
           &Session::set_image_axis);
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
-  connect(ui_->image_share_width_and_level_, &QCheckBox::clicked, session_.data(),
-          &Session::set_image_share_width_and_level);
+  connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
+          &Session::set_image_share_window_and_level);
 
   data_tool_->update_notes();
 

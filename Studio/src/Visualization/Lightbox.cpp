@@ -124,7 +124,7 @@ void Lightbox::display_shapes() {
 
   // bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
-    //std::cerr << "insert shape into viewer\n";
+    // std::cerr << "insert shape into viewer\n";
     this->insert_shape_into_viewer(this->shapes_[i], position);
 
     position++;
@@ -487,6 +487,16 @@ void Lightbox::update_interactor_style() {
   if (current_style != new_style) {
     render_window_->GetInteractor()->SetInteractorStyle(new_style);
     reset_camera();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::set_shared_window_and_level(double window, double level) {
+  if (!session_->get_image_share_window_and_level()) {
+    return;
+  }
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->set_window_and_level(window, level);
   }
 }
 }  // namespace shapeworks

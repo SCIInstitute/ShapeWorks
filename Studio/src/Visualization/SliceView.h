@@ -37,6 +37,8 @@ class SliceView {
 
   void handle_key(std::string key);
 
+  void set_window_and_level(double window, double level);
+
  private:
   Viewer* viewer_;
 

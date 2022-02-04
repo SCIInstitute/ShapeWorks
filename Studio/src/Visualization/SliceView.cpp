@@ -11,6 +11,7 @@
 #include <vtkRenderer.h>
 #include <vtkStripper.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkImageProperty.h>
 
 // shapeworks
 #include <Visualization/SliceView.h>
@@ -142,6 +143,7 @@ void SliceView::update_camera() {
     renderer->GetActiveCamera()->SetFocalPoint(center_x, center_y, 0);
     renderer->GetActiveCamera()->SetParallelScale(spacing[1] * dims[1]);
     */
+
   renderer->GetActiveCamera()->SetParallelProjection(1);
   renderer->ResetCamera();
 }
@@ -164,6 +166,13 @@ void SliceView::handle_key(std::string key) {
     viewer_->get_renderer()->GetRenderWindow()->Render();
   }
   std::cerr << "slice number: " << image_slice_number_ << "\n";
+}
+
+//-----------------------------------------------------------------------------
+void SliceView::set_window_and_level(double window, double level)
+{
+  image_slice_->GetProperty()->SetColorWindow(window);
+  image_slice_->GetProperty()->SetColorLevel(level);
 }
 
 //-----------------------------------------------------------------------------

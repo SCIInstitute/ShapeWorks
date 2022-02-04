@@ -87,6 +87,8 @@ class Lightbox : public QObject {
 
   void update_interactor_style();
 
+  void set_shared_window_and_level(double window, double level);
+
  public Q_SLOTS:
   void handle_timer_callback();
 
