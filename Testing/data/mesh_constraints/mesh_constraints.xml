@@ -1,13 +1,16 @@
-<output_dir>
-shape_models/
-</output_dir>
+<output_dir>output</output_dir>
+
+<pairwise_potential_type>
+   0
+</pairwise_potential_type>
+
 
 <number_of_particles>
-128
+16
 </number_of_particles>
 
 <use_normals>
-0
+1
 </use_normals>
 
 <attribute_scales>
@@ -16,32 +19,28 @@ shape_models/
  1.0
 </attribute_scales>
 
-<checkpointing_interval>
-200
-</checkpointing_interval>
-
 <keep_checkpoints>
 0
 </keep_checkpoints>
 
 <iterations_per_split>
-1000
+500
 </iterations_per_split>
 
 <optimization_iterations>
-1000
+200
 </optimization_iterations>
 
 <starting_regularization>
-10
+15
 </starting_regularization>
 
 <ending_regularization>
-1
+0.1
 </ending_regularization>
 
 <recompute_regularization_interval>
-1
+2
 </recompute_regularization_interval>
 
 <domains_per_shape>
@@ -53,19 +52,19 @@ mesh
 </domain_type>
 
 <relative_weighting>
-1
+10
 </relative_weighting>
 
 <initial_relative_weighting>
-0.05
+0.1
 </initial_relative_weighting>
 
 <procrustes_interval>
-0
+1
 </procrustes_interval>
 
 <procrustes_scaling>
-0
+1
 </procrustes_scaling>
 
 <save_init_splits>
@@ -81,26 +80,26 @@ mesh
 </verbosity>
 
 <use_xyz>
-1
+0
 </use_xyz>
 
-<use_shape_statistics_in_init>
-1.0
-</use_shape_statistics_in_init>
-
 <inputs>
-meshes/id0000_ss3.ply
-meshes/id0001_ss3.ply
-meshes/id0002_ss3.ply
+sphere10.vtk
+sphere20.vtk
+sphere30.vtk
+sphere40.vtk
 </inputs>
 
-<point_files>
-particles/id0000_ss3.local.particles
-particles/id0001_ss3.local.particles
-particles/meanshape_local.particles
-</point_files>
-
-<fixed_domains>
-0
+<num_ffcs_per_input>
 1
-</fixed_domains>
+1
+1
+1
+</num_ffcs_per_input>
+
+<ffcs>
+ffcs/sphere10.ffc
+ffcs/sphere20.ffc
+ffcs/sphere30.ffc
+ffcs/sphere40.ffc
+</ffcs>

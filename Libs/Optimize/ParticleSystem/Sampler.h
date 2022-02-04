@@ -447,6 +447,8 @@ public:
 
   }
 
+  std::vector<std::vector<FFCType> > GetFFCs(){return m_FFCs;}
+
 protected:
 
   void GenerateData();

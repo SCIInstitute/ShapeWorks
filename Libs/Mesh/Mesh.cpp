@@ -515,7 +515,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
     default:
       throw std::invalid_argument("invalid distance method");
   }
-  
+
   return std::vector<Field>{ distance, ids };
 }
 
@@ -1252,6 +1252,43 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   }
 
   return os;
+}
+
+vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double value) {
+  auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> polys;
+  std::vector<bool> member;
+
+  // copy points
+  for (vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++) {
+    points->InsertNextPoint(mesh->GetPoint(i));
+    if (this->getFieldValue(name, i) == value) {
+      member.push_back(true);
+    } else {
+      member.push_back(false);
+    }
+  }
+
+  // copy triangles
+  for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
+    vtkCell* cell = this->mesh->GetCell(i);
+
+    if (cell->GetCellType() != VTK_EMPTY_CELL) { // VTK_EMPTY_CELL means it was deleted
+      vtkIdType pts[3];
+      pts[0] = cell->GetPointId(0);
+      pts[1] = cell->GetPointId(1);
+      pts[2] = cell->GetPointId(2);
+      if (member[pts[0]] && member[pts[1]] && member[pts[2]]) {
+        polys->InsertNextCell(3, pts);
+      }
+    }
+  }
+
+  poly_data->SetPoints(points);
+  poly_data->SetPolys(polys);
+  return poly_data;
 }
 
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
