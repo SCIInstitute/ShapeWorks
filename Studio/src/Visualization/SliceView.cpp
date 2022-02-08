@@ -28,6 +28,14 @@ SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   stripper_ = vtkSmartPointer<vtkStripper>::New();
   cut_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   cut_actor_ = vtkSmartPointer<vtkActor>::New();
+
+  stripper_->PassCellDataAsFieldDataOn();
+  cut_mapper_->SetScalarVisibility(false);
+  cut_mapper_->SetResolveCoincidentTopologyToPolygonOffset();
+  cut_actor_->GetProperty()->SetColor(1, 1, 0.25);
+  cut_actor_->GetProperty()->SetLineWidth(3);
+  cut_actor_->GetProperty()->SetAmbient(1.0);
+  cut_actor_->GetProperty()->SetDiffuse(0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -37,13 +45,11 @@ void SliceView::set_volume(vtkSmartPointer<vtkImageData> volume) {
   image_slice_->SetMapper(slice_mapper_);
   auto transform = viewer_->get_image_transform();
   image_slice_->SetUserTransform(transform);
+}
 
-  // now for the mesh intersection
-  MeshGroup mesh_group = viewer_->get_meshes();
-  if (!mesh_group.valid()) {
-    return;
-  }
-  auto poly_data = mesh_group.meshes()[0]->get_poly_data();
+//-----------------------------------------------------------------------------
+void SliceView::set_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
+  auto transform = viewer_->get_image_transform();
   cut_transform_filter_->SetInputData(poly_data);
   cut_transform_filter_->SetTransform(transform);
 
@@ -51,19 +57,11 @@ void SliceView::set_volume(vtkSmartPointer<vtkImageData> volume) {
   cutter_->SetCutFunction(slice_mapper_->GetSlicePlane());
 
   stripper_->SetInputConnection(cutter_->GetOutputPort());
-  stripper_->PassCellDataAsFieldDataOn();
   stripper_->Update();
 
   cut_mapper_->SetInputConnection(stripper_->GetOutputPort());
-  cut_mapper_->SetScalarVisibility(false);
-  cut_mapper_->SetResolveCoincidentTopologyToPolygonOffset();
 
   cut_actor_->SetMapper(cut_mapper_);
-
-  cut_actor_->GetProperty()->SetColor(1, 1, 0.25);
-  cut_actor_->GetProperty()->SetLineWidth(3);
-  cut_actor_->GetProperty()->SetAmbient(1.0);
-  cut_actor_->GetProperty()->SetDiffuse(0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -95,6 +93,7 @@ void SliceView::update_camera() {
   auto renderer = viewer_->get_renderer();
   if (!is_image_loaded()) {
     renderer->GetActiveCamera()->SetParallelProjection(0);
+
     return;
   }
 
@@ -137,7 +136,11 @@ void SliceView::update_camera() {
   }
 
   renderer->GetActiveCamera()->SetParallelProjection(1);
+  renderer->ResetCameraClippingRange();
   renderer->ResetCamera();
+  // renderer->GetActiveCamera()->PrintSelf(std::cerr, vtkIndent(2));
+  // std::cerr <<  << "\n";
+  // namedColors->PrintSelf(std::cout,vtkIndent(2));
 }
 
 //-----------------------------------------------------------------------------

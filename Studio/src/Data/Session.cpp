@@ -963,12 +963,12 @@ bool Session::set_image_name(std::string image_name) {
     return false;
   }
   params_.set("image_name", image_name);
-  Q_EMIT update_view_mode();
+  Q_EMIT image_slice_settings_changed();
   return true;
 }
 
 //---------------------------------------------------------------------------
-std::string Session::get_image_name() { return params_.get("image_name", ""); }
+std::string Session::get_image_name() { return params_.get("image_name", "-none-"); }
 
 //---------------------------------------------------------------------------
 void Session::set_image_axis(QString axis) {
@@ -976,7 +976,7 @@ void Session::set_image_axis(QString axis) {
     return;
   }
   params_.set("image_axis", axis.toStdString());
-  Q_EMIT update_view_mode();
+  Q_EMIT image_slice_settings_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -995,7 +995,7 @@ void Session::set_image_3d_mode(bool mode) {
     return;
   }
   params_.set("image_3d_mode", mode);
-  Q_EMIT update_view_mode();
+  Q_EMIT image_slice_settings_changed();
 }
 
 //---------------------------------------------------------------------------

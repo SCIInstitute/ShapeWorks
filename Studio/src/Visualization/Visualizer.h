@@ -100,18 +100,6 @@ class Visualizer : public QObject {
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
-  //! Set the currently selected image volume
-  void set_image_volume(const std::string& image_volume);
-
-  //! Get the currently selected image volume
-  const std::string& get_image_volume() const;
-
-  //! Set image axis
-  void set_image_axis(Axis axis);
-
-  //! Get the image axis
-  Axis get_image_axis();
-
   //! clear out the viewers
   void clear_viewers();
 
@@ -152,6 +140,8 @@ class Visualizer : public QObject {
 
   void handle_feature_range_changed();
 
+  void handle_image_slice_settings_changed();
+
  private:
   ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
@@ -160,8 +150,6 @@ class Visualizer : public QObject {
 
   std::string display_mode_;
   std::string feature_map_;
-  std::string image_volume_;
-  Axis image_axis_ = Axis::Z;
   int alignment_domain_;
 
   bool center_;

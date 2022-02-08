@@ -46,8 +46,9 @@ void Visualizer::set_lightbox(LightboxHandle lightbox) {
 void Visualizer::set_session(SessionHandle session) {
   session_ = session;
   lightbox_->set_session(session);
-  connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
+  connect(session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
   connect(session_.data(), &Session::landmarks_changed, this, &Visualizer::update_landmarks);
+  connect(session_.data(), &Session::image_slice_settings_changed, this, &Visualizer::handle_image_slice_settings_changed);
 }
 
 //-----------------------------------------------------------------------------
@@ -232,6 +233,19 @@ void Visualizer::handle_feature_range_changed() {
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::handle_image_slice_settings_changed()
+{
+  lightbox_->update_interactor_style();
+
+  if (this->lightbox_) {
+    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) {
+      v->update_image_volume();
+    }
+  }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::update_lut() {
   int num_points = this->cached_mean_.size() / 3;
 
@@ -358,18 +372,6 @@ void Visualizer::set_feature_map(const std::string& feature_map) {
   this->feature_map_ = feature_map;
   this->reset_feature_range();
 }
-
-//-----------------------------------------------------------------------------
-void Visualizer::set_image_volume(const string& image_volume) { image_volume_ = image_volume; }
-
-//-----------------------------------------------------------------------------
-const string& Visualizer::get_image_volume() const { return image_volume_; }
-
-//-----------------------------------------------------------------------------
-void Visualizer::set_image_axis(Axis axis) { image_axis_ = axis; }
-
-//-----------------------------------------------------------------------------
-Axis Visualizer::get_image_axis() { return image_axis_; }
 
 //-----------------------------------------------------------------------------
 bool Visualizer::get_center() { return this->center_; }

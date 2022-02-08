@@ -64,6 +64,7 @@ class Viewer {
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
+  void reset_camera();
 
   void set_glyph_size_and_quality(double size, double quality);
   double get_glyph_size();
@@ -119,6 +120,8 @@ class Viewer {
 
   void set_window_and_level(double window, double level);
 
+  void update_image_volume();
+
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -136,8 +139,6 @@ class Viewer {
   void update_difference_lut(float r0, float r1);
 
   void update_actors();
-
-  void update_image_volume();
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
@@ -203,6 +204,8 @@ class Viewer {
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   QSharedPointer<Session> session_;
+
+  std::string current_image_name_;
 
   // slice viewer
   SliceView slice_view_{this};

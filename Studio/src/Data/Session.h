@@ -177,6 +177,7 @@ class Session : public QObject {
   void error(QString);
   void feature_range_changed();
   void update_view_mode();
+  void image_slice_settings_changed();
 
  public:
   // constants

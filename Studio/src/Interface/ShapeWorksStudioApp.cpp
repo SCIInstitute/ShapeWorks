@@ -910,9 +910,6 @@ void ShapeWorksStudioApp::update_view_mode() {
       image_volume_name = "";
     }
 
-    visualizer_->set_image_volume(image_volume_name);
-    visualizer_->set_image_axis(session_->get_image_axis());
-
     std::string feature_map_override = "";
     if (get_tool_state() == Session::DEEPSSM_C) {
       if (deepssm_tool_->get_display_feature() != "") {

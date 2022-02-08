@@ -60,9 +60,11 @@ void StudioSliceInteractorStyle::OnKeyDown() {
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::WindowLevel() {
   vtkInteractorStyleImage::WindowLevel();
-  double window = CurrentImageProperty->GetColorWindow();
-  double level = CurrentImageProperty->GetColorLevel();
-  lightbox_->set_shared_window_and_level(window, level);
+  if (CurrentImageProperty) {
+    double window = CurrentImageProperty->GetColorWindow();
+    double level = CurrentImageProperty->GetColorLevel();
+    lightbox_->set_shared_window_and_level(window, level);
+  }
 }
 
 //-----------------------------------------------------------------------------

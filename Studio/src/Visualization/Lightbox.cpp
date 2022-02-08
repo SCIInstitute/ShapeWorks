@@ -85,9 +85,9 @@ void Lightbox::handle_new_mesh() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::reset_camera() {
-  viewers_[0]->get_renderer()->ResetCameraClippingRange();
-  viewers_[0]->get_renderer()->ResetCamera();
-  viewers_[0]->get_renderer()->GetRenderWindow()->Render();
+  if (!viewers_.empty()) {
+    viewers_[0]->reset_camera();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -478,10 +478,10 @@ void Lightbox::update_interactor_style() {
   auto current_style = this->render_window_->GetInteractor()->GetInteractorStyle();
   vtkInteractorObserver* new_style = nullptr;
 
-  if (visualizer_->get_image_volume() != "" && !session_->get_image_3d_mode()) {
-    new_style = slice_style_;
-  } else {
+  if (session_->get_image_name() == "-none-" || session_->get_image_3d_mode()) {
     new_style = style_;
+  } else {
+    new_style = slice_style_;
   }
   if (current_style != new_style) {
     render_window_->GetInteractor()->SetInteractorStyle(new_style);

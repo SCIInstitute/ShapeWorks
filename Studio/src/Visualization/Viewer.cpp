@@ -603,6 +603,14 @@ void Viewer::clear_viewer() {
 void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
 
 //-----------------------------------------------------------------------------
+void Viewer::reset_camera() {
+  slice_view_.update_camera();
+  renderer_->ResetCameraClippingRange();
+  renderer_->ResetCamera();
+  renderer_->GetRenderWindow()->Render();
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::set_renderer(vtkSmartPointer<vtkRenderer> renderer) { renderer_ = renderer; }
 
 //-----------------------------------------------------------------------------
@@ -770,7 +778,6 @@ void Viewer::update_points() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_actors() {
-
   if (!visible_) {
     return;
   }
@@ -804,19 +811,33 @@ void Viewer::update_actors() {
   }
 
   slice_view_.update_renderer();
-  slice_view_.update_camera();
 
   update_opacities();
 }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_image_volume() {
-  auto image_volume_name = visualizer_->get_image_volume();
-  if (image_volume_name != "") {
+  if (!session_ || !shape_) {
+    return;
+  }
+  slice_view_.set_orientation(session_->get_image_axis());
+
+  if (meshes_.valid()) {
+    slice_view_.set_mesh(meshes_.meshes()[0]->get_poly_data());
+  }
+  auto image_volume_name = session_->get_image_name();
+  if (image_volume_name == current_image_name_) {
+    return;
+  }
+  current_image_name_ = image_volume_name;
+  if (image_volume_name != "-none-") {
     auto volume = shape_->get_image_volume(image_volume_name);
     slice_view_.set_volume(volume);
-    slice_view_.set_orientation(visualizer_->get_image_axis());
+  } else {
+    slice_view_.set_volume(nullptr);
   }
+  slice_view_.update_renderer();
+  slice_view_.update_camera();
 }
 
 //-----------------------------------------------------------------------------
@@ -1013,10 +1034,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
 void Viewer::handle_key(int* click_pos, std::string key) { slice_view_.handle_key(key); }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_window_and_level(double window, double level)
-{
-  slice_view_.set_window_and_level(window, level);
-}
+void Viewer::set_window_and_level(double window, double level) { slice_view_.set_window_and_level(window, level); }
 
 //-----------------------------------------------------------------------------
 bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {
