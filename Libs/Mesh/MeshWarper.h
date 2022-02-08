@@ -34,8 +34,19 @@ public:
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
+  //! [Overloaded] for building a mesh for a given set of particles and also warping the landmarks
+  vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles, Eigen::MatrixXd& warped_landmarks);
+
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
+
+  void initialize_use_landmarks(bool use_landmark, bool num_landmarks, Eigen::MatrixXd& landmarks_points)
+  {
+    this->landmarksPoints_ = landmarks_points;
+    this->warp_landmarks_ = use_landmark;
+    this->numLandmarks_ = num_landmarks;
+  }
+
 
 protected:
 
@@ -63,6 +74,8 @@ private:
   //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
 
+  bool find_landmarks_vertices_on_ref_mesh();
+
   //! Prep incoming mesh
   static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
@@ -79,9 +92,14 @@ private:
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
+  //![Overloaded to include Landmark warping] Generate a polydata from a set of points (e.g. warp the reference mesh)
+  vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points, Eigen::MatrixXd& warped_landmarks);
+
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
+  
+  Eigen::MatrixXd landmarksPoints_;
 
   std::vector<int> good_particles_;
 
@@ -89,6 +107,12 @@ private:
 
   bool warp_available_ = false;
 
+  bool warp_landmarks_ = false;
+  int numLandmarks_ = 0;
+  bool landmarks_vertices_computed;
+
+  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Mean mesh to the landmarks id 
+  std::vector<int> landmarks_ids; // for each landmark id, store vertex id 
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh

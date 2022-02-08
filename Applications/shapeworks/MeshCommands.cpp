@@ -1438,4 +1438,124 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   }
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+// WarpMesh
+///////////////////////////////////////////////////////////////////////////////
+void WarpMeshWithLandmarks::buildParser()
+{
+  const std::string prog = "warp-mesh-with-landmarks";
+  const std::string desc = "warps a mesh given reference and target particles";
+  parser.prog(prog).description(desc);
+  parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
+  parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
+  parser.add_option("--landmark_file").action("store").type("string").set_default("").help("Name of Landmark file.");
+  parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
+  parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
+  Command::buildParser();
+}
+bool WarpMeshWithLandmarks::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string inputMeshFilename = options["reference_mesh"];
+  if (inputMeshFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference mesh specified, must pass `--reference_mesh <filename>`\n";
+    return false;
+  }
+  std::string landmarkFilename = options["landmark_file"];
+  if (landmarkFilename.length() == 0) {
+    std::cerr << "warpmesh error: no landmark file specified, must pass `--landmark_file <filename>`\n";
+    return false;
+  }
+  std::string inputPointsFilename = options["reference_points"];
+  if (inputPointsFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference points specified, must pass `--reference_points <filename>`\n";
+    return false;
+  }
+  std::vector<std::string> targetPointsFilenames = options.get("target_points");
+  if (targetPointsFilenames.size() == 0) {
+    std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filenames> --`\n";
+    return false;
+  }
+  std::vector<std::string> landmark_ar;
+  landmark_ar.push_back(landmarkFilename);
+
+  std::string saveDir = options["save_dir"];
+  try {
+    Mesh inputMesh(inputMeshFilename); // input median mesh
+    targetPointsFilenames.push_back(inputPointsFilename); // input mean particles
+    ParticleSystem particlesystem(targetPointsFilenames); // Particle system of all target particles which needs to be warped
+    ParticleSystem landmarksystem(landmark_ar); // temporarily, read landmarks from .particles file, assuming landmarks are ordered by the index/row number
+    // TODO: parse XML file for landmark file extraction and consider landmark name
+    Eigen::MatrixXd allPts = particlesystem.Particles();
+    Eigen::MatrixXd staticPoints = allPts.col(targetPointsFilenames.size() - 1); // last file name is fixed mean particles
+
+    Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0); // just one vector in landmark system
+    int numLandmarks = landmarksPoints.rows() /3;
+    int numParticles = staticPoints.rows() / 3;
+    staticPoints.resize(3, numParticles);
+    staticPoints.transposeInPlace();
+    landmarksPoints.resize(3, numLandmarks);
+    landmarksPoints.transposeInPlace();
+    
+
+    MeshWarper warper;
+    warper.initialize_use_landmarks(true, numLandmarks, landmarksPoints); 
+  
+    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+    std::string filenm;
+    std:: string warped_landmarks_filename;
+
+    if (saveDir.length() > 0) {
+      boost::filesystem::create_directories(saveDir);
+    }
+
+    for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
+      filenm = targetPointsFilenames[i];
+      warped_landmarks_filename = "warped_landmarks_" + targetPointsFilenames[i];
+      filenm.replace(static_cast<int>(filenm.rfind('.')) + 1, filenm.length(), "vtk");
+      warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')) + 1, warped_landmarks_filename.length(), "particles");
+      if (saveDir.length() > 0) {
+        int idx = static_cast<int>(filenm.rfind('/'));
+        filenm.replace(0, idx, saveDir);
+
+        int idx_ = static_cast<int>(warped_landmarks_filename.rfind('/'));
+        warped_landmarks_filename.replace(0, idx_, saveDir);
+      }
+      
+      Eigen::MatrixXd movingPoints = allPts.col(i);
+      movingPoints.resize(3, numParticles);
+      movingPoints.transposeInPlace();
+      Eigen::MatrixXd warped_landmarks_ = Eigen::MatrixXd::Constant(numLandmarks, 3, 0);
+      Mesh output = warper.build_mesh(movingPoints, warped_landmarks_);
+
+      Eigen::VectorXd warped_landmarks = Eigen::Map<Eigen::VectorXd>((double*) warped_landmarks_.data(), warped_landmarks_.size());
+      output.write(filenm);
+
+      std::ofstream out(warped_landmarks_filename);
+      if (!out) {
+        std::cerr << "Error in writing warped Landmarks \n";
+        return false;
+      }
+      size_t newline = 1;
+      for (int i = 0; i < warped_landmarks.size(); i++) {
+        out << warped_landmarks[i] << (newline % 3 == 0 ? "\n" : "    ");
+        newline++;
+      }
+      out.close();
+      if (out.bad()) {
+        std::cerr << "Error in writing warped Landmarks \n";
+        return false;
+      }
+    }
+    return true;
+  } catch (std::exception &e) {
+    std::cerr << "exception during mesh warp: " << e.what() << std::endl;
+    return false;
+  } catch (...) {
+    std::cerr << "unknown exception while mesh warping" << std::endl;
+    return false;
+  }
+}
+
+
 } //shapeworks
