@@ -429,24 +429,24 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
 //---------------------------------------------------------------------------
 bool MeshWarper::generate_warp()
 {
-  // clean mesh
+  // clean incoming 'Median' mesh
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
 
   // prep points
-  this->vertices_ = this->reference_particles_;
+  this->vertices_ = this->reference_particles_; // vertices_ = median model vertices yet
 
-  this->add_particle_vertices();
+  this->add_particle_vertices(); // get proper vertices matrix(for mean model) based on the distance between incoming clean median mesh and given mean particles 
 
   this->find_good_particles();
-  this->vertices_ = this->remove_bad_particles(this->vertices_);
+  this->vertices_ = this->remove_bad_particles(this->vertices_); // clean the above generated mean model vertices matrix
 
   const Mesh referenceMesh(reference_mesh_);
-  Eigen::MatrixXd vertices = referenceMesh.points();
-  this->faces_ = referenceMesh.faces();
+  Eigen::MatrixXd vertices = referenceMesh.points(); // get the incoming median mesh vertices matrix 
+  this->faces_ = referenceMesh.faces(); // get the incoming median mesh faces matrix
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,
-                                        this->vertices_, this->warp_)) {
+                                        this->vertices_, this->warp_)) { // generate the warp matrix from this
     this->update_progress(1.0);
     this->warp_available_ = false;
     return false;

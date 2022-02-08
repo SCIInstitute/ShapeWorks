@@ -215,6 +215,95 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   return generalizations;
 }
 
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMlpca(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
+{
+  const int N = particleSystem.N();
+  const int D = particleSystem.D();
+  unsigned int dps;
+  const Eigen::MatrixXd &P = particleSystem.Particles();
+
+  if (N <= 1) {
+    return Eigen::VectorXd();
+  }
+
+  Eigen::VectorXd generalizations(N-1);
+
+  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N-1);
+
+  for (int leave = 0; leave < N; leave++) {
+    if (progress_callback) {
+      progress_callback(static_cast<float>(leave) / static_cast<float>(N));
+    }
+    Eigen::MatrixXd Y(D, N - 1);
+    Y.leftCols(leave) = P.leftCols(leave);
+    Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
+    const Eigen::VectorXd Ytest = P.col(leave);
+    
+    // 1. Compute Super matrix of Y(in context of MLPCA):
+    vnl_matrix<double> super_matrix;
+    super_matrix.set_size(m, n);
+    for(unsigned int i = 0; i < N; i++){
+        for(unsigned int j = 0; j < total_particles; j++){
+            super_matrix.put(j, i * VDimension, Y(j * VDimension, i));
+            super_matrix.put(j, i * VDimension + 1, Y(j * VDimension + 1, i));
+            super_matrix.put(j, i * VDimension + 2, Y(j * VDimension + 2, i));
+        }
+    }
+
+    vnl_matrix<double> ones_M;
+    ones_M.set_size(total_particles, 1);
+    ones_M.fill(1.0);
+    vnl_matrix<double> grand_mean = (ones_M.transpose() * super_matrix) * (1.0/((double)total_particles)); // --> 1 X 3N
+    grand_mean = grand_mean.transpose(); // --> 3N X 1
+    vnl_matrix<double> main_grand_mean;
+    main_grand_mean.set_size(VDimension, N); // --> 3 X N
+    for(unsigned int i = 0; i < N; i++){
+        main_grand_mean.put(0, i, grand_mean(i*VDimension, 0)); 
+        main_grand_mean.put(1, i, grand_mean(i*VDimension + 1, 0)); 
+        main_grand_mean.put(2, i, grand_mean(i*VDimension + 2, 0)); 
+    }
+
+
+
+
+
+    for(unsigned int k = 0; k < dps; k++){
+      
+
+    }
+
+    // const Eigen::VectorXd mu = Y.rowwise().mean();
+    // Y.colwise() -= mu;
+ 
+    //TODO: Compute Mlpca params and change Y here to Y = Y - grand mean - between term
+
+
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+
+    for (int mode = 1; mode < N; mode++) {
+
+      const auto epsi = svd.matrixU().block(0, 0, D, mode);
+      const auto betas = epsi.transpose() * (Ytest - mu);
+      const Eigen::VectorXd rec = epsi * betas + mu;
+
+      const int numParticles = D / VDimension;
+      const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
+      const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
+      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
+      totalDists(mode-1) += dist;
+    }
+  }
+
+  generalizations = totalDists / N;
+
+  return generalizations;
+}
+
+
+
+
 //---------------------------------------------------------------------------
 double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)

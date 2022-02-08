@@ -853,12 +853,12 @@ void AnalysisTool::compute_shape_evaluations()
                     ShapeEvaluationJob::JobType::GeneralizationType,
                     ShapeEvaluationJob::JobType::SpecificityType};
   if(dps > 1){
-    job_types = {ShapeEvaluationJob::JobType::CompactnessType,
-                 ShapeEvaluationJob::JobType::WithinSubspaceCompactness,
-                 ShapeEvaluationJob::JobType::BetweenSubspaceCompactness,
-                 ShapeEvaluationJob::JobType::GeneralizationType,
-                 ShapeEvaluationJob::JobType::SpecificityType};
-    std::cout << "--------Starting Evaluation Job for MLPCA-------" << std::endl;
+    // job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+    //              ShapeEvaluationJob::JobType::WithinSubspaceCompactness,
+    //              ShapeEvaluationJob::JobType::BetweenSubspaceCompactness,
+    //              ShapeEvaluationJob::JobType::GeneralizationType,
+    //              ShapeEvaluationJob::JobType::SpecificityType};
+    std::cout << "--------NOT Starting Evaluation Job for MLPCA-------" << std::endl;
   }
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();

@@ -42,10 +42,6 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  /** The first argument is a pointer to the particle system.  The second
-      argument is the index of the domain within that particle system.  The
-      third argument is the index of the particle location within the given
-      domain. */  
   
   virtual VectorType Evaluate(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const
@@ -90,6 +86,10 @@ public:
   virtual double EnergyWithinResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
+    /*
+      This function computes the Energy in Between Subspace 
+      which is computed based on the covariance matrix built from within residuals[Y_betweenSubspace = P - grand mean - withinTerms]
+    */
     double e, d;
     this->EvaluateWithinResiduals(a,b,c,d,e);
     return e;
@@ -98,6 +98,10 @@ public:
   virtual double EnergyBetweenResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
+    /*
+      This function computes the Energy in Within Subspace 
+      which is computed based on the covariance matrix built from Between residuals[Y_withinSubspace = P - grand mean - betweenTerms]
+    */
     double e, d;
     this->EvaluateBetweenResiduals(a,b,c,d,e);
     return e;
@@ -113,9 +117,6 @@ public:
   {    
     m_ShapeMatrix = s;
     m_dps = m_ShapeMatrix->GetDomainsPerShape(); 
-    std::cout <<" dps of entropy function set to be" << m_dps << std::endl;
-    
-  
   }
 
   ShapeMatrixType *GetShapeMatrix()
@@ -126,6 +127,9 @@ public:
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
+    /*  
+      Before Each Optimization iteration - Compute the MLPCA terms, and build covariance matrices from within and between residuals
+    */
     m_ShapeMatrix->BeforeIteration();
     if (m_Counter == 0)
       {
@@ -268,6 +272,14 @@ protected:
     m_InverseCovMatricesAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
     m_points_meanAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
 
+    log_energy_fileA = std::make_shared<std::ofstream>() ;
+    log_within_energy_fileB = std::make_shared<std::ofstream>();
+    log_between_energy_fileB = std::make_shared<std::ofstream>();
+    
+    log_energy_fileA->open('EnergyA.txt');
+    log_within_energy_fileB->open('EnergyWithinB.txt');
+    log_between_energy_fileB->open('EnergyBetweenB.txt');
+
   }
   virtual ~ParticleEnsembleMlpcaEntropyFunction() {}
   void operator=(const ParticleEnsembleMlpcaEntropyFunction &);
@@ -279,6 +291,8 @@ protected:
   virtual void ComputeCovarianceMatricesWithinResiduals();
   virtual void ComputeCovarianceMatricesBetweenResiduals();
   virtual void ComputeMlpcaTerms();
+  virtual void ComputeWithinTerms(std::vector<int>& num_particles, unsigned int& dps, unsigned int& m, unsigned int&n , unsigned int& M, unsigned int& N);
+  virtual void ComputeBetweenTerms(std::vector<int>& num_particles, unsigned int& dps, unsigned int& m, unsigned int&n , unsigned int& M, unsigned int& N);
   // std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
   double m_MinimumVariance;
   // double m_MinimumEigenValue;
@@ -298,6 +312,9 @@ protected:
   // std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation
   // std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation
 
+  std::shared_ptr<std::ofstream> log_energy_fileA;
+  std::shared_ptr<std::ofstream> log_within_energy_fileB;
+  std::shared_ptr<std::ofstream> log_between_energy_fileB;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_InverseCovMatricesAllWithin;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_points_meanAllWithin;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdateAllWithin; // gradient of Cov matrix of all organs

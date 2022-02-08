@@ -202,6 +202,9 @@ public:
 
     virtual double EnergyWithin(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
     {
+        /*
+            This function computes and returns the Energy in Within Subspace 
+        */
         double ansA = 0.0;
         double ansB = 0.0;
         double ansC = 0.0;
@@ -216,7 +219,6 @@ public:
         if (m_BOn == true)
         {   
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-            // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
             ansB = mlpca_function_b->EnergyBetweenResiduals(idx, d, system);
         }
 
@@ -251,14 +253,15 @@ public:
 
     virtual double EnergyBetween(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
     {
+        /*
+            This function computes and returns the Energy in Between Subspace 
+        */
         double ansB = 0.0;
         double finalEnergy = 0.0;
 
-        // Do not evaluate surface energy here, avoiding this
         if (m_BOn == true)
         {   
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-            // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
             ansB = mlpca_function_b->EnergyWithinResiduals(idx, d, system);
         }
 
@@ -366,39 +369,37 @@ public:
     virtual VectorType EvaluateWithin(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove, double &energy) const
-    {
+    {   
+        /* 
+            This function evaluates the Optimization function value(Q) in the Within Subspace
+            Returns the Energy Calculated through param energy,
+            And Also Returns the Predicted Move/gradient for position update at Particle postion 'idx' in domain 'd'
+        */
         double maxA = 0.0;
         double maxB = 0.0;
         double energyA = 0.0;
         double energyB = 0.0;
         VectorType ansA; ansA.fill(0.0);
         VectorType ansB; ansB.fill(0.0);
-        std::cout << "evaluating within dual vec " << std::endl;
+        std::cout << "Evaluating Q In Within Subspace" << std::endl;
 
         const_cast<ParticleDualVectorFunction *>(this)->m_CounterWithin = m_CounterWithin + 1.0;
 
         // evaluate individual functions: A = surface energy, B = correspondence
         if (m_AOn == true)
         {
-            // std::cout << " inside A within " << std::endl;
             ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
-            // std::cout << " inside A within eval done" << std::endl;
-
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
         }
 
         if (m_BOn == true)
         {   
-            // std::cout << " inside B within eval " << std::endl;
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-            // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
             ansB = mlpca_function_b->EvaluateBetweenResiduals(idx, d, system, maxB, energyB);
-            // std::cout << " inside B within eval done" << std::endl;
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageWithinGradMagB = m_AverageWithinGradMagB + ansB.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageWithinEnergyB = m_AverageWithinEnergyB + energyB;
-            std::cout << "WITHIN Grad Mag " << m_AverageWithinGradMagB << " Energy " << m_AverageWithinEnergyB << std::endl;
-
+            std::cout << "WITHIN Subspace Grad Mag " << ansB.magnitude() << " Energy " << energyB << std::endl;
         }
 
         if( m_RelativeEnergyScaling == 0.0)
@@ -458,14 +459,22 @@ public:
     virtual VectorType EvaluateWithin(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove) const
-    {
+    {   
+        /* 
+            This function Also evaluates the Optimization function value(Q) in the Within Subspace
+            Returns only the gradient for position update at Particle postion 'idx' in domain 'd', 
+        */
         double e;
         return this->EvaluateWithin(idx, d, system, maxmove, e);
     }
     virtual VectorType EvaluateBetween(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove) const
-    {
+    {   
+        /* 
+            This function evaluates the Optimization function value(Q) in the Between Subspace
+            Returns only the gradient for position update at Particle postion 'idx' in domain 'd', 
+        */
         double e;
         return this->EvaluateBetween(idx, d, system, maxmove, e);
     }
@@ -473,78 +482,32 @@ public:
     virtual VectorType EvaluateBetween(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove, double &energy) const
-    {
-        // double maxB = 0.0;
-        // double energyB = 0.0;
-        // VectorType ansB; ansB.fill(0.0);
+    {   
+        /* 
+            This function evaluates the Optimization function value(Q) in the Between Subspace
+            Returns the Energy Calculated through param energy,
+            And Also Returns the Predicted Move/gradient for position update at Particle postion 'idx' in domain 'd', 
+        */
 
-        // const_cast<ParticleDualVectorFunction *>(this)->m_CounterBetween = m_CounterBetween + 1.0;
-
-        // // Do not evaluate surface energy here, avoiding this
-        
-        // if (m_BOn == true)
-        // {   
-        //     // std::cout << " inside B between eval " << std::endl;
-        //     const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-        //     // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-        //     ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
-        //     // std::cout << " inside B between eval done" << std::endl;
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenEnergyB = m_AverageBetweenEnergyB + energyB;
-        // }
-
-        // if( m_RelativeEnergyScaling == 0.0)
-        // {
-        //     energyB = 0.0;
-        //     ansB.fill(0.0);
-        // }
-        // if (m_RelativeGradientScaling == 0.0)
-        // {
-        //     maxB = 0.0;
-        //     ansB.fill(0.0);
-        // }
-        // // compute final energy, maxmove and predicted move based on current configuration
-        // VectorType predictedMove; predictedMove.fill(0.0);
-        // if (m_BOn == true)
-        // {
-        //     // only B is active, A is not active
-        //     maxmove = maxB;
-        //     energy = energyB;
-        //     predictedMove = ansB;
-        //     return (predictedMove);  
-        // }
-
-        double maxA = 0.0;
         double maxB = 0.0;
-        double energyA = 0.0;
         double energyB = 0.0;
-        VectorType ansA; ansA.fill(0.0);
         VectorType ansB; ansB.fill(0.0);
-        std::cout << "evaluating between dual vec " << std::endl;
+        std::cout << "Evaluating Q In Between Subspace" << std::endl;
 
         const_cast<ParticleDualVectorFunction *>(this)->m_CounterBetween = m_CounterBetween + 1.0;
 
-        // evaluate individual functions: A = surface energy, B = correspondence
-        if (m_AOn == true)
-        {
-            // std::cout << " inside A within " << std::endl;
-            ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
-            // std::cout << " inside A within eval done" << std::endl;
-
-            const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-            const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
-        }
-
+        // Do not evaluate surface energy here, avoiding this
+        
         if (m_BOn == true)
         {   
-            // std::cout << " inside B within eval " << std::endl;
+            // std::cout << " inside B between eval " << std::endl;
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
             // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
             ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
-            // std::cout << " inside B within eval done" << std::endl;
+            // std::cout << " inside B between eval done" << std::endl;
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenEnergyB = m_AverageBetweenEnergyB + energyB;
-            std::cout << " BETWEEN Grad Mag " << m_AverageBetweenGradMagB << " Energy " << m_AverageBetweenEnergyB << std::endl;
+            std::cout << "BETWEEN Subspace Grad Mag " << ansB.magnitude() << " Energy " << energyB << std::endl;
         }
 
         if( m_RelativeEnergyScaling == 0.0)
@@ -552,53 +515,109 @@ public:
             energyB = 0.0;
             ansB.fill(0.0);
         }
-
         if (m_RelativeGradientScaling == 0.0)
         {
             maxB = 0.0;
             ansB.fill(0.0);
         }
-
         // compute final energy, maxmove and predicted move based on current configuration
         VectorType predictedMove; predictedMove.fill(0.0);
         if (m_BOn == true)
         {
-            if (m_AOn == true)  // both A and B are active
-            {
-                if (maxB > maxA)
-                {
-                    maxmove = maxB;
-                }
-                else
-                {
-                    maxmove = maxA;
-                }
-
-                energy = energyA + m_RelativeEnergyScaling * energyB;
-
-                maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
-
-                predictedMove = ansA + m_RelativeGradientScaling * ansB;
-
-                return (predictedMove);
-            }
-            else // only B is active, A is not active
-            {
-                maxmove = maxB;
-                energy = energyB;
-                predictedMove = ansB;
-
-                return (predictedMove);
-            }
+            // only B is active, A is not active
+            maxmove = maxB;
+            energy = energyB;
+            predictedMove = ansB;
+            return (predictedMove);  
         }
-        else  // only A is active
-        {
-            maxmove = maxA;
-            energy = energyA;
-            return ansA;
-        }
-        maxmove = 0.0;
-        return ansA;
+        return (predictedMove);
+
+        /* Below implementation is when Q_between = A(surface energy) + B(between subspace correspondence)*/
+        // double maxA = 0.0;
+        // double maxB = 0.0;
+        // double energyA = 0.0;
+        // double energyB = 0.0;
+        // VectorType ansA; ansA.fill(0.0);
+        // VectorType ansB; ansB.fill(0.0);
+        // std::cout << "evaluating between dual vec " << std::endl;
+
+        // const_cast<ParticleDualVectorFunction *>(this)->m_CounterBetween = m_CounterBetween + 1.0;
+
+        // // evaluate individual functions: A = surface energy, B = correspondence
+        // if (m_AOn == true)
+        // {
+        //     // std::cout << " inside A within " << std::endl;
+        //     ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
+        //     // std::cout << " inside A within eval done" << std::endl;
+
+        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
+        // }
+
+        // if (m_BOn == true)
+        // {   
+        //     // std::cout << " inside B within eval " << std::endl;
+        //     const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
+        //     // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
+        //     ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
+        //     // std::cout << " inside B within eval done" << std::endl;
+        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
+        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenEnergyB = m_AverageBetweenEnergyB + energyB;
+        //     std::cout << " BETWEEN Grad Mag " << m_AverageBetweenGradMagB << " Energy " << m_AverageBetweenEnergyB << std::endl;
+        // }
+
+        // if( m_RelativeEnergyScaling == 0.0)
+        // {
+        //     energyB = 0.0;
+        //     ansB.fill(0.0);
+        // }
+
+        // if (m_RelativeGradientScaling == 0.0)
+        // {
+        //     maxB = 0.0;
+        //     ansB.fill(0.0);
+        // }
+
+        // // compute final energy, maxmove and predicted move based on current configuration
+        // VectorType predictedMove; predictedMove.fill(0.0);
+        // if (m_BOn == true)
+        // {
+        //     if (m_AOn == true)  // both A and B are active
+        //     {
+        //         if (maxB > maxA)
+        //         {
+        //             maxmove = maxB;
+        //         }
+        //         else
+        //         {
+        //             maxmove = maxA;
+        //         }
+
+        //         energy = energyA + m_RelativeEnergyScaling * energyB;
+
+        //         maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+
+        //         predictedMove = ansA + m_RelativeGradientScaling * ansB;
+
+        //         return (predictedMove);
+        //     }
+        //     else // only B is active, A is not active
+        //     {
+        //         maxmove = maxB;
+        //         energy = energyB;
+        //         predictedMove = ansB;
+
+        //         return (predictedMove);
+        //     }
+        // }
+        // else  // only A is active
+        // {
+        //     maxmove = maxA;
+        //     energy = energyA;
+        //     return ansA;
+        // }
+        // maxmove = 0.0;
+        // return ansA;
 
 
     }
