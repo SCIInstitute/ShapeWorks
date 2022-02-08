@@ -95,6 +95,11 @@ public:
     this->m_PointsUpdate = points_update;
   }
 
+  void SetUserInverseCovariance(std::shared_ptr<vnl_matrix<double>> user_inverse_covariance)
+  {
+    this->m_UserInverseCovariance = user_inverse_covariance;
+  }
+
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
@@ -165,6 +170,7 @@ public:
     typename ParticleEnsembleEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleEntropyFunction<VDimension>::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_UserInverseCovariance = this->m_UserInverseCovariance;
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
@@ -203,9 +209,10 @@ protected:
   void operator=(const ParticleEnsembleEntropyFunction &);
   ParticleEnsembleEntropyFunction(const ParticleEnsembleEntropyFunction &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
-
+  std::shared_ptr<vnl_matrix_type> m_UserInverseCovariance;
   virtual void ComputeCovarianceMatrix();
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
+  
   double m_MinimumVariance;
   double m_MinimumEigenValue;
   double m_CurrentEnergy;

@@ -81,6 +81,15 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
 //        pinvMat = (V * invLambda) * V.transpose();
 //        m_InverseCovMatrix = (U * invLambda) * U.transpose();
+        
+        if (m_UserInverseCovariance->empty())
+        {
+        m_InverseCovMatrix = m_UserInverseCovariance;
+        }    
+
+        else
+        {
+
 
         gramMat = points_minus_mean.transpose()* points_minus_mean;
 
@@ -100,6 +109,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         const auto rhs = invLambda * projMat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
         m_InverseCovMatrix->set_size(num_dims, num_dims);
         Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+        }
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;

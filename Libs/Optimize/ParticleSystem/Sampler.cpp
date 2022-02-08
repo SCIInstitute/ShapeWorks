@@ -46,16 +46,21 @@ Sampler::Sampler()
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   m_EnsembleEntropyFunction->SetPointsUpdate( m_PointsUpdate);
+  // m_EnsembleEntropyFunction->SetUserInverseCovariance(m_UserInverseCovariance);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleRegressionEntropyFunction->SetPointsUpdate(m_PointsUpdate);
+  // m_EnsembleRegressionEntropyFunction->SetUserInverseCovariance(m_UserInverseCovariance);
+
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetPointsUpdate( m_PointsUpdate);
+  // m_EnsembleMixedEffectsEntropyFunction->SetUserInverseCovariance(m_UserInverseCovariance);
 
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetPointsUpdate( m_PointsUpdate);
-
+  m_MeshBasedGeneralEntropyGradientFunction->SetUserInverseCovariance(m_UserInverseCovariance);
+  
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
@@ -420,6 +425,10 @@ std::shared_ptr<vnl_matrix<double>> Sampler::GetCorrespondencePointsUpdate()
   return this->m_PointsUpdate;
 }
 
+std::shared_ptr<vnl_matrix<double>> Sampler::GetUserInverseCovarianceMatrix()
+{
+  return this->m_UserInverseCovariance;
+}
 
 bool Sampler::initialize_ffcs(size_t dom)
 {

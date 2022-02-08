@@ -448,6 +448,7 @@ public:
   }
 
   std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
+  std::shared_ptr<vnl_matrix<double>> GetUserInverseCovarianceMatrix();
 
 protected:
 
@@ -522,6 +523,7 @@ protected:
 
 
   std::shared_ptr<vnl_matrix<double>> m_PointsUpdate = std::make_shared<vnl_matrix<double>>(10, 10);
+  std::shared_ptr<vnl_matrix<double>> m_UserInverseCovariance = std::make_shared<vnl_matrix<double>>(10,10);
 
   bool initialize_ffcs(size_t dom);
 
