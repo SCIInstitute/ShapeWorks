@@ -95,9 +95,9 @@ public:
     this->m_PointsUpdate = points_update;
   }
 
-  void SetUserInverseCovariance(std::shared_ptr<vnl_matrix<double>> user_inverse_covariance)
+  void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance)
   {
-    this->m_UserInverseCovariance = user_inverse_covariance;
+    this->m_InputCovariance = user_input_covariance;
   }
 
   /** Called before each iteration of a solver. */
@@ -170,7 +170,7 @@ public:
     typename ParticleEnsembleEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleEntropyFunction<VDimension>::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
-    copy->m_UserInverseCovariance = this->m_UserInverseCovariance;
+    copy->m_InputCovariance = this->m_InverseCovMatrix;
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
@@ -182,7 +182,7 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
-
+    
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
@@ -209,7 +209,7 @@ protected:
   void operator=(const ParticleEnsembleEntropyFunction &);
   ParticleEnsembleEntropyFunction(const ParticleEnsembleEntropyFunction &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
-  std::shared_ptr<vnl_matrix_type> m_UserInverseCovariance;
+  std::shared_ptr<vnl_matrix_type> m_InputCovariance;
   virtual void ComputeCovarianceMatrix();
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
   

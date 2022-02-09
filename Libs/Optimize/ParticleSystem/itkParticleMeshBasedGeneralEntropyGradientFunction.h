@@ -67,9 +67,9 @@ public:
       this->m_PointsUpdate = points_update;
     }
 
-    void SetUserInverseCovariance(std::shared_ptr<vnl_matrix<double>> user_inverse_covariance)
+    void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance)
     {
-        this->m_UserInverseCovariance = user_inverse_covariance;
+        this->m_InputCovariance = user_input_covariance;
     }
 
   /** The first argument is a pointer to the particle system.  The second
@@ -205,7 +205,7 @@ public:
         copy->m_MinimumVariance = this->m_MinimumVariance;
         copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
         copy->m_PointsUpdate = this->m_PointsUpdate;
-        copy->m_UserInverseCovariance = this->m_UserInverseCovariance;
+        copy->m_InputCovariance = this->m_InputCovariance;
         copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
         copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
         copy->m_DomainsPerShape = this->m_DomainsPerShape;
@@ -245,10 +245,10 @@ protected:
 
     typename ShapeDataType::Pointer m_ShapeData;
     typename ShapeGradientType::Pointer m_ShapeGradient;
-    std::shared_ptr<vnl_matrix_type> m_UserInverseCovariance;
+    std::shared_ptr<vnl_matrix_type> m_InputCovariance;
     virtual void ComputeUpdates(const ParticleSystemType *c);
     std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
-    
+
     double m_MinimumVariance;
     double m_MinimumEigenValue;
     //  double m_MinimumVarianceBase;

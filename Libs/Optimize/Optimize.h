@@ -288,9 +288,9 @@ public:
   //! Set the correspondence update matrix
   void SetCorrespondenceUpdateMatrix(MatrixContainer matrix);
 
-  //! Set Inverse Covariance Matrix
-  void SetInverseCovarianceMatrix(MatrixContainer matrix);
-  
+  //! Set Covariance Matrix
+  void SetInputCovarianceMatrix(MatrixContainer matrix);
+
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 
