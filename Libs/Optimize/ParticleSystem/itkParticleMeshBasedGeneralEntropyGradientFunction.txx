@@ -82,9 +82,15 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //        pinvMat = (V * invLambda) * V.transpose();
 //        m_InverseCovMatrix = (U * invLambda) * U.transpose();
         
-        if (m_UserInverseCovariance->empty())
+        if (!m_UserInverseCovariance->empty())
         {
-        m_InverseCovMatrix = m_UserInverseCovariance;
+        std::cout << "Setting inverse covariance sw" << std::endl;
+        m_InverseCovMatrix->set_size(num_dims,num_dims);
+        for (int r=0; r < num_dims; r++){
+            for (int c=0; c<num_dims; c++){
+            m_InverseCovMatrix->put(r,c,(*m_UserInverseCovariance)(r,c));
+            }
+          }
         }    
 
         else

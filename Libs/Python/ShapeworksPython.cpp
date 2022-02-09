@@ -1476,6 +1476,13 @@ PYBIND11_MODULE(shapeworks_py, m)
           }
      )
 
+  .def("SetInverseCovarianceMatrix",
+     [](Optimize *opt, Eigen::MatrixXd inverseCovariance){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = inverseCovariance;
+          opt->SetInverseCovarianceMatrix(container);
+     })
+
   .def("GetOptimizing",
        &Optimize::GetOptimizing)
 
@@ -1485,6 +1492,10 @@ PYBIND11_MODULE(shapeworks_py, m)
             return container.matrix_;
       }
       )
+  .def("SetVerbosity",
+      [](Optimize *opt,int verbosity_level){
+          opt->SetVerbosity(verbosity_level);
+      })
   ;
 
 } // PYBIND11_MODULE(shapeworks_py)
