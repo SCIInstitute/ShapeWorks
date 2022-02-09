@@ -1,4 +1,5 @@
 #include <Visualization/Lightbox.h>
+
 #include <Visualization/StudioInteractorStyle.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
@@ -20,8 +21,6 @@ void StudioInteractorStyle::OnLeftButtonDown() {
     this->lightbox_->handle_pick(clickPos, true, true);
     return;
   }
-
-  std::cerr << "regular left button down\n";
 
   // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();

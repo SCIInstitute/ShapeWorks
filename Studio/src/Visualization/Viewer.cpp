@@ -465,6 +465,17 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPoints> Viewer::get_glyph_points() { return glyph_points_; }
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
+  int alignment_domain = visualizer_->get_alignment_domain();
+
+  auto transform = shape_->get_alignment(alignment_domain);
+  return transform;
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
@@ -507,6 +518,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   } else {
     loading_displayed_ = false;
     viewer_ready_ = true;
+    update_points();
 
     number_of_domains_ = meshes_.meshes().size();
     initialize_surfaces();
@@ -713,23 +725,26 @@ void Viewer::update_points() {
     glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
     glyph_points_->Reset();
-    glyph_points_->SetNumberOfPoints(num_points);
+    //glyph_points_->SetNumberOfPoints(num_points);
 
     scalars->Reset();
-    scalars->SetNumberOfTuples(num_points);
+    //scalars->SetNumberOfTuples(num_points);
 
     unsigned int idx = 0;
     for (int i = 0; i < num_points; i++) {
-      if (scalar_values.size() > i) {
-        scalars->InsertValue(i, scalar_values[i]);
-      } else {
-        scalars->InsertValue(i, i);
-      }
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      glyph_points_->InsertPoint(i, x, y, z);
+      if (slice_view_.should_point_show(x,y,z)) {
+
+        if (scalar_values.size() > i) {
+          scalars->InsertNextValue(scalar_values[i]);
+        } else {
+          scalars->InsertNextValue(i);
+        }
+        glyph_points_->InsertNextPoint(x, y, z);
+      }
     }
   } else {
     glyph_points_->Reset();
@@ -825,6 +840,9 @@ void Viewer::update_image_volume() {
   if (meshes_.valid()) {
     slice_view_.set_mesh(meshes_.meshes()[0]->get_poly_data());
   }
+
+  slice_view_.update_particles();
+
   auto image_volume_name = session_->get_image_name();
   if (image_volume_name == current_image_name_) {
     return;
@@ -838,6 +856,7 @@ void Viewer::update_image_volume() {
   }
   slice_view_.update_renderer();
   slice_view_.update_camera();
+  update_points();
 }
 
 //-----------------------------------------------------------------------------

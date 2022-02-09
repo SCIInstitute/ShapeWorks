@@ -122,6 +122,10 @@ class Viewer {
 
   void update_image_volume();
 
+  vtkSmartPointer<vtkPoints> get_glyph_points();
+
+  vtkSmartPointer<vtkTransform> get_alignment_transform();
+
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -203,6 +207,7 @@ class Viewer {
   int number_of_domains_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
+
   QSharedPointer<Session> session_;
 
   std::string current_image_name_;

@@ -377,16 +377,20 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
     if (new_mesh) {
       mesh_group.set_mesh(i, new_mesh);
 
-      // generate a basic centering transform
-      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(new_mesh->get_poly_data());
-      com->Update();
-      double center[3];
-      com->GetCenter(center);
+      if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
+        STUDIO_SHOW_ERROR("Error: Mesh contained no points: " + QString::fromStdString(filenames[i]));
+      } else {
+        // generate a basic centering transform
+        auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+        com->SetInputData(new_mesh->get_poly_data());
+        com->Update();
+        double center[3];
+        com->GetCenter(center);
 
-      if (save_transform && i == 0) {  // only store for first domain
-        this->transform_->Identity();
-        this->transform_->Translate(-center[0], -center[1], -center[2]);
+        if (save_transform && i == 0) {  // only store for first domain
+          this->transform_->Identity();
+          this->transform_->Translate(-center[0], -center[1], -center[2]);
+        }
       }
     }
   }

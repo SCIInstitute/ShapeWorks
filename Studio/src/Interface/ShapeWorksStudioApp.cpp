@@ -66,6 +66,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::handle_message);
   connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error, this,
           &ShapeWorksStudioApp::handle_error);
+  connect(&(StudioLog::Instance()), &StudioLog::error, this, &ShapeWorksStudioApp::handle_error);
 
   // default hide
   ui_->feature_widget->hide();
