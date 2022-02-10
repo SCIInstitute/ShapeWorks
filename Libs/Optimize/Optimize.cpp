@@ -355,6 +355,7 @@ Optimize::~Optimize()
 void Optimize::SetVerbosity(int verbosity_level)
 {
   this->m_verbosity_level = verbosity_level;
+  this->m_sampler->SetVerbosity(this->m_verbosity_level);
 }
 
 //---------------------------------------------------------------------------

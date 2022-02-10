@@ -5,7 +5,7 @@ import statsmodels.stats.multitest as multi
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
-
+from scipy import stats
 '''
 This function calculates the p-values per correspondence point for the group difference.
 Input are:
@@ -65,3 +65,102 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
         r, pval = multi.fdrcorrection(pvalues_matrix[particle_id, :], alpha=0.05)
         corrected_pvalue_matrix[particle_id, 0] = np.mean(pval)
     return corrected_pvalue_matrix
+
+def get_estimate_dof(data):
+    N,d = data.shape 
+    dof = []
+    for i in range(d):
+        dof.append(stats.t.fit(data[:,i])[2])
+    return np.mean(np.array(dof))
+
+
+def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,verbose=False):
+    N,d = data.shape
+    dof = get_estimate_dof(data) 
+    
+    nu = torch.Tensor([dof])
+    mu = torch.Tensor([np.mean(data,axis=0)]).reshape((1,-1))
+    W = torch.rand(d,latent_dim)
+    sigma2 = torch.Tensor([1])
+    log_un = torch.ones(N)*2
+
+    data = torch.from_numpy(data).float()
+    data.requires_grad = False
+    nu.requires_grad = True 
+    mu.requires_grad = True
+    W.requires_grad = True
+    sigma2.requires_grad = True
+    log_un.requires_grad = True
+
+    un = torch.exp(log_un)
+    eps = 1e-5
+    
+    tn = torch.ones((N,latent_dim,1 ))
+    tn.requires_grad = False
+    loss_array = []
+    if(d==2):
+        alpha0 = 0
+        opt = torch.optim.SGD([W,sigma2,log_un,mu], lr=lr)
+        opt_nu = torch.optim.SGD([nu],lr=1e-4)
+        rate = 1
+    else:
+        alpha0 = 100
+        alpha_end = 0.1
+        rate = -1*iters/np.log(alpha_end)
+        opt = torch.optim.SGD([W,sigma2,log_un,mu], lr=lr)
+        opt_nu = torch.optim.SGD([nu],lr=1e-3)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt_nu, 'min')
+    
+    for ite in range(iters):
+        alpha = alpha0*np.exp(-ite/rate)
+
+        un = torch.exp(log_un)
+
+        tn = torch.bmm(torch.mm(torch.pinverse(torch.mm(W.t().clone(),W.clone()) + \
+             sigma2*torch.eye(latent_dim) + alpha*torch.ones(latent_dim,latent_dim)),W.t().clone()).repeat(N,1,1),torch.unsqueeze(torch.sub(data,mu),2).clone())
+
+        W2 = W.t().clone().repeat(N,1,1)
+        
+        B = torch.unsqueeze(torch.sub(data,mu),2).clone()
+
+        term1 = N*(d/2) * torch.log(sigma2 + eps) 
+
+        new_data = torch.unsqueeze(torch.sub(data,mu),2)
+        
+        term2 = ((0.5/sigma2) * torch.sum(un*torch.bmm(torch.transpose(new_data,1,2),new_data)[:,0,0]))[0]
+
+        term3_1 = ((1/sigma2)*un.view(-1,1,1))*tn
+        
+        term3_2 = torch.bmm(W2,B)
+        
+        term3 = (torch.bmm(torch.transpose(term3_1,1,2),term3_2)).sum()
+
+        term4 = (1/sigma2)* (torch.diagonal(torch.bmm(torch.mm(W.t().clone(),W).repeat(N,1,1),torch.bmm(un.view(-1,1,1)*tn,torch.transpose(tn,1,2))), dim1=-2, dim2=-1).sum(-1) ).sum()
+        
+        term5 = N*torch.sum((nu/2)*torch.log((nu/2)+eps) - (nu/2).lgamma())
+        
+        term6 = torch.sum((0.5*nu - 1)*torch.log(un+eps) - (nu/2)*un)
+
+        loss = torch.stack([term1[0] ,term2, -1*term3,term4[0] ,term5 , term6 ]).sum()
+        loss = loss/(N*d)
+
+        opt.zero_grad()
+        opt_nu.zero_grad()
+        loss.backward(retain_graph=True)
+        opt.step()
+        opt_nu.step()
+        loss_array.append(loss.detach().numpy())
+        scheduler.step(loss)
+        if(verbose):
+            print("loss value ", loss)
+            print("nu,W,sigma2,mean")
+            print(nu,W,sigma2,mu)
+
+
+        matrix = np.matmul(W.T,W)
+        eigen_values, rotation_matrix = np.linalg.eig(matrix)
+        eigen_vector_W = np.matmul(W,rotation_matrix)
+        eigen_values_W 
+    return nu,W,sigma2,mu,un,loss_array
+
+
