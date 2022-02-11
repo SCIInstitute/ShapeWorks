@@ -276,7 +276,6 @@ public:
     }
 
     m_CorrespondenceMode = mode;
-    std::cout << "Linking set to mlpca ensemble entropy" << std::endl;
 
   }
 

@@ -492,7 +492,7 @@ public:
         double maxB = 0.0;
         double energyB = 0.0;
         VectorType ansB; ansB.fill(0.0);
-        std::cout << "Evaluating Q In Between Subspace" << std::endl;
+        // std::cout << "Evaluating Q In Between Subspace" << std::endl;
 
         const_cast<ParticleDualVectorFunction *>(this)->m_CounterBetween = m_CounterBetween + 1.0;
 
@@ -502,7 +502,6 @@ public:
         {   
             // std::cout << " inside B between eval " << std::endl;
             const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-            // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
             ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
             // std::cout << " inside B between eval done" << std::endl;
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
@@ -531,94 +530,6 @@ public:
             return (predictedMove);  
         }
         return (predictedMove);
-
-        /* Below implementation is when Q_between = A(surface energy) + B(between subspace correspondence)*/
-        // double maxA = 0.0;
-        // double maxB = 0.0;
-        // double energyA = 0.0;
-        // double energyB = 0.0;
-        // VectorType ansA; ansA.fill(0.0);
-        // VectorType ansB; ansB.fill(0.0);
-        // std::cout << "evaluating between dual vec " << std::endl;
-
-        // const_cast<ParticleDualVectorFunction *>(this)->m_CounterBetween = m_CounterBetween + 1.0;
-
-        // // evaluate individual functions: A = surface energy, B = correspondence
-        // if (m_AOn == true)
-        // {
-        //     // std::cout << " inside A within " << std::endl;
-        //     ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
-        //     // std::cout << " inside A within eval done" << std::endl;
-
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
-        // }
-
-        // if (m_BOn == true)
-        // {   
-        //     // std::cout << " inside B within eval " << std::endl;
-        //     const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>* mlpca_function_b = dynamic_cast <const itk::ParticleEnsembleMlpcaEntropyFunction<VDimension>*> (m_FunctionB.GetPointer());
-        //     // typename MlpcaCorrespondenceFunctionType::Pointer* mlpca_function_b = dynamic_cast<typename MlpcaCorrespondenceFunctionType::Pointer*>(m_FunctionB);
-        //     ansB = mlpca_function_b->EvaluateWithinResiduals(idx, d, system, maxB, energyB);
-        //     // std::cout << " inside B within eval done" << std::endl;
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenGradMagB = m_AverageBetweenGradMagB + ansB.magnitude();
-        //     const_cast<ParticleDualVectorFunction *>(this)->m_AverageBetweenEnergyB = m_AverageBetweenEnergyB + energyB;
-        //     std::cout << " BETWEEN Grad Mag " << m_AverageBetweenGradMagB << " Energy " << m_AverageBetweenEnergyB << std::endl;
-        // }
-
-        // if( m_RelativeEnergyScaling == 0.0)
-        // {
-        //     energyB = 0.0;
-        //     ansB.fill(0.0);
-        // }
-
-        // if (m_RelativeGradientScaling == 0.0)
-        // {
-        //     maxB = 0.0;
-        //     ansB.fill(0.0);
-        // }
-
-        // // compute final energy, maxmove and predicted move based on current configuration
-        // VectorType predictedMove; predictedMove.fill(0.0);
-        // if (m_BOn == true)
-        // {
-        //     if (m_AOn == true)  // both A and B are active
-        //     {
-        //         if (maxB > maxA)
-        //         {
-        //             maxmove = maxB;
-        //         }
-        //         else
-        //         {
-        //             maxmove = maxA;
-        //         }
-
-        //         energy = energyA + m_RelativeEnergyScaling * energyB;
-
-        //         maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
-
-        //         predictedMove = ansA + m_RelativeGradientScaling * ansB;
-
-        //         return (predictedMove);
-        //     }
-        //     else // only B is active, A is not active
-        //     {
-        //         maxmove = maxB;
-        //         energy = energyB;
-        //         predictedMove = ansB;
-
-        //         return (predictedMove);
-        //     }
-        // }
-        // else  // only A is active
-        // {
-        //     maxmove = maxA;
-        //     energy = energyA;
-        //     return ansA;
-        // }
-        // maxmove = 0.0;
-        // return ansA;
-
 
     }
 
@@ -728,6 +639,7 @@ public:
     {
         return m_RelativeEnergyScaling;
     }
+    // TODO: Specify it differently for within and between
 
     void SetRelativeGradientScaling(double r)
     {

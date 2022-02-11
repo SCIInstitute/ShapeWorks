@@ -1238,7 +1238,7 @@ void Optimize::ComputeEnergyAfterIteration()
         sampEnergy +=
           m_sampler->GetLinkingFunction()->EnergyA(j, i, m_sampler->GetParticleSystem());
       }
-      if (m_sampler->GetCorrespondenceMode() == shapeworks::CorrespondenceMode::MeanEnergy) {
+      if (m_sampler->GetCorrespondenceMode() == shapeworks::CorrespondenceMode::MeanEnergy) { //When not using Shape Statistics in Initialization
         corrEnergy +=
           m_sampler->GetLinkingFunction()->EnergyB(j, i, m_sampler->GetParticleSystem());
       }

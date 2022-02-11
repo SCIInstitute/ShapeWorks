@@ -595,13 +595,14 @@ namespace itk
 
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
+    std::cout << "numdomains is " << numdomains << std::endl;
 
     unsigned int counter = 0;
 
     double maxchange_within = 0.0;
     double maxchange_between = 0.0;
-    while (m_StopOptimization == false) // iterations loop
-    {
+    while (m_StopOptimization == false) // Optimization Iterations Main loop
+    {//START OPTIMIZATION
 
       double dampening = 1;
       int startDampening = m_MaximumNumberOfIterations / 2;
@@ -616,11 +617,11 @@ namespace itk
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
-        if (counter % global_iteration == 0)
-            m_GradientFunction->BeforeIteration(); // Compute the MLPCA Params before each iteration
-        counter++;
+      if (counter % global_iteration == 0)
+          m_GradientFunction->BeforeIteration(); // Compute the MLPCA Params, Covariance Matrices over here
+      counter++;
 
-        // Iterate over each domain
+      // Iterate over each domain
       // 1. Optimize in Parallel for within
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
@@ -665,7 +666,6 @@ namespace itk
             // maximumUpdateAllowed is set based on some fraction of the distance between particles
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed_within;
-            // VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
             VectorType original_within_gradient = localGradientFunction->EvaluateWithin(k, dom, m_ParticleSystem, maximumUpdateAllowed_within, within_energy);
             // std::cout << " Orig Within grad done " << std::endl;
 
@@ -678,8 +678,7 @@ namespace itk
             double newenergy_within, within_gradmag;
             while (true) {
               // Step A scale the projected gradient by the current time step
-              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeStepsWithin[dom][k]; // TODO: check time steps proper usage
-              // std::cout << "Within new gradient done " << std::endl;
+              VectorType within_gradient = original_within_gradient_projectedOntoTangentSpace * m_TimeStepsWithin[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
@@ -692,21 +691,16 @@ namespace itk
               if (within_gradmag > maximumUpdateAllowed_within) {
                 within_gradient = within_gradient * maximumUpdateAllowed_within / within_gradmag;
                 within_gradmag = within_gradient.magnitude();
-                // std::cout << " within grad mag value changed" << std::endl;
-
               }
 
               // Step D compute the new point position
               PointType newpoint_after_within_update = domain->UpdateParticlePosition(pt, k, within_gradient);
-              // std::cout << " New point after within update done" << std::endl;
 
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint_after_within_update, k, dom);
-              // std::cout << " Position set" << std::endl;
 
               // Step G compute the new energy of the particle system
               newenergy_within = localGradientFunction->EnergyWithin(k, dom, m_ParticleSystem);
-              // std::cout << " Updated WITHIN ENERGY _____ " << std::endl;
 
 
               if (newenergy_within < within_energy) // good move, increase timestep for next time
@@ -732,14 +726,13 @@ namespace itk
                 }
               }
             } // end while(true)
-            // std::cout << " Within while done" << std::endl;
           } // for each particle
         }// for each domain
-      });
+      });//end within optimization
 
       // 2. Optimize in Parallel for Between
       if(flag_b){
-      m_GradientFunction->BeforeIteration(); // Compute the MLPCA params before each iteration
+      m_GradientFunction->BeforeIteration(); // Update the MLPCA params, covariance matrices to reflect within part
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {
@@ -748,21 +741,14 @@ namespace itk
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
-            // note that this is really a 'continue' statement for the loop, but using TBB,
-            // we are in an anonymous function, not a loop, so return is equivalent to continue here
             return;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
-
-          // must clone this as we are in a thread and the gradient function is not thread-safe
           localGradientFunction_ = m_GradientFunction->Clone();
-          // typename DualGradientFunctionType::Pointer localGradientFunction = dynamic_cast<typename DualGradientFunctionType::Pointer> (localGradientFunction_.GetPointer());
-
           itk::ParticleDualVectorFunction<VDimension>* localGradientFunction = dynamic_cast <itk::ParticleDualVectorFunction<VDimension>*> (localGradientFunction_.GetPointer());
-
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
@@ -776,10 +762,8 @@ namespace itk
             // std::cout << "------optimizing BETWEEN now-----" << std::endl;
             // Compute gradient update.
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
-            // std::cout << "Before Evaluated Between done" << std::endl;
 
             {
-              // Ensure this check to avoid repeating the surface energy calculation when correspondence is turned off
               // std::cout << "------optimizing between now-----" << std::endl;
               double between_energy = 0.0;
               double maximumUpdateAllowed_between;
@@ -814,7 +798,7 @@ namespace itk
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint_after_between_update, k, dom);
 
-              // Step G compute the new energy of the particle system
+              // Step G compute the new Between energy of the particle system
               newenergy_between = localGradientFunction->EnergyBetween(k, dom, m_ParticleSystem);
 
 
@@ -845,7 +829,7 @@ namespace itk
             // end between optimize
           } // for each particle
         }// for each domain
-      });}
+      });}//end Between optimization
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration(); // recompute params 
@@ -874,7 +858,7 @@ namespace itk
       // Check for convergence.  Optimization is considered to have converged if
       // max number of iterations is reached or maximum distance moved by any
       // particle is less than the specified precision.
-      if (maxchange_within + maxchange_between < m_Tolerance) { //TODO:ensure proper usage here
+      if (maxchange_within + maxchange_between < m_Tolerance) { //TODO:ensure proper usage of tolerance here, and how does it affect the method?
         std::cerr << "Iteration " << m_NumberOfIterations << " maxchange_within = " << maxchange_within << "maxchange_between "<< maxchange_between << std::endl;
         m_StopOptimization = true;
       }

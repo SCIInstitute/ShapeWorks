@@ -233,9 +233,6 @@ public:
     copy->m_grand_mean = this->m_grand_mean;
     copy->m_super_matrix = this->m_super_matrix;
 
-    copy->m_within_space_mean = this->m_within_space_mean;
-    copy->m_between_space_mean = this->m_between_space_mean;
-
 
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
@@ -275,8 +272,13 @@ protected:
     m_InverseCovMatricesAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
     m_points_meanAllBetween = std::make_shared<std::vector<vnl_matrix_type>>();
 
-    m_within_space_mean = std::make_shared<std::vector<vnl_matrix_type>>();
-    m_between_space_mean =  std::make_shared<vnl_matrix_type>(10, 10);
+    log_energy_fileA = std::make_shared<std::ofstream>() ;
+    log_within_energy_fileB = std::make_shared<std::ofstream>();
+    log_between_energy_fileB = std::make_shared<std::ofstream>();
+    
+    log_energy_fileA->open('EnergyA.txt');
+    log_within_energy_fileB->open('EnergyWithinB.txt');
+    log_between_energy_fileB->open('EnergyBetweenB.txt');
 
   }
   virtual ~ParticleEnsembleMlpcaEntropyFunction() {}
@@ -327,11 +329,6 @@ protected:
 
   std::shared_ptr<std::vector<vnl_matrix_type>> m_within_scores;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_between_scores; // each idx points to each organ params
-
-  std::shared_ptr<std::vector<vnl_matrix_type>> m_within_space_mean;
-  std::shared_ptr<vnl_matrix_type> m_between_space_mean;
-
-
   std::shared_ptr<vnl_matrix_type> m_grand_mean;
 };
 
