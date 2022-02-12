@@ -91,9 +91,9 @@ public:
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
-  StudioParticles get_rppca_shape_points(int mode, double value);
+  // StudioParticles get_rppca_shape_points(int mode, double value);
   ShapeHandle get_mode_shape(int mode, double value);
-  ShapeHandle get_rppca_mode_shape(int mode, double value);
+  // ShapeHandle get_rppca_mode_shape(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
