@@ -74,7 +74,7 @@ def get_estimate_dof(data):
     return np.mean(np.array(dof))
 
 
-def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,verbose=False):
+def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1):
     N,d = data.shape
     dof = get_estimate_dof(data) 
     
@@ -104,9 +104,7 @@ def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,verbose=False):
         opt_nu = torch.optim.SGD([nu],lr=1e-4)
         rate = 1
     else:
-        alpha0 = 100
-        alpha_end = 0.1
-        rate = -1*iters/np.log(alpha_end)
+        rate = -1*iters/np.log(alpha1)
         opt = torch.optim.SGD([W,sigma2,log_un,mu], lr=lr)
         opt_nu = torch.optim.SGD([nu],lr=1e-3)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt_nu, 'min')
@@ -151,16 +149,11 @@ def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,verbose=False):
         opt_nu.step()
         loss_array.append(loss.detach().numpy())
         scheduler.step(loss)
-        if(verbose):
-            print("loss value ", loss)
-            print("nu,W,sigma2,mean")
-            print(nu,W,sigma2,mu)
-
 
         matrix = np.matmul(W.T,W)
         eigen_values, rotation_matrix = np.linalg.eig(matrix)
         eigen_vector_W = np.matmul(W,rotation_matrix)
-        eigen_values_W 
-    return nu,W,sigma2,mu,un,loss_array
+        eigen_values_W = eigen_values/ (np.sum(eigen_values) + sigma2)
+    return eigen_values_W,eigen_vector_W
 
 
