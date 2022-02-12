@@ -87,7 +87,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->metrics_open_button->setChecked(false);
 
   /// TODO nothing there yet (regression tab)
-  this->ui_->tabWidget->removeTab(3);
+  this->ui_->tabWidget->removeTab(4);
 
   this->ui_->graph_->set_y_label("Explained Variance");
 
