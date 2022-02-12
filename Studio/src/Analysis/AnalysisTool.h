@@ -64,17 +64,25 @@ public:
 
   int getPCAMode();
 
+  int getRPPCAMode();
+
   double get_group_value();
 
   double get_pca_value();
 
+  double get_rppca_value();
+
   bool pcaAnimate();
+
+  bool rppcaAnimate();
 
   int get_sample_number();
 
   bool compute_stats();
 
   void updateSlider();
+
+  void updateRPPCASlider();
 
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
@@ -83,7 +91,9 @@ public:
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
+  StudioParticles get_rppca_shape_points(int mode, double value);
   ShapeHandle get_mode_shape(int mode, double value);
+  ShapeHandle get_rppca_mode_shape(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -98,6 +108,7 @@ public:
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
+  static const std::string MODE_RPPCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
@@ -121,6 +132,12 @@ public Q_SLOTS:
 
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
+
+  //RPPCA
+  void on_rppcaSlider_valueChanged();
+  void on_rppcaModeSpinBox_valueChanged(int i);
+  void handle_rppca_animate_state_changed();
+  void handle_rppca_timer();
 
   void handle_group_animate_state_changed();
   void handle_group_timer();
@@ -164,6 +181,7 @@ signals:
 
   void update_view();
   void pca_update();
+  void rppca_update();
   void progress(int);
   void message(QString);
   void error(QString);
@@ -179,6 +197,7 @@ private:
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
+  void rppca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
 
@@ -213,6 +232,9 @@ private:
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
+
+  bool rppca_animate_direction_ = true;
+  QTimer rppca_animate_timer_;
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
