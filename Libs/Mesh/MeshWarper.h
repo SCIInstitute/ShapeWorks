@@ -112,7 +112,6 @@ private:
   bool landmarks_vertices_computed;
 
   std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Mean mesh to the landmarks id 
-  std::vector<int> landmarks_ids; // for each landmark id, store vertex id 
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh

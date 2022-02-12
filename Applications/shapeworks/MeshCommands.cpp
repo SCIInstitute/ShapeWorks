@@ -1445,7 +1445,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
 void WarpMeshWithLandmarks::buildParser()
 {
   const std::string prog = "warp-mesh-with-landmarks";
-  const std::string desc = "warps a mesh given reference and target particles";
+  const std::string desc = "warps a mesh given reference mesh, landmarks particles wrt reference and target particles";
   parser.prog(prog).description(desc);
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
   parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
@@ -1511,9 +1511,9 @@ bool WarpMeshWithLandmarks::execute(const optparse::Values &options, SharedComma
 
     for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
       filenm = targetPointsFilenames[i];
-      warped_landmarks_filename = "warped_landmarks_" + targetPointsFilenames[i];
+      warped_landmarks_filename = targetPointsFilenames[i];
       filenm.replace(static_cast<int>(filenm.rfind('.')) + 1, filenm.length(), "vtk");
-      warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')) + 1, warped_landmarks_filename.length(), "particles");
+      warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')), warped_landmarks_filename.length(), "_warped_landmarks.particles");
       if (saveDir.length() > 0) {
         int idx = static_cast<int>(filenm.rfind('/'));
         filenm.replace(0, idx, saveDir);
@@ -1525,21 +1525,20 @@ bool WarpMeshWithLandmarks::execute(const optparse::Values &options, SharedComma
       Eigen::MatrixXd movingPoints = allPts.col(i);
       movingPoints.resize(3, numParticles);
       movingPoints.transposeInPlace();
-      Eigen::MatrixXd warped_landmarks_ = Eigen::MatrixXd::Constant(numLandmarks, 3, 0);
-      Mesh output = warper.build_mesh(movingPoints, warped_landmarks_);
-
-      Eigen::VectorXd warped_landmarks = Eigen::Map<Eigen::VectorXd>((double*) warped_landmarks_.data(), warped_landmarks_.size());
+      Eigen::MatrixXd warped_landmarks = Eigen::MatrixXd::Constant(numLandmarks, 3, 0);
+      Mesh output = warper.build_mesh(movingPoints, warped_landmarks);      
+      // std::cout << warped_landmarks << std::endl;
       output.write(filenm);
-
       std::ofstream out(warped_landmarks_filename);
       if (!out) {
         std::cerr << "Error in writing warped Landmarks \n";
         return false;
       }
       size_t newline = 1;
-      for (int i = 0; i < warped_landmarks.size(); i++) {
-        out << warped_landmarks[i] << (newline % 3 == 0 ? "\n" : "    ");
-        newline++;
+      for (int i = 0; i < warped_landmarks.rows(); i++) {
+        for (int j = 0; j < warped_landmarks.cols(); j++){
+          out << warped_landmarks(i, j) << (j % 3 == 0 ? "\n" : "    ");
+        }
       }
       out.close();
       if (out.bad()) {
