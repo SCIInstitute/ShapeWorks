@@ -2,13 +2,14 @@
 
 ## What and Where is the Use Case? 
 
-This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement.
-This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes](../mesh-based/femur.md) use case. Separate statistical tests for differences in correspondence positions are applied to every correspondence index. We use Hotelling $T^2$ metric(nonparametric permutation test) with false discovery rate correction (FDR) for multiple comparisons. This method helps identify and visualize localized regions of significant shape differences.
+This use case demonstrates the functionality of shape statistics tools to perform hypothesis testing of group shape differences. This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes with Cutting Planes](../constraint-based/femur-cutting-planes.md) use case. The data has 21 examples of normal femurs and 5 examples of pathological femurs with cam impingement.
+This use case analyzes the femur shape model obtained from running the [Femur: SSM from Meshes with Cutting Planes](../constraint-based/femur-cutting-planes.md) use case. Separate statistical tests for differences in correspondence positions are applied to every correspondence index. We use Hotelling $T^2$ metric(nonparametric permutation test) with false discovery rate correction (FDR) for multiple comparisons. This method helps identify and visualize localized regions of significant shape differences.
 
 Here are femur samples with their optimized correspondences.
 ![Femur Samples](../../img/use-cases/femur_samples.png)
 
 A brief overview of the analysis:
+
 1. Given a shape model with group IDs, we create the subsets based on the group IDs. 
 2. Since the shape models are in correspondence, we access one particle location at a time and create two vectors.
 x: All particle locations of group 1 at ith location
