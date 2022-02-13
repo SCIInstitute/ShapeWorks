@@ -12,6 +12,7 @@
 #include "itkParticlePositionWriter.h"
 #include "Shapeworks.h"
 #include "ParticleSystem.h"
+#include "RPPCA.h"
 
 /**
  * \class ParticleShapeStatistics
@@ -126,6 +127,8 @@ public:
 
   Eigen::MatrixXd get_group1_matrix();
   Eigen::MatrixXd get_group2_matrix();
+
+  Eigen::MatrixXd getRPPCAMode();
 
 private:
 

@@ -1,7 +1,7 @@
 
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
-
+#include "RPPCA.h"
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 #include <tinyxml.h>
 
@@ -723,6 +723,12 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()
 Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
 {
   return this->m_group_2_matrix;
+}
+
+Eigen::MatrixXd ParticleShapeStatistics::getRPPCAMode()
+{ 
+  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  return shapeworks::RPPCA::ComputeRPPCAMode(ps,progress_callback);
 }
 
 } // shapeworks

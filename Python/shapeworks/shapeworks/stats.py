@@ -154,6 +154,6 @@ def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1):
         eigen_values, rotation_matrix = np.linalg.eig(matrix)
         eigen_vector_W = np.matmul(W,rotation_matrix)
         eigen_values_W = eigen_values/ (np.sum(eigen_values) + sigma2)
-    return eigen_values_W,eigen_vector_W
+    return eigen_values_W,eigen_vector_W,mu,eigen_values
 
 
