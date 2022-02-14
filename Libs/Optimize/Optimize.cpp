@@ -736,7 +736,10 @@ void Optimize::Initialize()
   }
   else {
     // force to mean
-    if ((m_attributes_per_domain.size() > 0 &&
+    if (m_use_mlpca_optimize){
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy);
+    }
+    else if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
@@ -746,7 +749,7 @@ void Optimize::Initialize()
     }
   }
 
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting); // TODO : Chnage for Multiple organs
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
   // Debuggg

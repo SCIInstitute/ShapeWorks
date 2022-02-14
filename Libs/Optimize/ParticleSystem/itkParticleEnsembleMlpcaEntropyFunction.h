@@ -65,25 +65,25 @@ public:
     return 0.0;
   }
   
-  virtual VectorType EvaluateWithinResiduals(unsigned int, unsigned int,
+  virtual VectorType EvaluateFromWithinResiduals(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const;
-  virtual VectorType EvaluateWithinResiduals(unsigned int a,  unsigned int b, 
+  virtual VectorType EvaluateFromWithinResiduals(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
     double e;
-    return this->EvaluateWithinResiduals(a,b,c,d,e);
+    return this->EvaluateFromWithinResiduals(a,b,c,d,e);
   }
   
-  virtual VectorType EvaluateBetweenResiduals(unsigned int, unsigned int,
+  virtual VectorType EvaluateFromBetweenResiduals(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&) const;
-  virtual VectorType EvaluateBetweenResiduals(unsigned int a,  unsigned int b, 
+  virtual VectorType EvaluateFromBetweenResiduals(unsigned int a,  unsigned int b, 
                               const ParticleSystemType *c, double &d) const
   {
     double e;
-    return this->EvaluateBetweenResiduals(a,b,c,d,e);
+    return this->EvaluateFromBetweenResiduals(a,b,c,d,e);
   }
   
-  virtual double EnergyWithinResiduals(unsigned int a, unsigned int b,
+  virtual double EnergyFromWithinResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
     /*
@@ -91,11 +91,11 @@ public:
       which is computed based on the covariance matrix built from within residuals[Y_betweenSubspace = P - grand mean - withinTerms]
     */
     double e, d;
-    this->EvaluateWithinResiduals(a,b,c,d,e);
+    this->EvaluateFromWithinResiduals(a,b,c,d,e);
     return e;
   }
 
-  virtual double EnergyBetweenResiduals(unsigned int a, unsigned int b,
+  virtual double EnergyFromBetweenResiduals(unsigned int a, unsigned int b,
                         const ParticleSystemType *c) const
   {
     /*
@@ -103,7 +103,7 @@ public:
       which is computed based on the covariance matrix built from Between residuals[Y_withinSubspace = P - grand mean - betweenTerms]
     */
     double e, d;
-    this->EvaluateBetweenResiduals(a,b,c,d,e);
+    this->EvaluateFromBetweenResiduals(a,b,c,d,e);
     return e;
   }
   
@@ -117,6 +117,8 @@ public:
   {    
     m_ShapeMatrix = s;
     m_dps = m_ShapeMatrix->GetDomainsPerShape(); 
+    m_MinimumWithinResidualEigenValues->resize(m_dps, 0.0);
+    m_MinimumBetweenResidualEigenValues->resize(m_dps, 0.0)
   }
 
   ShapeMatrixType *GetShapeMatrix()
@@ -134,8 +136,8 @@ public:
     if (m_Counter == 0)
       {
       this->ComputeMlpcaTerms();
-      this->ComputeCovarianceMatricesWithinResiduals();
-      this->ComputeCovarianceMatricesBetweenResiduals();
+      this->ComputeCovarianceMatricesFromWithinResiduals();
+      this->ComputeCovarianceMatricesFromBetweenResiduals();
       }
   }
 
@@ -239,6 +241,11 @@ public:
 
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
+    copy->m_CurrentWithinResidualEnergies = this->m_CurrentWithinResidualEnergies;
+    copy->m_CurrentBetweenResidualEnergies = this->m_CurrentBetweenResidualEnergies;
+    copy->m_MinimumWithinResidualEigenValues = this->m_MinimumWithinResidualEigenValues;
+    copy->m_MinimumBetweenResidualEigenValues = this->m_MinimumBetweenResidualEigenValues;
+
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
   }
@@ -278,6 +285,13 @@ protected:
     m_within_space_mean = std::make_shared<std::vector<vnl_matrix_type>>();
     m_between_space_mean =  std::make_shared<vnl_matrix_type>(10, 10);
 
+    m_CurrentWithinResidualEnergies = std::make_shared<std::vector<double>>();
+    m_CurrentBetweenResidualEnergies = std::make_shared<std::vector<double>>();
+    m_MinimumWithinResidualEigenValues = std::make_shared<std::vector<double>>();
+    m_MinimumBetweenResidualEigenValues = std::make_shared<std::vector<double>>();
+
+
+
   }
   virtual ~ParticleEnsembleMlpcaEntropyFunction() {}
   void operator=(const ParticleEnsembleMlpcaEntropyFunction &);
@@ -286,13 +300,13 @@ protected:
 
   // std::shared_ptr<std::vector<vnl_matrix_type>> m_shape_matrices;
 
-  virtual void ComputeCovarianceMatricesWithinResiduals();
-  virtual void ComputeCovarianceMatricesBetweenResiduals();
+  virtual void ComputeCovarianceMatricesFromWithinResiduals();
+  virtual void ComputeCovarianceMatricesFromBetweenResiduals();
   virtual void ComputeMlpcaTerms();
   virtual void ComputeWithinTerms(std::vector<int>& num_particles, unsigned int& dps, unsigned int& m, unsigned int&n , unsigned int& M, unsigned int& N);
   virtual void ComputeBetweenTerms(std::vector<int>& num_particles, unsigned int& dps, unsigned int& m, unsigned int&n , unsigned int& M, unsigned int& N);
   // std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
-  double m_MinimumVariance;
+  double m_MinimumVariance; // TODO: change for each domain
   // double m_MinimumEigenValue;
   double m_CurrentEnergy;
   bool m_HoldMinimumVariance;
@@ -307,12 +321,18 @@ protected:
   double m_CurrentWithinEnergy;
   double m_CurrentBetweenEnergy;
 
+  std::shared_ptr<std::vector<double>> m_MinimumWithinResidualEigenValues;
+  std::shared_ptr<std::vector<double>> m_MinimumBetweenResidualEigenValues;
+  std::shared_ptr<std::vector<double>> m_CurrentWithinResidualEnergies;
+  std::shared_ptr<std::vector<double>> m_CurrentBetweenResidualEnergies;
+
+
   // std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation
   // std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation
 
-  std::shared_ptr<std::ofstream> log_energy_fileA;
-  std::shared_ptr<std::ofstream> log_within_energy_fileB;
-  std::shared_ptr<std::ofstream> log_between_energy_fileB;
+  // std::shared_ptr<std::ofstream> log_energy_fileA;
+  // std::shared_ptr<std::ofstream> log_within_energy_fileB;
+  // std::shared_ptr<std::ofstream> log_between_energy_fileB;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_InverseCovMatricesAllWithin;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_points_meanAllWithin;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdateAllWithin; // gradient of Cov matrix of all organs

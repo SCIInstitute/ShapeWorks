@@ -271,8 +271,12 @@ public:
       std::cout << "Linking set to mlpca ensemble entropy BEFORE" << std::endl;
       m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
       m_MlpcaBasedEnsembleEntropyFunction->UseEntropy();
-      std::cout << "Linking set to mlpca ensemble entropy 2" << std::endl;
-      // TODO: check correct usage here
+    }
+    else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy) {
+      std::cout << "mode IS --> H " << std::endl;
+      std::cout << "Linking set to mlpca ensemble Mean Energy entropy BEFORE" << std::endl;
+      m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
+      m_MlpcaBasedEnsembleEntropyFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
