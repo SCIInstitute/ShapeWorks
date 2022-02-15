@@ -64,6 +64,9 @@ void SliceView::set_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
   if (poly_data->GetNumberOfCells() == 0) {
     return;
   }
+  if (!is_image_loaded()) {
+    return;
+  }
 
   current_poly_data_ = poly_data;
   auto transform = viewer_->get_image_transform();
