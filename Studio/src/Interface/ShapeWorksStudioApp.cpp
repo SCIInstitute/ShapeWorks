@@ -70,6 +70,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // default hide
   ui_->feature_widget->hide();
+  ui_->image_widget->hide();
   recent_file_actions_.append(ui_->action_recent1);
   recent_file_actions_.append(ui_->action_recent2);
   recent_file_actions_.append(ui_->action_recent3);
@@ -564,7 +565,7 @@ void ShapeWorksStudioApp::update_table() {
   ui_->features->setCurrentText(current_feature);
   ui_->feature_uniform_scale->setChecked(get_feature_uniform_scale());
 
-  /// fill in image combo
+  // fill in image combo
   auto current_image = ui_->image_combo_->currentText();
   ui_->image_combo_->clear();
   ui_->image_combo_->addItem("-none-");
@@ -576,6 +577,8 @@ void ShapeWorksStudioApp::update_table() {
   }
   ui_->image_combo_->setCurrentText(current_image);
   ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
+  ui_->image_widget->setVisible(!image_names.empty());
+
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
