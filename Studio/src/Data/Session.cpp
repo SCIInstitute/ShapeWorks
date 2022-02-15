@@ -182,7 +182,7 @@ bool Session::load_project(QString filename) {
   // clear the project out first
   this->filename_ = QFileInfo(filename).absoluteFilePath();
 
-  if (filename.toLower().endsWith(".xlsx")) {
+  if (filename.endsWith(".xlsx", Qt::CaseInsensitive)) {
     return this->load_xl_project(filename);
   }
 
