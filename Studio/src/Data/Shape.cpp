@@ -484,6 +484,9 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_name) {
+  if (!subject_) {
+    return nullptr;
+  }
   auto filenames = this->subject_->get_feature_filenames();
   if (filenames.find(image_volume_name) != filenames.end()) {
     auto filename = filenames[image_volume_name];
