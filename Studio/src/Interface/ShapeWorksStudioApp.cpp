@@ -1293,8 +1293,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
       return;
     }
   } catch (std::exception& e) {
-    handle_error(e.what());
-    handle_error("Project failed to load");
+    handle_error(QString("Project failed to load: ") + e.what());
     handle_progress(100);
     return;
   }
