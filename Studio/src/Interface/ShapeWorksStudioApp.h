@@ -1,25 +1,24 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QActionGroup>
-#include <QSlider>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QLabel>
-#include <QTimer>
-#include <QCheckBox>
-#include <QProgressBar>
-#include <QElapsedTimer>
-#include <QPointer>
-#include <QErrorMessage>
-
-#include <Interface/LogWindow.h>
 #include <Data/PreferencesWindow.h>
+#include <Interface/LogWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
-
-#include <Eigen/Eigen>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+
+#include <Eigen/Eigen>
+#include <QActionGroup>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
+#include <QElapsedTimer>
+#include <QErrorMessage>
+#include <QLabel>
+#include <QMainWindow>
+#include <QPointer>
+#include <QProgressBar>
+#include <QSlider>
+#include <QSpinBox>
+#include <QTimer>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -43,9 +42,8 @@ class PythonWorker;
  * This class represents the primary ShapeWorksStudio window interface
  */
 class ShapeWorksStudioApp : public QMainWindow {
-Q_OBJECT
-public:
-
+  Q_OBJECT
+ public:
   ShapeWorksStudioApp();
   ~ShapeWorksStudioApp();
 
@@ -54,7 +52,7 @@ public:
   void initialize_vtk();
   void import_files(QStringList file_names);
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   void open_project(QString filename);
 
@@ -131,13 +129,12 @@ public Q_SLOTS:
 
   QSharedPointer<PythonWorker> get_py_worker();
 
-protected:
+ protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
-private:
-
+ private:
   void new_session();
   void update_tool_mode();
   void update_view_mode();
@@ -145,18 +142,9 @@ private:
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
-  enum VIEW_MODE {
-    ORIGINAL = 0,
-    GROOMED = 1,
-    RECONSTRUCTED = 2
-  };
+  enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
 
-  enum DISPLAY_MODE {
-    ALL_SAMPLES = 0,
-    MEAN = 1,
-    PCA = 2,
-    SINGLE_SAMPLE = 3
-  };
+  enum DISPLAY_MODE { ALL_SAMPLES = 0, MEAN = 1, PCA = 2, SINGLE_SAMPLE = 3 };
 
   static const std::string MODE_ORIGINAL_C;
   static const std::string MODE_GROOMED_C;
@@ -168,7 +156,6 @@ private:
 
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
-
 
   std::string get_tool_state();
 
@@ -190,7 +177,6 @@ private:
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
-
 
   bool get_feature_uniform_scale();
   void set_feature_uniform_scale(bool value);
@@ -223,7 +209,7 @@ private:
   QSharedPointer<PreferencesWindow> preferences_window_;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
-  //all the preferences
+  // all the preferences
   Preferences preferences_;
 
   QSharedPointer<Session> session_;
@@ -242,7 +228,6 @@ private:
   QErrorMessage error_message_dialog_;
   std::vector<QSlider*> iso_opacity_sliders_;
 
-
   QString current_message_;
 
   std::string current_display_mode_;
@@ -254,4 +239,4 @@ private:
 
   QSharedPointer<PythonWorker> py_worker_;
 };
-}
+}  // namespace shapeworks

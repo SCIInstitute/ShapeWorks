@@ -62,10 +62,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
-  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning, this,
-          &ShapeWorksStudioApp::handle_message);
-  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error, this,
-          &ShapeWorksStudioApp::handle_error);
+  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning, this, &ShapeWorksStudioApp::handle_message);
+  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error, this, &ShapeWorksStudioApp::handle_error);
   connect(&(StudioLog::Instance()), &StudioLog::error, this, &ShapeWorksStudioApp::handle_error);
 
   // default hide
@@ -96,8 +94,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, preferences_));
   connect(splash_screen_.data(), &SplashScreen::open_project, this, &ShapeWorksStudioApp::open_project);
 
-  wheel_event_forwarder_ =
-      QSharedPointer<WheelEventForwarder>(new WheelEventForwarder(ui_->vertical_scroll_bar));
+  wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>(new WheelEventForwarder(ui_->vertical_scroll_bar));
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
 
   create_glyph_submenu();
@@ -122,8 +119,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(deepssm_tool_.data(), &DeepSSMTool::warning, this, &ShapeWorksStudioApp::handle_warning);
   connect(deepssm_tool_.data(), &DeepSSMTool::error, this, &ShapeWorksStudioApp::handle_error);
   connect(deepssm_tool_.data(), &DeepSSMTool::progress, this, &ShapeWorksStudioApp::handle_progress);
-  connect(deepssm_tool_.data(), &DeepSSMTool::update_view, this,
-          &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(deepssm_tool_.data(), &DeepSSMTool::update_view, this, &ShapeWorksStudioApp::handle_display_setting_changed);
 
   // resize from preferences
   if (!preferences_.get_window_geometry().isEmpty()) {
@@ -170,8 +166,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(optimize_tool_.data());
   connect(optimize_tool_.data(), SIGNAL(optimize_complete()), this, SLOT(handle_optimize_complete()));
 
-  connect(optimize_tool_.data(), &OptimizeTool::optimize_start, this,
-          &ShapeWorksStudioApp::handle_optimize_start);
+  connect(optimize_tool_.data(), &OptimizeTool::optimize_start, this, &ShapeWorksStudioApp::handle_optimize_start);
 
   connect(optimize_tool_.data(), &OptimizeTool::error_message, this, &ShapeWorksStudioApp::handle_error);
   connect(optimize_tool_.data(), &OptimizeTool::warning_message, this, &ShapeWorksStudioApp::handle_warning);
@@ -238,9 +233,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 ShapeWorksStudioApp::~ShapeWorksStudioApp() {}
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::initialize_vtk() {
-  lightbox_->set_render_window(ui_->qvtkWidget->GetRenderWindow());
-}
+void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->qvtkWidget->GetRenderWindow()); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
@@ -579,7 +572,6 @@ void ShapeWorksStudioApp::update_table() {
   ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
   ui_->image_widget->setVisible(!image_names.empty());
 
-
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
   ui_->image_share_window_and_level_->setChecked(session_->get_image_share_window_and_level());
@@ -895,7 +887,6 @@ std::string ShapeWorksStudioApp::get_tool_state() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
-
   auto view_mode = get_view_mode();
   ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
@@ -1249,15 +1240,13 @@ void ShapeWorksStudioApp::update_display(bool force) {
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                          session_->particles_present() && reconstruct_ready);
+        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present() && reconstruct_ready);
         visualizer_->display_sample(analysis_tool_->get_sample_number());
         visualizer_->reset_camera();
       } else {  //?
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                          session_->particles_present() && reconstruct_ready);
+        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present() && reconstruct_ready);
       }  // TODO regression?
     }
   }
@@ -1352,7 +1341,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   on_zoom_slider_valueChanged();
 
-  //update_table();
+  // update_table();
 
   session_->set_loading(false);
 
@@ -1660,8 +1649,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_project(std::string filename) {
-  session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
-                                   std::to_string(ui_->zoom_slider->value()));
+  session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
 
   session_->parameters().set("notes", data_tool_->get_notes());
 
