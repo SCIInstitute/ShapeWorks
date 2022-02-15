@@ -12,7 +12,7 @@
 #include "itkParticlePositionWriter.h"
 #include "Shapeworks.h"
 #include "ParticleSystem.h"
-#include "RPPCA.h"
+
 
 /**
  * \class ParticleShapeStatistics

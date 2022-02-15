@@ -309,6 +309,8 @@ public:
     return this->m_optimizing;
   }
 
+  double Get_MinimumVariance();
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback

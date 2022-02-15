@@ -2514,4 +2514,8 @@ void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>
   this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
 }
 
+double Optimize::Get_MinimumVariance()
+{
+  return this->m_sampler->Get_MinimumVariance();
+}
 }

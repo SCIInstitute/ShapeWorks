@@ -1494,9 +1494,11 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("SetVerbosity",
       &Optimize::SetVerbosity)
-      // [](Optimize *opt,int verbosity_level){
-      //     opt->SetVerbosity(verbosity_level);
-      // })
+
+  .def("GetMinimumVariance",
+     [](Optimize *opt){
+          return opt->Get_MinimumVariance();
+     });
   ;
 
 } // PYBIND11_MODULE(shapeworks_py)
