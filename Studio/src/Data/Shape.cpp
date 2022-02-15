@@ -137,7 +137,7 @@ bool Shape::import_global_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      return false;
+      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->global_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_world_particles(i, points);
@@ -151,7 +151,7 @@ bool Shape::import_local_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
+      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);

@@ -377,17 +377,17 @@ bool Session::load_light_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename) {
-  this->filename_ = QFileInfo(filename).absoluteFilePath();
+  filename_ = QFileInfo(filename).absoluteFilePath();
 
-  this->set_project_path(QFileInfo(filename).absolutePath());
+  set_project_path(QFileInfo(filename).absolutePath());
 
-  if (!this->project_->load(QFileInfo(filename).fileName().toStdString())) {
+  if (!project_->load(QFileInfo(filename).fileName().toStdString())) {
     return false;
   }
 
-  int num_subjects = this->project_->get_number_of_subjects();
+  int num_subjects = project_->get_number_of_subjects();
 
-  auto subjects = this->project_->get_subjects();
+  auto subjects = project_->get_subjects();
 
   std::vector<std::string> local_point_files;
   std::vector<std::string> global_point_files;
@@ -397,7 +397,7 @@ bool Session::load_xl_project(QString filename) {
   // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
-    shape->set_mesh_manager(this->mesh_manager_);
+    shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
     auto locals = subjects[i]->get_local_particle_filenames();
@@ -427,11 +427,11 @@ bool Session::load_xl_project(QString filename) {
     }
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     }
-    this->shapes_ << shape;
+    shapes_ << shape;
   }
 
-  this->groups_available_ = this->project_->get_group_names().size() > 0;
-  this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
+  groups_available_ = project_->get_group_names().size() > 0;
+  params_ = project_->get_parameters(Parameters::STUDIO_PARAMS);
   return true;
 }
 
