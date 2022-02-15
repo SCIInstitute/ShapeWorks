@@ -341,7 +341,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_quit_triggered() { close(); }
+void ShapeWorksStudioApp::on_action_quit_triggered() { qApp->closeAllWindows(); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_triggered() {
