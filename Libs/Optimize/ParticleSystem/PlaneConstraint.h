@@ -10,46 +10,44 @@ namespace shapeworks {
 
 class PlaneConstraint : public Constraint {
  public:
-  bool isViolated(const vnl_vector<double> &pt) const {
-    Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = pt[0];
-    pt_eigen(1) = pt[1];
-    pt_eigen(2) = pt[2];
-    return isViolated(pt_eigen);
-  }
-
-  bool isViolated(const Eigen::Vector3d &pt) const {
-    double dist = planeNormal.dot(pt - planePoint);
-    if (dist < 0) return true;
+  bool isViolated(const Eigen::Vector3d &pt) const override {
+    double dist = planeNormal_.dot(pt - planePoint_);
+    if (dist < 0) {
+      return true;
+    }
     return false;
   }
 
-  void printC() const {
-    std::cout << "normal " << planeNormal.transpose() << " point " << planePoint.transpose() << std::endl;
+  void print() const override {
+    std::cout << "normal " << planeNormal_.transpose() << " point " << planePoint_.transpose() << std::endl;
   }
 
-  Eigen::Vector3d GetPlaneNormal() { return planeNormal; }
-  void SetPlaneNormal(const Eigen::Vector3d &inPlane) { planeNormal = inPlane; }
-  Eigen::Vector3d GetPlanePoint() { return planePoint; }
-  void SetPlanePoint(const vnl_vector<double> &ina) {
+  Eigen::Vector3d getPlaneNormal() { return planeNormal_; }
+
+  void setPlaneNormal(const Eigen::Vector3d &inPlane) { planeNormal_ = inPlane; }
+
+  Eigen::Vector3d getPlanePoint() { return planePoint_; }
+
+  void setPlanePoint(const vnl_vector<double> &point) {
     Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = ina[0];
-    pt_eigen(1) = ina[1];
-    pt_eigen(2) = ina[2];
-    planePoint = pt_eigen;
+    pt_eigen(0) = point[0];
+    pt_eigen(1) = point[1];
+    pt_eigen(2) = point[2];
+    planePoint_ = pt_eigen;
   }
-  void SetPlanePoint(const Eigen::Vector3d &p) { planePoint = p; }
 
-  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const { return -planeNormal; }
+  void setPlanePoint(const Eigen::Vector3d &p) { planePoint_ = p; }
 
-  double ConstraintEval(const Eigen::Vector3d &pt) const {
-    double val = -planeNormal.dot(pt - planePoint);
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return -planeNormal_; }
+
+  double constraintEval(const Eigen::Vector3d &pt) const override {
+    double val = -planeNormal_.dot(pt - planePoint_);
     return val;
   }
 
  private:
-  Eigen::Vector3d planeNormal;
-  Eigen::Vector3d planePoint;
+  Eigen::Vector3d planeNormal_;
+  Eigen::Vector3d planePoint_;
 };
 
 }  // namespace shapeworks

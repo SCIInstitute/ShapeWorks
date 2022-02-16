@@ -18,10 +18,10 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
     qp(1) = q[1];
     qp(2) = q[2];
     PlaneConstraint plane_c;
-    plane_c.SetPlaneNormal(qp);
-    plane_c.SetPlanePoint(a);
-    planeConsts.push_back(plane_c);
-    active = true;
+    plane_c.setPlaneNormal(qp);
+    plane_c.setPlanePoint(a);
+    planeConstraints_.push_back(plane_c);
+    active_ = true;
   }
 }
 
@@ -31,34 +31,34 @@ void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double
   c(1) = v[1];
   c(2) = v[2];
   SphereConstraint sphere_c;
-  sphere_c.SetCenter(c);
-  sphere_c.SetRadius(r);
-  sphereConsts.push_back(sphere_c);
-  active = true;
+  sphere_c.setCenter(c);
+  sphere_c.setRadius(r);
+  sphereConstraints_.push_back(sphere_c);
+  active_ = true;
 }
 
-bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans) {
-  return transformPlanes(Trans) & true;
+bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &transform) {
+  return transformPlanes(transform) & true;
 }
 
-bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans) {
-  std::cout << "Transforming planes" << Trans << std::endl;
+bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transform) {
+  std::cout << "Transforming planes" << transform << std::endl;
 
   // Convert vnl_matrix to Eigen Matrix
   Eigen::Matrix4d trans;
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++) {
-      trans(i, j) = Trans[i][j];
+      trans(i, j) = transform[i][j];
     }
   }
 
   // Maybe TODO Check if transformation matrix is invertible. Return false if not.
 
   // Transform each plane to new format
-  for (unsigned int i = 0; i < planeConsts.size(); i++) {
+  for (unsigned int i = 0; i < planeConstraints_.size(); i++) {
     // Get points
-    Eigen::Vector3d norm = planeConsts[i].GetPlaneNormal();
-    Eigen::Vector3d point = planeConsts[i].GetPlanePoint();
+    Eigen::Vector3d norm = planeConstraints_[i].getPlaneNormal();
+    Eigen::Vector3d point = planeConstraints_[i].getPlanePoint();
 
     // Convert to homogeneous coordinates i.e. add an extra coordinate
     Eigen::Vector4d norm_homogeneous;
@@ -86,20 +86,18 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans) {
     new_norm = new_norm / new_norm.norm();
 
     // Set transformed planes
-    planeConsts[i].SetPlaneNormal(new_norm);
-    planeConsts[i].SetPlanePoint(new_point);
+    planeConstraints_[i].setPlaneNormal(new_norm);
+    planeConstraints_[i].setPlanePoint(new_point);
   }
 
   return true;
 }
 
-std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE,
-                                                        const itk::Point<double, 3> &pos) {
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos) {
   return applyPlaneConstraints(gradE, pos);
 }
 
-std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE,
-                                                        const itk::Point<double, 3> &pos) {
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point3 &pos) {
   vnl_vector_fixed<double, 3> gradD;
   gradD[0] = double(gradE[0]);
   gradD[1] = double(gradE[1]);
@@ -158,7 +156,7 @@ bool Constraints::PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Ei
 // This function implementation performs a series of projections onto planes such that at the end, the gradient update
 // is close to the original(<45 degrees) and the magnitude is less than or equal to the original. Read comments for more
 // information.
-std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const itk::Point<double, 3> &pos) {
+std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos) {
   // Error offset to account for precision error
   double eps = 1e-10;
 
@@ -222,12 +220,12 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   int minDInd = -1;
   std::vector<size_t> violations;
   std::vector<double> distances;
-  for (size_t i = 0; i < planeConsts.size(); i++) {
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
     // If constraint is violated, update gradient
-    if (planeConsts[i].isViolated(l0 + l)) {
+    if (planeConstraints_[i].isViolated(l0 + l)) {
       // Get points
-      Eigen::Vector3d n = planeConsts[i].GetPlaneNormal();
-      Eigen::Vector3d p0 = planeConsts[i].GetPlanePoint();
+      Eigen::Vector3d n = planeConstraints_[i].getPlaneNormal();
+      Eigen::Vector3d p0 = planeConstraints_[i].getPlanePoint();
 
       // Find intersection between cutting plane (p0, n) and update line (l0, l)
       // Eq of plane:             (p - p0).n = 0
@@ -257,11 +255,11 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     stream << "distance0 " << distances[0] << " distance1 " << distances[0] << std::endl;
     if (distances[0] <= 1e-4 && distances[1] <= 1e-4) {
       // Plane 1
-      Eigen::Vector3d n_d = planeConsts[violations[0]].GetPlaneNormal();
-      Eigen::Vector3d p0_d = planeConsts[violations[0]].GetPlanePoint();
+      Eigen::Vector3d n_d = planeConstraints_[violations[0]].getPlaneNormal();
+      Eigen::Vector3d p0_d = planeConstraints_[violations[0]].getPlanePoint();
       // Plane 2
-      Eigen::Vector3d n_d2 = planeConsts[violations[1]].GetPlaneNormal();
-      Eigen::Vector3d p0_d2 = planeConsts[violations[1]].GetPlanePoint();
+      Eigen::Vector3d n_d2 = planeConstraints_[violations[1]].getPlaneNormal();
+      Eigen::Vector3d p0_d2 = planeConstraints_[violations[1]].getPlanePoint();
       // Compute plane plane intersect line
       Eigen::Vector3d a;
       Eigen::Vector3d b;
@@ -293,8 +291,8 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   // else if update violates at least one plane
   if (minDInd > -1 && run) {
     // Project gradient-applied point onto dominant plane
-    Eigen::Vector3d n_d = planeConsts[minDInd].GetPlaneNormal();
-    Eigen::Vector3d p0_d = planeConsts[minDInd].GetPlanePoint();
+    Eigen::Vector3d n_d = planeConstraints_[minDInd].getPlaneNormal();
+    Eigen::Vector3d p0_d = planeConstraints_[minDInd].getPlanePoint();
     Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d + (n_d * eps), l0 + l, n_d);
 
     // Projected point proj_grad_upd is curr_updated_pt projected to the gradient update vector segment l0 -> l0+l
@@ -313,13 +311,13 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
            << std::endl;
 
     // Now progressively check for how non-dominant planes affect the plane
-    for (size_t i = 0; i < planeConsts.size(); i++) {
+    for (size_t i = 0; i < planeConstraints_.size(); i++) {
       // If constraint is violated, update gradient
       stream << "----Checking plane " << i << std::endl;
-      if (planeConsts[i].isViolated(curr_updated_pt)) {
+      if (planeConstraints_[i].isViolated(curr_updated_pt)) {
         // Get points
-        Eigen::Vector3d n = planeConsts[i].GetPlaneNormal();
-        Eigen::Vector3d p0 = planeConsts[i].GetPlanePoint();
+        Eigen::Vector3d n = planeConstraints_[i].getPlaneNormal();
+        Eigen::Vector3d p0 = planeConstraints_[i].getPlanePoint();
 
         // Find intersection between violated plane and feasible range line segment i.e. the line between
         // curr_updated_pt and its projection to the gradient update vector segment.
@@ -360,11 +358,215 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   return stream;
 }
 
+bool Constraints::isAnyViolated(const Point3 &pos) {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    if (planeConstraints_[i].isViolated(pt)) {
+      return true;
+    }
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    if (sphereConstraints_[i].isViolated(pt)) {
+      return true;
+    }
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    if (freeFormConstraints_[i].isViolated(pt)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+std::vector<int> Constraints::planesViolated(Eigen::Vector3d pt) {
+  std::vector<int> planesViolated;
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    if (planeConstraints_[i].isViolated(pt)) {
+      planesViolated.push_back(i);
+    }
+  }
+  return planesViolated;
+}
+
+void Constraints::printAll() {
+  std::cout << "Cutting planes " << planeConstraints_.size() << std::endl;
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    planeConstraints_[i].print();
+  }
+  std::cout << "Cutting spheres " << sphereConstraints_.size() << std::endl;
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    sphereConstraints_[i].print();
+  }
+  std::cout << "Cutting Free form constraints " << freeFormConstraints_.size() << std::endl;
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    freeFormConstraints_[i].print();
+  }
+}
+
+std::string Constraints::violationReport(const Point3 &pos) {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  std::stringstream stream;
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    if (planeConstraints_[i].constraintEval(pt) > 0)
+      stream << "CuttingPlane " << i << "/" << planeConstraints_.size() << ": "
+             << planeConstraints_[i].constraintEval(pt) << " gradient(c=1) "
+             << planeConstraints_[i].lagragianGradient(pt, 1).transpose() << std::endl;
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    if (sphereConstraints_[i].constraintEval(pt) > 0)
+      stream << "Sphere " << i << "/" << planeConstraints_.size() << ": " << sphereConstraints_[i].constraintEval(pt)
+             << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1).transpose() << std::endl;
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    if (freeFormConstraints_[i].constraintEval(pt) > 0)
+      stream << "FreeForm " << i << "/" << planeConstraints_.size() << ": "
+             << freeFormConstraints_[i].constraintEval(pt) << " gradient(c=1) "
+             << freeFormConstraints_[i].lagragianGradient(pt, 1).transpose() << std::endl;
+  }
+  return stream.str();
+}
+
+std::vector<std::vector<double> > Constraints::violationReportData(const Point3 &pos) {
+  std::vector<std::vector<double> > alls;
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  std::stringstream stream;
+  std::vector<double> pl;
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    pl.push_back(planeConstraints_[i].constraintEval(pt));
+  }
+  alls.push_back(pl);
+  std::vector<double> sp;
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    sp.push_back(sphereConstraints_[i].constraintEval(pt));
+  }
+  alls.push_back(sp);
+  std::vector<double> ff;
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    ff.push_back(freeFormConstraints_[i].constraintEval(pt));
+  }
+  alls.push_back(ff);
+  return alls;
+}
+
+vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3 &pos) const {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  Eigen::Vector3d grad = Eigen::Vector3d(0, 0, 0);
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    grad -= planeConstraints_[i].constraintGradient(pt);
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    grad -= sphereConstraints_[i].constraintGradient(pt);
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    grad -= freeFormConstraints_[i].constraintGradient(pt);
+  }
+  vnl_vector_fixed<double, 3> gradE;
+  for (size_t i = 0; i < 3; i++) {
+    gradE[i] = grad(i);
+  }
+  return gradE;
+}
+
+vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos,
+                                                                       double C) {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  Eigen::Vector3d prept;
+  prept(0) = prepos[0];
+  prept(1) = prepos[1];
+  prept(2) = prepos[2];
+  Eigen::Vector3d grad = Eigen::Vector3d(0, 0, 0);
+  std::stringstream stream;
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    // if(planeConsts[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts.size() << ": "
+    // << planeConsts[i].LagragianGradient(pt, C).transpose() << " ::: " << planeConsts[i].ConstraintEval(pt) <<
+    // std::endl;
+    grad += planeConstraints_[i].lagragianGradient(pt, C);
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    grad += sphereConstraints_[i].lagragianGradient(prept, pt, C);
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    grad += freeFormConstraints_[i].lagragianGradient(pt, C);
+  }
+  vnl_vector_fixed<double, 3> gradE;
+  for (size_t i = 0; i < 3; i++) {
+    gradE[i] = grad(i);
+  }
+  stream << "gradE " << gradE << std::endl;
+  // std::cout << stream.str();
+  return gradE;
+}
+
+void Constraints::InitializeLagrangianParameters(double lambda, double mu, double z) {
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    planeConstraints_[i].setLambda(lambda);
+    planeConstraints_[i].setMu(mu);
+    planeConstraints_[i].setZ(z);
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    sphereConstraints_[i].setLambda(lambda);
+    sphereConstraints_[i].setMu(mu);
+    sphereConstraints_[i].setZ(z);
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    freeFormConstraints_[i].setLambda(lambda);
+    freeFormConstraints_[i].setMu(mu);
+    freeFormConstraints_[i].setZ(z);
+  }
+}
+
+void Constraints::UpdateZs(const Point3 &pos, double C) {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    planeConstraints_[i].updateZ(pt, C);
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    sphereConstraints_[i].updateZ(pt, C);
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    freeFormConstraints_[i].updateZ(pt, C);
+  }
+}
+
+void Constraints::UpdateMus(const Point3 &pos, double C) {
+  Eigen::Vector3d pt;
+  pt(0) = pos[0];
+  pt(1) = pos[1];
+  pt(2) = pos[2];
+  for (size_t i = 0; i < planeConstraints_.size(); i++) {
+    planeConstraints_[i].updateMu(pt, C);
+  }
+  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
+    sphereConstraints_[i].updateMu(pt, C);
+  }
+  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
+    freeFormConstraints_[i].updateMu(pt, C);
+  }
+}
+
 void Constraints::addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh) {
   FreeFormConstraint ffc;
   ffc.setMesh(mesh);
-  this->freeFormConsts.push_back(ffc);
-  active = true;
+  this->freeFormConstraints_.push_back(ffc);
+  active_ = true;
 }
 
 // Cutting plane constraints using truncated gradients. Replaced with dominant constraint above.

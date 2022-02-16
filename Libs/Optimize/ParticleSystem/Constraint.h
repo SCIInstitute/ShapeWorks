@@ -12,24 +12,24 @@ namespace shapeworks {
 
 class Constraint {
  public:
-  virtual bool isViolated(const vnl_vector<double> &pt) const = 0;
+  bool isViolated(const vnl_vector<double> &pt) const { return isViolated(Eigen::Vector3d(pt[0], pt[1], pt[2])); }
   virtual bool isViolated(const Eigen::Vector3d &pt) const = 0;
-  virtual void printC() const = 0;
-  shapeworks::ConstraintType GetConstraintType() { return type; }
-  void setConstraintType(shapeworks::ConstraintType inType) { type = inType; }
+  virtual void print() const = 0;
+  shapeworks::ConstraintType getConstraintType() { return type_; }
+  void setConstraintType(shapeworks::ConstraintType inType) { type_ = inType; }
 
   // For augmented lagrangian
-  void SetZ(double inz) { z = inz; }
-  double GetZ() { return z; }
-  void SetMu(double inmu) { mu = inmu; }
-  double GetMu() { return mu; }
-  void SetLambda(double inLambda) { lambda = inLambda; }
-  double GetLambda() { return lambda; }
+  void setZ(double inz) { z_ = inz; }
+  double getZ() { return z_; }
+  void setMu(double inmu) { mu_ = inmu; }
+  double getMu() { return mu_; }
+  void setLambda(double inLambda) { lambda_ = inLambda; }
+  double getLambda() { return lambda_; }
 
-  virtual Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const = 0;
-  virtual double ConstraintEval(const Eigen::Vector3d &pt) const = 0;
+  virtual Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const = 0;
+  virtual double constraintEval(const Eigen::Vector3d &pt) const = 0;
 
-  void UpdateZ(const Eigen::Vector3d &pt, double C) {
+  void updateZ(const Eigen::Vector3d &pt, double C) {
     /*double a = 2*C;
     double c = 2*mu + 2*C*ConstraintEval(pt);
     if(c >= 0){
@@ -81,17 +81,17 @@ class Constraint {
     // std::cout << "z: " << z << std::endl;
   }
 
-  void UpdateMu(const Eigen::Vector3d &pt, double C) {
-    double eval = mu + C * ConstraintEval(pt);
+  void updateMu(const Eigen::Vector3d &pt, double C) {
+    double eval = mu_ + C * constraintEval(pt);
     if (eval < 0) {
-      mu = 0;
+      mu_ = 0;
     } else {
-      mu = eval;
+      mu_ = eval;
     }
     // std::cout << "mu: " << mu << std::endl;
   }
 
-  Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, double C) const {
+  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, double C) const {
     // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
     // f'(x) = mu*g'(x) + C*y' where by substitution
     // y = √(u^2) where by substitution
@@ -112,9 +112,9 @@ class Constraint {
     Eigen::Vector3d second_term = C*constraint_grad*sgn(eval + z*z);
     return first_term+second_term;
     */
-    Eigen::Vector3d constraint_grad = ConstraintGradient(pt);
-    double eval = ConstraintEval(pt);
-    double maxterm = mu + C * eval;
+    Eigen::Vector3d constraint_grad = constraintGradient(pt);
+    double eval = constraintEval(pt);
+    double maxterm = mu_ + C * eval;
     if (maxterm < 0) {
       return Eigen::Vector3d(0, 0, 0);
     } else {
@@ -123,14 +123,14 @@ class Constraint {
   }
 
  protected:
-  shapeworks::ConstraintType type;
+  shapeworks::ConstraintType type_;
 
   int sgn(double val) { return (double(0) < val) - (val < double(0)); }
 
   // For augmented lagrangian
-  double mu;
-  double z;
-  double lambda;
+  double mu_;
+  double z_;
+  double lambda_;
 };
 
 }  // namespace shapeworks

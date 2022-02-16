@@ -337,7 +337,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon,
           PointType newpos = this->GetDomain(dom_to_process+j*domains_per_shape)->GetPositionAfterSplit(lists[j][i], random, epsilon);
           // Go to surface
           if (!this->m_DomainFlags[dom_to_process+j*domains_per_shape] &&
-              !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
+              !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
             this->GetDomain(dom_to_process+j*domains_per_shape)->ApplyConstraints(newpos, -1);
           }
           newposs_good.push_back(newpos);

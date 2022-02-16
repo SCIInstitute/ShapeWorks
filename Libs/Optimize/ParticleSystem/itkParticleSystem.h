@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleSystem.h,v $
-  Date:      $Date: 2011/03/24 01:17:34 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleSystem_h
-#define __itkParticleSystem_h
+#pragma once
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
@@ -537,14 +522,5 @@ private:
 
 } // end namespace itk
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleSystem+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleSystem.txx"
-#endif
 
 #include "itkParticleSystem.txx"
-
-#endif

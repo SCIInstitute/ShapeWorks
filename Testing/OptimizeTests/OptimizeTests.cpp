@@ -65,7 +65,7 @@ static bool check_constraint_violations(Optimize &app, double slack) {
       itk::FixedArray<double, 3> p = lists[domain][i];
 
       auto violation_report_data =
-          app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
+          app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->violationReportData(p);
 
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {

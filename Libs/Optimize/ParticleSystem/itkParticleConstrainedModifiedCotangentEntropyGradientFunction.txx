@@ -162,8 +162,8 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       vnl_vector_fixed<double, VDimension> cpnorm;
       for (unsigned int i = 0; i < VDimension; i++) {
           x[i] = pos[i];
-          cppt[i] = system->GetDomain(d)->GetConstraints()->getPlaneConstraints()[0].GetPlaneNormal()(i);
-          cpnorm[i] = system->GetDomain(d)->GetConstraints()->getPlaneConstraints()[0].GetPlanePoint()(i);
+          cppt[i] = system->GetDomain(d)->GetConstraints()->getPlaneConstraints()[0].getPlaneNormal()(i);
+          cpnorm[i] = system->GetDomain(d)->GetConstraints()->getPlaneConstraints()[0].getPlanePoint()(i);
       }
       double D = dot_product(cpnorm,
                              x - cppt);
@@ -213,19 +213,19 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       // Add the closest points on any spheres that are defined in the domain.
       //std::vector<itk::Point<double, VDimension> > spherepoints;
 
-      auto& sphereConsts = domain->GetConstraints()->GetSphereConstraints();
+      auto& sphereConsts = domain->GetConstraints()->getSphereConstraints();
 
       for (unsigned int i = 0; i < sphereConsts.size(); i++) {
         itk::Point<double, VDimension> spherept;
         vnl_vector_fixed<double, VDimension> q;
 
         for (unsigned int j = 0; j < VDimension; j++)
-          q[j] = pos[j] - sphereConsts[ i ].GetCenter()(j);
+          q[j] = pos[j] - sphereConsts[ i ].getCenter()(j);
 
         q.normalize();
 
         for (unsigned int j = 0; j < VDimension; j++)
-          spherept[j] = sphereConsts[ i ].GetCenter()(j) + (q[j] * sphereConsts[ i ].GetRadius());
+          spherept[j] = sphereConsts[ i ].getCenter()(j) + (q[j] * sphereConsts[ i ].getRadius());
 
         //spherepoints.push_back( spherept );
         m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(spherept, 0));

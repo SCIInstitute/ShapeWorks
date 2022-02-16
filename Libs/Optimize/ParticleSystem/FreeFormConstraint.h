@@ -13,28 +13,26 @@ class FreeFormConstraint : public Constraint {
  public:
   FreeFormConstraint() {}
 
-  void setMesh(std::shared_ptr<shapeworks::Mesh> mesh1) { this->mesh = mesh1; }
+  void setMesh(std::shared_ptr<shapeworks::Mesh> mesh) { mesh_ = mesh; }
 
-  std::shared_ptr<shapeworks::Mesh> getMesh() { return this->mesh; }
-
-  bool isViolated(const vnl_vector<double> &pt) const { return isViolated(Eigen::Vector3d(pt[0], pt[1], pt[2])); }
+  std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
 
   bool isViolated(const Eigen::Vector3d &pt) const {
-    if (ConstraintEval(pt) >= 0) {
+    if (constraintEval(pt) >= 0) {
       return false;
     } else {
       return true;
     }
   }
 
-  void printC() const { std::cout << "FF" << std::endl; }
+  void print() const { std::cout << "FF" << std::endl; }
 
-  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const { return mesh->getFFCGradient(pt); }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const { return mesh_->getFFCGradient(pt); }
 
-  double ConstraintEval(const Eigen::Vector3d &pt) const { return mesh->getFFCValue(pt); }
+  double constraintEval(const Eigen::Vector3d &pt) const { return mesh_->getFFCValue(pt); }
 
  private:
-  std::shared_ptr<shapeworks::Mesh> mesh;
+  std::shared_ptr<shapeworks::Mesh> mesh_;
 };
 
 }  // namespace shapeworks

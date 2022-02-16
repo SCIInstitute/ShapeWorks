@@ -8,54 +8,48 @@ namespace shapeworks {
 
 class SphereConstraint : public Constraint {
  public:
-  bool isViolated(const vnl_vector<double> &pt) const {
-    Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = pt[0];
-    pt_eigen(1) = pt[1];
-    pt_eigen(2) = pt[2];
-    return isViolated(pt_eigen);
-  }
-
-  bool isViolated(const Eigen::Vector3d &pt) const {
+  bool isViolated(const Eigen::Vector3d &pt) const override {
     double distance_from_center =
-        sqrt(pow(pt(0) - center(0), 2) + pow(pt(1) - center(1), 2) + pow(pt(2) - center(2), 2));
+        sqrt(pow(pt(0) - center_(0), 2) + pow(pt(1) - center_(1), 2) + pow(pt(2) - center_(2), 2));
 
-    if (distance_from_center < radius) return true;
+    if (distance_from_center < radius_) {
+      return true;
+    }
     return false;
   }
 
-  void printC() const { std::cout << "radius " << radius << " center " << center.transpose() << std::endl; }
+  void print() const { std::cout << "radius " << radius_ << " center " << center_.transpose() << std::endl; }
 
-  Eigen::Vector3d GetCenter() { return center; }
-  void SetCenter(Eigen::Vector3d inCenter) { center = inCenter; }
-  double GetRadius() { return radius; }
-  void SetRadius(double inRadius) { radius = inRadius; }
+  Eigen::Vector3d getCenter() { return center_; }
+  void setCenter(Eigen::Vector3d inCenter) { center_ = inCenter; }
+  double getRadius() { return radius_; }
+  void setRadius(double inRadius) { radius_ = inRadius; }
 
-  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const {
-    Eigen::Vector3d grad = (pt - center) / (pt - center).norm();
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const {
+    Eigen::Vector3d grad = (pt - center_) / (pt - center_).norm();
     return -grad;
   }
 
-  Eigen::Vector3d ConstraintGradientSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const {
+  Eigen::Vector3d constraintGradientSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const {
     // Section computes the intersections between line segment and sphere and determines if they exist
     // <-----
     // Compute projection of center to line
     // proj = pt + dot(ptcenter, update) / dot(update, update) * update
     Eigen::Vector3d update = updpt - pt;
-    Eigen::Vector3d ptcenter = center - pt;
+    Eigen::Vector3d ptcenter = center_ - pt;
     // If update is none, then return distance from center without considering the update
     if (update.dot(update) == 0) {
-      return ConstraintGradient(updpt);
+      return constraintGradient(updpt);
     }
     Eigen::Vector3d proj = pt + ptcenter.dot(update) / update.dot(update) * update;
 
     // Computes the distance between line and center
-    double line_dist_from_center = (proj - center).norm();
+    double line_dist_from_center = (proj - center_).norm();
 
-    if (line_dist_from_center < radius) {
+    if (line_dist_from_center < radius_) {
       // Use pithagorean theorem to figure out the intersections of line with sphere.
       double dist_from_projection_to_intersection =
-          sqrt(radius * radius - line_dist_from_center * line_dist_from_center);
+          sqrt(radius_ * radius_ - line_dist_from_center * line_dist_from_center);
       Eigen::Vector3d unit_update = update / update.norm();
 
       Eigen::Vector3d intersection1 = proj + dist_from_projection_to_intersection * unit_update;
@@ -76,34 +70,34 @@ class SphereConstraint : public Constraint {
     }
 
     // If intersections don't exist, then just return regular gradient.
-    return ConstraintGradient(updpt);
+    return constraintGradient(updpt);
   }
 
-  double ConstraintEval(const Eigen::Vector3d &pt) const {
-    double val = (pt - center).norm() - radius;
+  double constraintEval(const Eigen::Vector3d &pt) const {
+    double val = (pt - center_).norm() - radius_;
     return -val;
   }
 
-  double ConstraintEvalSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const {
+  double constraintEvalSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const {
     // Section computes the intersections between line segment and sphere and determines if they exist
     // <-----
     // Compute projection of center to line
     // proj = pt + dot(ptcenter, update) / dot(update, update) * update
     Eigen::Vector3d update = updpt - pt;
-    Eigen::Vector3d ptcenter = center - pt;
+    Eigen::Vector3d ptcenter = center_ - pt;
     // If update is none, then return distance from center without considering the update
     if (update.dot(update) == 0) {
-      return ConstraintEval(updpt);
+      return constraintEval(updpt);
     }
     Eigen::Vector3d proj = pt + ptcenter.dot(update) / update.dot(update) * update;
 
     // Computes the distance between line and center
-    double line_dist_from_center = (proj - center).norm();
+    double line_dist_from_center = (proj - center_).norm();
 
-    if (line_dist_from_center < radius) {
+    if (line_dist_from_center < radius_) {
       // Use pithagorean theorem to figure out the intersections of line with sphere.
       double dist_from_projection_to_intersection =
-          sqrt(radius * radius - line_dist_from_center * line_dist_from_center);
+          sqrt(radius_ * radius_ - line_dist_from_center * line_dist_from_center);
       Eigen::Vector3d unit_update = update / update.norm();
 
       Eigen::Vector3d intersection1 = proj + dist_from_projection_to_intersection * unit_update;
@@ -124,10 +118,10 @@ class SphereConstraint : public Constraint {
     }
 
     // If intersections don't exist, then just return regular gradient.
-    return ConstraintEval(updpt);
+    return constraintEval(updpt);
   }
 
-  Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) const {
+  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) const {
     // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
     // f'(x) = mu*g'(x) + C*y' where by substitution
     // y = √(u^2) where by substitution
@@ -148,9 +142,9 @@ class SphereConstraint : public Constraint {
     Eigen::Vector3d second_term = C*constraint_grad*sgn(eval + z*z);
     return first_term+second_term;
     */
-    Eigen::Vector3d constraint_grad = ConstraintGradientSphere(pt, updpt);
-    double eval = ConstraintEvalSphere(pt, updpt);
-    double maxterm = mu + C * eval;
+    Eigen::Vector3d constraint_grad = constraintGradientSphere(pt, updpt);
+    double eval = constraintEvalSphere(pt, updpt);
+    double maxterm = mu_ + C * eval;
     if (maxterm < 0) {
       return Eigen::Vector3d(0, 0, 0);
     } else {
@@ -159,8 +153,8 @@ class SphereConstraint : public Constraint {
   }
 
  private:
-  double radius;
-  Eigen::Vector3d center;
+  double radius_;
+  Eigen::Vector3d center_;
 };
 
 }  // namespace shapeworks
