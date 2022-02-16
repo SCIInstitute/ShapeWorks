@@ -12,7 +12,7 @@
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
 
-namespace itk {
+namespace shapeworks {
 
 class Constraints {
  public:
@@ -39,9 +39,9 @@ class Constraints {
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
 
   // Apply functions
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos);
-  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const itk::Point<double, 3> &pos);
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const itk::Point<double, 3> &pos);
+  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const itk::Point<double, 3> &pos);
 
   // Write constraints
   bool writePlanes(std::string filename) { return true; }
@@ -63,7 +63,7 @@ class Constraints {
   std::vector<SphereConstraint> *GetSphereConstraints() { return sphereConsts; }
 
   // Is any constraint violated by point pos?
-  bool IsAnyViolated(const Point<double, 3> &pos) {
+  bool IsAnyViolated(const itk::Point<double, 3> &pos) {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
     pt(1) = pos[1];
@@ -112,7 +112,7 @@ class Constraints {
     }
   }
 
-  std::string ViolationReport(const Point<double, 3> &pos) {
+  std::string ViolationReport(const itk::Point<double, 3> &pos) {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
     pt(1) = pos[1];
@@ -136,7 +136,7 @@ class Constraints {
     return stream.str();
   }
 
-  std::vector<std::vector<double> > ViolationReportData(const Point<double, 3> &pos) {
+  std::vector<std::vector<double> > ViolationReportData(const itk::Point<double, 3> &pos) {
     std::vector<std::vector<double> > alls;
     Eigen::Vector3d pt;
     pt(0) = pos[0];
@@ -165,7 +165,7 @@ class Constraints {
   // Augmented Lagragian Fuctions
   // ============================
   // Energy gradient computations
-  vnl_vector_fixed<double, 3> ConstraintsGradient(const Point<double, 3> &pos) const {
+  vnl_vector_fixed<double, 3> ConstraintsGradient(const itk::Point<double, 3> &pos) const {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
     pt(1) = pos[1];
@@ -188,7 +188,7 @@ class Constraints {
   }
 
   // Lagragian gradient computation
-  vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, const Point<double, 3> &prepos,
+  vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const itk::Point<double, 3> &pos, const itk::Point<double, 3> &prepos,
                                                             double C) const {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
@@ -240,7 +240,7 @@ class Constraints {
     }
   }
 
-  void UpdateZs(const Point<double, 3> &pos, double C) {
+  void UpdateZs(const itk::Point<double, 3> &pos, double C) {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
     pt(1) = pos[1];
@@ -256,7 +256,7 @@ class Constraints {
     }
   }
 
-  void UpdateMus(const Point<double, 3> &pos, double C) {
+  void UpdateMus(const itk::Point<double, 3> &pos, double C) {
     Eigen::Vector3d pt;
     pt(0) = pos[0];
     pt(1) = pos[1];

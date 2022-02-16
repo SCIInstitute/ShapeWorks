@@ -4,7 +4,7 @@
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
 
-namespace itk {
+namespace shapeworks {
 
 class SphereConstraint : public Constraint {
  public:
@@ -163,4 +163,4 @@ class SphereConstraint : public Constraint {
   Eigen::Vector3d center;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

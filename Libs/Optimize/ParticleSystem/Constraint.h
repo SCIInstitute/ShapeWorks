@@ -8,7 +8,7 @@
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
 
-namespace itk {
+namespace shapeworks {
 
 class Constraint {
  public:
@@ -133,4 +133,4 @@ class Constraint {
   double lambda;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

@@ -7,7 +7,7 @@
 #include "Mesh.h"
 #include "vnl/vnl_math.h"
 
-namespace itk {
+namespace shapeworks {
 
 class FreeFormConstraint : public Constraint {
  public:
@@ -37,4 +37,4 @@ class FreeFormConstraint : public Constraint {
   std::shared_ptr<shapeworks::Mesh> mesh;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

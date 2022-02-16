@@ -185,7 +185,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     int numSpheres = 0;
     int numPlanes = 0;
 
-    std::vector<PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
+    std::vector<shapeworks::PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
     numPlanes = planeConsts.size();
     //std::cout << "Num planes " << numPlanes << std::endl;
     Eigen::Vector3d x_eigen;
@@ -199,7 +199,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         planePts.push_back(planept);
     }
 
-    std::vector<SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
+    std::vector<shapeworks::SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
     // Shadow particle sphere constraints
     numSpheres = sphereConsts.size();
     //std::cout << "Num spheres " << numSpheres << std::endl;

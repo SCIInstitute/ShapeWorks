@@ -213,7 +213,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       // Add the closest points on any spheres that are defined in the domain.
       //std::vector<itk::Point<double, VDimension> > spherepoints;
 
-      std::vector<SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
+      std::vector<shapeworks::SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
 
       for (unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++) {
         itk::Point<double, VDimension> spherept;

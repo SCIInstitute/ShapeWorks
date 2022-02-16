@@ -1,14 +1,15 @@
 #include "Constraints.h"
 
-namespace itk {
+namespace shapeworks {
 
 void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c) {
   // See http://mathworld.wolfram.com/Plane.html, for example
   vnl_vector<double> q;
-  if (DIMENSION == 3)
+  if (DIMENSION == 3) {
     q = vnl_cross_3d((b - a), (c - a));
-  else if (DIMENSION == 2)
+  } else if (DIMENSION == 2) {
     q = vnl_cross_2d((b - a), (c - a));
+  }
 
   if (q.magnitude() > 0.0) {
     Eigen::Vector3d qp;
@@ -93,12 +94,12 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans) {
 }
 
 std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE,
-                                                        const Point<double, 3> &pos) {
+                                                        const itk::Point<double, 3> &pos) {
   return applyPlaneConstraints(gradE, pos);
 }
 
 std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE,
-                                                        const Point<double, 3> &pos) {
+                                                        const itk::Point<double, 3> &pos) {
   vnl_vector_fixed<double, 3> gradD;
   gradD[0] = double(gradE[0]);
   gradD[1] = double(gradE[1]);
@@ -157,7 +158,7 @@ bool Constraints::PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Ei
 // This function implementation performs a series of projections onto planes such that at the end, the gradient update
 // is close to the original(<45 degrees) and the magnitude is less than or equal to the original. Read comments for more
 // information.
-std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos) {
+std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const itk::Point<double, 3> &pos) {
   // Error offset to account for precision error
   double eps = 1e-10;
 
@@ -402,4 +403,4 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     return false;
 }
 */
-}  // namespace itk
+}  // namespace shapeworks

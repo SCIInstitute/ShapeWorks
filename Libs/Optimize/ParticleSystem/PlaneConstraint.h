@@ -6,7 +6,7 @@
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
 
-namespace itk {
+namespace shapeworks {
 
 class PlaneConstraint : public Constraint {
  public:
@@ -52,4 +52,4 @@ class PlaneConstraint : public Constraint {
   Eigen::Vector3d planePoint;
 };
 
-}  // namespace itk
+}  // namespace shapeworks
