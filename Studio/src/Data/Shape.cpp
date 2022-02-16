@@ -374,7 +374,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
     MeshWorkItem item;
     item.filename = filename;
     MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
-    if (new_mesh) {
+    if (new_mesh && new_mesh->get_poly_data()) {
       mesh_group.set_mesh(i, new_mesh);
 
       if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
