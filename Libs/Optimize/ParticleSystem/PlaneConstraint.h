@@ -26,13 +26,7 @@ class PlaneConstraint : public Constraint {
 
   Eigen::Vector3d getPlanePoint() { return planePoint_; }
 
-  void setPlanePoint(const vnl_vector<double> &point) {
-    Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = point[0];
-    pt_eigen(1) = point[1];
-    pt_eigen(2) = point[2];
-    planePoint_ = pt_eigen;
-  }
+  void setPlanePoint(const vnl_vector<double> &point) { planePoint_ = Eigen::Vector3d(point[0], point[1], point[2]); }
 
   void setPlanePoint(const Eigen::Vector3d &p) { planePoint_ = p; }
 
