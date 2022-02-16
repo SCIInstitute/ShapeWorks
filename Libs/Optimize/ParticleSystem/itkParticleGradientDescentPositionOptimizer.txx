@@ -74,8 +74,12 @@ namespace itk
     if (this->m_AbortProcessing) {
       return;
     }
-    const double factor = 1.1;
-
+    double factor = 1.1;
+    if(m_factor!=0)
+    {
+    factor = m_factor;
+    }
+    
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
 
@@ -190,7 +194,7 @@ namespace itk
               newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
               if (newenergy < energy) // good move, increase timestep for next time
-              {
+              { 
                 m_TimeSteps[dom][k] *= factor;
                 if (gradmag > maxchange) maxchange = gradmag;
                 break;

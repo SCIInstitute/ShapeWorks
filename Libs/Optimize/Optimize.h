@@ -74,6 +74,7 @@ public:
 
   void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
 
+  void SetFactor(const double f);
   //! Abort optimization
   void AbortOptimization();
 

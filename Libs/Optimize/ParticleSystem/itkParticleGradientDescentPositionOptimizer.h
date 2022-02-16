@@ -131,6 +131,11 @@ public:
   void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f)
   { this->m_BeforeEvaluateCallback = f; }
 
+  void SetFactor(const double f)
+  {
+    this->m_factor = f;
+  }
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -156,6 +161,7 @@ private:
   void ResetTimeStepVectors();
 
   std::function<void(void)> m_BeforeEvaluateCallback;
+  double m_factor = 0;
 
 };
 

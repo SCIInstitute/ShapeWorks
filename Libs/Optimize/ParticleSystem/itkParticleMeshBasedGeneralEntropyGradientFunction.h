@@ -126,7 +126,7 @@ public:
     }
 
     void SetMinimumVariance( double d)
-    { this->m_MinimumVariance = d;}
+    { m_MinimumVariance = d;}
     double GetMinimumVariance() const
     { return m_MinimumVariance; }
 

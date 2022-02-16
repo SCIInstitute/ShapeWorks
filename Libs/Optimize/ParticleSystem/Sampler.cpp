@@ -428,9 +428,9 @@ std::shared_ptr<vnl_matrix<double>> Sampler::GetInputCovarianceMatrix()
   return this->m_InputCovariance;
 }
 
-std::shared_ptr<double> Sampler::Get_MinimumVariance()
+double Sampler::Get_MinimumVariance()
 {
- return this->m_MinimumVariance;
+ return this->m_MeshBasedGeneralEntropyGradientFunction->GetMinimumVariance();
 }
 
 bool Sampler::initialize_ffcs(size_t dom)

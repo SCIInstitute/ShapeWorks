@@ -2518,4 +2518,8 @@ double Optimize::Get_MinimumVariance()
 {
   return this->m_sampler->Get_MinimumVariance();
 }
+void Optimize::SetFactor(const double f)
+{
+  this->m_sampler->GetOptimizer()->SetFactor(f);
+}
 }
