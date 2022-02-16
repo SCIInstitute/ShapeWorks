@@ -1,12 +1,11 @@
 #pragma once
 
+#include <vnl/vnl_math.h>
 #include <vnl_vector.h>
 
-#include <iostream>
+#include <Eigen/Core>
 
 #include "ConstraintType.h"
-#include "Eigen/Core"
-#include "vnl/vnl_math.h"
 
 namespace shapeworks {
 
@@ -15,8 +14,6 @@ class Constraint {
   bool isViolated(const vnl_vector<double> &pt) const { return isViolated(Eigen::Vector3d(pt[0], pt[1], pt[2])); }
   virtual bool isViolated(const Eigen::Vector3d &pt) const = 0;
   virtual void print() const = 0;
-  shapeworks::ConstraintType getConstraintType() { return type_; }
-  void setConstraintType(shapeworks::ConstraintType inType) { type_ = inType; }
 
   // For augmented lagrangian
   void setZ(double inz) { z_ = inz; }
@@ -36,8 +33,6 @@ class Constraint {
   Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, double C) const;
 
  protected:
-  shapeworks::ConstraintType type_;
-
   int sgn(double val) { return (double(0) < val) - (val < double(0)); }
 
   // For augmented lagrangian

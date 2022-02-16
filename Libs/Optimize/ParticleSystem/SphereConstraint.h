@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Constraint.h"
-#include "Eigen/Core"
-#include "vnl/vnl_math.h"
+
+#include <iostream>
 
 namespace shapeworks {
 

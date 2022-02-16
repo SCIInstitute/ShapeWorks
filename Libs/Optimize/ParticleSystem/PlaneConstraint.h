@@ -3,8 +3,6 @@
 #include <iostream>
 
 #include "Constraint.h"
-#include "Eigen/Core"
-#include "vnl/vnl_math.h"
 
 namespace shapeworks {
 

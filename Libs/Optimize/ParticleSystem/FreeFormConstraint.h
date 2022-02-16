@@ -1,11 +1,8 @@
 #pragma once
 
-#include <vector>
+#include <Libs/Mesh/Mesh.h>
 
 #include "Constraint.h"
-#include "Eigen/Core"
-#include "Mesh.h"
-#include "vnl/vnl_math.h"
 
 namespace shapeworks {
 
