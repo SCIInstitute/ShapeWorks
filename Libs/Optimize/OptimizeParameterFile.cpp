@@ -61,6 +61,13 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
   optimize->SetDomainType(domain_type);
 
+  double factor = 1.1;
+  elem = doc_handle.FirstChild("factor").Element();
+  if (elem){
+    factor = atof(elem->GetText());
+  }
+  optimize->SetFactor(factor);
+
   if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
     if (!this->set_visualizer_parameters(&doc_handle, optimize)) {
       return false;
