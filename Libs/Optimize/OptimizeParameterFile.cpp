@@ -482,6 +482,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
   std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  auto ffcs = optimize->GetSampler()->GetFFCs();
 
   for (int index = 0; index < meshFiles.size(); index++) {
     bool fixed_domain = false;
@@ -521,6 +522,17 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
           mesh.clip(plane);
         }
       }
+
+      if (this->verbosity_level_ > 1) {
+        std::cout << "ffcssize " << ffcs.size() << std::endl;
+      }
+      if (index < ffcs.size()) {
+          for (size_t i = 0; i < ffcs[index].size(); i++) {
+            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
+            mesh = Mesh(mesh.clipByField("inout", 0.0));
+          }
+      }
+
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {

@@ -6,7 +6,7 @@ import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 import shapely
 import matplotlib.pyplot as plt
-from shapeworks import *
+import shapeworks as sw
 
 '''
 Make folder
@@ -67,7 +67,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
     make_dir(segDir)
 
     # get region that includes all of these meshes
-    bball = MeshUtils.boundingBox(meshList)
+    bball = sw.MeshUtils.boundingBox(meshList)
 
     # randomly select 20% meshes for boundary touching samples
     numMeshes = len(meshList)
@@ -84,7 +84,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
         segList.append(segFile)
 
         # load .ply mesh and get its bounding box
-        mesh = Mesh(mesh_)
+        mesh = sw.Mesh(mesh_)
         bb = mesh.boundingBox()
 
         # if mesh isn't in the set for allow_on_boundary, add [random] padding
@@ -215,12 +215,12 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
     for seg in segs:
         print("Generating image " + str(index) + " out of " + str(len(segs)))
         name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
-        img = Image(seg)
+        img = sw.Image(seg)
         origin = img.origin()
         img_array = blur(img.toArray(), blur_factor)
         img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
         img_array = np.float32(img_array)
-        img = Image(np.float32(img_array)).setOrigin(origin)
+        img = sw.Image(np.float32(img_array)).setOrigin(origin)
         img.write(name,compressed=True)
         index += 1
     return get_files(imgDir)
