@@ -96,7 +96,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
                                 m_CuttingPlanes[i][j].c);
-        if(m_verbosity >= 1) std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
+        if(m_verbosity >= 1) std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << domain->GetConstraints()->getPlaneConstraints()[j].GetPlaneNormal().transpose() << " and point " << domain->GetConstraints()->getPlaneConstraints()[j].GetPlanePoint().transpose() << std::endl;
       }
     }
 

@@ -20,7 +20,7 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
     PlaneConstraint plane_c;
     plane_c.SetPlaneNormal(qp);
     plane_c.SetPlanePoint(a);
-    planeConsts->push_back(plane_c);
+    planeConsts.push_back(plane_c);
     active = true;
   }
 }
@@ -33,7 +33,7 @@ void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double
   SphereConstraint sphere_c;
   sphere_c.SetCenter(c);
   sphere_c.SetRadius(r);
-  sphereConsts->push_back(sphere_c);
+  sphereConsts.push_back(sphere_c);
   active = true;
 }
 
@@ -55,10 +55,10 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans) {
   // Maybe TODO Check if transformation matrix is invertible. Return false if not.
 
   // Transform each plane to new format
-  for (unsigned int i = 0; i < planeConsts->size(); i++) {
+  for (unsigned int i = 0; i < planeConsts.size(); i++) {
     // Get points
-    Eigen::Vector3d norm = (*planeConsts)[i].GetPlaneNormal();
-    Eigen::Vector3d point = (*planeConsts)[i].GetPlanePoint();
+    Eigen::Vector3d norm = planeConsts[i].GetPlaneNormal();
+    Eigen::Vector3d point = planeConsts[i].GetPlanePoint();
 
     // Convert to homogeneous coordinates i.e. add an extra coordinate
     Eigen::Vector4d norm_homogeneous;
@@ -86,8 +86,8 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans) {
     new_norm = new_norm / new_norm.norm();
 
     // Set transformed planes
-    (*planeConsts)[i].SetPlaneNormal(new_norm);
-    (*planeConsts)[i].SetPlanePoint(new_point);
+    planeConsts[i].SetPlaneNormal(new_norm);
+    planeConsts[i].SetPlanePoint(new_point);
   }
 
   return true;
@@ -194,14 +194,14 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     // std::cerr << stream.str();
 
     /*
-    Eigen::Vector3d n = (*planeConsts)[violatedPlanes[0]].GetPlaneNormal();
-    Eigen::Vector3d p0 = (*planeConsts)[violatedPlanes[0]].GetPlanePoint();
+    Eigen::Vector3d n = planeConsts[violatedPlanes[0]].GetPlaneNormal();
+    Eigen::Vector3d p0 = planeConsts[violatedPlanes[0]].GetPlanePoint();
 
     double minD = (p0-l0).dot(n)/l.dot(n);
     int minDInd = violatedPlanes[0];
     for(size_t i = 1; i < violatedPlanes.size(); i++){
-        n = (*planeConsts)[violatedPlanes[i]].GetPlaneNormal();
-        p0 = (*planeConsts)[violatedPlanes[i]].GetPlanePoint();
+        n = planeConsts[violatedPlanes[i]].GetPlaneNormal();
+        p0 = planeConsts[violatedPlanes[i]].GetPlanePoint();
         double d = (p0-l0).dot(n)/l.dot(n);
         if(d < minD){
             minD = d;
@@ -209,7 +209,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
         }
     }
 
-    Eigen::Vector3d updated_gradient = (*planeConsts)[minDInd].GetPlaneNormal()*l.norm();
+    Eigen::Vector3d updated_gradient = planeConsts[minDInd].GetPlaneNormal()*l.norm();
     gradE[0] = -updated_gradient(0); gradE[1] = -updated_gradient(1); gradE[2] = -updated_gradient(2);
     return false;
     */
@@ -222,12 +222,12 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   int minDInd = -1;
   std::vector<size_t> violations;
   std::vector<double> distances;
-  for (size_t i = 0; i < planeConsts->size(); i++) {
+  for (size_t i = 0; i < planeConsts.size(); i++) {
     // If constraint is violated, update gradient
-    if ((*planeConsts)[i].isViolated(l0 + l)) {
+    if (planeConsts[i].isViolated(l0 + l)) {
       // Get points
-      Eigen::Vector3d n = (*planeConsts)[i].GetPlaneNormal();
-      Eigen::Vector3d p0 = (*planeConsts)[i].GetPlanePoint();
+      Eigen::Vector3d n = planeConsts[i].GetPlaneNormal();
+      Eigen::Vector3d p0 = planeConsts[i].GetPlanePoint();
 
       // Find intersection between cutting plane (p0, n) and update line (l0, l)
       // Eq of plane:             (p - p0).n = 0
@@ -257,11 +257,11 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     stream << "distance0 " << distances[0] << " distance1 " << distances[0] << std::endl;
     if (distances[0] <= 1e-4 && distances[1] <= 1e-4) {
       // Plane 1
-      Eigen::Vector3d n_d = (*planeConsts)[violations[0]].GetPlaneNormal();
-      Eigen::Vector3d p0_d = (*planeConsts)[violations[0]].GetPlanePoint();
+      Eigen::Vector3d n_d = planeConsts[violations[0]].GetPlaneNormal();
+      Eigen::Vector3d p0_d = planeConsts[violations[0]].GetPlanePoint();
       // Plane 2
-      Eigen::Vector3d n_d2 = (*planeConsts)[violations[1]].GetPlaneNormal();
-      Eigen::Vector3d p0_d2 = (*planeConsts)[violations[1]].GetPlanePoint();
+      Eigen::Vector3d n_d2 = planeConsts[violations[1]].GetPlaneNormal();
+      Eigen::Vector3d p0_d2 = planeConsts[violations[1]].GetPlanePoint();
       // Compute plane plane intersect line
       Eigen::Vector3d a;
       Eigen::Vector3d b;
@@ -293,8 +293,8 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   // else if update violates at least one plane
   if (minDInd > -1 && run) {
     // Project gradient-applied point onto dominant plane
-    Eigen::Vector3d n_d = (*planeConsts)[minDInd].GetPlaneNormal();
-    Eigen::Vector3d p0_d = (*planeConsts)[minDInd].GetPlanePoint();
+    Eigen::Vector3d n_d = planeConsts[minDInd].GetPlaneNormal();
+    Eigen::Vector3d p0_d = planeConsts[minDInd].GetPlanePoint();
     Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d + (n_d * eps), l0 + l, n_d);
 
     // Projected point proj_grad_upd is curr_updated_pt projected to the gradient update vector segment l0 -> l0+l
@@ -313,13 +313,13 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
            << std::endl;
 
     // Now progressively check for how non-dominant planes affect the plane
-    for (size_t i = 0; i < planeConsts->size(); i++) {
+    for (size_t i = 0; i < planeConsts.size(); i++) {
       // If constraint is violated, update gradient
       stream << "----Checking plane " << i << std::endl;
-      if ((*planeConsts)[i].isViolated(curr_updated_pt)) {
+      if (planeConsts[i].isViolated(curr_updated_pt)) {
         // Get points
-        Eigen::Vector3d n = (*planeConsts)[i].GetPlaneNormal();
-        Eigen::Vector3d p0 = (*planeConsts)[i].GetPlanePoint();
+        Eigen::Vector3d n = planeConsts[i].GetPlaneNormal();
+        Eigen::Vector3d p0 = planeConsts[i].GetPlanePoint();
 
         // Find intersection between violated plane and feasible range line segment i.e. the line between
         // curr_updated_pt and its projection to the gradient update vector segment.
@@ -363,7 +363,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
 void Constraints::addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh) {
   FreeFormConstraint ffc;
   ffc.setMesh(mesh);
-  this->freeFormConsts->push_back(ffc);
+  this->freeFormConsts.push_back(ffc);
   active = true;
 }
 
@@ -379,11 +379,11 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     for(size_t i = 0; i < planeConsts->size(); i++){
 
         // If constraint is violated, update gradient
-        if((*planeConsts)[i].isViolated(l0+l)){
+        if(planeConsts[i].isViolated(l0+l)){
 
             // Get points
-            Eigen::Vector3d n = (*planeConsts)[i].GetPlaneNormal();
-            Eigen::Vector3d p0 = (*planeConsts)[i].GetPlanePoint();
+            Eigen::Vector3d n = planeConsts[i].GetPlaneNormal();
+            Eigen::Vector3d p0 = planeConsts[i].GetPlanePoint();
 
             // Find intersection between cutting plane (p0, n) and update line (l0, l)
             // Eq of plane:             (p - p0).n = 0

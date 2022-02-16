@@ -185,7 +185,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     int numSpheres = 0;
     int numPlanes = 0;
 
-    std::vector<shapeworks::PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
+    auto& planeConsts = domain->GetConstraints()->getPlaneConstraints();
     numPlanes = planeConsts.size();
     //std::cout << "Num planes " << numPlanes << std::endl;
     Eigen::Vector3d x_eigen;
@@ -199,7 +199,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         planePts.push_back(planept);
     }
 
-    std::vector<shapeworks::SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
+    auto& sphereConsts = domain->GetConstraints()->GetSphereConstraints();
     // Shadow particle sphere constraints
     numSpheres = sphereConsts.size();
     //std::cout << "Num spheres " << numSpheres << std::endl;
@@ -244,7 +244,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     //  std::cout << planept << "\t" << D << std::endl;
 
 
-    for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
+    for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
     {
         m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
         // SHIREEN
@@ -253,7 +253,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     }
 
     // Add the closest points on any spheres that are defined in the domain.
-    for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
+    for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints().size(); i++ )
     {
         m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //            if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
@@ -302,7 +302,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, idx, m_CurrentWeights, neighborhood_radius, d );
 
 
-        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
+        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
         {
             m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
             // SHIREEN
@@ -311,7 +311,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         }
 
 
-        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
+        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints().size(); i++ )
         {
             m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
@@ -345,7 +345,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
                                                                 neighborhood_radius, d );
 
 
-        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
+        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
         {
             m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
             // SHIREEN
@@ -354,7 +354,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         }
 
 
-        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
+        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints().size(); i++ )
         {
             m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
@@ -396,11 +396,11 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
 
     unsigned int numspheres = 0;
     if (domain->GetConstraints()->IsCuttingSphereDefined())
-        numspheres = domain->GetConstraints()->GetSphereConstraints()->size();
+        numspheres = domain->GetConstraints()->GetSphereConstraints().size();
 
     unsigned int numPlanes  = 0;
-    if (domain->GetConstraints()->getPlaneConstraints()->size()>0)
-        numPlanes = domain->GetConstraints()->getPlaneConstraints()->size();
+    if (domain->GetConstraints()->getPlaneConstraints().size()>0)
+        numPlanes = domain->GetConstraints()->getPlaneConstraints().size();
 
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition( idx, d );

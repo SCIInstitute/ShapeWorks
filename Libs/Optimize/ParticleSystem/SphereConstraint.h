@@ -127,7 +127,7 @@ class SphereConstraint : public Constraint {
     return ConstraintEval(updpt);
   }
 
-  Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) {
+  Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) const {
     // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
     // f'(x) = mu*g'(x) + C*y' where by substitution
     // y = √(u^2) where by substitution
