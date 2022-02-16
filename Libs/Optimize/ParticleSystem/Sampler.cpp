@@ -11,7 +11,7 @@ namespace shapeworks {
 
 Sampler::Sampler() {
   // Allocate the particle system members.
-  m_ParticleSystem = itk::ParticleSystem<Dimension>::New();
+  m_ParticleSystem = itk::ParticleSystem::New();
 
   m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
   m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
@@ -255,7 +255,7 @@ void Sampler::Execute() {
 
 void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
-    object_reader<itk::ParticleSystem<3>::TransformType> reader;
+    object_reader<itk::ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
@@ -264,7 +264,7 @@ void Sampler::ReadTransforms() {
   }
 
   if (m_PrefixTransformFile != "") {
-    object_reader<itk::ParticleSystem<3>::TransformType> reader;
+    object_reader<itk::ParticleSystem::TransformType> reader;
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 

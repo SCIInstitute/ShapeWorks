@@ -530,7 +530,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile()
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -541,7 +541,7 @@ void Optimize::ReadTransformFile()
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn)
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -640,7 +640,7 @@ double Optimize::GetMinNeighborhoodRadius()
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint()
 {
-  typedef itk::ParticleSystem<3> ParticleSystemType;
+  typedef itk::ParticleSystem ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
@@ -1413,7 +1413,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string output_file = iter_prefix;
 
-  std::vector<itk::ParticleSystem<3>::TransformType> tlist;
+  std::vector<itk::ParticleSystem::TransformType> tlist;
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
        i++) {
@@ -1422,7 +1422,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<itk::ParticleSystem<3>::TransformType> writer;
+  object_writer<itk::ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();

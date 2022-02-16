@@ -35,10 +35,12 @@ namespace itk
  * particular domain into another coordinate frame, for example, a common
  * coordinate frame.
  */
-template <unsigned int VDimension=3>
-class ITK_EXPORT ParticleSystem : public DataObject
+class ParticleSystem : public DataObject
 {
 public:
+
+  static constexpr int VDimension = 3;
+
   /** Standard class typedefs */
   typedef ParticleSystem Self;
   typedef DataObject Superclass;
@@ -68,7 +70,7 @@ public:
   /** Point container type.  One is associated with each domain.*/
   typedef ParticleContainer<PointType> PointContainerType;
 
-  typedef typename NeighborhoodType::PointVectorType PointVectorType;
+  typedef NeighborhoodType::PointVectorType PointVectorType;
   
   /** Defines a transform class type.  One is associated with each
       domain. Transforms are affine for simplicity.  This could be extended by
@@ -164,7 +166,7 @@ public:
   void SetNeighborhood(unsigned int,  NeighborhoodType *, int threadId=0);
   void SetNeighborhood(NeighborhoodType *n, int threadId=0)
   { this->SetNeighborhood(0, n, threadId); }
-  typename NeighborhoodType::ConstPointer GetNeighborhood(unsigned int k) const
+  NeighborhoodType::ConstPointer GetNeighborhood(unsigned int k) const
   { return m_Neighborhoods[k]; }
 
   /** Return the neighborhood of points with radius r around point p in domain
@@ -219,12 +221,12 @@ public:
   
   /** Return an iterator that points to the first element of the list of the
       domains. */
-  typename std::vector< typename DomainType::Pointer >::const_iterator GetDomainsBegin() const
+  std::vector< DomainType::Pointer >::const_iterator GetDomainsBegin() const
   { return m_Domains.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       domains. */
-  typename std::vector< typename DomainType::Pointer >::const_iterator GetDomainsEnd() const
+  std::vector< DomainType::Pointer >::const_iterator GetDomainsEnd() const
   { return m_Domains.end(); }
 
   /** Return the i'th domain object. */
@@ -262,12 +264,12 @@ public:
 
   /** Return an iterator that points to the first element of the list of the
       transforms. */
-  typename std::vector< TransformType >::const_iterator
+  std::vector< TransformType >::const_iterator
   GetTransformsBegin() const  { return m_Transforms.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       transforms. */
-  typename std::vector< TransformType >::const_iterator
+  std::vector< TransformType >::const_iterator
   GetTransformsEnd() const  { return m_Transforms.end(); }
   
   /** Return the i'th transform object. */
@@ -304,13 +306,13 @@ public:
   
   /** Return an iterator that points to the first element of the list of the
       inverse transforms. */
-  typename std::vector< TransformType >::const_iterator
+  std::vector< TransformType >::const_iterator
   GetInverseTransformsBegin() const
   { return m_InverseTransforms.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       transforms. */
-  typename std::vector< TransformType >::const_iterator
+  std::vector< TransformType >::const_iterator
   GetInverseTransformsEnd() const
   { return m_InverseTransforms.end(); }
   
@@ -331,9 +333,9 @@ public:
   {return m_InversePrefixTransforms[0]; }
 
   /** Return the array of particle positions. */
-  const  std::vector<typename  PointContainerType::Pointer> &  GetPositions() const
+  const  std::vector< PointContainerType::Pointer> &  GetPositions() const
   { return m_Positions; }
-  const  typename  PointContainerType::Pointer & GetPositions(unsigned int d) const
+  const  PointContainerType::Pointer & GetPositions(unsigned int d) const
   { return m_Positions[d]; }
 
   /** Adds a list of points to the specified domain.  The arguments are the
@@ -429,33 +431,33 @@ protected:
 
   /** Return an iterator that points to the first element of the list of the
       domains. */
-  typename std::vector< typename DomainType::Pointer >::iterator GetDomainsBegin()
+  std::vector< DomainType::Pointer >::iterator GetDomainsBegin()
   { return m_Domains.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       domains. */
-  typename std::vector< typename DomainType::Pointer >::iterator GetDomainsEnd()
+   std::vector<  DomainType::Pointer >::iterator GetDomainsEnd()
   { return m_Domains.end(); }
   
   /** Return an iterator that points to the first element of the list of the
       transforms. */
-  typename std::vector< TransformType >::iterator GetTransformsBegin()
+   std::vector< TransformType >::iterator GetTransformsBegin()
   { return m_Transforms.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       transforms. */
-  typename std::vector< TransformType >::iterator GetTransformsEnd()
+   std::vector< TransformType >::iterator GetTransformsEnd()
   { return m_Transforms.end(); }
   
   /** Return an iterator that points to the first element of the list of the
       inverse transforms. */
-  typename std::vector< TransformType >::iterator
+   std::vector< TransformType >::iterator
   GetInverseTransformsBegin()
   { return m_InverseTransforms.begin(); }
 
   /** Return an iterator that points one position past the last element of the list of the
       transforms. */
-  typename std::vector< TransformType >::iterator
+   std::vector< TransformType >::iterator
   GetInverseTransformsEnd()
   { return m_InverseTransforms.end(); }
   
@@ -481,16 +483,16 @@ private:
   
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
-  std::vector<typename  PointContainerType::Pointer>  m_Positions;
+  std::vector<  PointContainerType::Pointer>  m_Positions;
 
   /** The set of particle domain definitions. */
-  std::vector< typename DomainType::Pointer > m_Domains;
+  std::vector<  DomainType::Pointer > m_Domains;
 
   /** Set number of domains per shape -- Praful */
   unsigned int m_DomainsPerShape;
 
   /** The set of domain neighborhood objects. */
-  std::vector< typename NeighborhoodType::Pointer > m_Neighborhoods;
+  std::vector<  NeighborhoodType::Pointer > m_Neighborhoods;
                
   /** The set of domain transform objects */
   std::vector< TransformType > m_Transforms;
