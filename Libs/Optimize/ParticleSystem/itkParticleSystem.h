@@ -455,7 +455,7 @@ class ParticleSystem : public DataObject {
 
   /** An array that indicates which particle indices (in any domain) will
       not respond to SetPosition. */
-  std::vector<std::vector<bool> > m_FixedParticleFlags;
+  std::vector<std::vector<bool>> m_FixedParticleFlags;
 
   std::mt19937 m_rand{42};
 };

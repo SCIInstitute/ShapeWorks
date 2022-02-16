@@ -17,7 +17,7 @@ class FreeFormConstraint : public Constraint {
 
   std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
 
-  bool isViolated(const Eigen::Vector3d &pt) const {
+  bool isViolated(const Eigen::Vector3d &pt) const override {
     if (constraintEval(pt) >= 0) {
       return false;
     } else {
@@ -25,11 +25,11 @@ class FreeFormConstraint : public Constraint {
     }
   }
 
-  void print() const { std::cout << "FF" << std::endl; }
+  void print() const override { std::cout << "FF" << std::endl; }
 
-  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const { return mesh_->getFFCGradient(pt); }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return mesh_->getFFCGradient(pt); }
 
-  double constraintEval(const Eigen::Vector3d &pt) const { return mesh_->getFFCValue(pt); }
+  double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
 
  private:
   std::shared_ptr<shapeworks::Mesh> mesh_;
