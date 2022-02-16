@@ -429,7 +429,7 @@ bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
 
 //---------------------------------------------------------------------------
 void Shape::load_feature(std::string display_mode, std::string feature) {
-  auto group = this->get_meshes(display_mode);
+  auto group = get_meshes(display_mode);
   if (!group.valid()) {
     // not ready yet
     return;
@@ -442,16 +442,24 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
 
     // first check if we already have this array
     auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+    if (scalar_array) {
+      auto point_features = get_point_features(feature);
+      if (point_features.size() == 0) {
+        auto original_meshes = this->get_original_meshes(true).meshes();
+        this->load_feature_from_mesh(feature, original_meshes[d]);
+      }
+      return;
+    }
     if (!scalar_array) {
-      if (!this->subject_) {
+      if (!subject_) {
         return;
       }
 
       // first check if we have particle scalars for this feature
-      auto point_features = this->get_point_features(feature);
+      auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
           display_mode == Visualizer::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
-        this->set_point_features(feature, point_features);
+        set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
         auto filenames = this->subject_->get_feature_filenames();
@@ -472,7 +480,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
             reader->Update();
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
-            this->apply_feature_to_points(feature, image);
+            apply_feature_to_points(feature, image);
           } catch (itk::ExceptionObject& excep) {
             QMessageBox::warning(0, "Unable to open file", "Error opening file: \"" + filename + "\"");
           }
@@ -543,7 +551,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     values[i] = pixel;
   }
 
-  this->set_point_features(feature, values);
+  set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------
@@ -584,8 +592,8 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature) {
-  auto it = this->point_features_.find(feature);
-  if (it == this->point_features_.end()) {
+  auto it = point_features_.find(feature);
+  if (it == point_features_.end()) {
     return Eigen::VectorXf();
   }
 

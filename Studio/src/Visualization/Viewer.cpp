@@ -518,7 +518,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   } else {
     loading_displayed_ = false;
     viewer_ready_ = true;
-    update_points();
 
     number_of_domains_ = meshes_.meshes().size();
     initialize_surfaces();
@@ -544,8 +543,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
       vtkSmartPointer<vtkPolyDataMapper> mapper = surface_mappers_[i];
       vtkSmartPointer<vtkActor> actor = surface_actors_[i];
-
-      // update_points();
 
       draw_exclusion_spheres(shape);
 
@@ -586,7 +583,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       } else {
         mapper->ScalarVisibilityOff();
       }
+
     }
+    update_points();
 
     display_vector_field();
   }
@@ -716,6 +715,7 @@ void Viewer::update_points() {
   Eigen::VectorXf scalar_values;
   if (showing_feature_map()) {
     auto feature_map = get_displayed_feature_map();
+    shape_->load_feature(visualizer_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);
   }
 
@@ -725,10 +725,7 @@ void Viewer::update_points() {
     glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
     glyph_points_->Reset();
-    //glyph_points_->SetNumberOfPoints(num_points);
-
     scalars->Reset();
-    //scalars->SetNumberOfTuples(num_points);
 
     unsigned int idx = 0;
     for (int i = 0; i < num_points; i++) {
@@ -737,7 +734,6 @@ void Viewer::update_points() {
       double z = correspondence_points[idx++];
 
       if (slice_view_.should_point_show(x,y,z)) {
-
         if (scalar_values.size() > i) {
           scalars->InsertNextValue(scalar_values[i]);
         } else {
