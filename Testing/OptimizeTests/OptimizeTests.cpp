@@ -162,7 +162,7 @@ TEST(OptimizeTests, open_mesh_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, fixedDomain) {
+TEST(OptimizeTests, fixed_domain) {
   setupenv(std::string(TEST_DATA_DIR) + "/fixed_domain");
 
   // prep/groom
@@ -341,7 +341,7 @@ TEST(OptimizeTests, cutting_plane_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, sphereConstraint) {
+TEST(OptimizeTests, sphere_constraint) {
   setupenv(std::string(TEST_DATA_DIR) + "/sphere_constraint");
 
   // prep/groom
@@ -372,7 +372,7 @@ TEST(OptimizeTests, sphereConstraint) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, sphereCuttingPlaneConstraint) {
+TEST(OptimizeTests, sphere_cutting_plane_constraint) {
   setupenv(std::string(TEST_DATA_DIR) + "/sphere_cutting_plane_constraint");
 
   // prep/groom
@@ -443,7 +443,7 @@ TEST(OptimizeTests, ffc_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, MultiDomainConstraint) {
+TEST(OptimizeTests, multi_domain_constraint) {
   setupenv(std::string(TEST_DATA_DIR) + "/multidomain_constraints");
 
   // prep/groom
