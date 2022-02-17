@@ -82,7 +82,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //        pinvMat = (V * invLambda) * V.transpose();
 //        m_InverseCovMatrix = (U * invLambda) * U.transpose();
         
-        if (!m_InputCovariance->is_zero ())
+        if (!m_InputCovariance->is_zero())
         {
         
         gramMat = *m_InputCovariance;
