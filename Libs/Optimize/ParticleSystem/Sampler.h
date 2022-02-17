@@ -447,9 +447,12 @@ public:
 
   }
 
+
   std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
   std::shared_ptr<vnl_matrix<double>> GetInputCovarianceMatrix();
   double Get_MinimumVariance();
+  std::vector<std::vector<FFCType> > GetFFCs(){return m_FFCs;}
+
 
 protected:
 

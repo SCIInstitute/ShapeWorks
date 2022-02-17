@@ -1,0 +1,76 @@
+name: Linux Build Debug
+
+on:
+  push:
+    branches:
+      - master
+      - release_v*
+    tags:
+    - '*'
+  pull_request:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
+  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
+    
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: akenmorris/ubuntu-build-box
+    
+    steps:
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - name: Conda info
+      run: conda info
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        lfs: true
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+    - name: Restore Caches
+      shell: bash -l {0}
+      run: .github/workflows/restore_caches.sh
+    
+    - name: Conda Installs
+      shell: bash -l {0}
+      run: .github/workflows/gha_conda.sh
+
+    - name: Build Dependencies
+      shell: bash -l {0}
+      run: .github/workflows/gha_deps.sh
+
+    - name: cmake
+      shell: bash -l {0}
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRY_CENTRAL_DIR=$HOME/install/geometry-central -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+
+    - name: make
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make -j4
+
+    - name: make install
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make install
+      
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
+  
+    - name: Store ccache
+      shell: bash -l {0}
+      run: .github/workflows/store_ccache.sh
+
+      

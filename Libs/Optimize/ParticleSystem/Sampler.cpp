@@ -120,10 +120,8 @@ void Sampler::AllocateDomainsAndNeighborhoods()
 
       // Adding free-form constraints to constraint object
       //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
-      if (m_FFCs.size() > 1) {
-          for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
-            initialize_ffcs(i);
-          }
+      if (m_FFCs.size() > i && m_FFCs[i].size() > 0) {
+         initialize_ffcs(i);
       }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
