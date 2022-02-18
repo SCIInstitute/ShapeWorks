@@ -33,6 +33,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->landmarks_open_button, &QPushButton::toggled, ui_->landmarks_content, &QWidget::setVisible);
   connect(ui_->landmarks_open_button, &QPushButton::toggled, this, &DataTool::handle_landmark_mode_changed);
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
+  connect(ui_->constraints_open_button, &QPushButton::toggled, this, &DataTool::handle_constraints_mode_changed);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
   connect(ui_->landmark_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -87,6 +88,7 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   landmark_table_model_->set_session(session);
   update_table();
   handle_landmark_mode_changed();
+  handle_constraints_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -162,8 +164,7 @@ void DataTool::landmark_domain_changed() {
 void DataTool::constraints_domain_changed() {}
 
 //---------------------------------------------------------------------------
-void DataTool::new_plane_clicked() {
-}
+void DataTool::new_plane_clicked() {}
 
 //---------------------------------------------------------------------------
 void DataTool::update_domain_box(QComboBox* box) {
@@ -213,6 +214,13 @@ void DataTool::set_placing_button_clicked(int id) {
 void DataTool::handle_landmark_mode_changed() {
   if (session_) {
     session_->set_landmarks_active(ui_->landmarks_open_button->isChecked());
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::handle_constraints_mode_changed() {
+  if (session_) {
+    session_->set_planes_active(ui_->constraints_open_button->isChecked());
   }
 }
 

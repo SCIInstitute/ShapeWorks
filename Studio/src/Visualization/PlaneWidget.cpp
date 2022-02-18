@@ -57,9 +57,11 @@ void PlaneWidget::update_planes() {
   int num_points = 0;
 
   for (int i = 0; i < domain_names.size(); i++) {
-    auto &planes = shape->constraints()[i].getPlaneConstraints();
-    for (auto &plane : planes) {
-      num_points += plane.points().size();
+    if (i < shape->constraints().size()) {
+      auto &planes = shape->constraints()[i].getPlaneConstraints();
+      for (auto &plane : planes) {
+        num_points += plane.points().size();
+      }
     }
   }
 
@@ -74,12 +76,19 @@ void PlaneWidget::update_planes() {
 
   int handle = 0;
   for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    if (domain_id >= shape->constraints().size()) {
+      continue;
+    }
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
+    int plane_it = 0;
     for (auto &plane : planes) {
+      QColor colors[6] = {QColor(255, 0, 0),   QColor(0, 255, 0),    QColor(0, 0, 255),
+                          QColor(255, 128, 0), QColor(255, 64, 255), QColor(0, 128, 64)};
+      QColor qcolor = colors[plane_it];
+      plane_it = (plane_it + 1) % 6;
       for (auto &point : plane.points()) {
-        vtkPolygonalHandleRepresentation3D *rep =
-            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
+        auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
         double xyz[3];
 
         xyz[0] = point[0];
@@ -96,7 +105,7 @@ void PlaneWidget::update_planes() {
 
         assign_handle_to_domain(handles_[handle], domain_id);
 
-        QColor qcolor(Qt::green);
+        // QColor qcolor(Qt::green);
         double color[3];
         color[0] = qcolor.red() / 255.0;
         color[1] = qcolor.green() / 255.0;
@@ -138,12 +147,16 @@ void PlaneWidget::store_positions() {
 
   int handle = 0;
   for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    if (domain_id >= shape->constraints().size()) {
+      continue;
+    }
+
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
     for (auto &plane : planes) {
       for (auto &point : plane.points()) {
         vtkPolygonalHandleRepresentation3D *rep =
-            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
+            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle++]->GetRepresentation());
 
         double position[3];
         rep->GetWorldPosition(position);
