@@ -80,12 +80,11 @@ class Constraints {
   bool GetActive() { return active_; }
   void SetActive(bool ac) { active_ = ac; }
 
- protected:
+ private:
   std::vector<PlaneConstraint> planeConstraints_;
   std::vector<SphereConstraint> sphereConstraints_;
   std::vector<FreeFormConstraint> freeFormConstraints_;
 
- private:
   // Projections and intersects
   bool active_;
   Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);
