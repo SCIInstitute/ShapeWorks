@@ -9,6 +9,7 @@ add_library(Optimize STATIC
   ParticleSystem/Constraints.cpp
   ParticleSystem/Constraint.cpp
   ParticleSystem/SphereConstraint.cpp
+  ParticleSystem/PlaneConstraint.cpp
   ParticleSystem/TriMeshWrapper.cpp
   ParticleSystem/VtkMeshWrapper.cpp
   ParticleSystem/OptimizationVisualizer.cpp
