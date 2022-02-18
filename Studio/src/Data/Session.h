@@ -172,6 +172,7 @@ class Session : public QObject {
   void data_changed();
   void points_changed();
   void landmarks_changed();
+  void planes_changed();
   void update_display();
   void new_mesh();
   void message(QString);
@@ -194,6 +195,10 @@ class Session : public QObject {
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
+
+  void new_landmark(PickResult result);
+
+  void new_plane_point(PickResult result);
 
   QWidget* parent_{nullptr};
 

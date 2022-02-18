@@ -43,7 +43,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->new_plane_, &QPushButton::clicked, this, &DataTool::new_plane_clicked);
 
   ui_->landmark_help->setText("Place landmarks using " + click_message);
-  ui_->plane_contraints_instruction_->setText("");
+  ui_->plane_contraints_instruction_->setText("Place 3 points to define a plane on a shape using " + click_message);
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -163,7 +163,6 @@ void DataTool::constraints_domain_changed() {}
 
 //---------------------------------------------------------------------------
 void DataTool::new_plane_clicked() {
-  ui_->plane_contraints_instruction_->setText("Place 3 points to define a plane on a shape using " + click_message);
 }
 
 //---------------------------------------------------------------------------

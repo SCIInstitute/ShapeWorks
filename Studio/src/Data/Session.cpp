@@ -758,6 +758,76 @@ void Session::renumber_shapes() {
 }
 
 //---------------------------------------------------------------------------
+void Session::new_landmark(PickResult result) {
+  if (result.subject_ < 0 || result.subject_ >= shapes_.size()) {
+    return;
+  }
+
+  Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
+
+  // find the row that matches the placing_landmark and domain
+  int row = -1;
+  int point_id = 0;
+  for (int i = 0; i < landmarks.rows(); i++) {
+    if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
+      row = i;
+      point_id = placing_landmark_;
+    }
+  }
+
+  if (row == -1) {  // not found
+    for (int i = 0; i < landmarks.rows(); i++) {
+      if (landmarks(i, 0) == result.domain_) {
+        point_id = std::max<int>(point_id, landmarks(i, 1) + 1);
+      }
+    }
+  }
+
+  if (row == -1) {
+    landmarks.conservativeResize(landmarks.rows() + 1, 5);
+    row = landmarks.rows() - 1;
+  }
+  landmarks(row, 0) = result.domain_;
+  landmarks(row, 1) = point_id;
+  landmarks(row, 2) = result.pos_.x;
+  landmarks(row, 3) = result.pos_.y;
+  landmarks(row, 4) = result.pos_.z;
+  if (point_id >= project_->get_landmarks(result.domain_).size()) {
+    project_->new_landmark(result.domain_);
+  }
+  update_auto_glyph_size();
+  emit landmarks_changed();
+}
+
+//---------------------------------------------------------------------------
+void Session::new_plane_point(PickResult result) {
+  if (result.subject_ < 0 || result.subject_ >= shapes_.size()) {
+    return;
+  }
+
+  Eigen::Vector3d pos(result.pos_.x,result.pos_.y,result.pos_.z);
+  Constraints &constraints = shapes_[result.subject_]->constraints();
+  auto& planes = constraints.getPlaneConstraints();
+
+  bool found = false;
+  for (auto & plane : planes) {
+    if (plane.points().size() < 3) {
+      // found one to add a point to
+      plane.points().push_back(pos);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) { // no planes were found with less than 3 points,
+    PlaneConstraint plane;
+    plane.points().push_back(pos);
+    planes.push_back(plane);
+  }
+  emit planes_changed();
+}
+
+//---------------------------------------------------------------------------
 QString Session::get_filename() { return this->filename_; }
 
 //---------------------------------------------------------------------------
@@ -887,47 +957,15 @@ void Session::set_feature_range_max(double value) {
 void Session::handle_ctrl_click(PickResult result) {
   std::string tool_state = parameters().get("tool_state", Session::DATA_C);
 
-  if (tool_state != Session::DATA_C || !landmarks_active_) {
-    // do nothing if we are not in the data tool with landmarks active
+  if (tool_state != Session::DATA_C) {
     return;
   }
 
-  if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
-    Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
-
-    // find the row that matches the placing_landmark and domain
-    int row = -1;
-    int point_id = 0;
-    for (int i = 0; i < landmarks.rows(); i++) {
-      if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
-        row = i;
-        point_id = placing_landmark_;
-      }
-    }
-
-    if (row == -1) {  // not found
-      for (int i = 0; i < landmarks.rows(); i++) {
-        if (landmarks(i, 0) == result.domain_) {
-          point_id = std::max<int>(point_id, landmarks(i, 1) + 1);
-        }
-      }
-    }
-
-    if (row == -1) {
-      landmarks.conservativeResize(landmarks.rows() + 1, 5);
-      row = landmarks.rows() - 1;
-    }
-    landmarks(row, 0) = result.domain_;
-    landmarks(row, 1) = point_id;
-    landmarks(row, 2) = result.pos_.x;
-    landmarks(row, 3) = result.pos_.y;
-    landmarks(row, 4) = result.pos_.z;
-    if (point_id >= project_->get_landmarks(result.domain_).size()) {
-      project_->new_landmark(result.domain_);
-    }
+  if (landmarks_active_) {
+    new_landmark(result);
+  } else if (planes_active_) {
+    new_plane_point(result);
   }
-  update_auto_glyph_size();
-  emit landmarks_changed();
 }
 
 //---------------------------------------------------------------------------

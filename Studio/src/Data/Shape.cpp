@@ -741,4 +741,7 @@ std::string Shape::get_override_feature() { return this->override_feature_; }
 
 //---------------------------------------------------------------------------
 Eigen::MatrixXd& Shape::landmarks() { return landmarks_; }
+
+//---------------------------------------------------------------------------
+Constraints& Shape::constraints() { return constraints_; }
 }  // namespace shapeworks

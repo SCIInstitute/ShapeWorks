@@ -152,6 +152,8 @@ class Shape {
 
   Eigen::MatrixXd& landmarks();
 
+  Constraints& constraints();
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
