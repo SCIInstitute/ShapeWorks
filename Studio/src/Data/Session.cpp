@@ -949,6 +949,9 @@ int Session::get_placing_landmark() { return placing_landmark_; }
 void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
 
 //---------------------------------------------------------------------------
+void Session::set_planes_active(bool active) { planes_active_ = active; }
+
+//---------------------------------------------------------------------------
 void Session::set_show_landmarks(bool show) {
   show_landmark_labels_ = show;
   emit landmarks_changed();

@@ -133,6 +133,7 @@ class Session : public QObject {
   void set_placing_landmark(int id);
   int get_placing_landmark();
   void set_landmarks_active(bool active);
+  void set_planes_active(bool active);
   void set_show_landmarks(bool show);
   bool get_show_landmarks();
 
@@ -221,6 +222,7 @@ class Session : public QObject {
   int placing_landmark_ = -1;
   bool landmark_drag_mode_ = false;
   bool landmarks_active_ = false;
+  bool planes_active_ = false;
   bool show_landmark_labels_ = false;
   bool is_loading_ = false;
 };

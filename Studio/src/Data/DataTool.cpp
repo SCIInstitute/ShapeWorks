@@ -13,6 +13,12 @@
 #include <QThread>
 #include <iostream>
 
+#ifdef __APPLE__
+static QString click_message = "⌘+click";
+#else
+static QString clickMessage = "ctrl+click";
+#endif
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -29,16 +35,20 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
 
-  connect(ui_->domainBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &DataTool::landmark_domain_changed);
+  connect(ui_->landmark_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &DataTool::landmark_domain_changed);
+  connect(ui_->constraints_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &DataTool::constraints_domain_changed);
 
-#ifdef __APPLE__
-  ui_->landmark_help->setText("Place landmarks using ⌘+click");
-#endif
+  connect(ui_->new_plane_, &QPushButton::clicked, this, &DataTool::new_plane_clicked);
+
+  ui_->landmark_help->setText("Place landmarks using " + click_message);
+  ui_->plane_contraints_instruction_->setText("");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
-  //ui_->table_open_button->toggle();
-  ui_->constraints_open_button->toggle();
+  ui_->table_open_button->toggle();
+  // ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
@@ -131,34 +141,47 @@ void DataTool::update_table() {
 
 //---------------------------------------------------------------------------
 void DataTool::update_landmark_table() {
-  update_domain_box();
+  update_domain_box(ui_->landmark_domain_box_);
+  update_domain_box(ui_->constraints_domain_box_);
+
+  auto domain_names = session_->get_project()->get_domain_names();
+  ui_->landmark_domain_widget_->setVisible(domain_names.size() > 1);
+  ui_->constraints_domain_widget_->setVisible(domain_names.size() > 1);
+
   landmark_table_model_->update_table();
   ui_->landmark_table->resizeColumnsToContents();
 }
 
 //---------------------------------------------------------------------------
 void DataTool::landmark_domain_changed() {
-  landmark_table_model_->set_active_domain(ui_->domainBox->currentIndex());
+  landmark_table_model_->set_active_domain(ui_->landmark_domain_box_->currentIndex());
   landmark_table_model_->update_table();
 }
 
 //---------------------------------------------------------------------------
-void DataTool::update_domain_box() {
-  auto domain_names = session_->get_project()->get_domain_names();
-  ui_->domainWidget->setVisible(domain_names.size() > 1);
+void DataTool::constraints_domain_changed() {}
 
-  int currentIndex = ui_->domainBox->currentIndex();
-  if (domain_names.size() != ui_->domainBox->count()) {
-    ui_->domainBox->clear();
+//---------------------------------------------------------------------------
+void DataTool::new_plane_clicked() {
+  ui_->plane_contraints_instruction_->setText("Place 3 points to define a plane on a shape using " + click_message);
+}
+
+//---------------------------------------------------------------------------
+void DataTool::update_domain_box(QComboBox* box) {
+  auto domain_names = session_->get_project()->get_domain_names();
+
+  int currentIndex = box->currentIndex();
+  if (domain_names.size() != box->count()) {
+    box->clear();
     for (auto&& item : domain_names) {
-      ui_->domainBox->addItem(QString::fromStdString(item));
+      box->addItem(QString::fromStdString(item));
     }
   }
   if (currentIndex < 0) {
     currentIndex = 0;
   }
-  if (currentIndex < ui_->domainBox->count()) {
-    ui_->domainBox->setCurrentIndex(currentIndex);
+  if (currentIndex < box->count()) {
+    box->setCurrentIndex(currentIndex);
   }
 }
 //---------------------------------------------------------------------------

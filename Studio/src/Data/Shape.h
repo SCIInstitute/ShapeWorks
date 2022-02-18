@@ -6,6 +6,7 @@
 #include <Data/StudioParticles.h>
 #include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
+#include <Libs/Optimize/ParticleSystem/Constraints.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -194,5 +195,7 @@ class Shape {
 
   vtkSmartPointer<vtkImageData> image_volume_;
   std::string image_volume_filename_;
+
+  Constraints constraints_;
 };
 }  // namespace shapeworks
