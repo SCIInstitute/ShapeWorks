@@ -55,6 +55,8 @@ public:
       Requires that ReadPointFiles be called first. */
   int ComputeModes();
 
+  //Robust PPCA compute modes
+  int ComputeRPPCAMode();
   /** Computes the principal component loadings, or projections onto the
       principal componenent axes for each of the samples.  ComputeModes must be
       called first. */
@@ -79,6 +81,11 @@ public:
   const Eigen::MatrixXd &Eigenvectors() { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
 
+  const Eigen::MatrixXd &RPPCAEigenvectors() { return m_rppcaeigenvectors; }
+  const std::vector<double> &RPPCAEigenvalues() { return m_rppcaeigenvalues; }
+  const Eigen::VectorXd &RPPCAMean() { return m_rppcamean; }
+  const std::vector<double> &RPPCAExpVar() { return m_rppcapercentVarByMode; }
+  const Eigen::MatrixXd &RPPCAPointsMinMean() { return m_rppcapointsMinusMean; }
   /** Returns the mean shape. */
   const Eigen::VectorXd &Mean() { return m_mean; }
   const Eigen::VectorXd &Group1Mean() { return m_mean1; }
@@ -130,6 +137,40 @@ public:
 
   Eigen::MatrixXd getRPPCAMode();
 
+  void set_rppcaEigenVecs(Eigen::MatrixXd X)
+  { 
+    
+    this->m_rppcaeigenvectors = X;
+  }
+
+   void set_rppcaEigenVals(Eigen::VectorXd X)
+  {
+    this->m_rppcaeigenvalues.resize(X.size());
+    for(int i = 0; i<X.size(); i++){
+      this->m_rppcaeigenvalues[i] = X[i];
+    }
+    
+  }
+
+  void set_rppcaMean(Eigen::VectorXd X)
+  {
+    
+    this->m_rppcamean = X;
+    
+  }
+   void set_rppcaExpVar(Eigen::VectorXd X)
+  {
+    
+    this->m_rppcapercentVarByMode.resize(X.size());
+    for(int i = 0; i<X.size(); i++){
+      this->m_rppcapercentVarByMode[i] = X[i];
+    }
+  }
+  void set_rppcaXminMean(Eigen::MatrixXd X)
+  {
+    
+    this->m_rppcapointsMinusMean = X;
+  }
 private:
 
   unsigned int m_numSamples1;
@@ -154,6 +195,11 @@ private:
   std::vector<double> m_percentVarByMode;
   Eigen::VectorXd m_fishersLD;
   Eigen::MatrixXd m_principals;
+  Eigen::MatrixXd m_rppcaeigenvectors;
+  std::vector<double> m_rppcaeigenvalues;
+  Eigen::VectorXd m_rppcamean;
+  std::vector<double> m_rppcapercentVarByMode;
+  Eigen::MatrixXd m_rppcapointsMinusMean;
 
   Eigen::VectorXd m_groupdiff;
   Eigen::VectorXd m_groupdiffnorm;
@@ -165,6 +211,7 @@ private:
 
   Eigen::MatrixXd m_group_1_matrix;
   Eigen::MatrixXd m_group_2_matrix;
+  bool m_rppca_job_done;
 };
 
 } // shapeworks

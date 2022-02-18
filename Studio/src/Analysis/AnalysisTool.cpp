@@ -1,4 +1,4 @@
-// std
+s std
 #include <iostream>
 #include <fstream>
 
@@ -18,6 +18,7 @@
 #include <Visualization/Lightbox.h>
 #include <Python/PythonWorker.h>
 #include <Job/GroupPvalueJob.h>
+#include <Job/RPPCAJob.h>
 
 #include <jkqtplotter/jkqtplotter.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
@@ -29,6 +30,7 @@ namespace shapeworks {
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
+const std::string AnalysisTool::MODE_RPPCA_C("rppca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
@@ -62,6 +64,11 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+  //To Do: placeholders for RPPCA connections
+  connect(this->ui_->rppcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
+          SLOT(handle_rppca_animate_state_changed()));
+  connect(&this->rppca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_rppca_timer()));
 
   // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -114,6 +121,9 @@ std::string AnalysisTool::get_analysis_mode()
   }
   if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
     return AnalysisTool::MODE_PCA_C;
+  }
+  if(this->ui_->tabWidget->currentWidget() == this->ui_->rppca_tab){
+    return AnalysisTool::MODE_RPPCA_C;
   }
   if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) {
     return AnalysisTool::MODE_REGRESSION_C;
@@ -206,7 +216,12 @@ int AnalysisTool::getPCAMode()
 {
   return this->ui_->pcaModeSpinBox->value() - 1;
 }
-
+//---------------------------------------------------------------------------
+//get RPPCA modes
+int AnalysisTool::getRPPCAMode()
+{
+  return this->ui_->rppcaModeSpinBox->value() - 1;
+}
 //---------------------------------------------------------------------------
 double AnalysisTool::get_group_value()
 {
@@ -220,7 +235,12 @@ bool AnalysisTool::pcaAnimate()
 {
   return this->ui_->pcaAnimateCheckBox->isChecked();
 }
-
+//---------------------------------------------------------------------------
+//Animate RPPCA
+bool AnalysisTool::rppcaAnimate()
+{
+  return this->ui_->rppcaAnimateCheckBox->isChecked();
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::setLabels(QString which, QString value)
 {
@@ -232,6 +252,15 @@ void AnalysisTool::setLabels(QString which, QString value)
   }
   else if (which == QString("lambda")) {
     this->ui_->pcaLambdaLabel->setText(value);
+  }
+  else if (which == QString("rppca")){
+    this->ui_->rppcaValueLabel->setText(value);
+  }
+  else if (which == QString("rppcaeigen")){
+    this->ui_->rppcaEigenValue_Value->setText(value);
+  }
+  else if (which == QString("rppcalambda")){
+    this->ui_->rppcaLambda->setText(value);
   }
 }
 
@@ -317,6 +346,14 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaSlider->setEnabled(true);
     this->ui_->pcaAnimateCheckBox->setEnabled(true);
     this->ui_->pcaModeSpinBox->setEnabled(true);
+  }
+  else if (this->ui_->tabWidget->currentWidget() == this->ui_->rppca_tab) {
+    //pca mode
+    this->ui_->sampleSpinBox->setEnabled(false);
+    this->ui_->medianButton->setEnabled(false);
+    this->ui_->rppcaSlider->setEnabled(true);
+    this->ui_->rppcaAnimateCheckBox->setEnabled(true);
+    this->ui_->rppcaModeSpinBox->setEnabled(true);
   }
   else {
     //regression mode
@@ -434,7 +471,8 @@ bool AnalysisTool::compute_stats()
 
   this->ui_->pcaModeSpinBox->setMaximum(
     std::max<double>(1, this->session_->get_shapes().size() - 1));
-
+  this->ui_->rppcaModeSpinBox->setMaximum(
+    std::max<double>(1, this->session_->get_shapes().size() - 1));
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
@@ -487,7 +525,8 @@ bool AnalysisTool::compute_stats()
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
-
+  this->compute_rppca();
+  this->stats_.ComputeRPPCAModes();
   this->compute_shape_evaluations();
 
   this->stats_ready_ = true;
@@ -522,7 +561,15 @@ bool AnalysisTool::compute_stats()
 
   return true;
 }
-
+void AnalysisTool::compute_rppca()
+{
+  this->rppca_job_ = QSharedPointer<RPPCAJob>::create(this->stats_);
+    connect(this->rppca_job_.data(), &RPPCAJob::message, this, &AnalysisTool::message);
+    connect(this->rppca_job_.data(), &RPPCAJob::progress, this, &AnalysisTool::progress);
+    connect(this->rppca_job_.data(), &RPPCAJob::finished,
+            this, &AnalysisTool::handle_rpca_job_done);
+    this->app_->get_py_worker()->run_job(this->rppca_job_);
+}
 //-----------------------------------------------------------------------------
 StudioParticles AnalysisTool::get_mean_shape_points()
 {
@@ -548,7 +595,7 @@ StudioParticles AnalysisTool::get_mean_shape_points()
 
   return this->convert_from_combined(this->stats_.Mean());
 }
-
+// TO DO include get mean shape for rppca
 //-----------------------------------------------------------------------------
 StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 {
@@ -593,6 +640,56 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
   return this->convert_from_combined(this->temp_shape_);
 }
 
+//-----------------------------------------------------------------------------
+StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
+{
+  if (!this->compute_stats() || this->stats_.RPPCAEigenvectors().size() <= 1) {
+    return StudioParticles();
+  }
+  if (mode + 2 > this->stats_.RPPCAEigenvalues().size()) {
+    mode = this->stats_.RPPCAEigenvalues().size() - 2;
+  }
+
+  unsigned int m = this->stats_.RPPCAEigenvectors().cols() - (mode + 1);
+
+  Eigen::VectorXd e = this->stats_.RPPCAEigenvectors().col(m);
+
+  double lambda = sqrt(this->stats_.RPPCAEigenvalues()[m]);
+
+  this->rppca_labels_changed(QString::number(value, 'g', 2),
+                           QString::number(this->stats_.RPPCAEigenvalues()[m]),
+                           QString::number(value * lambda));
+
+  std::vector<double> vals;
+  for (int i = this->stats_.RPPCAEigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.RPPCAEigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+  if (sum > 0) {
+    this->ui_->rppca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->rppca_cumulative_explained_variance->setText(
+      QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  }
+  else {
+    this->ui_->rppca_explained_variance->setText("");
+    this->ui_->rppca_cumulative_explained_variance->setText("");
+  }
+
+  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+
+  return this->convert_from_combined(this->temp_shape_);
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_rppca_mode_shape(int mode, double value)
+{
+  return this->create_shape_from_points(this->get_rppca_shape_points(mode, value));
+}
+
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
 {
@@ -634,6 +731,7 @@ void AnalysisTool::store_settings()
 void AnalysisTool::shutdown()
 {
   this->pca_animate_timer_.stop();
+  this->rppca_animate_timer_.stop();
 }
 
 //---------------------------------------------------------------------------
@@ -696,7 +794,14 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 
   emit pca_update();
 }
+//---------------------------------------------------------------------------
+void AnalysisTool::on_rppcaSlider_valueChanged()
+{
 
+  QCoreApplication::processEvents();
+
+  emit rppca_update();
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged()
 {
@@ -716,6 +821,11 @@ void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 {
   emit pca_update();
 }
+//---------------------------------------------------------------------------
+void AnalysisTool::on_rppcaModeSpinBox_valueChanged(int i)
+{
+  emit rppca_update();
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed()
@@ -726,6 +836,17 @@ void AnalysisTool::handle_pca_animate_state_changed()
   }
   else {
     this->pca_animate_timer_.stop();
+  }
+}
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_rppca_animate_state_changed()
+{
+  if (this->rppcaAnimate()) {
+    this->rppca_animate_timer_.setInterval(10);
+    this->rppca_animate_timer_.start();
+  }
+  else {
+    this->rppca_animate_timer_.stop();
   }
 }
 
@@ -749,6 +870,27 @@ void AnalysisTool::handle_pca_timer()
   }
 
   this->ui_->pcaSlider->setValue(value);
+}
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_rppca_timer()
+{
+  if (!this->rppcaAnimate()) {
+    return;
+  }
+
+  int value = this->ui_->rppcaSlider->value();
+  if (this->rppca_animate_direction_) {
+    value += this->ui_->rppcaSlider->singleStep();
+  }
+  else {
+    value -= this->ui_->rppcaSlider->singleStep();
+  }
+
+  if (value >= this->ui_->rppcaSlider->maximum() || value <= this->ui_->rppcaSlider->minimum()) {
+    this->rppca_animate_direction_ = !this->rppca_animate_direction_;
+  }
+
+  this->ui_->rppcaSlider->setValue(value);
 }
 
 //---------------------------------------------------------------------------
@@ -792,7 +934,16 @@ double AnalysisTool::get_pca_value()
   double value = (double) slider_value / (double) halfRange * range;
   return value;
 }
+//---------------------------------------------------------------------------
+double AnalysisTool::get_rppca_value()
+{
+  int slider_value = this->ui_->rppcaSlider->value();
+  float range = preferences_.get_pca_range();
+  int halfRange = this->ui_->rppcaSlider->maximum();
 
+  double value = (double) slider_value / (double) halfRange * range;
+  return value;
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lambda)
 {
@@ -801,6 +952,12 @@ void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lamb
   this->setLabels(QString("lambda"), lambda);
 }
 
+void AnalysisTool::rppca_labels_changed(QString value, QString eigen, QString lambda)
+{
+  this->setLabels(QString("rppca"), value);
+  this->setLabels(QString("rppcaeigen"), eigen);
+  this->setLabels(QString("rppcalambda"), lambda);
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::updateSlider()
 {
@@ -808,7 +965,13 @@ void AnalysisTool::updateSlider()
   auto sliderRange = this->ui_->pcaSlider->maximum() - this->ui_->pcaSlider->minimum();
   this->ui_->pcaSlider->setSingleStep(sliderRange / steps);
 }
-
+//---------------------------------------------------------------------------
+void AnalysisTool::updateRPPCASlider()
+{
+  auto steps = this->preferences_.get_pca_steps();
+  auto sliderRange = this->ui_->rppcaSlider->maximum() - this->ui_->rppcaSlider->minimum();
+  this->ui_->rppcaSlider->setSingleStep(sliderRange / steps);
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
@@ -821,6 +984,11 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaAnimateCheckBox->setEnabled(false);
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
+    //Robust PPCA
+  this->ui_->rppcaSlider->setEnabled(false);
+  this->ui_->rppcaAnimateCheckBox->setEnabled(false);
+  this->ui_->rppcaModeSpinBox->setEnabled(false);
+  this->ui_->rppcaAnimateCheckBox->setChecked(false);
   this->stats_ready_ = false;
   this->evals_ready_ = false;
   this->stats_ = ParticleShapeStatistics();
@@ -868,6 +1036,9 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   }
   else if (mode == "pca") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->pca_tab);
+  }
+  else if (mode == "rppca") {
+    this->ui_->tabWidget->setCurrentWidget(this->ui_->rppca_tab);
   }
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
@@ -1290,6 +1461,8 @@ void AnalysisTool::set_active(bool active)
   if (!active) {
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->pca_animate_timer_.stop();
+    this->ui_->rppcaAnimateCheckBox->setChecked(false);
+    this->rppca_animate_timer_.stop();
   }
   this->active_ = active;
 }

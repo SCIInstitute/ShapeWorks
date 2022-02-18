@@ -153,7 +153,28 @@ def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1):
         matrix = np.matmul(W.T,W)
         eigen_values, rotation_matrix = np.linalg.eig(matrix)
         eigen_vector_W = np.matmul(W,rotation_matrix)
-        eigen_values_W = eigen_values/ (np.sum(eigen_values) + sigma2)
-    return eigen_values_W,eigen_vector_W,mu,eigen_values
+        exp_var = np.cumsum(eigen_values)/ (np.sum(eigen_values) + sigma2)
+        X_minusMean = data - mu
+
+        return eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean
 
 
+def get_rrpcaEigenVector(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,_X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
+    return eigen_vector_W
+
+def get_rppcaEigenValues(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,_X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
+    return eigen_values_W
+
+def get_expVar(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
+    return exp_var
+
+def get_rppcamean(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
+    return mu
+
+def get_X_minsMean(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
+    return X_minusMean
