@@ -1,6 +1,7 @@
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/LandmarkWidget.h>
+#include <Visualization/PlaneWidget.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
@@ -35,6 +36,7 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
+  plane_widget_ = std::make_shared<PlaneWidget>(this);
 
   sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
@@ -479,6 +481,12 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_planes()
+{
+plane_widget_->update_planes();
+}
+
+//-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
 
 //-----------------------------------------------------------------------------
@@ -595,6 +603,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   update_actors();
   update_glyph_properties();
   landmark_widget_->clear_landmarks();
+  plane_widget_->clear_planes();
   update_landmarks();
   ren->AddViewProp(corner_annotation_);
 }
@@ -672,6 +681,7 @@ void Viewer::update_glyph_properties() {
   glyphs_->Update();
   arrow_glyphs_->Update();
   landmark_widget_->update_glyph_properties();
+  plane_widget_->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------

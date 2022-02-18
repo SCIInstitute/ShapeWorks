@@ -152,7 +152,7 @@ class Shape {
 
   Eigen::MatrixXd& landmarks();
 
-  Constraints& constraints();
+  std::vector<Constraints>& constraints();
 
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
@@ -198,6 +198,6 @@ class Shape {
   vtkSmartPointer<vtkImageData> image_volume_;
   std::string image_volume_filename_;
 
-  Constraints constraints_;
+  std::vector<Constraints> constraints_; // one set for each domain
 };
 }  // namespace shapeworks

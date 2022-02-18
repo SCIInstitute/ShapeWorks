@@ -35,6 +35,7 @@ class Viewer;
 class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
+class PlaneWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -105,6 +106,7 @@ class Viewer {
   QSharedPointer<Shape> get_shape();
 
   void update_landmarks();
+  void update_planes();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
 
@@ -207,6 +209,7 @@ class Viewer {
   int number_of_domains_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
+  std::shared_ptr<PlaneWidget> plane_widget_;
 
   QSharedPointer<Session> session_;
 

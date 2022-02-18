@@ -806,8 +806,8 @@ void Session::new_plane_point(PickResult result) {
   }
 
   Eigen::Vector3d pos(result.pos_.x,result.pos_.y,result.pos_.z);
-  Constraints &constraints = shapes_[result.subject_]->constraints();
-  auto& planes = constraints.getPlaneConstraints();
+  auto& constraints = shapes_[result.subject_]->constraints();
+  auto& planes = constraints[result.domain_].getPlaneConstraints();
 
   bool found = false;
   for (auto & plane : planes) {

@@ -1,5 +1,5 @@
 #include <Data/Session.h>
-#include <Visualization/LandmarkWidget.h>
+#include <Visualization/PlaneWidget.h>
 #include <Visualization/Viewer.h>
 #include <vtkActor.h>
 #include <vtkCommand.h>
@@ -18,41 +18,50 @@
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
-class LandmarkCallback : public vtkCommand {
+class PlaneCallback : public vtkCommand {
  public:
-  LandmarkCallback() = default;
+  PlaneCallback() = default;
 
-  static LandmarkCallback *New() { return new LandmarkCallback; }
+  static PlaneCallback *New() { return new PlaneCallback; }
 
   void Execute(vtkObject *caller, unsigned long, void *user_data) override { widget_->store_positions(); }
 
-  void setWidget(LandmarkWidget *widget) { widget_ = widget; };
+  void setWidget(PlaneWidget *widget) { widget_ = widget; };
 
  private:
-  LandmarkWidget *widget_;
+  PlaneWidget *widget_;
 };
 
 //-----------------------------------------------------------------------------
-LandmarkWidget::LandmarkWidget(Viewer *viewer) : viewer_(viewer) {
+PlaneWidget::PlaneWidget(Viewer *viewer) : viewer_(viewer) {
   sphere_ = vtkSmartPointer<vtkSphereSource>::New();
-  callback_ = vtkSmartPointer<LandmarkCallback>::New();
+  callback_ = vtkSmartPointer<PlaneCallback>::New();
   callback_->setWidget(this);
 }
 
 //-----------------------------------------------------------------------------
-LandmarkWidget::~LandmarkWidget() { clear_landmarks(); }
+PlaneWidget::~PlaneWidget() { clear_planes(); }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::update_landmarks() {
+void PlaneWidget::update_planes() {
   auto shape = viewer_->get_shape();
 
   if (!shape || !viewer_->get_show_landmarks()) {
-    clear_landmarks();
+    clear_planes();
     return;
   }
 
-  auto &landmarks = shape->landmarks();
-  int num_points = landmarks.rows();
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+
+  int num_points = 0;
+
+  for (int i = 0; i < domain_names.size(); i++) {
+    auto &planes = shape->constraints()[i].getPlaneConstraints();
+    for (auto &plane : planes) {
+      num_points += plane.points().size();
+    }
+  }
 
   while (handles_.size() < num_points) {
     handles_.push_back(create_handle());
@@ -62,53 +71,58 @@ void LandmarkWidget::update_landmarks() {
     handles_[handles_.size() - 1]->SetEnabled(0);
     handles_.pop_back();
   }
-  auto session = viewer_->get_session();
-  auto definitions = session->get_project()->get_all_landmark_definitions();
-  auto domain_names = session->get_project()->get_domain_names();
 
-  for (int i = 0; i < num_points; i++) {
-    vtkPolygonalHandleRepresentation3D *rep =
-        vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
-    double xyz[3];
-    int domain_id = landmarks(i, 0);
-    int point_id = landmarks(i, 1);
-    xyz[0] = landmarks(i, 2);
-    xyz[1] = landmarks(i, 3);
-    xyz[2] = landmarks(i, 4);
+  int handle = 0;
+  for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
-    double xyzt[3];
-    auto transform = viewer_->get_landmark_transform(domain_id);
-    transform->TransformPoint(xyz, xyzt);
-    rep->SetWorldPosition(xyzt);
-    rep->SetLabelVisibility(session->get_show_landmarks());
-    rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
-    rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
+    for (auto &plane : planes) {
+      for (auto &point : plane.points()) {
+        vtkPolygonalHandleRepresentation3D *rep =
+            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
+        double xyz[3];
 
-    assign_handle_to_domain(handles_[i], domain_id);
+        xyz[0] = point[0];
+        xyz[1] = point[1];
+        xyz[2] = point[2];
 
-    QColor qcolor(QString::fromStdString(definitions[domain_id][point_id].color_));
-    double color[3];
-    color[0] = qcolor.red() / 255.0;
-    color[1] = qcolor.green() / 255.0;
-    color[2] = qcolor.blue() / 255.0;
-    rep->GetProperty()->SetColor(color);
+        double xyzt[3];
+        auto transform = viewer_->get_landmark_transform(domain_id);
+        transform->TransformPoint(xyz, xyzt);
+        rep->SetWorldPosition(xyzt);
+        rep->SetLabelVisibility(session->get_show_landmarks());
+        // rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
+        rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
-    bool enabled = true;
-    bool visible = definitions[domain_id][point_id].visible_;
-    if (!session->get_landmark_drag_mode()) {
-      enabled = false;
-    }
+        assign_handle_to_domain(handles_[handle], domain_id);
 
-    if (!visible) {
-      handles_[i]->SetShowInactive(0);
-      handles_[i]->SetEnabled(1);
-      handles_[i]->SetEnabled(0);
-    } else {
-      handles_[i]->SetShowInactive(1);
-      handles_[i]->SetEnabled(1);
-      handles_[i]->SetEnabled(0);
-      if (enabled) {
-        handles_[i]->SetEnabled(1);
+        QColor qcolor(Qt::green);
+        double color[3];
+        color[0] = qcolor.red() / 255.0;
+        color[1] = qcolor.green() / 255.0;
+        color[2] = qcolor.blue() / 255.0;
+        rep->GetProperty()->SetColor(color);
+
+        bool enabled = true;
+        // bool visible = definitions[domain_id][point_id].visible_;
+        bool visible = true;                       // TODO: do we need visibility settings?
+        if (!session->get_landmark_drag_mode()) {  /// TODO plane version?
+          enabled = false;
+        }
+
+        if (!visible) {
+          handles_[handle]->SetShowInactive(0);
+          handles_[handle]->SetEnabled(1);
+          handles_[handle]->SetEnabled(0);
+        } else {
+          handles_[handle]->SetShowInactive(1);
+          handles_[handle]->SetEnabled(1);
+          handles_[handle]->SetEnabled(0);
+          if (enabled) {
+            handles_[handle]->SetEnabled(1);
+          }
+        }
+        handle++;
       }
     }
   }
@@ -116,35 +130,42 @@ void LandmarkWidget::update_landmarks() {
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::store_positions() {
+void PlaneWidget::store_positions() {
   auto shape = viewer_->get_shape();
-  auto &landmarks = shape->landmarks();
 
-  for (int i = 0; i < handles_.size(); i++) {
-    vtkPolygonalHandleRepresentation3D *rep =
-        vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
 
-    double position[3];
-    rep->GetWorldPosition(position);
+  int handle = 0;
+  for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
-    int domain_id = landmarks(i, 0);
+    for (auto &plane : planes) {
+      for (auto &point : plane.points()) {
+        vtkPolygonalHandleRepresentation3D *rep =
+            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
 
-    auto transform = viewer_->get_landmark_transform(domain_id);
+        double position[3];
+        rep->GetWorldPosition(position);
 
-    double xyzt[3];
-    auto inverse = vtkSmartPointer<vtkTransform>::New();
-    inverse->DeepCopy(transform);
-    inverse->Inverse();
-    inverse->TransformPoint(position, xyzt);
+        auto transform = viewer_->get_landmark_transform(domain_id);
 
-    landmarks(i, 2) = xyzt[0];
-    landmarks(i, 3) = xyzt[1];
-    landmarks(i, 4) = xyzt[2];
+        double xyzt[3];
+        auto inverse = vtkSmartPointer<vtkTransform>::New();
+        inverse->DeepCopy(transform);
+        inverse->Inverse();
+        inverse->TransformPoint(position, xyzt);
+
+        point[0] = xyzt[0];
+        point[1] = xyzt[1];
+        point[2] = xyzt[2];
+      }
+    }
   }
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::update_glyph_properties() {
+void PlaneWidget::update_glyph_properties() {
   sphere_->SetThetaResolution(viewer_->get_glyph_quality());
   sphere_->SetPhiResolution(viewer_->get_glyph_quality());
   sphere_->SetRadius(viewer_->get_glyph_size());
@@ -152,7 +173,7 @@ void LandmarkWidget::update_glyph_properties() {
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::clear_landmarks() {
+void PlaneWidget::clear_planes() {
   while (!handles_.empty()) {
     handles_[handles_.size() - 1]->SetEnabled(0);
     handles_[handles_.size() - 1]->SetInteractor(nullptr);
@@ -161,7 +182,7 @@ void LandmarkWidget::clear_landmarks() {
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
+vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
   auto handle = vtkSmartPointer<vtkHandleWidget>::New();
 
   vtkPolygonalHandleRepresentation3D *rep = vtkPolygonalHandleRepresentation3D::New();
@@ -204,7 +225,7 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id) {
+void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id) {
   vtkPolygonalHandleRepresentation3D *rep =
       vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 

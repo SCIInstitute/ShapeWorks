@@ -9,25 +9,25 @@ class vtkSphereSource;
 namespace shapeworks {
 
 class Viewer;
-class LandmarkCallback;
+class PlaneCallback;
 
-//! LandmarkWidget
+//! PlaneWidget
 /*!
  * Widget to display and manipulate landmarks
  *
  */
-class LandmarkWidget {
+class PlaneWidget {
  public:
-  LandmarkWidget(Viewer* viewer);
-  ~LandmarkWidget();
+  PlaneWidget(Viewer* viewer);
+  ~PlaneWidget();
 
-  void update_landmarks();
+  void update_planes();
 
   void store_positions();
 
   void update_glyph_properties();
 
-  void clear_landmarks();
+  void clear_planes();
 
  private:
   vtkSmartPointer<vtkHandleWidget> create_handle();
@@ -39,7 +39,7 @@ class LandmarkWidget {
   std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;
 
   vtkSmartPointer<vtkSphereSource> sphere_;
-  vtkSmartPointer<LandmarkCallback> callback_;
+  vtkSmartPointer<PlaneCallback> callback_;
 };
 
 }  // namespace shapeworks
