@@ -5,7 +5,9 @@
 #include <vtkCommand.h>
 #include <vtkFollower.h>
 #include <vtkHandleWidget.h>
+#include <vtkPlaneSource.h>
 #include <vtkPolyDataCollection.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkPolygonalHandleRepresentation3D.h>
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkProperty.h>
@@ -43,7 +45,7 @@ PlaneWidget::PlaneWidget(Viewer *viewer) : viewer_(viewer) {
 PlaneWidget::~PlaneWidget() { clear_planes(); }
 
 //-----------------------------------------------------------------------------
-void PlaneWidget::update_planes() {
+void PlaneWidget::update_plane_points() {
   auto shape = viewer_->get_shape();
 
   if (!shape || !viewer_->get_show_landmarks()) {
@@ -114,8 +116,8 @@ void PlaneWidget::update_planes() {
 
         bool enabled = true;
         // bool visible = definitions[domain_id][point_id].visible_;
-        bool visible = true;                       // TODO: do we need visibility settings?
-        if (!session->get_landmark_drag_mode()) {  /// TODO plane version?
+        bool visible = true;                            // TODO: do we need visibility settings?
+        if (!session->get_landmark_drag_mode() && 0) {  /// TODO plane version?
           enabled = false;
         }
 
@@ -139,6 +141,83 @@ void PlaneWidget::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
+void PlaneWidget::update_planes() {
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+
+  int num_planes = count_complete_planes();
+
+  // add if needed
+  while (plane_sources_.size() < num_planes) {
+    auto plane_source = vtkSmartPointer<vtkPlaneSource>::New();
+    plane_sources_.push_back(plane_source);
+    auto plane_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    plane_mapper->SetInputConnection(plane_source->GetOutputPort());
+    plane_mappers_.push_back(plane_mapper);
+    auto plane_actor = vtkSmartPointer<vtkActor>::New();
+    plane_actor->SetMapper(plane_mapper);
+    plane_actor->GetProperty()->SetOpacity(0.5);
+    plane_actor->GetProperty()->SetColor(0, 0, 0.8);
+    plane_actor->SetPickable(false);
+    plane_actors_.push_back(plane_actor);
+    viewer_->get_renderer()->AddViewProp(plane_actor);
+    std::cerr << "Added a plane!\n";
+  }
+
+  // remove if needed
+  while (plane_sources_.size() > num_planes) {
+    viewer_->get_renderer()->RemoveViewProp(plane_actors_[plane_actors_.size() - 1]);
+    plane_actors_.pop_back();
+    plane_mappers_.pop_back();
+    plane_sources_.pop_back();
+  }
+
+  auto shape = viewer_->get_shape();
+
+  int plane_it = 0;
+  for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    if (domain_id >= shape->constraints().size()) {
+      continue;
+    }
+    auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
+
+    for (auto &plane : planes) {
+      QColor colors[6] = {QColor(255, 0, 0),   QColor(0, 255, 0),    QColor(0, 0, 255),
+                          QColor(255, 128, 0), QColor(255, 64, 255), QColor(0, 128, 64)};
+      QColor qcolor = colors[plane_it];
+      if (plane.points().size() < 3) {
+        continue;
+      }
+      auto transform = viewer_->get_landmark_transform(domain_id);
+
+      double xyzt[3];
+      transform->TransformPoint(plane.getPlanePoint().data(), xyzt);
+      double normal[3];
+      transform->TransformVector(plane.getPlaneNormal().data(), normal);
+
+      plane.updatePlaneFromPoints();
+      auto tmp = vtkSmartPointer<vtkPlaneSource>::New();
+      plane_sources_[plane_it] = tmp;
+      plane_mappers_[plane_it]->SetInputConnection(tmp->GetOutputPort());
+      plane_sources_[plane_it]->SetNormal(0, 0, 1);
+      plane_sources_[plane_it]->SetPoint1(100, 0, 0);
+      plane_sources_[plane_it]->SetPoint2(0, 100, 0);
+      plane_sources_[plane_it]->SetNormal(plane.getPlaneNormal().data());
+      plane_sources_[plane_it]->SetCenter(plane.getPlanePoint().data());
+      plane_actors_[plane_it]->SetUserTransform(transform);
+      std::cerr << "Set a plane!\n";
+      plane_it++;
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+void PlaneWidget::update() {
+  update_plane_points();
+  update_planes();
+}
+
+//-----------------------------------------------------------------------------
 void PlaneWidget::store_positions() {
   auto shape = viewer_->get_shape();
 
@@ -151,22 +230,18 @@ void PlaneWidget::store_positions() {
       continue;
     }
 
+    auto inverse = viewer_->get_inverse_landmark_transform(domain_id);
+
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
     for (auto &plane : planes) {
       for (auto &point : plane.points()) {
-        vtkPolygonalHandleRepresentation3D *rep =
-            vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle++]->GetRepresentation());
+        auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle++]->GetRepresentation());
 
         double position[3];
         rep->GetWorldPosition(position);
 
-        auto transform = viewer_->get_landmark_transform(domain_id);
-
         double xyzt[3];
-        auto inverse = vtkSmartPointer<vtkTransform>::New();
-        inverse->DeepCopy(transform);
-        inverse->Inverse();
         inverse->TransformPoint(position, xyzt);
 
         point[0] = xyzt[0];
@@ -175,6 +250,7 @@ void PlaneWidget::store_positions() {
       }
     }
   }
+  update_planes();
 }
 
 //-----------------------------------------------------------------------------
@@ -197,10 +273,9 @@ void PlaneWidget::clear_planes() {
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
   auto handle = vtkSmartPointer<vtkHandleWidget>::New();
-
-  vtkPolygonalHandleRepresentation3D *rep = vtkPolygonalHandleRepresentation3D::New();
-
-  static_cast<vtkPolygonalHandleRepresentation3D *>(rep)->SetHandle(sphere_->GetOutput());
+  /// TODO: check ownership of this representation object
+  auto *rep = vtkPolygonalHandleRepresentation3D::New();
+  rep->SetHandle(sphere_->GetOutput());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   for (const auto &actor : viewer_->get_surface_actors()) {
@@ -239,8 +314,7 @@ vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
 
 //-----------------------------------------------------------------------------
 void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id) {
-  vtkPolygonalHandleRepresentation3D *rep =
-      vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
+  auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   auto actors = viewer_->get_surface_actors();
@@ -257,6 +331,28 @@ void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handl
   }
   point_placer->SetDistanceOffset(0);
   rep->SetPointPlacer(point_placer);
+}
+
+//-----------------------------------------------------------------------------
+int PlaneWidget::count_complete_planes() {
+  auto shape = viewer_->get_shape();
+
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+
+  int num_planes = 0;
+
+  for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+    if (domain_id < shape->constraints().size()) {
+      auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
+      for (auto &plane : planes) {
+        if (plane.points().size() == 3) {
+          num_planes++;
+        }
+      }
+    }
+  }
+  return num_planes;
 }
 
 //-----------------------------------------------------------------------------

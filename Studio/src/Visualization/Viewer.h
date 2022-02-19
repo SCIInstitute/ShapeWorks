@@ -116,6 +116,8 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
 
+  vtkSmartPointer<vtkTransform> get_inverse_landmark_transform(int domain);
+
   vtkSmartPointer<vtkTransform> get_image_transform();
 
   void handle_key(int* click_pos, std::string key);

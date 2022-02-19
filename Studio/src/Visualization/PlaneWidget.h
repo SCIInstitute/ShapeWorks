@@ -5,6 +5,9 @@
 
 class vtkHandleWidget;
 class vtkSphereSource;
+class vtkPlaneSource;
+class vtkPolyDataMapper;
+class vtkActor;
 
 namespace shapeworks {
 
@@ -21,7 +24,9 @@ class PlaneWidget {
   PlaneWidget(Viewer* viewer);
   ~PlaneWidget();
 
+  void update_plane_points();
   void update_planes();
+  void update();
 
   void store_positions();
 
@@ -34,11 +39,20 @@ class PlaneWidget {
 
   void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);
 
+  int count_plane_points();
+  int count_complete_planes();
+
   Viewer* viewer_ = nullptr;
 
+  // control points
+  vtkSmartPointer<vtkSphereSource> sphere_;
   std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;
 
-  vtkSmartPointer<vtkSphereSource> sphere_;
+  // planes
+  std::vector<vtkSmartPointer<vtkPlaneSource>> plane_sources_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> plane_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> plane_actors_;
+
   vtkSmartPointer<PlaneCallback> callback_;
 };
 

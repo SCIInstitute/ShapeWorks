@@ -31,6 +31,8 @@ class PlaneConstraint : public Constraint {
 
   double constraintEval(const Eigen::Vector3d &pt) const override;
 
+  void updatePlaneFromPoints();
+
  private:
   Eigen::Vector3d planeNormal_;
   Eigen::Vector3d planePoint_;

@@ -1,8 +1,8 @@
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/LandmarkWidget.h>
-#include <Visualization/PlaneWidget.h>
 #include <Visualization/Lightbox.h>
+#include <Visualization/PlaneWidget.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
 #include <vtkArrowSource.h>
@@ -481,10 +481,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_planes()
-{
-plane_widget_->update_planes();
-}
+void Viewer::update_planes() { plane_widget_->update(); }
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
@@ -591,7 +588,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       } else {
         mapper->ScalarVisibilityOff();
       }
-
     }
     update_points();
 
@@ -743,7 +739,7 @@ void Viewer::update_points() {
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      if (slice_view_.should_point_show(x,y,z)) {
+      if (slice_view_.should_point_show(x, y, z)) {
         if (scalar_values.size() > i) {
           scalars->InsertNextValue(scalar_values[i]);
         } else {
@@ -1048,6 +1044,15 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int do
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), domain);
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_inverse_landmark_transform(int domain) {
+  auto transform = get_landmark_transform(domain);
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(transform);
+  inverse->Inverse();
+  return inverse;
 }
 
 //-----------------------------------------------------------------------------
