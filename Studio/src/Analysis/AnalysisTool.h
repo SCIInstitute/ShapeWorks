@@ -66,10 +66,12 @@ public:
   int getPCAMode();
 
   int getRPPCAMode();
-  
+
   double get_group_value();
 
   double get_pca_value();
+
+  double get_rppca_value();
 
   bool pcaAnimate();
 
@@ -175,6 +177,7 @@ public Q_SLOTS:
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
 
   void handle_group_pvalues_complete();
+  void handle_rppca_job_done();
   void handle_alignment_changed(int new_alignment);
 
 signals:
@@ -199,6 +202,7 @@ private:
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void rppca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
+  void compute_rppca_mode_shape();
   void update_analysis_mode();
 
   bool group_pvalues_valid();
@@ -252,7 +256,7 @@ private:
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
-
+  QSharedPointer<RPPCAJob> rppca_job_;
   AlignmentType current_alignment_{AlignmentType::Local};
 };
 }

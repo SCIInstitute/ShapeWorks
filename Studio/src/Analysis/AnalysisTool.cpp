@@ -1,4 +1,4 @@
-s std
+// std
 #include <iostream>
 #include <fstream>
 
@@ -307,7 +307,8 @@ bool AnalysisTool::group_pvalues_valid()
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_mode_shape()
 {}
-
+void AnalysisTool::compute_rppca_mode_shape()
+{}
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options()
 {
@@ -526,17 +527,19 @@ bool AnalysisTool::compute_stats()
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
   this->compute_rppca();
-  this->stats_.ComputeRPPCAModes();
   this->compute_shape_evaluations();
-
   this->stats_ready_ = true;
+  
   std::vector<double> vals;
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
   this->ui_->graph_->set_data(vals);
   this->ui_->graph_->repaint();
-
+  
+  
+  
+  
   ////  Uncomment this to write out long format sample data
   /*
      if (groups_enabled) {
@@ -563,12 +566,17 @@ bool AnalysisTool::compute_stats()
 }
 void AnalysisTool::compute_rppca()
 {
+  // std::shared_ptr<ParticleShapeStatistics> statistics_ = std::make_shared(this->stats_);
   this->rppca_job_ = QSharedPointer<RPPCAJob>::create(this->stats_);
+
     connect(this->rppca_job_.data(), &RPPCAJob::message, this, &AnalysisTool::message);
+    std::cout << "Connect 1" << std::endl;
     connect(this->rppca_job_.data(), &RPPCAJob::progress, this, &AnalysisTool::progress);
     connect(this->rppca_job_.data(), &RPPCAJob::finished,
-            this, &AnalysisTool::handle_rpca_job_done);
+            this, &AnalysisTool::handle_rppca_job_done);
+    std::cout << "Before py worker" << std::endl;
     this->app_->get_py_worker()->run_job(this->rppca_job_);
+
 }
 //-----------------------------------------------------------------------------
 StudioParticles AnalysisTool::get_mean_shape_points()
@@ -642,27 +650,31 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 
 //-----------------------------------------------------------------------------
 StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
-{
-  if (!this->compute_stats() || this->stats_.RPPCAEigenvectors().size() <= 1) {
+{ 
+
+  std::cout <<"Inside rppca shape points" << std::endl;
+  if (!this->compute_stats() || this->rppca_job_->RPPCAEigenvectors().size() <= 1) {
+    std::cout << this->rppca_job_->RPPCAEigenvectors().size() <<std::endl;
     return StudioParticles();
   }
-  if (mode + 2 > this->stats_.RPPCAEigenvalues().size()) {
-    mode = this->stats_.RPPCAEigenvalues().size() - 2;
+  
+  if (mode + 2 > this->rppca_job_->RPPCAEigenvalues().size()) {
+    mode = this->rppca_job_->RPPCAEigenvalues().size() - 2;
   }
 
-  unsigned int m = this->stats_.RPPCAEigenvectors().cols() - (mode + 1);
+  unsigned int m = this->rppca_job_->RPPCAEigenvectors().cols() - (mode + 1);
 
-  Eigen::VectorXd e = this->stats_.RPPCAEigenvectors().col(m);
+  Eigen::VectorXd e = this->rppca_job_->RPPCAEigenvectors().col(m);
 
-  double lambda = sqrt(this->stats_.RPPCAEigenvalues()[m]);
+  double lambda = sqrt(this->rppca_job_->RPPCAEigenvalues()[m]);
 
   this->rppca_labels_changed(QString::number(value, 'g', 2),
-                           QString::number(this->stats_.RPPCAEigenvalues()[m]),
+                           QString::number(this->rppca_job_->RPPCAEigenvalues()[m]),
                            QString::number(value * lambda));
 
   std::vector<double> vals;
-  for (int i = this->stats_.RPPCAEigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(this->stats_.RPPCAEigenvalues()[i]);
+  for (int i = this->rppca_job_->RPPCAEigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->rppca_job_->RPPCAEigenvalues()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
@@ -670,16 +682,16 @@ StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
     cumulation += vals[i];
   }
   if (sum > 0) {
-    this->ui_->rppca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
-    this->ui_->rppca_cumulative_explained_variance->setText(
+    this->ui_->rppca_exp_var_value->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->rppca_cm_var_value->setText(
       QString::number(cumulation / sum * 100, 'f', 1) + "%");
   }
   else {
-    this->ui_->rppca_explained_variance->setText("");
-    this->ui_->rppca_cumulative_explained_variance->setText("");
+    this->ui_->rppca_exp_var_value->setText("");
+    this->ui_->rppca_cm_var_value->setText("");
   }
 
-  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  this->temp_shape_ = this->rppca_job_->RPPCAMean() + (e * (value * lambda));
 
   return this->convert_from_combined(this->temp_shape_);
 }
@@ -1402,7 +1414,12 @@ void AnalysisTool::handle_group_pvalues_complete()
   emit progress(100);
   emit update_view();
 }
-
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_rppca_job_done()
+{
+  emit progress(100);
+  emit update_view();
+}
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment)
 {

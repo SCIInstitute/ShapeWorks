@@ -116,11 +116,13 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
 FILE(GLOB STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
+  Job/RPPCAJob.cpp
   )
 
 FILE(GLOB STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
+  Job/RPPCAJob.h
   )
 
 SET(STUDIO_GROOM_SRCS

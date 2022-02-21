@@ -105,6 +105,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this, SLOT(handle_display_setting_changed()));
   connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
+  connect(this->analysis_tool_.data(), SIGNAL(rppca_update()), this, SLOT(handle_rppca_update()));
   connect(this->analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()), this, SLOT(handle_reconstruction_complete()));
 
@@ -572,7 +573,20 @@ void ShapeWorksStudioApp::handle_pca_changed() {
   this->visualizer_->update_lut();
   this->compute_mode_shape();
 }
-
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_rppca_changed() {
+  if (!this->session_->particles_present()) {
+    return;
+  }
+  this->session_->handle_clear_cache();
+  this->visualizer_->update_lut();
+  this->compute_rppca_mode_shape();
+}
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_rppca_slider_update()
+{
+  this->analysis_tool_->updateRPPCASlider();
+}
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update() { this->analysis_tool_->updateSlider(); }
 
@@ -582,7 +596,12 @@ void ShapeWorksStudioApp::handle_pca_update() {
     this->compute_mode_shape();
   }
 }
-
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_rppca_update() {
+  if (this->analysis_tool_->get_active() && this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_RPPCA_C) {
+    this->compute_rppca_mode_shape();
+  }
+}
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(QString str) {
   if (str != this->current_message_) {
@@ -1075,6 +1094,9 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
   if (this->analysis_tool_->pcaAnimate()) {
     return;
   }
+  if (this->analysis_tool_->rppcaAnimate()) {
+    return;
+  }
   this->update_display(true);
 }
 
@@ -1213,7 +1235,15 @@ void ShapeWorksStudioApp::update_display(bool force) {
         this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
         this->compute_mode_shape();
         this->visualizer_->reset_camera();
-      } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+      } else if(mode == AnalysisTool::MODE_RPPCA_C){
+        this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+        this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+        this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        this->compute_mode_shape();
+        this->visualizer_->reset_camera();
+      }
+      else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
         this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
         this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -1577,7 +1607,14 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 
   this->visualizer_->display_shape(this->analysis_tool_->get_mode_shape(pca_mode, pca_value));
 }
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::compute_rppca_mode_shape() {
+  std::cout << "In compute rppca mode shape" << std::endl;
+  int rppca_mode = this->analysis_tool_->getRPPCAMode();
+  double rppca_value = this->analysis_tool_->get_rppca_value();
 
+  this->visualizer_->display_shape(this->analysis_tool_->get_rppca_mode_shape(rppca_mode, rppca_value));
+}
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode) {
   if (view_mode != this->get_view_mode()) {
