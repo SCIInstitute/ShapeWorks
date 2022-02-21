@@ -6,6 +6,8 @@ from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 from scipy import stats
+import torch
+torch.manual_seed(0)
 '''
 This function calculates the p-values per correspondence point for the group difference.
 Input are:
@@ -74,7 +76,9 @@ def get_estimate_dof(data):
     return np.mean(np.array(dof))
 
 
-def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1):
+def robust_ppca(data,latent_dim,iters=1,lr=1e-3,alpha0=100,alpha1=0.1):
+    data = np.transpose(data)
+    
     N,d = data.shape
     dof = get_estimate_dof(data) 
     
@@ -150,31 +154,36 @@ def robust_ppca(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1):
         loss_array.append(loss.detach().numpy())
         scheduler.step(loss)
 
-        matrix = np.matmul(W.T,W)
-        eigen_values, rotation_matrix = np.linalg.eig(matrix)
-        eigen_vector_W = np.matmul(W,rotation_matrix)
-        exp_var = np.cumsum(eigen_values)/ (np.sum(eigen_values) + sigma2)
-        X_minusMean = data - mu
+    W = W.detach().numpy()
+    mu = mu.detach().numpy()
+    sigma2 = sigma2.detach().numpy()
+    data =  data.detach().numpy()
+    matrix = np.matmul(W.T,W)
+    eigen_values, rotation_matrix = np.linalg.eig(matrix)
+    eigen_vector_W = np.matmul(W,rotation_matrix)
+    exp_var = np.cumsum(eigen_values)/ (np.sum(eigen_values) + sigma2)
+    X_minusMean = data - mu
+    print(eigen_vector_W.shape,eigen_values.shape,mu.shape,exp_var.shape)
 
-        return eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean
+    return eigen_values,eigen_vector_W,mu,exp_var,X_minusMean
 
 
-def get_rrpcaEigenVector(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
-    eigen_values_W,eigen_vector_W,mu,exp_var,_X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
-    return eigen_vector_W
+def get_rrpcaEigenVector(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    return np.asarray(eigen_vector_W)
 
-def get_rppcaEigenValues(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
-    eigen_values_W,eigen_vector_W,mu,exp_var,_X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
-    return eigen_values_W
+def get_rppcaEigenValues(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    return np.asarray(eigen_values_W)
 
-def get_expVar(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
-    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
-    return exp_var
+def get_expVar(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    return np.asarray(exp_var)
 
-def get_rppcamean(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
-    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
-    return mu
+def get_rppcamean(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    return np.transpose(np.asarray(mu))[:,0]
 
-def get_X_minsMean(data,latent_dim,iters=1000,lr=1e-3,alph0=100,alpha1=0.1): 
-    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alph0,alpha1)
-    return X_minusMean
+def get_X_minsMean(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+    eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    return np.asarray(np.transpose(X_minusMean))
