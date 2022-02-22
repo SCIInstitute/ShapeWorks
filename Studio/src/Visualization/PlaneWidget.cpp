@@ -158,6 +158,9 @@ void PlaneWidget::update_planes() {
     plane_actor->SetMapper(plane_mapper);
     plane_actor->GetProperty()->SetOpacity(0.5);
     plane_actor->GetProperty()->SetColor(0, 0, 0.8);
+    plane_actor->GetProperty()->SetEdgeColor(1.0, 0, 0);
+    plane_actor->GetProperty()->SetLineWidth(4.0);
+    plane_actor->GetProperty()->SetEdgeVisibility(1);
     plane_actor->SetPickable(false);
     plane_actors_.push_back(plane_actor);
     viewer_->get_renderer()->AddViewProp(plane_actor);
