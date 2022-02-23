@@ -27,6 +27,8 @@ class vtkPolygonalSurfacePointPlacer;
 class vtkImageSlice;
 class vtkImageSliceMapper;
 class vtkImageData;
+class vtkCellPicker;
+class vtkPropPicker;
 
 namespace shapeworks {
 
@@ -216,6 +218,9 @@ class Viewer {
   QSharedPointer<Session> session_;
 
   std::string current_image_name_;
+
+  vtkSmartPointer<vtkCellPicker> cell_picker_;
+  vtkSmartPointer<vtkPropPicker> prop_picker_;
 
   // slice viewer
   SliceView slice_view_{this};

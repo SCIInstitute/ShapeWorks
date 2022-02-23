@@ -1,5 +1,6 @@
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/PlaneWidget.h>
@@ -15,12 +16,14 @@
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
+#include <vtkPickingManager.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 #include <vtkScalarBarActor.h>
@@ -35,6 +38,11 @@ namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
+  cell_picker_ = vtkSmartPointer<vtkCellPicker>::New();
+  cell_picker_->SetPickFromList(1);
+  prop_picker_ = vtkSmartPointer<vtkPropPicker>::New();
+  prop_picker_->SetPickFromList(1);
+
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
 
@@ -803,6 +811,8 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
 
+  cell_picker_->InitializePickList();
+  prop_picker_->InitializePickList();
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
@@ -823,6 +833,9 @@ void Viewer::update_actors() {
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      surface_actors_[i]->SetPickable(1);
+      cell_picker_->AddPickList(surface_actors_[i]);
+      prop_picker_->AddPickList(surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
     }
   }
@@ -864,16 +877,19 @@ void Viewer::update_image_volume() {
 //-----------------------------------------------------------------------------
 int Viewer::handle_pick(int* click_pos) {
   // First determine what was picked
-  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
-  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
+  // we use a new prop picker here since the member one only uses the surface actors
+  auto prop_picker = vtkSmartPointer<vtkPropPicker>::New();
 
+  // check that the glyph actor was picked
+  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
   if (prop_picker->GetActor() != glyph_actor_) {
     return -1;
   }
 
-  vtkSmartPointer<vtkCellPicker> cell_picker = vtkSmartPointer<vtkCellPicker>::New();
+  // now determine which point was picked
+  // we use a new cell picker here since the member only only uses the surface actors
+  auto cell_picker = vtkSmartPointer<vtkCellPicker>::New();
   cell_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
-
   vtkDataArray* input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
 
   if (input_ids) {
@@ -887,7 +903,7 @@ int Viewer::handle_pick(int* click_pos) {
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
       if (glyph_id >= 0) {
-        std::cerr << "picked correspondence point :" << glyph_id << "\n";
+        STUDIO_LOG_MESSAGE("picked correspondence point :" + QString::number(glyph_id));
         return glyph_id;
       }
     }
@@ -899,13 +915,12 @@ int Viewer::handle_pick(int* click_pos) {
 //-----------------------------------------------------------------------------
 PickResult Viewer::handle_ctrl_click(int* click_pos) {
   // First determine what was picked
-  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
-  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
+  cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
   for (int i = 0; i < surface_actors_.size(); i++) {
-    if (prop_picker->GetActor() == surface_actors_[i]) {
-      double* pos = prop_picker->GetPickPosition();
+    if (cell_picker_->GetActor() == surface_actors_[i]) {
+      double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
       transform->DeepCopy(get_landmark_transform(i));
