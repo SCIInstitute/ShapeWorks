@@ -19,7 +19,10 @@
 #include <vtkPickingManager.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataCollection.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkPolyDataPointPlacer.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
@@ -42,6 +45,8 @@ Viewer::Viewer() {
   cell_picker_->SetPickFromList(1);
   prop_picker_ = vtkSmartPointer<vtkPropPicker>::New();
   prop_picker_->SetPickFromList(1);
+  point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+  point_placer_->SetDistanceOffset(0);
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
@@ -530,23 +535,31 @@ void Viewer::update_clipping_planes() {
         normal[2] = -normal[2];
         opposite_plane->SetNormal(normal);
 
-        clipped_mapper->AddClippingPlane(opposite_plane);
+        mapper->AddClippingPlane(vtk_plane);
+        // clipped_mapper->AddClippingPlane(opposite_plane);
       }
     }
   }
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_planes() {
+  update_actors();
   update_clipping_planes();
   plane_widget_->update();
 }
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
+
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkActor>> Viewer::get_clipped_surface_actors() { return clipped_surface_actors_; }
 
 //-----------------------------------------------------------------------------
 MeshGroup Viewer::get_meshes() { return meshes_; }
@@ -870,6 +883,7 @@ void Viewer::update_actors() {
 
   cell_picker_->InitializePickList();
   prop_picker_->InitializePickList();
+  point_placer_->GetPolys()->RemoveAllItems();
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
@@ -892,16 +906,27 @@ void Viewer::update_actors() {
 
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
+      /*
+      if (shape_->has_planes()) {
+        renderer_->AddActor(surface_actors_[i]);
+        renderer_->AddActor(clipped_surface_actors_[i]);
+      } else {
+        renderer_->AddActor(clipped_surface_actors_[i]);
+        renderer_->AddActor(surface_actors_[i]);
+      }
+*/
+      renderer_->AddActor(clipped_surface_actors_[i]);
+      renderer_->AddActor(surface_actors_[i]);
+
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       cell_picker_->AddPickList(surface_actors_[i]);
       prop_picker_->AddPickList(surface_actors_[i]);
       cell_picker_->AddPickList(clipped_surface_actors_[i]);
       prop_picker_->AddPickList(clipped_surface_actors_[i]);
-      renderer_->AddActor(surface_actors_[i]);
-      if (shape_->has_planes()) {
-        renderer_->AddActor(clipped_surface_actors_[i]);
-      }
+      // point_placer_->AddProp(surface_actors_[i]);
+      point_placer_->AddProp(clipped_surface_actors_[i]);
+      point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
     }
   }
 

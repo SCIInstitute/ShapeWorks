@@ -763,12 +763,12 @@ Constraints& Shape::get_constraints(int domain_id) {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::has_planes()
-{
-  return true;
-  for (int i=0;i<constraints_.size();i++) {
-    if (!constraints_[i].getPlaneConstraints().empty()) {
-      return true;
+bool Shape::has_planes() {
+  for (int i = 0; i < constraints_.size(); i++) {
+    for (auto& plane : constraints_[i].getPlaneConstraints()) {
+      if (plane.points().size() == 3) {
+        return true;
+      }
     }
   }
   return false;

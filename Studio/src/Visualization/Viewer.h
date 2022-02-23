@@ -111,6 +111,7 @@ class Viewer {
   void update_planes();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
+  std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
 
   MeshGroup get_meshes();
 
@@ -133,6 +134,8 @@ class Viewer {
   vtkSmartPointer<vtkTransform> get_alignment_transform();
 
   void update_clipping_planes();
+
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
@@ -227,6 +230,8 @@ class Viewer {
 
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
+
 
   // slice viewer
   SliceView slice_view_{this};

@@ -292,20 +292,7 @@ vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
   auto *rep = vtkPolygonalHandleRepresentation3D::New();
   rep->SetHandle(sphere_->GetOutput());
 
-  auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  for (const auto &actor : viewer_->get_surface_actors()) {
-    point_placer->AddProp(actor);
-  }
-  auto shape = viewer_->get_shape();
-  auto meshes = viewer_->get_meshes();
-  if (meshes.valid()) {
-    for (size_t i = 0; i < meshes.meshes().size(); i++) {
-      MeshHandle mesh = meshes.meshes()[i];
-      vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
-      point_placer->GetPolys()->AddItem(poly_data);
-    }
-  }
-  point_placer->SetDistanceOffset(0);
+  auto point_placer = viewer_->get_point_placer();
   rep->SetPointPlacer(point_placer);
 
   handle->EnableAxisConstraintOff();
@@ -332,7 +319,7 @@ void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handl
   auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  auto actors = viewer_->get_surface_actors();
+  auto actors = viewer_->get_clipped_surface_actors();
   if (domain_id < actors.size()) {
     point_placer->AddProp(actors[domain_id]);
   }
