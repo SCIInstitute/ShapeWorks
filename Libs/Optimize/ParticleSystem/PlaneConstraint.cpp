@@ -1,5 +1,6 @@
 #include "PlaneConstraint.h"
 
+#include <vtkPlane.h>
 #include <vtkTriangle.h>
 
 #include <iostream>
@@ -32,6 +33,14 @@ void PlaneConstraint::updatePlaneFromPoints() {
     planePoint_ = (points_[0] + points_[1] + points_[2]) / 3.0;
     vtkTriangle::ComputeNormal(points_[0].data(), points_[1].data(), points_[2].data(), planeNormal_.data());
   }
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPlane> PlaneConstraint::getVTKPlane() {
+  auto plane = vtkSmartPointer<vtkPlane>::New();
+  plane->SetNormal(getPlaneNormal().data());
+  plane->SetOrigin(getPlanePoint().data());
+  return plane;
 }
 
 }  // namespace shapeworks

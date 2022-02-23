@@ -4,6 +4,10 @@
 
 #include "Constraint.h"
 
+#include <vtkSmartPointer.h>
+
+class vtkPlane;
+
 namespace shapeworks {
 
 class PlaneConstraint : public Constraint {
@@ -32,6 +36,9 @@ class PlaneConstraint : public Constraint {
   double constraintEval(const Eigen::Vector3d &pt) const override;
 
   void updatePlaneFromPoints();
+
+  //! Return this plane as a vtkPlane
+  vtkSmartPointer<vtkPlane> getVTKPlane();
 
  private:
   Eigen::Vector3d planeNormal_;

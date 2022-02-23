@@ -156,6 +156,8 @@ class Shape {
 
   std::vector<Constraints>& constraints();
 
+  Constraints& get_constraints(int domain_id);
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);

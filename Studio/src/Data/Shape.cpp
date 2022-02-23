@@ -30,8 +30,7 @@ Shape::Shape() {
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_display_name()
-{
+QString Shape::get_display_name() {
   if (subject_ && subject_->get_display_name() != "") {
     return QString::fromStdString(subject_->get_display_name());
   }
@@ -754,4 +753,12 @@ Eigen::MatrixXd& Shape::landmarks() { return landmarks_; }
 
 //---------------------------------------------------------------------------
 std::vector<Constraints>& Shape::constraints() { return constraints_; }
+
+//---------------------------------------------------------------------------
+Constraints& Shape::get_constraints(int domain_id) {
+  while (domain_id >= constraints_.size()) {
+    constraints_.push_back(Constraints{});
+  }
+  return constraints_[domain_id];
+}
 }  // namespace shapeworks

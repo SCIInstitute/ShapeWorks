@@ -132,6 +132,8 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_alignment_transform();
 
+  void update_clipping_planes();
+
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -152,6 +154,8 @@ class Viewer {
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
+
+  vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
   bool visible_;
 

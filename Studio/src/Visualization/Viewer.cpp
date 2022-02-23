@@ -475,6 +475,27 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPlane> Viewer::transform_plane(vtkSmartPointer<vtkPlane> plane,
+                                                  vtkSmartPointer<vtkTransform> transform) {
+  vtkSmartPointer<vtkPlane> new_plane = vtkSmartPointer<vtkPlane>::New();
+  double new_origin[3];
+  double new_normal[3];
+  double normal[3];
+  plane->GetNormal(normal);
+  normal[0] = normal[0] + plane->GetOrigin()[0];
+  normal[1] = normal[1] + plane->GetOrigin()[1];
+  normal[2] = normal[2] + plane->GetOrigin()[2];
+  transform->TransformPoint(normal, new_normal);
+  transform->TransformPoint(plane->GetOrigin(), new_origin);
+  new_normal[0] = new_normal[0] - new_origin[0];
+  new_normal[1] = new_normal[1] - new_origin[1];
+  new_normal[2] = new_normal[2] - new_origin[2];
+  new_plane->SetNormal(new_normal);
+  new_plane->SetOrigin(new_origin);
+  return new_plane;
+}
+
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPoints> Viewer::get_glyph_points() { return glyph_points_; }
 
 //-----------------------------------------------------------------------------
@@ -486,10 +507,33 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_clipping_planes() {
+  for (int i = 0; i < surface_mappers_.size(); i++) {
+    auto mapper = surface_mappers_[i];
+    mapper->RemoveAllClippingPlanes();
+    auto& constraints = shape_->get_constraints(i);
+    for (auto& plane : constraints.getPlaneConstraints()) {
+      if (plane.points().size() == 3) {
+        auto vtk_plane = plane.getVTKPlane();
+        // auto transform = get_inverse_landmark_transform(i);
+        auto transform = get_transform(visualizer_->get_alignment_domain(), i);
+
+        vtk_plane = transform_plane(vtk_plane, transform);
+
+        mapper->AddClippingPlane(vtk_plane);
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_planes() { plane_widget_->update(); }
+void Viewer::update_planes() {
+  update_clipping_planes();
+  plane_widget_->update();
+}
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
@@ -604,6 +648,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   update_image_volume();
 
+  update_clipping_planes();
   update_actors();
   update_glyph_properties();
   landmark_widget_->clear_landmarks();
