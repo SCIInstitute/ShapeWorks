@@ -187,6 +187,8 @@ class Viewer {
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;

@@ -158,6 +158,8 @@ class Shape {
 
   Constraints& get_constraints(int domain_id);
 
+  bool has_planes();
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);

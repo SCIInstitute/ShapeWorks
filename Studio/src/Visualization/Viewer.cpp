@@ -510,17 +510,27 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 void Viewer::update_clipping_planes() {
   for (int i = 0; i < surface_mappers_.size(); i++) {
     auto mapper = surface_mappers_[i];
+    auto clipped_mapper = clipped_surface_mappers_[i];
     mapper->RemoveAllClippingPlanes();
+    clipped_mapper->RemoveAllClippingPlanes();
     auto& constraints = shape_->get_constraints(i);
     for (auto& plane : constraints.getPlaneConstraints()) {
       if (plane.points().size() == 3) {
         auto vtk_plane = plane.getVTKPlane();
-        // auto transform = get_inverse_landmark_transform(i);
         auto transform = get_transform(visualizer_->get_alignment_domain(), i);
 
         vtk_plane = transform_plane(vtk_plane, transform);
 
-        mapper->AddClippingPlane(vtk_plane);
+        auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
+        opposite_plane->SetOrigin(vtk_plane->GetOrigin());
+        double normal[3];
+        vtk_plane->GetNormal(normal);
+        normal[0] = -normal[0];
+        normal[1] = -normal[1];
+        normal[2] = -normal[2];
+        opposite_plane->SetNormal(normal);
+
+        clipped_mapper->AddClippingPlane(opposite_plane);
       }
     }
   }
@@ -598,8 +608,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         }
       }
 
-      vtkSmartPointer<vtkPolyDataMapper> mapper = surface_mappers_[i];
-      vtkSmartPointer<vtkActor> actor = surface_actors_[i];
+      auto mapper = surface_mappers_[i];
+      auto actor = surface_actors_[i];
 
       draw_exclusion_spheres(shape);
 
@@ -613,7 +623,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         poly_data = reverse_filter->GetOutput();
       }
       actor->SetUserTransform(transform);
+      clipped_surface_actors_[i]->SetUserTransform(transform);
       mapper->SetInputData(poly_data);
+      clipped_surface_mappers_[i]->SetInputData(poly_data);
 
       int domain_scheme = (scheme_ + i) % color_schemes_.size();
 
@@ -861,6 +873,9 @@ void Viewer::update_actors() {
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
+  for (size_t i = 0; i < clipped_surface_actors_.size(); i++) {
+    renderer_->RemoveActor(clipped_surface_actors_[i]);
+  }
 
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
@@ -878,10 +893,15 @@ void Viewer::update_actors() {
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      surface_actors_[i]->SetPickable(1);
+      clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       cell_picker_->AddPickList(surface_actors_[i]);
       prop_picker_->AddPickList(surface_actors_[i]);
+      cell_picker_->AddPickList(clipped_surface_actors_[i]);
+      prop_picker_->AddPickList(clipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
+      if (shape_->has_planes()) {
+        renderer_->AddActor(clipped_surface_actors_[i]);
+      }
     }
   }
 
@@ -1087,11 +1107,20 @@ void Viewer::initialize_surfaces() {
   if (number_of_domains_ > surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
+    clipped_surface_mappers_.resize(number_of_domains_);
+    clipped_surface_actors_.resize(number_of_domains_);
 
     for (int i = 0; i < number_of_domains_; i++) {
       surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
       surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       surface_actors_[i]->SetMapper(surface_mappers_[i]);
+      clipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      clipped_surface_mappers_[i]->ScalarVisibilityOff();
+
+      clipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
+      // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
+      clipped_surface_actors_[i]->GetProperty()->SetColor(0.45, 0.45, 0.45);
+      clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
     }
   }
 }

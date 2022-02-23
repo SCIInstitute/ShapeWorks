@@ -761,4 +761,16 @@ Constraints& Shape::get_constraints(int domain_id) {
   }
   return constraints_[domain_id];
 }
+
+//---------------------------------------------------------------------------
+bool Shape::has_planes()
+{
+  return true;
+  for (int i=0;i<constraints_.size();i++) {
+    if (!constraints_[i].getPlaneConstraints().empty()) {
+      return true;
+    }
+  }
+  return false;
+}
 }  // namespace shapeworks
