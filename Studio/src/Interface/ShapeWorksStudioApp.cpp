@@ -510,6 +510,7 @@ void ShapeWorksStudioApp::update_from_preferences() {
   if (session_) {
     ui_->feature_uniform_scale->setChecked(get_feature_uniform_scale());
     ui_->feature_auto_scale->setChecked(session_->get_feature_auto_scale());
+    ui_->planes_visible_button_->setChecked(session_->get_show_planes());
     ui_->feature_min->setValue(session_->get_feature_range_min());
     ui_->feature_max->setValue(session_->get_feature_range_max());
   }
@@ -794,6 +795,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
+
+  connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
 
   data_tool_->update_notes();
 

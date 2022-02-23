@@ -79,7 +79,7 @@ void LandmarkWidget::update_landmarks() {
     auto transform = viewer_->get_landmark_transform(domain_id);
     transform->TransformPoint(xyz, xyzt);
     rep->SetWorldPosition(xyzt);
-    rep->SetLabelVisibility(session->get_show_landmarks());
+    rep->SetLabelVisibility(session->get_show_landmark_labels());
     rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
     rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 

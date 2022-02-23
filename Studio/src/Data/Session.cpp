@@ -996,13 +996,25 @@ void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
 void Session::set_planes_active(bool active) { planes_active_ = active; }
 
 //---------------------------------------------------------------------------
-void Session::set_show_landmarks(bool show) {
+void Session::set_show_landmark_labels(bool show) {
   show_landmark_labels_ = show;
   emit landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_show_landmarks() { return show_landmark_labels_; }
+bool Session::get_show_landmark_labels() { return show_landmark_labels_; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_planes(bool show) {
+  bool old_value = get_show_planes();
+  params_.set("show_planes", show);
+  if (show != old_value) {
+    emit planes_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_show_planes() { return params_.get("show_planes", true); }
 
 //---------------------------------------------------------------------------
 bool Session::set_image_name(std::string image_name) {

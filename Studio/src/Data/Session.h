@@ -135,8 +135,11 @@ class Session : public QObject {
   int get_placing_landmark();
   void set_landmarks_active(bool active);
   void set_planes_active(bool active);
-  void set_show_landmarks(bool show);
-  bool get_show_landmarks();
+  void set_show_landmark_labels(bool show);
+  bool get_show_landmark_labels();
+
+  void set_show_planes(bool show);
+  bool get_show_planes();
 
   // image volume
   bool set_image_name(std::string image_name);

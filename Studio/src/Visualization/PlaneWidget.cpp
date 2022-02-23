@@ -103,7 +103,7 @@ void PlaneWidget::update_plane_points() {
         auto transform = viewer_->get_landmark_transform(domain_id);
         transform->TransformPoint(xyz, xyzt);
         rep->SetWorldPosition(xyzt);
-        rep->SetLabelVisibility(session->get_show_landmarks());
+        rep->SetLabelVisibility(session->get_show_landmark_labels());
         // rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
         rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
@@ -144,11 +144,14 @@ void PlaneWidget::update_plane_points() {
 
 //-----------------------------------------------------------------------------
 void PlaneWidget::update_planes() {
-
   auto session = viewer_->get_session();
   auto domain_names = session->get_project()->get_domain_names();
 
   int num_planes = count_complete_planes();
+
+  if (!session->get_show_planes()) {
+    num_planes = 0;
+  }
 
   // add if needed
   while (plane_sources_.size() < num_planes) {
@@ -175,6 +178,10 @@ void PlaneWidget::update_planes() {
     plane_actors_.pop_back();
     plane_mappers_.pop_back();
     plane_sources_.pop_back();
+  }
+
+  if (!session->get_show_planes()) {
+    return;
   }
 
   auto shape = viewer_->get_shape();
