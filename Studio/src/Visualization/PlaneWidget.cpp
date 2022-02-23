@@ -167,7 +167,6 @@ void PlaneWidget::update_planes() {
     plane_actor->SetPickable(false);
     plane_actors_.push_back(plane_actor);
     viewer_->get_renderer()->AddViewProp(plane_actor);
-    std::cerr << "Added a plane!\n";
   }
 
   // remove if needed

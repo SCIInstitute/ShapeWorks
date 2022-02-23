@@ -525,7 +525,8 @@ void Viewer::update_clipping_planes() {
         auto transform = get_transform(visualizer_->get_alignment_domain(), i);
 
         vtk_plane = transform_plane(vtk_plane, transform);
-
+        mapper->AddClippingPlane(vtk_plane);
+/*
         auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
         opposite_plane->SetOrigin(vtk_plane->GetOrigin());
         double normal[3];
@@ -534,9 +535,8 @@ void Viewer::update_clipping_planes() {
         normal[1] = -normal[1];
         normal[2] = -normal[2];
         opposite_plane->SetNormal(normal);
-
-        mapper->AddClippingPlane(vtk_plane);
         // clipped_mapper->AddClippingPlane(opposite_plane);
+*/
       }
     }
   }
@@ -679,6 +679,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   landmark_widget_->clear_landmarks();
   plane_widget_->clear_planes();
   update_landmarks();
+  update_planes();
   ren->AddViewProp(corner_annotation_);
 }
 
