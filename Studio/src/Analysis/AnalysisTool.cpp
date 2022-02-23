@@ -260,7 +260,7 @@ void AnalysisTool::setLabels(QString which, QString value)
     this->ui_->rppcaEigenValue_Value->setText(value);
   }
   else if (which == QString("rppcalambda")){
-    this->ui_->rppcaLambda->setText(value);
+    this->ui_->rppcaLambdaValue->setText(value);
   }
 }
 
