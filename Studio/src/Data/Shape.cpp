@@ -30,6 +30,16 @@ Shape::Shape() {
 }
 
 //---------------------------------------------------------------------------
+QString Shape::get_display_name()
+{
+  if (subject_ && subject_->get_display_name() != "") {
+    return QString::fromStdString(subject_->get_display_name());
+  }
+
+  return "";
+}
+
+//---------------------------------------------------------------------------
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------

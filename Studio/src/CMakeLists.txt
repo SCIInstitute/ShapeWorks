@@ -72,7 +72,7 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 #--------------------------------------------------------------------------------
 
 
-FILE(GLOB STUDIO_DATA_SRCS
+SET(STUDIO_DATA_SRCS
   Data/CustomSurfaceReconstructionFilter.cpp
   Data/LandmarkItemDelegate.cpp
   Data/LandmarkTableModel.cpp
@@ -99,7 +99,7 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/Worker.cpp
   )
 
-FILE(GLOB STUDIO_DATA_MOC_HDRS
+SET(STUDIO_DATA_MOC_HDRS
   Data/LandmarkItemDelegate.h
   Data/LandmarkTableModel.h
   Data/DataTool.h
@@ -114,12 +114,12 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/StudioLog.h
   )
 
-FILE(GLOB STUDIO_JOB_SRCS
+SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
   )
 
-FILE(GLOB STUDIO_JOB_MOC_HDRS
+SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
   )

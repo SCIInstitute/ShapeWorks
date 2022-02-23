@@ -788,16 +788,6 @@ QWidget#specificity_panel {
            </layout>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QTableView" name="plane_table_">
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::ContiguousSelection</enum>
-           </property>
-          </widget>
-         </item>
          <item row="7" column="1">
           <widget class="QPushButton" name="delete_ffc_">
            <property name="text">
@@ -862,6 +852,16 @@ QWidget#specificity_panel {
              <widget class="QComboBox" name="constraints_domain_box_"/>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QTableWidget" name="plane_table_">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ContiguousSelection</enum>
+           </property>
           </widget>
          </item>
         </layout>

@@ -85,6 +85,7 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   connect(ui_->landmark_drag_mode, &QCheckBox::stateChanged, session_.data(), &Session::set_landmark_drag_mode);
   connect(ui_->show_landmark_labels, &QCheckBox::stateChanged, session_.data(), &Session::set_show_landmarks);
+  connect(session.data(), &Session::planes_changed, this, &DataTool::update_plane_table);
   landmark_table_model_->set_session(session);
   update_table();
   handle_landmark_mode_changed();
@@ -139,6 +140,7 @@ void DataTool::update_table() {
   ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   update_landmark_table();
+  update_plane_table();
 }
 
 //---------------------------------------------------------------------------
@@ -183,6 +185,71 @@ void DataTool::update_domain_box(QComboBox* box) {
   if (currentIndex < box->count()) {
     box->setCurrentIndex(currentIndex);
   }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::update_plane_table() {
+  auto shapes = session_->get_shapes();
+  auto domain_names = session_->get_project()->get_domain_names();
+
+  int plane_count = 0;
+  for (int i = 0; i < shapes.size(); i++) {
+    auto shape = shapes[i];
+    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+      if (domain_id < shape->constraints().size()) {
+        auto& planes = shape->constraints()[domain_id].getPlaneConstraints();
+        plane_count += planes.size();
+      }
+    }
+  }
+
+  QStringList table_headers;
+  table_headers << "Shape";
+  table_headers << "Domain";
+  table_headers << "Center";
+  table_headers << "Normal";
+
+  QTableWidget* table = ui_->plane_table_;
+  table->clear();
+  table->setRowCount(plane_count);
+  table->setColumnCount(table_headers.size());
+
+  table->setHorizontalHeaderLabels(table_headers);
+  table->verticalHeader()->setVisible(true);
+
+  int row = 0;
+  for (int i = 0; i < shapes.size(); i++) {
+    auto shape = shapes[i];
+    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+      if (domain_id < shape->constraints().size()) {
+        auto& planes = shape->constraints()[domain_id].getPlaneConstraints();
+        for (auto& plane : planes) {
+          auto* new_item = new QTableWidgetItem(shape->get_display_name());
+          table->setItem(row, 0, new_item);
+          new_item = new QTableWidgetItem(QString::fromStdString(domain_names[domain_id]));
+
+          table->setItem(row, 1, new_item);
+
+          auto center = plane.getPlanePoint();
+          QString center_string =
+              QString::number(center[0]) + "," + QString::number(center[1]) + "," + QString::number(center[2]);
+          new_item = new QTableWidgetItem(center_string);
+          table->setItem(row, 2, new_item);
+
+          auto normal = plane.getPlaneNormal();
+          QString normal_string =
+              QString::number(normal[0]) + "," + QString::number(normal[1]) + "," + QString::number(normal[2]);
+          new_item = new QTableWidgetItem(normal_string);
+          table->setItem(row, 3, new_item);
+          row++;
+        }
+      }
+    }
+  }
+
+  ui_->table->resizeColumnsToContents();
+  ui_->table->horizontalHeader()->setStretchLastSection(false);
+  ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 //---------------------------------------------------------------------------
 void DataTool::update_notes() {

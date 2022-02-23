@@ -68,6 +68,8 @@ class DataTool : public QWidget {
  private:
   void update_domain_box(QComboBox* box);
 
+  void update_plane_table();
+
   Preferences& preferences_;
 
   Ui_DataTool* ui_;
