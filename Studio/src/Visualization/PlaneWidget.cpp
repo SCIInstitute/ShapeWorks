@@ -17,6 +17,10 @@
 
 #include <QColor>
 
+static const QColor colors[6] = {QColor(226, 149, 61), QColor(127, 165, 123), QColor(176, 64, 86),
+                                 QColor(84, 78, 171),  QColor(205, 216, 86),  QColor(100, 129, 163)};
+static constexpr int max_colors = 6;
+
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
@@ -85,10 +89,8 @@ void PlaneWidget::update_plane_points() {
 
     int plane_it = 0;
     for (auto &plane : planes) {
-      QColor colors[6] = {QColor(255, 0, 0),   QColor(0, 255, 0),    QColor(0, 0, 255),
-                          QColor(255, 128, 0), QColor(255, 64, 255), QColor(0, 128, 64)};
       QColor qcolor = colors[plane_it];
-      plane_it = (plane_it + 1) % 6;
+      plane_it = (plane_it + 1) % max_colors;
       for (auto &point : plane.points()) {
         auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
         double xyz[3];
@@ -142,6 +144,7 @@ void PlaneWidget::update_plane_points() {
 
 //-----------------------------------------------------------------------------
 void PlaneWidget::update_planes() {
+
   auto session = viewer_->get_session();
   auto domain_names = session->get_project()->get_domain_names();
 
@@ -158,7 +161,7 @@ void PlaneWidget::update_planes() {
     plane_actor->SetMapper(plane_mapper);
     plane_actor->GetProperty()->SetOpacity(0.5);
     plane_actor->GetProperty()->SetColor(0, 0, 0.8);
-    plane_actor->GetProperty()->SetEdgeColor(1.0, 0, 0);
+    plane_actor->GetProperty()->SetEdgeColor(1.0, 1.0, 1.0);
     plane_actor->GetProperty()->SetLineWidth(4.0);
     plane_actor->GetProperty()->SetEdgeVisibility(1);
     plane_actor->SetPickable(false);
@@ -178,6 +181,7 @@ void PlaneWidget::update_planes() {
   auto shape = viewer_->get_shape();
 
   int plane_it = 0;
+  int plane_color = 0;
   for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     if (domain_id >= shape->constraints().size()) {
       continue;
@@ -185,9 +189,9 @@ void PlaneWidget::update_planes() {
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
     for (auto &plane : planes) {
-      QColor colors[6] = {QColor(255, 0, 0),   QColor(0, 255, 0),    QColor(0, 0, 255),
-                          QColor(255, 128, 0), QColor(255, 64, 255), QColor(0, 128, 64)};
-      QColor qcolor = colors[plane_it];
+      QColor qcolor = colors[plane_color];
+      plane_color = (plane_color + 1) % max_colors;
+
       if (plane.points().size() < 3) {
         continue;
       }
@@ -208,7 +212,9 @@ void PlaneWidget::update_planes() {
       plane_sources_[plane_it]->SetNormal(plane.getPlaneNormal().data());
       plane_sources_[plane_it]->SetCenter(plane.getPlanePoint().data());
       plane_actors_[plane_it]->SetUserTransform(transform);
-      std::cerr << "Set a plane!\n";
+      plane_actors_[plane_it]->GetProperty()->SetColor(qcolor.red() / 255.0, qcolor.green() / 255.0,
+                                                       qcolor.blue() / 255.0);
+
       plane_it++;
     }
   }
