@@ -805,7 +805,7 @@ void Session::new_plane_point(PickResult result) {
     return;
   }
 
-  Eigen::Vector3d pos(result.pos_.x,result.pos_.y,result.pos_.z);
+  Eigen::Vector3d pos(result.pos_.x, result.pos_.y, result.pos_.z);
   auto& constraints = shapes_[result.subject_]->constraints();
   while (result.domain_ >= constraints.size()) {
     shapes_[result.subject_]->constraints().push_back(Constraints{});
@@ -813,7 +813,7 @@ void Session::new_plane_point(PickResult result) {
   auto& planes = constraints[result.domain_].getPlaneConstraints();
 
   bool found = false;
-  for (auto & plane : planes) {
+  for (auto& plane : planes) {
     if (plane.points().size() < 3) {
       // found one to add a point to
       plane.points().push_back(pos);
@@ -822,7 +822,7 @@ void Session::new_plane_point(PickResult result) {
     }
   }
 
-  if (!found) { // no planes were found with less than 3 points,
+  if (!found) {  // no planes were found with less than 3 points,
     PlaneConstraint plane;
     plane.points().push_back(pos);
     planes.push_back(plane);
@@ -973,6 +973,9 @@ void Session::handle_ctrl_click(PickResult result) {
 
 //---------------------------------------------------------------------------
 void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_planes_changed() { emit planes_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }

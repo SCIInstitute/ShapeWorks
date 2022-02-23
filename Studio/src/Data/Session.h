@@ -127,6 +127,7 @@ class Session : public QObject {
   void handle_ctrl_click(PickResult result);
 
   void trigger_landmarks_changed();
+  void trigger_planes_changed();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();

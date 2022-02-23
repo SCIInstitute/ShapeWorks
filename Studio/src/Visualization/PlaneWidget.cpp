@@ -222,6 +222,9 @@ void PlaneWidget::update_planes() {
 
 //-----------------------------------------------------------------------------
 void PlaneWidget::update() {
+  if (block_update_) {
+    return;
+  }
   update_plane_points();
   update_planes();
 }
@@ -260,6 +263,9 @@ void PlaneWidget::store_positions() {
     }
   }
   update_planes();
+  block_update_ = true;
+  session->trigger_planes_changed();
+  block_update_ = false;
 }
 
 //-----------------------------------------------------------------------------

@@ -224,6 +224,7 @@ void DataTool::update_plane_table() {
       if (domain_id < shape->constraints().size()) {
         auto& planes = shape->constraints()[domain_id].getPlaneConstraints();
         for (auto& plane : planes) {
+          plane.updatePlaneFromPoints();
           auto* new_item = new QTableWidgetItem(shape->get_display_name());
           table->setItem(row, 0, new_item);
           new_item = new QTableWidgetItem(QString::fromStdString(domain_names[domain_id]));
@@ -231,14 +232,18 @@ void DataTool::update_plane_table() {
           table->setItem(row, 1, new_item);
 
           auto center = plane.getPlanePoint();
+          auto normal = plane.getPlaneNormal();
           QString center_string =
               QString::number(center[0]) + "," + QString::number(center[1]) + "," + QString::number(center[2]);
+          QString normal_string =
+              QString::number(normal[0]) + "," + QString::number(normal[1]) + "," + QString::number(normal[2]);
+          if (plane.points().size() != 3) {
+            normal_string = "N/A";
+            center_string = "N/A";
+          }
           new_item = new QTableWidgetItem(center_string);
           table->setItem(row, 2, new_item);
 
-          auto normal = plane.getPlaneNormal();
-          QString normal_string =
-              QString::number(normal[0]) + "," + QString::number(normal[1]) + "," + QString::number(normal[2]);
           new_item = new QTableWidgetItem(normal_string);
           table->setItem(row, 3, new_item);
           row++;

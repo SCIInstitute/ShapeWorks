@@ -35,6 +35,8 @@ class PlaneWidget {
   void clear_planes();
 
  private:
+  bool block_update_ = false;
+
   vtkSmartPointer<vtkHandleWidget> create_handle();
 
   void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);
