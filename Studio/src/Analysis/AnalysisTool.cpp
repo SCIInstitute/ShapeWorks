@@ -652,7 +652,7 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
 { 
 
-  std::cout <<"Inside rppca shape points" << std::endl;
+  std::cout <<"Inside rppca shape points  " << mode <<std::endl;
   if (!this->compute_stats() || this->rppca_job_->RPPCAEigenvectors().size() <= 1) {
     std::cout << this->rppca_job_->RPPCAEigenvectors().size() <<std::endl;
     return StudioParticles();
@@ -662,7 +662,8 @@ StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
     mode = this->rppca_job_->RPPCAEigenvalues().size() - 2;
   }
 
-  unsigned int m = this->rppca_job_->RPPCAEigenvectors().cols() - (mode + 1);
+  // unsigned int m = this->rppca_job_->RPPCAEigenvectors().cols() - (mode + 1);
+  unsigned int m = mode;
 
   Eigen::VectorXd e = this->rppca_job_->RPPCAEigenvectors().col(m);
 
@@ -679,12 +680,12 @@ StudioParticles AnalysisTool::get_rppca_shape_points(int mode, double value)
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
   for (size_t i = 0; i < mode + 1; ++i) {
-    cumulation += vals[i];
+    cumulation += this->rppca_job_->RPPCAExpVar()[i];
   }
   if (sum > 0) {
-    this->ui_->rppca_exp_var_value->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->rppca_exp_var_value->setText(QString::number(this->rppca_job_->RPPCAExpVar()[m], 'f', 1) + "%");
     this->ui_->rppca_cm_var_value->setText(
-      QString::number(cumulation / sum * 100, 'f', 1) + "%");
+      QString::number(cumulation, 'f', 1) + "%");
   }
   else {
     this->ui_->rppca_exp_var_value->setText("");
