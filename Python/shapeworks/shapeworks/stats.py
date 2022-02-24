@@ -7,7 +7,8 @@ from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 from scipy import stats
 import torch
-torch.manual_seed(0)
+import matplotlib.pyplot as plt
+torch.manual_seed(21)
 '''
 This function calculates the p-values per correspondence point for the group difference.
 Input are:
@@ -109,9 +110,12 @@ def robust_ppca(data,latent_dim,iters=1,lr=1e-3,alpha0=100,alpha1=0.1):
         rate = 1
     else:
         rate = -1*iters/np.log(alpha1)
-        opt = torch.optim.SGD([W,sigma2,log_un,mu], lr=lr)
-        opt_nu = torch.optim.SGD([nu],lr=1e-3)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt_nu, 'min')
+        opt_W = torch.optim.Adam([W], lr=lr)
+        opt_mu = torch.optim.Adam([mu], lr=lr)
+        opt_sigma2 = torch.optim.Adam([sigma2], lr=lr)
+        opt_un = torch.optim.Adam([log_un], lr=lr)
+        opt_nu = torch.optim.SGD([nu],lr=lr)#1e-3
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt_nu, 'min')
     
     for ite in range(iters):
         alpha = alpha0*np.exp(-ite/rate)
@@ -146,44 +150,63 @@ def robust_ppca(data,latent_dim,iters=1,lr=1e-3,alpha0=100,alpha1=0.1):
         loss = torch.stack([term1[0] ,term2, -1*term3,term4[0] ,term5 , term6 ]).sum()
         loss = loss/(N*d)
 
-        opt.zero_grad()
+        opt_W.zero_grad()
+        opt_un.zero_grad()
+        opt_mu.zero_grad()
+        opt_sigma2.zero_grad()
         opt_nu.zero_grad()
         loss.backward(retain_graph=True)
-        opt.step()
+        opt_W.step()
+        opt_mu.step()
+        opt_un.step()
+        opt_sigma2.step()
         opt_nu.step()
         loss_array.append(loss.detach().numpy())
-        scheduler.step(loss)
+        # scheduler.step(loss)
 
+    # plt.figure()
+    # plt.plot(loss_array)
+    # plt.show()
     W = W.detach().numpy()
-    mu = mu.detach().numpy()
+    un = torch.exp(log_un)
     sigma2 = sigma2.detach().numpy()
-    data =  data.detach().numpy()
-    matrix = np.matmul(W.T,W)
-    eigen_values, rotation_matrix = np.linalg.eig(matrix)
-    eigen_vector_W = np.matmul(W,rotation_matrix)
-    exp_var = np.cumsum(eigen_values)/ (np.sum(eigen_values) + sigma2)
-    X_minusMean = data - mu
-    print(eigen_vector_W.shape,eigen_values.shape,mu.shape,exp_var.shape)
+    mu = mu.detach().numpy()
+    nu = nu.detach().numpy()
+    un = un.detach().numpy()
 
+
+    matrix = np.matmul(W.T,W)
+    eigen_values,rotation = np.linalg.eigh(matrix)
+    eigen_vector_W = np.matmul(W,rotation)
+    index = eigen_values.argsort()[::-1]
+    eigen_values = eigen_values[index]
+    eigen_vector_W = eigen_vector_W[:,index]
+    norms = np.linalg.norm(eigen_vector_W,axis=0)
+    eigen_vector_W = eigen_vector_W/norms
+    exp_var = (eigen_values/sum(eigen_values))*100
+    X_minusMean = data.detach().numpy() - mu
+    # return W,mu,sigma2,un,nu
     return eigen_values,eigen_vector_W,mu,exp_var,X_minusMean
 
 
-def get_rrpcaEigenVector(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+def get_rrpcaEigenVector(data,latent_dim,iters=4000,lr=1e-3,alpha0=1,alpha1=0.1): 
     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
     return np.asarray(eigen_vector_W)
 
-def get_rppcaEigenValues(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+def get_rppcaEigenValues(data,latent_dim,iters=4000,lr=1e-3,alpha0=1,alpha1=0.1): 
     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    print(eigen_values_W)
     return np.asarray(eigen_values_W)
 
-def get_expVar(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+def get_expVar(data,latent_dim,iters=4000,lr=1e-3,alpha0=1,alpha1=0.1): 
     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
+    print(exp_var)
     return np.asarray(exp_var)
 
-def get_rppcamean(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+def get_rppcamean(data,latent_dim,iters=4000,lr=1e-3,alpha0=1,alpha1=0.1): 
     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
     return np.transpose(np.asarray(mu))[:,0]
 
-def get_X_minsMean(data,latent_dim,iters=1000,lr=1e-3,alpha0=100,alpha1=0.1): 
+def get_X_minsMean(data,latent_dim,iters=4000,lr=1e-3,alpha0=100,alpha1=0.1): 
     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
     return np.asarray(np.transpose(X_minusMean))
