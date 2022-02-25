@@ -96,6 +96,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>(new WheelEventForwarder(ui_->vertical_scroll_bar));
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
+  ui_->qvtkWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   create_glyph_submenu();
   // analysis tool initializations
