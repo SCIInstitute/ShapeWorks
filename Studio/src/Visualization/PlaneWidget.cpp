@@ -2,6 +2,7 @@
 #include <Visualization/PlaneWidget.h>
 #include <Visualization/Viewer.h>
 #include <vtkActor.h>
+#include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
 #include <vtkFollower.h>
 #include <vtkHandleWidget.h>
@@ -12,16 +13,27 @@
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
+#include <vtkWidgetEventTranslator.h>
 
 #include <QColor>
+#include <QMenu>
+#include <QtGui>
+
+#include "StudioHandleWidget.h"
 
 static const QColor colors[6] = {QColor(226, 149, 61), QColor(127, 165, 123), QColor(176, 64, 86),
                                  QColor(84, 78, 171),  QColor(205, 216, 86),  QColor(100, 129, 163)};
 static constexpr int max_colors = 6;
 
 namespace shapeworks {
+
+namespace actions {
+const QString flip_plane("Flip plane normal");
+const QString delete_plane("Delete plane");
+}  // namespace actions
 
 //-----------------------------------------------------------------------------
 class PlaneCallback : public vtkCommand {
@@ -30,7 +42,13 @@ class PlaneCallback : public vtkCommand {
 
   static PlaneCallback *New() { return new PlaneCallback; }
 
-  void Execute(vtkObject *caller, unsigned long, void *user_data) override { widget_->store_positions(); }
+  void Execute(vtkObject *caller, unsigned long event_id, void *user_data) override {
+    if (event_id == vtkCommand::RightButtonPressEvent) {
+      std::cerr << "right click!\n";
+      return;
+    }
+    widget_->store_positions();
+  }
 
   void setWidget(PlaneWidget *widget) { widget_ = widget; };
 
@@ -88,10 +106,12 @@ void PlaneWidget::update_plane_points() {
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
     int plane_it = 0;
-    for (auto &plane : planes) {
+    for (int plane_number = 0; plane_number < planes.size(); plane_number++) {
+      auto &plane = planes[plane_number];
       QColor qcolor = colors[plane_it];
       plane_it = (plane_it + 1) % max_colors;
-      for (auto &point : plane.points()) {
+      for (int i = 0; i < plane.points().size(); i++) {
+        auto &point = plane.points()[i];
         auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[handle]->GetRepresentation());
         double xyz[3];
 
@@ -108,6 +128,11 @@ void PlaneWidget::update_plane_points() {
         rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
         assign_handle_to_domain(handles_[handle], domain_id);
+
+        handles_[handle]->set_domain(domain_id);
+        handles_[handle]->set_plane(plane_number);
+        handles_[handle]->set_point(i);
+        handles_[handle]->set_plane_widget(this);
 
         // QColor qcolor(Qt::green);
         double color[3];
@@ -148,10 +173,6 @@ void PlaneWidget::update_planes() {
   auto domain_names = session->get_project()->get_domain_names();
 
   int num_planes = count_complete_planes();
-
-  if (!session->get_show_planes()) {
-    num_planes = 0;
-  }
 
   // add if needed
   while (plane_sources_.size() < num_planes) {
@@ -292,8 +313,42 @@ void PlaneWidget::clear_planes() {
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
-  auto handle = vtkSmartPointer<vtkHandleWidget>::New();
+void PlaneWidget::handle_right_click(int domain, int plane, int point) {
+  QMenu *menu = new QMenu(nullptr);
+  menu->setAttribute(Qt::WA_DeleteOnClose);
+  menu->addAction(actions::flip_plane)->setProperty("id", (int)1);
+  menu->addAction(actions::delete_plane)->setProperty("id", (int)2);
+  menu->popup(QCursor::pos());
+
+  auto session = viewer_->get_session();
+
+  session->connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
+    std::cerr << "callback: " << action->text().toStdString() << domain << "," << plane << "," << point << "\n";
+    if (action->text() == actions::flip_plane) {
+    } else if (action->text() == actions::delete_plane) {
+      delete_plane(domain, plane);
+    }
+  });
+}
+
+//-----------------------------------------------------------------------------
+void PlaneWidget::delete_plane(int domain, int plane) {
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+  auto shape = viewer_->get_shape();
+
+  assert(domain < domain_names.size());
+  auto &constraints = shape->get_constraints(domain);
+  auto &planes = constraints.getPlaneConstraints();
+  assert(plane < planes.size());
+  planes.erase(planes.begin() + plane);
+  update_planes();
+  session->trigger_planes_changed();
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<StudioHandleWidget> PlaneWidget::create_handle() {
+  auto handle = vtkSmartPointer<StudioHandleWidget>::New();
   /// TODO: check ownership of this representation object
   auto *rep = vtkPolygonalHandleRepresentation3D::New();
   rep->SetHandle(sphere_->GetOutput());
@@ -316,12 +371,13 @@ vtkSmartPointer<vtkHandleWidget> PlaneWidget::create_handle() {
   rep->Delete();
 
   handle->AddObserver(vtkCommand::InteractionEvent, callback_);
+
   handle->EnabledOn();
   return handle;
 }
 
 //-----------------------------------------------------------------------------
-void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id) {
+void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<StudioHandleWidget> handle, int domain_id) {
   auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
@@ -346,6 +402,11 @@ int PlaneWidget::count_complete_planes() {
   auto shape = viewer_->get_shape();
 
   auto session = viewer_->get_session();
+
+  if (!session->get_show_planes()) {
+    return 0;
+  }
+
   auto domain_names = session->get_project()->get_domain_names();
 
   int num_planes = 0;

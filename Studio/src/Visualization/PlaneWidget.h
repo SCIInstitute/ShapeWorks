@@ -13,6 +13,7 @@ namespace shapeworks {
 
 class Viewer;
 class PlaneCallback;
+class StudioHandleWidget;
 
 //! PlaneWidget
 /*!
@@ -34,12 +35,16 @@ class PlaneWidget {
 
   void clear_planes();
 
+  void handle_right_click(int domain, int plane, int point);
+
+  void delete_plane(int domain, int plane);
+
  private:
   bool block_update_ = false;
 
-  vtkSmartPointer<vtkHandleWidget> create_handle();
+  vtkSmartPointer<StudioHandleWidget> create_handle();
 
-  void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);
+  void assign_handle_to_domain(vtkSmartPointer<StudioHandleWidget> handle, int domain_id);
 
   int count_plane_points();
   int count_complete_planes();
@@ -48,7 +53,7 @@ class PlaneWidget {
 
   // control points
   vtkSmartPointer<vtkSphereSource> sphere_;
-  std::vector<vtkSmartPointer<vtkHandleWidget>> handles_;
+  std::vector<vtkSmartPointer<StudioHandleWidget>> handles_;
 
   // planes
   std::vector<vtkSmartPointer<vtkPlaneSource>> plane_sources_;
