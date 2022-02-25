@@ -921,8 +921,8 @@ void Viewer::update_actors() {
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      cell_picker_->AddPickList(surface_actors_[i]);
-      prop_picker_->AddPickList(surface_actors_[i]);
+      //cell_picker_->AddPickList(surface_actors_[i]);
+      //prop_picker_->AddPickList(surface_actors_[i]);
       cell_picker_->AddPickList(clipped_surface_actors_[i]);
       prop_picker_->AddPickList(clipped_surface_actors_[i]);
       // point_placer_->AddProp(surface_actors_[i]);
@@ -1009,8 +1009,8 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
   cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
-  for (int i = 0; i < surface_actors_.size(); i++) {
-    if (cell_picker_->GetActor() == surface_actors_[i]) {
+  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
+    if (cell_picker_->GetActor() == clipped_surface_actors_[i]) {
       double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();

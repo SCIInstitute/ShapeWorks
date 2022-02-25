@@ -167,7 +167,7 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
   static_cast<vtkPolygonalHandleRepresentation3D *>(rep)->SetHandle(sphere_->GetOutput());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  for (const auto &actor : viewer_->get_surface_actors()) {
+  for (const auto &actor : viewer_->get_clipped_surface_actors()) {
     point_placer->AddProp(actor);
   }
   auto shape = viewer_->get_shape();
@@ -207,7 +207,7 @@ void LandmarkWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> ha
       vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  auto actors = viewer_->get_surface_actors();
+  auto actors = viewer_->get_clipped_surface_actors();
   if (domain_id < actors.size()) {
     point_placer->AddProp(actors[domain_id]);
   }
