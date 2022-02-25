@@ -204,6 +204,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
   Visualization/StudioVtkOutputWindow.cpp
+  Visualization/StudioHandleWidget.cpp
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
