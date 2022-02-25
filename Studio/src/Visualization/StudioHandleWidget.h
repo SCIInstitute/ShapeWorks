@@ -16,11 +16,18 @@ class StudioHandleWidget : public vtkHandleWidget {
   void set_plane_widget(PlaneWidget *plane_widget) { plane_widget_ = plane_widget; }
 
  protected:
-  static void RightClickSelectAction(vtkAbstractWidget *);
+  static void RightClickSelectAction(vtkAbstractWidget *w);
+
+  static void CustomMoveAction(vtkAbstractWidget *w);
+  static void CustomSelectAction(vtkAbstractWidget *w);
+  static void CustomEndSelectAction(vtkAbstractWidget *w);
 
   int domain_ = -1;
   int plane_ = -1;
   int point_ = -1;
   PlaneWidget *plane_widget_;
+
+  bool shift_active_ = false;
+  int start_y_ = 0;
 };
 }  // namespace shapeworks

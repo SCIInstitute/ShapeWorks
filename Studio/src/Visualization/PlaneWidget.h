@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <Libs/Optimize/ParticleSystem/PlaneConstraint.h>
+
 class vtkHandleWidget;
 class vtkSphereSource;
 class vtkPlaneSource;
@@ -40,7 +42,10 @@ class PlaneWidget {
   void delete_plane(int domain, int plane);
   void flip_plane(int domain, int plane);
 
- private:
+  void set_plane_offset(int domain, int plane, int offset);
+
+
+private:
   bool block_update_ = false;
 
   vtkSmartPointer<StudioHandleWidget> create_handle();
@@ -49,6 +54,8 @@ class PlaneWidget {
 
   int count_plane_points();
   int count_complete_planes();
+
+  PlaneConstraint &get_plane_reference(int domain, int plane);
 
   Viewer* viewer_ = nullptr;
 

@@ -32,6 +32,8 @@ class PlaneConstraint : public Constraint {
   Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return -planeNormal_; }
 
   std::vector<Eigen::Vector3d> &points() { return points_; };
+  double getOffset();
+  void setOffset(double offset);
 
   double constraintEval(const Eigen::Vector3d &pt) const override;
 
@@ -45,6 +47,7 @@ class PlaneConstraint : public Constraint {
   Eigen::Vector3d planePoint_;
 
   std::vector<Eigen::Vector3d> points_;
+  double offset_;
 };
 
 }  // namespace shapeworks

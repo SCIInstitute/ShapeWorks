@@ -224,6 +224,9 @@ void PlaneWidget::update_planes() {
       double normal[3];
       transform->TransformVector(plane.getPlaneNormal().data(), normal);
 
+      Eigen::Vector3d center = plane.getPlanePoint();
+      center = center + plane.getPlaneNormal() * plane.getOffset();
+
       plane.updatePlaneFromPoints();
       auto tmp = vtkSmartPointer<vtkPlaneSource>::New();
       plane_sources_[plane_it] = tmp;
@@ -232,7 +235,7 @@ void PlaneWidget::update_planes() {
       plane_sources_[plane_it]->SetPoint1(100, 0, 0);
       plane_sources_[plane_it]->SetPoint2(0, 100, 0);
       plane_sources_[plane_it]->SetNormal(plane.getPlaneNormal().data());
-      plane_sources_[plane_it]->SetCenter(plane.getPlanePoint().data());
+      plane_sources_[plane_it]->SetCenter(center.data());
       plane_actors_[plane_it]->SetUserTransform(transform);
       plane_actors_[plane_it]->GetProperty()->SetColor(qcolor.red() / 255.0, qcolor.green() / 255.0,
                                                        qcolor.blue() / 255.0);
@@ -338,7 +341,6 @@ void PlaneWidget::delete_plane(int domain, int plane) {
   auto &planes = constraints.getPlaneConstraints();
   assert(plane < planes.size());
   planes.erase(planes.begin() + plane);
-  // update_planes();
   session->trigger_planes_changed();
 }
 
@@ -361,8 +363,28 @@ void PlaneWidget::flip_plane(int domain, int plane) {
   Eigen::Vector3d tmp = points[0];
   points[0] = points[2];
   points[2] = tmp;
-  // update_planes();
   session->trigger_planes_changed();
+}
+
+//-----------------------------------------------------------------------------
+void PlaneWidget::set_plane_offset(int domain, int plane, int offset)
+{
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+  auto shape = viewer_->get_shape();
+
+  assert(domain < domain_names.size());
+  auto &constraints = shape->get_constraints(domain);
+  auto &planes = constraints.getPlaneConstraints();
+  assert(plane < planes.size());
+  planes[plane].setOffset(offset);
+//  session->trigger_planes_changed();
+
+  update_planes();
+//  block_update_ = true;
+//  session->trigger_planes_changed();
+//  block_update_ = false;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -441,6 +463,12 @@ int PlaneWidget::count_complete_planes() {
     }
   }
   return num_planes;
+}
+
+//-----------------------------------------------------------------------------
+PlaneConstraint &PlaneWidget::get_plane_reference(int domain, int plane)
+{
+
 }
 
 //-----------------------------------------------------------------------------
