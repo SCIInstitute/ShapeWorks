@@ -38,6 +38,7 @@ class PlaneWidget {
   void handle_right_click(int domain, int plane, int point);
 
   void delete_plane(int domain, int plane);
+  void flip_plane(int domain, int plane);
 
  private:
   bool block_update_ = false;

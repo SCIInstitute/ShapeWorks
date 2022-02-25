@@ -1,4 +1,5 @@
 #include <Data/Session.h>
+#include <Data/StudioLog.h>
 #include <Visualization/PlaneWidget.h>
 #include <Visualization/Viewer.h>
 #include <vtkActor.h>
@@ -42,13 +43,7 @@ class PlaneCallback : public vtkCommand {
 
   static PlaneCallback *New() { return new PlaneCallback; }
 
-  void Execute(vtkObject *caller, unsigned long event_id, void *user_data) override {
-    if (event_id == vtkCommand::RightButtonPressEvent) {
-      std::cerr << "right click!\n";
-      return;
-    }
-    widget_->store_positions();
-  }
+  void Execute(vtkObject *caller, unsigned long event_id, void *user_data) override { widget_->store_positions(); }
 
   void setWidget(PlaneWidget *widget) { widget_ = widget; };
 
@@ -325,6 +320,7 @@ void PlaneWidget::handle_right_click(int domain, int plane, int point) {
   session->connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
     std::cerr << "callback: " << action->text().toStdString() << domain << "," << plane << "," << point << "\n";
     if (action->text() == actions::flip_plane) {
+      flip_plane(domain, plane);
     } else if (action->text() == actions::delete_plane) {
       delete_plane(domain, plane);
     }
@@ -342,7 +338,30 @@ void PlaneWidget::delete_plane(int domain, int plane) {
   auto &planes = constraints.getPlaneConstraints();
   assert(plane < planes.size());
   planes.erase(planes.begin() + plane);
-  update_planes();
+  // update_planes();
+  session->trigger_planes_changed();
+}
+
+//-----------------------------------------------------------------------------
+void PlaneWidget::flip_plane(int domain, int plane) {
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+  auto shape = viewer_->get_shape();
+
+  assert(domain < domain_names.size());
+  auto &constraints = shape->get_constraints(domain);
+  auto &planes = constraints.getPlaneConstraints();
+  assert(plane < planes.size());
+  auto &points = planes[plane].points();
+  if (points.size() != 3) {
+    STUDIO_SHOW_ERROR("Plane doesn't have 3 points");
+    return;
+  }
+
+  Eigen::Vector3d tmp = points[0];
+  points[0] = points[2];
+  points[2] = tmp;
+  // update_planes();
   session->trigger_planes_changed();
 }
 
