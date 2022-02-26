@@ -5,9 +5,11 @@
 #include <vtkActor.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
+#include <vtkCutter.h>
 #include <vtkFollower.h>
 #include <vtkHandleWidget.h>
 #include <vtkPlaneSource.h>
+#include <vtkPointLocator.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPolygonalHandleRepresentation3D.h>
@@ -210,6 +212,12 @@ void PlaneWidget::update_planes() {
     }
     auto &planes = shape->constraints()[domain_id].getPlaneConstraints();
 
+    double size = 100;
+    auto meshes = viewer_->get_meshes();
+    if (meshes.valid()) {
+      size = meshes.meshes()[domain_id]->get_largest_dimension_size();
+    }
+
     for (auto &plane : planes) {
       QColor qcolor = colors[plane_color];
       plane_color = (plane_color + 1) % max_colors;
@@ -225,15 +233,15 @@ void PlaneWidget::update_planes() {
       transform->TransformVector(plane.getPlaneNormal().data(), normal);
 
       Eigen::Vector3d center = plane.getPlanePoint();
-      center = center + plane.getPlaneNormal() * plane.getOffset();
+      center = center + plane.getPlaneNormal() * plane.getOffset() / get_offset_scale(domain_id);
 
       plane.updatePlaneFromPoints();
       auto tmp = vtkSmartPointer<vtkPlaneSource>::New();
       plane_sources_[plane_it] = tmp;
       plane_mappers_[plane_it]->SetInputConnection(tmp->GetOutputPort());
       plane_sources_[plane_it]->SetNormal(0, 0, 1);
-      plane_sources_[plane_it]->SetPoint1(100, 0, 0);
-      plane_sources_[plane_it]->SetPoint2(0, 100, 0);
+      plane_sources_[plane_it]->SetPoint1(size, 0, 0);
+      plane_sources_[plane_it]->SetPoint2(0, size, 0);
       plane_sources_[plane_it]->SetNormal(plane.getPlaneNormal().data());
       plane_sources_[plane_it]->SetCenter(center.data());
       plane_actors_[plane_it]->SetUserTransform(transform);
@@ -331,7 +339,7 @@ void PlaneWidget::handle_right_click(int domain, int plane, int point) {
 }
 
 //-----------------------------------------------------------------------------
-void PlaneWidget::delete_plane(int domain, int plane) {
+void PlaneWidget::delete_plane(int domain, int plane_id) {
   auto session = viewer_->get_session();
   auto domain_names = session->get_project()->get_domain_names();
   auto shape = viewer_->get_shape();
@@ -339,22 +347,17 @@ void PlaneWidget::delete_plane(int domain, int plane) {
   assert(domain < domain_names.size());
   auto &constraints = shape->get_constraints(domain);
   auto &planes = constraints.getPlaneConstraints();
-  assert(plane < planes.size());
-  planes.erase(planes.begin() + plane);
+  assert(plane_id < planes.size());
+  planes.erase(planes.begin() + plane_id);
   session->trigger_planes_changed();
 }
 
 //-----------------------------------------------------------------------------
-void PlaneWidget::flip_plane(int domain, int plane) {
+void PlaneWidget::flip_plane(int domain, int plane_id) {
+  auto &plane = get_plane_reference(domain, plane_id);
   auto session = viewer_->get_session();
-  auto domain_names = session->get_project()->get_domain_names();
-  auto shape = viewer_->get_shape();
+  auto &points = plane.points();
 
-  assert(domain < domain_names.size());
-  auto &constraints = shape->get_constraints(domain);
-  auto &planes = constraints.getPlaneConstraints();
-  assert(plane < planes.size());
-  auto &points = planes[plane].points();
   if (points.size() != 3) {
     STUDIO_SHOW_ERROR("Plane doesn't have 3 points");
     return;
@@ -367,24 +370,47 @@ void PlaneWidget::flip_plane(int domain, int plane) {
 }
 
 //-----------------------------------------------------------------------------
-void PlaneWidget::set_plane_offset(int domain, int plane, int offset)
-{
-  auto session = viewer_->get_session();
-  auto domain_names = session->get_project()->get_domain_names();
-  auto shape = viewer_->get_shape();
-
-  assert(domain < domain_names.size());
-  auto &constraints = shape->get_constraints(domain);
-  auto &planes = constraints.getPlaneConstraints();
-  assert(plane < planes.size());
-  planes[plane].setOffset(offset);
-//  session->trigger_planes_changed();
-
+void PlaneWidget::set_plane_offset(int domain, int plane_id, int offset) {
+  auto &plane = get_plane_reference(domain, plane_id);
+  plane.setOffset(offset);
   update_planes();
-//  block_update_ = true;
-//  session->trigger_planes_changed();
-//  block_update_ = false;
+}
 
+//-----------------------------------------------------------------------------
+void PlaneWidget::finalize_plane_offset(int domain, int plane_id) {
+  auto &plane = get_plane_reference(domain, plane_id);
+  auto vtk_plane = plane.getVTKPlane();
+  auto meshes = viewer_->get_meshes();
+  if (!meshes.valid() || domain >= meshes.meshes().size()) {
+    return;
+  }
+
+  MeshHandle mesh = meshes.meshes()[domain];
+  auto poly_data = mesh->get_poly_data();
+
+  Eigen::Vector3d center = plane.getPlanePoint();
+  center = center + plane.getPlaneNormal() * plane.getOffset() / get_offset_scale(domain);
+  vtk_plane->SetOrigin(center.data());
+
+  auto cutter = vtkSmartPointer<vtkCutter>::New();
+  cutter->SetCutFunction(vtk_plane);
+  cutter->SetInputData(poly_data);
+  cutter->Update();
+
+  vtkSmartPointer<vtkPolyData> cut = cutter->GetOutput();
+  if (cut->GetNumberOfPoints() != 0) {
+    auto locator = vtkSmartPointer<vtkPointLocator>::New();
+    locator->SetDataSet(cut);
+    locator->BuildLocator();
+    for (auto &point : plane.points()) {
+      int id = locator->FindClosestPoint(point.data());
+      cut->GetPoint(id, point.data());
+    }
+  }
+  // set the offset to 0
+  plane.setOffset(0);
+  update();
+  viewer_->get_session()->trigger_planes_changed();
 }
 
 //-----------------------------------------------------------------------------
@@ -466,9 +492,35 @@ int PlaneWidget::count_complete_planes() {
 }
 
 //-----------------------------------------------------------------------------
-PlaneConstraint &PlaneWidget::get_plane_reference(int domain, int plane)
-{
+PlaneConstraint &PlaneWidget::get_plane_reference(int domain, int plane) {
+  auto session = viewer_->get_session();
+  auto domain_names = session->get_project()->get_domain_names();
+  auto shape = viewer_->get_shape();
 
+  assert(domain < domain_names.size());
+  auto &constraints = shape->get_constraints(domain);
+  auto &planes = constraints.getPlaneConstraints();
+  assert(plane < planes.size());
+  return planes[plane];
+}
+
+//-----------------------------------------------------------------------------
+double PlaneWidget::get_offset_scale(int domain_id) {
+  double size = 100;
+  auto meshes = viewer_->get_meshes();
+  if (meshes.valid()) {
+    size = meshes.meshes()[domain_id]->get_largest_dimension_size();
+  }
+
+  auto window_size = viewer_->get_renderer()->GetRenderWindow()->GetSize();
+  auto viewport = viewer_->get_renderer()->GetViewport();
+
+  double viewport_height = viewport[3] - viewport[1];
+  double window_height = window_size[1];
+
+  double viewport_pixels = viewport_height * window_height;
+
+  return viewport_pixels * (1.0 / size);
 }
 
 //-----------------------------------------------------------------------------

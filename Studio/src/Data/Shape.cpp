@@ -773,4 +773,5 @@ bool Shape::has_planes() {
   }
   return false;
 }
+
 }  // namespace shapeworks

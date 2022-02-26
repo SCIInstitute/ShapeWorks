@@ -39,10 +39,11 @@ class PlaneWidget {
 
   void handle_right_click(int domain, int plane, int point);
 
-  void delete_plane(int domain, int plane);
-  void flip_plane(int domain, int plane);
+  void delete_plane(int domain, int plane_id);
+  void flip_plane(int domain, int plane_id);
 
-  void set_plane_offset(int domain, int plane, int offset);
+  void set_plane_offset(int domain, int plane_id, int offset);
+  void finalize_plane_offset(int domain, int plane_id);
 
 
 private:
@@ -56,6 +57,8 @@ private:
   int count_complete_planes();
 
   PlaneConstraint &get_plane_reference(int domain, int plane);
+
+  double get_offset_scale(int domain_id);
 
   Viewer* viewer_ = nullptr;
 

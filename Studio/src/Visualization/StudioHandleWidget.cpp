@@ -76,7 +76,6 @@ void StudioHandleWidget::CustomMoveAction(vtkAbstractWidget *w) {
   // if (self->Interactor->GetShiftKey()) {
   if (self->shift_active_) {
     int diff = Y - self->start_y_;
-    std::cerr << "shift key active! diff = " << diff << "\n";
     if (self->plane_widget_) {
       self->plane_widget_->set_plane_offset(self->domain_, self->plane_, diff);
     }
@@ -151,6 +150,10 @@ void StudioHandleWidget::CustomEndSelectAction(vtkAbstractWidget *w) {
 
   if (self->shift_active_) {
     // now re-cut and place landmarks
+    if (self->plane_widget_) {
+      self->plane_widget_->finalize_plane_offset(self->domain_, self->plane_);
+    }
+
   }
   self->shift_active_ = false;
   self->EventCallbackCommand->SetAbortFlag(1);
