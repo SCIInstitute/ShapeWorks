@@ -41,10 +41,12 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->constraints_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &DataTool::constraints_domain_changed);
 
-  connect(ui_->new_plane_, &QPushButton::clicked, this, &DataTool::new_plane_clicked);
+  connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
 
   ui_->landmark_help->setText("Place landmarks using " + click_message);
-  ui_->plane_contraints_instruction_->setText("Place 3 points to define a plane on a shape using " + click_message);
+  ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +
+                                              "\n" + "• Slide plane along normal with shift+click\n" +
+                                              "• Right click plane point to flip normal");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -166,7 +168,24 @@ void DataTool::landmark_domain_changed() {
 void DataTool::constraints_domain_changed() {}
 
 //---------------------------------------------------------------------------
-void DataTool::new_plane_clicked() {}
+void DataTool::delete_planes_clicked() {
+  QModelIndexList list = ui_->plane_table_->selectionModel()->selectedRows();
+
+  auto shapes = session_->get_shapes();
+
+  QList<int> index_list;
+  for (int i = list.size() - 1; i >= 0; i--) {
+    int row = list[i].row();
+    index_list << list[i].row();
+
+    int shape_id = ui_->plane_table_->item(row, 0)->data(Qt::UserRole).toInt();
+    int domain_id = ui_->plane_table_->item(row, 1)->data(Qt::UserRole).toInt();
+    int plane_id = ui_->plane_table_->item(row, 2)->data(Qt::UserRole).toInt();
+    auto& planes = shapes[shape_id]->get_constraints(domain_id).getPlaneConstraints();
+    planes.erase(planes.begin() + plane_id);
+  }
+  session_->trigger_planes_changed();
+}
 
 //---------------------------------------------------------------------------
 void DataTool::update_domain_box(QComboBox* box) {
@@ -223,12 +242,16 @@ void DataTool::update_plane_table() {
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
       if (domain_id < shape->constraints().size()) {
         auto& planes = shape->constraints()[domain_id].getPlaneConstraints();
+        int plane_id = 0;
         for (auto& plane : planes) {
           plane.updatePlaneFromPoints();
+          // shape
           auto* new_item = new QTableWidgetItem(shape->get_display_name());
+          new_item->setData(Qt::UserRole, i);  // shape id
           table->setItem(row, 0, new_item);
+          // domain
           new_item = new QTableWidgetItem(QString::fromStdString(domain_names[domain_id]));
-
+          new_item->setData(Qt::UserRole, domain_id);
           table->setItem(row, 1, new_item);
 
           auto center = plane.getPlanePoint();
@@ -241,9 +264,12 @@ void DataTool::update_plane_table() {
             normal_string = "N/A";
             center_string = "N/A";
           }
+          // center
           new_item = new QTableWidgetItem(center_string);
+          new_item->setData(Qt::UserRole, plane_id++);
           table->setItem(row, 2, new_item);
 
+          // normal
           new_item = new QTableWidgetItem(normal_string);
           table->setItem(row, 3, new_item);
           row++;

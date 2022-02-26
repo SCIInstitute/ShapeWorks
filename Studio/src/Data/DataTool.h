@@ -43,7 +43,7 @@ class DataTool : public QWidget {
 
   void constraints_domain_changed();
 
-  void new_plane_clicked();
+  void delete_planes_clicked();
 
   void update_notes();
 
