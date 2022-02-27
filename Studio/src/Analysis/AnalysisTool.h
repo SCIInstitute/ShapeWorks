@@ -238,6 +238,8 @@ private:
   Eigen::VectorXd eval_compactness_within_;
   Eigen::VectorXd eval_generalization_;
 
+  std::vector<int> number_of_particles_ar;
+
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
   vnl_vector<double> temp_shape_mca;

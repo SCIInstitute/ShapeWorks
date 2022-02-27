@@ -570,7 +570,7 @@ namespace itk
     //Updated GD Optimizer
     /// uncomment this to run single threaded
     // tbb::task_scheduler_init init(1);
-    std::cout << " Inside New MLPCA Optimization function " << std::endl;
+    std::cout << " Inside MLPCA Optimization function - flag" << flag_b <<  std::endl;
 
     if (this->m_AbortProcessing) {
       return;
@@ -582,25 +582,19 @@ namespace itk
     if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
       m_StopOptimization = true;
     }
-    //m_GradientFunction->SetParticleSystem(m_ParticleSystem);
-
+  
     typedef typename DomainType::VnlVectorType NormalType;
 
     ResetTimeStepVectors();
-    // double minimumTimeStep = 1.0;
     double minimumTimeStepWithin = 1.0;
     double minimumTimeStepBetween = 1.0;
-
-
-
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
-    std::cout << "numdomains is " << numdomains << std::endl;
-
+    // std::cout << "numdomains is " << numdomains << std::endl;
     unsigned int counter = 0;
-
     double maxchange_within = 0.0;
     double maxchange_between = 0.0;
+
     while (m_StopOptimization == false) // Optimization Iterations Main loop
     {//START OPTIMIZATION
 
@@ -631,21 +625,13 @@ namespace itk
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
-            // note that this is really a 'continue' statement for the loop, but using TBB,
-            // we are in an anonymous function, not a loop, so return is equivalent to continue here
             return;
           }
-
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
-
-          // must clone this as we are in a thread and the gradient function is not thread-safe
           localGradientFunction_ = m_GradientFunction->Clone();
-          // typename DualGradientFunctionType::Pointer localGradientFunction = dynamic_cast<typename DualGradientFunctionType::Pointer> (localGradientFunction_.GetPointer());
-
           itk::ParticleDualVectorFunction<VDimension>* localGradientFunction = dynamic_cast <itk::ParticleDualVectorFunction<VDimension>*> (localGradientFunction_.GetPointer());
-
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
@@ -661,7 +647,6 @@ namespace itk
             double within_energy = 0.0;
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
 
-            // std::cout << "Before Evaluated done" << std::endl;
 
             // maximumUpdateAllowed is set based on some fraction of the distance between particles
             // This is to avoid particles shooting past their neighbors
@@ -759,7 +744,6 @@ namespace itk
             if (m_TimeStepsBetween[dom][k] < minimumTimeStepBetween) {
               m_TimeStepsBetween[dom][k] = minimumTimeStepBetween;
             }
-            // std::cout << "------optimizing BETWEEN now-----" << std::endl;
             // Compute gradient update.
             localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
 
@@ -772,7 +756,7 @@ namespace itk
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_between_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_between_gradient, pt, k);
-              // Update with within gradient
+              // Update with between gradient
               double newenergy_between, between_gradmag;
               while (true) {
               // Step A scale the projected gradient by the current time step
@@ -784,7 +768,6 @@ namespace itk
               }
 
               between_gradmag = between_gradient.magnitude();
-
 
               // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
               if (between_gradmag > maximumUpdateAllowed_between) {

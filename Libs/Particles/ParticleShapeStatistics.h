@@ -47,7 +47,7 @@ public:
   int ComputeWithinModesForMca();
   int ComputeBetweenModesForMca();
   int ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps);
-
+  void SetNumberOfParticlesAr(std::vector<int> num_particles_ar);
   /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(const std::string &s);
 
@@ -58,6 +58,8 @@ public:
       excel or R or Matlab for analysis. */
   int WriteCSVFile(const std::string &s);
   int WriteCSVFile2(const std::string &s);
+  int WriteEvaluationResults(Eigen::VectorXd ar, const std::string &s);
+
 
   /** Computes PCA modes from the set of correspondence mode positions.
       Requires that ReadPointFiles be called first. */
@@ -160,6 +162,7 @@ private:
   unsigned int m_dps;
   unsigned int m_N;
   unsigned int m_numPoints;
+  std::vector<int> m_num_particles_ar;
 
 
   unsigned int m_numDimensions;

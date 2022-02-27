@@ -36,14 +36,34 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     unsigned int N = m_ShapeMatrix->cols();
     std::vector<int> num_particles = m_ShapeMatrix->GetAllNumberOfParticles();
 
-    m_CurrentWithinResidualEnergies->clear();
-    m_CurrentWithinResidualEnergies->resize(dps);
-    
+    m_CurrentWithinResidualEnergies.clear();
+    m_CurrentWithinResidualEnergies.resize(dps);
+    // std::cout << "Start - ComputeCovarianceMatricesFromWithinResiduals" << std::endl;
+    // std::cout << std::endl <<  "between variance set to " << std::endl;
+    // for(int i = 0; i < dps; i++){
+    //     std::cout << m_MinimumVariance_between_ar[i] << " ";
+    // }
+    // std::cout << std::endl <<  "between variance Decay set to " << std::endl;
+    //  for(int i = 0; i < dps; i++){
+    //     std::cout << m_MinimumVarianceDecayConstant_between_ar[i] << " ";
+    // }
+
+    // std::cout << std::endl <<  "within variance set to " << std::endl;
+
+    //  for(int i = 0; i < dps; i++){
+    //     std::cout << m_MinimumVariance_within_ar[i] << " ";
+    // }
+    // std::cout << std::endl <<  "within variance Decay set to " << std::endl;
+    //  for(int i = 0; i < dps; i++){
+    //     std::cout << m_MinimumVarianceDecayConstant_within_ar[i] << " ";
+    // }
 
     tbb::parallel_for(tbb::blocked_range<size_t>{0, dps},
     [&](const tbb::blocked_range<size_t>& r){
         for(size_t k = r.begin(); k < r.end(); ++k){ // for each domain build covariance matrix with within residuals from mlpca terms
             // 1. Compute grand_mean_sub---> 3m X N
+            // std::cout << "Start - Within for k = " << k << std::endl;
+
             vnl_matrix_type grand_mean_sub;
             grand_mean_sub.set_size(VDimension * num_particles[k], N);
             for(unsigned int i = 0; i < N; i++){
@@ -53,18 +73,18 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
                     grand_mean_sub(j * VDimension + 2, i) = m_grand_mean->get(2, i);
                 }
             }
+            // std::cout << "Grand mean transformed" << std::endl;
 
             // 2. Compute within parts
-            vnl_matrix_type = ones_N;
+            vnl_matrix_type ones_N;
             ones_N.set_size(N, 1);
             ones_N.fill(1.0);
-            vnl_matrix_type within_part = m_within_space_mean->at(k)*ones_N.transpose() +  m_within_scores->at(k) * m_within_loadings->at(k).transpose(); //-->3m X N // Wh + b  --> uv^T
-
+            vnl_matrix_type within_part = (m_within_space_mean->at(k)*ones_N.transpose()) +  (m_within_scores->at(k) * m_within_loadings->at(k).transpose()); //-->3m X N // Wh + b  --> uv^T
             vnl_matrix_type z_k;
             z_k.set_size(VDimension * num_particles[k], N);
             z_k.fill(0.0);
             unsigned int row = 0;
-            for(unsigned int x = 0; x < k; x++){ row += (num_particles[k] * VDimension);}
+            for(unsigned int x = 0; x < k; x++){ row += (num_particles[x] * VDimension);}
             m_ShapeMatrix->extract(z_k, row, 0);
 
             vnl_matrix_type z_k_within_residual;
@@ -78,9 +98,6 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             const unsigned int num_dims    = num_particles[k] * VDimension;
             PointsUpdate_k.set_size(num_dims, num_samples);
             PointsUpdate_k.fill(0.0);
-
-
-
             vnl_matrix_type points_minus_mean_k;
             points_minus_mean_k.clear();
             points_minus_mean_k.set_size(num_dims, num_samples); // ---> 3m X N
@@ -106,7 +123,9 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             {
                 for (unsigned int i = 0; i < num_samples; i++)
                 {
-                    points_minus_mean_k(j, i) = z_k_within_residual(j, i) - points_mean_k(j,0);
+                    // points_minus_mean_k(j, i) = z_k_within_residual(j, i) - points_mean_k(j,0);
+                    points_minus_mean_k(j, i) = z_k_within_residual(j, i);
+
                 }
             }
 
@@ -116,7 +135,6 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
             vnl_matrix_type gramMat_k(num_samples, num_samples, 0.0); // ---> N X N
             vnl_matrix_type pinvMat_k(num_samples, num_samples, 0.0); //gramMat inverse ---> N X N
-
             if (this->m_UseMeanEnergy)
             {
                 pinvMat_k.set_identity();
@@ -125,14 +143,15 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             else
             {
                 gramMat_k = points_minus_mean_k.transpose()* points_minus_mean_k; // Y^TY where Y = z_k - grand mean part - within part --> N X N
-
                 vnl_svd<double> svd(gramMat_k);
                 vnl_matrix_type UG = svd.U(); // ---> N X N
                 W_k = svd.W(); // ---> N X N
 
                 vnl_diag_matrix<double> invLambda_k = svd.W(); // ----> N X N
 
-                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance); // TODO: check if Variance needs to differ for within and between part
+                // invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance); 
+                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance_between_ar[k]); 
+
                 invLambda_k.invert_in_place();
 
                 pinvMat_k = (UG * invLambda_k) * UG.transpose(); // ---> N X N
@@ -144,23 +163,27 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
                 Utils::multiply_into(InverseCovMatrix_k, lhs, rhs);
             }
             PointsUpdate_k.update(z_k_within_residual * pinvMat_k); // ---> 3m X N   X  N X N ---> 3m X N update the gradient
-            m_CurrentWithinResidualEnergies->at(k) = 0.0;
+            m_CurrentWithinResidualEnergies.at(k) = 0.0;
             if (m_UseMeanEnergy)
-                m_CurrentWithinResidualEnergies->at(k) = points_minus_mean_k.frobenius_norm();
+                m_CurrentWithinResidualEnergies.at(k) = points_minus_mean_k.frobenius_norm();
             else
             {
-                m_MinimumWithinResidualEigenValues->at(k) = W_k(0)*W_k(0) + m_MinimumVariance;  // TODO: change variance part wrt independent reg params
+                // m_MinimumWithinResidualEigenValues.at(k) = W_k(0)*W_k(0) + m_MinimumVariance;  
+                m_MinimumWithinResidualEigenValues.at(k) = W_k(0)*W_k(0) + m_MinimumVariance_between_ar[k];  
+
                 for (unsigned int i = 0; i < num_samples; i++)
                 {
-                    double val_i = W_k(i)*W_k(i) + m_MinimumVariance;
-                    if ( val_i < m_MinimumWithinResidualEigenValues->at(k))
-                        m_MinimumWithinResidualEigenValues->at(k) = val_i;
-                    m_CurrentWithinResidualEnergies->at(k) += log(val_i);
+                    // double val_i = W_k(i)*W_k(i) + m_MinimumVariance;
+                    double val_i = W_k(i)*W_k(i) + m_MinimumVariance_between_ar[k];
+
+                    if ( val_i < m_MinimumWithinResidualEigenValues.at(k))
+                        m_MinimumWithinResidualEigenValues.at(k) = val_i;
+                    m_CurrentWithinResidualEnergies.at(k) += log(val_i);
                 }
             }
-            m_CurrentWithinResidualEnergies->at(k) /= 2.0;
+            m_CurrentWithinResidualEnergies.at(k) /= 2.0;
             if (m_UseMeanEnergy)
-                m_MinimumWithinResidualEigenValues->at(k) = m_CurrentWithinResidualEnergies->at(k) / 2.0;
+                m_MinimumWithinResidualEigenValues.at(k) = m_CurrentWithinResidualEnergies.at(k) / 2.0;
 
             m_PointsUpdateAllWithin->at(k) = PointsUpdate_k;
             m_InverseCovMatricesAllWithin->at(k) = InverseCovMatrix_k;        
@@ -168,6 +191,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         }// end of all domains/organs calculation
     
     });
+    // std::cout << "End - ComputeCovarianceMatricesFromWithinResiduals" << std::endl;
+
         
 }
 
@@ -184,12 +209,13 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     
     // NOTE: This code requires that indices be contiguous, i.e. it wont work if
     // you start deleting particles.
+    // std::cout << "Start - ComputeCovarianceMatricesFromBetweenResiduals" << std::endl;
     unsigned int dps = m_ShapeMatrix->GetDomainsPerShape();
     unsigned int N = m_ShapeMatrix->cols();
     std::vector<int> num_particles = m_ShapeMatrix->GetAllNumberOfParticles();
 
-    m_CurrentWithinResidualEnergies->clear();
-    m_CurrentWithinResidualEnergies->resize(dps);
+    m_CurrentBetweenResidualEnergies.clear();
+    m_CurrentBetweenResidualEnergies.resize(dps);
 
     tbb::parallel_for(tbb::blocked_range<size_t>{0, dps},
     [&](const tbb::blocked_range<size_t>& r){
@@ -220,8 +246,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
                 between_scores_part.update(m_between_scores->at(k), j * VDimension, 0);
                 for(unsigned int i = 0; i < N; i++){
                     between_mean_part.update(m_between_space_mean->extract(3, 1, k * VDimension, 0), j * VDimension, i);
-                }
-                
+                } 
             }
             vnl_matrix_type between_part = between_mean_part + between_scores_part * m_between_loadings->transpose(); //-->3m X N X N X N ---> 3m X N
 
@@ -229,7 +254,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             z_k.set_size(VDimension * num_particles[k], N);
             z_k.fill(0.0);
             unsigned int row = 0;
-            for(unsigned int x = 0; x < k; x++){ row += (num_particles[k] * VDimension);}
+            for(unsigned int x = 0; x < k; x++){ row += (num_particles[x] * VDimension);}
             m_ShapeMatrix->extract(z_k, row, 0);
 
             vnl_matrix_type z_k_between_residual;
@@ -272,7 +297,9 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             {
                 for (unsigned int i = 0; i < num_samples; i++)
                 {
-                    points_minus_mean_k(j, i) = z_k_between_residual(j, i) - points_mean_k(j,0);
+                    // points_minus_mean_k(j, i) = z_k_between_residual(j, i) - points_mean_k(j,0);
+                    points_minus_mean_k(j, i) = z_k_between_residual(j, i);
+
                 }
             }
 
@@ -298,7 +325,9 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
                 vnl_diag_matrix<double> invLambda_k = svd.W(); // ----> N X N
 
-                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance); // TODO: check if Variance needs to differ for within and between part
+                // invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance); 
+                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance_within_ar[k]); 
+
                 invLambda_k.invert_in_place();
 
                 pinvMat_k = (UG * invLambda_k) * UG.transpose(); // ---> N X N
@@ -311,30 +340,34 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             }
             PointsUpdate_k.update(z_k_between_residual * pinvMat_k); // ---> 3m X N   X  N X N ---> 3m X N update the gradient
 
-            m_CurrentBetweenResidualEnergies->at(k) = 0.0;
+            m_CurrentBetweenResidualEnergies.at(k) = 0.0;
             if (m_UseMeanEnergy)
-                m_CurrentBetweenResidualEnergies->at(k) = points_minus_mean_k.frobenius_norm();
+                m_CurrentBetweenResidualEnergies.at(k) = points_minus_mean_k.frobenius_norm();
             else
             {
-                m_MinimumBetweenResidualEigenValues->at(k) = W_k(0)*W_k(0) + m_MinimumVariance;
+                // m_MinimumBetweenResidualEigenValues.at(k) = W_k(0)*W_k(0) + m_MinimumVariance;
+                m_MinimumBetweenResidualEigenValues.at(k) = W_k(0)*W_k(0) + m_MinimumVariance_within_ar[k];
+
                 for (unsigned int i = 0; i < num_samples; i++)
                 {
-                    double val_i = W_k(i)*W_k(i) + m_MinimumVariance;
-                    if ( val_i < m_MinimumBetweenResidualEigenValues->at(k))
-                         m_MinimumBetweenResidualEigenValues->at(k) = val_i;
-                    m_CurrentBetweenResidualEnergies->at(k) += log(val_i);
+                    // double val_i = W_k(i)*W_k(i) + m_MinimumVariance;
+                    double val_i = W_k(i)*W_k(i) + m_MinimumVariance_within_ar[k];
+
+                    if ( val_i < m_MinimumBetweenResidualEigenValues.at(k))
+                         m_MinimumBetweenResidualEigenValues.at(k) = val_i;
+                    m_CurrentBetweenResidualEnergies.at(k) += log(val_i);
                 }
             }
-            m_CurrentBetweenResidualEnergies->at(k) /= 2.0;
+            m_CurrentBetweenResidualEnergies.at(k) /= 2.0;
             if (m_UseMeanEnergy)
-                m_MinimumBetweenResidualEigenValues->at(k) = m_CurrentBetweenResidualEnergies->at(k) / 2.0;
+                m_MinimumBetweenResidualEigenValues.at(k) = m_CurrentBetweenResidualEnergies.at(k) / 2.0;
 
             m_PointsUpdateAllBetween->at(k) = PointsUpdate_k;
             m_InverseCovMatricesAllBetween->at(k) = InverseCovMatrix_k;
             m_points_meanAllBetween->at(k) = points_mean_k;
         }// end of all domains/organs calculation
-        
-    });    
+    });
+    // std::cout << "End - ComputeCovarianceMatricesFromBetweenResiduals" << std::endl;    
     
 }
 
@@ -382,7 +415,6 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
       m_points_meanAllWithin->push_back(points_mean_within);
       m_PointsUpdateAllBetween->push_back(points_update_between);
       m_PointsUpdateAllWithin->push_back(points_update_within);
-
       m_within_space_mean->push_back(within_space_mean);
     }
 
@@ -395,18 +427,22 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     }
     // Part A: Build the Super Matrix(with Points Transpose -- needed for within and between calculation) from m_ShapeMatrix
     unsigned int M = total_particles;
-    unsigned int n = N * VDimension; //3N
-    unsigned int m = total_particles * dps * VDimension; //MK
-    m_super_matrix->set_size(m, n);
+    // unsigned int n = N * VDimension; //3N
+    // unsigned int m = total_particles * dps * VDimension; //MK
+    // unsigned int m = total_particles * dps * VDimension; // M
+
+    // m_super_matrix->set_size(m, n);
+    m_super_matrix->set_size(M, N * VDimension);
+
     for(unsigned int i = 0; i < N; i++){
-        for(unsigned int j = 0; j < total_particles; j++){
+        for(unsigned int j = 0; j < M; j++){
             m_super_matrix->put(j, i * VDimension, m_ShapeMatrix->get(j * VDimension, i));
             m_super_matrix->put(j, i * VDimension + 1, m_ShapeMatrix->get(j * VDimension + 1, i));
             m_super_matrix->put(j, i * VDimension + 2, m_ShapeMatrix->get(j * VDimension + 2, i));
         }
     }
     vnl_matrix_type super_matrix = m_super_matrix->transpose().transpose();
-
+    std::cout << "grand matrix done" << std::endl;
     // Part B: Compute grand mean
     vnl_matrix_type ones_M;
     ones_M.set_size(total_particles, 1); // M X 1
@@ -420,25 +456,29 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         m_grand_mean->put(1, i, grand_mean(i*VDimension + 1, 0)); 
         m_grand_mean->put(2, i, grand_mean(i*VDimension + 2, 0)); 
     }
-    // std::cout << "----Grand Mean Computed----" << std::endl;
+    std::cout << "----Grand Mean Computed----" << std::endl;
     // C. Within terms
-    this->ComputeWithinTerms(num_particles, dps, m, n, M, N);
+    this->ComputeWithinTerms(num_particles, dps, M, N);
     std::cout << "-----Within Terms computed----" << std::endl;
     // D. Between terms
-    this->ComputeBetweenTerms(num_particles, dps, m, n, M, N);
-    std::cout << "----ML-PCA terms calculated-----" << std::endl;
+    this->ComputeBetweenTerms(num_particles, dps, M, N);
+    std::cout << "----Multi-level terms calculated-----" << std::endl;
 }
 
 
 template <unsigned int VDimension>
 void
 ParticleEnsembleMlpcaEntropyFunction<VDimension>
-::ComputeWithinTerms(std::vector<int>& num_particles, unsigned int& dps,unsigned int& m, unsigned int& n, unsigned int& M, unsigned int& N)
+::ComputeWithinTerms(std::vector<int>& num_particles, unsigned int& dps, unsigned int& M, unsigned int& N)
 {   
+    for(int i = 0; i < dps; i++ ){ std:: cout <<"i  = " << i << " num _ par = " << num_particles[i]  << std:: endl;}
+    // std::cout << " M = " << M << std::endl;
+    // std::cout << "super matrix details rows = "<< m_super_matrix->rows() << " X " << m_super_matrix->cols() << std::endl;
     tbb::parallel_for(tbb::blocked_range<size_t>{0, dps},
     [&](const tbb::blocked_range<size_t>& r){
         for(size_t k = r.begin(); k < r.end(); ++k){
-
+        // for(unsigned int k = 0; k < dps; k++){
+            // std::cout << "start k = " << k << std::endl;
             //Part A: Build Within objective of deviations of particles from com of organ k
             vnl_matrix_type centering_matrix; // Build centering matrix for within
             centering_matrix.set_size(num_particles[k], num_particles[k]);
@@ -451,10 +491,12 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             z_k.set_size(num_particles[k], VDimension * N);
             z_k.fill(0.0);
             unsigned int row = 0;
-            for(unsigned int x = 0; x < k; x++){ row += num_particles[k];} // k * num_particles[k]
+            for(unsigned int x = 0; x < k; x++){ row += num_particles[x];} // k * num_particles[k]
+            // std::cout << "row val is = " << row << std::endl;
             m_super_matrix->extract(z_k, row, 0); // Get shape matrix of the kth organ
+            // std::cout << "super extract done" << std::endl;
             vnl_matrix_type z_within_k = centering_matrix.transpose() * z_k; // m  X 3N
-            
+            // std::cout << "product done" << std::endl;
             // Compute Svd obejctive --> 3m X N
             vnl_matrix_type z_within_k_objective;
             z_within_k_objective.set_size(VDimension * num_particles[k], N);
@@ -469,8 +511,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
                     z_within_k_objective.put(j * VDimension + 2, i, z_within_k.get(j, i * VDimension + 2));
                 }
             }
+            // std::cout << "objective done " << std::endl;
 
-            // Part B - do centering across samples
             vnl_matrix_type temp;
             temp.clear();
             temp.set_size(VDimension * num_particles[k], 1);
@@ -484,12 +526,15 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
                 vnl_matrix_type change_within = z_within_k_objective.get_n_columns(x, 1) - temp;
                 z_within_k_objective.update(change_within, 0, x);
             }
+            // std::cout << "update done" << std::endl;
             vnl_svd<double> svd_within(z_within_k_objective);
             // std::cout << "within svd of " << k << "done" << std::endl; 
             // m_within_scores->at(k) = svd_within.U(); // --> 3m X N 
             // m_within_loadings->at(k) = svd_within.V() * svd_within.W(); // ----> N X N  X  N X N ===> N X N 
             m_within_scores->at(k) = svd_within.U() * svd_within.W(); // ----> 3m X N  X  N X N ===> 3m X N 
+            // std::cout << "scores done" << std::endl;
             m_within_loadings->at(k) = svd_within.V(); // N X N
+            // std::cout << "loadings done" << std::endl;
             // net res = scores * loadings^T = 3m X N
         }
     });
@@ -501,9 +546,10 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 template <unsigned int VDimension>
 void
 ParticleEnsembleMlpcaEntropyFunction<VDimension>
-::ComputeBetweenTerms(std::vector<int>& num_particles,unsigned int& dps,unsigned int& m, unsigned int& n, unsigned int& M, unsigned int& N)
+::ComputeBetweenTerms(std::vector<int>& num_particles,unsigned int& dps, unsigned int& M, unsigned int& N)
 {   
     //PART A: Compute deviations of COM of each organ from COM of all the organs
+    // std::cout << "Inside Between term part" << std::endl;
     vnl_matrix_type super_matrix = m_super_matrix->transpose().transpose();
     vnl_matrix_type between_centering_matrix; // Build centering matrix for between
     between_centering_matrix.set_size(M, M);
@@ -520,7 +566,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         vnl_matrix_type z_centered_k;
         z_centered_k.set_size(num_particles[k], VDimension * N); // m X 3N
         unsigned int row = 0;
-        for(unsigned int x = 0; x < k; x++){ row += num_particles[k];} // k * num_particles[k]
+        for(unsigned int x = 0; x < k; x++){ row += num_particles[x];} // k * num_particles[k]
         z_centered.extract(z_centered_k, row, 0); // extract sub-matrix for kth organ from centred matrix and Center that sub-matrix(for between)
         vnl_matrix_type ones_m_k;
         ones_m_k.set_size(num_particles[k], 1);
@@ -529,7 +575,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         z_between.update(z_temp, k, 0);
     }
 
-    // tranform K X 3N --> 3K X N
+    // transform K X 3N --> 3K X N
     vnl_matrix_type z_between_objective_temp;
     z_between_objective_temp.set_size(VDimension * dps, N); // ---> 3K X N 
     z_between_objective_temp.fill(0.0);
@@ -540,6 +586,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             z_between_objective_temp.put(k * VDimension + 2, i, z_between(k, i * VDimension + 2));
         }
     }
+    // std::cout << "betweeen obj created" << std::endl;
+
     // std::cout << "z_between objective_temp done" << std::endl;
 
     // vnl_matrix_type avg_matrix;
@@ -556,8 +604,6 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     // vnl_matrix_type z_between_objective = avg_matrix * z_between_objective_temp; //---> 3K X N
     vnl_matrix_type z_between_objective = z_between_objective_temp; //---> 3K X N
 
-
-    //Part B: Center it across all samples - Build between cov matrix
     vnl_matrix_type temp;
     temp.clear();
     temp.set_size(VDimension * dps, 1); // 3K X 1
@@ -566,13 +612,15 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         temp += z_between_objective.get_n_columns(x, 1);
     }
     temp /= N;
+    m_between_space_mean->set_size(VDimension * dps, 1);
     m_between_space_mean->update(temp); // 3K X 1
     for(unsigned int x = 0; x < N; x++){
         vnl_matrix_type change_between = z_between_objective.get_n_columns(x, 1) - temp;
         z_between_objective.update(change_between, 0, x);
     }
-
+    // std::cout << "betweeen svd starting" << std::endl;
     vnl_svd<double> svd_between(z_between_objective); // Do Between svd
+    // std::cout << "betweeen svd done" << std::endl;
     m_between_loadings->set_size(N, N);
     m_between_loadings->fill(0.0);
     // m_between_loadings->update(svd_between.V() * svd_between.W());  // ----> N X N    X  N X N  --> N X N       
@@ -611,21 +659,26 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     VectorType gradE;
     unsigned int k = 0;
     int dom = d % DomainsPerShape;
-    maxdt  = m_MinimumWithinResidualEigenValues->at(dom);
+    maxdt  = m_MinimumWithinResidualEigenValues.at(dom);
     for (int i = 0; i < dom; i++)
         k += system->GetNumberOfParticles(i) * VDimension;
     k += idx*VDimension;
 
     vnl_matrix_type Xi(3,1,0.0);
     // vnl_matrix_type within_part = m_within_scores->at(dom) * m_within_loadings->at(dom).transpose(); //-->3m X N
-    vnl_matrix_type = ones_N;
-    ones_N.set_size(N, 1);
+    vnl_matrix_type ones_N;
+    ones_N.set_size(m_ShapeMatrix->cols(), 1);
     ones_N.fill(1.0);
     vnl_matrix_type within_part = m_within_space_mean->at(dom)*ones_N.transpose() +  m_within_scores->at(dom) * m_within_loadings->at(dom).transpose(); //-->3m X N // Wh + b 
 
-    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - within_part(idx*VDimension, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension, d/DomainsPerShape);
-    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - within_part(idx*VDimension + 1, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension + 1, d/DomainsPerShape);
-    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - within_part(idx*VDimension + 2, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension + 2, d/DomainsPerShape);
+
+    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - within_part(idx*VDimension, d/DomainsPerShape);
+    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - within_part(idx*VDimension + 1, d/DomainsPerShape);
+    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - within_part(idx*VDimension + 2, d/DomainsPerShape);
+
+    // Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - within_part(idx*VDimension, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension, 0);
+    // Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - within_part(idx*VDimension + 1, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension + 1, 0);
+    // Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - within_part(idx*VDimension + 2, d/DomainsPerShape) - m_points_meanAllWithin->at(dom).get(idx*VDimension + 2, 0);
     vnl_matrix_type tmp1(3, 3, 0.0);
     if (this->m_UseMeanEnergy)
         tmp1.set_identity();
@@ -655,11 +708,12 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
+    // std::cout << "Start - EvaluateFromBetweenResiduals" << std::endl;
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
     VectorType gradE;
     unsigned int k = 0;
     int dom = d % DomainsPerShape; // dom is the organ here
-    maxdt  = m_MinimumBetweenResidualEigenValues->at(dom);
+    maxdt  = m_MinimumBetweenResidualEigenValues.at(dom);
     for (int i = 0; i < dom; i++)
         k += system->GetNumberOfParticles(i) * VDimension;
     k += idx*VDimension;
@@ -679,20 +733,27 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     vnl_matrix_type between_mean_part;
     between_mean_part.set_size(VDimension * system->GetNumberOfParticles(dom), N); // 3m X N
     between_mean_part.fill(0.0);
+    std::cout << "between_part extract start " << std::endl;
 
     for(unsigned int j = 0; j < system->GetNumberOfParticles(dom); j++){
         between_scores_part.update(m_between_scores->at(dom), j * VDimension, 0);
         for(unsigned int i = 0; i < N; i++){
-            between_mean_part.update(m_between_space_mean->extract(3, 1, system->GetNumberOfParticles(dom) * VDimension, 0), j * VDimension, i);
+            between_mean_part.update(m_between_space_mean->extract(3, 1, dom * VDimension, 0), j * VDimension, i);
         }
-                
     }
+    // std::cout << "between_part extract done " << std::endl;
+
     vnl_matrix_type between_part = between_mean_part + between_scores_part * m_between_loadings->transpose(); //-->3m X N X N X N ---> 3m X N
+    // std::cout << "between_part details " << between_part.rows()  << " X " << between_part.cols() << std::endl;
 
+    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - between_part(idx*VDimension, d/DomainsPerShape);
+    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - between_part(idx*VDimension + 1, d/DomainsPerShape);
+    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - between_part(idx*VDimension + 2, d/DomainsPerShape);
 
-    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - between_part(idx*VDimension, d/DomainsPerShape) - m_points_meanAllBetween->at(dom).get(idx*VDimension, d/DomainsPerShape);
-    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - between_part(idx*VDimension + 1, d/DomainsPerShape) - m_points_meanAllBetween->at(dom).get(idx*VDimension + 1, d/DomainsPerShape);
-    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - between_part(idx*VDimension + 2, d/DomainsPerShape) -  m_points_meanAllBetween->at(dom).get(idx*VDimension + 2, d/DomainsPerShape);
+    // Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_grand_mean->get(0, d/DomainsPerShape) - between_part(idx*VDimension, d/DomainsPerShape) - m_points_meanAllBetween->at(dom).get(idx*VDimension, 0);
+    // Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_grand_mean->get(1, d/DomainsPerShape) - between_part(idx*VDimension + 1, d/DomainsPerShape) - m_points_meanAllBetween->at(dom).get(idx*VDimension + 1, 0);
+    // Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_grand_mean->get(2, d/DomainsPerShape) - between_part(idx*VDimension + 2, d/DomainsPerShape) -  m_points_meanAllBetween->at(dom).get(idx*VDimension + 2, 0);
+    // std::cout << "Xi  - Computed" << std::endl;
 
     vnl_matrix_type tmp1(3, 3, 0.0);
     if (this->m_UseMeanEnergy)
@@ -706,6 +767,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     {
         gradE[i] = m_PointsUpdateAllBetween->at(dom).get(idx*VDimension + i, d / DomainsPerShape);
     }
+    // std::cout << "End - EvaluateFromBetweenResiduals" << std::endl;
+
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));

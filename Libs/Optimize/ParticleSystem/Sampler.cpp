@@ -36,7 +36,6 @@ Sampler::Sampler()
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
-  // TODO: Initialize Mlpca optimization function
   m_MlpcaBasedEnsembleEntropyFunction = itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::New();
   std::cout << "sampler constructor " << std::endl;
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
@@ -269,6 +268,7 @@ void Sampler::Execute()
 
   //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy){
+  // if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy || m_CorrespondenceMode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy){
     std::cout << "Inside MLPCA sampler execute" << std::endl;
     this->GetOptimizer()->StartMlpcaOptimization(m_LinkingFunction->GetBOn());
   }

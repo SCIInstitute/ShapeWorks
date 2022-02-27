@@ -510,6 +510,10 @@ bool AnalysisTool::compute_stats()
   this->group1_list_.clear();
   this->group2_list_.clear();
 
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  unsigned int dps = domain_names.size();
+  this->number_of_particles_ar.resize(dps);
+  bool flag_get_num_part = false;
   for (ShapeHandle shape : this->session_->get_shapes()) {
 
     if (groups_enabled) {
@@ -533,6 +537,19 @@ bool AnalysisTool::compute_stats()
       local_points.push_back(shape->get_local_correspondence_points());
       group_ids.push_back(shape->get_group_id());
     }
+    if(!flag_get_num_part){
+      auto local_particles_ar = shape->get_particles().get_local_particles();
+      int sz = local_particles_ar.size();
+      std::cout << "size is " << sz; 
+      if(local_particles_ar.size() != dps){
+        std::cerr << "Inconsistency in number of particles size";
+      }
+      for(int i = 0; i < dps; i++){
+        this->number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
+        // std::cout << "domain = " << i << " num_part = " << number_of_particles_ar[i] << std::endl;
+      }
+
+    }
   }
 
   if (points.empty()) {
@@ -548,10 +565,10 @@ bool AnalysisTool::compute_stats()
       return false;
     }
   }
-  auto domain_names = this->session_->get_project()->get_domain_names();
-  unsigned int dps = domain_names.size();
-
+  
+  
   this->stats_.ImportPoints(points, group_ids);
+  this->stats_.SetNumberOfParticlesAr(this->number_of_particles_ar);
   this->stats_.ImportPointsAndComputeMlpca(points, dps);
   // this->stats_.ImportPointsForMca(points, dps);
   this->stats_.ComputeModes();
@@ -858,7 +875,7 @@ void AnalysisTool::compute_shape_evaluations()
     //              ShapeEvaluationJob::JobType::BetweenSubspaceCompactness,
     //              ShapeEvaluationJob::JobType::GeneralizationType,
     //              ShapeEvaluationJob::JobType::SpecificityType};
-    std::cout << "--------NOT Starting Evaluation Job for MLPCA-------" << std::endl;
+    // std::cout << "--------NOT Starting Evaluation Job for MLPCA-------" << std::endl;
   }
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();

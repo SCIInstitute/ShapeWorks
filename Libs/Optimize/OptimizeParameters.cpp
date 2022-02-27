@@ -150,6 +150,54 @@ bool OptimizeParameters::get_use_mlpca_optimize()
 }
 
 //---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_starting_regularization_multilevel()
+{
+  return this->params_.get("starting_regularization_multilevel", {1000.0});
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_starting_regularization_multilevel(std::vector<double> reg_params_start)
+{
+  return this->params_.set("starting_regularization_multilevel", reg_params_start);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_ending_regularization_multilevel()
+{
+  return this->params_.get("ending_regularization_multilevel", {10.0});
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_ending_regularization_multilevel(std::vector<double> reg_params_end)
+{
+  return this->params_.set("ending_regularization_multilevel", reg_params_end);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_starting_regularization_between()
+{
+  return this->params_.get("starting_regularization_between", 1000.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_starting_regularization_between(double value)
+{
+  this->params_.set("starting_regularization_between", value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_ending_regularization_between()
+{
+  return this->params_.get("ending_regularization_between", 10.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_ending_regularization_between(double value)
+{
+  this->params_.set("ending_regularization_between", value);
+}
+
+//---------------------------------------------------------------------------
 double OptimizeParameters::get_normals_strength()
 {
   return this->params_.get("normals_strength", 10);
@@ -265,6 +313,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   }
 
   optimize->SetMlpcaOptimize(use_mlpca_optimize);
+  if(use_mlpca_optimize)
+  {
+    //Set reg parameters for each organ indiviually
+
+    optimize->SetStartingRegularizationMultilevelWithin(this->get_starting_regularization_multilevel());
+    optimize->SetEndingRegularizationMultilevelWithin(this->get_ending_regularization_multilevel());
+    optimize->SetStartingRegularizationMultilevelBetween(this->get_starting_regularization_between());
+    optimize->SetEndingRegularizationMultilevelBetween(this->get_ending_regularization_between());
+
+  }
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
   optimize->SetUseMeshBasedAttributes(normals_enabled);

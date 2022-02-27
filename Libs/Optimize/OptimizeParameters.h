@@ -51,6 +51,18 @@ public:
   bool get_use_mlpca_optimize();
   void set_use_mlpca_optimize(bool value);
 
+  std::vector<double> get_starting_regularization_multilevel();
+  void set_starting_regularization_multilevel(std::vector<double> reg_params_start);
+
+  std::vector<double> get_ending_regularization_multilevel();
+  void set_ending_regularization_multilevel(std::vector<double> reg_params_end);
+
+  double get_starting_regularization_between();
+  void set_starting_regularization_between(double value);
+
+  double get_ending_regularization_between();
+  void set_ending_regularization_between(double value);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 

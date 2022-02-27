@@ -359,6 +359,7 @@ void Optimize::SetVerbosity(int verbosity_level)
 void Optimize::SetDomainsPerShape(int domains_per_shape)
 {
   this->m_domains_per_shape = domains_per_shape;
+  std::cout << "Initially, dps set to = "<< domains_per_shape << std::endl;
   this->m_sampler->SetDomainsPerShape(this->m_domains_per_shape);
 }
 
@@ -586,9 +587,14 @@ void Optimize::InitializeSampler()
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVariance(m_starting_regularization); // For Initialization set start_reg_params
   m_sampler->GetEnsembleMlpcaEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleMlpcaEntropyFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetDomainsPerShapeInfo(m_domains_per_shape);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceWithin(m_starting_regularization_multilevel); // For Initialization set start_reg_params
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetHoldMinimumVarianceWithin(false);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceBetween(m_starting_regularization_multilevel_between); // For Initialization set start_reg_params
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetHoldMinimumVarianceBetween(false);
 
   std::cout << "mlpca initialized" << std::endl;
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
@@ -621,7 +627,7 @@ void Optimize::InitializeSampler()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleMlpcaEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  std::cout << "mlpca initialized 2" << std::endl;
+  // std::cout << "mlpca initialized 2" << std::endl;
 
 
   // These flags must be set before Initialize, since Initialize need to know which domains are fixed ahead of time
@@ -629,7 +635,7 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
   m_sampler->Initialize();
-  std::cout << "Sampler Init 1 done" << std::endl;
+  // std::cout << "Sampler Init 1 done" << std::endl;
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 
@@ -728,7 +734,13 @@ void Optimize::Initialize()
     m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                      m_ending_regularization,
                                                                      m_iterations_per_split);
-
+    m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecayWithin(m_starting_regularization_multilevel,
+                                                                     m_ending_regularization_multilevel,
+                                                                     m_iterations_per_split);
+    m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecayBetween(m_starting_regularization_multilevel_between,
+                                                                     m_ending_regularization_multilevel_between,
+                                                                     m_iterations_per_split);
+                                                                     
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
       m_starting_regularization,
       m_ending_regularization,
@@ -736,10 +748,10 @@ void Optimize::Initialize()
   }
   else {
     // force to mean
-    if (m_use_mlpca_optimize){
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy);
-    }
-    else if ((m_attributes_per_domain.size() > 0 &&
+    // if (m_use_mlpca_optimize){
+    //   m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy);
+    // }
+    if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
@@ -1051,6 +1063,16 @@ void Optimize::RunOptimize()
   m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecay(
     m_starting_regularization,
     m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecayWithin(
+    m_starting_regularization_multilevel,
+    m_ending_regularization_multilevel,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+  m_sampler->GetEnsembleMlpcaEntropyFunction()->SetMinimumVarianceDecayBetween(
+    m_starting_regularization_multilevel_between,
+    m_ending_regularization_multilevel_between,
     m_optimization_iterations -
     m_optimization_iterations_completed);
   
@@ -2105,6 +2127,23 @@ void Optimize::SetStartingRegularization(double starting_regularization)
 //---------------------------------------------------------------------------
 void Optimize::SetEndingRegularization(double ending_regularization)
 { this->m_ending_regularization = ending_regularization; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetStartingRegularizationMultilevelWithin(std::vector<double> reg_params_start)
+{ this->m_starting_regularization_multilevel = reg_params_start; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetEndingRegularizationMultilevelWithin(std::vector<double> reg_params_end)
+{ this->m_ending_regularization_multilevel = reg_params_end; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetStartingRegularizationMultilevelBetween(double starting_regularization)
+{ this->m_starting_regularization_multilevel_between = starting_regularization; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetEndingRegularizationMultilevelBetween(double ending_regularization)
+{ this->m_ending_regularization_multilevel_between = ending_regularization; }
+
 
 //---------------------------------------------------------------------------
 void Optimize::SetRecomputeRegularizationInterval(int recompute_regularization_interval)

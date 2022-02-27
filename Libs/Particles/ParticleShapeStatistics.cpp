@@ -213,6 +213,14 @@ int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points
   return 0;
 }
 
+void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
+{
+  this->m_num_particles_ar = num_particles_ar;
+  for(int i = 0; i < num_particles_ar.size(); i++){
+    std::cout << num_particles_ar[i] << " ";
+  }
+  std::cout << std::endl <<  "Number of Particles Set for Multi-level Analysis" << std::endl;
+}
 
 int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
 {
@@ -226,8 +234,10 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
 
   unsigned int n = m_N * VDimension; 
   // std::cout << " n " << n << std::endl;
-  unsigned int m = num_points * dps;
-  // std::cout << "m " << m << std::endl;
+  // unsigned int m = num_points * dps;
+  unsigned int m = 0;
+  for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx] * VDimension); }
+  std::cout << "m " << m << std::endl;
 
   m_super_matrix.set_size(m, n);
   m_shapes_mca.clear();
@@ -256,8 +266,13 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
   for(unsigned int k = 0; k < m_dps; k++){
     // extract shape matrix of kth domain
     vnl_matrix<double> z_k;
-    z_k.set_size(num_points, n);
-    m_super_matrix.extract(z_k, k * num_points, 0);
+    // z_k.set_size(num_points, n);
+    // m_super_matrix.extract(z_k, k * num_points, 0);
+
+    z_k.set_size(this->m_num_particles_ar[k], n);
+    unsigned int row = 0;
+    for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[k]; }
+    m_super_matrix.extract(z_k, row, 0);
 
     m_shapes_mca.push_back(z_k); // keep track of shape matriz of each domain
     // compute column-wise mean(of each sample)
@@ -270,22 +285,28 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
 
     vnl_matrix<double> ones_m_k;
-    ones_m_k.set_size(num_points, 1);
+    // ones_m_k.set_size(num_points, 1);
+    ones_m_k.set_size(this->m_num_particles_ar[k], 1);
     ones_m_k.fill(1.0);
 
     vnl_matrix<double> z_k_centred = z_k - (ones_m_k * mean_k.transpose());
 
-    z_within_centred.update(z_k_centred, k * num_points, 0);
+    // z_within_centred.update(z_k_centred, k * num_points, 0);
+    z_within_centred.update(z_k_centred, row, 0);
+
   }
 
   vnl_matrix<double> z_within_objective;
-  unsigned int M = num_points * VDimension * m_dps;
+  // unsigned int M = num_points * VDimension * m_dps;
+  unsigned int M = 0;
+  for(unsigned int idx = 0; idx < dps; idx++) { M += (this->m_num_particles_ar[idx] * VDimension); }
   z_within_objective.set_size(M, m_N);
   this->m_MatrixWithin.resize(M, m_N);
   // 2.a Compute within objective matrix
 
   for(unsigned int i = 0; i < m_N; i++){
-    unsigned int p = num_points * m_dps;
+    // unsigned int p = num_points * m_dps;
+    unsigned int p = m;
     for(unsigned int j = 0; j < p; j++){
       z_within_objective(j * VDimension, i) = z_within_centred(j, i * VDimension);
       z_within_objective(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
@@ -939,6 +960,25 @@ int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
   return 0;
 }
 
+int ParticleShapeStatistics::WriteEvaluationResults(Eigen::VectorXd ar, const std::string &s)
+{
+  // Write csv file
+  std::ofstream outfile;
+  outfile.open(s.c_str());
+
+  outfile << "X, Y";
+  outfile << std::endl;
+
+  for (unsigned int r = 0; r < ar.size(); r++) {
+    outfile << (r+1) << ",";
+    outfile << ar[r] << ",";
+    outfile << std::endl;
+  }
+  std::cout << s << " file written" << std::endl;
+  outfile.close();
+  return 0;
+}
+
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
@@ -960,13 +1000,31 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness_between_subspace(std::f
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
+  // if (m_dps > 1)
+  // { 
+  //   std::cout << "Computing Specificity for Multi-level Modeling" << std::endl;
+  //   Eigen::VectorXd specificity =  shapeworks::ShapeEvaluation::ComputeFullSpecificityMultiLevel(ps, this->m_num_particles_ar, progress_callback);
+  //   // std::string fn = "/home/sci/nawazish.khan/Desktop/spec.csv";
+  //   // this->WriteEvaluationResults(specificity, fn);
+  //   return specificity;
+  // }
+  // else
+    return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
+  if (m_dps > 1)
+  { 
+    std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
+    Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel(ps, this->m_num_particles_ar, progress_callback);
+    // std::string fn = "/home/sci/nawazish.khan/Desktop/gener.csv";
+    // this->WriteEvaluationResults(generalization, fn);
+    return generalization;
+  }
+  else 
+    return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
 Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()

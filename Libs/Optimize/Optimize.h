@@ -189,6 +189,15 @@ public:
   void SetStartingRegularization(double starting_regularization);
   //! Set the ending regularization (TODO: details)
   void SetEndingRegularization(double ending_regularization);
+
+  void SetStartingRegularizationMultilevelWithin(std::vector<double> reg_params_start);
+  //! Set the ending regularization (TODO: details)
+  void SetEndingRegularizationMultilevelWithin(std::vector<double> reg_params_end);
+  void SetStartingRegularizationMultilevelBetween(double reg_params_start);
+  //! Set the ending regularization (TODO: details)
+  void SetEndingRegularizationMultilevelBetween(double reg_params_end);
+
+
   //! Set the interval for recomputing regularization (TODO: details)
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
   //! Set if initialization splits should be saved or not
@@ -395,6 +404,10 @@ protected:
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
+  std::vector<double> m_ending_regularization_multilevel;
+  std::vector<double> m_starting_regularization_multilevel;
+  double m_starting_regularization_multilevel_between = 1000;
+  double m_ending_regularization_multilevel_between = 1.0;
   int m_recompute_regularization_interval = 1;
   bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;
