@@ -5,7 +5,7 @@ void run_use_case(const std::string& name)
 {
   setupenv(std::string(TEST_DATA_DIR) + "/../PythonTests");
 
-  std::string command = "python " + name;
+  std::string command = "python -u " + name; // -u generates unbuffered output, shown even if crashes
   ASSERT_FALSE(system(command.c_str()));
 }
 
