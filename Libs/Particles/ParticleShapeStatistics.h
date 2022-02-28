@@ -46,6 +46,7 @@ public:
   int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
   int ComputeWithinModesForMca();
   int ComputeBetweenModesForMca();
+  int MultiLevelPrincipalComponentProjections();
   int ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps);
   void SetNumberOfParticlesAr(std::vector<int> num_particles_ar);
   /** Loads a set of point files and pre-computes some statistics. */
@@ -82,6 +83,9 @@ public:
   const int NumberOfDimensions() { return m_numDimensions; }
   const int DomainsNumber() { return m_dps; }
   const int NumberOfPoints() { return m_numPoints; }
+  const std::vector<int> NumberOfPointsArray() { return m_num_particles_ar; }
+
+  void SetResultsDir(std::string dir_name) { m_results_dir = dir_name; }
 
   /** Returns the group ids */
   const int GroupID(unsigned int i) { return m_groupIDs[i]; }
@@ -163,6 +167,7 @@ private:
   unsigned int m_N;
   unsigned int m_numPoints;
   std::vector<int> m_num_particles_ar;
+  std::string m_results_dir;
 
 
   unsigned int m_numDimensions;
@@ -197,6 +202,7 @@ private:
   std::vector<double> m_percentVarByMode;
   vnl_vector<double> m_fishersLD;
   Eigen::MatrixXd m_principals;
+  Eigen::MatrixXd m_mulit_level_combined_principals;
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;

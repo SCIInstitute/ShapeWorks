@@ -566,14 +566,25 @@ bool AnalysisTool::compute_stats()
     }
   }
   
-  
+  auto results_dir = this->preferences_.get_last_directory().toStdString();
+  results_dir = results_dir.substr(0, results_dir.find_last_of("/") + 1);
+  std::cout << "results dir will be" << results_dir << std::endl;
+  this->stats_.SetResultsDir(results_dir);
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.SetNumberOfParticlesAr(this->number_of_particles_ar);
-  this->stats_.ImportPointsAndComputeMlpca(points, dps);
+  if(dps> 1)
+  {
+    this->stats_.ImportPointsAndComputeMlpca(points, dps);
+  }
   // this->stats_.ImportPointsForMca(points, dps);
   this->stats_.ComputeModes();
-  this->stats_.ComputeBetweenModesForMca();
-  this->stats_.ComputeWithinModesForMca();
+  if(dps> 1){
+    this->stats_.ComputeBetweenModesForMca();
+    this->stats_.ComputeWithinModesForMca();
+    this->stats_.MultiLevelPrincipalComponentProjections();
+  }
+  
+  this->stats_.PrincipalComponentProjections();
   // this->stats_.MCADecomposition();
 
   this->compute_shape_evaluations();
@@ -745,17 +756,25 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
     std::cout << "Computing temp shape for between" << std::endl;
     vnl_vector<double> e_between;
     unsigned int sz = this->stats_.Mean().size();
-    unsigned int num_points = this->stats_.NumberOfPoints();
+    // unsigned int num_points = this->stats_.NumberOfPoints();
+    std::vector<int> number_of_points_ar = this->stats_.NumberOfPointsArray();
     e_between.set_size(sz);
     std::cout << "between eigen vector size changed" << std::endl;
     unsigned int D = this->stats_.DomainsNumber();
-    std::cout << "D = " << D << " num_points = " << num_points << std::endl;
+    // std::cout << "D = " << D << " num_points = " << num_points << std::endl;
+    std::cout << "D = " << D  << std::endl;
     
     for(unsigned int i = 0; i < D; i++){
+    int num_points = number_of_particles_ar[i];
+    int row = 0;
+    for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
       for(unsigned int j = 0; j < num_points; j++){
-        e_between((i * num_points * 3) + (j * 3)) = e(i * 3);
-        e_between((i * num_points * 3) + (j * 3) + 1) = e(i * 3 + 1);
-        e_between((i * num_points * 3) + (j * 3) + 2) = e(i * 3 + 2);
+        // e_between((i * num_points * 3) + (j * 3)) = e(i * 3);
+        // e_between((i * num_points * 3) + (j * 3) + 1) = e(i * 3 + 1);
+        // e_between((i * num_points * 3) + (j * 3) + 2) = e(i * 3 + 2);
+        e_between((row) + (j * 3)) = e(i * 3);
+        e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
+        e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
     std::cout << "between eig vec done " << std::endl;

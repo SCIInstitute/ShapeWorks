@@ -206,7 +206,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
       const int numParticles = D / VDimension;
       const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
       const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
-      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
+      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().squaredNorm().sum() / numParticles;
       totalDists(mode-1) += dist;
     }
   }
@@ -246,7 +246,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const Parti
 
     ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
     std::cout << "After  - DoMultiLevelModeling " << std::endl;
-
+    std::cout << "between_objective_all size is " << between_objective_all.rows() << " X " << between_objective_all.cols() << std::endl;
     // Now Build Between part
     Eigen::MatrixXd beteween_objective(dps * VDimension, N - 1);
     beteween_objective.leftCols(leave) = between_objective_all.leftCols(leave);
@@ -254,26 +254,37 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const Parti
     const Eigen::VectorXd between_mean = beteween_objective.rowwise().mean();
     beteween_objective.colwise() -= between_mean;
     const Eigen::VectorXd test_between_part = between_objective_all.col(leave);
-    Eigen::JacobiSVD<Eigen::MatrixXd> between_svd(Y, Eigen::ComputeFullU);
+    std::cout << "beteween_objective for gen done " << std::endl;
+    Eigen::JacobiSVD<Eigen::MatrixXd> between_svd(beteween_objective, Eigen::ComputeFullU);
+    std::cout << "beteween_svd for gen done " << std::endl;
+
     std::vector<Eigen::VectorXd> between_rec_modes;
     for (int mode = 1; mode < N; mode++)
     {
       const auto between_epsi = between_svd.matrixU().block(0, 0, dps * VDimension, mode);
+      std::cout << "beteween_ epsi for mode =  " << mode << std::endl;
       const auto between_betas = between_epsi.transpose() * (test_between_part - between_mean);
+      std::cout << "beteween_betas for gen done " << std::endl;
+
       const Eigen::VectorXd between_rec = between_epsi * between_betas + between_mean;
-      between_rec_modes.push_back(between_mean);
+      // const Eigen::VectorXd between_rec = between_epsi * between_betas;
+
+      between_rec_modes.push_back(between_rec);
     }
 
     // Now for each organ compute, generalization by adding between and within part for each
     for (unsigned int k = 0; k < dps; k++)
     {
+      std::cout << "within gen k = " << k << std::endl;
       unsigned int row = 0;
       unsigned int m = VDimension * num_particles_ar[k];
       for (unsigned int x = 0; x < k; x++)
       {
-        row += num_particles_ar[x];
-      }  
-      Eigen::MatrixXd organ_k = P.block(row * VDimension, 0, num_particles_ar[k] * VDimension, N);
+        row += (num_particles_ar[x] * VDimension);
+      } 
+      std::cout << "row " << row << " P size is " << P.rows() << " X " << P.cols() << std::endl;
+      Eigen::MatrixXd organ_k = P.block(row, 0, num_particles_ar[k] * VDimension, N);
+      std::cout << "extract for organ k done " << std::endl;
       Eigen::MatrixXd organ_k_Y(m, N-1);
       organ_k_Y.leftCols(leave) = organ_k.leftCols(leave);
       organ_k_Y.rightCols(N - leave - 1) = organ_k.rightCols(N - leave - 1);
@@ -281,22 +292,36 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const Parti
       organ_k_Y.colwise() -= mu;
       const Eigen::VectorXd organ_k_test = organ_k.col(leave);
 
-
+      std::cout << "within_objectives[k]" << within_objectives[k].rows() << " X " << within_objectives[k].cols() << std::endl;
       Eigen::MatrixXd within_objective_k(m, N - 1);
       within_objective_k.leftCols(leave) = within_objectives[k].leftCols(leave);
       within_objective_k.rightCols(N - leave - 1) = within_objectives[k].rightCols(N - leave - 1);
       const Eigen::VectorXd within_mean = within_objective_k.rowwise().mean();
       within_objective_k.colwise() -= within_mean;
       const Eigen::VectorXd test_within_part_k = within_objectives[k].col(leave);
+      std::cout << "within k objective  done " << std::endl;
+
       Eigen::JacobiSVD<Eigen::MatrixXd> within_k_svd(within_objective_k, Eigen::ComputeFullU);
+      std::cout << "within svd done  done " << std::endl;
+
       for (int mode = 1; mode < N; mode++)
-      {
+      { 
+        std::cout << "mode = " << mode << " m = " << m << " within_k_svd.matrixU() " << within_k_svd.matrixU().rows() << " X " << within_k_svd.matrixU().cols() <<  std::endl;
         const auto within_epsi = within_k_svd.matrixU().block(0, 0, m, mode);
+        std::cout << "within epsi done, mode =  " << mode << "k = " << k << std::endl;
         const auto within_betas = within_epsi.transpose() * (test_within_part_k - within_mean);
+        std::cout << "within bteas done " << std::endl;
+
         const Eigen::VectorXd within_rec = within_epsi * within_betas + within_mean;
+        // const Eigen::VectorXd within_rec = within_epsi * within_betas
+
 
         Eigen::VectorXd between_rec_k = Eigen::VectorXd::Zero(m);
-        Eigen::VectorXd between_part_k_ext = between_rec_modes[mode].segment(VDimension * k, VDimension);
+        std::cout << "start betweeen seg " << std::endl;
+
+        Eigen::VectorXd between_part_k_ext = between_rec_modes[mode-1].segment(VDimension * k, VDimension);
+        std::cout << "start betweeen seg done  " << std::endl;
+
         const int numParticles = m / VDimension;
         for (unsigned int i = 0; i < numParticles; i++){
           between_rec_k(i * VDimension) = between_part_k_ext(0);
@@ -304,19 +329,29 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const Parti
           between_rec_k(i * VDimension + 2) = between_part_k_ext(2);
 
         }
-        const Eigen::VectorXd organ_k_rec = within_rec + between_rec_k + mu;
+        std::cout << " betweeen REC done  " << std::endl;
+
+        // const Eigen::VectorXd organ_k_rec = within_rec + between_rec_k + mu;
+        const Eigen::VectorXd organ_k_rec = within_rec + between_rec_k;
+
+        std::cout << " ORGAN  REC done  " << std::endl;
+
 
         const Eigen::Map<const RowMajorMatrix> organ_k_test_reshaped(organ_k_test.data(), numParticles, VDimension);
         const Eigen::Map<const RowMajorMatrix> organ_K_rec_reshaped(organ_k_rec.data(), numParticles, VDimension);
-        const double dist = (organ_K_rec_reshaped - organ_k_test_reshaped).rowwise().norm().sum() / numParticles;
+        const double dist = (organ_K_rec_reshaped - organ_k_test_reshaped).rowwise().squaredNorm().sum() / numParticles;
+        std::cout << " distance  done  " << std::endl;
+
         totalDists(mode - 1) += dist;
-        distMatrix(leave, mode - 1) += dist;
+        // distMatrix(leave, mode - 1) += dist;
       }
+      std::cout << "organ k done " << k << std::endl;
     }// end for all organs
-    
+    std::cout << "leave = " << leave << " done " << std::endl;
   }// end for leave out loop
-  generalizations = totalDists / (N * dps);
-  distMatrix /= dps;
+  // for (int i = 0; i < totalDists.size(); i++) { generalizations[i] = std::sqrt(totalDists[i]); }
+  generalizations = totalDists / (N);
+  // distMatrix /= dps;
   return generalizations;
 }
 
@@ -589,8 +624,8 @@ void ShapeEvaluation::DoMultiLevelModeling(const Eigen::MatrixXd &shape_matrix, 
 
   for(unsigned int i = 0; i < N; i++){
         for(unsigned int j = 0; j < M; j++){
-        std::cout << "Inside init" << std::endl;
-        std::cout << "val is i  = " << i << " j = "<< j << std::endl;
+        // std::cout << "Inside init" << std::endl;
+        // std::cout << "val is i  = " << i << " j = "<< j << std::endl;
             super_matrix(j, i*3) = shape_matrix(j*3, i);
             super_matrix(j, i*3 + 1) = shape_matrix(j*3 + 1, i);
             super_matrix(j, i*3 + 2) = shape_matrix(j*3 + 2, i);
@@ -604,7 +639,8 @@ void ShapeEvaluation::DoMultiLevelModeling(const Eigen::MatrixXd &shape_matrix, 
   Eigen::MatrixXd  grand_mean_temp = (ones_M.transpose() * super_matrix) * (1.0/((double)M)); // --> 1 X 3N
   std::cout << "grand mean transpose done" << std::endl;
 
-  grand_mean_temp = grand_mean_temp.transpose(); // --> 3N X 1
+  // grand_mean_temp = grand_mean_temp.transpose(); // --> 3N X 1
+  grand_mean_temp.transposeInPlace();
   for(unsigned int i = 0; i < N; i++){
         grand_mean(0, i) = grand_mean_temp(i*3, 0); 
         grand_mean(1, i) = grand_mean_temp(i*3 + 1, 0); 
@@ -614,11 +650,17 @@ void ShapeEvaluation::DoMultiLevelModeling(const Eigen::MatrixXd &shape_matrix, 
 
 
   // 3. Compute Within Parameters
+  // Eigen::MatrixXd between_objectives_temp;
+  // std::vector<Eigen::MatrixXd> within_objectives_temp;
+
   std::cout << "Before  - ComputeWithinTerms" << std::endl;
   ShapeEvaluation::ComputeWithinTerms(super_matrix, num_particles, within_objectives);
   std::cout << "After  - ComputeWithinTerms" << std::endl;
   ShapeEvaluation::ComputeBetweenTerms(super_matrix, num_particles, between_objectives);
+  // within_objectives = within_objectives_temp;
+  // between_objectives = between_objectives_temp;
   std::cout << "After  - ComputeBetweenTerms" << std::endl;
+  
 
 }
 
@@ -655,20 +697,27 @@ void ShapeEvaluation::ComputeWithinTerms(Eigen::MatrixXd &super_matrix, const st
     }
     within_objectives.push_back(z_within_k_objective);
   }
+  std::cout << "Within terms done" << std::endl;
+
 }
 
-void ShapeEvaluation::ComputeBetweenTerms(Eigen::MatrixXd &super_matrix, const std::vector<int>& num_particles, Eigen::MatrixXd between_objectives)
+void ShapeEvaluation::ComputeBetweenTerms(Eigen::MatrixXd &super_matrix, const std::vector<int>& num_particles, Eigen::MatrixXd& between_objectives)
 {
-
+  std::cout << "starting between terms" << std::endl;
   unsigned int dps = num_particles.size();
   unsigned int M =  std::accumulate(num_particles.begin(), num_particles.end(), 0);
-  unsigned int N = super_matrix.cols();
+  unsigned int N = (int)(super_matrix.cols() / VDimension);
   //PART A: Compute deviations of COM of each organ from COM of all the organs
   Eigen::MatrixXd between_centering_matrix(M, M);// Build centering matrix for between
   between_centering_matrix.setIdentity();
   Eigen::MatrixXd ones_m = Eigen::MatrixXd::Constant(M, 1, 1.0);
   between_centering_matrix = between_centering_matrix - (ones_m * ones_m.transpose()) * (1.0 / ((double)M));
+  std::cout << " M = " << M << " N = " << N << std::endl;
+  std::cout << "between_centering_matrix done Size = " << between_centering_matrix.rows() << " X " << between_centering_matrix.cols() <<  std::endl;
+  
   Eigen::MatrixXd z_centered = between_centering_matrix * super_matrix; // M * 3N
+  std::cout << "CENTERING DONE size = " << z_centered.rows() << " X " << z_centered.cols() << std::endl;
+
   Eigen::MatrixXd z_between(dps, VDimension * N);
   for (unsigned int k = 0; k < dps; k++)
   {
@@ -679,8 +728,14 @@ void ShapeEvaluation::ComputeBetweenTerms(Eigen::MatrixXd &super_matrix, const s
       row += num_particles[x];
     }                                         // k * num_particles[k]
     z_centered_k = z_centered.block(row, 0, num_particles[k], VDimension * N); // extract sub-matrix for kth organ from centred matrix and Center that sub-matrix(for between)
+    std::cout << "z_centred_k extract done k = " << k << std::endl;
     Eigen::MatrixXd ones_m_k = Eigen::MatrixXd::Constant(num_particles[k], 1, 1.0);
     Eigen::MatrixXd z_temp = (ones_m_k.transpose() * z_centered_k) * (1.0 / ((double)num_particles[k])); // --> 1 X 3N
+    std::cout << "z_temp extract done k = " << k << std::endl;
+    std::cout << "z_temp extract done k = " << k << std::endl;
+    std::cout << "size = " << z_temp.rows() << " X " << z_temp.cols() <<  std::endl;
+
+
     z_between.block(k, 0, 1, VDimension*N) = z_temp;
   }
 
@@ -696,7 +751,11 @@ void ShapeEvaluation::ComputeBetweenTerms(Eigen::MatrixXd &super_matrix, const s
     }
   }
   Eigen::MatrixXd z_between_objective = z_between_objective_temp; //---> 3K X N
+  std::cout << " between objective set 1| size = " << z_between_objective.rows() << " X "  << z_between_objective.cols() << std::endl;
   between_objectives = (z_between_objective);
+  std::cout << " between objective set 2| size = " << between_objectives.rows() << " X "  << between_objectives.cols() << std::endl;
+  std::cout << " between objective set 2" << std::endl;
+
 }
 
 

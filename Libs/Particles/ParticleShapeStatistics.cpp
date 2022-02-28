@@ -225,26 +225,29 @@ void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_partic
 int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps)
 {
   // debug
-  // std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
+  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
   unsigned int num_points = (int)(points[0].size() / (3 * dps));
   this->m_dps = dps;
   this->m_numPoints = num_points;
   this->m_N = points.size();
-  // std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
+  std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
+  std::cout << "points[0].size() = " << points[0].size() << std::endl;
+
 
   unsigned int n = m_N * VDimension; 
   // std::cout << " n " << n << std::endl;
   // unsigned int m = num_points * dps;
   unsigned int m = 0;
-  for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx] * VDimension); }
+  for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx]); }
   std::cout << "m " << m << std::endl;
 
   m_super_matrix.set_size(m, n);
   m_shapes_mca.clear();
-  // std::cout << "cleared" <<std::endl;
+  std::cout << "cleared" <<std::endl;
 
   for(unsigned int i = 0; i < points.size(); i++){
-    unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
+    // unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
+    unsigned int p = m_super_matrix.rows();
     // std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
     for(unsigned int j= 0; j < p; j++){
       m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
@@ -253,7 +256,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
   
-  // std::cout << " Super matrix constructed " << std::endl;
+  std::cout << " Super matrix constructed " << std::endl;
 
   // Step 2. Compute within covariance matrix
 
@@ -265,16 +268,19 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
 
   for(unsigned int k = 0; k < m_dps; k++){
     // extract shape matrix of kth domain
+    std::cout << "start k = " << k << std::endl;
     vnl_matrix<double> z_k;
     // z_k.set_size(num_points, n);
     // m_super_matrix.extract(z_k, k * num_points, 0);
 
     z_k.set_size(this->m_num_particles_ar[k], n);
     unsigned int row = 0;
-    for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[k]; }
+    for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
+    std::cout << "row = " << row << std::endl;
     m_super_matrix.extract(z_k, row, 0);
+    std::cout << "extract done for k = " << k << std::endl;
 
-    m_shapes_mca.push_back(z_k); // keep track of shape matriz of each domain
+    // m_shapes_mca.push_back(z_k); // keep track of shape matriz of each domain
     // compute column-wise mean(of each sample)
     vnl_matrix<double> mean_k;
     mean_k.set_size(n, 1);
@@ -293,6 +299,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
 
     // z_within_centred.update(z_k_centred, k * num_points, 0);
     z_within_centred.update(z_k_centred, row, 0);
+    std::cout << "update done " << std::endl;
 
   }
 
@@ -319,7 +326,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
-  // std::cout << "Within objective computed " << std::endl;
+  std::cout << "Within objective computed " << std::endl;
 
   // 2..b compute within covariance matrix
   m_pointsMinusMean_for_within.set_size(M, m_N);
@@ -335,7 +342,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
-  // std::cout << "Within Covariance Matrix computed " << std::endl;
+  std::cout << "Within Covariance Matrix computed " << std::endl;
 
   // Step 3.Compute Between Covariance matrix
 
@@ -349,6 +356,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
       z_between_centred(j, i) = m_super_matrix(j, i) - col_mean;
     }
   }
+  std::cout << "between means done before covariance" << std::endl;
 
   vnl_matrix<double> z_between;
   z_between.set_size(m_dps, n);
@@ -358,12 +366,17 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     z_between_k_mean.set_size(1, n);;
     for(unsigned int i = 0; i < n; i++){
       vnl_matrix<double> mean_temp_vec;
-      mean_temp_vec.set_size(num_points, 1);
-      z_between_centred.extract(mean_temp_vec, k * num_points, i);
+      // mean_temp_vec.set_size(num_points, 1);
+      mean_temp_vec.set_size(this->m_num_particles_ar[k], 1);
+      // z_between_centred.extract(mean_temp_vec, k * num_points, i);
+      unsigned int row = 0;
+      for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
+      z_between_centred.extract(mean_temp_vec, row, i);
       z_between_k_mean(0, i) = mean_temp_vec.mean();
     }
     z_between.update(z_between_k_mean, k, 0);
   }
+  std::cout << "z_between formed" << std::endl;
   vnl_matrix<double> z_between_objective;
   z_between_objective.set_size(m_dps * VDimension, m_N);
   this->m_MatrixBetween.resize(m_dps * VDimension, m_N);
@@ -379,6 +392,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
       this->m_MatrixBetween(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
     }
   }
+  std::cout << "z_between objective done" << std::endl;
   
 
   //3.b between covariance matrix
@@ -396,8 +410,8 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
     }
   }
 
-//  std::cout << "Between Covariance Matrix computed " << std::endl;
-//  std::cout << "MLPCA base part done" << std::endl;
+ std::cout << "Between Covariance Matrix computed " << std::endl;
+ std::cout << "MLPCA base part done" << std::endl;
 
 }
 
@@ -804,7 +818,49 @@ int ParticleShapeStatistics::PrincipalComponentProjections()
 
     }
   }
+  auto fn = this->m_results_dir + "PCA_projections.txt";
+  std::cout << "Writing Projections to file " << fn << std::endl;
 
+  std::ofstream outfile;
+  outfile.open(fn.c_str());
+  for(int s = 0; s < m_numSamples; s++){
+    for (int n = 0; n < m_numSamples; n++){
+      outfile << m_principals(s, n) << ((n == m_numSamples-1) ? "\n" : " ");
+    }
+  }
+  outfile.close();
+  return 0;
+}
+
+
+int ParticleShapeStatistics::MultiLevelPrincipalComponentProjections()
+{
+  // Now print the projection of each shape
+  m_mulit_level_combined_principals.resize(m_numSamples, m_numSamples);
+
+  for (unsigned int n = 0; n < m_numSamples; n++) {
+    for (unsigned int s = 0; s < m_numSamples; s++) {
+      double within = dot_product<double>(m_withinEigenvectors.get_column((m_numSamples - 1) - n),
+                                     m_pointsMinusMean_for_within.get_column(s));
+      double between = dot_product<double>(m_betweenEigenvectors.get_column((m_numSamples - 1) - n),
+                                     m_pointsMinusMean_for_between.get_column(s));
+
+      m_mulit_level_combined_principals(s, n) = (within + between); // each row is a sample, columns index PC
+
+    }
+  }
+  
+  auto fn = this->m_results_dir + "MLPCA_projections.txt";
+  std::cout << "Writing Projections to file " << fn << std::endl;
+
+  std::ofstream outfile;
+  outfile.open(fn.c_str());
+  for(int s = 0; s < m_numSamples; s++){
+    for (int n = 0; n < m_numSamples; n++){
+      outfile << m_mulit_level_combined_principals(s, n) << ((n == m_numSamples-1) ? "\n" : " ");
+    }
+  }
+  outfile.close();
   return 0;
 }
 
@@ -1015,15 +1071,15 @@ Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(floa
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  if (m_dps > 1)
-  { 
-    std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
-    Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel(ps, this->m_num_particles_ar, progress_callback);
-    // std::string fn = "/home/sci/nawazish.khan/Desktop/gener.csv";
-    // this->WriteEvaluationResults(generalization, fn);
-    return generalization;
-  }
-  else 
+  // if (m_dps > 1)
+  // { 
+  //   std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
+  //   Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel(ps, this->m_num_particles_ar, progress_callback);
+  //   // std::string fn = this->m_results_dir + "generalization_multi_level.csv";
+  //   // this->WriteEvaluationResults(generalization, fn);
+  //   return generalization;
+  // }
+  // else 
     return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
