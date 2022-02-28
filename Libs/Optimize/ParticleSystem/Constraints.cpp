@@ -1,5 +1,8 @@
 #include "Constraints.h"
 
+#include <nlohmann/json.hpp>
+
+
 namespace shapeworks {
 
 void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c) {
@@ -605,4 +608,16 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     return false;
 }
 */
+
+
+void Constraints::Read(std::string filename)
+{
+
+}
+
+void Constraints::Write(std::string filename)
+{
+
+}
+
 }  // namespace shapeworks

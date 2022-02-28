@@ -80,6 +80,9 @@ class Constraints {
   bool GetActive() { return active_; }
   void SetActive(bool ac) { active_ = ac; }
 
+  void Read(std::string filename);
+  void Write(std::string filename);
+
  private:
   std::vector<PlaneConstraint> planeConstraints_;
   std::vector<SphereConstraint> sphereConstraints_;
