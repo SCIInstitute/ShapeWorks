@@ -328,10 +328,11 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
   }
 
   m_CuttingPlanes[i].push_back(CuttingPlaneType());
+  int last = m_CuttingPlanes[i].size() - 1;
 
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].a = va;
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].b = vb;
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].c = vc;
+  m_CuttingPlanes[i][last].a = va;
+  m_CuttingPlanes[i][last].b = vb;
+  m_CuttingPlanes[i][last].c = vc;
 
   if (m_Initialized == true) {
     std::cout << "Initialized plane" << std::endl;

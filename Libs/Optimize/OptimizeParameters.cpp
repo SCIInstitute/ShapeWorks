@@ -206,7 +206,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   if (get_use_landmarks()) {
     // landmarks/point files
     std::vector<std::string> point_files;
-    for (auto s : subjects) {
+    for (auto &s : subjects) {
       auto landmarks = s->get_landmarks_filenames();
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
@@ -215,6 +215,39 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
+  // add cutting planes
+  int domain_count = 0;
+  for (auto &s : subjects) {
+    auto files = s->get_constraints_filenames();
+    for (auto &file : files) {
+      Constraints c;
+      c.Read(file);
+      for (auto &plane : c.getPlaneConstraints()) {
+        auto& points = plane.points();
+        vnl_vector_fixed<double, 3> a, b, c;
+        if (points.size() != 3) {
+          throw std::runtime_error("Error reading plane constrain: " + file);
+        }
+        for (int i=0;i<3;i++) {
+          a[i] = points[0][i];
+          b[i] = points[1][i];
+          c[i] = points[2][i];
+        }
+
+        a = optimize->TransformPoint(domain_count, a);
+        b = optimize->TransformPoint(domain_count, b);
+        c = optimize->TransformPoint(domain_count, c);
+
+        optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
+
+      }
+
+      domain_count++;
+
+    }
+  }
+
+
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
   std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes =
@@ -222,7 +255,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   std::vector<std::string> filenames;
   int count = 0;
-  int domain_count = 0;
+  domain_count = 0;
   for (auto s : subjects) {
     if (this->abort_load_) {
       return false;
@@ -246,7 +279,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (count < planes.size()) {
           for (size_t i = 0; i < planes[count].size(); i++) {
             // Create vtk plane
-            vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+            auto plane = vtkSmartPointer<vtkPlane>::New();
             plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1], planes[count][i].first[2]);
             plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1], planes[count][i].second[2]);
 
