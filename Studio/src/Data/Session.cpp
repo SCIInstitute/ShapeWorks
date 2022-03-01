@@ -140,6 +140,13 @@ bool Session::save_project(std::string fname) {
     }
   }
 
+  // constraints
+  if (has_constraints()) {
+    for (int i = 0; i < shapes_.size(); i++) {
+      shapes_[i]->store_constraints();
+    }
+  }
+
   // correspondence points
   if (this->unsaved_particle_files_ && this->particles_present()) {
     for (int i = 0; i < this->shapes_.size(); i++) {
@@ -403,6 +410,7 @@ bool Session::load_xl_project(QString filename) {
     auto locals = subjects[i]->get_local_particle_filenames();
     auto worlds = subjects[i]->get_world_particle_filenames();
     auto landmark_files = subjects[i]->get_landmarks_filenames();
+    auto constraints_files = subjects[i]->get_constraints_filenames();
 
     if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
       return false;
@@ -411,6 +419,9 @@ bool Session::load_xl_project(QString filename) {
       return false;
     }
     if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmark_files))) {
+      return false;
+    }
+    if (!shape->import_constraints(StudioUtils::to_string_list(constraints_files))) {
       return false;
     }
 
@@ -1070,6 +1081,16 @@ void Session::set_image_share_window_and_level(bool enabled) {
 
 //---------------------------------------------------------------------------
 bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+
+//---------------------------------------------------------------------------
+bool Session::has_constraints() {
+  for (auto& shape : shapes_) {
+    if (!shape->constraints().empty()) {
+      return true;
+    }
+  }
+  return false;
+}
 
 //---------------------------------------------------------------------------
 void Session::set_loading(bool loading) { is_loading_ = loading; }

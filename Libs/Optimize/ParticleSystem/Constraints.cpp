@@ -1,7 +1,7 @@
 #include "Constraints.h"
 
 #include <nlohmann/json.hpp>
-
+using json = nlohmann::json;
 
 namespace shapeworks {
 
@@ -609,15 +609,53 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 }
 */
 
-
-void Constraints::Read(std::string filename)
-{
-
+void Constraints::Read(std::string filename) {
+  std::ifstream in(filename);
+  if (!in.good()) {
+    throw std::runtime_error("Unable to open " + filename + " for reading");
+  }
+  json j;
+  in >> j;
+  planeConstraints_.clear();
+  if (j.contains("planes")) {
+    for (const auto &planeJson : j["planes"]) {
+      PlaneConstraint plane;
+      auto center = planeJson["center"];
+      plane.setPlanePoint({center[0].get<double>(), center[1].get<double>(), center[2].get<double>()});
+      auto normal = planeJson["normal"];
+      plane.setPlanePoint({normal[0].get<double>(), normal[1].get<double>(), normal[2].get<double>()});
+      if (planeJson.contains("points")) {
+        for (auto p : planeJson["points"]) {
+          plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+        }
+      }
+      planeConstraints_.push_back(plane);
+    }
+  }
 }
 
-void Constraints::Write(std::string filename)
-{
+void Constraints::Write(std::string filename) {
+  json planes;
+  std::vector<json> planeJsons;
+  for (auto &plane : planeConstraints_) {
+    json planeJson;
+    planeJson["center"] = {plane.getPlanePoint()[0], plane.getPlanePoint()[1], plane.getPlanePoint()[2]};
+    planeJson["normal"] = {plane.getPlaneNormal()[0], plane.getPlaneNormal()[1], plane.getPlaneNormal()[2]};
+    std::vector<json> points;
+    for (auto &point : plane.points()) {
+      points.push_back({point[0], point[1], point[2]});
+    }
+    planeJson["points"] = points;
+    planeJsons.push_back(planeJson);
+  }
 
+  json j;
+  j["planes"] = planeJsons;
+  std::ofstream file(filename);
+  if (!file.good()) {
+    throw std::runtime_error("Unable to open " + filename + " for writing");
+  }
+  file << j.dump(4);
 }
 
 }  // namespace shapeworks

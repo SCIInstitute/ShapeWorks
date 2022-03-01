@@ -187,7 +187,6 @@ void PlaneWidget::update_planes() {
     plane_actor->GetProperty()->SetEdgeVisibility(1);
     plane_actor->SetPickable(false);
     plane_actors_.push_back(plane_actor);
-    viewer_->get_renderer()->AddViewProp(plane_actor);
   }
 
   // remove if needed
@@ -216,6 +215,8 @@ void PlaneWidget::update_planes() {
     auto meshes = viewer_->get_meshes();
     if (meshes.valid()) {
       size = meshes.meshes()[domain_id]->get_largest_dimension_size();
+    } else {
+      continue;
     }
 
     for (auto &plane : planes) {
@@ -247,6 +248,7 @@ void PlaneWidget::update_planes() {
       plane_actors_[plane_it]->SetUserTransform(transform);
       plane_actors_[plane_it]->GetProperty()->SetColor(qcolor.red() / 255.0, qcolor.green() / 255.0,
                                                        qcolor.blue() / 255.0);
+      viewer_->get_renderer()->AddViewProp(plane_actors_[plane_it]);
 
       plane_it++;
     }

@@ -157,6 +157,8 @@ class Session : public QObject {
   void set_image_share_window_and_level(bool enabled);
   bool get_image_share_window_and_level();
 
+  bool has_constraints();
+
   void set_loading(bool loading);
   bool is_loading();
 

@@ -314,7 +314,7 @@ void Project::store_subjects() {
     column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(seg_columns[i]);
     landmarks_columns.push_back(column_name);
     column_name = std::string(CONSTRAINTS_PREFIX) + this->get_column_identifier(seg_columns[i]);
-    landmarks_columns.push_back(column_name);
+    constraints_columns.push_back(column_name);
   }
 
   bool groomed_present = false;

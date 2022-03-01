@@ -227,11 +227,14 @@ void Lightbox::setup_renderers() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_tile_layout(int width, int height) {
-  this->tile_layout_width_ = width;
-  this->tile_layout_height_ = height;
+  if (width == tile_layout_width_ && height == tile_layout_height_) {
+    return;
+  }
+  tile_layout_width_ = width;
+  tile_layout_height_ = height;
 
-  this->setup_renderers();
-  this->display_shapes();
+  setup_renderers();
+  display_shapes();
 }
 
 //-----------------------------------------------------------------------------

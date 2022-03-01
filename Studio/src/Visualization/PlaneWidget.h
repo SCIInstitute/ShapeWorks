@@ -1,9 +1,8 @@
 
+#include <Libs/Optimize/ParticleSystem/PlaneConstraint.h>
 #include <vtkSmartPointer.h>
 
 #include <vector>
-
-#include <Libs/Optimize/ParticleSystem/PlaneConstraint.h>
 
 class vtkHandleWidget;
 class vtkSphereSource;
@@ -19,7 +18,7 @@ class StudioHandleWidget;
 
 //! PlaneWidget
 /*!
- * Widget to display and manipulate landmarks
+ * Widget to display and manipulate constraint planes
  *
  */
 class PlaneWidget {
@@ -27,10 +26,10 @@ class PlaneWidget {
   PlaneWidget(Viewer* viewer);
   ~PlaneWidget();
 
-  void update_plane_points();
-  void update_planes();
+  //! Update the widget from shape data
   void update();
 
+  //! Store positions back to shape data (this is called by callback)
   void store_positions();
 
   void update_glyph_properties();
@@ -45,9 +44,11 @@ class PlaneWidget {
   void set_plane_offset(int domain, int plane_id, int offset);
   void finalize_plane_offset(int domain, int plane_id);
 
-
-private:
-  bool block_update_ = false;
+ private:
+  //! update the point handles
+  void update_plane_points();
+  //! update the plane display actors
+  void update_planes();
 
   vtkSmartPointer<StudioHandleWidget> create_handle();
 
@@ -56,9 +57,11 @@ private:
   int count_plane_points();
   int count_complete_planes();
 
-  PlaneConstraint &get_plane_reference(int domain, int plane);
+  PlaneConstraint& get_plane_reference(int domain, int plane);
 
   double get_offset_scale(int domain_id);
+
+  bool block_update_ = false;
 
   Viewer* viewer_ = nullptr;
 

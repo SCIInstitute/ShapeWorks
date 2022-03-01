@@ -74,6 +74,12 @@ class Shape {
   //! Store landmarks
   bool store_landmarks();
 
+  //! import constraints
+  bool import_constraints(QStringList filenames);
+
+  //! Store constraints
+  bool store_constraints();
+
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
 

@@ -232,6 +232,43 @@ bool Shape::store_landmarks() {
 }
 
 //---------------------------------------------------------------------------
+bool Shape::import_constraints(QStringList filenames) {
+  for (int i = 0; i < filenames.size(); i++) {
+    Constraints constraints;
+    try {
+      constraints.Read(filenames[i].toStdString());
+    } catch (std::exception& e) {
+      STUDIO_SHOW_ERROR(e.what());
+      return false;
+    }
+    constraints_.push_back(constraints);
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::store_constraints() {
+  auto filenames = subject_->get_constraints_filenames();
+  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
+    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
+    filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
+    filenames.push_back(filename);
+  }
+
+  subject_->set_constraints_filenames(filenames);
+
+  for (int i = 0; i < filenames.size(); i++) {
+    try {
+      get_constraints(i).Write(filenames[i]);
+    } catch (std::exception& e) {
+      STUDIO_SHOW_ERROR(e.what());
+      return false;
+    }
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
 Eigen::VectorXd Shape::get_global_correspondence_points() { return this->particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
