@@ -32,16 +32,25 @@ class PlaneWidget {
   //! Store positions back to shape data (this is called by callback)
   void store_positions();
 
+  //! Update the sizes and detail of control spheres
   void update_glyph_properties();
 
+  //! Clear point handles and planes
   void clear_planes();
 
+  //! Handle a right click on a particular point
   void handle_right_click(int domain, int plane, int point);
 
+  //! Delete a particular plane
   void delete_plane(int domain, int plane_id);
+
+  //! Flip the normal for a given plane
   void flip_plane(int domain, int plane_id);
 
+  //! Set an offset for a given plane
   void set_plane_offset(int domain, int plane_id, int offset);
+
+  //! Finalize the offset for a given plane
   void finalize_plane_offset(int domain, int plane_id);
 
  private:

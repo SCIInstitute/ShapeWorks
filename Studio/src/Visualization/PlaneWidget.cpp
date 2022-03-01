@@ -313,10 +313,18 @@ void PlaneWidget::update_glyph_properties() {
 
 //-----------------------------------------------------------------------------
 void PlaneWidget::clear_planes() {
+  // remove handles
   while (!handles_.empty()) {
     handles_[handles_.size() - 1]->SetEnabled(0);
     handles_[handles_.size() - 1]->SetInteractor(nullptr);
     handles_.pop_back();
+  }
+  // remove planes
+  while (!plane_sources_.empty()) {
+    viewer_->get_renderer()->RemoveViewProp(plane_actors_[plane_actors_.size() - 1]);
+    plane_actors_.pop_back();
+    plane_mappers_.pop_back();
+    plane_sources_.pop_back();
   }
 }
 
