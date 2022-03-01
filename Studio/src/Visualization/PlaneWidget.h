@@ -47,6 +47,9 @@ class PlaneWidget {
   //! Flip the normal for a given plane
   void flip_plane(int domain, int plane_id);
 
+  //! Apply a plane from one shape to all others (e.g. copy and paste)
+  void apply_plane(int domain, int plane_id);
+
   //! Set an offset for a given plane
   void set_plane_offset(int domain, int plane_id, int offset);
 

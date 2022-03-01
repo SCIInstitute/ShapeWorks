@@ -34,8 +34,9 @@ static constexpr int max_colors = 6;
 namespace shapeworks {
 
 namespace actions {
-const QString flip_plane("Flip plane normal");
-const QString delete_plane("Delete plane");
+const QString FLIP_PLANE("Flip plane normal");
+const QString DELETE_PLANE("Delete plane");
+const QString APPLY_PLANE("Apply plane to all other shapes");
 }  // namespace actions
 
 //-----------------------------------------------------------------------------
@@ -332,18 +333,21 @@ void PlaneWidget::clear_planes() {
 void PlaneWidget::handle_right_click(int domain, int plane, int point) {
   QMenu *menu = new QMenu(nullptr);
   menu->setAttribute(Qt::WA_DeleteOnClose);
-  menu->addAction(actions::flip_plane)->setProperty("id", (int)1);
-  menu->addAction(actions::delete_plane)->setProperty("id", (int)2);
+  menu->addAction(actions::FLIP_PLANE)->setProperty("id", (int)1);
+  menu->addAction(actions::DELETE_PLANE)->setProperty("id", (int)2);
+  menu->addAction(actions::APPLY_PLANE)->setProperty("id", (int)2);
   menu->popup(QCursor::pos());
 
   auto session = viewer_->get_session();
 
   session->connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
     std::cerr << "callback: " << action->text().toStdString() << domain << "," << plane << "," << point << "\n";
-    if (action->text() == actions::flip_plane) {
+    if (action->text() == actions::FLIP_PLANE) {
       flip_plane(domain, plane);
-    } else if (action->text() == actions::delete_plane) {
+    } else if (action->text() == actions::DELETE_PLANE) {
       delete_plane(domain, plane);
+    } else if (action->text() == actions::APPLY_PLANE) {
+      apply_plane(domain, plane);
     }
   });
 }
@@ -380,6 +384,44 @@ void PlaneWidget::flip_plane(int domain, int plane_id) {
 }
 
 //-----------------------------------------------------------------------------
+void PlaneWidget::apply_plane(int domain, int plane_id) {
+  auto &plane = get_plane_reference(domain, plane_id);
+  auto session = viewer_->get_session();
+  if (plane.points().size() != 3) {
+    STUDIO_SHOW_ERROR("Can't apply plane that doesn't have 3 points");
+    return;
+  }
+
+  for (auto &shape : session->get_shapes()) {
+    if (shape == viewer_->get_shape()) {
+      continue;
+    }
+
+    // transform from source shape to common space
+    auto base_transform = viewer_->get_shape()->get_transform(domain);
+
+    // transform from common space to destination space
+    auto inverse = vtkSmartPointer<vtkTransform>::New();
+    inverse->DeepCopy(shape->get_transform(domain));
+    inverse->Inverse();
+
+    // copy plane and transform plane
+    PlaneConstraint new_plane = plane;
+    for (int i = 0; i < 3; i++) {
+      base_transform->TransformPoint(new_plane.points()[i].data(), new_plane.points()[i].data());
+      inverse->TransformPoint(new_plane.points()[i].data(), new_plane.points()[i].data());
+    }
+
+    // update plane center and normal
+    new_plane.updatePlaneFromPoints();
+
+    shape->get_constraints(domain).getPlaneConstraints().push_back(new_plane);
+  }
+
+  session->trigger_planes_changed();
+}
+
+//-----------------------------------------------------------------------------
 void PlaneWidget::set_plane_offset(int domain, int plane_id, int offset) {
   auto &plane = get_plane_reference(domain, plane_id);
   plane.setOffset(offset);
@@ -394,6 +436,13 @@ void PlaneWidget::finalize_plane_offset(int domain, int plane_id) {
   if (!meshes.valid() || domain >= meshes.meshes().size()) {
     return;
   }
+
+  if (plane.points().size() != 3) {
+    // silently revert
+    return;
+  }
+
+  PlaneConstraint original = plane;
 
   MeshHandle mesh = meshes.meshes()[domain];
   auto poly_data = mesh->get_poly_data();
@@ -417,6 +466,13 @@ void PlaneWidget::finalize_plane_offset(int domain, int plane_id) {
       cut->GetPoint(id, point.data());
     }
   }
+
+  if (plane.points()[0] == plane.points()[1] || plane.points()[1] == plane.points()[2] ||
+      plane.points()[0] == plane.points()[2]) {
+    STUDIO_LOG_MESSAGE("Plane finalizing found co-incident points, reverting plane");
+    plane = original;
+  }
+
   // set the offset to 0
   plane.setOffset(0);
   update();

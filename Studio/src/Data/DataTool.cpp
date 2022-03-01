@@ -54,6 +54,8 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   // ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
+  ui_->ffc_widget->hide();
+
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
           &LandmarkTableModel::new_landmark);
