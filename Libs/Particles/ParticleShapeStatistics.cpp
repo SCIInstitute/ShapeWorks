@@ -1056,15 +1056,15 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness_between_subspace(std::f
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  // if (m_dps > 1)
-  // { 
-  //   std::cout << "Computing Specificity for Multi-level Modeling" << std::endl;
-  //   Eigen::VectorXd specificity =  shapeworks::ShapeEvaluation::ComputeFullSpecificityMultiLevel(ps, this->m_num_particles_ar, progress_callback);
-  //   // std::string fn = "/home/sci/nawazish.khan/Desktop/spec.csv";
-  //   // this->WriteEvaluationResults(specificity, fn);
-  //   return specificity;
-  // }
-  // else
+  if (m_dps > 1)
+  { 
+    std::cout << "Computing Specificity for Multi-level Modeling" << std::endl;
+    Eigen::VectorXd specificity =  shapeworks::ShapeEvaluation::ComputeFullSpecificityMultiLevel(ps, this->m_num_particles_ar, progress_callback);
+    // std::string fn = "/home/sci/nawazish.khan/Desktop/spec.csv";
+    // this->WriteEvaluationResults(specificity, fn);
+    return specificity;
+  }
+  else
     return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 

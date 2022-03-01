@@ -573,7 +573,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityMultiLevel(const Particle
       }
 
       Eigen::MatrixXd samplingPoints_within_k = (epsi_within * samplingBetas_for_within).colwise() + within_mean; //m X nModes  X  nModes * 1000 ---> m X 1000
+      std::cout << " samplingPoints_within_k done " << std::endl;
       Eigen::MatrixXd samplingPoints_between_all = (epsi_between * samplingBetas_for_between).colwise() + between_mean; //Kd X nModes  X  nModes * 1000 ---> Kd X 1000
+      std::cout << " samplingPoints_between_all done " << std::endl;
       Eigen::MatrixXd samplingPoints_between_k(m, nSamples);
       for (unsigned int x = 0; x < num_particles_ar[k]; x++){
         samplingPoints_between_k.block(VDimension*x, 0, VDimension, nSamples) = samplingPoints_between_all.block(k*VDimension, 0, VDimension, nSamples);
