@@ -620,15 +620,12 @@ void Constraints::Read(std::string filename) {
   if (j.contains("planes")) {
     for (const auto &planeJson : j["planes"]) {
       PlaneConstraint plane;
-      auto center = planeJson["center"];
-      plane.setPlanePoint({center[0].get<double>(), center[1].get<double>(), center[2].get<double>()});
-      auto normal = planeJson["normal"];
-      plane.setPlanePoint({normal[0].get<double>(), normal[1].get<double>(), normal[2].get<double>()});
       if (planeJson.contains("points")) {
         for (auto p : planeJson["points"]) {
           plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
         }
       }
+      plane.updatePlaneFromPoints();
       planeConstraints_.push_back(plane);
     }
   }
@@ -639,8 +636,6 @@ void Constraints::Write(std::string filename) {
   std::vector<json> planeJsons;
   for (auto &plane : planeConstraints_) {
     json planeJson;
-    planeJson["center"] = {plane.getPlanePoint()[0], plane.getPlanePoint()[1], plane.getPlanePoint()[2]};
-    planeJson["normal"] = {plane.getPlaneNormal()[0], plane.getPlaneNormal()[1], plane.getPlaneNormal()[2]};
     std::vector<json> points;
     for (auto &point : plane.points()) {
       points.push_back({point[0], point[1], point[2]});
