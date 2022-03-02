@@ -824,59 +824,71 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="new_ffc_">
-              <property name="text">
-               <string>New</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="delete_ffc_">
-              <property name="text">
-               <string>Delete</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0" colspan="2">
              <widget class="QWidget" name="ffc_controls_" native="true">
               <layout class="QGridLayout" name="gridLayout_3">
-               <item row="0" column="1" colspan="2">
+               <item row="2" column="1">
+                <widget class="QRadioButton" name="ffc_included_mode_">
+                 <property name="text">
+                  <string>Included</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" colspan="2">
                 <widget class="QSlider" name="ffc_brush_size_">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>25</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Brush Size</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QRadioButton" name="ffc_included_mode_">
-                 <property name="text">
-                  <string>Included</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
                   <string>Paint Type</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Brush Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
                 <widget class="QRadioButton" name="ffc_excluded_mode_">
                  <property name="text">
                   <string>Excluded</string>
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="ffc_active_">
+                 <property name="text">
+                  <string>Painting Enabled</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QPushButton" name="delete_ffc_">
+              <property name="text">
+               <string>Delete</string>
+              </property>
              </widget>
             </item>
            </layout>

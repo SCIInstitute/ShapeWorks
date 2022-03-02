@@ -51,6 +51,7 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
+  connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,6 +85,12 @@ void Visualizer::update_landmarks() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_ffc_mode() {
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
   lightbox_->redraw();
 }
 

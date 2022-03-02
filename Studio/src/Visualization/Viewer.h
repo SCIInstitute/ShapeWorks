@@ -109,6 +109,7 @@ class Viewer {
 
   void update_landmarks();
   void update_planes();
+  void update_ffc_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
   std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
@@ -231,7 +232,6 @@ class Viewer {
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
-
 
   // slice viewer
   SliceView slice_view_{this};

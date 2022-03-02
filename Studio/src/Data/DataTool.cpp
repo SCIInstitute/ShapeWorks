@@ -40,6 +40,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
           &DataTool::landmark_domain_changed);
   connect(ui_->constraints_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &DataTool::constraints_domain_changed);
+  connect(ui_->ffc_active_, &QCheckBox::toggled, this, &DataTool::handle_ffc_active_changed);
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
 
@@ -54,9 +55,9 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->notes_open_button->toggle();
 
   // table on
-  //ui_->table_open_button->toggle();
+  // ui_->table_open_button->toggle();
 
-  ui_->ffc_widget->hide();
+  // ui_->ffc_widget->hide();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
@@ -330,6 +331,13 @@ void DataTool::handle_constraints_mode_changed() {
   if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
     ui_->landmarks_open_button->setChecked(false);
   }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::handle_ffc_active_changed()
+{
+  // maybe just direct connect unless we add something else?
+  session_->set_ffc_paint_active(ui_->ffc_active_->isChecked());
 }
 
 //---------------------------------------------------------------------------

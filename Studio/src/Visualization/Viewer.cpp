@@ -526,17 +526,17 @@ void Viewer::update_clipping_planes() {
 
         vtk_plane = transform_plane(vtk_plane, transform);
         mapper->AddClippingPlane(vtk_plane);
-/*
-        auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
-        opposite_plane->SetOrigin(vtk_plane->GetOrigin());
-        double normal[3];
-        vtk_plane->GetNormal(normal);
-        normal[0] = -normal[0];
-        normal[1] = -normal[1];
-        normal[2] = -normal[2];
-        opposite_plane->SetNormal(normal);
-        // clipped_mapper->AddClippingPlane(opposite_plane);
-*/
+        /*
+                auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
+                opposite_plane->SetOrigin(vtk_plane->GetOrigin());
+                double normal[3];
+                vtk_plane->GetNormal(normal);
+                normal[0] = -normal[0];
+                normal[1] = -normal[1];
+                normal[2] = -normal[2];
+                opposite_plane->SetNormal(normal);
+                // clipped_mapper->AddClippingPlane(opposite_plane);
+        */
       }
     }
   }
@@ -554,6 +554,9 @@ void Viewer::update_planes() {
   update_clipping_planes();
   plane_widget_->update();
 }
+
+//-----------------------------------------------------------------------------
+void Viewer::update_ffc_mode() {}
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
@@ -921,8 +924,8 @@ void Viewer::update_actors() {
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      //cell_picker_->AddPickList(surface_actors_[i]);
-      //prop_picker_->AddPickList(surface_actors_[i]);
+      // cell_picker_->AddPickList(surface_actors_[i]);
+      // prop_picker_->AddPickList(surface_actors_[i]);
       cell_picker_->AddPickList(clipped_surface_actors_[i]);
       prop_picker_->AddPickList(clipped_surface_actors_[i]);
       // point_placer_->AddProp(surface_actors_[i]);

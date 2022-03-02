@@ -61,6 +61,7 @@ class DataTool : public QWidget {
 
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
+  void handle_ffc_active_changed();
 
  Q_SIGNALS:
   void import_button_clicked();

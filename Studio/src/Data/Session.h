@@ -167,6 +167,9 @@ class Session : public QObject {
   void set_tool_state(std::string state);
   std::string get_tool_state();
 
+  void set_ffc_paint_active(bool enabled);
+  bool get_ffc_paint_active();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -191,6 +194,7 @@ class Session : public QObject {
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
+  void ffc_paint_mode_changed();
 
  public:
   // constants
@@ -239,6 +243,7 @@ class Session : public QObject {
   bool landmark_drag_mode_ = false;
   bool landmarks_active_ = false;
   bool planes_active_ = false;
+  bool ffc_painting_active_ = false;
   bool show_landmark_labels_ = false;
   bool is_loading_ = false;
 };

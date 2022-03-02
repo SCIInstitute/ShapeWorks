@@ -1114,6 +1114,12 @@ void Session::set_tool_state(string state) {
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
+void Session::set_ffc_paint_active(bool enabled) { ffc_painting_active_ = enabled; }
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_active() { return ffc_painting_active_; }
+
+//---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
   emit landmarks_changed();
