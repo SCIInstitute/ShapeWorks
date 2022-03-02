@@ -134,17 +134,13 @@ bool Session::save_project(std::string fname) {
   }
 
   // landmarks
-  if (project_->get_landmarks_present()) {
-    for (int i = 0; i < shapes_.size(); i++) {
-      shapes_[i]->store_landmarks();
-    }
+  for (int i = 0; i < shapes_.size(); i++) {
+    shapes_[i]->store_landmarks();
   }
 
   // constraints
-  if (has_constraints()) {
-    for (int i = 0; i < shapes_.size(); i++) {
-      shapes_[i]->store_constraints();
-    }
+  for (int i = 0; i < shapes_.size(); i++) {
+    shapes_[i]->store_constraints();
   }
 
   // correspondence points
@@ -372,7 +368,8 @@ bool Session::load_light_project(QString filename) {
   }
 
   this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
-  this->parameters().set("tool_state", Session::ANALYSIS_C);
+
+  set_tool_state(Session::ANALYSIS_C);
 
   this->renumber_shapes();
 
@@ -969,9 +966,7 @@ void Session::set_feature_range_max(double value) {
 
 //---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
-  std::string tool_state = parameters().get("tool_state", Session::DATA_C);
-
-  if (tool_state != Session::DATA_C) {
+  if (get_tool_state() != Session::DATA_C) {
     return;
   }
 
@@ -1004,7 +999,16 @@ int Session::get_placing_landmark() { return placing_landmark_; }
 void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
 
 //---------------------------------------------------------------------------
-void Session::set_planes_active(bool active) { planes_active_ = active; }
+bool Session::get_landmarks_active() { return landmarks_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_planes_active(bool active) {
+  planes_active_ = active;
+  trigger_planes_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_planes_active() { return planes_active_ && get_tool_state() == Session::DATA_C; }
 
 //---------------------------------------------------------------------------
 void Session::set_show_landmark_labels(bool show) {
@@ -1099,12 +1103,23 @@ void Session::set_loading(bool loading) { is_loading_ = loading; }
 bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
+void Session::set_tool_state(string state) {
+  parameters().set("tool_state", state);
+  // these need to be updated so that the handles appear/disappear
+  trigger_landmarks_changed();
+  trigger_planes_changed();
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
+
+//---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
   emit landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_landmark_drag_mode() { return landmark_drag_mode_; }
+bool Session::get_landmark_drag_mode() { return landmark_drag_mode_ && get_landmarks_active(); }
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

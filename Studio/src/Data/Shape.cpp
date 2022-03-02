@@ -10,6 +10,7 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -174,9 +175,12 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   std::vector<Eigen::VectorXd> all_points;
   int total_count = 0;
   for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      continue;
+    }
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
+      throw std::invalid_argument("Unable to load landmarks file: " + filenames[i].toStdString());
     }
     total_count += points.size() / 3;
 
@@ -209,6 +213,16 @@ bool Shape::store_landmarks() {
     std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
     filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
+  }
+  for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      std::string filename = subject_->get_segmentation_filenames()[i];
+      filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+    }
+  }
+
+  if (landmarks_.rows() == 0) {
+    filenames = {};
   }
 
   subject_->set_landmarks_filenames(filenames);
@@ -253,6 +267,10 @@ bool Shape::store_constraints() {
     std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
     filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
     filenames.push_back(filename);
+  }
+
+  if (constraints_.size() == 0) {
+    filenames = {};
   }
 
   subject_->set_constraints_filenames(filenames);

@@ -134,7 +134,9 @@ class Session : public QObject {
   void set_placing_landmark(int id);
   int get_placing_landmark();
   void set_landmarks_active(bool active);
+  bool get_landmarks_active();
   void set_planes_active(bool active);
+  bool get_planes_active();
   void set_show_landmark_labels(bool show);
   bool get_show_landmark_labels();
 
@@ -161,6 +163,9 @@ class Session : public QObject {
 
   void set_loading(bool loading);
   bool is_loading();
+
+  void set_tool_state(std::string state);
+  std::string get_tool_state();
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);

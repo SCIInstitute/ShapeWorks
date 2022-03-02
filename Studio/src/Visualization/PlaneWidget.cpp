@@ -67,13 +67,13 @@ PlaneWidget::~PlaneWidget() { clear_planes(); }
 //-----------------------------------------------------------------------------
 void PlaneWidget::update_plane_points() {
   auto shape = viewer_->get_shape();
+  auto session = viewer_->get_session();
 
-  if (!shape || !viewer_->get_show_landmarks()) {
+  if (!shape || !session->get_show_planes()) {
     clear_planes();
     return;
   }
 
-  auto session = viewer_->get_session();
   auto domain_names = session->get_project()->get_domain_names();
 
   int num_points = 0;
@@ -121,8 +121,6 @@ void PlaneWidget::update_plane_points() {
         auto transform = viewer_->get_landmark_transform(domain_id);
         transform->TransformPoint(xyz, xyzt);
         rep->SetWorldPosition(xyzt);
-        rep->SetLabelVisibility(session->get_show_landmark_labels());
-        // rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
         rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
         assign_handle_to_domain(handles_[handle], domain_id);
@@ -132,7 +130,6 @@ void PlaneWidget::update_plane_points() {
         handles_[handle]->set_point(i);
         handles_[handle]->set_plane_widget(this);
 
-        // QColor qcolor(Qt::green);
         double color[3];
         color[0] = qcolor.red() / 255.0;
         color[1] = qcolor.green() / 255.0;
@@ -140,11 +137,7 @@ void PlaneWidget::update_plane_points() {
         rep->GetProperty()->SetColor(color);
 
         bool enabled = true;
-        // bool visible = definitions[domain_id][point_id].visible_;
-        bool visible = true;                            // TODO: do we need visibility settings?
-        if (!session->get_landmark_drag_mode() && 0) {  /// TODO plane version?
-          enabled = false;
-        }
+        bool visible = session->get_planes_active();
 
         if (!visible) {
           handles_[handle]->SetShowInactive(0);

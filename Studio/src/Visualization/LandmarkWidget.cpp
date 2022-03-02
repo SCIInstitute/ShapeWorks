@@ -83,7 +83,6 @@ void LandmarkWidget::update_landmarks() {
     rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
     rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
-
     assign_handle_to_domain(handles_[i], domain_id);
 
     QColor qcolor(QString::fromStdString(definitions[domain_id][point_id].color_));
@@ -95,7 +94,7 @@ void LandmarkWidget::update_landmarks() {
 
     bool enabled = true;
     bool visible = definitions[domain_id][point_id].visible_;
-    if (!session->get_landmark_drag_mode()) {
+    if (!session->get_landmark_drag_mode() || !session->get_landmarks_active()) {
       enabled = false;
     }
 
