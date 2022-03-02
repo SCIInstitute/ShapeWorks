@@ -315,12 +315,18 @@ void DataTool::handle_landmark_mode_changed() {
   if (session_) {
     session_->set_landmarks_active(ui_->landmarks_open_button->isChecked());
   }
+  if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
+    ui_->constraints_open_button->setChecked(false);
+  }
 }
 
 //---------------------------------------------------------------------------
 void DataTool::handle_constraints_mode_changed() {
   if (session_) {
     session_->set_planes_active(ui_->constraints_open_button->isChecked());
+  }
+  if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
+    ui_->landmarks_open_button->setChecked(false);
   }
 }
 
