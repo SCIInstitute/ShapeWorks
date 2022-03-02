@@ -16,7 +16,7 @@
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
 #else
-static QString clickMessage = "ctrl+click";
+static QString click_message = "ctrl+click";
 #endif
 
 namespace shapeworks {
