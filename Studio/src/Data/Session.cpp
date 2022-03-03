@@ -1114,7 +1114,28 @@ void Session::set_tool_state(string state) {
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
-void Session::set_ffc_paint_active(bool enabled) { ffc_painting_active_ = enabled; }
+void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
+  ffc_painting_inclusive_mode_ = inclusive;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mode_; }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_size(double size) {
+  ffc_paint_size = size;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_ffc_paint_size() { return ffc_paint_size; }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_active(bool enabled) {
+  ffc_painting_active_ = enabled;
+  Q_EMIT ffc_paint_mode_changed();
+}
 
 //---------------------------------------------------------------------------
 bool Session::get_ffc_paint_active() { return ffc_painting_active_; }
@@ -1122,7 +1143,7 @@ bool Session::get_ffc_paint_active() { return ffc_painting_active_; }
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
-  emit landmarks_changed();
+  Q_EMIT landmarks_changed();
 }
 
 //---------------------------------------------------------------------------

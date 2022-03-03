@@ -94,6 +94,10 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   connect(ui_->show_landmark_labels, &QCheckBox::stateChanged, session_.data(), &Session::set_show_landmark_labels);
   connect(session.data(), &Session::planes_changed, this, &DataTool::update_plane_table);
   landmark_table_model_->set_session(session);
+
+  connect(ui_->ffc_brush_size_, &QSlider::valueChanged, session.data(), &Session::set_ffc_paint_size);
+  connect(ui_->ffc_included_mode_, &QRadioButton::toggled, session.data(), &Session::set_ffc_paint_mode_inclusive);
+
   update_table();
   handle_landmark_mode_changed();
   handle_constraints_mode_changed();

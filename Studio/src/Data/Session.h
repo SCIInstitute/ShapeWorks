@@ -170,6 +170,12 @@ class Session : public QObject {
   void set_ffc_paint_active(bool enabled);
   bool get_ffc_paint_active();
 
+  void set_ffc_paint_mode_inclusive(bool inclusive);
+  bool get_ffc_paint_mode_inclusive();
+
+  void set_ffc_paint_size(double size);
+  double get_ffc_paint_size();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -243,8 +249,12 @@ class Session : public QObject {
   bool landmark_drag_mode_ = false;
   bool landmarks_active_ = false;
   bool planes_active_ = false;
-  bool ffc_painting_active_ = false;
   bool show_landmark_labels_ = false;
+
+  bool ffc_painting_active_ = false;
+  bool ffc_painting_inclusive_mode_ = true;
+  double ffc_paint_size = 50;
+
   bool is_loading_ = false;
 };
 
