@@ -33,9 +33,8 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   //----------------------------------------------------------------------
   StudioSphereRepresentation() {
     this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
-    this->sphere_source_->SetThetaResolution(64);
-    this->sphere_source_->SetPhiResolution(64);
-
+    this->sphere_source_->SetThetaResolution(32);
+    this->sphere_source_->SetPhiResolution(32);
     this->sphere_source_->SetRadius(7);
 
     this->property_ = vtkSmartPointer<vtkProperty>::New();
@@ -51,17 +50,6 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
     this->actor_ = vtkSmartPointer<vtkActor>::New();
     this->actor_->SetMapper(this->mapper_);
     this->actor_->SetProperty(this->property_);
-    this->set_visible(false);
-  }
-
-  //----------------------------------------------------------------------
-  void set_2d_mode() {
-    // 2d
-    this->property_->SetOpacity(1.0);
-    this->property_->LightingOff();
-    this->property_->SetLineWidth(3.0);
-    // this->property_->SetRepresentationToPoints();
-    this->property_->SetRepresentationToWireframe();
     this->set_visible(false);
   }
 
@@ -180,6 +168,10 @@ void PaintWidget::SetEnabled(int enabling) { this->Superclass::SetEnabled(enabli
 bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
   double worldPos[3];
   double worldOrient[9] = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+
+  if (!this->Renderer->IsInViewport(displayPos[0], displayPos[1])) {
+    return false;
+  }
 
   if (!this->PointPlacer->ComputeWorldPosition(this->Renderer, displayPos, worldPos, worldOrient)) {
     this->LeaveAction(this);
