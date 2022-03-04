@@ -840,13 +840,13 @@ QWidget#specificity_panel {
                <item row="1" column="1" colspan="2">
                 <widget class="QSlider" name="ffc_brush_size_">
                  <property name="minimum">
-                  <number>1</number>
+                  <number>5</number>
                  </property>
                  <property name="maximum">
                   <number>100</number>
                  </property>
                  <property name="value">
-                  <number>25</number>
+                  <number>50</number>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>

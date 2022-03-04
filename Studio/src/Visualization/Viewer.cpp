@@ -564,9 +564,17 @@ void Viewer::update_planes() {
 void Viewer::update_ffc_mode() {
   paint_widget_->SetDefaultRenderer(renderer_);
   paint_widget_->SetRenderer(renderer_);
-  paint_widget_->SetInteractor( renderer_->GetRenderWindow()->GetInteractor() );
+  paint_widget_->SetInteractor(renderer_->GetRenderWindow()->GetInteractor());
   paint_widget_->SetEnabled(session_->get_ffc_paint_active());
-  paint_widget_->set_brush_size(session_->get_ffc_paint_size());
+
+  double paint_size = session_->get_ffc_paint_size() * 0.10;
+
+  // scale based on dimension of data
+  if (meshes_.valid()) {
+    paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+  }
+
+  paint_widget_->set_brush_size(paint_size);
   paint_widget_->SetPointPlacer(point_placer_);
 }
 
@@ -695,6 +703,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   plane_widget_->clear_planes();
   update_landmarks();
   update_planes();
+  update_ffc_mode();
   ren->AddViewProp(corner_annotation_);
 }
 
