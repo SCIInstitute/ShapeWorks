@@ -843,7 +843,7 @@ QWidget#specificity_panel {
                   <number>5</number>
                  </property>
                  <property name="maximum">
-                  <number>100</number>
+                  <number>120</number>
                  </property>
                  <property name="value">
                   <number>50</number>

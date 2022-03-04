@@ -50,12 +50,12 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
                                               "• Right click plane point to flip normal");
 
   // start with these off
-  //ui_->landmarks_open_button->toggle();
-  ui_->constraints_open_button->toggle();
-  //ui_->notes_open_button->toggle();
+  ui_->landmarks_open_button->toggle();
+  //ui_->constraints_open_button->toggle();
+  ui_->notes_open_button->toggle();
 
   // table on
-   ui_->table_open_button->toggle();
+  ui_->table_open_button->toggle();
 
   // ui_->ffc_widget->hide();
 
