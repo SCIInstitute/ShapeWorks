@@ -38,6 +38,7 @@ class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
 class PlaneWidget;
+class PaintWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -224,6 +225,7 @@ class Viewer {
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;
+  vtkSmartPointer<PaintWidget> paint_widget_;
 
   QSharedPointer<Session> session_;
 

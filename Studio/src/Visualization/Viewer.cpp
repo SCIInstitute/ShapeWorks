@@ -1,11 +1,4 @@
-#include <Data/Preferences.h>
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
-#include <Visualization/LandmarkWidget.h>
-#include <Visualization/Lightbox.h>
-#include <Visualization/PlaneWidget.h>
-#include <Visualization/Viewer.h>
-#include <Visualization/Visualizer.h>
+// vtk
 #include <vtkArrowSource.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
@@ -37,6 +30,17 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
 
+// shapeworks
+#include <Data/Preferences.h>
+#include <Data/Shape.h>
+#include <Data/StudioLog.h>
+#include <Visualization/LandmarkWidget.h>
+#include <Visualization/Lightbox.h>
+#include <Visualization/PaintWidget.h>
+#include <Visualization/PlaneWidget.h>
+#include <Visualization/Viewer.h>
+#include <Visualization/Visualizer.h>
+
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
@@ -50,6 +54,7 @@ Viewer::Viewer() {
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
+  paint_widget_ = vtkSmartPointer<PaintWidget>::New();
 
   sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
@@ -556,7 +561,14 @@ void Viewer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_ffc_mode() {}
+void Viewer::update_ffc_mode() {
+  paint_widget_->SetDefaultRenderer(renderer_);
+  paint_widget_->SetRenderer(renderer_);
+  paint_widget_->SetInteractor( renderer_->GetRenderWindow()->GetInteractor() );
+  paint_widget_->SetEnabled(session_->get_ffc_paint_active());
+  paint_widget_->set_brush_size(session_->get_ffc_paint_size());
+  paint_widget_->SetPointPlacer(point_placer_);
+}
 
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
