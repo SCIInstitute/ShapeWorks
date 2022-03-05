@@ -1,6 +1,7 @@
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <Libs/Image/Image.h>
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
@@ -136,7 +137,7 @@ bool Shape::import_global_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      return false;
+      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->global_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_world_particles(i, points);
@@ -150,7 +151,7 @@ bool Shape::import_local_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
+      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
     this->particles_.set_local_particles(i, points);
@@ -222,16 +223,10 @@ bool Shape::store_landmarks() {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points()
-{
-  return this->particles_.get_combined_global_particles();
-}
+Eigen::VectorXd Shape::get_global_correspondence_points() { return this->particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points()
-{
-  return this->particles_.get_combined_local_particles();
-}
+Eigen::VectorXd Shape::get_local_correspondence_points() { return this->particles_.get_combined_local_particles(); }
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return this->id_; }
@@ -379,27 +374,30 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
     MeshWorkItem item;
     item.filename = filename;
     MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
-    if (new_mesh) {
+    if (new_mesh && new_mesh->get_poly_data()) {
       mesh_group.set_mesh(i, new_mesh);
 
-      // generate a basic centering transform
-      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(new_mesh->get_poly_data());
-      com->Update();
-      double center[3];
-      com->GetCenter(center);
+      if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
+        STUDIO_SHOW_ERROR("Error: Mesh contained no points: " + QString::fromStdString(filenames[i]));
+      } else {
+        // generate a basic centering transform
+        auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+        com->SetInputData(new_mesh->get_poly_data());
+        com->Update();
+        double center[3];
+        com->GetCenter(center);
 
-      if (save_transform && i == 0) {  // only store for first domain
-        this->transform_->Identity();
-        this->transform_->Translate(-center[0], -center[1], -center[2]);
+        if (save_transform && i == 0) {  // only store for first domain
+          this->transform_->Identity();
+          this->transform_->Translate(-center[0], -center[1], -center[2]);
+        }
       }
     }
   }
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, Eigen::VectorXd& points)
-{
+bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
     return false;
@@ -431,7 +429,7 @@ bool Shape::import_point_file(QString filename, Eigen::VectorXd& points)
 
 //---------------------------------------------------------------------------
 void Shape::load_feature(std::string display_mode, std::string feature) {
-  auto group = this->get_meshes(display_mode);
+  auto group = get_meshes(display_mode);
   if (!group.valid()) {
     // not ready yet
     return;
@@ -444,16 +442,24 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
 
     // first check if we already have this array
     auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+    if (scalar_array) {
+      auto point_features = get_point_features(feature);
+      if (point_features.size() == 0) {
+        auto original_meshes = this->get_original_meshes(true).meshes();
+        this->load_feature_from_mesh(feature, original_meshes[d]);
+      }
+      return;
+    }
     if (!scalar_array) {
-      if (!this->subject_) {
+      if (!subject_) {
         return;
       }
 
       // first check if we have particle scalars for this feature
-      auto point_features = this->get_point_features(feature);
+      auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
           display_mode == Visualizer::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
-        this->set_point_features(feature, point_features);
+        set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
         auto filenames = this->subject_->get_feature_filenames();
@@ -474,7 +480,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
             reader->Update();
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
-            this->apply_feature_to_points(feature, image);
+            apply_feature_to_points(feature, image);
           } catch (itk::ExceptionObject& excep) {
             QMessageBox::warning(0, "Unable to open file", "Error opening file: \"" + filename + "\"");
           }
@@ -482,6 +488,27 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       }
     }
   }
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_name) {
+  if (!subject_) {
+    return nullptr;
+  }
+  auto filenames = this->subject_->get_feature_filenames();
+  if (filenames.find(image_volume_name) != filenames.end()) {
+    auto filename = filenames[image_volume_name];
+
+    if (image_volume_filename_ != filename) {
+      Image image(filename);
+      image_volume_ = vtkSmartPointer<vtkImageData>::New();
+      image_volume_->DeepCopy(image.getVTKImage());
+      image_volume_filename_ = filename;
+    }
+
+    return image_volume_;
+  }
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -524,7 +551,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     values[i] = pixel;
   }
 
-  this->set_point_features(feature, values);
+  set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------
@@ -565,8 +592,8 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature) {
-  auto it = this->point_features_.find(feature);
-  if (it == this->point_features_.end()) {
+  auto it = point_features_.find(feature);
+  if (it == point_features_.end()) {
     return Eigen::VectorXf();
   }
 
@@ -642,8 +669,7 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points_for_display()
-{
+Eigen::VectorXd Shape::get_global_correspondence_points_for_display() {
   auto worlds = this->particles_.get_world_particles();
   int size = 0;
   for (int i = 0; i < worlds.size(); i++) {

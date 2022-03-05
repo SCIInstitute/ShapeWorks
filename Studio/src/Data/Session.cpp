@@ -76,7 +76,7 @@ void Session::calculate_reconstructed_samples() {
     return;
   }
   // this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (auto shape : this->shapes_) {
+  for (auto shape : qAsConst(this->shapes_)) {
     auto pts = shape->get_local_correspondence_points();
     if (!(pts.size() == 0)) {
       /// TODO: fix
@@ -134,7 +134,7 @@ bool Session::save_project(std::string fname) {
   }
 
   // landmarks
-  if (!project_->get_all_landmark_definitions().empty()) {
+  if (project_->get_landmarks_present()) {
     for (int i = 0; i < shapes_.size(); i++) {
       shapes_[i]->store_landmarks();
     }
@@ -182,7 +182,7 @@ bool Session::load_project(QString filename) {
   // clear the project out first
   this->filename_ = QFileInfo(filename).absoluteFilePath();
 
-  if (filename.toLower().endsWith(".xlsx")) {
+  if (filename.endsWith(".xlsx", Qt::CaseInsensitive)) {
     return this->load_xl_project(filename);
   }
 
@@ -377,17 +377,17 @@ bool Session::load_light_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename) {
-  this->filename_ = QFileInfo(filename).absoluteFilePath();
+  filename_ = QFileInfo(filename).absoluteFilePath();
 
-  this->set_project_path(QFileInfo(filename).absolutePath());
+  set_project_path(QFileInfo(filename).absolutePath());
 
-  if (!this->project_->load(QFileInfo(filename).fileName().toStdString())) {
+  if (!project_->load(QFileInfo(filename).fileName().toStdString())) {
     return false;
   }
 
-  int num_subjects = this->project_->get_number_of_subjects();
+  int num_subjects = project_->get_number_of_subjects();
 
-  auto subjects = this->project_->get_subjects();
+  auto subjects = project_->get_subjects();
 
   std::vector<std::string> local_point_files;
   std::vector<std::string> global_point_files;
@@ -397,7 +397,7 @@ bool Session::load_xl_project(QString filename) {
   // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
-    shape->set_mesh_manager(this->mesh_manager_);
+    shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
     auto locals = subjects[i]->get_local_particle_filenames();
@@ -427,11 +427,11 @@ bool Session::load_xl_project(QString filename) {
     }
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     }
-    this->shapes_ << shape;
+    shapes_ << shape;
   }
 
-  this->groups_available_ = this->project_->get_group_names().size() > 0;
-  this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
+  groups_available_ = project_->get_group_names().size() > 0;
+  params_ = project_->get_parameters(Parameters::STUDIO_PARAMS);
   return true;
 }
 
@@ -666,7 +666,6 @@ double Session::update_auto_glyph_size() {
   int num_particles = 0;
 
   for (auto& shape : shapes_) {
-
     Eigen::VectorXd points = shape->get_global_correspondence_points();
     if (points.size() == 0) {
       continue;
@@ -957,6 +956,67 @@ void Session::set_show_landmarks(bool show) {
 
 //---------------------------------------------------------------------------
 bool Session::get_show_landmarks() { return show_landmark_labels_; }
+
+//---------------------------------------------------------------------------
+bool Session::set_image_name(std::string image_name) {
+  if (image_name == get_image_name() || is_loading()) {
+    return false;
+  }
+  params_.set("image_name", image_name);
+  Q_EMIT image_slice_settings_changed();
+  return true;
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_image_name() { return params_.get("image_name", "-none-"); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_axis(QString axis) {
+  if (axis == get_image_axis() || is_loading()) {
+    return;
+  }
+  params_.set("image_axis", axis.toStdString());
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+Axis Session::get_image_axis() {
+  std::string axis_string = params_.get("image_axis", "Z");
+  Axis axis = toAxis(axis_string);
+  if (axis == Axis::invalid) {
+    axis = Axis::Z;
+  }
+  return toAxis(axis_string);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_image_3d_mode(bool mode) {
+  if (mode == get_image_3d_mode() || is_loading()) {
+    return;
+  }
+  params_.set("image_3d_mode", mode);
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_share_window_and_level(bool enabled) {
+  if (enabled == get_image_share_window_and_level() || is_loading()) {
+    return;
+  }
+  params_.set("image_share_window_and_level", enabled);
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+
+//---------------------------------------------------------------------------
+void Session::set_loading(bool loading) { is_loading_ = loading; }
+
+//---------------------------------------------------------------------------
+bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {

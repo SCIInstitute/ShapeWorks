@@ -102,6 +102,7 @@ double length(const Vector3 &v);
 /// handy way to specify an axis
 enum Axis { invalid = -1, X, Y, Z };
 Axis toAxis(const std::string &str);
+std::string axisToString(Axis axis);
 
 /// Ensure an axis is valid
 bool axis_is_valid(const Vector3 &axis);

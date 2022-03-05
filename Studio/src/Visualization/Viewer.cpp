@@ -192,7 +192,7 @@ void Viewer::set_color_scheme(int scheme) {
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
-                                 color_schemes_[scheme].background.b);
+                           color_schemes_[scheme].background.b);
 
   double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
                     color_schemes_[scheme].background.b) /
@@ -465,6 +465,17 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPoints> Viewer::get_glyph_points() { return glyph_points_; }
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
+  int alignment_domain = visualizer_->get_alignment_domain();
+
+  auto transform = shape_->get_alignment(alignment_domain);
+  return transform;
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
@@ -533,8 +544,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       vtkSmartPointer<vtkPolyDataMapper> mapper = surface_mappers_[i];
       vtkSmartPointer<vtkActor> actor = surface_actors_[i];
 
-      // update_points();
-
       draw_exclusion_spheres(shape);
 
       auto transform = get_transform(visualizer_->get_alignment_domain(), i);
@@ -574,9 +583,14 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       } else {
         mapper->ScalarVisibilityOff();
       }
+
     }
+    update_points();
+
     display_vector_field();
   }
+
+  update_image_volume();
 
   update_actors();
   update_glyph_properties();
@@ -597,8 +611,14 @@ void Viewer::clear_viewer() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::reset_camera(std::array<double, 3> c) {
+void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
+
+//-----------------------------------------------------------------------------
+void Viewer::reset_camera() {
+  slice_view_.update_camera();
+  renderer_->ResetCameraClippingRange();
   renderer_->ResetCamera();
+  renderer_->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -666,6 +686,7 @@ void Viewer::set_show_surface(bool show) {
   update_actors();
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::set_show_landmarks(bool show) {
   show_landmarks_ = show;
   update_landmarks();
@@ -694,6 +715,7 @@ void Viewer::update_points() {
   Eigen::VectorXf scalar_values;
   if (showing_feature_map()) {
     auto feature_map = get_displayed_feature_map();
+    shape_->load_feature(visualizer_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);
   }
 
@@ -703,23 +725,22 @@ void Viewer::update_points() {
     glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
     glyph_points_->Reset();
-    glyph_points_->SetNumberOfPoints(num_points);
-
     scalars->Reset();
-    scalars->SetNumberOfTuples(num_points);
 
     unsigned int idx = 0;
     for (int i = 0; i < num_points; i++) {
-      if (scalar_values.size() > i) {
-        scalars->InsertValue(i, scalar_values[i]);
-      } else {
-        scalars->InsertValue(i, i);
-      }
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      glyph_points_->InsertPoint(i, x, y, z);
+      if (slice_view_.should_point_show(x,y,z)) {
+        if (scalar_values.size() > i) {
+          scalars->InsertNextValue(scalar_values[i]);
+        } else {
+          scalars->InsertNextValue(i);
+        }
+        glyph_points_->InsertNextPoint(x, y, z);
+      }
     }
   } else {
     glyph_points_->Reset();
@@ -799,7 +820,39 @@ void Viewer::update_actors() {
       renderer_->AddActor(surface_actors_[i]);
     }
   }
+
+  slice_view_.update_renderer();
+
   update_opacities();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_image_volume() {
+  if (!session_ || !shape_) {
+    return;
+  }
+  slice_view_.set_orientation(session_->get_image_axis());
+
+  if (meshes_.valid()) {
+    slice_view_.set_mesh(meshes_.meshes()[0]->get_poly_data());
+  }
+
+  slice_view_.update_particles();
+
+  auto image_volume_name = session_->get_image_name();
+  if (image_volume_name == current_image_name_) {
+    return;
+  }
+  current_image_name_ = image_volume_name;
+  if (image_volume_name != "-none-") {
+    auto volume = shape_->get_image_volume(image_volume_name);
+    slice_view_.set_volume(volume);
+  } else {
+    slice_view_.set_volume(nullptr);
+  }
+  slice_view_.update_renderer();
+  slice_view_.update_camera();
+  update_points();
 }
 
 //-----------------------------------------------------------------------------
@@ -884,8 +937,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object) {
   if (num_points <= 0) {
     exclusion_sphere_points_->Reset();
   } else {
-    vtkUnsignedLongArray* scalars =
-        (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
+    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
     scalars->Reset();
     scalars->SetNumberOfTuples(num_points);
 
@@ -987,6 +1039,17 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int do
 vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), domain);
 }
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
+  return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), 0);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::handle_key(int* click_pos, std::string key) { slice_view_.handle_key(key); }
+
+//-----------------------------------------------------------------------------
+void Viewer::set_window_and_level(double window, double level) { slice_view_.set_window_and_level(window, level); }
 
 //-----------------------------------------------------------------------------
 bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {

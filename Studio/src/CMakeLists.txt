@@ -111,6 +111,7 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Worker.h
+  Data/StudioLog.h
   )
 
 FILE(GLOB STUDIO_JOB_SRCS
@@ -196,10 +197,14 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/StudioInteractorStyle.cpp
+  Visualization/StudioSliceInteractorStyle.cpp
+  Visualization/SliceView.cpp
+  Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
   Visualization/StudioVtkOutputWindow.cpp
 )
+
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/BarGraph.h
   Visualization/Lightbox.h

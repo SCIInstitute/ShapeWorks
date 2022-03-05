@@ -411,9 +411,16 @@ std::vector<LandmarkDefinition> Project::get_landmarks(int domain_id) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitions()
-{
-  return landmark_definitions_;
+std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitions() { return landmark_definitions_; }
+
+//---------------------------------------------------------------------------
+bool Project::get_landmarks_present() {
+  for (const auto& def : landmark_definitions_) {
+    if (!def.empty()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -745,6 +752,13 @@ std::vector<std::string> Project::get_feature_names() {
   }
 
   return this->feature_names_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_image_names() {
+  // grab feature volumes
+  auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  return feature_names;
 }
 
 //---------------------------------------------------------------------------

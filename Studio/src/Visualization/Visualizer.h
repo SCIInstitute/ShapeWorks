@@ -140,6 +140,8 @@ class Visualizer : public QObject {
 
   void handle_feature_range_changed();
 
+  void handle_image_slice_settings_changed();
+
  private:
   ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;

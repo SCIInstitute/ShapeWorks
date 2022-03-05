@@ -136,6 +136,25 @@ class Session : public QObject {
   void set_show_landmarks(bool show);
   bool get_show_landmarks();
 
+  // image volume
+  bool set_image_name(std::string image_name);
+  std::string get_image_name();
+
+  // image axis
+  void set_image_axis(QString axis);
+  Axis get_image_axis();
+
+  // image view 3d mode
+  void set_image_3d_mode(bool mode);
+  bool get_image_3d_mode();
+
+  // image sync/share window width and level
+  void set_image_share_window_and_level(bool enabled);
+  bool get_image_share_window_and_level();
+
+  void set_loading(bool loading);
+  bool is_loading();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -157,6 +176,8 @@ class Session : public QObject {
   void message(QString);
   void error(QString);
   void feature_range_changed();
+  void update_view_mode();
+  void image_slice_settings_changed();
 
  public:
   // constants
@@ -201,6 +222,7 @@ class Session : public QObject {
   bool landmark_drag_mode_ = false;
   bool landmarks_active_ = false;
   bool show_landmark_labels_ = false;
+  bool is_loading_ = false;
 };
 
 }  // namespace shapeworks

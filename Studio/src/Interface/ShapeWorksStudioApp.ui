@@ -22,6 +22,11 @@
     border-radius: 3px;
     border: 1px solid grey;
 }
+
+QWidget#image_widget {
+    border-radius: 3px;
+    border: 1px solid grey;
+}
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -32,25 +37,12 @@
     <property name="bottomMargin">
      <number>4</number>
     </property>
-    <property name="spacing">
+    <property name="horizontalSpacing">
      <number>0</number>
     </property>
-    <item row="0" column="0">
-     <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>300</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
-    </item>
+    <property name="verticalSpacing">
+     <number>2</number>
+    </property>
     <item row="2" column="0">
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -316,15 +308,31 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>300</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout"/>
+    </item>
     <item row="0" column="1">
      <widget class="QScrollBar" name="vertical_scroll_bar">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
-    </item>
-    <item row="3" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout"/>
     </item>
     <item row="4" column="0">
      <widget class="QWidget" name="feature_widget" native="true">
@@ -341,6 +349,49 @@
        <property name="bottomMargin">
         <number>3</number>
        </property>
+       <item row="0" column="11">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLineEdit" name="feature_line">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QCheckBox" name="feature_uniform_scale">
+         <property name="toolTip">
+          <string>Apply a uniform scale for all viewers</string>
+         </property>
+         <property name="text">
+          <string>Uniform Scale</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="3">
         <widget class="QComboBox" name="features">
          <property name="toolTip">
@@ -351,16 +402,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="10">
-        <widget class="QCheckBox" name="feature_auto_scale">
-         <property name="toolTip">
-          <string>Automatic scale range</string>
-         </property>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Auto</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+          <string>Min</string>
          </property>
         </widget>
        </item>
@@ -377,36 +422,16 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="11">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="4">
-        <widget class="QCheckBox" name="feature_uniform_scale">
+       <item row="0" column="10">
+        <widget class="QCheckBox" name="feature_auto_scale">
          <property name="toolTip">
-          <string>Apply a uniform scale for all viewers</string>
+          <string>Automatic scale range</string>
          </property>
          <property name="text">
-          <string>Uniform Scale</string>
+          <string>Auto</string>
          </property>
          <property name="checked">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="8">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Max</string>
          </property>
         </widget>
        </item>
@@ -423,10 +448,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="5">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="8">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Max</string>
          </property>
         </widget>
        </item>
@@ -437,21 +462,120 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_3">
+      </layout>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QWidget" name="image_widget" native="true">
+      <layout class="QGridLayout" name="gridLayout_6">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>3</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>Min</string>
+          <string>Image</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLineEdit" name="feature_line">
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+        <widget class="QComboBox" name="image_combo_">
+         <property name="toolTip">
+          <string>Select feature map</string>
          </property>
-         <property name="readOnly">
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="4">
+        <widget class="Line" name="line_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QCheckBox" name="image_share_window_and_level_">
+         <property name="toolTip">
+          <string>Apply a uniform scale for all viewers</string>
+         </property>
+         <property name="text">
+          <string>Shared Brightness/Contrast</string>
+         </property>
+         <property name="checked">
           <bool>true</bool>
          </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>View</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QCheckBox" name="image_3d_mode_">
+         <property name="toolTip">
+          <string>Apply a uniform scale for all viewers</string>
+         </property>
+         <property name="text">
+          <string>3D Mode</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QComboBox" name="image_axis_">
+         <property name="toolTip">
+          <string>Select feature map</string>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>X</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Y</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Z</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
