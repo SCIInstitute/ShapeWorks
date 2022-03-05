@@ -578,13 +578,12 @@ bool AnalysisTool::compute_stats()
   }
   // this->stats_.ImportPointsForMca(points, dps);
   this->stats_.ComputeModes();
-  if(dps> 1){
-    this->stats_.ComputeBetweenModesForMca();
-    this->stats_.ComputeWithinModesForMca();
-    this->stats_.MultiLevelPrincipalComponentProjections();
-  }
+  this->stats_.ComputeBetweenModesForMca();
+  this->stats_.ComputeWithinModesForMca();
+    // this->stats_.MultiLevelPrincipalComponentProjections();
   
-  this->stats_.PrincipalComponentProjections();
+  
+  // this->stats_.PrincipalComponentProjections();
   // this->stats_.MCADecomposition();
 
   this->compute_shape_evaluations();

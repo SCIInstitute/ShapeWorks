@@ -28,6 +28,10 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
 {
+  std::cout << "writing original  compactness" << std::endl;
+ std::string fn = "/home/sci/nawazish.khan/Desktop/result/pca_compactness.txt";
+ std::ofstream outfile;
+ outfile.open(fn.c_str());
   const int N = particleSystem.N();
   const int D = particleSystem.D();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
@@ -52,6 +56,8 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
     cumsum(i) = cumsum(i-1) + S(i);
   }
   cumsum /= S.sum();
+  outfile << cumsum << "\n";
+  outfile.close();
   return cumsum;
 }
 
@@ -206,7 +212,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
       const int numParticles = D / VDimension;
       const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
       const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
-      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().squaredNorm().sum() / numParticles;
+      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
       totalDists(mode-1) += dist;
     }
   }
@@ -219,7 +225,6 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
 
 Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  std::cout << "Start - ComputeFullGeneralizationMultiLevel " << std::endl;
   const int N = particleSystem.N();
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
@@ -343,15 +348,12 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationMultiLevel(const Parti
         std::cout << " distance  done  " << std::endl;
 
         totalDists(mode - 1) += dist;
-        // distMatrix(leave, mode - 1) += dist;
       }
       std::cout << "organ k done " << k << std::endl;
     }// end for all organs
     std::cout << "leave = " << leave << " done " << std::endl;
   }// end for leave out loop
-  // for (int i = 0; i < totalDists.size(); i++) { generalizations[i] = std::sqrt(totalDists[i]); }
   generalizations = totalDists / (N);
-  // distMatrix /= dps;
   return generalizations;
 }
 
@@ -490,7 +492,6 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
       int closestIdx, _r;
       distanceToClosestTrainingSample(i) = ptsDistance.minCoeff(&_r, &closestIdx);
     }
-
     double meanSpecificity = distanceToClosestTrainingSample.mean();
     const double specificity = meanSpecificity / numParticles;
     specificities(nModes-1) = specificity;
@@ -501,46 +502,51 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityMultiLevel(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
+  std::cout << "mult-level specificity start" << std::endl;
+  int N = particleSystem.N();
+  std::cout << " N = " << N << std::endl;
+  int D = particleSystem.D();
+  std::cout << " D = " << D << std::endl;
+
   // const int numParticles = D / VDimension;
   unsigned int dps = num_particles_ar.size();
+  std::cout << " dps = " << dps << std::endl;
 
 
-  Eigen::VectorXd specificities = Eigen::VectorXd::Zero(N-1);
-  Eigen::VectorXd specificitiesMatrix = Eigen::VectorXd::Zero(1000, N-1);
+
+  Eigen::VectorXd specificities(N-1);
+  Eigen::MatrixXd specificitiesMatrix = Eigen::MatrixXd::Zero(1000, N-1);
 
 
   // PCA calculations
   const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
-  const int nTrain = ptsModels.cols();
+  int nTrain = ptsModels.cols();
 
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
 
-
-
-  //--*************************
-
-
-
-
-  ///****************
   ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  std::cout << "Multi level modeling done" << std::endl;
+
   const Eigen::VectorXd between_mean = between_objective_all.rowwise().mean();
   between_objective_all.colwise() -= between_mean;
   Eigen::JacobiSVD<Eigen::MatrixXd> svd_between(between_objective_all, Eigen::ComputeFullU);
   const auto allEigenValues_between = svd_between.singularValues();
+  std::cout << "svd between done" << std::endl;
+
 
   for(unsigned int k = 0; k < dps; k++)
   {  
+    std::cout << "---spec k = " << k << std::endl;
     unsigned int row = 0;
     unsigned int m = num_particles_ar[k] * VDimension;
     for (unsigned int x = 0; x < k; x++)
     {
-      row += num_particles_ar[x];
+      row += (num_particles_ar[x] * VDimension);
     }  
-    Eigen::MatrixXd organ_k_points = ptsModels.block(row * VDimension, 0, num_particles_ar[k] * VDimension, nTrain);
+    std::cout <<" row = " << row << std::endl;
+    Eigen::MatrixXd organ_k_points = ptsModels.block(row, 0, num_particles_ar[k] * VDimension, nTrain);
+    std::cout << "organ k points extracted " << std::endl;
     const Eigen::VectorXd mu_k = organ_k_points.rowwise().mean();
     organ_k_points.colwise() -= mu_k;
     
@@ -548,63 +554,89 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityMultiLevel(const Particle
     const Eigen::VectorXd within_mean = within_objective_k.rowwise().mean();
     within_objective_k.colwise() -= within_mean;
     Eigen::JacobiSVD<Eigen::MatrixXd> svd_within(within_objective_k, Eigen::ComputeFullU);
+    std::cout << "svd within done k = " << k << std::endl;
+
+
     const auto allEigenValues_within = svd_within.singularValues();
 
     for (int nModes=1;nModes<N;nModes++)
     {
+      std::cout << "start for k = " << k << " mode = " << nModes << std::endl; 
       if (progress_callback) {
         progress_callback(static_cast<float>(nModes) / static_cast<float>(N));
       }
       const int nSamples = 1000;
       const auto eigenValues_within = allEigenValues_within.head(nModes);
+      std::cout << " m = " << m  << " nModes = " << nModes << "svd_within.matrixU() size = " <<svd_within.matrixU().rows() << " X " << svd_within.matrixU().cols() << std::endl;
       const auto epsi_within = svd_within.matrixU().block(0, 0, m, nModes); // m * nModes
-      const auto eigenValues_between = allEigenValues_between.head(nModes);
-      const auto epsi_between = svd_between.matrixU().block(0, 0, dps * VDimension, nModes); // Kd * nModes
+      // const auto eigenValues_between = allEigenValues_between.head(nModes);
+      // const auto epsi_between = svd_between.matrixU().block(0, 0, dps * VDimension, nModes); // Kd * nModes
+      // std::cout << " dps = " << dps  << " nModes = " << nModes << "svd_between.matrixU() size = " <<svd_between.matrixU().rows() << " X " << svd_between.matrixU().cols() << std::endl;
+
 
       Eigen::MatrixXd samplingBetas_for_within(nModes, nSamples);
       Eigen::MatrixXd samplingBetas_for_between(nModes, nSamples); // nModes X 1000
-      MultiVariateNormalRandom sampling_between{eigenValues_between.asDiagonal()};
+      // MultiVariateNormalRandom sampling_between{eigenValues_between.asDiagonal()};
       MultiVariateNormalRandom sampling_within{eigenValues_within.asDiagonal()};
+      std::cout << "sampling done " << std::endl;
 
       //Populate sampling betas
       for (int i = 0; i < nSamples; i++) {
-        samplingBetas_for_between.col(i) = sampling_between();
+        // samplingBetas_for_between.col(i) = sampling_between();
         samplingBetas_for_within.col(i) = sampling_within();
       }
 
       Eigen::MatrixXd samplingPoints_within_k = (epsi_within * samplingBetas_for_within).colwise() + within_mean; //m X nModes  X  nModes * 1000 ---> m X 1000
       std::cout << " samplingPoints_within_k done " << std::endl;
-      Eigen::MatrixXd samplingPoints_between_all = (epsi_between * samplingBetas_for_between).colwise() + between_mean; //Kd X nModes  X  nModes * 1000 ---> Kd X 1000
+      // Eigen::MatrixXd samplingPoints_between_all = (epsi_between * samplingBetas_for_between).colwise() + between_mean; //Kd X nModes  X  nModes * 1000 ---> Kd X 1000
       std::cout << " samplingPoints_between_all done " << std::endl;
-      Eigen::MatrixXd samplingPoints_between_k(m, nSamples);
+      // Eigen::MatrixXd samplingPoints_between_k(m, nSamples);
       for (unsigned int x = 0; x < num_particles_ar[k]; x++){
-        samplingPoints_between_k.block(VDimension*x, 0, VDimension, nSamples) = samplingPoints_between_all.block(k*VDimension, 0, VDimension, nSamples);
+        // samplingPoints_between_k.block(VDimension*x, 0, VDimension, nSamples) = samplingPoints_between_all.block(k*VDimension, 0, VDimension, nSamples);
       }
-      Eigen::MatrixXd samplingPoints_net_k = (samplingPoints_between_k + samplingPoints_within_k).colwise() + mu_k;
+      std::cout << " samplingPoints_between k  done " << std::endl;
+
+      // Eigen::MatrixXd samplingPoints_net_k = (samplingPoints_between_k + samplingPoints_within_k);
+
+      Eigen::MatrixXd samplingPoints_net_k =  samplingPoints_within_k;
+      std::cout << " A  done " << std::endl;
+
       Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
       for (int i = 0; i < nSamples; i++)
       {
         Eigen::VectorXd pts_m_k = samplingPoints_net_k.col(i);
         Eigen::MatrixXd ptsDistance_vec_k = organ_k_points.colwise() - pts_m_k;
+        std::cout << " B  done i = " << i << std::endl;
+
         Eigen::MatrixXd ptsDistance_k(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
         for (int j = 0; j < nTrain; j++) {
-          Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped_k(ptsDistance_vec_k.col(j).data(), num_particles_ar[k],
+
+          std::cout << " C  done j = " << j << std::endl;
+
+          Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped_k(ptsDistance_vec_k.col(j).data(), ptsDistance_vec_k.col(j).size()/VDimension,
                                                                     VDimension);
-          ptsDistance_k(j) = (ptsDistance_vec_reshaped_k).rowwise().norm().sum();
+          std::cout << " D  done j = " << j << std::endl;
+
+          ptsDistance_k(j) = (ptsDistance_vec_reshaped_k).rowwise().squaredNorm().sum();
+          std::cout << " E  done j = " << j << std::endl;
+
         }
         int closestIdx, _r;
-        distanceToClosestTrainingSample(i) = ptsDistance_k.minCoeff(&_r, &closestIdx);
+          std::cout << " F  done" << std::endl;
+
+        distanceToClosestTrainingSample(i) = std::sqrt(ptsDistance_k.minCoeff(&_r, &closestIdx));
+          std::cout << " G  done  "  << std::endl;
+
 
       }
-      specificitiesMatrix.col(nModes-1) = distanceToClosestTrainingSample;
+      // specificitiesMatrix.col(nModes-1) = distanceToClosestTrainingSample;
       double meanSpecificity = distanceToClosestTrainingSample.mean();
       const double specificity = meanSpecificity / num_particles_ar[k];
-      specificities(nModes-1) += specificity; // For each mode add specificty for each organ
+      specificities(nModes-1) += (specificity); // For each mode add specificty for each organ
     }
   }
-  specificities /= dps;
-  specificitiesMatrix /= dps;
   return specificities;
+ 
 }
 
 

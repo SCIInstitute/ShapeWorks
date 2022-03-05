@@ -412,6 +412,80 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<vnl_vector<
 
  std::cout << "Between Covariance Matrix computed " << std::endl;
  std::cout << "MLPCA base part done" << std::endl;
+ std::cout << "writing within compactness" << std::endl;
+ std::string fn = "/home/sci/nawazish.khan/Desktop/result/within_compactness.txt";
+ std::ofstream outfile;
+ outfile.open(fn.c_str());
+
+ Eigen::MatrixXd WithinMatrix = this->m_MatrixWithin;
+
+  const int N = WithinMatrix.cols();
+  const int D = WithinMatrix.rows();
+  const int num_modes = N-1; // the number of modes is one less than the number of samples
+
+  if (num_modes < 1) {
+    std::cout << "no modes" << std::endl;
+  }
+  Eigen::MatrixXd Y = WithinMatrix;
+
+  // Compute Within subspace here
+  
+  const Eigen::VectorXd mu = Y.rowwise().mean();
+  Y.colwise() -= mu;
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
+  const auto S = svd.singularValues().array().pow(2) / (N * D);
+
+  // Compute cumulative sum
+  Eigen::VectorXd cumsum(num_modes);
+  cumsum(0) = S(0);
+  for (int i = 1; i < num_modes; i++) {
+    cumsum(i) = cumsum(i-1) + S(i);
+  }
+  cumsum /= S.sum();
+  outfile << cumsum << "\n";
+  outfile.close();
+
+
+ std::cout << "gen ml file opened" << std::endl;
+ std::cout << "writing between  part compactness" << std::endl;
+  std::string fn1 = "/home/sci/nawazish.khan/Desktop/result/between_compactness.txt";
+ std::ofstream outfile1;
+ outfile1.open(fn1.c_str());
+
+ Eigen::MatrixXd BetweenMatrix = this->m_MatrixBetween;
+
+   const int N1 = BetweenMatrix.cols();
+  const int D1 = BetweenMatrix.rows();
+  const int num_modes1 = N1-1; // the number of modes is one less than the number of samples
+
+  if (num_modes1 < 1) {
+    std::cout << "no modes" << std::endl;
+  }
+  Eigen::MatrixXd Y1 = BetweenMatrix;
+
+  // Compute Within subspace here
+  
+  const Eigen::VectorXd mu1 = Y1.rowwise().mean();
+  Y1.colwise() -= mu1;
+  std::cout << "before svd done of Y" << std::endl;
+
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd1(Y1);
+  std::cout << "svd done of Y" << std::endl;
+  const auto S1 = svd1.singularValues().array().pow(2) / (N1 * D1);
+
+  // Compute cumulative sum
+  Eigen::VectorXd cumsum1(num_modes1);
+  cumsum1(0) = S1(0);
+  for (int i = 1; i < num_modes1; i++) {
+ 
+    cumsum1(i) = cumsum1(i-1) + S1(i);
+  }
+  cumsum1 /= S1.sum();
+  outfile1 << cumsum1 << "\n";
+  outfile1.close();
+  std::cout << "done " << std::endl;
 
 }
 
@@ -806,62 +880,77 @@ int ParticleShapeStatistics::ComputeModes()
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
-  // Now print the projection of each shape
-  m_principals.resize(m_numSamples, m_numSamples);
+  // // Now print the projection of each shape
+  // m_principals.resize(m_numSamples, m_numSamples);
 
-  for (unsigned int n = 0; n < m_numSamples; n++) {
-    for (unsigned int s = 0; s < m_numSamples; s++) {
-      double p = dot_product<double>(m_eigenvectors.get_column((m_numSamples - 1) - n),
-                                     m_pointsMinusMean.get_column(s));
+  // for (unsigned int n = 0; n < m_numSamples; n++) {
+  //   for (unsigned int s = 0; s < m_numSamples; s++) {
+  //     double p = dot_product<double>(m_eigenvectors.get_column((m_numSamples - 1) - n),
+  //                                    m_pointsMinusMean.get_column(s));
 
-      m_principals(s, n) = p; // each row is a sample, columns index PC
+  //     m_principals(s, n) = p; // each row is a sample, columns index PC
 
-    }
-  }
-  auto fn = this->m_results_dir + "PCA_projections.txt";
-  std::cout << "Writing Projections to file " << fn << std::endl;
+  //   }
+  // }
+  // auto fn = this->m_results_dir + "PCA_projections.txt";
+  // std::cout << "Writing Projections to file " << fn << std::endl;
 
-  std::ofstream outfile;
-  outfile.open(fn.c_str());
-  for(int s = 0; s < m_numSamples; s++){
-    for (int n = 0; n < m_numSamples; n++){
-      outfile << m_principals(s, n) << ((n == m_numSamples-1) ? "\n" : " ");
-    }
-  }
-  outfile.close();
-  return 0;
+  // std::ofstream outfile;
+  // outfile.open(fn.c_str());
+  // for(int s = 0; s < m_numSamples; s++){
+  //   for (int n = 0; n < m_numSamples; n++){
+  //     outfile << m_principals(s, n) << ((n == m_numSamples-1) ? "\n" : " ");
+  //   }
+  // }
+  // outfile.close();
+  // return 0;
 }
 
 
 int ParticleShapeStatistics::MultiLevelPrincipalComponentProjections()
 {
-  // Now print the projection of each shape
-  m_mulit_level_combined_principals.resize(m_numSamples, m_numSamples);
+  // // Now print the projection of each shape
+  // m_mulit_level_combined_principals.resize(m_numSamples, 2 * m_numSamples);
 
-  for (unsigned int n = 0; n < m_numSamples; n++) {
-    for (unsigned int s = 0; s < m_numSamples; s++) {
-      double within = dot_product<double>(m_withinEigenvectors.get_column((m_numSamples - 1) - n),
-                                     m_pointsMinusMean_for_within.get_column(s));
-      double between = dot_product<double>(m_betweenEigenvectors.get_column((m_numSamples - 1) - n),
-                                     m_pointsMinusMean_for_between.get_column(s));
-
-      m_mulit_level_combined_principals(s, n) = (within + between); // each row is a sample, columns index PC
-
-    }
-  }
+  // for (unsigned int n = 0; n < m_numSamples; n++) {
+  //   for (unsigned int s = 0; s < m_numSamples; s++) {
+  //     double within = dot_product<double>(m_withinEigenvectors.get_column((m_numSamples - 1) - n),
+  //                                    m_pointsMinusMean_for_within.get_column(s));
+  //     m_mulit_level_combined_principals(s, n) = (within); // each row is a sample, columns index PC
+  //   }
+  //   for (unsigned int s = 0; s < m_numSamples; s++) {
+  //     double between = dot_product<double>(m_betweenEigenvectors.get_column((m_numSamples - 1) - n),
+  //                                    m_pointsMinusMean_for_between.get_column(s));
+  //     m_mulit_level_combined_principals(s, 2 * n) = (between); // each row is a sample, columns index PC
+  //   }
+  // }
   
-  auto fn = this->m_results_dir + "MLPCA_projections.txt";
-  std::cout << "Writing Projections to file " << fn << std::endl;
+  // // m_mulit_level_combined_principals.resize(m_numSamples, m_numSamples);
 
-  std::ofstream outfile;
-  outfile.open(fn.c_str());
-  for(int s = 0; s < m_numSamples; s++){
-    for (int n = 0; n < m_numSamples; n++){
-      outfile << m_mulit_level_combined_principals(s, n) << ((n == m_numSamples-1) ? "\n" : " ");
-    }
-  }
-  outfile.close();
-  return 0;
+  // // for (unsigned int n = 0; n < m_numSamples; n++) {
+  // //   for (unsigned int s = 0; s < m_numSamples; s++) {
+  // //     double within = dot_product<double>(m_withinEigenvectors.get_column((m_numSamples - 1) - n),
+  // //                                    m_pointsMinusMean_for_within.get_column(s));
+  // //     double between = dot_product<double>(m_betweenEigenvectors.get_column((m_numSamples - 1) - n),
+  // //                                    m_pointsMinusMean_for_between.get_column(s));
+
+  // //     m_mulit_level_combined_principals(s, n) = (within + between); // each row is a sample, columns index PC
+
+  // //   }
+  // // }
+  
+  // auto fn = this->m_results_dir + "MLPCA_projections.txt";
+  // std::cout << "Writing Projections to file " << fn << std::endl;
+
+  // std::ofstream outfile;
+  // outfile.open(fn.c_str());
+  // for(int s = 0; s < m_numSamples; s++){
+  //   for (int n = 0; n < (2 * m_numSamples); n++){
+  //     outfile << m_mulit_level_combined_principals(s, n) << ((n == (2 * m_numSamples)-1) ? "\n" : " ");
+  //   }
+  // }
+  // outfile.close();
+  // return 0;
 }
 
 int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
@@ -1038,6 +1127,12 @@ int ParticleShapeStatistics::WriteEvaluationResults(Eigen::VectorXd ar, const st
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  // if(m_dps > 1){
+  //   auto within_compact = shapeworks::ShapeEvaluation::ComputeFullCompactnessInWithinSubspace(this->m_MatrixWithin, progress_callback);
+  //   auto between_compact =  shapeworks::ShapeEvaluation::ComputeFullCompactnessInBetweenSubspace(this->m_MatrixBetween, progress_callback);
+  //   return within_compact;
+  // }
+  // else
   return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
 }
 
@@ -1071,15 +1166,15 @@ Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(floa
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  // if (m_dps > 1)
-  // { 
-  //   std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
-  //   Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel(ps, this->m_num_particles_ar, progress_callback);
-  //   // std::string fn = this->m_results_dir + "generalization_multi_level.csv";
-  //   // this->WriteEvaluationResults(generalization, fn);
-  //   return generalization;
-  // }
-  // else 
+  if (m_dps > 1)
+  { 
+    std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
+    Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel( ps, this->m_num_particles_ar, progress_callback);
+    // std::string fn = this->m_results_dir + "generalization_multi_level.csv";
+    // this->WriteEvaluationResults(generalization, fn);
+    return generalization;
+  }
+  else 
     return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 
