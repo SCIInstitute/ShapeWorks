@@ -191,11 +191,11 @@ void PlaneWidget::update_planes() {
     plane_sources_.pop_back();
   }
 
-  if (!session->get_show_planes()) {
+  auto shape = viewer_->get_shape();
+
+  if (!session->get_show_planes() || !shape) {
     return;
   }
-
-  auto shape = viewer_->get_shape();
 
   int plane_it = 0;
   int plane_color = 0;
@@ -526,6 +526,9 @@ void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<StudioHandleWidget> ha
 //-----------------------------------------------------------------------------
 int PlaneWidget::count_complete_planes() {
   auto shape = viewer_->get_shape();
+  if (!shape) {
+    return 0;
+  }
 
   auto session = viewer_->get_session();
 
