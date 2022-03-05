@@ -358,6 +358,10 @@
 </tr>
 <tr>
 <td></td>
+<td><strong><a href="StudioLog_8h.html#define-studio-show-error">STUDIO_SHOW_ERROR</a></strong>(message) <br>Log show error macro.</td>
+</tr>
+<tr>
+<td></td>
 <td><strong><a href="StudioLog_8h.html#define-studio-close-log">STUDIO_CLOSE_LOG</a></strong>() <br>Close session macro.</td>
 </tr>
 <tr>
@@ -371,23 +375,30 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_STACK(</span>
 <span class="w">    </span><span class="n">message</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_stack</span><span class="p">(</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_stack</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log stack macro. </p>
 <h3 id="define-studio_log_message">define STUDIO_LOG_MESSAGE</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_MESSAGE(</span>
 <span class="w">    </span><span class="n">message</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log message macro. </p>
 <h3 id="define-studio_log_error">define STUDIO_LOG_ERROR</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_ERROR(</span>
 <span class="w">    </span><span class="n">message</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log error macro. </p>
+<h3 id="define-studio_show_error">define STUDIO_SHOW_ERROR</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_SHOW_ERROR(</span>
+<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Log show error macro. </p>
 <h3 id="define-studio_close_log">define STUDIO_CLOSE_LOG</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_CLOSE_LOG(</span>
 
@@ -405,16 +416,17 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioLog</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioLog</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">StudioLog</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioLog</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">Instance</span><span class="p">();</span><span class="w"></span>
@@ -427,6 +439,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">close_log</span><span class="p">();</span><span class="w"></span>
@@ -437,13 +451,15 @@
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_log_filename</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_header</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_header</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_current_datetime</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">log_</span><span class="p">;</span><span class="w"> </span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">log_</span><span class="p">;</span><span class="w">  </span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">log_filename_</span><span class="p">;</span><span class="w"></span>
 
@@ -452,26 +468,21 @@
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">log_datetime_format_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 
+<span class="cp">#define STUDIO_LOG_STACK(message) shapeworks::StudioLog::Instance().log_stack(message)</span>
 
+<span class="cp">#define STUDIO_LOG_MESSAGE(message) shapeworks::StudioLog::Instance().log_message(message, __LINE__, __FILE__)</span>
 
-<span class="cp">#define STUDIO_LOG_STACK(message) \</span>
-<span class="cp">  shapeworks::StudioLog::Instance().log_stack( message )</span>
+<span class="cp">#define STUDIO_LOG_ERROR(message) shapeworks::StudioLog::Instance().log_error(message, __LINE__, __FILE__)</span>
 
-<span class="cp">#define STUDIO_LOG_MESSAGE(message) \</span>
-<span class="cp">  shapeworks::StudioLog::Instance().log_message( message, __LINE__, __FILE__ )</span>
+<span class="cp">#define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)</span>
 
-<span class="cp">#define STUDIO_LOG_ERROR(message) \</span>
-<span class="cp">  shapeworks::StudioLog::Instance().log_error( message, __LINE__, __FILE__ )</span>
+<span class="cp">#define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();</span>
 
-<span class="cp">#define STUDIO_CLOSE_LOG() \</span>
-<span class="cp">  shapeworks::StudioLog::Instance().close_log();</span>
-
-<span class="cp">#define STUDIO_FLUSH_LOG() \</span>
-<span class="cp">  shapeworks::StudioLog::Instance().flush_log();</span>
-<span class="p">}</span><span class="w"></span>
+<span class="cp">#define STUDIO_FLUSH_LOG() shapeworks::StudioLog::Instance().flush_log();</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:37 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:35 +0000</p>
               
             </div>
           </div>

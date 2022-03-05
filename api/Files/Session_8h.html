@@ -455,6 +455,25 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="c1">// image volume</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_image_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_image_name</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// image axis</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_axis</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Axis</span><span class="w"> </span><span class="nf">get_image_axis</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// image view 3d mode</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_3d_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_3d_mode</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// image sync/share window width and level</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_share_window_and_level</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_share_window_and_level</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_loading</span><span class="p">();</span><span class="w"></span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
@@ -475,6 +494,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1">// constants</span>
@@ -517,12 +538,13 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmark_drag_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmarks_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmark_labels_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:37 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:35 +0000</p>
               
             </div>
           </div>

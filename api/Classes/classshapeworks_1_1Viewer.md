@@ -24,6 +24,7 @@ summary: 3D Viewer
 | void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
+| void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**() |
 | void | **[set_glyph_size_and_quality](../Classes/classshapeworks_1_1Viewer.md#function-set-glyph-size-and-quality)**(double size, double quality) |
 | double | **[get_glyph_size](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-size)**() |
 | double | **[get_glyph_quality](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-quality)**() |
@@ -52,6 +53,12 @@ summary: 3D Viewer
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-transform)**(int alignment_domain, int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
+| vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
+| void | **[handle_key](../Classes/classshapeworks_1_1Viewer.md#function-handle-key)**(int * click_pos, std::string key) |
+| void | **[set_window_and_level](../Classes/classshapeworks_1_1Viewer.md#function-set-window-and-level)**(double window, double level) |
+| void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**() |
+| vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
+| vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
 
 ## Detailed Description
 
@@ -117,6 +124,13 @@ void clear_viewer()
 void reset_camera(
     std::array< double, 3 > c
 )
+```
+
+
+### function reset_camera
+
+```cpp
+void reset_camera()
 ```
 
 
@@ -348,6 +362,54 @@ vtkSmartPointer< vtkTransform > get_landmark_transform(
 ```
 
 
+### function get_image_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_image_transform()
+```
+
+
+### function handle_key
+
+```cpp
+void handle_key(
+    int * click_pos,
+    std::string key
+)
+```
+
+
+### function set_window_and_level
+
+```cpp
+void set_window_and_level(
+    double window,
+    double level
+)
+```
+
+
+### function update_image_volume
+
+```cpp
+void update_image_volume()
+```
+
+
+### function get_glyph_points
+
+```cpp
+vtkSmartPointer< vtkPoints > get_glyph_points()
+```
+
+
+### function get_alignment_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_alignment_transform()
+```
+
+
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

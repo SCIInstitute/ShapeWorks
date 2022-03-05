@@ -98,6 +98,8 @@ public:
 
   std::vector<std::string> get_feature_names();
 
+  std::vector<std::string> get_image_names();
+
   std::vector<std::string> get_group_names();
 
   std::vector<std::string> get_group_values(const std::string& group_name) const;
@@ -118,6 +120,8 @@ public:
   std::vector<LandmarkDefinition> get_landmarks(int domain_id);
 
   std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  bool get_landmarks_present();
 
   void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
 
@@ -222,4 +226,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:35 +0000

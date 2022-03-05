@@ -338,18 +338,17 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkActor.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkCamera.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkActor.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkCamera.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span><span class="cp"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkOrientationMarkerWidget</span><span class="p">;</span><span class="w"></span>
 
@@ -358,6 +357,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">StudioInteractorStyle</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioSliceInteractorStyle</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span><span class="w"></span>
@@ -365,8 +365,9 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">Lightbox</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="o">~</span><span class="n">Lightbox</span><span class="p">();</span><span class="w"></span>
 
@@ -394,13 +395,14 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_hover</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_key</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_visualizer</span><span class="p">(</span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">render_window_ready</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">render_window_</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">render_window_ready</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">render_window_</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_renderers</span><span class="p">();</span><span class="w"></span>
 
@@ -412,18 +414,20 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera_clipping_range</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker</span><span class="p">(</span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"></span>
-<span class="w">                              </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker</span><span class="p">(</span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker_viewport</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_interactor_style</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_window_and_level</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="p">);</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_timer_callback</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkOrientationMarkerWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_orientation_marker</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">check_for_first_draw</span><span class="p">();</span><span class="w"></span>
@@ -453,6 +457,7 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">first_draw_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioInteractorStyle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">style_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioSliceInteractorStyle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_style_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span><span class="w"></span>
 
@@ -466,17 +471,16 @@
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkOrientationMarkerWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orientation_marker_widget_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">current_orientation_marker_type_</span><span class="w"></span>
-<span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="o">::</span><span class="n">none</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">current_orientation_marker_corner_</span><span class="w"></span>
-<span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="o">::</span><span class="n">upper_right</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">current_orientation_marker_type_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="o">::</span><span class="n">none</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">current_orientation_marker_corner_</span><span class="w"> </span><span class="o">=</span><span class="w"></span>
+<span class="w">      </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="o">::</span><span class="n">upper_right</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:37 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:35 +0000</p>
               
             </div>
           </div>

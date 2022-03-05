@@ -215,7 +215,10 @@ title: Files
             * **file [Studio/src/Visualization/ColorSchemes.h](../Files/ColorSchemes_8h.md#file-colorschemes.h)** 
             * **file [Studio/src/Visualization/LandmarkWidget.h](../Files/LandmarkWidget_8h.md#file-landmarkwidget.h)** 
             * **file [Studio/src/Visualization/Lightbox.h](../Files/Lightbox_8h.md#file-lightbox.h)** 
+            * **file [Studio/src/Visualization/MeshSlice.h](../Files/MeshSlice_8h.md#file-meshslice.h)** 
+            * **file [Studio/src/Visualization/SliceView.h](../Files/SliceView_8h.md#file-sliceview.h)** 
             * **file [Studio/src/Visualization/StudioInteractorStyle.h](../Files/StudioInteractorStyle_8h.md#file-studiointeractorstyle.h)** 
+            * **file [Studio/src/Visualization/StudioSliceInteractorStyle.h](../Files/StudioSliceInteractorStyle_8h.md#file-studiosliceinteractorstyle.h)** 
             * **file [Studio/src/Visualization/StudioVtkOutputWindow.h](../Files/StudioVtkOutputWindow_8h.md#file-studiovtkoutputwindow.h)** 
             * **file [Studio/src/Visualization/Viewer.h](../Files/Viewer_8h.md#file-viewer.h)** 
             * **file [Studio/src/Visualization/Visualizer.h](../Files/Visualizer_8h.md#file-visualizer.h)** 
@@ -224,4 +227,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:35 +0000

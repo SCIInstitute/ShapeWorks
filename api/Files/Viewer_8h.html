@@ -344,6 +344,7 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/ColorSchemes.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/SliceView.h&gt;</span><span class="cp"></span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointF&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
@@ -365,6 +366,9 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkReverseSense</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkHandleWidget</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkPolygonalSurfacePointPlacer</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSlice</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSliceMapper</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageData</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
@@ -398,6 +402,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_viewer</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_size_and_quality</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">quality</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_glyph_size</span><span class="p">();</span><span class="w"></span>
@@ -417,11 +422,9 @@
 
 <span class="w">  </span><span class="n">PickResult</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span><span class="w"></span>
 
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
-
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading_screen</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">loading_screen</span><span class="p">);</span><span class="w"></span>
 
@@ -449,8 +452,19 @@
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmark_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_key</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_window_and_level</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_image_volume</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_points</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment_transform</span><span class="p">();</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_reverse</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_surfaces</span><span class="p">();</span><span class="w"></span>
@@ -531,12 +545,18 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LandmarkWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmark_widget_</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_image_name_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// slice viewer</span>
+<span class="w">  </span><span class="n">SliceView</span><span class="w"> </span><span class="n">slice_view_</span><span class="p">{</span><span class="k">this</span><span class="p">};</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:37 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:35 +0000</p>
               
             </div>
           </div>

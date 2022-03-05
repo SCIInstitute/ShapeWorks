@@ -78,6 +78,7 @@ Representation of a single shape/patient/subject.
 | std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustest_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transforms)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(std::string display_mode, std::string feature) |
+| vtkSmartPointer< vtkImageData > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
 | Eigen::VectorXf | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
 | void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXf values) |
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
@@ -544,6 +545,15 @@ void load_feature(
 ```
 
 
+### function get_image_volume
+
+```cpp
+vtkSmartPointer< vtkImageData > get_image_volume(
+    std::string image_volume_name
+)
+```
+
+
 ### function get_point_features
 
 ```cpp
@@ -598,4 +608,4 @@ Eigen::MatrixXd & landmarks()
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

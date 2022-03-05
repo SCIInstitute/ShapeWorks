@@ -390,6 +390,14 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-feature-range-changed">feature_range_changed</a></strong>()</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-update-view-mode">update_view_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-image-slice-settings-changed">image_slice_settings_changed</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions">Public Functions</h2>
@@ -599,6 +607,46 @@
 </tr>
 <tr>
 <td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-name">set_image_name</a></strong>(std::string image_name)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-name">get_image_name</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-axis">set_image_axis</a></strong>(QString axis)</td>
+</tr>
+<tr>
+<td>Axis</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-axis">get_image_axis</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-3d-mode">set_image_3d_mode</a></strong>(bool mode)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-3d-mode">get_image_3d_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-share-window-and-level">set_image_share_window_and_level</a></strong>(bool enabled)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-share-window-and-level">get_image_share_window_and_level</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-loading">set_loading</a></strong>(bool loading)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-is-loading">is_loading</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
 </tr>
 <tr>
@@ -700,6 +748,12 @@
 </code></pre></div>
 <h3 id="signal-feature_range_changed">signal feature_range_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">feature_range_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-update_view_mode">signal update_view_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-image_slice_settings_changed">signal image_slice_settings_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">image_slice_settings_changed</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-session">function Session</h3>
@@ -911,6 +965,46 @@
 <h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-set_image_name">function set_image_name</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_image_name</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_name">function get_image_name</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_image_name</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_axis">function set_image_axis</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_axis</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_axis">function get_image_axis</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Axis</span><span class="w"> </span><span class="n">get_image_axis</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_3d_mode">function set_image_3d_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_3d_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_3d_mode">function get_image_3d_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_3d_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_share_window_and_level">function set_image_share_window_and_level</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_share_window_and_level</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_share_window_and_level">function get_image_share_window_and_level</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_share_window_and_level</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_loading">function set_loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_loading</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-is_loading">function is_loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
@@ -939,7 +1033,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:36 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
               
             </div>
           </div>

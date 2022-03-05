@@ -338,26 +338,25 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMainWindow&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDoubleSpinBox&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QLabel&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QCheckBox&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QErrorMessage&gt;</span><span class="cp"></span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/PreferencesWindow.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span><span class="cp"></span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QCheckBox&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDoubleSpinBox&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QErrorMessage&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QLabel&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMainWindow&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
 
 <span class="c1">// Forward Qt class declarations</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
@@ -378,9 +377,8 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QMainWindow</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="o">~</span><span class="n">ShapeWorksStudioApp</span><span class="p">();</span><span class="w"></span>
 
@@ -389,7 +387,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_vtk</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">import_files</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">file_names</span><span class="p">);</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">open_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
 
@@ -456,6 +454,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_selection</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_scale</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_combo_changed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_splash_screen</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">about</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">keyboard_shortcuts</span><span class="p">();</span><span class="w"></span>
@@ -464,13 +464,12 @@
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_py_worker</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dragEnterEvent</span><span class="p">(</span><span class="n">QDragEnterEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">dragLeaveEvent</span><span class="p">(</span><span class="n">QDragLeaveEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="n">QDropEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_session</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_tool_mode</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span><span class="w"></span>
@@ -478,18 +477,9 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_particle_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">VIEW_MODE</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ORIGINAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">GROOMED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">RECONSTRUCTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">VIEW_MODE</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ORIGINAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">GROOMED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">RECONSTRUCTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">DISPLAY_MODE</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ALL_SAMPLES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">MEAN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">PCA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SINGLE_SAMPLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">DISPLAY_MODE</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ALL_SAMPLES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">MEAN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">PCA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">SINGLE_SAMPLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_GROOMED_C</span><span class="p">;</span><span class="w"></span>
@@ -501,7 +491,6 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_view_combo_item_enabled</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">item</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_view_combo_item_enabled</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">item</span><span class="p">);</span><span class="w"></span>
-
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_tool_state</span><span class="p">();</span><span class="w"></span>
 
@@ -554,7 +543,7 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PreferencesWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">preferences_window_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">studio_vtk_output_window_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="c1">//all the preferences</span>
+<span class="w">  </span><span class="c1">// all the preferences</span>
 <span class="w">  </span><span class="n">Preferences</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
@@ -573,23 +562,21 @@
 <span class="w">  </span><span class="n">QErrorMessage</span><span class="w"> </span><span class="n">error_message_dialog_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span><span class="w"></span>
 
-
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">current_message_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_display_mode_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_update_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">time_since_last_update_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="n">last_render_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:37 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:35 +0000</p>
               
             </div>
           </div>

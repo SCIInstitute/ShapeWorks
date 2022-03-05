@@ -30,6 +30,7 @@ title: Studio/src/Visualization/Viewer.h
 
 #include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
+#include <Visualization/SliceView.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -51,6 +52,9 @@ class vtkTransform;
 class vtkReverseSense;
 class vtkHandleWidget;
 class vtkPolygonalSurfacePointPlacer;
+class vtkImageSlice;
+class vtkImageSliceMapper;
+class vtkImageData;
 
 namespace shapeworks {
 
@@ -84,6 +88,7 @@ class Viewer {
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
+  void reset_camera();
 
   void set_glyph_size_and_quality(double size, double quality);
   double get_glyph_size();
@@ -103,11 +108,9 @@ class Viewer {
 
   PickResult handle_ctrl_click(int* click_pos);
 
-
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
-
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -135,8 +138,19 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
 
- private:
+  vtkSmartPointer<vtkTransform> get_image_transform();
 
+  void handle_key(int* click_pos, std::string key);
+
+  void set_window_and_level(double window, double level);
+
+  void update_image_volume();
+
+  vtkSmartPointer<vtkPoints> get_glyph_points();
+
+  vtkSmartPointer<vtkTransform> get_alignment_transform();
+
+ private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void initialize_surfaces();
@@ -217,7 +231,13 @@ class Viewer {
   int number_of_domains_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
+
   QSharedPointer<Session> session_;
+
+  std::string current_image_name_;
+
+  // slice viewer
+  SliceView slice_view_{this};
 };
 }  // namespace shapeworks
 ```
@@ -225,4 +245,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:35 +0000

@@ -9,6 +9,14 @@ title: shapeworks::StudioLog
 
 
 
+Inherits from QObject
+
+## Public Signals
+
+|                | Name           |
+| -------------- | -------------- |
+| void | **[error](../Classes/classshapeworks_1_1StudioLog.md#signal-error)**(QString message) |
+
 ## Public Functions
 
 |                | Name           |
@@ -18,12 +26,24 @@ title: shapeworks::StudioLog
 | void | **[log_message](../Classes/classshapeworks_1_1StudioLog.md#function-log-message)**(QString message, const int line, const char * file)<br>Log a message, use STUDIO_LOG_MESSAGE macro.  |
 | void | **[log_stack](../Classes/classshapeworks_1_1StudioLog.md#function-log-stack)**(std::string message)<br>Log a stack trace message, use STUDIO_LOG_STACK macro.  |
 | void | **[log_error](../Classes/classshapeworks_1_1StudioLog.md#function-log-error)**(QString message, const int line, const char * file)<br>Log an error, use STUDIO_LOG_ERROR macro.  |
+| void | **[show_error](../Classes/classshapeworks_1_1StudioLog.md#function-show-error)**(QString message, const int line, const char * file)<br>Log an error, use STUDIO_SHOW_ERROR macro.  |
 | void | **[log_debug](../Classes/classshapeworks_1_1StudioLog.md#function-log-debug)**(QString message, const int line, const char * file)<br>Log a debug message, use STUDIO_LOG_DEBUG macro.  |
 | void | **[close_log](../Classes/classshapeworks_1_1StudioLog.md#function-close-log)**()<br>Close the log, use STUDIO_CLOSE_LOG macro.  |
 | void | **[flush_log](../Classes/classshapeworks_1_1StudioLog.md#function-flush-log)**()<br>Flush log to disk.  |
 | bool | **[check_log_open](../Classes/classshapeworks_1_1StudioLog.md#function-check-log-open)**()<br>Return if the log is open.  |
 | QString | **[get_log_filename](../Classes/classshapeworks_1_1StudioLog.md#function-get-log-filename)**()<br>Return the log filename.  |
 | [StudioLog](../Classes/classshapeworks_1_1StudioLog.md) & | **[Instance](../Classes/classshapeworks_1_1StudioLog.md#function-instance)**()<br>Return the singleton instance.  |
+
+## Public Signals Documentation
+
+### signal error
+
+```cpp
+void error(
+    QString message
+)
+```
+
 
 ## Public Functions Documentation
 
@@ -75,6 +95,18 @@ void log_error(
 ```
 
 Log an error, use STUDIO_LOG_ERROR macro. 
+
+### function show_error
+
+```cpp
+void show_error(
+    QString message,
+    const int line,
+    const char * file
+)
+```
+
+Log an error, use STUDIO_SHOW_ERROR macro. 
 
 ### function log_debug
 
@@ -130,4 +162,4 @@ Return the singleton instance.
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

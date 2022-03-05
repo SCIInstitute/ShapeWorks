@@ -39,6 +39,8 @@ Inherits from QObject
 | void | **[message](../Classes/classshapeworks_1_1Session.md#signal-message)**(QString ) |
 | void | **[error](../Classes/classshapeworks_1_1Session.md#signal-error)**(QString ) |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
+| void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
+| void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
 
 ## Public Functions
 
@@ -93,6 +95,16 @@ Inherits from QObject
 | void | **[set_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-set-landmarks-active)**(bool active) |
 | void | **[set_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-set-show-landmarks)**(bool show) |
 | bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-get-show-landmarks)**() |
+| bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
+| std::string | **[get_image_name](../Classes/classshapeworks_1_1Session.md#function-get-image-name)**() |
+| void | **[set_image_axis](../Classes/classshapeworks_1_1Session.md#function-set-image-axis)**(QString axis) |
+| Axis | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
+| void | **[set_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-set-image-3d-mode)**(bool mode) |
+| bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
+| void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
+| bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
+| void | **[set_loading](../Classes/classshapeworks_1_1Session.md#function-set-loading)**(bool loading) |
+| bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -233,6 +245,20 @@ void error(
 
 ```cpp
 void feature_range_changed()
+```
+
+
+### signal update_view_mode
+
+```cpp
+void update_view_mode()
+```
+
+
+### signal image_slice_settings_changed
+
+```cpp
+void image_slice_settings_changed()
 ```
 
 
@@ -643,6 +669,86 @@ bool get_show_landmarks()
 ```
 
 
+### function set_image_name
+
+```cpp
+bool set_image_name(
+    std::string image_name
+)
+```
+
+
+### function get_image_name
+
+```cpp
+std::string get_image_name()
+```
+
+
+### function set_image_axis
+
+```cpp
+void set_image_axis(
+    QString axis
+)
+```
+
+
+### function get_image_axis
+
+```cpp
+Axis get_image_axis()
+```
+
+
+### function set_image_3d_mode
+
+```cpp
+void set_image_3d_mode(
+    bool mode
+)
+```
+
+
+### function get_image_3d_mode
+
+```cpp
+bool get_image_3d_mode()
+```
+
+
+### function set_image_share_window_and_level
+
+```cpp
+void set_image_share_window_and_level(
+    bool enabled
+)
+```
+
+
+### function get_image_share_window_and_level
+
+```cpp
+bool get_image_share_window_and_level()
+```
+
+
+### function set_loading
+
+```cpp
+void set_loading(
+    bool loading
+)
+```
+
+
+### function is_loading
+
+```cpp
+bool is_loading()
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -701,4 +807,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

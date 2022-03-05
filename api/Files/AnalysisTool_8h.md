@@ -39,10 +39,10 @@ title: Studio/src/Analysis/AnalysisTool.h
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
-#include <Data/Shape.h>
 #include <Data/Preferences.h>
-#include <Visualization/Visualizer.h>
+#include <Data/Shape.h>
 #include <Visualization/BarGraph.h>
+#include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
 class JKQTPlotter;
@@ -56,9 +56,9 @@ class GroupPvalueJob;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
-public:
 
-    enum AlignmentType {
+ public:
+  enum AlignmentType {
     Global = -2,
     Local = -1,
   };
@@ -124,7 +124,7 @@ public:
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   // analysis mode
   void on_tabWidget_currentChanged();
@@ -182,7 +182,7 @@ public Q_SLOTS:
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
 
-signals:
+ signals:
 
   void update_view();
   void pca_update();
@@ -192,8 +192,7 @@ signals:
   void warning(QString);
   void reconstruction_complete();
 
-private:
-
+ private:
   void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
 
   void compute_reconstructed_domain_transforms();
@@ -253,10 +252,10 @@ private:
 
   AlignmentType current_alignment_{AlignmentType::Local};
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:35 +0000

@@ -34,6 +34,7 @@ Representation of a project.  [More...](#detailed-description)
 | bool | **[get_particles_present](../Classes/classshapeworks_1_1Project.md#function-get-particles-present)**() const<br>Return if particle files are present.  |
 | bool | **[get_images_present](../Classes/classshapeworks_1_1Project.md#function-get-images-present)**()<br>Return if images are present (e.g. CT/MRI)  |
 | std::vector< std::string > | **[get_feature_names](../Classes/classshapeworks_1_1Project.md#function-get-feature-names)**()<br>Get feature names.  |
+| std::vector< std::string > | **[get_image_names](../Classes/classshapeworks_1_1Project.md#function-get-image-names)**()<br>Get image names.  |
 | std::vector< std::string > | **[get_group_names](../Classes/classshapeworks_1_1Project.md#function-get-group-names)**()<br>Get group names.  |
 | std::vector< std::string > | **[get_group_values](../Classes/classshapeworks_1_1Project.md#function-get-group-values)**(const std::string & group_name) const<br>Get possible group values.  |
 | [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1Project.md#function-get-parameters)**(const std::string & name, const std::string & domain_name ="")<br>Retrieve parameters based on key.  |
@@ -44,6 +45,7 @@ Representation of a project.  [More...](#detailed-description)
 | int | **[get_version](../Classes/classshapeworks_1_1Project.md#function-get-version)**() const<br>Get the version of the currently loaded project.  |
 | std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > | **[get_landmarks](../Classes/classshapeworks_1_1Project.md#function-get-landmarks)**(int domain_id)<br>Return the set of landmarks definitions for a particular domain.  |
 | std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > | **[get_all_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-get-all-landmark-definitions)**()<br>Return all landmark definitions.  |
+| bool | **[get_landmarks_present](../Classes/classshapeworks_1_1Project.md#function-get-landmarks-present)**()<br>Return if landmarks are present.  |
 | void | **[set_landmarks](../Classes/classshapeworks_1_1Project.md#function-set-landmarks)**(int domain_id, std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > landmarks)<br>Set landmarks for this project.  |
 | void | **[new_landmark](../Classes/classshapeworks_1_1Project.md#function-new-landmark)**(int domain_id)<br>Add a new landmark.  |
 
@@ -201,6 +203,14 @@ std::vector< std::string > get_feature_names()
 
 Get feature names. 
 
+### function get_image_names
+
+```cpp
+std::vector< std::string > get_image_names()
+```
+
+Get image names. 
+
 ### function get_group_names
 
 ```cpp
@@ -294,6 +304,14 @@ std::vector< std::vector< LandmarkDefinition > > get_all_landmark_definitions()
 
 Return all landmark definitions. 
 
+### function get_landmarks_present
+
+```cpp
+bool get_landmarks_present()
+```
+
+Return if landmarks are present. 
+
 ### function set_landmarks
 
 ```cpp
@@ -317,4 +335,4 @@ Add a new landmark.
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:33 +0000

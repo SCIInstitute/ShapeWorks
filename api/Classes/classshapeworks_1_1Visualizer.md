@@ -21,6 +21,7 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[update_viewer_properties](../Classes/classshapeworks_1_1Visualizer.md#slot-update-viewer-properties)**()<br>update viewer properties (e.g. glyph size, quality, etc)  |
 | void | **[handle_feature_range_changed](../Classes/classshapeworks_1_1Visualizer.md#slot-handle-feature-range-changed)**() |
+| void | **[handle_image_slice_settings_changed](../Classes/classshapeworks_1_1Visualizer.md#slot-handle-image-slice-settings-changed)**() |
 
 ## Public Functions
 
@@ -102,6 +103,13 @@ update viewer properties (e.g. glyph size, quality, etc)
 
 ```cpp
 void handle_feature_range_changed()
+```
+
+
+### slot handle_image_slice_settings_changed
+
+```cpp
+void handle_image_slice_settings_changed()
 ```
 
 
@@ -506,4 +514,4 @@ static const std::string MODE_RECONSTRUCTION_C;
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

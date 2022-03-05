@@ -108,6 +108,7 @@ double length(const Vector3 &v);
 
 enum Axis { invalid = -1, X, Y, Z };
 Axis toAxis(const std::string &str);
+std::string axisToString(Axis axis);
 
 bool axis_is_valid(const Vector3 &axis);
 bool axis_is_valid(const Axis &axis);
@@ -285,4 +286,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:34 +0000

@@ -44,6 +44,7 @@ title: shapeworks
 | class | **[shapeworks::MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md)** <br>Representation of a group of meshes.  |
 | class | **[shapeworks::MeshManager](../Classes/classshapeworks_1_1MeshManager.md)**  |
 | class | **[shapeworks::MeshReconstructors](../Classes/classshapeworks_1_1MeshReconstructors.md)**  |
+| class | **[shapeworks::MeshSlice](../Classes/classshapeworks_1_1MeshSlice.md)** <br>[MeshSlice]().  |
 | class | **[shapeworks::MeshUtils](../Classes/classshapeworks_1_1MeshUtils.md)**  |
 | class | **[shapeworks::MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md)**  |
 | class | **[shapeworks::MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)**  |
@@ -82,6 +83,7 @@ title: shapeworks
 | class | **[shapeworks::ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)**  |
 | class | **[shapeworks::ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)**  |
 | struct | **[shapeworks::SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)**  |
+| class | **[shapeworks::SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView]().  |
 | class | **[shapeworks::SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)**  |
 | class | **[shapeworks::StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget]().  |
 | class | **[shapeworks::StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions.  |
@@ -89,6 +91,7 @@ title: shapeworks
 | class | **[shapeworks::StudioLog](../Classes/classshapeworks_1_1StudioLog.md)**  |
 | class | **[shapeworks::StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh.  |
 | class | **[shapeworks::StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
+| class | **[shapeworks::StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)**  |
 | class | **[shapeworks::StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)**  |
 | class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
@@ -269,6 +272,7 @@ title: shapeworks
 | Vector3 | **[crossProduct](../Namespaces/namespaceshapeworks.md#function-crossproduct)**(const Vector3 & a, const Vector3 & b) |
 | double | **[length](../Namespaces/namespaceshapeworks.md#function-length)**(const Vector3 & v) |
 | Axis | **[toAxis](../Namespaces/namespaceshapeworks.md#function-toaxis)**(const std::string & str) |
+| std::string | **[axisToString](../Namespaces/namespaceshapeworks.md#function-axistostring)**(Axis axis) |
 | bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Vector3 & axis)<br>Ensure an axis is valid.  |
 | bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Axis & axis) |
 | double | **[degToRad](../Namespaces/namespaceshapeworks.md#function-degtorad)**(const double deg)<br>convert degrees to radians  |
@@ -1810,6 +1814,15 @@ Axis toAxis(
 ```
 
 
+### function axisToString
+
+```cpp
+std::string axisToString(
+    Axis axis
+)
+```
+
+
 ### function axis_is_valid
 
 ```cpp
@@ -2294,4 +2307,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:36 +0000
+Updated on 2022-03-05 at 23:20:33 +0000

@@ -307,6 +307,22 @@
             <div class="section">
               
                 <h1 id="shapeworksstudiolog">shapeworks::StudioLog</h1>
+<p>Inherits from QObject</p>
+<h2 id="public-signals">Public Signals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioLog.html#signal-error">error</a></strong>(QString message)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -338,6 +354,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioLog.html#function-show-error">show_error</a></strong>(QString message, const int line, const char * file)<br>Log an error, use STUDIO_SHOW_ERROR macro.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1StudioLog.html#function-log-debug">log_debug</a></strong>(QString message, const int line, const char * file)<br>Log a debug message, use STUDIO_LOG_DEBUG macro.</td>
 </tr>
 <tr>
@@ -362,6 +382,12 @@
 </tr>
 </tbody>
 </table>
+<h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-error">signal error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-studiolog">function StudioLog</h3>
 <div class="highlight"><pre><span></span><code><span class="n">StudioLog</span><span class="p">()</span><span class="w"></span>
@@ -392,6 +418,14 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log an error, use STUDIO_LOG_ERROR macro. </p>
+<h3 id="function-show_error">function show_error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Log an error, use STUDIO_SHOW_ERROR macro. </p>
 <h3 id="function-log_debug">function log_debug</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
@@ -421,7 +455,7 @@
 </code></pre></div>
 <p>Return the singleton instance. </p>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:36 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
               
             </div>
           </div>

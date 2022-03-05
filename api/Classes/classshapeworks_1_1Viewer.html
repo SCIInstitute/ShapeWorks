@@ -348,6 +348,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-reset-camera">reset_camera</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-glyph-size-and-quality">set_glyph_size_and_quality</a></strong>(double size, double quality)</td>
 </tr>
 <tr>
@@ -458,6 +462,30 @@
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-landmark-transform">get_landmark_transform</a></strong>(int domain)</td>
 </tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-image-transform">get_image_transform</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-key">handle_key</a></strong>(int * click_pos, std::string key)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-window-and-level">set_window_and_level</a></strong>(double window, double level)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-image-volume">update_image_volume</a></strong>()</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPoints &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-glyph-points">get_glyph_points</a></strong>()</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-alignment-transform">get_alignment_transform</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
@@ -492,6 +520,9 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-reset_camera_1">function reset_camera</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_glyph_size_and_quality">function set_glyph_size_and_quality</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_size_and_quality</span><span class="p">(</span><span class="w"></span>
@@ -609,8 +640,32 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_image_transform">function get_image_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-handle_key">function handle_key</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_window_and_level">function set_window_and_level</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_and_level</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update_image_volume">function update_image_volume</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_image_volume</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_glyph_points">function get_glyph_points</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_points</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_alignment_transform">function get_alignment_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment_transform</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-03-03 at 07:50:36 +0000</p>
+<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
               
             </div>
           </div>

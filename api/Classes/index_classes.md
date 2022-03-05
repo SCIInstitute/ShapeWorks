@@ -164,6 +164,7 @@ title: Classes
     * **class [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md)** <br>Representation of a group of meshes. 
     * **class [MeshManager](../Classes/classshapeworks_1_1MeshManager.md)** 
     * **class [MeshReconstructors](../Classes/classshapeworks_1_1MeshReconstructors.md)** 
+    * **class [MeshSlice](../Classes/classshapeworks_1_1MeshSlice.md)** <br>[MeshSlice](). 
     * **class [MeshUtils](../Classes/classshapeworks_1_1MeshUtils.md)** 
     * **class [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md)** 
     * **class [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** 
@@ -205,6 +206,7 @@ title: Classes
     * **class [ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)** 
     * **class [ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)** 
     * **struct [SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)** 
+    * **class [SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView](). 
     * **class [SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)** 
     * **class [StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget](). 
     * **class [StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions. 
@@ -212,6 +214,7 @@ title: Classes
     * **class [StudioLog](../Classes/classshapeworks_1_1StudioLog.md)** 
     * **class [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh. 
     * **class [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
+    * **class [StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)** 
     * **class [StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** 
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
@@ -237,4 +240,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-03-03 at 07:50:37 +0000
+Updated on 2022-03-05 at 23:20:35 +0000
