@@ -8,8 +8,8 @@
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
-#include <vtkLandmarkTransform.h>
 #include <vtkCenterOfMass.h>
+#include <vtkLandmarkTransform.h>
 #include <vtkPointSet.h>
 
 #include <boost/filesystem.hpp>
@@ -474,7 +474,6 @@ bool Groom::run_alignment() {
       assign_transforms(transforms, domain, true /* global */);
 
     } else if (global_landmarks) {
-
       std::vector<vtkSmartPointer<vtkPoints>> landmarks = get_combined_points();
 
       size_t reference = Groom::find_reference_landmarks(landmarks);
@@ -499,8 +498,7 @@ bool Groom::run_alignment() {
 }
 
 //---------------------------------------------------------------------------
-void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global)
-{
+void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global) {
   auto subjects = this->project_->get_subjects();
 
   for (size_t i = 0; i < subjects.size(); i++) {
@@ -522,8 +520,8 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkMatrix4x4> Groom::compute_landmark_transform(vtkSmartPointer<vtkPoints> source, vtkSmartPointer<vtkPoints> target)
-{
+vtkSmartPointer<vtkMatrix4x4> Groom::compute_landmark_transform(vtkSmartPointer<vtkPoints> source,
+                                                                vtkSmartPointer<vtkPoints> target) {
   auto landmark_transform = vtkSmartPointer<vtkLandmarkTransform>::New();
   landmark_transform->SetSourceLandmarks(source);
   landmark_transform->SetTargetLandmarks(target);
@@ -558,7 +556,11 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   auto path = base + "/" + prefix;
 
-  boost::filesystem::create_directories(path);
+  try {
+    boost::filesystem::create_directories(path);
+  } catch (std::exception& e) {
+    throw std::runtime_error("Unable to create groom output directory: \"" + path + "\"");
+  }
 
   auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
 
@@ -693,8 +695,8 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double> > Groom::get_landmark_transforms(const std::vector<vtkSmartPointer<vtkPoints>> landmarks, size_t reference)
-{
+std::vector<std::vector<double>> Groom::get_landmark_transforms(const std::vector<vtkSmartPointer<vtkPoints>> landmarks,
+                                                                size_t reference) {
   std::vector<std::vector<double>> transforms(landmarks.size());
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, landmarks.size()}, [&](const tbb::blocked_range<size_t>& r) {
@@ -715,7 +717,6 @@ std::vector<std::vector<double> > Groom::get_landmark_transforms(const std::vect
     }
   });
   return transforms;
-
 }
 
 //---------------------------------------------------------------------------
@@ -745,8 +746,7 @@ void Groom::add_center_transform(vtkSmartPointer<vtkTransform> transform, vtkSma
 }
 
 //---------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkPoints> > Groom::get_combined_points()
-{
+std::vector<vtkSmartPointer<vtkPoints>> Groom::get_combined_points() {
   auto subjects = project_->get_subjects();
   size_t num_domains = this->project_->get_number_of_domains_per_subject();
 
@@ -755,14 +755,13 @@ std::vector<vtkSmartPointer<vtkPoints> > Groom::get_combined_points()
     auto points = vtkSmartPointer<vtkPoints>::New();
     for (size_t domain = 0; domain < num_domains; domain++) {
       auto add_points = get_landmarks(i, domain);
-      for (int j=0;j<add_points->GetNumberOfPoints();j++) {
+      for (int j = 0; j < add_points->GetNumberOfPoints(); j++) {
         points->InsertNextPoint(add_points->GetPoint(j));
       }
     }
   }
   return landmarks;
 }
-
 
 //---------------------------------------------------------------------------
 void Groom::add_reflect_transform(vtkSmartPointer<vtkTransform> transform, const std::string& reflect_axis) {
