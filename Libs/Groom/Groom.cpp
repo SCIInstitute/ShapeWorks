@@ -554,12 +554,15 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     suffix = "_groomed.vtk";
   }
 
-  auto path = base + "/" + prefix;
+  auto path = base;
+  if (prefix != "") {
+    path = base + "/" + prefix;
 
-  try {
-    boost::filesystem::create_directories(path);
-  } catch (std::exception& e) {
-    throw std::runtime_error("Unable to create groom output directory: \"" + path + "\"");
+    try {
+      boost::filesystem::create_directories(path);
+    } catch (std::exception& e) {
+      throw std::runtime_error("Unable to create groom output directory: \"" + path + "\"");
+    }
   }
 
   auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
