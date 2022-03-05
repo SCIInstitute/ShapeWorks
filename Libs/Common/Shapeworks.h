@@ -11,6 +11,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
+#include <vtkPolyData.h>
+#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -26,10 +28,16 @@ using Matrix44      = itk::Matrix<double, 4, 4>;
 using Matrix33      = itk::Matrix<double, 3, 3>;
 using IPoint3       = itk::Point<int, 3>;
 using FPoint3       = itk::Point<float, 3>;
+using Covariant     = itk::CovariantVector<float, 3>;
 using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
+
+// While doubles are the most commonly stored items, vtkDataArray can store any
+// type, yet has a default interface that conveniently stores and retrieves
+// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray
+// explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
 
@@ -94,6 +102,7 @@ double length(const Vector3 &v);
 /// handy way to specify an axis
 enum Axis { invalid = -1, X, Y, Z };
 Axis toAxis(const std::string &str);
+std::string axisToString(Axis axis);
 
 /// Ensure an axis is valid
 bool axis_is_valid(const Vector3 &axis);
@@ -101,6 +110,15 @@ bool axis_is_valid(const Axis &axis);
 
 /// convert degrees to radians
 double degToRad(const double deg);
+
+/// incrementally compute (single-component) mean of field
+double mean(const Field field);
+
+/// compute (single-component) standard deviation of field
+double stddev(const Field field);
+
+/// compute (single-component) range of field
+std::vector<double> range(const Field field);
 
 /// Handy functions to perform operations on Points and Vectors with which ITK is more restrictive
 class Image;

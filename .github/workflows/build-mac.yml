@@ -37,7 +37,7 @@ jobs:
 
     - name: Acquire 10.13 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
+        curl --retry 5 -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
         cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
         
     - name: Checkout code
@@ -95,7 +95,7 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts
@@ -124,3 +124,8 @@ jobs:
     - name: Store ccache
       shell: bash -l {0}
       run: .github/workflows/store_ccache.sh
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts
+      

@@ -2,7 +2,6 @@
 #include "ParticleSystem.h"
 #include "Utils.h"
 
-
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkLookupTable.h>
@@ -10,7 +9,6 @@
 #include <vtkNamedColors.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderer.h>
-
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
@@ -64,7 +62,8 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   if (meshTransform)
     m = icp->GetMatrix();
   else
-    vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+    vtkMatrix4x4::Invert(icp->GetMatrix(), m); // It's inversed because when an image is transformed,
+                                               // a new image is created in the target space and samples through the transform back to the original space
 
   return m;
 }
@@ -149,7 +148,8 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
         transformed.applyTransform(transform);
 
         // compute distance
-        double distance = transformed.distance(meshes[pair.second]).getFieldMean("distance");
+        auto distances = transformed.distance(meshes[pair.second])[0];
+        double distance = mean(distances);
         {
           // lock and store results
           tbb::mutex::scoped_lock lock(mutex);
@@ -182,7 +182,7 @@ void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>&
   {
     bool hasNormals = true;
     try {
-      meshes[i].get().getField<vtkDataArray>("Normals");
+      meshes[i].get().getField("Normals", Mesh::Point);
     }
     catch (...) {
       hasNormals = false;
@@ -236,7 +236,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = meshes[j].get().getField<vtkDataArray>("Normals");
+    auto normals = meshes[j].get().getField("Normals", Mesh::Point);
 
     if (num_normals != normals->GetNumberOfTuples())
       throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");

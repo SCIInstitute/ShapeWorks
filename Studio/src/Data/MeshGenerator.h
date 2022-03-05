@@ -36,7 +36,7 @@ public:
 
   MeshHandle build_mesh(const MeshWorkItem& item);
 
-  MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
+  MeshHandle build_mesh_from_points(const Eigen::VectorXd& shape, int domain);
 
   MeshHandle build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.0001);
 

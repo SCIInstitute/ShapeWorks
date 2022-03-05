@@ -14,6 +14,8 @@
 
 #include <ui_GroomTool.h>
 
+#include <QDebug>
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -22,6 +24,11 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_ = new Ui_GroomTool;
   ui_->setupUi(this);
   qRegisterMetaType<std::string>();
+
+  // connect panel open buttons
+  connect(ui_->image_open_button, &QPushButton::toggled, ui_->image_content, &QWidget::setVisible);
+  connect(ui_->mesh_open_button, &QPushButton::toggled, ui_->mesh_content, &QWidget::setVisible);
+  connect(ui_->alignment_open_button, &QPushButton::toggled, ui_->alignment_content, &QWidget::setVisible);
 
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::alignment_checkbox_changed);
@@ -57,15 +64,15 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
 
   // connect percent controls
-  connect(ui_->remesh_percent_slider, &QSlider::valueChanged,
-          [=](int value) { ui_->remesh_percent_spinbox->setValue(value); });
-  connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+  connect(ui_->remesh_percent_slider, &QSlider::valueChanged, this,
+          [this](int value) { ui_->remesh_percent_spinbox->setValue(value); });
+  connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) { ui_->remesh_percent_slider->setValue(static_cast<int>(value)); });
 
   // connect gradation controls
-  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged,
+  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged, this,
           [=](int value) { ui_->remesh_gradation_spinbox->setValue(value / 50.0); });
-  connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged),
+  connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) {
             ui_->remesh_gradation_slider->setValue(static_cast<int>(value * 50.0));
           });
@@ -633,9 +640,11 @@ void GroomTool::update_ui()
   ui_->spacing_z->setEnabled(!iso_mode);
   ui_->spacing_iso->setEnabled(iso_mode);
 
-  ui_->reflect_choice->setEnabled(ui_->reflect_checkbox->isChecked());
-  ui_->reflect_column->setEnabled(ui_->reflect_checkbox->isChecked());
-  ui_->reflect_axis->setEnabled(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_choice->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_column->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_axis->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_equal->setVisible(ui_->reflect_checkbox->isChecked());
+  ui_->reflect_on_label->setVisible(ui_->reflect_checkbox->isChecked());
 
   ui_->remesh_box->setVisible(ui_->remesh_checkbox->isChecked());
 

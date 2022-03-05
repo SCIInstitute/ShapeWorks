@@ -11,7 +11,6 @@ target_include_directories(Analyze PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Analyze PUBLIC
   Mesh
-  Alignment
   Utils)
 
 # set

@@ -4,8 +4,17 @@
 The `ellipsoid_mesh` use case uses the same dataset as the `ellipsoid` use case, but optimization is done on meshes rather than distance transforms. The dataset comprises of axis-aligned ellipsoids with varying radii along the x-axis. The `ellipsoid_mesh` use case represents the standard use version of a shape modeling workflow from meshes using ShapeWorks. 
 
 ## Grooming Steps
-This use case starts with pre-aligned meshes and does not require grooming.  
-![Ellipsoid meshes](../../img/use-cases/ellipsoid_mesh_input.png)
+
+This is how the meshes in the dataset look before grooming. The ellipsoids have random orientations.
+
+![This is how the meshes in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_pre_groom.png)
+
+1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
+2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid).
+3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
+
+The ellipsoids are now aligned ready to be sent to the optimizer.
+![Meshes obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
@@ -45,5 +54,5 @@ Below is the mean shape reulting from optimization. Here we can see that there i
 ![Ellipsoid Mesh Optimization](../../img/use-cases/ellipsoid_mesh.png)
 
 Animating along the first PCA mode we can see the variation in the radius along the x-axis.
-![Ellipsoid Mesh Mode 1](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mesh_mode1.gif)
+![Ellipsoid Mesh Mode 1](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_mesh_1mode.gif)
 

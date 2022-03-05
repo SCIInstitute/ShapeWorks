@@ -1,32 +1,31 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QActionGroup>
-#include <QSlider>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QLabel>
-#include <QTimer>
-#include <QCheckBox>
-#include <QProgressBar>
-#include <QElapsedTimer>
-#include <QPointer>
-#include <QErrorMessage>
-
-#include <Interface/LogWindow.h>
 #include <Data/PreferencesWindow.h>
+#include <Interface/LogWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
-
-#include <vnl_vector.h>
-
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+
+#include <Eigen/Eigen>
+#include <QActionGroup>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
+#include <QElapsedTimer>
+#include <QErrorMessage>
+#include <QLabel>
+#include <QMainWindow>
+#include <QPointer>
+#include <QProgressBar>
+#include <QSlider>
+#include <QSpinBox>
+#include <QTimer>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
 namespace shapeworks {
 class Lightbox;
+class DataTool;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
@@ -43,9 +42,8 @@ class PythonWorker;
  * This class represents the primary ShapeWorksStudio window interface
  */
 class ShapeWorksStudioApp : public QMainWindow {
-Q_OBJECT
-public:
-
+  Q_OBJECT
+ public:
   ShapeWorksStudioApp();
   ~ShapeWorksStudioApp();
 
@@ -54,7 +52,7 @@ public:
   void initialize_vtk();
   void import_files(QStringList file_names);
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   void open_project(QString filename);
 
@@ -67,8 +65,6 @@ public Q_SLOTS:
   void on_action_import_triggered();
 
   void on_vertical_scroll_bar_valueChanged();
-  void on_add_button_clicked();
-  void on_delete_button_clicked();
 
   void on_action_import_mode_triggered();
   void on_action_groom_mode_triggered();
@@ -123,6 +119,8 @@ public Q_SLOTS:
   void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
 
+  void image_combo_changed(const QString& image_name);
+
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
@@ -131,32 +129,22 @@ public Q_SLOTS:
 
   QSharedPointer<PythonWorker> get_py_worker();
 
-protected:
+ protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
-private:
-
+ private:
   void new_session();
   void update_tool_mode();
   void update_view_mode();
   void reset_num_viewers();
 
-  static bool write_particle_file(std::string filename, vnl_vector<double> particles);
+  static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
-  enum VIEW_MODE {
-    ORIGINAL = 0,
-    GROOMED = 1,
-    RECONSTRUCTED = 2
-  };
+  enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
 
-  enum DISPLAY_MODE {
-    ALL_SAMPLES = 0,
-    MEAN = 1,
-    PCA = 2,
-    SINGLE_SAMPLE = 3
-  };
+  enum DISPLAY_MODE { ALL_SAMPLES = 0, MEAN = 1, PCA = 2, SINGLE_SAMPLE = 3 };
 
   static const std::string MODE_ORIGINAL_C;
   static const std::string MODE_GROOMED_C;
@@ -168,7 +156,6 @@ private:
 
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
-
 
   std::string get_tool_state();
 
@@ -213,6 +200,7 @@ private:
   QActionGroup* action_group_;
 
   QSharedPointer<Lightbox> lightbox_;
+  QSharedPointer<DataTool> data_tool_;
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
@@ -221,7 +209,7 @@ private:
   QSharedPointer<PreferencesWindow> preferences_window_;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
-  //all the preferences
+  // all the preferences
   Preferences preferences_;
 
   QSharedPointer<Session> session_;
@@ -240,17 +228,15 @@ private:
   QErrorMessage error_message_dialog_;
   std::vector<QSlider*> iso_opacity_sliders_;
 
-
   QString current_message_;
 
   std::string current_display_mode_;
 
   bool block_update_{false};
-  bool is_loading_{false};
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
 
   QSharedPointer<PythonWorker> py_worker_;
 };
-}
+}  // namespace shapeworks

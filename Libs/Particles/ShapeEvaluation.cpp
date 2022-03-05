@@ -13,6 +13,10 @@ namespace shapeworks {
 double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
+  const int N = particleSystem.N();
+  if (nModes > N-1){
+    throw std::invalid_argument("Invalid mode of variation specified");
+  }
   Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particleSystem);
 
   if (!saveTo.empty()) {
@@ -31,6 +35,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
   const int D = particleSystem.D();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
 
+  if (num_modes < 1) {
+    return Eigen::VectorXd();
+  }
   Eigen::MatrixXd Y = particleSystem.Particles();
   const Eigen::VectorXd mu = Y.rowwise().mean();
   Y.colwise() -= mu;
@@ -59,6 +66,9 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
 
+  if (nModes > N-1){
+    throw std::invalid_argument("Invalid mode of variation specified");
+  }
   // Keep track of the reconstructions so we can visualize them later
   std::vector<Reconstruction> reconstructions;
 
@@ -102,6 +112,10 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
   const int N = particleSystem.N();
   const int D = particleSystem.D();
   const Eigen::MatrixXd &P = particleSystem.Particles();
+
+  if (N <= 1) {
+    return Eigen::VectorXd();
+  }
 
   Eigen::VectorXd generalizations(N-1);
 
@@ -148,6 +162,9 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
   const int N = particleSystem.N();
   const int D = particleSystem.D();
 
+  if (nModes > N-1){
+    throw std::invalid_argument("Invalid mode of variation specified");
+  }
   const int nSamples = 1000;
 
   // Keep track of the reconstructions so we can visualize them later

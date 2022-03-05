@@ -1,27 +1,25 @@
 // std
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 // qt
-#include <QThread>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QThread>
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
-#include <Interface/ShapeWorksStudioApp.h>
-#include <Data/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
+#include <Data/ShapeWorksWorker.h>
 #include <Data/StudioLog.h>
-#include <Visualization/Lightbox.h>
-#include <Python/PythonWorker.h>
+#include <Data/StudioMesh.h>
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
-
-#include <jkqtplotter/jkqtplotter.h>
+#include <Python/PythonWorker.h>
+#include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
-
+#include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
 namespace shapeworks {
@@ -33,18 +31,14 @@ const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
 //---------------------------------------------------------------------------
-AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
-{
+AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  connect(this->ui_->view_header, &QPushButton::clicked,
-          this->ui_->view_open_button, &QPushButton::toggle);
-  connect(this->ui_->metrics_header, &QPushButton::clicked,
-          this->ui_->metrics_open_button, &QPushButton::toggle);
-  connect(this->ui_->surface_header, &QPushButton::clicked,
-          this->ui_->surface_open_button, &QPushButton::toggle);
+  connect(this->ui_->view_header, &QPushButton::clicked, this->ui_->view_open_button, &QPushButton::toggle);
+  connect(this->ui_->metrics_header, &QPushButton::clicked, this->ui_->metrics_open_button, &QPushButton::toggle);
+  connect(this->ui_->surface_header, &QPushButton::clicked, this->ui_->surface_open_button, &QPushButton::toggle);
   this->ui_->view_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   this->ui_->surface_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   this->ui_->metrics_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -55,12 +49,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->allSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
   connect(this->ui_->singleSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
-  connect(this->ui_->sampleSpinBox, SIGNAL(valueChanged(int)), this,
-          SLOT(handle_analysis_options()));
+  connect(this->ui_->sampleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handle_analysis_options()));
   connect(this->ui_->medianButton, SIGNAL(clicked()), this, SLOT(handle_median()));
 
-  connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
-          SLOT(handle_pca_animate_state_changed()));
+  connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
   // group animation
@@ -68,20 +60,19 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged),
-          this, &AnalysisTool::update_group_values);
+  connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::update_group_values);
 
-  connect(this->ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged),
-          this, &AnalysisTool::group_changed);
+  connect(this->ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::group_changed);
 
-  connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
-          this, &AnalysisTool::group_changed);
+  connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::group_changed);
 
-  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this,
-          &AnalysisTool::group_p_values_clicked);
+  connect(this->ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
 
-  connect(this->ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged),
-          this, &AnalysisTool::handle_alignment_changed);
+  connect(this->ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::handle_alignment_changed);
 
   this->ui_->surface_open_button->setChecked(false);
   this->ui_->metrics_open_button->setChecked(false);
@@ -91,10 +82,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   this->ui_->graph_->set_y_label("Explained Variance");
 
-  for (auto button : {this->ui_->distance_transfom_radio_button,
-                      this->ui_->mesh_warping_radio_button, this->ui_->legacy_radio_button}) {
-    connect(button, &QRadioButton::clicked,
-            this, &AnalysisTool::reconstruction_method_changed);
+  for (auto button : {this->ui_->distance_transfom_radio_button, this->ui_->mesh_warping_radio_button,
+                      this->ui_->legacy_radio_button}) {
+    connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
   }
 
   this->ui_->explained_variance_panel->hide();
@@ -102,11 +92,14 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 }
 
 //---------------------------------------------------------------------------
-std::string AnalysisTool::get_analysis_mode()
-{
+std::string AnalysisTool::get_analysis_mode() {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
-    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C; }
-    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C; }
+    if (this->ui_->allSamplesRadio->isChecked()) {
+      return AnalysisTool::MODE_ALL_SAMPLES_C;
+    }
+    if (this->ui_->singleSamplesRadio->isChecked()) {
+      return AnalysisTool::MODE_SINGLE_SAMPLE_C;
+    }
   }
 
   if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
@@ -122,14 +115,10 @@ std::string AnalysisTool::get_analysis_mode()
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::get_group_difference_mode()
-{
-  return this->ui_->difference_button->isChecked();
-}
+bool AnalysisTool::get_group_difference_mode() { return this->ui_->difference_button->isChecked(); }
 
 //---------------------------------------------------------------------------
-std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors()
-{
+std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
   std::vector<Shape::Point> vecs;
 
   auto num_points = this->stats_.Mean().size() / 3;
@@ -144,36 +133,32 @@ std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_linear_radio_toggled(bool b)
-{
+void AnalysisTool::on_linear_radio_toggled(bool b) {
   if (b) {
     this->ui_->graph_->set_log_scale(false);
     this->ui_->graph_->repaint();
-  }
-  else {
+  } else {
     this->ui_->graph_->set_log_scale(true);
     this->ui_->graph_->repaint();
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_reconstruction_complete()
-{
+void AnalysisTool::handle_reconstruction_complete() {
   this->session_->handle_clear_cache();
 
   this->session_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");
   emit reconstruction_complete();
-  ///TODO: Studio
-  ///this->ui_->run_optimize_button->setEnabled(true);
+  /// TODO: Studio
+  /// this->ui_->run_optimize_button->setEnabled(true);
 
   this->enable_actions();
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_reconstructionButton_clicked()
-{
+void AnalysisTool::on_reconstructionButton_clicked() {
   this->store_settings();
   emit message("Please wait: running reconstruction step...");
   emit progress(5);
@@ -181,13 +166,9 @@ void AnalysisTool::on_reconstructionButton_clicked()
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
 
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, nullptr, nullptr,
-    nullptr, this->session_,
-    local, global, images,
-    this->ui_->maxAngle->value(),
-    this->ui_->meshDecimation->value(),
-    this->ui_->numClusters->value());
+  ShapeworksWorker* worker = new ShapeworksWorker(ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr,
+                                                  this->session_, local, global, images, this->ui_->maxAngle->value(),
+                                                  this->ui_->meshDecimation->value(), this->ui_->numClusters->value());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
@@ -202,52 +183,37 @@ void AnalysisTool::on_reconstructionButton_clicked()
 }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::getPCAMode()
-{
-  return this->ui_->pcaModeSpinBox->value() - 1;
-}
+int AnalysisTool::getPCAMode() { return this->ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
-double AnalysisTool::get_group_value()
-{
+double AnalysisTool::get_group_value() {
   double groupSliderValue = this->ui_->group_slider->value();
   double groupRatio = groupSliderValue / static_cast<double>(this->ui_->group_slider->maximum());
   return groupRatio;
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::pcaAnimate()
-{
-  return this->ui_->pcaAnimateCheckBox->isChecked();
-}
+bool AnalysisTool::pcaAnimate() { return this->ui_->pcaAnimateCheckBox->isChecked(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::setLabels(QString which, QString value)
-{
+void AnalysisTool::setLabels(QString which, QString value) {
   if (which == QString("pca")) {
     this->ui_->pcaValueLabel->setText(value);
-  }
-  else if (which == QString("eigen")) {
+  } else if (which == QString("eigen")) {
     this->ui_->pcaEigenValueLabel->setText(value);
-  }
-  else if (which == QString("lambda")) {
+  } else if (which == QString("lambda")) {
     this->ui_->pcaLambdaLabel->setText(value);
   }
 }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::get_sample_number()
-{
-  return this->ui_->sampleSpinBox->value();
-}
+int AnalysisTool::get_sample_number() { return this->ui_->sampleSpinBox->value(); }
 
 //---------------------------------------------------------------------------
-AnalysisTool::~AnalysisTool()
-{}
+AnalysisTool::~AnalysisTool() {}
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_session(QSharedPointer<Session> session)
-{
+void AnalysisTool::set_session(QSharedPointer<Session> session) {
   this->session_ = session;
   // reset to original
   this->ui_->mesh_warping_radio_button->setChecked(true);
@@ -258,31 +224,21 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_app(ShapeWorksStudioApp* app)
-{
-  this->app_ = app;
-}
+void AnalysisTool::set_app(ShapeWorksStudioApp* app) { this->app_ = app; }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_analysis_mode()
-{
-  this->handle_analysis_options();
-}
+void AnalysisTool::update_analysis_mode() { this->handle_analysis_options(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::group_pvalues_valid()
-{
+bool AnalysisTool::group_pvalues_valid() {
   return this->group_pvalue_job_ && this->group_pvalue_job_->get_group_pvalues().rows() > 0;
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::compute_mode_shape()
-{}
+void AnalysisTool::compute_mode_shape() {}
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_analysis_options()
-{
-
+void AnalysisTool::handle_analysis_options() {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
@@ -290,18 +246,16 @@ void AnalysisTool::handle_analysis_options()
     this->pca_animate_timer_.stop();
     this->ui_->pcaSlider->setEnabled(false);
     if (this->ui_->singleSamplesRadio->isChecked()) {
-      //one sample mode
+      // one sample mode
       this->ui_->sampleSpinBox->setEnabled(true);
       this->ui_->medianButton->setEnabled(true);
-    }
-    else {
-      //all samples mode
+    } else {
+      // all samples mode
       this->ui_->sampleSpinBox->setEnabled(false);
       this->ui_->medianButton->setEnabled(false);
     }
-  }
-  else if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
-    //mean mode
+  } else if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
+    // mean mode
     this->ui_->sampleSpinBox->setEnabled(false);
     this->ui_->medianButton->setEnabled(false);
     this->ui_->pcaSlider->setEnabled(false);
@@ -309,17 +263,15 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->pca_animate_timer_.stop();
-  }
-  else if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
-    //pca mode
+  } else if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
+    // pca mode
     this->ui_->sampleSpinBox->setEnabled(false);
     this->ui_->medianButton->setEnabled(false);
     this->ui_->pcaSlider->setEnabled(true);
     this->ui_->pcaAnimateCheckBox->setEnabled(true);
     this->ui_->pcaModeSpinBox->setEnabled(true);
-  }
-  else {
-    //regression mode
+  } else {
+    // regression mode
     this->ui_->sampleSpinBox->setEnabled(false);
     this->ui_->medianButton->setEnabled(false);
     this->ui_->pcaSlider->setEnabled(false);
@@ -332,17 +284,16 @@ void AnalysisTool::handle_analysis_options()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_median()
-{
-  if (!this->compute_stats()) { return; }
-  this->ui_->sampleSpinBox->setValue(
-    this->stats_.ComputeMedianShape(-32));       //-32 = both groups
+void AnalysisTool::handle_median() {
+  if (!this->compute_stats()) {
+    return;
+  }
+  this->ui_->sampleSpinBox->setValue(this->stats_.ComputeMedianShape(-32));  //-32 = both groups
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_mean_button_clicked()
-{
+void AnalysisTool::on_mean_button_clicked() {
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
   this->ui_->difference_button->setChecked(false);
@@ -352,8 +303,7 @@ void AnalysisTool::on_mean_button_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_group1_button_clicked()
-{
+void AnalysisTool::on_group1_button_clicked() {
   this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
   this->ui_->mean_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
@@ -365,8 +315,7 @@ void AnalysisTool::on_group1_button_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_group2_button_clicked()
-{
+void AnalysisTool::on_group2_button_clicked() {
   this->ui_->group_slider->setValue(this->ui_->group_slider->maximum());
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
@@ -378,8 +327,7 @@ void AnalysisTool::on_group2_button_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_difference_button_clicked()
-{
+void AnalysisTool::on_difference_button_clicked() {
   this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
@@ -391,8 +339,7 @@ void AnalysisTool::on_difference_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::group_p_values_clicked()
-{
+void AnalysisTool::group_p_values_clicked() {
   this->ui_->group_slider->setValue(10);
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
@@ -403,9 +350,7 @@ void AnalysisTool::group_p_values_clicked()
 
   if (this->group_pvalues_valid()) {
     this->handle_group_pvalues_complete();
-  }
-  else {
-
+  } else {
     if (this->group1_list_.size() < 3 || this->group2_list_.size() < 3) {
       emit error("Unable to compute p-values with less than 3 shapes per group");
       return;
@@ -413,15 +358,14 @@ void AnalysisTool::group_p_values_clicked()
     this->group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(this->stats_);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
     connect(this->group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
-    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::finished,
-            this, &AnalysisTool::handle_group_pvalues_complete);
+    connect(this->group_pvalue_job_.data(), &GroupPvalueJob::finished, this,
+            &AnalysisTool::handle_group_pvalues_complete);
     this->app_->get_py_worker()->run_job(this->group_pvalue_job_);
   }
 }
 
 //-----------------------------------------------------------------------------
-bool AnalysisTool::compute_stats()
-{
+bool AnalysisTool::compute_stats() {
   if (this->stats_ready_) {
     return true;
   }
@@ -432,10 +376,9 @@ bool AnalysisTool::compute_stats()
 
   this->compute_reconstructed_domain_transforms();
 
-  this->ui_->pcaModeSpinBox->setMaximum(
-    std::max<double>(1, this->session_->get_shapes().size() - 1));
+  this->ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, this->session_->get_shapes().size() - 1));
 
-  std::vector<vnl_vector<double>> points;
+  std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
   std::string group_set = this->ui_->group_box->currentText().toStdString();
@@ -448,24 +391,20 @@ bool AnalysisTool::compute_stats()
   this->group2_list_.clear();
 
   for (ShapeHandle shape : this->session_->get_shapes()) {
-
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(1);
         this->group1_list_.push_back(shape);
-      }
-      else if (value == right_group) {
+      } else if (value == right_group) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(2);
         this->group2_list_.push_back(shape);
-      }
-      else {
+      } else {
         // we don't include it
       }
-    }
-    else {
+    } else {
       points.push_back(shape->get_global_correspondence_points());
       group_ids.push_back(shape->get_group_id());
     }
@@ -479,8 +418,7 @@ bool AnalysisTool::compute_stats()
   size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      emit error(
-        "Inconsistency in data, particle files must contain the same number of points");
+      emit error("Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
   }
@@ -500,43 +438,52 @@ bool AnalysisTool::compute_stats()
 
   ////  Uncomment this to write out long format sample data
   /*
-     if (groups_enabled) {
-     std::ofstream file;
-     file.open ("/tmp/stats.csv");
-     file << "subject,group,particle,x,y,z\n";
+  if (groups_enabled) {
+    auto feature_names = session_->get_project()->get_feature_names();
+    std::ofstream file;
+    file.open("/tmp/stats.csv");
+    file << "subject,group,particle,x,y,z";
+    for (int i=0;i<feature_names.size();i++) {
+      file << "," << feature_names[i];
+    }
+    file << "\n";
 
-     int shape_id = 0;
-     for (ShapeHandle shape : this->session_->get_shapes()) {
+    int shape_id = 0;
+    Q_FOREACH (ShapeHandle shape, this->session_->get_shapes()) {
       auto group = shape->get_subject()->get_group_value(group_set);
       auto particles = shape->get_particles();
       auto points = particles.get_world_points(0);
       int point_id = 0;
-      for (auto point : points) {
-        file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2] << "\n";
-      }
-      shape_id++;
-     }
-     file.close();
-     }
-   */
+      for (int j=0;j<points.size(); j++) {
+        auto point = points[j];
+        file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2];
 
+        for (int i=0;i<feature_names.size();i++) {
+          auto scalars = shape->get_point_features(feature_names[i]);
+          file << "," << scalars[j];
+        }
+        file << "\n";
+      }
+
+      shape_id++;
+    }
+    file.close();
+  }
+  */
   return true;
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_mean_shape_points()
-{
+StudioParticles AnalysisTool::get_mean_shape_points() {
   if (!this->compute_stats()) {
     return StudioParticles();
   }
 
   if (this->ui_->group1_button->isChecked() || this->ui_->difference_button->isChecked()) {
     return this->convert_from_combined(this->stats_.Group1Mean());
-  }
-  else if (this->ui_->group2_button->isChecked()) {
+  } else if (this->ui_->group2_button->isChecked()) {
     return this->convert_from_combined(this->stats_.Group2Mean());
-  }
-  else if (this->ui_->mean_button->isChecked()) {
+  } else if (this->ui_->mean_button->isChecked()) {
     return this->convert_from_combined(this->stats_.Mean());
   }
 
@@ -550,8 +497,7 @@ StudioParticles AnalysisTool::get_mean_shape_points()
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_shape_points(int mode, double value)
-{
+StudioParticles AnalysisTool::get_shape_points(int mode, double value) {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return StudioParticles();
   }
@@ -559,14 +505,13 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
     mode = this->stats_.Eigenvalues().size() - 2;
   }
 
-  unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
+  unsigned int m = this->stats_.Eigenvectors().cols() - (mode + 1);
 
-  vnl_vector<double> e = this->stats_.Eigenvectors().get_column(m);
+  Eigen::VectorXd e = this->stats_.Eigenvectors().col(m);
 
   double lambda = sqrt(this->stats_.Eigenvalues()[m]);
 
-  this->pca_labels_changed(QString::number(value, 'g', 2),
-                           QString::number(this->stats_.Eigenvalues()[m]),
+  this->pca_labels_changed(QString::number(value, 'g', 2), QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
   std::vector<double> vals;
@@ -580,10 +525,8 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
   }
   if (sum > 0) {
     this->ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
-    this->ui_->cumulative_explained_variance->setText(
-      QString::number(cumulation / sum * 100, 'f', 1) + "%");
-  }
-  else {
+    this->ui_->cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  } else {
     this->ui_->explained_variance->setText("");
     this->ui_->cumulative_explained_variance->setText("");
   }
@@ -594,21 +537,18 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
-{
+ShapeHandle AnalysisTool::get_mode_shape(int mode, double value) {
   return this->create_shape_from_points(this->get_shape_points(mode, value));
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics AnalysisTool::get_stats()
-{
+ParticleShapeStatistics AnalysisTool::get_stats() {
   this->compute_stats();
   return this->stats_;
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::load_settings()
-{
+void AnalysisTool::load_settings() {
   Parameters params = this->session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
   this->ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
   this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
@@ -616,13 +556,11 @@ void AnalysisTool::load_settings()
 
   this->update_group_boxes();
 
-  this->ui_->group_box->setCurrentText(
-    QString::fromStdString(params.get("current_group", "-None-")));
+  this->ui_->group_box->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::store_settings()
-{
+void AnalysisTool::store_settings() {
   Parameters params = this->session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
   params.set("reconstruction_clusters", this->ui_->numClusters->value());
   params.set("reconstruction_decimation", this->ui_->meshDecimation->value());
@@ -631,20 +569,13 @@ void AnalysisTool::store_settings()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::shutdown()
-{
-  this->pca_animate_timer_.stop();
-}
+void AnalysisTool::shutdown() { this->pca_animate_timer_.stop(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::export_variance_graph(QString filename)
-{
-  return this->ui_->graph_->grab().save(filename);
-}
+bool AnalysisTool::export_variance_graph(QString filename) { return this->ui_->graph_->grab().save(filename); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::compute_shape_evaluations()
-{
+void AnalysisTool::compute_shape_evaluations() {
   if (this->evals_ready_) {
     return;
   }
@@ -668,8 +599,7 @@ void AnalysisTool::compute_shape_evaluations()
   this->ui_->generalization_progress->setValue(0);
   this->ui_->specificity_progress->setValue(0);
 
-  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType,
-                    ShapeEvaluationJob::JobType::GeneralizationType,
+  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
                     ShapeEvaluationJob::JobType::SpecificityType};
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();
@@ -683,14 +613,10 @@ void AnalysisTool::compute_shape_evaluations()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_tabWidget_currentChanged()
-{
-  this->update_analysis_mode();
-}
+void AnalysisTool::on_tabWidget_currentChanged() { this->update_analysis_mode(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaSlider_valueChanged()
-{
+void AnalysisTool::on_pcaSlider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
 
@@ -698,10 +624,9 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_group_slider_valueChanged()
-{
+void AnalysisTool::on_group_slider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
-  //QCoreApplication::processEvents();
+  // QCoreApplication::processEvents();
 
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
@@ -712,26 +637,20 @@ void AnalysisTool::on_group_slider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
-{
-  emit pca_update();
-}
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { emit pca_update(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_pca_animate_state_changed()
-{
+void AnalysisTool::handle_pca_animate_state_changed() {
   if (this->pcaAnimate()) {
     this->pca_animate_timer_.setInterval(10);
     this->pca_animate_timer_.start();
-  }
-  else {
+  } else {
     this->pca_animate_timer_.stop();
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_pca_timer()
-{
+void AnalysisTool::handle_pca_timer() {
   if (!this->pcaAnimate()) {
     return;
   }
@@ -739,8 +658,7 @@ void AnalysisTool::handle_pca_timer()
   int value = this->ui_->pcaSlider->value();
   if (this->pca_animate_direction_) {
     value += this->ui_->pcaSlider->singleStep();
-  }
-  else {
+  } else {
     value -= this->ui_->pcaSlider->singleStep();
   }
 
@@ -752,66 +670,58 @@ void AnalysisTool::handle_pca_timer()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_group_animate_state_changed()
-{
+void AnalysisTool::handle_group_animate_state_changed() {
   if (this->ui_->group_animate_checkbox->isChecked()) {
     this->group_animate_timer_.setInterval(10);
     this->group_animate_timer_.start();
-  }
-  else {
+  } else {
     this->group_animate_timer_.stop();
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_group_timer()
-{
+void AnalysisTool::handle_group_timer() {
   int value = this->ui_->group_slider->value();
   if (this->group_animate_direction_) {
     value += this->ui_->group_slider->singleStep();
-  }
-  else {
+  } else {
     value -= this->ui_->group_slider->singleStep();
   }
 
   if (value >= this->ui_->group_slider->maximum() || value <= this->ui_->group_slider->minimum()) {
     this->group_animate_direction_ = !this->group_animate_direction_;
-    //this->setPregenSteps();
+    // this->setPregenSteps();
   }
 
   this->ui_->group_slider->setValue(value);
 }
 
 //---------------------------------------------------------------------------
-double AnalysisTool::get_pca_value()
-{
+double AnalysisTool::get_pca_value() {
   int slider_value = this->ui_->pcaSlider->value();
   float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
-  double value = (double) slider_value / (double) halfRange * range;
+  double value = (double)slider_value / (double)halfRange * range;
   return value;
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lambda)
-{
+void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lambda) {
   this->setLabels(QString("pca"), value);
   this->setLabels(QString("eigen"), eigen);
   this->setLabels(QString("lambda"), lambda);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::updateSlider()
-{
+void AnalysisTool::updateSlider() {
   auto steps = this->preferences_.get_pca_steps();
   auto sliderRange = this->ui_->pcaSlider->maximum() - this->ui_->pcaSlider->minimum();
   this->ui_->pcaSlider->setSingleStep(sliderRange / steps);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::reset_stats()
-{
+void AnalysisTool::reset_stats() {
   this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
   this->ui_->allSamplesRadio->setChecked(true);
   this->ui_->singleSamplesRadio->setChecked(false);
@@ -827,8 +737,7 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::enable_actions(bool newly_enabled)
-{
+void AnalysisTool::enable_actions(bool newly_enabled) {
   if (this->session_->get_num_shapes() < 1) {
     return;
   }
@@ -840,11 +749,11 @@ void AnalysisTool::enable_actions(bool newly_enabled)
 
   auto domain_types = this->session_->get_domain_types();
   bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
-  this->ui_->distance_transfom_radio_button->setEnabled(
-    this->session_->particles_present() && this->session_->get_groomed_present() && image_domain);
+  this->ui_->distance_transfom_radio_button->setEnabled(this->session_->particles_present() &&
+                                                        this->session_->get_groomed_present() && image_domain);
 
-  this->ui_->mesh_warping_radio_button->setEnabled(
-    this->session_->particles_present() && this->session_->get_groomed_present());
+  this->ui_->mesh_warping_radio_button->setEnabled(this->session_->particles_present() &&
+                                                   this->session_->get_groomed_present());
 
   if (!this->ui_->mesh_warping_radio_button->isEnabled()) {
     this->ui_->legacy_radio_button->setChecked(true);
@@ -856,27 +765,22 @@ void AnalysisTool::enable_actions(bool newly_enabled)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_analysis_mode(std::string mode)
-{
+void AnalysisTool::set_analysis_mode(std::string mode) {
   if (mode == "all samples" || mode == "single sample") {
     this->ui_->allSamplesRadio->setChecked(mode == "all samples");
     this->ui_->singleSamplesRadio->setChecked(mode == "single sample");
     this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
-  }
-  else if (mode == "mean") {
+  } else if (mode == "mean") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
-  }
-  else if (mode == "pca") {
+  } else if (mode == "pca") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->pca_tab);
-  }
-  else if (mode == "regression") {
+  } else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_mean_shape()
-{
+ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = this->get_mean_shape_points();
   ShapeHandle shape = this->create_shape_from_points(shape_points);
   if (this->get_group_difference_mode()) {
@@ -905,8 +809,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
         auto value = shapes[i]->get_point_features(this->feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
-        }
-        else {
+        } else {
           values.push_back(value);
           sum = sum + value;
         }
@@ -916,8 +819,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
       if (ready) {
         shape->set_point_features(this->feature_map_, mean);
       }
-    }
-    else {
+    } else {
       Eigen::VectorXf sum_left(num_points);
       sum_left.setZero();
       Eigen::VectorXf sum_right(num_points);
@@ -928,8 +830,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
         auto value = shape->get_point_features(this->feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
-        }
-        else {
+        } else {
           sum_left = sum_left + value;
         }
       }
@@ -940,8 +841,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
         auto value = shape->get_point_features(this->feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
-        }
-        else {
+        } else {
           sum_right = sum_right + value;
         }
       }
@@ -959,8 +859,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
-{
+ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points) {
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
   shape->set_particles(points);
@@ -970,14 +869,10 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_feature_map(const std::string& feature_map)
-{
-  this->feature_map_ = feature_map;
-}
+void AnalysisTool::set_feature_map(const std::string& feature_map) { this->feature_map_ = feature_map; }
 
 //---------------------------------------------------------------------------
-std::string AnalysisTool::get_display_feature_map()
-{
+std::string AnalysisTool::get_display_feature_map() {
   if (this->ui_->group_p_values_button->isChecked() && this->group_pvalue_job_ &&
       this->group_pvalue_job_->get_group_pvalues().rows() > 0) {
     return "p_values";
@@ -986,14 +881,13 @@ std::string AnalysisTool::get_display_feature_map()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_group_boxes()
-{
+void AnalysisTool::update_group_boxes() {
   // populate the group sets
   auto group_names = this->session_->get_project()->get_group_names();
 
   this->ui_->group_widget->setEnabled(!group_names.empty());
 
-  if (group_names != this->current_group_names_) { // only update if different
+  if (group_names != this->current_group_names_) {  // only update if different
     this->ui_->group_box->clear();
     this->ui_->group_box->addItem("-None-");
     for (const std::string& group : group_names) {
@@ -1005,11 +899,9 @@ void AnalysisTool::update_group_boxes()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_group_values()
-{
-  auto values = this->session_->get_project()->
-                get_group_values(std::string("group_")
-                                 + this->ui_->group_box->currentText().toStdString());
+void AnalysisTool::update_group_values() {
+  auto values = this->session_->get_project()->get_group_values(std::string("group_") +
+                                                                this->ui_->group_box->currentText().toStdString());
 
   if (values != this->current_group_values_) {
     // populate group values
@@ -1045,8 +937,7 @@ void AnalysisTool::update_group_values()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_domain_alignment_box()
-{
+void AnalysisTool::update_domain_alignment_box() {
   auto domain_names = this->session_->get_project()->get_domain_names();
 
   bool multiple_domains = domain_names.size() > 1;
@@ -1063,38 +954,33 @@ void AnalysisTool::update_domain_alignment_box()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::group_changed()
-{
+void AnalysisTool::group_changed() {
   this->stats_ready_ = false;
   this->group_pvalue_job_ = nullptr;
   this->compute_stats();
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::groups_active()
-{
+bool AnalysisTool::groups_active() {
   std::string group_set = this->ui_->group_box->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_view_open_button_toggled()
-{
+void AnalysisTool::on_view_open_button_toggled() {
   bool show = this->ui_->view_open_button->isChecked();
   this->ui_->view_content->setVisible(show);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_surface_open_button_toggled()
-{
+void AnalysisTool::on_surface_open_button_toggled() {
   bool show = this->ui_->surface_open_button->isChecked();
   this->ui_->surface_content->setVisible(show);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_metrics_open_button_toggled()
-{
+void AnalysisTool::on_metrics_open_button_toggled() {
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
 
@@ -1104,8 +990,7 @@ void AnalysisTool::on_metrics_open_button_toggled()
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::is_group_active(int shape_index)
-{
+bool AnalysisTool::is_group_active(int shape_index) {
   std::string group_set = this->ui_->group_box->currentText().toStdString();
   std::string left_group = this->ui_->group_left->currentText().toStdString();
   std::string right_group = this->ui_->group_right->currentText().toStdString();
@@ -1121,8 +1006,7 @@ bool AnalysisTool::is_group_active(int shape_index)
   if (this->ui_->group1_button->isChecked()) {
     both = false;
     left = true;
-  }
-  else if (this->ui_->group2_button->isChecked()) {
+  } else if (this->ui_->group2_button->isChecked()) {
     both = false;
     right = true;
   }
@@ -1131,26 +1015,23 @@ bool AnalysisTool::is_group_active(int shape_index)
     auto value = shape->get_subject()->get_group_value(group_set);
     if (left && value == left_group) {
       return true;
-    }
-    else if (right && value == right_group) {
+    } else if (right && value == right_group) {
       return true;
-    }
-    else if (both) {
+    } else if (both) {
       return true;
+    } else {
+      return false;
     }
-    else { return false; }
   }
 
   return true;
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::initialize_mesh_warper()
-{
+void AnalysisTool::initialize_mesh_warper() {
   if (this->session_->particles_present() && this->session_->get_groomed_present()) {
-
     this->compute_stats();
-    int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
+    int median = this->stats_.ComputeMedianShape(-32);  //-32 = both groups
 
     if (median < 0 || median >= this->session_->get_num_shapes()) {
       STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
@@ -1166,75 +1047,63 @@ void AnalysisTool::initialize_mesh_warper()
     }
     auto meshes = mesh_group.meshes();
     for (int i = 0; i < mesh_group.meshes().size(); i++) {
-
-      vnl_vector<double> particles = median_shape->get_particles().get_local_particles(i);
-      Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
-        (double*) particles.data_block(), particles.size());
+      Eigen::VectorXd particles = median_shape->get_particles().get_local_particles(i);
+      Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*)particles.data(), particles.size());
       points.resize(3, points.size() / 3);
       points.transposeInPlace();
 
-      this->session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(
-        meshes[i]->get_poly_data(), points);
+      this->session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(meshes[i]->get_poly_data(), points);
     }
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type,
-                                               Eigen::VectorXd data)
-{
+void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) {
   switch (job_type) {
-  case ShapeEvaluationJob::JobType::CompactnessType:
-    this->eval_compactness_ = data;
-    this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes",
-                      "Explained Variance");
-    this->ui_->compactness_graph->show();
-    this->ui_->compactness_progress_widget->hide();
-    break;
-  case ShapeEvaluationJob::JobType::SpecificityType:
-    this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes",
-                      "Specificity");
-    this->eval_specificity_ = data;
-    this->ui_->specificity_graph->show();
-    this->ui_->specificity_progress_widget->hide();
-    break;
-  case ShapeEvaluationJob::JobType::GeneralizationType:
-    this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes",
-                      "Generalization");
-    this->eval_generalization_ = data;
-    this->ui_->generalization_graph->show();
-    this->ui_->generalization_progress_widget->hide();
-    break;
+    case ShapeEvaluationJob::JobType::CompactnessType:
+      this->eval_compactness_ = data;
+      this->create_plot(this->ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
+      this->ui_->compactness_graph->show();
+      this->ui_->compactness_progress_widget->hide();
+      break;
+    case ShapeEvaluationJob::JobType::SpecificityType:
+      this->create_plot(this->ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
+      this->eval_specificity_ = data;
+      this->ui_->specificity_graph->show();
+      this->ui_->specificity_progress_widget->hide();
+      break;
+    case ShapeEvaluationJob::JobType::GeneralizationType:
+      this->create_plot(this->ui_->generalization_graph, data, "Generalization", "Number of Modes", "Generalization");
+      this->eval_generalization_ = data;
+      this->ui_->generalization_graph->show();
+      this->ui_->generalization_progress_widget->hide();
+      break;
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type,
-                                               float progress)
-{
+void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress) {
   switch (job_type) {
-  case ShapeEvaluationJob::JobType::CompactnessType:
-    this->ui_->compactness_progress->setValue(progress * 100);
-    break;
-  case ShapeEvaluationJob::JobType::SpecificityType:
-    this->ui_->specificity_progress->setValue(progress * 100);
-    break;
-  case ShapeEvaluationJob::JobType::GeneralizationType:
-    this->ui_->generalization_progress->setValue(progress * 100);
-    break;
+    case ShapeEvaluationJob::JobType::CompactnessType:
+      this->ui_->compactness_progress->setValue(progress * 100);
+      break;
+    case ShapeEvaluationJob::JobType::SpecificityType:
+      this->ui_->specificity_progress->setValue(progress * 100);
+      break;
+    case ShapeEvaluationJob::JobType::GeneralizationType:
+      this->ui_->generalization_progress->setValue(progress * 100);
+      break;
   }
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_group_pvalues_complete()
-{
+void AnalysisTool::handle_group_pvalues_complete() {
   emit progress(100);
   emit update_view();
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_alignment_changed(int new_alignment)
-{
+void AnalysisTool::handle_alignment_changed(int new_alignment) {
   new_alignment -= 2;
   if (new_alignment == this->current_alignment_) {
     return;
@@ -1245,12 +1114,10 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     if (this->current_alignment_ == AlignmentType::Local) {
       transform = nullptr;
-    }
-    else if (this->current_alignment_ == AlignmentType::Global) {
+    } else if (this->current_alignment_ == AlignmentType::Global) {
       auto domain_names = this->session_->get_project()->get_domain_names();
       transform = shape->get_groomed_transform(domain_names.size());
-    }
-    else {
+    } else {
       transform = shape->get_groomed_transform(new_alignment);
     }
 
@@ -1263,20 +1130,16 @@ void AnalysisTool::handle_alignment_changed(int new_alignment)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::reconstruction_method_changed()
-{
-  this->ui_->reconstruction_options->setVisible(
-    this->ui_->distance_transfom_radio_button->isChecked());
+void AnalysisTool::reconstruction_method_changed() {
+  this->ui_->reconstruction_options->setVisible(this->ui_->distance_transfom_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
   if (this->ui_->distance_transfom_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
-  }
-  else if (this->ui_->mesh_warping_radio_button->isChecked()) {
+  } else if (this->ui_->mesh_warping_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
   }
 
-  auto previous_method =
-    this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
+  auto previous_method = this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
   if (previous_method != method) {
     this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     this->session_->handle_clear_cache();
@@ -1285,8 +1148,7 @@ void AnalysisTool::reconstruction_method_changed()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_active(bool active)
-{
+void AnalysisTool::set_active(bool active) {
   if (!active) {
     this->ui_->pcaAnimateCheckBox->setChecked(false);
     this->pca_animate_timer_.stop();
@@ -1295,14 +1157,10 @@ void AnalysisTool::set_active(bool active)
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::get_active()
-{
-  return this->active_;
-}
+bool AnalysisTool::get_active() { return this->active_; }
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
-{
+StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
   StudioParticles particles;
   if (this->session_->get_shapes().empty()) {
     return particles;
@@ -1312,7 +1170,7 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
   auto worlds = base.get_world_particles();
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
-    vnl_vector<double> new_world(worlds[d].size());
+    Eigen::VectorXd new_world(worlds[d].size());
     for (int i = 0; i < worlds[d].size(); i++) {
       new_world[i] = points[idx++];
     }
@@ -1323,11 +1181,9 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::compute_reconstructed_domain_transforms()
-{
+void AnalysisTool::compute_reconstructed_domain_transforms() {
   auto shapes = this->session_->get_shapes();
   if (this->current_alignment_ == AlignmentType::Local) {
-
     this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
     for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
       int num_shapes = shapes.size();
@@ -1339,14 +1195,12 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
         vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
 
         for (int j = 0; j < 16; j++) {
-          values[j] += (base->GetMatrix()->GetData()[j] -
-                        offset->GetMatrix()->GetData()[j]) / num_shapes;
+          values[j] += (base->GetMatrix()->GetData()[j] - offset->GetMatrix()->GetData()[j]) / num_shapes;
         }
       }
       this->reconstruction_transforms_[domain] = transform;
     }
-  }
-  else {
+  } else {
     this->reconstruction_transforms_.clear();
   }
   for (int s = 0; s < shapes.size(); s++) {
@@ -1355,10 +1209,10 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title,
-                               QString x_label, QString y_label)
-{
+void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
+                               QString y_label) {
   JKQTPDatastore* ds = plot->getDatastore();
+  ds->clear();
 
   QVector<double> x, y;
   for (int i = 0; i < data.size(); i++) {
@@ -1379,7 +1233,7 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
   plot->getPlotter()->setUseAntiAliasingForText(true);
-  //plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
+  // plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
   plot->getPlotter()->setPlotLabelFontSize(18);
   plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
   plot->getPlotter()->setDefaultTextSize(14);
@@ -1396,4 +1250,4 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   plot->addGraph(graph);
   plot->zoomToFit();
 }
-}
+}  // namespace shapeworks
