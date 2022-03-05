@@ -1,5 +1,6 @@
 
 #include "PaintWidget.h"
+#include "Viewer.h"
 
 #include <QCursor>
 
@@ -185,6 +186,7 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
 
   if (this->WidgetState == PaintWidget::Paint || this->WidgetState == PaintWidget::Erase) {
     if (this->WidgetState == PaintWidget::Paint) {
+      viewer_->handle_ffc_paint(displayPos, worldPos);
       ////paint_position( this, worldPos );
     } else if (this->WidgetState == PaintWidget::Erase) {
       ////erase_position( this, worldPos );
@@ -310,6 +312,9 @@ void PaintWidget::PrintSelf(ostream& os, vtkIndent indent) {
 
   os << indent << "WidgetState: " << this->WidgetState << endl;
 }
+
+//----------------------------------------------------------------------
+void PaintWidget::set_viewer(Viewer* viewer) { viewer_ = viewer; }
 
 //----------------------------------------------------------------------
 void PaintWidget::set_brush_size(float size) { sphere_cursor_->set_size(size); }

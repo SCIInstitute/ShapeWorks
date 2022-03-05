@@ -551,6 +551,12 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
+void Viewer::handle_ffc_paint(double displayPos[], double worldPos[])
+{
+
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------

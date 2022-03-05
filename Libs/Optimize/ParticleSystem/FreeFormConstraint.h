@@ -14,13 +14,7 @@ class FreeFormConstraint : public Constraint {
 
   std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
 
-  bool isViolated(const Eigen::Vector3d &pt) const override {
-    if (constraintEval(pt) >= 0) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  bool isViolated(const Eigen::Vector3d &pt) const override;
 
   void print() const override { std::cout << "FF" << std::endl; }
 
@@ -28,8 +22,16 @@ class FreeFormConstraint : public Constraint {
 
   double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
 
+  //! Set polydata where per-vertex free form constraint definition exists
+  void setDefinition(vtkSmartPointer<vtkPolyData> polyData) { definition_ = polyData; };
+
+  //! Get polydata where per-vertex free form constraint definition exists
+  vtkSmartPointer<vtkPolyData> getDefinition() { return definition_; };
+
  private:
   std::shared_ptr<shapeworks::Mesh> mesh_;
+
+  vtkSmartPointer<vtkPolyData> definition_;
 };
 
 }  // namespace shapeworks

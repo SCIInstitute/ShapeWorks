@@ -9,6 +9,7 @@ class vtkRenderer;
 
 namespace shapeworks {
 
+class Viewer;
 class StudioSphereRepresentation;
 
 class PaintWidget : public vtkAbstractWidget {
@@ -33,6 +34,8 @@ class PaintWidget : public vtkAbstractWidget {
 
   vtkSetMacro(Renderer, vtkRenderer*);
   vtkGetMacro(Renderer, vtkRenderer*);
+
+  void set_viewer(Viewer* viewer);
 
   // Description:
   // The method for activiating and deactiviating this widget. This method
@@ -96,6 +99,8 @@ class PaintWidget : public vtkAbstractWidget {
   StudioSphereRepresentation* sphere_cursor_;
 
   bool mouse_in_window_;
+
+  Viewer* viewer_;
 
  private:
   PaintWidget(const PaintWidget&);     // Not implemented
