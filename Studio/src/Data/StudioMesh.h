@@ -13,6 +13,7 @@
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
+class vtkFloatArray;
 
 namespace shapeworks {
 
@@ -63,6 +64,9 @@ class StudioMesh {
 
   //! Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)
   double get_largest_dimension_size();
+
+  //! Get or create and return an array with a given name
+  vtkFloatArray* get_or_create_array(std::string name);
 
  private:
   // metadata

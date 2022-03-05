@@ -199,6 +199,7 @@ class Viewer {
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
+  vtkSmartPointer<vtkLookupTable> ffc_lut_;
 
   vtkSmartPointer<vtkArrowSource> arrow_source_;
   vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;

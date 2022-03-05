@@ -552,7 +552,20 @@ vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { ret
 
 //-----------------------------------------------------------------------------
 void Viewer::handle_ffc_paint(double displayPos[], double worldPos[])
-{
+{  
+  if (!meshes_.valid()) {
+    return;
+  }
+
+  int domain = 0; // update for multiple domain
+
+  auto mesh = meshes_.meshes()[0];
+  auto poly_data = mesh->get_poly_data();
+
+  auto ffc_paint = mesh->get_or_create_array("ffc_paint");
+
+
+  /// find vertices within paint sphere
 
 }
 

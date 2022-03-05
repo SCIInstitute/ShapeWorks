@@ -188,6 +188,19 @@ double StudioMesh::get_largest_dimension_size() {
   return max;
 }
 
+//---------------------------------------------------------------------------
+vtkFloatArray* StudioMesh::get_or_create_array(std::string name) {
+  auto result = poly_data_->GetPointData()->GetArray(name.c_str());
+  if (!result) {
+    vtkFloatArray* array = vtkFloatArray::New();
+    array->SetName(name.c_str());
+    array->SetNumberOfValues(poly_data_->GetNumberOfPoints());
+    poly_data_->GetPointData()->AddArray(array);
+  }
+
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(poly_data_->GetPointData()->GetArray(name.c_str()));
+  return array;
+}
 
 //---------------------------------------------------------------------------
 void StudioMesh::apply_scalars(MeshHandle mesh) {
