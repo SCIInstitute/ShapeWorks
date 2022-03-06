@@ -378,8 +378,16 @@ std::string OptimizeParameters::get_output_prefix() {
   auto prefix = this->get_optimize_output_prefix();
   boost::replace_all(prefix, "<project>", project_name);
 
-  auto path = base + "/" + prefix;
-  boost::filesystem::create_directories(path);
+  auto path = base;
+  if (prefix != "") {
+    path = base + "/" + prefix;
+
+    try {
+      boost::filesystem::create_directories(path);
+    } catch (std::exception& e) {
+      throw std::runtime_error("Unable to create output directory: \"" + path + "\"");
+    }
+  }
 
   auto output = path + "/";
   return output;
