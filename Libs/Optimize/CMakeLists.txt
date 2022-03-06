@@ -5,11 +5,14 @@ add_library(Optimize STATIC
   Optimize.cpp
   OptimizeParameterFile.cpp
   OptimizeParameters.cpp
-  ./ParticleSystem/MeshDomain.cpp
-  ./ParticleSystem/Constraints.cpp
-  ./ParticleSystem/TriMeshWrapper.cpp
-  ./ParticleSystem/VtkMeshWrapper.cpp
-  ./ParticleSystem/OptimizationVisualizer.cpp
+  ParticleSystem/MeshDomain.cpp
+  ParticleSystem/Constraints.cpp
+  ParticleSystem/Constraint.cpp
+  ParticleSystem/SphereConstraint.cpp
+  ParticleSystem/PlaneConstraint.cpp
+  ParticleSystem/TriMeshWrapper.cpp
+  ParticleSystem/VtkMeshWrapper.cpp
+  ParticleSystem/OptimizationVisualizer.cpp
   )
 
 target_link_libraries(Optimize
@@ -25,6 +28,7 @@ target_link_libraries(Optimize
   igl::core
   ${Boost_LIBRARIES}
   geometry-central
+  nlohmann_json::nlohmann_json
   )
 
 # Create an interface library that will bring pybind11::embed along

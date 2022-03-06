@@ -158,6 +158,7 @@ private:
   static constexpr const char* IMAGE_PREFIX = "image_";
   static constexpr const char* NAME = "name";
   static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
+  static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);

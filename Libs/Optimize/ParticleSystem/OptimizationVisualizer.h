@@ -23,7 +23,7 @@ namespace shapeworks
   public:
 
     void AddMesh(vtkPolyData *mesh, std::shared_ptr<trimesh::TriMesh> tmesh);
-    void IterationCallback(itk::ParticleSystem<3> * particleSystem);
+    void IterationCallback(itk::ParticleSystem * particleSystem);
 
     void SetWireFrame(bool enabled);
     void SetSaveScreenshots(bool enabled, std::string path);

@@ -4,6 +4,7 @@
 #include <Data/MeshManager.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioParticles.h>
+#include <Libs/Optimize/ParticleSystem/Constraints.h>
 #include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
 
@@ -32,6 +33,8 @@ class Shape {
   Shape();
 
   ~Shape();
+
+  QString get_display_name();
 
   MeshGroup get_meshes(const string& display_mode);
 
@@ -70,6 +73,12 @@ class Shape {
 
   //! Store landmarks
   bool store_landmarks();
+
+  //! import constraints
+  bool import_constraints(QStringList filenames);
+
+  //! Store constraints
+  bool store_constraints();
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
@@ -151,6 +160,12 @@ class Shape {
 
   Eigen::MatrixXd& landmarks();
 
+  std::vector<Constraints>& constraints();
+
+  Constraints& get_constraints(int domain_id);
+
+  bool has_planes();
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
@@ -194,5 +209,7 @@ class Shape {
 
   vtkSmartPointer<vtkImageData> image_volume_;
   std::string image_volume_filename_;
+
+  std::vector<Constraints> constraints_;  // one set for each domain
 };
 }  // namespace shapeworks

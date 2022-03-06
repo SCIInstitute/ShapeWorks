@@ -10,6 +10,7 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -27,6 +28,15 @@ Shape::Shape() {
   this->corner_annotations_ << "";
   this->corner_annotations_ << "";
   this->corner_annotations_ << "";
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_display_name() {
+  if (subject_ && subject_->get_display_name() != "") {
+    return QString::fromStdString(subject_->get_display_name());
+  }
+
+  return "";
 }
 
 //---------------------------------------------------------------------------
@@ -165,9 +175,12 @@ bool Shape::import_landmarks_files(QStringList filenames) {
   std::vector<Eigen::VectorXd> all_points;
   int total_count = 0;
   for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      continue;
+    }
     Eigen::VectorXd points;
     if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to load file: " + filenames[i].toStdString());
+      throw std::invalid_argument("Unable to load landmarks file: " + filenames[i].toStdString());
     }
     total_count += points.size() / 3;
 
@@ -201,6 +214,16 @@ bool Shape::store_landmarks() {
     filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
   }
+  for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      std::string filename = subject_->get_segmentation_filenames()[i];
+      filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+    }
+  }
+
+  if (landmarks_.rows() == 0) {
+    filenames = {};
+  }
 
   subject_->set_landmarks_filenames(filenames);
 
@@ -219,6 +242,47 @@ bool Shape::store_landmarks() {
     out.close();
   }
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::import_constraints(QStringList filenames) {
+  for (int i = 0; i < filenames.size(); i++) {
+    Constraints constraints;
+    try {
+      constraints.Read(filenames[i].toStdString());
+    } catch (std::exception& e) {
+      STUDIO_SHOW_ERROR(e.what());
+      return false;
+    }
+    constraints_.push_back(constraints);
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::store_constraints() {
+  auto filenames = subject_->get_constraints_filenames();
+  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
+    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
+    filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
+    filenames.push_back(filename);
+  }
+
+  if (constraints_.size() == 0) {
+    filenames = {};
+  }
+
+  subject_->set_constraints_filenames(filenames);
+
+  for (int i = 0; i < filenames.size(); i++) {
+    try {
+      get_constraints(i).Write(filenames[i]);
+    } catch (std::exception& e) {
+      STUDIO_SHOW_ERROR(e.what());
+      return false;
+    }
+  }
   return true;
 }
 
@@ -741,4 +805,28 @@ std::string Shape::get_override_feature() { return this->override_feature_; }
 
 //---------------------------------------------------------------------------
 Eigen::MatrixXd& Shape::landmarks() { return landmarks_; }
+
+//---------------------------------------------------------------------------
+std::vector<Constraints>& Shape::constraints() { return constraints_; }
+
+//---------------------------------------------------------------------------
+Constraints& Shape::get_constraints(int domain_id) {
+  while (domain_id >= constraints_.size()) {
+    constraints_.push_back(Constraints{});
+  }
+  return constraints_[domain_id];
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_planes() {
+  for (int i = 0; i < constraints_.size(); i++) {
+    for (auto& plane : constraints_[i].getPlaneConstraints()) {
+      if (plane.points().size() == 3) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 }  // namespace shapeworks

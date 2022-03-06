@@ -27,6 +27,8 @@ class vtkPolygonalSurfacePointPlacer;
 class vtkImageSlice;
 class vtkImageSliceMapper;
 class vtkImageData;
+class vtkCellPicker;
+class vtkPropPicker;
 
 namespace shapeworks {
 
@@ -35,6 +37,7 @@ class Viewer;
 class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
+class PlaneWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -105,14 +108,18 @@ class Viewer {
   QSharedPointer<Shape> get_shape();
 
   void update_landmarks();
+  void update_planes();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
+  std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
 
   MeshGroup get_meshes();
 
   vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
+
+  vtkSmartPointer<vtkTransform> get_inverse_landmark_transform(int domain);
 
   vtkSmartPointer<vtkTransform> get_image_transform();
 
@@ -125,6 +132,10 @@ class Viewer {
   vtkSmartPointer<vtkPoints> get_glyph_points();
 
   vtkSmartPointer<vtkTransform> get_alignment_transform();
+
+  void update_clipping_planes();
+
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
@@ -146,6 +157,8 @@ class Viewer {
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
+
+  vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
   bool visible_;
 
@@ -177,6 +190,8 @@ class Viewer {
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
@@ -207,10 +222,16 @@ class Viewer {
   int number_of_domains_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
+  std::shared_ptr<PlaneWidget> plane_widget_;
 
   QSharedPointer<Session> session_;
 
   std::string current_image_name_;
+
+  vtkSmartPointer<vtkCellPicker> cell_picker_;
+  vtkSmartPointer<vtkPropPicker> prop_picker_;
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
+
 
   // slice viewer
   SliceView slice_view_{this};
