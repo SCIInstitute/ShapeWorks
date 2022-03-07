@@ -10,8 +10,7 @@ namespace shapeworks {
  *
  */
 class MeshGroup {
-
-public:
+ public:
   MeshGroup();
 
   MeshGroup(unsigned long num_meshes);
@@ -24,10 +23,10 @@ public:
 
   void set_mesh(int i, MeshHandle mesh);
 
+  //! Return a reference to the list of meshes
   MeshList& meshes();
 
-private:
+ private:
   MeshList meshes_;
-
 };
-}
+}  // namespace shapeworks

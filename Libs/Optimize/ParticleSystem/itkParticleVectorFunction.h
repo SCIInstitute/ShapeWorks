@@ -44,7 +44,7 @@ public:
   itkTypeMacro( ParticleVectorFunction, LightObject);
 
   /** Type of particle system. */
-  typedef ParticleSystem<VDimension> ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
 
   /** Type of vectors. */
   typedef vnl_vector_fixed<double, VDimension> VectorType;

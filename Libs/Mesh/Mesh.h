@@ -221,6 +221,9 @@ public:
   /// Formats mesh into an IGL format
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
+  /// Clips the mesh according to a field value
+  vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
+
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
