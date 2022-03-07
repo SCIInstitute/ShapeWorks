@@ -36,7 +36,7 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self)

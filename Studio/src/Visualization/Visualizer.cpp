@@ -13,6 +13,8 @@
 
 namespace shapeworks {
 
+//-----------------------------------------------------------------------------
+
 const std::string Visualizer::MODE_ORIGINAL_C("Original");
 const std::string Visualizer::MODE_GROOMED_C("Groomed");
 const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
@@ -44,8 +46,11 @@ void Visualizer::set_lightbox(LightboxHandle lightbox) {
 void Visualizer::set_session(SessionHandle session) {
   session_ = session;
   lightbox_->set_session(session);
-  connect(this->session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
+  connect(session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
   connect(session_.data(), &Session::landmarks_changed, this, &Visualizer::update_landmarks);
+  connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
+  connect(session_.data(), &Session::image_slice_settings_changed, this,
+          &Visualizer::handle_image_slice_settings_changed);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,6 +78,12 @@ void Visualizer::update_samples() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_planes() {
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
   lightbox_->redraw();
 }
 
@@ -230,6 +241,16 @@ void Visualizer::handle_feature_range_changed() {
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::handle_image_slice_settings_changed() {
+  lightbox_->update_interactor_style();
+
+  if (this->lightbox_) {
+    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) { v->update_image_volume(); }
+  }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::update_lut() {
   int num_points = this->cached_mean_.size() / 3;
 
@@ -330,10 +351,7 @@ void Visualizer::compute_measurements() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_mean(const Eigen::VectorXd& mean)
-{
-  this->cached_mean_ = mean;
-}
+void Visualizer::set_mean(const Eigen::VectorXd& mean) { this->cached_mean_ = mean; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera() {
@@ -447,4 +465,5 @@ double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; 
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
+
 }  // namespace shapeworks

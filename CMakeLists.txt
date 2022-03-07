@@ -157,9 +157,13 @@ find_package (ACVD REQUIRED)
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
+### Boost
 find_package(Boost REQUIRED COMPONENTS
              filesystem)
 
+### Json library
+find_package(nlohmann_json 3.10.5 REQUIRED)
+	   
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
   set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)

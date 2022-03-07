@@ -25,7 +25,7 @@ public:
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
     /** Particle system typedefs. */
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
     typedef typename ParticleSystemType::PointType PointType;
 
     /** Type of the domain. */

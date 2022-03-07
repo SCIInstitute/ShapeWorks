@@ -65,7 +65,7 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Particle System type is based on the dimensionality. */
-  typedef ParticleSystem<VDimension> ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
 
   /** Type of the gradient function. */
   typedef ParticleVectorFunction<VDimension> GradientFunctionType;

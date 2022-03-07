@@ -43,7 +43,7 @@ namespace shapeworks {
     tmeshes.push_back(tmesh);
   }
 
-  void OptimizationVisualizer::IterationCallback(itk::ParticleSystem<3> * particleSystem) {
+  void OptimizationVisualizer::IterationCallback(itk::ParticleSystem * particleSystem) {
     if (!initialized) {
       initialize();
     }

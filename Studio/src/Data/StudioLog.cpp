@@ -83,6 +83,13 @@ void StudioLog::log_error(QString message, const int line, const char* file)
 }
 
 //-----------------------------------------------------------------------------
+void StudioLog::show_error(QString message, const int line, const char *file)
+{
+  log_error(message, line, file);
+  emit error(message);
+}
+
+//-----------------------------------------------------------------------------
 void StudioLog::close_log()
 {
   if (!this->log_.is_open()) {

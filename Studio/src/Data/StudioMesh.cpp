@@ -1,20 +1,17 @@
 #include <Data/StudioMesh.h>
+#include <itkImageRegionIteratorWithIndex.h>
+#include <itkLinearInterpolateImageFunction.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
+#include <itkOrientImageFilter.h>
+#include <itkVTKImageExport.h>
+#include <vtkFloatArray.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkPointData.h>
+#include <vtkPointLocator.h>
+#include <vtkTriangleFilter.h>
 
 #include <QMessageBox>
 #include <QTextStream>
-
-#include <itkImageRegionIteratorWithIndex.h>
-#include <itkVTKImageExport.h>
-#include <itkOrientImageFilter.h>
-#include <itkNearestNeighborInterpolateImageFunction.h>
-#include <itkLinearInterpolateImageFunction.h>
-
-#include <vtkTriangleFilter.h>
-#include <vtkFloatArray.h>
-#include <vtkPointData.h>
-#include <vtkPointLocator.h>
-#include <vtkKdTreePointLocator.h>
-#include <Data/StudioMesh.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
@@ -23,55 +20,35 @@ using TransformType = vtkSmartPointer<vtkTransform>;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-StudioMesh::StudioMesh()
-{}
+StudioMesh::StudioMesh() {}
 
 //---------------------------------------------------------------------------
-StudioMesh::~StudioMesh()
-{}
+StudioMesh::~StudioMesh() {}
 
 //---------------------------------------------------------------------------
-void StudioMesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
-{
-  this->poly_data_ = poly_data;
-}
+void StudioMesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data) { this->poly_data_ = poly_data; }
 
 //---------------------------------------------------------------------------
-void StudioMesh::set_error_message(std::string error_message)
-{
-  this->error_message_ = error_message;
-}
+void StudioMesh::set_error_message(std::string error_message) { this->error_message_ = error_message; }
 
 //---------------------------------------------------------------------------
-std::string StudioMesh::get_error_message()
-{
-  return this->error_message_;
-}
+std::string StudioMesh::get_error_message() { return this->error_message_; }
 
 //---------------------------------------------------------------------------
-QString StudioMesh::get_dimension_string()
-{
-  QString str = "[" + QString::number(this->dimensions_[0]) +
-                ", " + QString::number(this->dimensions_[1]) +
-                ", " + QString::number(this->dimensions_[2]) + "]";
+QString StudioMesh::get_dimension_string() {
+  QString str = "[" + QString::number(this->dimensions_[0]) + ", " + QString::number(this->dimensions_[1]) + ", " +
+                QString::number(this->dimensions_[2]) + "]";
   return str;
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data()
-{
-  return this->poly_data_;
-}
+vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data() { return this->poly_data_; }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> StudioMesh::get_center_transform()
-{
-  return this->center_transform_;
-}
+vnl_vector<double> StudioMesh::get_center_transform() { return this->center_transform_; }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
-{
+void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image) {
   if (!this->poly_data_ || name == "") {
     return;
   }
@@ -111,9 +88,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 
 //---------------------------------------------------------------------------
 void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions,
-                                             Eigen::VectorXf scalar_values)
-{
-
+                                             Eigen::VectorXf scalar_values) {
   int num_points = positions.size() / 3;
   if (num_points == 0) {
     return;
@@ -125,7 +100,6 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
 
   unsigned int idx = 0;
   for (int i = 0; i < num_points; i++) {
-
     double x = positions[idx++];
     double y = positions[idx++];
     double z = positions[idx++];
@@ -177,8 +151,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
         distance[p] = 0;
         exactly_on_point = true;
         exact_scalar = scalar_values[id];
-      }
-      else {
+      } else {
         distance[p] = 1.0f / (x * x + y * y + z * z);
       }
 
@@ -199,12 +172,25 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   }
 
   this->poly_data_->GetPointData()->AddArray(scalars);
-
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_scalars(MeshHandle mesh)
-{
+double StudioMesh::get_largest_dimension_size() {
+  if (!poly_data_) {
+    return -1;
+  }
+  double bounds[6];
+  poly_data_->GetBounds(bounds);
+  double max = 0;
+  max = std::max<double>(max, bounds[1] - bounds[0]);
+  max = std::max<double>(max, bounds[3] - bounds[2]);
+  max = std::max<double>(max, bounds[5] - bounds[4]);
+  return max;
+}
+
+
+//---------------------------------------------------------------------------
+void StudioMesh::apply_scalars(MeshHandle mesh) {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
 
@@ -240,4 +226,4 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
     }
   }
 }
-}
+}  // namespace shapeworks

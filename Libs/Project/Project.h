@@ -89,6 +89,9 @@ public:
   //! Get feature names
   std::vector<std::string> get_feature_names();
 
+  //! Get image names
+  std::vector<std::string> get_image_names();
+
   //! Get group names
   std::vector<std::string> get_group_names();
 
@@ -119,6 +122,9 @@ public:
 
   //! Return all landmark definitions
   std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  //! Return if landmarks are present
+  bool get_landmarks_present();
 
   //! Set landmarks for this project
   void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
@@ -152,6 +158,7 @@ private:
   static constexpr const char* IMAGE_PREFIX = "image_";
   static constexpr const char* NAME = "name";
   static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
+  static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);

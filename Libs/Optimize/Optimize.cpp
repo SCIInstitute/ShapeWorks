@@ -79,7 +79,7 @@ bool Optimize::Run()
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
   if (this->m_python_filename != "") {
-    
+
 #ifdef _WIN32
     // need to set PYTHONHOME to the same directory as python.exe on Windows
     std::string found_path = find_in_path("python.exe");
@@ -88,7 +88,7 @@ bool Optimize::Run()
       _putenv_s("PYTHONHOME", found_path.c_str());
     }
 #endif
-  
+
     py::initialize_interpreter();
 
     auto dir = this->m_python_filename;
@@ -530,7 +530,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile()
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -541,7 +541,7 @@ void Optimize::ReadTransformFile()
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn)
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -640,7 +640,7 @@ double Optimize::GetMinNeighborhoodRadius()
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint()
 {
-  typedef itk::ParticleSystem<3> ParticleSystemType;
+  typedef itk::ParticleSystem ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
@@ -1413,7 +1413,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string output_file = iter_prefix;
 
-  std::vector<itk::ParticleSystem<3>::TransformType> tlist;
+  std::vector<itk::ParticleSystem::TransformType> tlist;
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
        i++) {
@@ -1422,7 +1422,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<itk::ParticleSystem<3>::TransformType> writer;
+  object_writer<itk::ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
@@ -2450,5 +2450,33 @@ void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
   this->m_geodesic_cache_size_multiplier = n;
 }
+
+//---------------------------------------------------------------------------
+vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixed<double, 3> input)
+{
+  // If initial transform provided, transform cutting plane points
+  if (GetPrefixTransformFile() == "" || GetTransformFile() == "") {
+    return input;
+  }
+
+  itk::ParticleSystem::PointType pa;
+
+  pa[0] = input[0];
+  pa[1] = input[1];
+  pa[2] = input[2];
+
+  itk::ParticleSystem::TransformType T =  GetSampler()->GetParticleSystem()->GetTransform(domain);
+  itk::ParticleSystem::TransformType prefT =
+      GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
+  pa = GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
+
+  vnl_vector_fixed<double, 3> output;
+
+  output[0] = pa[0];
+  output[1] = pa[1];
+  output[2] = pa[2];
+  return output;
+}
+
 
 }

@@ -63,6 +63,7 @@ class Visualizer : public QObject {
   void update_samples();
 
   void update_landmarks();
+  void update_planes();
 
   void display_sample(int i);
 
@@ -139,6 +140,8 @@ class Visualizer : public QObject {
   void update_viewer_properties();
 
   void handle_feature_range_changed();
+
+  void handle_image_slice_settings_changed();
 
  private:
   ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);

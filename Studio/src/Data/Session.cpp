@@ -76,7 +76,7 @@ void Session::calculate_reconstructed_samples() {
     return;
   }
   // this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (auto shape : this->shapes_) {
+  for (auto shape : qAsConst(this->shapes_)) {
     auto pts = shape->get_local_correspondence_points();
     if (!(pts.size() == 0)) {
       /// TODO: fix
@@ -134,10 +134,13 @@ bool Session::save_project(std::string fname) {
   }
 
   // landmarks
-  if (!project_->get_all_landmark_definitions().empty()) {
-    for (int i = 0; i < shapes_.size(); i++) {
-      shapes_[i]->store_landmarks();
-    }
+  for (int i = 0; i < shapes_.size(); i++) {
+    shapes_[i]->store_landmarks();
+  }
+
+  // constraints
+  for (int i = 0; i < shapes_.size(); i++) {
+    shapes_[i]->store_constraints();
   }
 
   // correspondence points
@@ -182,7 +185,7 @@ bool Session::load_project(QString filename) {
   // clear the project out first
   this->filename_ = QFileInfo(filename).absoluteFilePath();
 
-  if (filename.toLower().endsWith(".xlsx")) {
+  if (filename.endsWith(".xlsx", Qt::CaseInsensitive)) {
     return this->load_xl_project(filename);
   }
 
@@ -365,7 +368,8 @@ bool Session::load_light_project(QString filename) {
   }
 
   this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
-  this->parameters().set("tool_state", Session::ANALYSIS_C);
+
+  set_tool_state(Session::ANALYSIS_C);
 
   this->renumber_shapes();
 
@@ -377,17 +381,17 @@ bool Session::load_light_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename) {
-  this->filename_ = QFileInfo(filename).absoluteFilePath();
+  filename_ = QFileInfo(filename).absoluteFilePath();
 
-  this->set_project_path(QFileInfo(filename).absolutePath());
+  set_project_path(QFileInfo(filename).absolutePath());
 
-  if (!this->project_->load(QFileInfo(filename).fileName().toStdString())) {
+  if (!project_->load(QFileInfo(filename).fileName().toStdString())) {
     return false;
   }
 
-  int num_subjects = this->project_->get_number_of_subjects();
+  int num_subjects = project_->get_number_of_subjects();
 
-  auto subjects = this->project_->get_subjects();
+  auto subjects = project_->get_subjects();
 
   std::vector<std::string> local_point_files;
   std::vector<std::string> global_point_files;
@@ -397,12 +401,13 @@ bool Session::load_xl_project(QString filename) {
   // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
-    shape->set_mesh_manager(this->mesh_manager_);
+    shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
     auto locals = subjects[i]->get_local_particle_filenames();
     auto worlds = subjects[i]->get_world_particle_filenames();
     auto landmark_files = subjects[i]->get_landmarks_filenames();
+    auto constraints_files = subjects[i]->get_constraints_filenames();
 
     if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
       return false;
@@ -411,6 +416,9 @@ bool Session::load_xl_project(QString filename) {
       return false;
     }
     if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmark_files))) {
+      return false;
+    }
+    if (!shape->import_constraints(StudioUtils::to_string_list(constraints_files))) {
       return false;
     }
 
@@ -427,11 +435,11 @@ bool Session::load_xl_project(QString filename) {
     }
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     }
-    this->shapes_ << shape;
+    shapes_ << shape;
   }
 
-  this->groups_available_ = this->project_->get_group_names().size() > 0;
-  this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
+  groups_available_ = project_->get_group_names().size() > 0;
+  params_ = project_->get_parameters(Parameters::STUDIO_PARAMS);
   return true;
 }
 
@@ -666,7 +674,6 @@ double Session::update_auto_glyph_size() {
   int num_particles = 0;
 
   for (auto& shape : shapes_) {
-
     Eigen::VectorXd points = shape->get_global_correspondence_points();
     if (points.size() == 0) {
       continue;
@@ -756,6 +763,79 @@ void Session::renumber_shapes() {
   for (int i = 0; i < this->shapes_.size(); i++) {
     this->shapes_[i]->set_id(i + 1);
   }
+}
+
+//---------------------------------------------------------------------------
+void Session::new_landmark(PickResult result) {
+  if (result.subject_ < 0 || result.subject_ >= shapes_.size()) {
+    return;
+  }
+
+  Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
+
+  // find the row that matches the placing_landmark and domain
+  int row = -1;
+  int point_id = 0;
+  for (int i = 0; i < landmarks.rows(); i++) {
+    if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
+      row = i;
+      point_id = placing_landmark_;
+    }
+  }
+
+  if (row == -1) {  // not found
+    for (int i = 0; i < landmarks.rows(); i++) {
+      if (landmarks(i, 0) == result.domain_) {
+        point_id = std::max<int>(point_id, landmarks(i, 1) + 1);
+      }
+    }
+  }
+
+  if (row == -1) {
+    landmarks.conservativeResize(landmarks.rows() + 1, 5);
+    row = landmarks.rows() - 1;
+  }
+  landmarks(row, 0) = result.domain_;
+  landmarks(row, 1) = point_id;
+  landmarks(row, 2) = result.pos_.x;
+  landmarks(row, 3) = result.pos_.y;
+  landmarks(row, 4) = result.pos_.z;
+  if (point_id >= project_->get_landmarks(result.domain_).size()) {
+    project_->new_landmark(result.domain_);
+  }
+  update_auto_glyph_size();
+  emit landmarks_changed();
+}
+
+//---------------------------------------------------------------------------
+void Session::new_plane_point(PickResult result) {
+  if (result.subject_ < 0 || result.subject_ >= shapes_.size()) {
+    return;
+  }
+
+  Eigen::Vector3d pos(result.pos_.x, result.pos_.y, result.pos_.z);
+  auto& constraints = shapes_[result.subject_]->constraints();
+  while (result.domain_ >= constraints.size()) {
+    shapes_[result.subject_]->constraints().push_back(Constraints{});
+  }
+  auto& planes = constraints[result.domain_].getPlaneConstraints();
+
+  bool found = false;
+  for (auto& plane : planes) {
+    if (plane.points().size() < 3) {
+      // found one to add a point to
+      plane.points().push_back(pos);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {  // no planes were found with less than 3 points,
+    PlaneConstraint plane;
+    plane.points().push_back(pos);
+    planes.push_back(plane);
+  }
+  emit planes_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -886,53 +966,22 @@ void Session::set_feature_range_max(double value) {
 
 //---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
-  std::string tool_state = parameters().get("tool_state", Session::DATA_C);
-
-  if (tool_state != Session::DATA_C || !landmarks_active_) {
-    // do nothing if we are not in the data tool with landmarks active
+  if (get_tool_state() != Session::DATA_C) {
     return;
   }
 
-  if (result.subject_ >= 0 && result.subject_ < shapes_.size()) {
-    Eigen::MatrixXd& landmarks = shapes_[result.subject_]->landmarks();
-
-    // find the row that matches the placing_landmark and domain
-    int row = -1;
-    int point_id = 0;
-    for (int i = 0; i < landmarks.rows(); i++) {
-      if (landmarks(i, 0) == result.domain_ && landmarks(i, 1) == placing_landmark_) {
-        row = i;
-        point_id = placing_landmark_;
-      }
-    }
-
-    if (row == -1) {  // not found
-      for (int i = 0; i < landmarks.rows(); i++) {
-        if (landmarks(i, 0) == result.domain_) {
-          point_id = std::max<int>(point_id, landmarks(i, 1) + 1);
-        }
-      }
-    }
-
-    if (row == -1) {
-      landmarks.conservativeResize(landmarks.rows() + 1, 5);
-      row = landmarks.rows() - 1;
-    }
-    landmarks(row, 0) = result.domain_;
-    landmarks(row, 1) = point_id;
-    landmarks(row, 2) = result.pos_.x;
-    landmarks(row, 3) = result.pos_.y;
-    landmarks(row, 4) = result.pos_.z;
-    if (point_id >= project_->get_landmarks(result.domain_).size()) {
-      project_->new_landmark(result.domain_);
-    }
+  if (landmarks_active_) {
+    new_landmark(result);
+  } else if (planes_active_) {
+    new_plane_point(result);
   }
-  update_auto_glyph_size();
-  emit landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
 void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_planes_changed() { emit planes_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
@@ -950,13 +999,119 @@ int Session::get_placing_landmark() { return placing_landmark_; }
 void Session::set_landmarks_active(bool active) { landmarks_active_ = active; }
 
 //---------------------------------------------------------------------------
-void Session::set_show_landmarks(bool show) {
+bool Session::get_landmarks_active() { return landmarks_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_planes_active(bool active) {
+  planes_active_ = active;
+  trigger_planes_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_planes_active() { return planes_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_landmark_labels(bool show) {
   show_landmark_labels_ = show;
   emit landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_show_landmarks() { return show_landmark_labels_; }
+bool Session::get_show_landmark_labels() { return show_landmark_labels_; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_planes(bool show) {
+  bool old_value = get_show_planes();
+  params_.set("show_planes", show);
+  if (show != old_value) {
+    emit planes_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_show_planes() { return params_.get("show_planes", true); }
+
+//---------------------------------------------------------------------------
+bool Session::set_image_name(std::string image_name) {
+  if (image_name == get_image_name() || is_loading()) {
+    return false;
+  }
+  params_.set("image_name", image_name);
+  Q_EMIT image_slice_settings_changed();
+  return true;
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_image_name() { return params_.get("image_name", "-none-"); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_axis(QString axis) {
+  if (axis == get_image_axis() || is_loading()) {
+    return;
+  }
+  params_.set("image_axis", axis.toStdString());
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+Axis Session::get_image_axis() {
+  std::string axis_string = params_.get("image_axis", "Z");
+  Axis axis = toAxis(axis_string);
+  if (axis == Axis::invalid) {
+    axis = Axis::Z;
+  }
+  return toAxis(axis_string);
+}
+
+//---------------------------------------------------------------------------
+void Session::set_image_3d_mode(bool mode) {
+  if (mode == get_image_3d_mode() || is_loading()) {
+    return;
+  }
+  params_.set("image_3d_mode", mode);
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_share_window_and_level(bool enabled) {
+  if (enabled == get_image_share_window_and_level() || is_loading()) {
+    return;
+  }
+  params_.set("image_share_window_and_level", enabled);
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+
+//---------------------------------------------------------------------------
+bool Session::has_constraints() {
+  for (auto& shape : shapes_) {
+    if (!shape->constraints().empty()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_loading(bool loading) { is_loading_ = loading; }
+
+//---------------------------------------------------------------------------
+bool Session::is_loading() { return is_loading_; }
+
+//---------------------------------------------------------------------------
+void Session::set_tool_state(string state) {
+  parameters().set("tool_state", state);
+  // these need to be updated so that the handles appear/disappear
+  trigger_landmarks_changed();
+  trigger_planes_changed();
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
@@ -965,6 +1120,6 @@ void Session::set_landmark_drag_mode(bool mode) {
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_landmark_drag_mode() { return landmark_drag_mode_; }
+bool Session::get_landmark_drag_mode() { return landmark_drag_mode_ && get_landmarks_active(); }
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

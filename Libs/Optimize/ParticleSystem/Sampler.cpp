@@ -1,29 +1,27 @@
 
-#include "itkParticlePositionReader.h"
-#include "itkImageRegionIterator.h"
-#include "object_reader.h"
-#include "itkParticleImageDomain.h"
 #include "Sampler.h"
+
 #include "ContourDomain.h"
+#include "itkImageRegionIterator.h"
+#include "itkParticleImageDomain.h"
+#include "itkParticlePositionReader.h"
+#include "object_reader.h"
 
 namespace shapeworks {
 
-Sampler::Sampler()
-{
+Sampler::Sampler() {
   // Allocate the particle system members.
-  m_ParticleSystem = itk::ParticleSystem<Dimension>::New();
+  m_ParticleSystem = itk::ParticleSystem::New();
 
   m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_CurvatureGradientFunction
-    = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
 
-  m_ModifiedCotangentGradientFunction
-    = itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_ConstrainedModifiedCotangentGradientFunction
-    = itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_ModifiedCotangentGradientFunction =
+      itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_ConstrainedModifiedCotangentGradientFunction =
+      itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
 
-  m_OmegaGradientFunction
-    = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_OmegaGradientFunction = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
 
   // Allocate some optimization code.
   m_Optimizer = OptimizerType::New();
@@ -59,8 +57,7 @@ Sampler::Sampler()
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
-void Sampler::AllocateDataCaches()
-{
+void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
@@ -82,8 +79,7 @@ void Sampler::AllocateDataCaches()
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
 
-void Sampler::AllocateDomainsAndNeighborhoods()
-{
+void Sampler::AllocateDomainsAndNeighborhoods() {
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
@@ -93,10 +89,12 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     auto domain = m_DomainList[i];
     // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
-      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
-        domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
-                                m_CuttingPlanes[i][j].c);
-        if(m_verbosity >= 1) std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlaneNormal().transpose() << " and point " << (*domain->GetConstraints()->getPlaneConstraints())[j].GetPlanePoint().transpose() << std::endl;
+      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
+        domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+        if (m_verbosity >= 1)
+          std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
+                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
+                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
       }
     }
 
@@ -104,7 +102,9 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
-         if(m_verbosity >= 1) std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center " << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
+        if (m_verbosity >= 1)
+          std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center "
+                    << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
       }
     }
 
@@ -112,9 +112,9 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
 
       // Adding free-form constraints to constraint object
-      //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+      // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
       if (m_FFCs.size() > i && m_FFCs[i].size() > 0) {
-         initialize_ffcs(i);
+        initialize_ffcs(i);
       }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
@@ -140,11 +140,11 @@ void Sampler::AllocateDomainsAndNeighborhoods()
             themesh->across_edge.clear();
           }
           themesh->need_across_edge();
-          //themesh->need_faceedges();
-          //themesh->need_oneringfaces();
-          //themesh->need_abs_curvatures();
-          //themesh->need_speed();
-          //themesh->setSpeedType(1);
+          // themesh->need_faceedges();
+          // themesh->need_oneringfaces();
+          // themesh->need_abs_curvatures();
+          // themesh->need_speed();
+          // themesh->setSpeedType(1);
 
           imageDomain->SetMesh(themesh);
           imageDomain->SetFids(m_FidsFiles[i].c_str());
@@ -164,13 +164,11 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   }
 }
 
-void Sampler::ReadPointsFiles()
-{
+void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      itk::ParticlePositionReader<3>::Pointer reader
-        = itk::ParticlePositionReader<3>::New();
+      itk::ParticlePositionReader<3>::Pointer reader = itk::ParticlePositionReader<3>::New();
       reader->SetFileName(m_PointsFiles[i].c_str());
       reader->Update();
       this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
@@ -182,8 +180,7 @@ void Sampler::ReadPointsFiles()
   this->GetParticleSystem()->SynchronizePositions();
 }
 
-void Sampler::InitializeOptimizationFunctions()
-{
+void Sampler::InitializeOptimizationFunctions() {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
   unsigned int maxdim = 0;
@@ -210,8 +207,7 @@ void Sampler::InitializeOptimizationFunctions()
   m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(
-    minimumNeighborhoodRadius);
+  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
@@ -229,13 +225,9 @@ void Sampler::InitializeOptimizationFunctions()
   m_GeneralShapeGradMatrix->Initialize();
 }
 
-void Sampler::GenerateData()
-{
-}
+void Sampler::GenerateData() {}
 
-void Sampler::Execute()
-{
-
+void Sampler::Execute() {
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
     this->SetAdaptivityMode(m_AdaptivityMode);
@@ -257,14 +249,13 @@ void Sampler::Execute()
 
   if (this->GetInitializing() == true) return;
 
-  //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
+  // this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   this->GetOptimizer()->StartOptimization();
 }
 
-void Sampler::ReadTransforms()
-{
+void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
-    object_reader<itk::ParticleSystem<3>::TransformType> reader;
+    object_reader<itk::ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
@@ -273,18 +264,16 @@ void Sampler::ReadTransforms()
   }
 
   if (m_PrefixTransformFile != "") {
-    object_reader<itk::ParticleSystem<3>::TransformType> reader;
+    object_reader<itk::ParticleSystem::TransformType> reader;
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 
     for (unsigned int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains(); i++)
       this->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
   }
-
 }
 
-void Sampler::ReInitialize()
-{
+void Sampler::ReInitialize() {
   this->SetAdaptivityMode(m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
@@ -296,20 +285,18 @@ void Sampler::ReInitialize()
   this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
-{
+void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   auto domain = itk::MeshDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
-  if(mesh) {
+  if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
-    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled()); // disable weighting for geodesics
+    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
   }
   m_DomainList.push_back(domain);
 }
 
-void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
-{
+void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = itk::ContourDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (poly_data != nullptr) {
@@ -320,17 +307,13 @@ void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
   m_DomainList.push_back(domain);
 }
 
-void Sampler::TransformCuttingPlanes(unsigned int i)
-{
+void Sampler::TransformCuttingPlanes(unsigned int i) {
   if (m_Initialized == true) {
-    TransformType T1 =
-      this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
+    TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++) {
       if (this->GetParticleSystem()->GetDomainFlag(d) == false) {
-        TransformType T2 = this->GetParticleSystem()->InvertTransform(
-          this->GetParticleSystem()->GetTransform(d)
-          *
-          this->GetParticleSystem()->GetPrefixTransform(d));
+        TransformType T2 = this->GetParticleSystem()->InvertTransform(this->GetParticleSystem()->GetTransform(d) *
+                                                                      this->GetParticleSystem()->GetPrefixTransform(d));
         m_ParticleSystem->GetDomain(d)->GetConstraints()->transformPlanes(T2 * T1);
       }
     }
@@ -339,17 +322,17 @@ void Sampler::TransformCuttingPlanes(unsigned int i)
 
 void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>& va,
                               const vnl_vector_fixed<double, Dimension>& vb,
-                              const vnl_vector_fixed<double, Dimension>& vc)
-{
+                              const vnl_vector_fixed<double, Dimension>& vc) {
   if (m_CuttingPlanes.size() < i + 1) {
     m_CuttingPlanes.resize(i + 1);
   }
 
   m_CuttingPlanes[i].push_back(CuttingPlaneType());
+  int last = m_CuttingPlanes[i].size() - 1;
 
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].a = va;
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].b = vb;
-  m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].c = vc;
+  m_CuttingPlanes[i][last].a = va;
+  m_CuttingPlanes[i][last].b = vb;
+  m_CuttingPlanes[i][last].c = vc;
 
   if (m_Initialized == true) {
     std::cout << "Initialized plane" << std::endl;
@@ -357,8 +340,7 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
   }
 }
 
-void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r)
-{
+void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r) {
   if (m_Spheres.size() < i + 1) {
     m_Spheres.resize(i + 1);
   }
@@ -373,10 +355,8 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
-void Sampler::AddFreeFormConstraint(unsigned int i,
-                                    const std::vector<std::vector<Eigen::Vector3d> > boundaries,
-                                    const Eigen::Vector3d query)
-{
+void Sampler::AddFreeFormConstraint(unsigned int i, const std::vector<std::vector<Eigen::Vector3d> > boundaries,
+                                    const Eigen::Vector3d query) {
   if (m_FFCs.size() < i + 1) {
     m_FFCs.resize(i + 1);
   }
@@ -386,8 +366,7 @@ void Sampler::AddFreeFormConstraint(unsigned int i,
   m_FFCs[i][m_FFCs[i].size() - 1].query = query;
 }
 
-void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name)
-{
+void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
 
@@ -408,12 +387,13 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   m_DomainList.push_back(domain);
 }
 
-bool Sampler::initialize_ffcs(size_t dom)
-{
+bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
 
   for (size_t i = 0; i < m_FFCs[dom].size(); i++) {
-    if(m_verbosity >= 1) std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point " << m_FFCs[dom][i].query.transpose() << std::endl;
+    if (m_verbosity >= 1)
+      std::cout << "Splitting mesh FFC for domain " << dom << " shape " << i << " with query point "
+                << m_FFCs[dom][i].query.transpose() << std::endl;
     mesh->splitMesh(m_FFCs[dom][i].boundaries, m_FFCs[dom][i].query, dom, i);
   }
 
@@ -427,4 +407,4 @@ bool Sampler::initialize_ffcs(size_t dom)
   return true;
 }
 
-} // end namespace
+}  // namespace shapeworks
