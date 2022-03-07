@@ -43,6 +43,8 @@
 
 namespace shapeworks {
 
+const double EXCLUDED_COLOR[4] = {0.45, 0.45, 0.45, 1.0};
+
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
   cell_picker_ = vtkSmartPointer<vtkCellPicker>::New();
@@ -215,8 +217,12 @@ void Viewer::set_color_scheme(int scheme) {
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     int scheme = (scheme_ + i) % color_schemes_.size();
 
-    surface_actors_[i]->GetProperty()->SetDiffuseColor(
-        color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g, color_schemes_[scheme].foreground.b);
+    double rgba[4] = {color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g,
+                      color_schemes_[scheme].foreground.b, 1.0};
+    surface_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
+
+    ffc_lut_->SetTableValue(0, rgba);
+    ffc_lut_->SetTableValue(1, EXCLUDED_COLOR);
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
@@ -536,20 +542,8 @@ void Viewer::update_clipping_planes() {
       if (plane.points().size() == 3) {
         auto vtk_plane = plane.getVTKPlane();
         auto transform = get_transform(visualizer_->get_alignment_domain(), i);
-
         vtk_plane = transform_plane(vtk_plane, transform);
         mapper->AddClippingPlane(vtk_plane);
-        /*
-                auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
-                opposite_plane->SetOrigin(vtk_plane->GetOrigin());
-                double normal[3];
-                vtk_plane->GetNormal(normal);
-                normal[0] = -normal[0];
-                normal[1] = -normal[1];
-                normal[2] = -normal[2];
-                opposite_plane->SetNormal(normal);
-                // clipped_mapper->AddClippingPlane(opposite_plane);
-        */
       }
     }
   }
@@ -568,16 +562,13 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
 
   auto mesh = meshes_.meshes()[domain];
 
-
-
   auto transform = vtkSmartPointer<vtkTransform>::New();
   transform->DeepCopy(get_landmark_transform(domain));
   transform->Inverse();
   double xyzt[3];
   transform->TransformPoint(world_pos, xyzt);
 
-
-  mesh->paint_ffc(xyzt, session_->get_ffc_paint_size(), session_->get_ffc_paint_mode_inclusive());
+  mesh->paint_ffc(xyzt, paint_widget_->get_brush_size(), session_->get_ffc_paint_mode_inclusive());
 }
 
 //-----------------------------------------------------------------------------
@@ -1208,7 +1199,7 @@ void Viewer::initialize_surfaces() {
 
       clipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
-      clipped_surface_actors_[i]->GetProperty()->SetColor(0.45, 0.45, 0.45);
+      clipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
       clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
     }
   }

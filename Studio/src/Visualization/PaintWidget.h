@@ -67,7 +67,9 @@ class PaintWidget : public vtkAbstractWidget {
   virtual void Initialize(vtkPolyData* poly, int state = 1);
   virtual void Initialize() { this->Initialize(NULL); }
 
-  void set_brush_size(float size);
+  void set_brush_size(double size);
+  double get_brush_size();
+
   void set_brush_color(float r, float g, float b);
 
  protected:

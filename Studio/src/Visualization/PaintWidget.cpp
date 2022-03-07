@@ -1,9 +1,9 @@
 
 #include "PaintWidget.h"
-#include "Viewer.h"
 
 #include <QCursor>
 
+#include "Viewer.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCommand.h"
 #include "vtkEvent.h"
@@ -91,7 +91,10 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   }
 
   //----------------------------------------------------------------------
-  void set_size(float size) { this->sphere_source_->SetRadius(size); }
+  void set_size(double size) { this->sphere_source_->SetRadius(size); }
+
+  //----------------------------------------------------------------------
+  double get_size() { return this->sphere_source_->GetRadius(); }
 
   //----------------------------------------------------------------------
   void set_position(double pos[3]) { this->actor_->SetPosition(pos); }
@@ -317,7 +320,10 @@ void PaintWidget::PrintSelf(ostream& os, vtkIndent indent) {
 void PaintWidget::set_viewer(Viewer* viewer) { viewer_ = viewer; }
 
 //----------------------------------------------------------------------
-void PaintWidget::set_brush_size(float size) { sphere_cursor_->set_size(size); }
+void PaintWidget::set_brush_size(double size) { sphere_cursor_->set_size(size); }
+
+//----------------------------------------------------------------------
+double PaintWidget::get_brush_size() { return sphere_cursor_->get_size(); }
 
 //----------------------------------------------------------------------
 void PaintWidget::set_brush_color(float r, float g, float b) { sphere_cursor_->set_color(r, g, b); }
