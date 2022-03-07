@@ -2,7 +2,7 @@
 
 ## What is the Use Case?
 
-The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The the femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT). These images are groomed along with the shapes when `--groom_images` is used, so that they remain in alignment for subsequent analysis.
+The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The the femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT). 
 
 There are both left and right femurs in this dataset, thus some must be relfected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
 ![Femur Lengths](../../img/use-cases/femurLengths.png)
@@ -23,21 +23,10 @@ The femur mesh grooming steps are:
 4. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the mesh closest to that mean (i.e., medoid).
 5. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are aligned to the selected reference using rigid alignment, which factors out the rotation and translation. 
 
-*Note: The reflection, centering translation, and rigid alignment transforms are saved to use for grooming the corresponding images.*
-
-If the `--groom_images` tag is used, the corresponding images are groomed as follows:
-
-1. [**Reflection**](../../workflow/groom.md#reflect-meshes): If the corresponding mesh was reflected, we reflect the image.
-2. [**Centering**](../../workflow/groom.md#aligning-segmentations): The translation used to center the mesh is applied to the image.
-3. [**Reference selection**](../../workflow/groom.md#resampling-images-and-segmentations): The image corresponding to the reference mesh is selected as a reference image for applying rigid transforms to the images. The reference image is resampled to have isotropic spacing.
-4. [**Rigid alignment**](../../workflow/groom.md#aligning-segmentations): All of the images are aligned using the rigid alignment transforms applied to the meshes. The reference image parameters (i.e. origin, dims, spacing, and coordsys) are passed to define a valid coordinate system for the resulting images.
-5. [**Cropping**](../../workflow/groom.md#cropping-and-padding-segmentations): The images are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the smallest bounding box that encapsulates all the groomed meshes.
-
 Here are the resulting groomed femurs:
 ![Groomed femurs](../../img/use-cases/femur_groomed.png)
 
 ## Relevant Arguments
-[--groom_images](../use-cases.md#-groom_images)
 [--use_subsample](../use-cases.md#-use_subsample)
 [--num_subsample](../use-cases.md#-use_subsample)
 [--skip_grooming](../use-cases.md#-skip_grooming)

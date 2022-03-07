@@ -40,16 +40,13 @@ def Run_Pipeline(args):
     if args.tiny_test:
         args.use_single_scale = 1
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
-        file_list_img = sorted(
-            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))[:3]
+
         file_list_seg = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
 
     # Else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
-        file_list_img = sorted(
-            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
         file_list_seg = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
 
@@ -58,7 +55,6 @@ def Run_Pipeline(args):
             inputSegs =[sw.Image(filename) for filename in file_list_seg]
             sample_idx = sw.data.sample_images(inputSegs, int(args.num_subsample))
             file_list_seg = [file_list_seg[i] for i in sample_idx]
-            file_list_img = [file_list_img[i] for i in sample_idx]
         else:
             sample_idx = []
 
@@ -116,72 +112,6 @@ def Run_Pipeline(args):
             shape_seg = sw.Image(shape_filename)
             # append to the shape list
             shape_seg_list.append(shape_seg)
-
-        """
-        If we are grooming with images, we need to loop over the image files and laod the images
-        """
-        if args.groom_images and file_list_img:
-
-            # list of shape images
-            shape_img_list = []
-            # list of shape names (shape files prefixes) to be used for saving outputs
-            shape_img_names = []
-            for shape_filename in file_list_img:
-                print('Loading: ' + shape_filename)
-                # get current shape name
-                shape_img_names.append(shape_filename.split('/')
-                                       [-1].replace('.nrrd', ''))
-                # load image
-                shape_image = sw.Image(shape_filename)
-                # append to the shape image list
-                shape_img_list.append(shape_image)
-            """
-            If we are grooming with images, we will perform the same grooming operations
-            on images
-
-            """
-
-            """
-            Now we can loop over the images and apply the initial grooming steps to themm
-            """
-            print("\nPerforming resampling, centering,and padding operation on images\n")
-            for shape_img, shape_name in zip(shape_img_list, shape_img_names):
-
-                """
-                Grooming Step 1: Resample images to have isotropic (uniform) spacing
-                    - Antialiase the images to convert it to a smooth continuous-valued 
-                    image for interpolation
-                    - Resample the antialiased image using the same voxel spacing for all dimensions
-                    - Binarize the resampled images to results in a binary image with an 
-                    isotropic voxel spacing
-                """
-                print('Resampling image: ' + shape_name)
-                # antialias for 30 iterations
-                antialias_iterations = 30
-                shape_img.antialias(antialias_iterations)
-                # resample to isotropic spacing using linear interpolation
-                iso_spacing = [1, 1, 1]
-                shape_img.resample(iso_spacing, sw.InterpolationType.Linear)
-                # make segmetnation binary again
-                shape_img.binarize()
-
-                """
-                Grooming Step 2:Recenter the image
-
-                """
-                print('Recentering image: ' + shape_name)
-                shape_img.recenter()
-
-                """
-                Grooming Step 3: Padding the image
-
-                """
-                print('Padding image: ' + shape_name)
-                # parameters for padding
-                padding_size = 10  # number of voxels to pad for each dimension
-                padding_value = 0  # the constant value used to pad the segmentations
-                shape_img.pad(padding_size, padding_value)
-
         """
         Now we can loop over the segmentations and apply the initial grooming steps to them
         """
@@ -241,23 +171,9 @@ def Run_Pipeline(args):
             print('Center of mass alignment: ' + shape_name)
             # compute the center of mass of this segmentation
             shape_center = shape_seg.centerOfMass()
-            # get the center of the image domain
-            image_center = shape_seg.center()
-            # define the translation to move the shape to its center
-            translationVector = image_center - shape_center
             # perform antialias-translate-binarize
             shape_seg.antialias(antialias_iterations).translate(
-                translationVector).binarize()
-            # if we are grooming the images, appply the COM alignment to the corresponding images
-            if(args.groom_images):
-                shape_img_name = shape_img_names[i]
-                shape_img = shape_img_list[i]
-                print(
-                    "Center of mass alignment for corresponding image: " + shape_img_name)
-
-                # perform antialias-translate-binarize
-                shape_img.antialias(antialias_iterations).translate(
-                    translationVector).binarize()
+                -shape_center).binarize()
 
         """
         Grooming Step 5: Select a reference
@@ -304,21 +220,6 @@ def Run_Pipeline(args):
                                      sw.InterpolationType.Linear)
             # then turn antialized-tranformed segmentation to a binary segmentation
             shape_seg.binarize()
-            # If we are grooming the iamges, apply the rigid alignment to the corresponding images
-            if(args.groom_images):
-                shape_img_name = shape_img_names[i]
-                shape_img = shape_img_list[i]
-                print('Aligning the corresponding image: ' +
-                      shape_img_name + ' to ' + ref_name)
-                # second we apply the computed transformation,first we antialias and then
-                # we can directly apply the transformation
-                shape_img.antialias(antialias_iterations)
-                shape_img.applyTransform(rigidTransform,
-                                         ref_seg.origin(),  ref_seg.dims(),
-                                         ref_seg.spacing(), ref_seg.coordsys(),
-                                         sw.InterpolationType.Linear)
-                # then turn antialized-tranformed segmentation to a binary image
-                shape_img.binarize()
 
         """
         Grooming Step 7: Finding the largest bounding box
@@ -351,19 +252,6 @@ def Run_Pipeline(args):
             print('Cropping & padding segmentation: ' + shape_name)
             shape_seg.crop(segs_bounding_box).pad(padding_size, padding_value)
 
-            # if we are grooming images, apply same cropping and padding to images
-            if(args.groom_images):
-                shape_img_name = shape_img_names[i]
-                shape_img = shape_img_list[i]
-                print('Cropping & padding corresponding image: ' + shape_img_name)
-                shape_img.crop(segs_bounding_box).pad(
-                    padding_size, padding_value)
-
-        # Save groomed images
-        if args.groom_images:
-            print('\nSaving groomed images\n')
-            sw.utils.save_images(groom_dir + 'images', shape_img_list,
-                                 shape_img_names, extension='nrrd', compressed=True, verbose=True)
         """
         Grooming Step 9: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
