@@ -139,7 +139,7 @@ class Viewer {
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
-  void handle_ffc_paint(double displayPos[2], double worldPos[3]);
+  void handle_ffc_paint(double display_pos[2], double world_pos[3]);
 
  private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);

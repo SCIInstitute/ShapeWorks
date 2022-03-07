@@ -55,6 +55,7 @@ Viewer::Viewer() {
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
   paint_widget_ = vtkSmartPointer<PaintWidget>::New();
+  paint_widget_->set_viewer(this);
 
   sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
@@ -198,6 +199,14 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+
+
+  // set up ffc paint lut
+  ffc_lut_ = vtkSmartPointer<vtkLookupTable>::New();
+  ffc_lut_->SetHueRange(.667, 0.0);
+  ffc_lut_->SetNumberOfTableValues(2);
+  ffc_lut_->SetRange(0,1);
+  ffc_lut_->Build();
 }
 
 //-----------------------------------------------------------------------------
@@ -551,22 +560,16 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_ffc_paint(double displayPos[], double worldPos[])
-{  
+void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
   if (!meshes_.valid()) {
     return;
   }
 
-  int domain = 0; // update for multiple domain
+  int domain = 0;  /// TODO: update for multiple domain
 
-  auto mesh = meshes_.meshes()[0];
-  auto poly_data = mesh->get_poly_data();
+  auto mesh = meshes_.meshes()[domain];
 
-  auto ffc_paint = mesh->get_or_create_array("ffc_paint");
-
-
-  /// find vertices within paint sphere
-
+  mesh->paint_ffc(world_pos, session_->get_ffc_paint_size(), session_->get_ffc_paint_mode_inclusive());
 }
 
 //-----------------------------------------------------------------------------
