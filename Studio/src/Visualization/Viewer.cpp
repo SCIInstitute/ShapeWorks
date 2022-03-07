@@ -201,13 +201,6 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
-
-  // set up ffc paint lut
-  ffc_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  ffc_lut_->SetHueRange(.667, 0.0);
-  ffc_lut_->SetNumberOfTableValues(2);
-  ffc_lut_->SetRange(0, 1);
-  ffc_lut_->Build();
 }
 
 //-----------------------------------------------------------------------------
@@ -221,8 +214,8 @@ void Viewer::set_color_scheme(int scheme) {
                       color_schemes_[scheme].foreground.b, 1.0};
     surface_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
 
-    ffc_lut_->SetTableValue(0, rgba);
-    ffc_lut_->SetTableValue(1, EXCLUDED_COLOR);
+    ffc_luts_[i]->SetTableValue(0, rgba);
+    ffc_luts_[i]->SetTableValue(1, EXCLUDED_COLOR);
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
@@ -558,7 +551,14 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
     return;
   }
 
-  int domain = 0;  /// TODO: update for multiple domain
+  prop_picker_->Pick(display_pos[0], display_pos[1], 0, renderer_);
+
+  int domain = 0;
+  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
+    if (prop_picker_->GetActor() == clipped_surface_actors_[i]) {
+      domain = i;
+    }
+  }
 
   auto mesh = meshes_.meshes()[domain];
 
@@ -714,7 +714,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         mapper->ScalarVisibilityOn();
         mapper->SetScalarModeToUsePointData();
         mapper->SetScalarRange(0, 1);
-        mapper->SetLookupTable(ffc_lut_);
+        mapper->SetLookupTable(ffc_luts_[i]);
         mesh->get_or_create_array(StudioMesh::FFC_PAINT);
         poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
       }
@@ -961,25 +961,13 @@ void Viewer::update_actors() {
 
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
-      /*
-      if (shape_->has_planes()) {
-        renderer_->AddActor(surface_actors_[i]);
-        renderer_->AddActor(clipped_surface_actors_[i]);
-      } else {
-        renderer_->AddActor(clipped_surface_actors_[i]);
-        renderer_->AddActor(surface_actors_[i]);
-      }
-*/
       renderer_->AddActor(clipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      // cell_picker_->AddPickList(surface_actors_[i]);
-      // prop_picker_->AddPickList(surface_actors_[i]);
       cell_picker_->AddPickList(clipped_surface_actors_[i]);
       prop_picker_->AddPickList(clipped_surface_actors_[i]);
-      // point_placer_->AddProp(surface_actors_[i]);
       point_placer_->AddProp(clipped_surface_actors_[i]);
       point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
     }
@@ -1189,6 +1177,7 @@ void Viewer::initialize_surfaces() {
     surface_actors_.resize(number_of_domains_);
     clipped_surface_mappers_.resize(number_of_domains_);
     clipped_surface_actors_.resize(number_of_domains_);
+    ffc_luts_.resize(number_of_domains_);
 
     for (int i = 0; i < number_of_domains_; i++) {
       surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -1201,6 +1190,12 @@ void Viewer::initialize_surfaces() {
       // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
       clipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
       clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
+
+      ffc_luts_[i] = vtkSmartPointer<vtkLookupTable>::New();
+      ffc_luts_[i]->SetHueRange(.667, 0.0);
+      ffc_luts_[i]->SetNumberOfTableValues(2);
+      ffc_luts_[i]->SetRange(0, 1);
+      ffc_luts_[i]->Build();
     }
   }
 }
