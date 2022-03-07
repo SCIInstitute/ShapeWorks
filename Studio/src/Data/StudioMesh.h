@@ -75,6 +75,7 @@ class StudioMesh {
   //! Does this mesh have free form constraint paint?
   bool has_ffc_paint();
 
+  static constexpr const char* const FFC_PAINT = "ffc_paint";
 
  private:
   // metadata

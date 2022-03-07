@@ -200,12 +200,11 @@ Viewer::Viewer() {
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
 
-
   // set up ffc paint lut
   ffc_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   ffc_lut_->SetHueRange(.667, 0.0);
   ffc_lut_->SetNumberOfTableValues(2);
-  ffc_lut_->SetRange(0,1);
+  ffc_lut_->SetRange(0, 1);
   ffc_lut_->Build();
 }
 
@@ -569,7 +568,16 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
 
   auto mesh = meshes_.meshes()[domain];
 
-  mesh->paint_ffc(world_pos, session_->get_ffc_paint_size(), session_->get_ffc_paint_mode_inclusive());
+
+
+  auto transform = vtkSmartPointer<vtkTransform>::New();
+  transform->DeepCopy(get_landmark_transform(domain));
+  transform->Inverse();
+  double xyzt[3];
+  transform->TransformPoint(world_pos, xyzt);
+
+
+  mesh->paint_ffc(xyzt, session_->get_ffc_paint_size(), session_->get_ffc_paint_mode_inclusive());
 }
 
 //-----------------------------------------------------------------------------
@@ -708,7 +716,16 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
           visualizer_->update_feature_range(range);
         }
       } else {
-        mapper->ScalarVisibilityOff();
+        if (mesh->has_ffc_paint()) {
+        }
+        ////mapper->ScalarVisibilityOff();
+
+        mapper->ScalarVisibilityOn();
+        mapper->SetScalarModeToUsePointData();
+        mapper->SetScalarRange(0, 1);
+        mapper->SetLookupTable(ffc_lut_);
+        mesh->get_or_create_array(StudioMesh::FFC_PAINT);
+        poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
       }
     }
     update_points();

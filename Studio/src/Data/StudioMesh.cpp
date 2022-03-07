@@ -20,8 +20,6 @@ using TransformType = vtkSmartPointer<vtkTransform>;
 
 namespace shapeworks {
 
-static constexpr const char* const FFC_PAINT = "ffc_paint";
-
 //---------------------------------------------------------------------------
 StudioMesh::StudioMesh() {}
 
@@ -223,7 +221,9 @@ void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
     vtkIdType point_ind = result->GetId(i);
     float value = inclusive ? 0 : 1;
     scalars->SetTuple1(point_ind, value);
+    //std::cerr << "paint " << point_ind << " to " << value << "\n";
   }
+  scalars->Modified();
 }
 
 //---------------------------------------------------------------------------
