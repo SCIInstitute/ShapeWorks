@@ -19,7 +19,7 @@ Inherits from DataObject
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-constpointer)**  |
 | typedef DataObject | **[Superclass](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-superclass)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-particlesystemtype)**  |
 | typedef [ParticleShapeMatrixAttribute](../Classes/classitk_1_1ParticleShapeMatrixAttribute.md)< double, VDimension > | **[ShapeMatrixType](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-shapematrixtype)**  |
 | typedef [ShapeMatrixType::DataType](../Classes/classitk_1_1ParticleShapeMatrixAttribute.md#typedef-datatype) | **[DataType](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-datatype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleGaussianModeWriter.md#typedef-pointtype)**  |
@@ -103,7 +103,7 @@ typedef DataObject itk::ParticleGaussianModeWriter< VDimension >::Superclass;
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem<VDimension> itk::ParticleGaussianModeWriter< VDimension >::ParticleSystemType;
+typedef ParticleSystem itk::ParticleGaussianModeWriter< VDimension >::ParticleSystemType;
 ```
 
 
@@ -325,4 +325,4 @@ std::string m_FileName;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

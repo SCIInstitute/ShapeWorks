@@ -25,7 +25,7 @@ Inherits from vnl_matrix< T >, [itk::ParticleAttribute< VDimension >](../Classes
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleAttribute.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleAttribute.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleAttribute.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md#typedef-constweakpointer)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md#typedef-particlesystemtype)**  |
 
 ## Public Functions
 
@@ -157,7 +157,7 @@ typedef WeakPointer<const Self> itk::ParticleGeneralShapeGradientMatrix< T, VDim
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem<VDimension> itk::ParticleGeneralShapeGradientMatrix< T, VDimension >::ParticleSystemType;
+typedef ParticleSystem itk::ParticleGeneralShapeGradientMatrix< T, VDimension >::ParticleSystemType;
 ```
 
 
@@ -365,4 +365,4 @@ int m_DomainsPerShape;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

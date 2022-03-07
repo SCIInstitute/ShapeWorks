@@ -61,7 +61,7 @@ public:
   typedef LightObject Superclass;
   itkTypeMacro( ParticleVectorFunction, LightObject);
 
-  typedef ParticleSystem<VDimension> ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
 
   typedef vnl_vector_fixed<double, VDimension> VectorType;
 
@@ -127,4 +127,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

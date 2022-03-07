@@ -45,7 +45,7 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
     typedef typename ParticleSystemType::PointType PointType;
 
     typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
@@ -121,4 +121,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

@@ -447,8 +447,16 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-update-landmarks">update_landmarks</a></strong>()</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-planes">update_planes</a></strong>()</td>
+</tr>
+<tr>
 <td>std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-surface-actors">get_surface_actors</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-clipped-surface-actors">get_clipped_surface_actors</a></strong>()</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
@@ -461,6 +469,10 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-landmark-transform">get_landmark_transform</a></strong>(int domain)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-inverse-landmark-transform">get_inverse_landmark_transform</a></strong>(int domain)</td>
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
@@ -485,6 +497,14 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-alignment-transform">get_alignment_transform</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-clipping-planes">update_clipping_planes</a></strong>()</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolygonalSurfacePointPlacer &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-point-placer">get_point_placer</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -623,8 +643,14 @@
 <h3 id="function-update_landmarks">function update_landmarks</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-update_planes">function update_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-get_surface_actors">function get_surface_actors</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_clipped_surface_actors">function get_clipped_surface_actors</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_clipped_surface_actors</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_meshes">function get_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">()</span><span class="w"></span>
@@ -637,6 +663,11 @@
 </code></pre></div>
 <h3 id="function-get_landmark_transform">function get_landmark_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmark_transform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_inverse_landmark_transform">function get_inverse_landmark_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_landmark_transform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -664,8 +695,14 @@
 <h3 id="function-get_alignment_transform">function get_alignment_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment_transform</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-update_clipping_planes">function update_clipping_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_clipping_planes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_point_placer">function get_point_placer</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_point_placer</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:28 +0000</p>
               
             </div>
           </div>

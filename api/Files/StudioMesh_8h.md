@@ -50,18 +50,16 @@ using ImageType =  itk::Image<PixelType, 3>;
 ```cpp
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QString>
-#include <QSharedPointer>
-
+#include <itkImage.h>
+#include <vnl/vnl_vector.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <itkImage.h>
 
-#include <vnl/vnl_vector.h>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
@@ -73,10 +71,8 @@ using MeshHandle = std::shared_ptr<StudioMesh>;
 using MeshList = std::vector<MeshHandle>;
 
 
-
 class StudioMesh {
-public:
-
+ public:
   StudioMesh();
 
   ~StudioMesh();
@@ -97,11 +93,11 @@ public:
 
   void apply_scalars(MeshHandle mesh);
 
-  void interpolate_scalars_to_mesh(std::string name,
-                                   Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
 
-private:
+  double get_largest_dimension_size();
 
+ private:
   // metadata
   int dimensions_[3];
   vnl_vector<double> center_transform_;
@@ -111,12 +107,11 @@ private:
 
   // error message if the polydata didn't load
   std::string error_message_;
-
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

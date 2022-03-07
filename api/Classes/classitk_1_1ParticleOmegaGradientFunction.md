@@ -23,7 +23,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-constpointer)**  |
 | typedef [ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)< TGradientNumericType, VDimension > | **[Superclass](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-superclass)**  |
 | typedef Superclass::GradientNumericType | **[GradientNumericType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-gradientnumerictype)**  |
-| typedef [Superclass::ParticleSystemType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-particlesystemtype) | **[ParticleSystemType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-particlesystemtype)**  |
+| typedef [Superclass::ParticleSystemType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-particlesystemtype) | **[ParticleSystemType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-particlesystemtype)**  |
 | typedef [Superclass::VectorType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-vectortype)**  |
 | typedef Superclass::PointType | **[PointType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-pointtype)**  |
 | typedef Superclass::GradientVectorType | **[GradientVectorType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-gradientvectortype)**  |
@@ -576,4 +576,4 @@ float m_MaxMoveFactor;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

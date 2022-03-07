@@ -11,13 +11,13 @@ title: Libs/Optimize/ParticleSystem/Constraints.h
 
 | Name           |
 | -------------- |
-| **[itk](../Namespaces/namespaceitk.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[itk::Constraints](../Classes/classitk_1_1Constraints.md)**  |
+| class | **[shapeworks::Constraints](../Classes/classshapeworks_1_1Constraints.md)**  |
 
 
 
@@ -27,253 +27,106 @@ title: Libs/Optimize/ParticleSystem/Constraints.h
 ```cpp
 #pragma once
 
+#include <vector>
+
 #include "Constraint.h"
+#include "Eigen/Dense"
+#include "FreeFormConstraint.h"
+#include "Mesh.h"
 #include "PlaneConstraint.h"
 #include "SphereConstraint.h"
-#include "FreeFormConstraint.h"
-#include <vector>
-#include "vnl/vnl_inverse.h"
-#include "vnl/vnl_cross.h"
-#include "Eigen/Dense"
 #include "itkPoint.h"
+#include "vnl/vnl_cross.h"
+#include "vnl/vnl_inverse.h"
 
-#include "Mesh.h"
+namespace shapeworks {
 
-namespace itk
-{
+class Constraints {
+ public:
+  using Point3 = itk::Point<double, 3>;
 
-class Constraints{
-public:
-    Constraints(){
-        planeConsts = new std::vector<PlaneConstraint>();
-        sphereConsts = new std::vector<SphereConstraint>();
-        freeFormConsts = new std::vector<FreeFormConstraint>();
-        active = false;
-    }
+  Constraints() { active_ = false; }
 
-    ~Constraints(){
-        delete planeConsts;
-        delete sphereConsts;
-        delete freeFormConsts;
-    }
+  ~Constraints() {}
 
   // Set constraints
-  void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
+  void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c);
   void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
   void addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh);
 
   // Transforms
-  bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans);
-  bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
+  bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &transform);
+  bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transform);
 
   // Apply functions
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos);
-  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos);
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point3 &pos);
+  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos);
 
   // Write constraints
-  bool writePlanes(std::string filename){return true;}
-  bool writeSpheres(std::string filename){return true;}
-  bool writeFreeFormConstraint(std::string filename){return true;}
+  bool writePlanes(std::string filename) { return true; }
+  bool writeSpheres(std::string filename) { return true; }
+  bool writeFreeFormConstraint(std::string filename) { return true; }
 
   // Is defined? functions
-  bool IsCuttingPlaneDefined() const {if(planeConsts->size() > 0) return true; return false;}
-  bool IsCuttingSphereDefined() const {if(sphereConsts->size() > 0) return true; return false;}
+  bool isCuttingPlaneDefined() const { return !planeConstraints_.empty(); }
+  bool isCuttingSphereDefined() const { return !sphereConstraints_.empty(); }
 
   // Plane constraint
-  std::vector<PlaneConstraint> *getPlaneConstraints(){return planeConsts;}
-  std::vector<SphereConstraint> *GetSphereConstraints(){return sphereConsts;}
+  std::vector<PlaneConstraint> &getPlaneConstraints() { return planeConstraints_; }
+  std::vector<SphereConstraint> &getSphereConstraints() { return sphereConstraints_; }
 
   // Is any constraint violated by point pos?
-  bool IsAnyViolated(const Point<double, 3> &pos){
-      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-      for(size_t i = 0; i < planeConsts->size(); i++){
-          if((*planeConsts)[i].isViolated(pt)){return true;}
-      }
-      for(size_t i = 0; i < sphereConsts->size(); i++){
-          if((*sphereConsts)[i].isViolated(pt)){return true;}
-      }
-      for(size_t i = 0; i < freeFormConsts->size(); i++){
-          if((*freeFormConsts)[i].isViolated(pt)){return true;}
-      }
-      return false;
-  }
+  bool isAnyViolated(const Point3 &pos);
 
   // Constraint violations
-  std::vector<int> planesViolated(Eigen::Vector3d pt){
-      std::vector<int> planesViolated;
-      for(size_t i = 0; i < planeConsts->size(); i++){
-          if((*planeConsts)[i].isViolated(pt)){planesViolated.push_back(i);}
-      }
-      return planesViolated;
-  }
+  std::vector<int> planesViolated(Eigen::Vector3d pt);
 
-  void PrintAll(){
-      std::cout << "Cutting planes " << planeConsts->size() << std::endl;
-      for(size_t i = 0; i < planeConsts->size(); i++){
-          (*planeConsts)[i].printC();
-      }
-      std::cout << "Cutting spheres " << sphereConsts->size() << std::endl;
-      for(size_t i = 0; i < sphereConsts->size(); i++){
-          (*sphereConsts)[i].printC();
-      }
-      std::cout << "Cutting Free form constraints " << freeFormConsts->size() << std::endl;
-      for(size_t i = 0; i < freeFormConsts->size(); i++){
-          (*freeFormConsts)[i].printC();
-      }
-  }
+  void printAll();
 
-  std::string ViolationReport(const Point<double, 3> &pos){
-      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-      std::stringstream stream;
-      for(size_t i = 0; i < planeConsts->size(); i++){
-          if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].ConstraintEval(pt) << " gradient(c=1) " << (*planeConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
-      }
-      for(size_t i = 0; i < sphereConsts->size(); i++){
-          if((*sphereConsts)[i].ConstraintEval(pt)>0) stream << "Sphere " << i << "/" << planeConsts->size() << ": " << (*sphereConsts)[i].ConstraintEval(pt)<< " gradient(c=1) " << (*sphereConsts)[i].LagragianGradient(pt, pt, 1).transpose() << std::endl;
-      }
-      for(size_t i = 0; i < freeFormConsts->size(); i++){
-          if((*freeFormConsts)[i].ConstraintEval(pt)>0) stream << "FreeForm " << i << "/" << planeConsts->size() << ": " << (*freeFormConsts)[i].ConstraintEval(pt) <<" gradient(c=1) " << (*freeFormConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
-      }
-      return stream.str();
-  }
+  std::string violationReport(const Point3 &pos);
 
-  std::vector<std::vector<double> > ViolationReportData(const Point<double, 3> &pos){
-      std::vector<std::vector<double> > alls;
-      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-      std::stringstream stream;
-      std::vector<double> pl;
-      for(size_t i = 0; i < planeConsts->size(); i++){
-          pl.push_back((*planeConsts)[i].ConstraintEval(pt));
-      }
-      alls.push_back(pl);
-      std::vector<double> sp;
-      for(size_t i = 0; i < sphereConsts->size(); i++){
-          sp.push_back((*sphereConsts)[i].ConstraintEval(pt));
-      }
-      alls.push_back(sp);
-      std::vector<double> ff;
-      for(size_t i = 0; i < freeFormConsts->size(); i++){
-          ff.push_back((*freeFormConsts)[i].ConstraintEval(pt));
-      }
-      alls.push_back(ff);
-      return alls;
-  }
+  std::vector<std::vector<double>> violationReportData(const Point3 &pos);
 
   // ============================
-   // Augmented Lagragian Fuctions
-   // ============================
-   // Energy gradient computations
-   vnl_vector_fixed<double, 3> ConstraintsGradient(const Point<double, 3> &pos) const{
-       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-       Eigen::Vector3d grad= Eigen::Vector3d(0,0,0);
-       for(size_t i = 0; i < planeConsts->size(); i++){
-           grad -= (*planeConsts)[i].ConstraintGradient(pt);
-       }
-       for(size_t i = 0; i < sphereConsts->size(); i++){
-           grad -= (*sphereConsts)[i].ConstraintGradient(pt);
-       }
-       for(size_t i = 0; i < freeFormConsts->size(); i++){
-           grad -= (*freeFormConsts)[i].ConstraintGradient(pt);
-       }
-       vnl_vector_fixed<double, 3> gradE;
-       for(size_t i = 0; i < 3; i++){
-           gradE[i] = grad(i);
-       }
-       return gradE;
-   }
+  // Augmented Lagragian Fuctions
+  // ============================
+  // Energy gradient computations
+  vnl_vector_fixed<double, 3> constraintsGradient(const Point3 &pos) const;
 
-   // Lagragian gradient computation
-   vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, const Point<double, 3> &prepos, double C) const{
-       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-       Eigen::Vector3d prept; prept(0) = prepos[0]; prept(1) = prepos[1]; prept(2) = prepos[2];
-       Eigen::Vector3d grad = Eigen::Vector3d(0,0,0);
-       std::stringstream stream;
-       for(size_t i = 0; i < planeConsts->size(); i++){
-           //if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << " ::: " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
-           grad += (*planeConsts)[i].LagragianGradient(pt, C);
-       }
-       for(size_t i = 0; i < sphereConsts->size(); i++){
-           grad += (*sphereConsts)[i].LagragianGradient(prept, pt, C);
-       }
-       for(size_t i = 0; i < freeFormConsts->size(); i++){
-           grad += (*freeFormConsts)[i].LagragianGradient(pt, C);
-       }
-       vnl_vector_fixed<double, 3> gradE;
-       for(size_t i = 0; i < 3; i++){
-           gradE[i] = grad(i);
-       }
-       stream << "gradE " << gradE << std::endl;
-       //std::cout << stream.str();
-       return gradE;
-   }
+  // Lagragian gradient computation
+  vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C);
 
-   // Parameters lambda, mu and z initialization
-   void InitializeLagrangianParameters(double lambda, double mu, double z) const{
-       for(size_t i = 0; i < planeConsts->size(); i++){
-           (*planeConsts)[i].SetLambda(lambda);
-           (*planeConsts)[i].SetMu(mu);
-           (*planeConsts)[i].SetZ(z);
-       }
-       for(size_t i = 0; i < sphereConsts->size(); i++){
-           (*sphereConsts)[i].SetLambda(lambda);
-           (*sphereConsts)[i].SetMu(mu);
-           (*sphereConsts)[i].SetZ(z);
-       }
-       for(size_t i = 0; i < freeFormConsts->size(); i++){
-           (*freeFormConsts)[i].SetLambda(lambda);
-           (*freeFormConsts)[i].SetMu(mu);
-           (*freeFormConsts)[i].SetZ(z);
-       }
-   }
+  // Parameters lambda, mu and z initialization
+  void InitializeLagrangianParameters(double lambda, double mu, double z);
 
-   void UpdateZs(const Point<double, 3> &pos, double C){
-       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-       for(size_t i = 0; i < planeConsts->size(); i++){
-           (*planeConsts)[i].UpdateZ(pt,C);
-       }
-       for(size_t i = 0; i < sphereConsts->size(); i++){
-           (*sphereConsts)[i].UpdateZ(pt,C);
-       }
-       for(size_t i = 0; i < freeFormConsts->size(); i++){
-           (*freeFormConsts)[i].UpdateZ(pt,C);
-       }
-   }
+  void UpdateZs(const Point3 &pos, double C);
 
-   void UpdateMus(const Point<double, 3> &pos, double C){
-       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-       for(size_t i = 0; i < planeConsts->size(); i++){
-           (*planeConsts)[i].UpdateMu(pt,C);
-       }
-       for(size_t i = 0; i < sphereConsts->size(); i++){
-           (*sphereConsts)[i].UpdateMu(pt,C);
-       }
-       for(size_t i = 0; i < freeFormConsts->size(); i++){
-           (*freeFormConsts)[i].UpdateMu(pt,C);
-       }
-   }
+  void UpdateMus(const Point3 &pos, double C);
 
-   bool GetActive(){return active;}
-   void SetActive(bool ac){active = ac;}
+  bool GetActive() { return active_; }
+  void SetActive(bool ac) { active_ = ac; }
 
-protected:
-  std::vector<PlaneConstraint> *planeConsts;
-  std::vector<SphereConstraint> *sphereConsts;
-  std::vector<FreeFormConstraint> *freeFormConsts;
+  void Read(std::string filename);
+  void Write(std::string filename);
 
-private:
+ private:
+  std::vector<PlaneConstraint> planeConstraints_;
+  std::vector<SphereConstraint> sphereConstraints_;
+  std::vector<FreeFormConstraint> freeFormConstraints_;
+
   // Projections and intersects
-  bool active;
+  bool active_;
   Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);
   Eigen::Vector3d linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector3d p0, Eigen::Vector3d l0, Eigen::Vector3d l);
-  bool PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Eigen::Vector3d n2, Eigen::Vector3d p2, Eigen::Vector3d & l0_result, Eigen::Vector3d & l1_result);
+  bool PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Eigen::Vector3d n2, Eigen::Vector3d p2,
+                           Eigen::Vector3d &l0_result, Eigen::Vector3d &l1_result);
 };
 
-
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

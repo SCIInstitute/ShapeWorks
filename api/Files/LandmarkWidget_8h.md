@@ -38,6 +38,7 @@ namespace shapeworks {
 class Viewer;
 class LandmarkCallback;
 
+
 class LandmarkWidget {
  public:
   LandmarkWidget(Viewer* viewer);
@@ -45,7 +46,7 @@ class LandmarkWidget {
 
   void update_landmarks();
 
-  void update_positions();
+  void store_positions();
 
   void update_glyph_properties();
 
@@ -70,4 +71,4 @@ class LandmarkWidget {
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

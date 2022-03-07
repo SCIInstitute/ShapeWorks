@@ -60,6 +60,9 @@ public:
   void set_landmarks_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_landmarks_filenames();
 
+  void set_constraints_filenames(std::vector<std::string> filenames);
+  std::vector<std::string> get_constraints_filenames();
+
   void set_number_of_domains(int number_of_domains);
   int get_number_of_domains();
 
@@ -101,6 +104,7 @@ private:
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
   std::vector<std::string> landmarks_filenames_;
+  std::vector<std::string> constraints_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;
 
@@ -115,4 +119,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

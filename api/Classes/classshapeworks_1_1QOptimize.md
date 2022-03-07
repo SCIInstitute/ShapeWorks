@@ -146,6 +146,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
 | void | **[SetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-setshowvisualizer)**(bool show) |
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
+| vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
 
 **Protected Functions inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
 
@@ -381,4 +382,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

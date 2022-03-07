@@ -32,8 +32,8 @@ title: shapeworks::Sampler
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension > ) |
-| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension > ) |
+| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) ) |
+| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) ) |
 | | **[Sampler](../Classes/classshapeworks_1_1Sampler.md#function-sampler)**()<br>Constructor.  |
 | virtual | **[~Sampler](../Classes/classshapeworks_1_1Sampler.md#function-~sampler)**()<br>Destructor.  |
 | [itk::ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)< ImageType::PixelType, Dimension > * | **[GetGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getgradientfunction)**() |
@@ -143,7 +143,7 @@ title: shapeworks::Sampler
 | [itk::ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)< double, Dimension >::Pointer | **[m_Sigma1Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma1cache)**  |
 | [itk::ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)< double, Dimension >::Pointer | **[m_Sigma2Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma2cache)**  |
 | MeanCurvatureCacheType::Pointer | **[m_MeanCurvatureCache](../Classes/classshapeworks_1_1Sampler.md#variable-m-meancurvaturecache)**  |
-| [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension >::Pointer | **[m_ParticleSystem](../Classes/classshapeworks_1_1Sampler.md#variable-m-particlesystem)**  |
+| itk::ParticleSystem::Pointer | **[m_ParticleSystem](../Classes/classshapeworks_1_1Sampler.md#variable-m-particlesystem)**  |
 | std::vector< [itk::ParticleDomain::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) > | **[m_DomainList](../Classes/classshapeworks_1_1Sampler.md#variable-m-domainlist)**  |
 | std::vector< [itk::ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)< ImageType >::Pointer > | **[m_NeighborhoodList](../Classes/classshapeworks_1_1Sampler.md#variable-m-neighborhoodlist)**  |
 | int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Sampler.md#variable-m-pairwise-potential-type)**  |
@@ -210,7 +210,7 @@ using shapeworks::Sampler::OptimizerType =  itk::ParticleGradientDescentPosition
 ```cpp
 itkGetObjectMacro(
     ParticleSystem ,
-    itk::ParticleSystem< Dimension > 
+    itk::ParticleSystem 
 )
 ```
 
@@ -223,7 +223,7 @@ Returns the particle system used in the surface sampling.
 ```cpp
 itkGetConstObjectMacro(
     ParticleSystem ,
-    itk::ParticleSystem< Dimension > 
+    itk::ParticleSystem 
 )
 ```
 
@@ -1011,7 +1011,7 @@ MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 ### variable m_ParticleSystem
 
 ```cpp
-itk::ParticleSystem< Dimension >::Pointer m_ParticleSystem;
+itk::ParticleSystem::Pointer m_ParticleSystem;
 ```
 
 
@@ -1115,4 +1115,4 @@ itk::ParticleMeshBasedGeneralEntropyGradientFunction< Dimension >::Pointer m_Mes
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

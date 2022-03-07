@@ -202,13 +202,13 @@ public:
   void UpdateZeroCrossingPoint() override {
     for (size_t i = 0; i < m_possible_zero_crossings.size(); i++) {
         this->m_ZeroCrossingPoint = m_possible_zero_crossings[i];
-        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){
+        if(!this->GetConstraints()->isAnyViolated(this->m_ZeroCrossingPoint)){
             //std::cout << "Chosen initial point " << this->m_ZeroCrossingPoint << std::endl;
             break;
         }
     }
 
-    if(this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){std::cerr << "A particle initialization violates at least one constraint. Make sure at least one point satisfies all constraints" << std::endl;}
+    if(this->GetConstraints()->isAnyViolated(this->m_ZeroCrossingPoint)){std::cerr << "A particle initialization violates at least one constraint. Make sure at least one point satisfies all constraints" << std::endl;}
   }
 
 protected:
@@ -302,4 +302,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

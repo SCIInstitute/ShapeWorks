@@ -28,6 +28,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | void | **[apply_feature_map](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-feature-map)**(std::string name, ImageType::Pointer image)<br>Apply a feature map.  |
 | void | **[apply_scalars](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-scalars)**(MeshHandle mesh)<br>Apply scalars from another mesh, with a transform.  |
 | void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.  |
+| double | **[get_largest_dimension_size](../Classes/classshapeworks_1_1StudioMesh.md#function-get-largest-dimension-size)**()<br>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)  |
 
 ## Detailed Description
 
@@ -142,6 +143,14 @@ void interpolate_scalars_to_mesh(
 
 Interpolation scalars at positions to this mesh. 
 
+### function get_largest_dimension_size
+
+```cpp
+double get_largest_dimension_size()
+```
+
+Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100) 
+
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

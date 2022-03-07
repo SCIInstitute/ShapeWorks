@@ -24,7 +24,7 @@ Inherits from Object
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-constweakpointer)**  |
 | typedef [ParticleImageDomainWithGradients](../Classes/classitk_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-domaintype)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-particlesystemtype)**  |
 | typedef [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< VDimension > | **[GradientFunctionType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-gradientfunctiontype)**  |
 | typedef [GradientFunctionType::VectorType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-vectortype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-pointtype)**  |
@@ -130,7 +130,7 @@ Type of the domain.
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem<VDimension> itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::ParticleSystemType;
+typedef ParticleSystem itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::ParticleSystemType;
 ```
 
 
@@ -454,4 +454,4 @@ inline virtual ~ParticleGradientDescentPositionOptimizer()
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

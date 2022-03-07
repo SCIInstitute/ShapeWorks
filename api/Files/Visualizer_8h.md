@@ -74,6 +74,7 @@ class Visualizer : public QObject {
   void update_samples();
 
   void update_landmarks();
+  void update_planes();
 
   void display_sample(int i);
 
@@ -180,4 +181,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

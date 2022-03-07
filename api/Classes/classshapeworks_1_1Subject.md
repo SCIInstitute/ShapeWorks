@@ -30,6 +30,8 @@ Representation of a single subject.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_world_particle_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-world-particle-filenames)**()<br>Get the world particle filenames.  |
 | void | **[set_landmarks_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-landmarks-filenames)**(std::vector< std::string > filenames)<br>Get the landmarks filenames (one per domain)  |
 | std::vector< std::string > | **[get_landmarks_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-landmarks-filenames)**()<br>Set the landmarks filenames.  |
+| void | **[set_constraints_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-constraints-filenames)**(std::vector< std::string > filenames)<br>Get the constraints filenames (one per domain)  |
+| std::vector< std::string > | **[get_constraints_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-constraints-filenames)**()<br>Set the constratins filenames.  |
 | void | **[set_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-set-number-of-domains)**(int number_of_domains)<br>Set the number of domains.  |
 | int | **[get_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-get-number-of-domains)**()<br>Get the number of domains.  |
 | void | **[set_image_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-image-filenames)**(std::vector< std::string > filenames)<br>Set image filenames.  |
@@ -176,6 +178,24 @@ std::vector< std::string > get_landmarks_filenames()
 ```
 
 Set the landmarks filenames. 
+
+### function set_constraints_filenames
+
+```cpp
+void set_constraints_filenames(
+    std::vector< std::string > filenames
+)
+```
+
+Get the constraints filenames (one per domain) 
+
+### function get_constraints_filenames
+
+```cpp
+std::vector< std::string > get_constraints_filenames()
+```
+
+Set the constratins filenames. 
 
 ### function set_number_of_domains
 
@@ -360,4 +380,4 @@ Set the display name.
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

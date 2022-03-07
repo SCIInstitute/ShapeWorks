@@ -111,7 +111,7 @@ public:
   }
   virtual shapeworks::DomainType GetDomainType() const = 0;
 
-  std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
+  std::shared_ptr<shapeworks::Constraints> GetConstraints() const { return constraints; }
 
   // Use `random` to advance a particle and return a new position
   virtual PointType GetPositionAfterSplit(const PointType& pt,
@@ -144,14 +144,14 @@ protected:
   std::string m_DomainName;
 
   ParticleDomain() {
-      this->constraints = std::make_shared<Constraints>();
+      this->constraints = std::make_shared<shapeworks::Constraints>();
   }
   virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-  std::shared_ptr<Constraints> constraints;
+  std::shared_ptr<shapeworks::Constraints> constraints;
 
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented
@@ -166,4 +166,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

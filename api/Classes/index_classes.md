@@ -64,10 +64,7 @@ title: Classes
     * **class [AdvancedTransform](../Classes/classitk_1_1AdvancedTransform.md)** <br>Transform maps points, vectors and covariant vectors from an input space to an output space. 
     * **class [BSplineInterpolateImageFunctionWithDoubleCoefficents](../Classes/classitk_1_1BSplineInterpolateImageFunctionWithDoubleCoefficents.md)** 
     * **class [CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)** 
-    * **class [Constraint](../Classes/classitk_1_1Constraint.md)** 
-    * **class [Constraints](../Classes/classitk_1_1Constraints.md)** 
     * **class [ContourDomain](../Classes/classitk_1_1ContourDomain.md)** 
-    * **class [FreeFormConstraint](../Classes/classitk_1_1FreeFormConstraint.md)** 
     * **namespace [Functor](../Namespaces/namespaceitk_1_1Functor.md)** 
         * **class [MultiplyByConstant](../Classes/classitk_1_1Functor_1_1MultiplyByConstant.md)** 
     * **class [ImageToVTKImageFilter](../Classes/classitk_1_1ImageToVTKImageFilter.md)** <br>Converts an ITK image into a VTK image and plugs a itk data pipeline to a VTK datapipeline. 
@@ -115,11 +112,9 @@ title: Classes
     * **class [ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)** 
     * **class [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system. 
     * **class [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)** 
-    * **class [PlaneConstraint](../Classes/classitk_1_1PlaneConstraint.md)** 
     * **class [PowerOfTwoPointTree](../Classes/classitk_1_1PowerOfTwoPointTree.md)** 
     * **class [PowerOfTwoPointTreeNode](../Classes/classitk_1_1PowerOfTwoPointTreeNode.md)** 
     * **class [SparseKernelTransform](../Classes/classitk_1_1SparseKernelTransform.md)** 
-    * **class [SphereConstraint](../Classes/classitk_1_1SphereConstraint.md)** 
     * **class [TPGACLevelSetImageFilter](../Classes/classitk_1_1TPGACLevelSetImageFilter.md)** 
     * **class [ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)** 
     * **struct [powstruct](../Classes/structitk_1_1powstruct.md)** 
@@ -133,11 +128,14 @@ title: Classes
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
+    * **class [Constraint](../Classes/classshapeworks_1_1Constraint.md)** 
+    * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
     * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
+    * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** 
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
     * **class [GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)** 
@@ -184,6 +182,8 @@ title: Classes
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
+    * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** 
+    * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
@@ -207,9 +207,11 @@ title: Classes
     * **class [ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)** 
     * **struct [SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)** 
     * **class [SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView](). 
+    * **class [SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)** 
     * **class [SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)** 
     * **class [StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget](). 
     * **class [StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions. 
+    * **class [StudioHandleWidget](../Classes/classshapeworks_1_1StudioHandleWidget.md)** 
     * **class [StudioInteractorStyle](../Classes/classshapeworks_1_1StudioInteractorStyle.md)** 
     * **class [StudioLog](../Classes/classshapeworks_1_1StudioLog.md)** 
     * **class [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh. 
@@ -240,4 +242,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

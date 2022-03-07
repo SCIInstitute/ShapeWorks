@@ -43,6 +43,7 @@ Inherits from QObject
 | void | **[display_samples](../Classes/classshapeworks_1_1Visualizer.md#function-display-samples)**()<br>update the display using the current settings  |
 | void | **[update_samples](../Classes/classshapeworks_1_1Visualizer.md#function-update-samples)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Visualizer.md#function-update-landmarks)**() |
+| void | **[update_planes](../Classes/classshapeworks_1_1Visualizer.md#function-update-planes)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
 | void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
@@ -254,6 +255,13 @@ void update_samples()
 
 ```cpp
 void update_landmarks()
+```
+
+
+### function update_planes
+
+```cpp
+void update_planes()
 ```
 
 
@@ -514,4 +522,4 @@ static const std::string MODE_RECONSTRUCTION_C;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

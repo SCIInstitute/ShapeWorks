@@ -342,6 +342,10 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-~shape">~Shape</a></strong>()</td>
 </tr>
 <tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-display-name">get_display_name</a></strong>()</td>
+</tr>
+<tr>
 <td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-meshes">get_meshes</a></strong>(const string &amp; display_mode)</td>
 </tr>
@@ -400,6 +404,14 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-store-landmarks">store_landmarks</a></strong>()<br>Store landmarks.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-constraints">import_constraints</a></strong>(QStringList filenames)<br>import constraints</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-store-constraints">store_constraints</a></strong>()<br>Store constraints.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -581,6 +593,18 @@
 <td>Eigen::MatrixXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-landmarks">landmarks</a></strong>()</td>
 </tr>
+<tr>
+<td>std::vector&lt; <a href="classshapeworks_1_1Constraints.html">Constraints</a> &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-constraints">constraints</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Constraints.html">Constraints</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-constraints">get_constraints</a></strong>(int domain_id)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-has-planes">has_planes</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -589,6 +613,9 @@
 </code></pre></div>
 <h3 id="function-shape_1">function ~Shape</h3>
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Shape</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_display_name">function get_display_name</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_meshes">function get_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">(</span><span class="w"></span>
@@ -667,6 +694,16 @@
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Store landmarks. </p>
+<h3 id="function-import_constraints">function import_constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_constraints</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>import constraints </p>
+<h3 id="function-store_constraints">function store_constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_constraints</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Store constraints. </p>
 <h3 id="function-set_particles">function set_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
@@ -854,8 +891,19 @@
 <h3 id="function-landmarks">function landmarks</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-constraints">function constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Constraints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">constraints</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_constraints">function get_constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Constraints</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_constraints</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-has_planes">function has_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_planes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

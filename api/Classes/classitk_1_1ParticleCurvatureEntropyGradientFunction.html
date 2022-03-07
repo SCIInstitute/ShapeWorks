@@ -954,7 +954,6 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function Evaluate</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
@@ -965,7 +964,6 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <h3 id="function-beforeevaluate">function BeforeEvaluate</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
@@ -973,8 +971,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeevaluate">itk::ParticleVectorFunction::BeforeEvaluate</a></p>
-<p>This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-energy">function Energy</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
@@ -982,7 +978,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-energy">itk::ParticleEntropyGradientFunction::Energy</a></p>
 <h3 id="function-computekappa">function ComputeKappa</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeKappa</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">mc</span><span class="p">,</span><span class="w"></span>
@@ -1068,7 +1063,6 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_3">function Evaluate</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
@@ -1079,7 +1073,6 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <h3 id="function-beforeevaluate_1">function BeforeEvaluate</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
@@ -1087,8 +1080,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeevaluate">itk::ParticleVectorFunction::BeforeEvaluate</a></p>
-<p>This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-energy_1">function Energy</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
@@ -1096,7 +1087,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-energy">itk::ParticleEntropyGradientFunction::Energy</a></p>
 <h3 id="function-computekappa_1">function ComputeKappa</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeKappa</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">mc</span><span class="p">,</span><span class="w"></span>
@@ -1207,7 +1197,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">m_MaxMoveFactor</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:32 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:26 +0000</p>
               
             </div>
           </div>

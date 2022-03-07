@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classitk_1_1PlaneConstraint.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1PlaneWidget.html">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>itk::PlaneConstraint - ShapeWorks</title>
+  <title>shapeworks::PlaneWidget - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "itk::PlaneConstraint";
-    var mkdocs_page_input_path = "api/Classes/classitk_1_1PlaneConstraint.md";
-    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classitk_1_1PlaneConstraint.html";
+    var mkdocs_page_name = "shapeworks::PlaneWidget";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1PlaneWidget.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1PlaneWidget.html";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
@@ -292,10 +292,10 @@
     
       
     
-    <li>itk::PlaneConstraint</li>
+    <li>shapeworks::PlaneWidget</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1PlaneConstraint.md"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1PlaneWidget.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -306,8 +306,9 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="itkplaneconstraint">itk::PlaneConstraint</h1>
-<p>Inherits from <a href="classitk_1_1Constraint.html">itk::Constraint</a></p>
+                <h1 id="shapeworksplanewidget">shapeworks::PlaneWidget</h1>
+<p><a href="">PlaneWidget</a>.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;PlaneWidget.h&gt;</code></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -318,197 +319,131 @@
 </thead>
 <tbody>
 <tr>
-<td>virtual bool</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-isviolated">isViolated</a></strong>(const vnl_vector&lt; double &gt; &amp; pt) const</td>
+<td></td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-planewidget">PlaneWidget</a></strong>(<a href="classshapeworks_1_1Viewer.html">Viewer</a> * viewer)</td>
 </tr>
 <tr>
-<td>virtual bool</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-isviolated">isViolated</a></strong>(const Eigen::Vector3d &amp; pt) const</td>
-</tr>
-<tr>
-<td>virtual void</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-printc">printC</a></strong>() const</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-getplanenormal">GetPlaneNormal</a></strong>()</td>
+<td></td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-~planewidget">~PlaneWidget</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-setplanenormal">SetPlaneNormal</a></strong>(const Eigen::Vector3d &amp; inPlane)</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-getplanepoint">GetPlanePoint</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-update">update</a></strong>()<br>Update the widget from shape data.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-setplanepoint">SetPlanePoint</a></strong>(const vnl_vector&lt; double &gt; &amp; ina)</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-store-positions">store_positions</a></strong>()<br>Store positions back to shape data (this is called by callback)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-setplanepoint">SetPlanePoint</a></strong>(const Eigen::Vector3d &amp; p)</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-update-glyph-properties">update_glyph_properties</a></strong>()<br>Update the sizes and detail of control spheres.</td>
 </tr>
 <tr>
-<td>virtual Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-constraintgradient">ConstraintGradient</a></strong>(const Eigen::Vector3d &amp; pt) const</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-clear-planes">clear_planes</a></strong>()<br>Clear point handles and planes.</td>
 </tr>
 <tr>
-<td>virtual double</td>
-<td><strong><a href="classitk_1_1PlaneConstraint.html#function-constrainteval">ConstraintEval</a></strong>(const Eigen::Vector3d &amp; pt) const</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-handle-right-click">handle_right_click</a></strong>(int domain, int plane, int point)<br>Handle a right click on a particular point.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-delete-plane">delete_plane</a></strong>(int domain, int plane_id)<br>Delete a particular plane.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-flip-plane">flip_plane</a></strong>(int domain, int plane_id)<br>Flip the normal for a given plane.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-apply-plane">apply_plane</a></strong>(int domain, int plane_id)<br>Apply a plane from one shape to all others (e.g. copy and paste)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-set-plane-offset">set_plane_offset</a></strong>(int domain, int plane_id, int offset)<br>Set an offset for a given plane.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneWidget.html#function-finalize-plane-offset">finalize_plane_offset</a></strong>(int domain, int plane_id)<br>Finalize the offset for a given plane.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="additional-inherited-members">Additional inherited members</h2>
-<p><strong>Public Functions inherited from <a href="classitk_1_1Constraint.html">itk::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>shapeworks::ConstraintType</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getconstrainttype">GetConstraintType</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setconstrainttype">setConstraintType</a></strong>(shapeworks::ConstraintType inType)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setz">SetZ</a></strong>(double inz)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getz">GetZ</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setmu">SetMu</a></strong>(double inmu)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getmu">GetMu</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setlambda">SetLambda</a></strong>(double inLambda)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getlambda">GetLambda</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-updatez">UpdateZ</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-updatemu">UpdateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-lagragiangradient">LagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Protected Functions inherited from <a href="classitk_1_1Constraint.html">itk::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>int</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-sgn">sgn</a></strong>(double val)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Protected Attributes inherited from <a href="classitk_1_1Constraint.html">itk::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>shapeworks::ConstraintType</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-type">type</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-mu">mu</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-z">z</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-lambda">lambda</a></strong></td>
-</tr>
-</tbody>
-</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">PlaneWidget</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p><a href="">PlaneWidget</a>. </p>
+<p>Widget to display and manipulate constraint planes </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-isviolated">function isViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1Constraint.html#function-isviolated">itk::Constraint::isViolated</a></p>
-<h3 id="function-isviolated_1">function isViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1Constraint.html#function-isviolated">itk::Constraint::isViolated</a></p>
-<h3 id="function-printc">function printC</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">printC</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1Constraint.html#function-printc">itk::Constraint::printC</a></p>
-<h3 id="function-getplanenormal">function GetPlaneNormal</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">GetPlaneNormal</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-setplanenormal">function SetPlaneNormal</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPlaneNormal</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inPlane</span><span class="w"></span>
+<h3 id="function-planewidget">function PlaneWidget</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PlaneWidget</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-getplanepoint">function GetPlanePoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">GetPlanePoint</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-planewidget_1">function ~PlaneWidget</h3>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">PlaneWidget</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setplanepoint">function SetPlanePoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPlanePoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ina</span><span class="w"></span>
+<h3 id="function-update">function update</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Update the widget from shape data. </p>
+<h3 id="function-store_positions">function store_positions</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">store_positions</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Store positions back to shape data (this is called by callback) </p>
+<h3 id="function-update_glyph_properties">function update_glyph_properties</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_glyph_properties</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Update the sizes and detail of control spheres. </p>
+<h3 id="function-clear_planes">function clear_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_planes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Clear point handles and planes. </p>
+<h3 id="function-handle_right_click">function handle_right_click</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_right_click</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setplanepoint_1">function SetPlanePoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPlanePoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
+<p>Handle a right click on a particular point. </p>
+<h3 id="function-delete_plane">function delete_plane</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">delete_plane</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-constraintgradient">function ConstraintGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ConstraintGradient</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<p>Delete a particular plane. </p>
+<h3 id="function-flip_plane">function flip_plane</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">flip_plane</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1Constraint.html#function-constraintgradient">itk::Constraint::ConstraintGradient</a></p>
-<h3 id="function-constrainteval">function ConstraintEval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ConstraintEval</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<p>Flip the normal for a given plane. </p>
+<h3 id="function-apply_plane">function apply_plane</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_plane</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1Constraint.html#function-constrainteval">itk::Constraint::ConstraintEval</a></p>
+<p>Apply a plane from one shape to all others (e.g. copy and paste) </p>
+<h3 id="function-set_plane_offset">function set_plane_offset</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_plane_offset</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set an offset for a given plane. </p>
+<h3 id="function-finalize_plane_offset">function finalize_plane_offset</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finalize_plane_offset</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Finalize the offset for a given plane. </p>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:33 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

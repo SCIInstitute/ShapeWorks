@@ -120,6 +120,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
 | void | **[SetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-setshowvisualizer)**(bool show) |
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
+| vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
 
 ## Protected Functions
 
@@ -1179,6 +1180,17 @@ bool GetShowVisualizer()
 ```
 
 
+### function TransformPoint
+
+```cpp
+vnl_vector_fixed< double, 3 > TransformPoint(
+    int domain,
+    vnl_vector_fixed< double, 3 > input
+)
+```
+
+transform a point if necessary 
+
 ## Protected Functions Documentation
 
 ### function SetIterationCallback
@@ -2069,4 +2081,4 @@ std::shared_ptr< Project > project_;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

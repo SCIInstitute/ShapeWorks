@@ -23,7 +23,7 @@ Representation of a group of meshes.  [More...](#detailed-description)
 | void | **[set_number_of_meshes](../Classes/classshapeworks_1_1MeshGroup.md#function-set-number-of-meshes)**(int n) |
 | bool | **[valid](../Classes/classshapeworks_1_1MeshGroup.md#function-valid)**() |
 | void | **[set_mesh](../Classes/classshapeworks_1_1MeshGroup.md#function-set-mesh)**(int i, MeshHandle mesh) |
-| MeshList & | **[meshes](../Classes/classshapeworks_1_1MeshGroup.md#function-meshes)**() |
+| MeshList & | **[meshes](../Classes/classshapeworks_1_1MeshGroup.md#function-meshes)**()<br>Return a reference to the list of meshes.  |
 
 ## Detailed Description
 
@@ -92,7 +92,8 @@ void set_mesh(
 MeshList & meshes()
 ```
 
+Return a reference to the list of meshes. 
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

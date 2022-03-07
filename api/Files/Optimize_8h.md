@@ -218,6 +218,8 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
 protected:
 
   virtual void SetIterationCallback();
@@ -388,4 +390,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

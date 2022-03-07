@@ -309,6 +309,7 @@
                 <h1 id="itkparticlesystem">itk::ParticleSystem</h1>
 <p>A facade class managing interactions with a particle system.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;itkParticleSystem.h&gt;</code></p>
+<p>Inherits from DataObject</p>
 <h2 id="public-types">Public Types</h2>
 <table>
 <thead>
@@ -494,11 +495,11 @@
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-adddomain">AddDomain</a></strong>(<a href="classitk_1_1ParticleSystem.html#typedef-domaintype">DomainType</a> * , int threadId =0)</td>
 </tr>
 <tr>
-<td>std::vector&lt; typename <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::const_iterator</td>
+<td>std::vector&lt; <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::const_iterator</td>
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getdomainsbegin">GetDomainsBegin</a></strong>() const</td>
 </tr>
 <tr>
-<td>std::vector&lt; typename <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::const_iterator</td>
+<td>std::vector&lt; <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::const_iterator</td>
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getdomainsend">GetDomainsEnd</a></strong>() const</td>
 </tr>
 <tr>
@@ -602,7 +603,7 @@
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getinverseprefixtransform">GetInversePrefixTransform</a></strong>() const</td>
 </tr>
 <tr>
-<td>const std::vector&lt; typename PointContainerType::Pointer &gt; &amp;</td>
+<td>const std::vector&lt; PointContainerType::Pointer &gt; &amp;</td>
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getpositions">GetPositions</a></strong>() const</td>
 </tr>
 <tr>
@@ -705,11 +706,11 @@
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-~particlesystem">~ParticleSystem</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; typename <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::iterator</td>
+<td>std::vector&lt; <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::iterator</td>
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getdomainsbegin">GetDomainsBegin</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; typename <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::iterator</td>
+<td>std::vector&lt; <a href="classitk_1_1ParticleDomain.html#typedef-pointer">DomainType::Pointer</a> &gt;::iterator</td>
 <td><strong><a href="classitk_1_1ParticleSystem.html#function-getdomainsend">GetDomainsEnd</a></strong>()</td>
 </tr>
 <tr>
@@ -746,57 +747,71 @@
 </tr>
 </tbody>
 </table>
+<h2 id="public-attributes">Public Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>constexpr int</td>
+<td><strong><a href="classitk_1_1ParticleSystem.html#variable-vdimension">VDimension</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="mi">3</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>A facade class managing interactions with a particle system. </p>
 <p>A particle system consists of a set of particle locations and domains in which those locations are defined. For example, a particle system may simply be a set of points in 3D Euclidean space that are constrained to a specified bounding box. A more complex example is a set of 3D points constrained to a given surface. The itkParticleSystem class is also designed to manage multiple sets of points across multiple domains. For example, one may create a system of dozens of point sets that are each defined in different spaces. The itkParticleSystem class can also maintain a set of transformations associated with each domain that map that particular domain into another coordinate frame, for example, a common coordinate frame. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-domaintype">typedef DomainType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Define the base domain type. </p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Point type used to store particle locations. </p>
 <h3 id="typedef-neighborhoodtype">typedef NeighborhoodType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NeighborhoodType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">NeighborhoodType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Class used to compute neighborhoods of points. One is associated with each domain. </p>
 <h3 id="typedef-pointcontainertype">typedef PointContainerType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Point container type. One is associated with each domain. </p>
 <h3 id="typedef-pointvectortype">typedef PointVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-transformtype">typedef TransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">TransformType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">TransformType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Defines a transform class type. One is associated with each domain. Transforms are affine for simplicity. This could be extended by using the itk::Transform base type so that a variety of transform types may be used. </p>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
@@ -995,11 +1010,11 @@
 </code></pre></div>
 <p>Add a domain to the particle system. This method also allocates space for a list of positions that are contained within the domain, and a default neighborhood calculator. The final, optional argument indicates the calling thread id. </p>
 <h3 id="function-getdomainsbegin">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-getdomain">function GetDomain</h3>
@@ -1130,7 +1145,7 @@
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getpositions">function GetPositions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return the array of particle positions. </p>
 <h3 id="function-getpositions_1">function GetPositions</h3>
@@ -1204,8 +1219,7 @@
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>The following methods provide functionality for specifying particle indices that are fixed landmarks. SetPosition() calls to these particle indices will silently fail. For simplicity, only one list of indices is </p>
-<p>maintained for all dimensions. If particle index n is flagged, for example, then particle index n in all domains is fixed. </p>
+<p>The following methods provide functionality for specifying particle indices that are fixed landmarks. SetPosition() calls to these particle indices will silently fail. For simplicity, only one list of indices is maintained for all dimensions. If particle index n is flagged, for example, then particle index n in all domains is fixed. </p>
 <h3 id="function-resetfixedparticleflag">function ResetFixedParticleFlag</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlag</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
@@ -1249,11 +1263,11 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleSystem</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-getdomainsbegin_1">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend_1">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-gettransformsbegin_1">function GetTransformsBegin</h3>
@@ -1292,8 +1306,12 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>API for the single transform case. </p>
+<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-vdimension">variable VDimension</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:33 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

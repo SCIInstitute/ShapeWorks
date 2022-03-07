@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classitk_1_1Constraints.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1Constraints.html">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>itk::Constraints - ShapeWorks</title>
+  <title>shapeworks::Constraints - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "itk::Constraints";
-    var mkdocs_page_input_path = "api/Classes/classitk_1_1Constraints.md";
-    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classitk_1_1Constraints.html";
+    var mkdocs_page_name = "shapeworks::Constraints";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1Constraints.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1Constraints.html";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
@@ -292,10 +292,10 @@
     
       
     
-    <li>itk::Constraints</li>
+    <li>shapeworks::Constraints</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1Constraints.md"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1Constraints.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -306,7 +306,22 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="itkconstraints">itk::Constraints</h1>
+                <h1 id="shapeworksconstraints">shapeworks::Constraints</h1>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using itk::Point&lt; double, 3 &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#using-point3">Point3</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -318,145 +333,134 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classitk_1_1Constraints.html#function-constraints">Constraints</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-constraints">Constraints</a></strong>()</td>
 </tr>
 <tr>
 <td></td>
-<td><strong><a href="classitk_1_1Constraints.html#function-~constraints">~Constraints</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-~constraints">~Constraints</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-addplane">addPlane</a></strong>(const vnl_vector&lt; double &gt; &amp; a, const vnl_vector&lt; double &gt; &amp; b, const vnl_vector&lt; double &gt; &amp; c)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-addplane">addPlane</a></strong>(const vnl_vector&lt; double &gt; &amp; a, const vnl_vector&lt; double &gt; &amp; b, const vnl_vector&lt; double &gt; &amp; c)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-addsphere">addSphere</a></strong>(const vnl_vector_fixed&lt; double, DIMENSION &gt; &amp; v, double r)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-addsphere">addSphere</a></strong>(const vnl_vector_fixed&lt; double, DIMENSION &gt; &amp; v, double r)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-addfreeformconstraint">addFreeFormConstraint</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">shapeworks::Mesh</a> &gt; mesh)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-addfreeformconstraint">addFreeFormConstraint</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">shapeworks::Mesh</a> &gt; mesh)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-transformconstraints">transformConstraints</a></strong>(const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; Trans)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-transformconstraints">transformConstraints</a></strong>(const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; transform)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-transformplanes">transformPlanes</a></strong>(const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; Trans)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-transformplanes">transformPlanes</a></strong>(const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; transform)</td>
 </tr>
 <tr>
 <td>std::stringstream</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-applyboundaryconstraints">applyBoundaryConstraints</a></strong>(vnl_vector_fixed&lt; double, 3 &gt; &amp; gradE, const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-applyboundaryconstraints">applyBoundaryConstraints</a></strong>(vnl_vector_fixed&lt; double, 3 &gt; &amp; gradE, const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>std::stringstream</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-applyboundaryconstraints">applyBoundaryConstraints</a></strong>(vnl_vector_fixed&lt; float, 3 &gt; &amp; gradE, const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-applyboundaryconstraints">applyBoundaryConstraints</a></strong>(vnl_vector_fixed&lt; float, 3 &gt; &amp; gradE, const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>std::stringstream</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-applyplaneconstraints">applyPlaneConstraints</a></strong>(vnl_vector_fixed&lt; double, 3 &gt; &amp; gradE, const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-applyplaneconstraints">applyPlaneConstraints</a></strong>(vnl_vector_fixed&lt; double, 3 &gt; &amp; gradE, const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-writeplanes">writePlanes</a></strong>(std::string filename)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-writeplanes">writePlanes</a></strong>(std::string filename)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-writespheres">writeSpheres</a></strong>(std::string filename)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-writespheres">writeSpheres</a></strong>(std::string filename)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-writefreeformconstraint">writeFreeFormConstraint</a></strong>(std::string filename)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-writefreeformconstraint">writeFreeFormConstraint</a></strong>(std::string filename)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-iscuttingplanedefined">IsCuttingPlaneDefined</a></strong>() const</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-iscuttingplanedefined">isCuttingPlaneDefined</a></strong>() const</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-iscuttingspheredefined">IsCuttingSphereDefined</a></strong>() const</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-iscuttingspheredefined">isCuttingSphereDefined</a></strong>() const</td>
 </tr>
 <tr>
-<td>std::vector&lt; <a href="classitk_1_1PlaneConstraint.html">PlaneConstraint</a> &gt; *</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-getplaneconstraints">getPlaneConstraints</a></strong>()</td>
+<td>std::vector&lt; <a href="classshapeworks_1_1PlaneConstraint.html">PlaneConstraint</a> &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-getplaneconstraints">getPlaneConstraints</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; <a href="classitk_1_1SphereConstraint.html">SphereConstraint</a> &gt; *</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-getsphereconstraints">GetSphereConstraints</a></strong>()</td>
+<td>std::vector&lt; <a href="classshapeworks_1_1SphereConstraint.html">SphereConstraint</a> &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-getsphereconstraints">getSphereConstraints</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-isanyviolated">IsAnyViolated</a></strong>(const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-isanyviolated">isAnyViolated</a></strong>(const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>std::vector&lt; int &gt;</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-planesviolated">planesViolated</a></strong>(Eigen::Vector3d pt)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-planesviolated">planesViolated</a></strong>(Eigen::Vector3d pt)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-printall">PrintAll</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-printall">printAll</a></strong>()</td>
 </tr>
 <tr>
 <td>std::string</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-violationreport">ViolationReport</a></strong>(const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-violationreport">violationReport</a></strong>(const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::vector&lt; double &gt; &gt;</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-violationreportdata">ViolationReportData</a></strong>(const Point&lt; double, 3 &gt; &amp; pos)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-violationreportdata">violationReportData</a></strong>(const Point3 &amp; pos)</td>
 </tr>
 <tr>
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-constraintsgradient">ConstraintsGradient</a></strong>(const Point&lt; double, 3 &gt; &amp; pos) const</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-constraintsgradient">constraintsGradient</a></strong>(const Point3 &amp; pos) const</td>
 </tr>
 <tr>
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-constraintslagrangiangradient">ConstraintsLagrangianGradient</a></strong>(const Point&lt; double, 3 &gt; &amp; pos, const Point&lt; double, 3 &gt; &amp; prepos, double C) const</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-constraintslagrangiangradient">constraintsLagrangianGradient</a></strong>(const Point3 &amp; pos, const Point3 &amp; prepos, double C)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-initializelagrangianparameters">InitializeLagrangianParameters</a></strong>(double lambda, double mu, double z) const</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-initializelagrangianparameters">InitializeLagrangianParameters</a></strong>(double lambda, double mu, double z)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-updatezs">UpdateZs</a></strong>(const Point&lt; double, 3 &gt; &amp; pos, double C)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-updatezs">UpdateZs</a></strong>(const Point3 &amp; pos, double C)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-updatemus">UpdateMus</a></strong>(const Point&lt; double, 3 &gt; &amp; pos, double C)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-updatemus">UpdateMus</a></strong>(const Point3 &amp; pos, double C)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-getactive">GetActive</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-getactive">GetActive</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1Constraints.html#function-setactive">SetActive</a></strong>(bool ac)</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-setactive">SetActive</a></strong>(bool ac)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-read">Read</a></strong>(std::string filename)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraints.html#function-write">Write</a></strong>(std::string filename)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="protected-attributes">Protected Attributes</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>std::vector&lt; <a href="classitk_1_1PlaneConstraint.html">PlaneConstraint</a> &gt; *</td>
-<td><strong><a href="classitk_1_1Constraints.html#variable-planeconsts">planeConsts</a></strong></td>
-</tr>
-<tr>
-<td>std::vector&lt; <a href="classitk_1_1SphereConstraint.html">SphereConstraint</a> &gt; *</td>
-<td><strong><a href="classitk_1_1Constraints.html#variable-sphereconsts">sphereConsts</a></strong></td>
-</tr>
-<tr>
-<td>std::vector&lt; <a href="classitk_1_1FreeFormConstraint.html">FreeFormConstraint</a> &gt; *</td>
-<td><strong><a href="classitk_1_1Constraints.html#variable-freeformconsts">freeFormConsts</a></strong></td>
-</tr>
-</tbody>
-</table>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-point3">using Point3</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="o">::</span><span class="n">Point3</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-constraints">function Constraints</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Constraints</span><span class="p">()</span><span class="w"></span>
@@ -484,30 +488,30 @@
 </code></pre></div>
 <h3 id="function-transformconstraints">function transformConstraints</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">transformConstraints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Trans</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-transformplanes">function transformPlanes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">transformPlanes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Trans</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-applyboundaryconstraints">function applyBoundaryConstraints</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">applyBoundaryConstraints</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradE</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-applyboundaryconstraints_1">function applyBoundaryConstraints</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">applyBoundaryConstraints</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradE</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-applyplaneconstraints">function applyPlaneConstraints</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">applyPlaneConstraints</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradE</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-writeplanes">function writePlanes</h3>
@@ -525,69 +529,69 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-iscuttingplanedefined">function IsCuttingPlaneDefined</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsCuttingPlaneDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<h3 id="function-iscuttingplanedefined">function isCuttingPlaneDefined</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isCuttingPlaneDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-iscuttingspheredefined">function IsCuttingSphereDefined</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsCuttingSphereDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<h3 id="function-iscuttingspheredefined">function isCuttingSphereDefined</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isCuttingSphereDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-getplaneconstraints">function getPlaneConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PlaneConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">getPlaneConstraints</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PlaneConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getPlaneConstraints</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-getsphereconstraints">function GetSphereConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SphereConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSphereConstraints</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-getsphereconstraints">function getSphereConstraints</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SphereConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getSphereConstraints</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-isanyviolated">function IsAnyViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsAnyViolated</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<h3 id="function-isanyviolated">function isAnyViolated</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isAnyViolated</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-planesviolated">function planesViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">planesViolated</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">planesViolated</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-printall">function PrintAll</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintAll</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-printall">function printAll</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">printAll</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-violationreport">function ViolationReport</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ViolationReport</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<h3 id="function-violationreport">function violationReport</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">violationReport</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-violationreportdata">function ViolationReportData</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ViolationReportData</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<h3 id="function-violationreportdata">function violationReportData</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">violationReportData</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-constraintsgradient">function ConstraintsGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstraintsGradient</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
+<h3 id="function-constraintsgradient">function constraintsGradient</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraintsGradient</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-constraintslagrangiangradient">function ConstraintsLagrangianGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstraintsLagrangianGradient</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prepos</span><span class="p">,</span><span class="w"></span>
+<h3 id="function-constraintslagrangiangradient">function constraintsLagrangianGradient</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraintsLagrangianGradient</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prepos</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-initializelagrangianparameters">function InitializeLagrangianParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">InitializeLagrangianParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InitializeLagrangianParameters</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">lambda</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">mu</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">z</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-updatezs">function UpdateZs</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZs</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZs</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-updatemus">function UpdateMus</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateMus</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateMus</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -599,18 +603,18 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ac</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
-<h3 id="variable-planeconsts">variable planeConsts</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PlaneConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">planeConsts</span><span class="p">;</span><span class="w"></span>
+<h3 id="function-read">function Read</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Read</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-sphereconsts">variable sphereConsts</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SphereConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sphereConsts</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-freeformconsts">variable freeFormConsts</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">freeFormConsts</span><span class="p">;</span><span class="w"></span>
+<h3 id="function-write">function Write</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Write</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:32 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

@@ -405,9 +405,6 @@ inline virtual VectorType Evaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
-
-
 The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. 
 
 
@@ -424,9 +421,6 @@ virtual VectorType Evaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
-
-
 ### function BeforeEvaluate
 
 ```cpp
@@ -438,12 +432,6 @@ virtual void BeforeEvaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleVectorFunction::BeforeEvaluate](../Classes/classitk_1_1ParticleVectorFunction.md#function-beforeevaluate)
-
-
-This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. 
-
-
 ### function Energy
 
 ```cpp
@@ -453,9 +441,6 @@ inline virtual double Energy(
     const ParticleSystemType * c
 ) const
 ```
-
-
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-energy)
 
 
 ### function ComputeKappa
@@ -619,9 +604,6 @@ inline virtual VectorType Evaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
-
-
 The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. 
 
 
@@ -638,9 +620,6 @@ virtual VectorType Evaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
-
-
 ### function BeforeEvaluate
 
 ```cpp
@@ -652,12 +631,6 @@ virtual void BeforeEvaluate(
 ```
 
 
-**Reimplements**: [itk::ParticleVectorFunction::BeforeEvaluate](../Classes/classitk_1_1ParticleVectorFunction.md#function-beforeevaluate)
-
-
-This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. 
-
-
 ### function Energy
 
 ```cpp
@@ -667,9 +640,6 @@ inline virtual double Energy(
     const ParticleSystemType * c
 ) const
 ```
-
-
-**Reimplements**: [itk::ParticleEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-energy)
 
 
 ### function ComputeKappa
@@ -899,4 +869,4 @@ float m_MaxMoveFactor;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:32 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

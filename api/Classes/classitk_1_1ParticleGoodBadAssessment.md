@@ -25,7 +25,7 @@ Inherits from Object
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[Pointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[ConstPointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-constweakpointer)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-particlesystemtype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-pointtype)**  |
 | typedef [ParticleImageDomainWithGradients](../Classes/classitk_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-domaintype)**  |
 | typedef DomainType::VnlVectorType | **[NormalType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-normaltype)**  |
@@ -92,7 +92,7 @@ typedef WeakPointer<const Self> itk::ParticleGoodBadAssessment< TGradientNumeric
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem<VDimension> itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::ParticleSystemType;
+typedef ParticleSystem itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::ParticleSystemType;
 ```
 
 
@@ -228,4 +228,4 @@ inline virtual ~ParticleGoodBadAssessment()
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

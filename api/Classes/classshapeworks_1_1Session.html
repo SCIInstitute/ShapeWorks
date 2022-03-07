@@ -372,6 +372,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-planes-changed">planes_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-update-display">update_display</a></strong>()</td>
 </tr>
 <tr>
@@ -579,6 +583,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-planes-changed">trigger_planes_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-active-landmark-domain">set_active_landmark_domain</a></strong>(int id)</td>
 </tr>
 <tr>
@@ -598,12 +606,32 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-landmarks-active">set_landmarks_active</a></strong>(bool active)</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-landmarks-active">get_landmarks_active</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-landmarks">set_show_landmarks</a></strong>(bool show)</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-planes-active">set_planes_active</a></strong>(bool active)</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-landmarks">get_show_landmarks</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-planes-active">get_planes_active</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-landmark-labels">set_show_landmark_labels</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-landmark-labels">get_show_landmark_labels</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-planes">set_show_planes</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-planes">get_show_planes</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -638,12 +666,24 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-image-share-window-and-level">get_image_share_window_and_level</a></strong>()</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-has-constraints">has_constraints</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-loading">set_loading</a></strong>(bool loading)</td>
 </tr>
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-loading">is_loading</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-tool-state">set_tool_state</a></strong>(std::string state)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-tool-state">get_tool_state</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -729,6 +769,9 @@
 </code></pre></div>
 <h3 id="signal-landmarks_changed">signal landmarks_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">landmarks_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-planes_changed">signal planes_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">planes_changed</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="signal-update_display">signal update_display</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_display</span><span class="p">()</span><span class="w"></span>
@@ -936,6 +979,9 @@
 <h3 id="function-trigger_landmarks_changed">function trigger_landmarks_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_landmarks_changed</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-trigger_planes_changed">function trigger_planes_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_planes_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-set_active_landmark_domain">function set_active_landmark_domain</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_landmark_domain</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
@@ -957,13 +1003,32 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span><span class="w"></span>
+<h3 id="function-get_landmarks_active">function get_landmarks_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmarks_active</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_planes_active">function set_planes_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_planes_active</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_planes_active">function get_planes_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_planes_active</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_landmark_labels">function set_show_landmark_labels</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmark_labels</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-get_show_landmark_labels">function get_show_landmark_labels</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmark_labels</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_planes">function set_show_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_planes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_planes">function get_show_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_planes</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_image_name">function set_image_name</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_image_name</span><span class="p">(</span><span class="w"></span>
@@ -997,6 +1062,9 @@
 <h3 id="function-get_image_share_window_and_level">function get_image_share_window_and_level</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_share_window_and_level</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-has_constraints">function has_constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_constraints</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-set_loading">function set_loading</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_loading</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="w"></span>
@@ -1004,6 +1072,14 @@
 </code></pre></div>
 <h3 id="function-is_loading">function is_loading</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_tool_state">function set_tool_state</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_tool_state</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_tool_state">function get_tool_state</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_tool_state</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span><span class="w"></span>
@@ -1033,7 +1109,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:34 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

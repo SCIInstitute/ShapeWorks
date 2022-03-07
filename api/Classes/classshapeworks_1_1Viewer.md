@@ -49,16 +49,21 @@ summary: 3D Viewer
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
 | QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
+| void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-actors)**() |
+| std::vector< vtkSmartPointer< vtkActor > > | **[get_clipped_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-clipped-surface-actors)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-transform)**(int alignment_domain, int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
+| vtkSmartPointer< vtkTransform > | **[get_inverse_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
 | void | **[handle_key](../Classes/classshapeworks_1_1Viewer.md#function-handle-key)**(int * click_pos, std::string key) |
 | void | **[set_window_and_level](../Classes/classshapeworks_1_1Viewer.md#function-set-window-and-level)**(double window, double level) |
 | void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**() |
 | vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
+| void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
+| vtkSmartPointer< vtkPolygonalSurfacePointPlacer > | **[get_point_placer](../Classes/classshapeworks_1_1Viewer.md#function-get-point-placer)**() |
 
 ## Detailed Description
 
@@ -329,10 +334,24 @@ void update_landmarks()
 ```
 
 
+### function update_planes
+
+```cpp
+void update_planes()
+```
+
+
 ### function get_surface_actors
 
 ```cpp
 std::vector< vtkSmartPointer< vtkActor > > get_surface_actors()
+```
+
+
+### function get_clipped_surface_actors
+
+```cpp
+std::vector< vtkSmartPointer< vtkActor > > get_clipped_surface_actors()
 ```
 
 
@@ -357,6 +376,15 @@ vtkSmartPointer< vtkTransform > get_transform(
 
 ```cpp
 vtkSmartPointer< vtkTransform > get_landmark_transform(
+    int domain
+)
+```
+
+
+### function get_inverse_landmark_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_inverse_landmark_transform(
     int domain
 )
 ```
@@ -410,6 +438,20 @@ vtkSmartPointer< vtkTransform > get_alignment_transform()
 ```
 
 
+### function update_clipping_planes
+
+```cpp
+void update_clipping_planes()
+```
+
+
+### function get_point_placer
+
+```cpp
+vtkSmartPointer< vtkPolygonalSurfacePointPlacer > get_point_placer()
+```
+
+
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

@@ -96,9 +96,9 @@ public:
      Eigen::Vector3d query;
   };
 
-  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
 
-  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem);
 
   Sampler();
 
@@ -499,7 +499,7 @@ protected:
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+  itk::ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<itk::ParticleDomain::Pointer> m_DomainList;
 
@@ -556,4 +556,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

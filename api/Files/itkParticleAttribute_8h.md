@@ -52,9 +52,7 @@ title: Libs/Optimize/ParticleSystem/itkParticleAttribute.h
 namespace itk
 {
 
-#ifndef __itkParticleSystem_h
-template<unsigned int VDimension> class ParticleSystem;
-#endif
+//class ParticleSystem;
 
 template< unsigned int VDimension>
 class ITK_EXPORT ParticleAttribute : public DataObject
@@ -144,4 +142,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

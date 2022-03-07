@@ -34,6 +34,7 @@ Inherits from QObject
 | void | **[data_changed](../Classes/classshapeworks_1_1Session.md#signal-data-changed)**()<br>signal that the data has changed  |
 | void | **[points_changed](../Classes/classshapeworks_1_1Session.md#signal-points-changed)**() |
 | void | **[landmarks_changed](../Classes/classshapeworks_1_1Session.md#signal-landmarks-changed)**() |
+| void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[message](../Classes/classshapeworks_1_1Session.md#signal-message)**(QString ) |
@@ -88,13 +89,19 @@ Inherits from QObject
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Session.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result) |
 | void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
+| void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
 | void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
 | int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
 | void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
 | int | **[get_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-get-placing-landmark)**() |
 | void | **[set_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-set-landmarks-active)**(bool active) |
-| void | **[set_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-set-show-landmarks)**(bool show) |
-| bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-get-show-landmarks)**() |
+| bool | **[get_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-get-landmarks-active)**() |
+| void | **[set_planes_active](../Classes/classshapeworks_1_1Session.md#function-set-planes-active)**(bool active) |
+| bool | **[get_planes_active](../Classes/classshapeworks_1_1Session.md#function-get-planes-active)**() |
+| void | **[set_show_landmark_labels](../Classes/classshapeworks_1_1Session.md#function-set-show-landmark-labels)**(bool show) |
+| bool | **[get_show_landmark_labels](../Classes/classshapeworks_1_1Session.md#function-get-show-landmark-labels)**() |
+| void | **[set_show_planes](../Classes/classshapeworks_1_1Session.md#function-set-show-planes)**(bool show) |
+| bool | **[get_show_planes](../Classes/classshapeworks_1_1Session.md#function-get-show-planes)**() |
 | bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
 | std::string | **[get_image_name](../Classes/classshapeworks_1_1Session.md#function-get-image-name)**() |
 | void | **[set_image_axis](../Classes/classshapeworks_1_1Session.md#function-set-image-axis)**(QString axis) |
@@ -103,8 +110,11 @@ Inherits from QObject
 | bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
 | void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
 | bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
+| bool | **[has_constraints](../Classes/classshapeworks_1_1Session.md#function-has-constraints)**() |
 | void | **[set_loading](../Classes/classshapeworks_1_1Session.md#function-set-loading)**(bool loading) |
 | bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
+| void | **[set_tool_state](../Classes/classshapeworks_1_1Session.md#function-set-tool-state)**(std::string state) |
+| std::string | **[get_tool_state](../Classes/classshapeworks_1_1Session.md#function-get-tool-state)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -206,6 +216,13 @@ void points_changed()
 
 ```cpp
 void landmarks_changed()
+```
+
+
+### signal planes_changed
+
+```cpp
+void planes_changed()
 ```
 
 
@@ -612,6 +629,13 @@ void trigger_landmarks_changed()
 ```
 
 
+### function trigger_planes_changed
+
+```cpp
+void trigger_planes_changed()
+```
+
+
 ### function set_active_landmark_domain
 
 ```cpp
@@ -653,19 +677,58 @@ void set_landmarks_active(
 ```
 
 
-### function set_show_landmarks
+### function get_landmarks_active
 
 ```cpp
-void set_show_landmarks(
+bool get_landmarks_active()
+```
+
+
+### function set_planes_active
+
+```cpp
+void set_planes_active(
+    bool active
+)
+```
+
+
+### function get_planes_active
+
+```cpp
+bool get_planes_active()
+```
+
+
+### function set_show_landmark_labels
+
+```cpp
+void set_show_landmark_labels(
     bool show
 )
 ```
 
 
-### function get_show_landmarks
+### function get_show_landmark_labels
 
 ```cpp
-bool get_show_landmarks()
+bool get_show_landmark_labels()
+```
+
+
+### function set_show_planes
+
+```cpp
+void set_show_planes(
+    bool show
+)
+```
+
+
+### function get_show_planes
+
+```cpp
+bool get_show_planes()
 ```
 
 
@@ -733,6 +796,13 @@ bool get_image_share_window_and_level()
 ```
 
 
+### function has_constraints
+
+```cpp
+bool has_constraints()
+```
+
+
 ### function set_loading
 
 ```cpp
@@ -746,6 +816,22 @@ void set_loading(
 
 ```cpp
 bool is_loading()
+```
+
+
+### function set_tool_state
+
+```cpp
+void set_tool_state(
+    std::string state
+)
+```
+
+
+### function get_tool_state
+
+```cpp
+std::string get_tool_state()
 ```
 
 
@@ -807,4 +893,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

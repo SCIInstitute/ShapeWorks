@@ -25,6 +25,7 @@ Representation of a single shape/patient/subject.
 | -------------- | -------------- |
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
+| QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const string & display_mode) |
 | void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
 | QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
@@ -40,6 +41,8 @@ Representation of a single shape/patient/subject.
 | bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point files.  |
 | bool | **[import_landmarks_files](../Classes/classshapeworks_1_1Shape.md#function-import-landmarks-files)**(QStringList filenames)<br>Import landmarks files.  |
 | bool | **[store_landmarks](../Classes/classshapeworks_1_1Shape.md#function-store-landmarks)**()<br>Store landmarks.  |
+| bool | **[import_constraints](../Classes/classshapeworks_1_1Shape.md#function-import-constraints)**(QStringList filenames)<br>import constraints  |
+| bool | **[store_constraints](../Classes/classshapeworks_1_1Shape.md#function-store-constraints)**()<br>Store constraints.  |
 | void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
@@ -85,6 +88,9 @@ Representation of a single shape/patient/subject.
 | void | **[set_override_feature](../Classes/classshapeworks_1_1Shape.md#function-set-override-feature)**(std::string feature) |
 | std::string | **[get_override_feature](../Classes/classshapeworks_1_1Shape.md#function-get-override-feature)**() |
 | Eigen::MatrixXd & | **[landmarks](../Classes/classshapeworks_1_1Shape.md#function-landmarks)**() |
+| std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
+| [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
+| bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
 
 ## Public Functions Documentation
 
@@ -99,6 +105,13 @@ Shape()
 
 ```cpp
 ~Shape()
+```
+
+
+### function get_display_name
+
+```cpp
+QString get_display_name()
 ```
 
 
@@ -238,6 +251,24 @@ bool store_landmarks()
 ```
 
 Store landmarks. 
+
+### function import_constraints
+
+```cpp
+bool import_constraints(
+    QStringList filenames
+)
+```
+
+import constraints 
+
+### function store_constraints
+
+```cpp
+bool store_constraints()
+```
+
+Store constraints. 
 
 ### function set_particles
 
@@ -606,6 +637,29 @@ Eigen::MatrixXd & landmarks()
 ```
 
 
+### function constraints
+
+```cpp
+std::vector< Constraints > & constraints()
+```
+
+
+### function get_constraints
+
+```cpp
+Constraints & get_constraints(
+    int domain_id
+)
+```
+
+
+### function has_planes
+
+```cpp
+bool has_planes()
+```
+
+
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

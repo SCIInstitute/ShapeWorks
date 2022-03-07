@@ -55,7 +55,7 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
     itkNewMacro(Self)
 
     
@@ -110,7 +110,7 @@ public:
 
     void SetValues(const ParticleSystemType *ps, int idx, int d)
     {
-        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
+        const typename itk::ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
 
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
@@ -191,7 +191,7 @@ public:
 
                 // mat3 = H/|grad_f| * (I - n*n');
                 typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
-                typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
+                typename itk::ParticleSystem::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);
                 for (unsigned int c = 0; c<VDimension; c++)
@@ -259,7 +259,7 @@ public:
     {
         // update the size of matrix based on xyz, normals and number of attributes being used
         const itk::ParticlePositionAddEvent &event = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
-        const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
+        const itk::ParticleSystem *ps= dynamic_cast<const itk::ParticleSystem *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
 
@@ -283,7 +283,7 @@ public:
     {
         // update xyz, normals and number of attributes being used
         const itk::ParticlePositionSetEvent &event = dynamic_cast<const itk::ParticlePositionSetEvent &>(e);
-        const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
+        const itk::ParticleSystem *ps= dynamic_cast<const itk::ParticleSystem *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
 
@@ -333,4 +333,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:35 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

@@ -11,13 +11,13 @@ title: Libs/Optimize/ParticleSystem/FreeFormConstraint.h
 
 | Name           |
 | -------------- |
-| **[itk](../Namespaces/namespaceitk.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[itk::FreeFormConstraint](../Classes/classitk_1_1FreeFormConstraint.md)**  |
+| class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)**  |
 
 
 
@@ -27,63 +27,42 @@ title: Libs/Optimize/ParticleSystem/FreeFormConstraint.h
 ```cpp
 #pragma once
 
+#include <Libs/Mesh/Mesh.h>
+
 #include "Constraint.h"
-#include "Eigen/Core"
-#include "vnl/vnl_math.h"
-#include <vector>
 
-#include "Mesh.h"
+namespace shapeworks {
 
-namespace itk
-{
+class FreeFormConstraint : public Constraint {
+ public:
+  FreeFormConstraint() {}
 
-class FreeFormConstraint: public Constraint{
-public:
-    FreeFormConstraint(){}
+  void setMesh(std::shared_ptr<shapeworks::Mesh> mesh) { mesh_ = mesh; }
 
-    void setMesh(std::shared_ptr<shapeworks::Mesh> mesh1){
-        this->mesh = mesh1;
+  std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
+
+  bool isViolated(const Eigen::Vector3d &pt) const override {
+    if (constraintEval(pt) >= 0) {
+      return false;
+    } else {
+      return true;
     }
-
-    std::shared_ptr<shapeworks::Mesh> getMesh(){
-        return this->mesh;
-    }
-
-  bool isViolated(const vnl_vector<double> &pt) const {
-      return isViolated(Eigen::Vector3d(pt[0], pt[1], pt[2]));
   }
 
-  bool isViolated(const Eigen::Vector3d &pt) const {
-      if(ConstraintEval(pt) >= 0){
-          return false;
-      }
-      else{
-          return true;
-      }
+  void print() const override { std::cout << "FF" << std::endl; }
 
-  }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return mesh_->getFFCGradient(pt); }
 
-  void printC() const{
-      std::cout << "FF" << std::endl;
-  }
+  double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
 
-  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
-      return mesh->getFFCGradient(pt);
-    }
-
-    double ConstraintEval(const Eigen::Vector3d &pt) const{
-      return mesh->getFFCValue(pt);
-    }
-
-private:
-    std::shared_ptr<shapeworks::Mesh> mesh;
+ private:
+  std::shared_ptr<shapeworks::Mesh> mesh_;
 };
 
-
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:34 +0000
+Updated on 2022-03-07 at 00:21:28 +0000

@@ -20,10 +20,7 @@ title: itk
 | class | **[itk::AdvancedTransform](../Classes/classitk_1_1AdvancedTransform.md)** <br>Transform maps points, vectors and covariant vectors from an input space to an output space.  |
 | class | **[itk::BSplineInterpolateImageFunctionWithDoubleCoefficents](../Classes/classitk_1_1BSplineInterpolateImageFunctionWithDoubleCoefficents.md)**  |
 | class | **[itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)**  |
-| class | **[itk::Constraint](../Classes/classitk_1_1Constraint.md)**  |
-| class | **[itk::Constraints](../Classes/classitk_1_1Constraints.md)**  |
 | class | **[itk::ContourDomain](../Classes/classitk_1_1ContourDomain.md)**  |
-| class | **[itk::FreeFormConstraint](../Classes/classitk_1_1FreeFormConstraint.md)**  |
 | class | **[itk::ImageToVTKImageFilter](../Classes/classitk_1_1ImageToVTKImageFilter.md)** <br>Converts an ITK image into a VTK image and plugs a itk data pipeline to a VTK datapipeline.  |
 | class | **[itk::KernelTransform2](../Classes/classitk_1_1KernelTransform2.md)**  |
 | class | **[itk::MeshDomain](../Classes/classitk_1_1MeshDomain.md)**  |
@@ -66,13 +63,11 @@ title: itk
 | class | **[itk::ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)**  |
 | class | **[itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system.  |
 | class | **[itk::ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)**  |
-| class | **[itk::PlaneConstraint](../Classes/classitk_1_1PlaneConstraint.md)**  |
 | class | **[itk::PowerOfTwoPointTree](../Classes/classitk_1_1PowerOfTwoPointTree.md)**  |
 | class | **[itk::PowerOfTwoPointTreeNode](../Classes/classitk_1_1PowerOfTwoPointTreeNode.md)**  |
 | struct | **[itk::powstruct](../Classes/structitk_1_1powstruct.md)**  |
 | struct | **[itk::powstruct< a, 0 >](../Classes/structitk_1_1powstruct_3_01a_00_010_01_4.md)**  |
 | class | **[itk::SparseKernelTransform](../Classes/classitk_1_1SparseKernelTransform.md)**  |
-| class | **[itk::SphereConstraint](../Classes/classitk_1_1SphereConstraint.md)**  |
 | class | **[itk::ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)**  |
 | class | **[itk::TPGACLevelSetImageFilter](../Classes/classitk_1_1TPGACLevelSetImageFilter.md)**  |
 
@@ -311,4 +306,4 @@ static int nbh26Table = {
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:32 +0000
+Updated on 2022-03-07 at 00:21:26 +0000

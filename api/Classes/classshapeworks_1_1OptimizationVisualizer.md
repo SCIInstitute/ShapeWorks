@@ -14,7 +14,7 @@ title: shapeworks::OptimizationVisualizer
 |                | Name           |
 | -------------- | -------------- |
 | void | **[AddMesh](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-addmesh)**(vtkPolyData * mesh, std::shared_ptr< trimesh::TriMesh > tmesh) |
-| void | **[IterationCallback](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-iterationcallback)**([itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< 3 > * particleSystem) |
+| void | **[IterationCallback](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-iterationcallback)**([itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) * particleSystem) |
 | void | **[SetWireFrame](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-setwireframe)**(bool enabled) |
 | void | **[SetSaveScreenshots](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-setsavescreenshots)**(bool enabled, std::string path) |
 | | **[OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md#function-optimizationvisualizer)**() |
@@ -36,7 +36,7 @@ void AddMesh(
 
 ```cpp
 void IterationCallback(
-    itk::ParticleSystem< 3 > * particleSystem
+    itk::ParticleSystem * particleSystem
 )
 ```
 
@@ -76,4 +76,4 @@ inline ~OptimizationVisualizer()
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000

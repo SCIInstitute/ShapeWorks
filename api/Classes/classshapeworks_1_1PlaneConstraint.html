@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classitk_1_1Constraint.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/api/Classes/classshapeworks_1_1PlaneConstraint.html">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>itk::Constraint - ShapeWorks</title>
+  <title>shapeworks::PlaneConstraint - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "itk::Constraint";
-    var mkdocs_page_input_path = "api/Classes/classitk_1_1Constraint.md";
-    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classitk_1_1Constraint.html";
+    var mkdocs_page_name = "shapeworks::PlaneConstraint";
+    var mkdocs_page_input_path = "api/Classes/classshapeworks_1_1PlaneConstraint.md";
+    var mkdocs_page_url = "/software/shapeworks.html/api/Classes/classshapeworks_1_1PlaneConstraint.html";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
@@ -292,10 +292,10 @@
     
       
     
-    <li>itk::Constraint</li>
+    <li>shapeworks::PlaneConstraint</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1Constraint.md"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1PlaneConstraint.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -306,8 +306,8 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="itkconstraint">itk::Constraint</h1>
-<p>Inherited by <a href="classitk_1_1FreeFormConstraint.html">itk::FreeFormConstraint</a>, <a href="classitk_1_1PlaneConstraint.html">itk::PlaneConstraint</a>, <a href="classitk_1_1SphereConstraint.html">itk::SphereConstraint</a></p>
+                <h1 id="shapeworksplaneconstraint">shapeworks::PlaneConstraint</h1>
+<p>Inherits from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -319,71 +319,111 @@
 <tbody>
 <tr>
 <td>virtual bool</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-isviolated">isViolated</a></strong>(const vnl_vector&lt; double &gt; &amp; pt) const =0</td>
-</tr>
-<tr>
-<td>virtual bool</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-isviolated">isViolated</a></strong>(const Eigen::Vector3d &amp; pt) const =0</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-isviolated">isViolated</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-printc">printC</a></strong>() const =0</td>
-</tr>
-<tr>
-<td>shapeworks::ConstraintType</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getconstrainttype">GetConstraintType</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setconstrainttype">setConstraintType</a></strong>(shapeworks::ConstraintType inType)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setz">SetZ</a></strong>(double inz)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getz">GetZ</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setmu">SetMu</a></strong>(double inmu)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getmu">GetMu</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-setlambda">SetLambda</a></strong>(double inLambda)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-getlambda">GetLambda</a></strong>()</td>
-</tr>
-<tr>
-<td>virtual Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-constraintgradient">ConstraintGradient</a></strong>(const Eigen::Vector3d &amp; pt) const =0</td>
-</tr>
-<tr>
-<td>virtual double</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-constrainteval">ConstraintEval</a></strong>(const Eigen::Vector3d &amp; pt) const =0</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-updatez">UpdateZ</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-updatemu">UpdateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-print">print</a></strong>() const override</td>
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-lagragiangradient">LagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-getplanenormal">getPlaneNormal</a></strong>()<br>Get plane normal.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setplanenormal">setPlaneNormal</a></strong>(const Eigen::Vector3d &amp; inPlane)<br>Set plane normal.</td>
+</tr>
+<tr>
+<td>Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-getplanepoint">getPlanePoint</a></strong>()<br>Get plane center point.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setplanepoint">setPlanePoint</a></strong>(const vnl_vector&lt; double &gt; &amp; point)<br>Set plane center point.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setplanepoint">setPlanePoint</a></strong>(const Eigen::Vector3d &amp; p)<br>Set plane center point.</td>
+</tr>
+<tr>
+<td>virtual Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-constraintgradient">constraintGradient</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
+</tr>
+<tr>
+<td>std::vector&lt; Eigen::Vector3d &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-points">points</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-getoffset">getOffset</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setoffset">setOffset</a></strong>(double offset)</td>
+</tr>
+<tr>
+<td>virtual double</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-constrainteval">constraintEval</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-updateplanefrompoints">updatePlaneFromPoints</a></strong>()</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPlane &gt;</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-getvtkplane">getVTKPlane</a></strong>()<br>Return this plane as a vtkPlane.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="protected-functions">Protected Functions</h2>
+<h2 id="additional-inherited-members">Additional inherited members</h2>
+<p><strong>Public Functions inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setz">setZ</a></strong>(double inz)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getz">getZ</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmu">setMu</a></strong>(double inmu)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmu">getMu</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setlambda">setLambda</a></strong>(double inLambda)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getlambda">getLambda</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatez">updateZ</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+</tr>
+<tr>
+<td>Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C) const</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
 <table>
 <thead>
 <tr>
@@ -394,11 +434,11 @@
 <tbody>
 <tr>
 <td>int</td>
-<td><strong><a href="classitk_1_1Constraint.html#function-sgn">sgn</a></strong>(double val)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-sgn">sgn</a></strong>(double val)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="protected-attributes">Protected Attributes</h2>
+<p><strong>Protected Attributes inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
 <table>
 <thead>
 <tr>
@@ -408,123 +448,88 @@
 </thead>
 <tbody>
 <tr>
-<td>shapeworks::ConstraintType</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-type">type</a></strong></td>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mu-">mu_</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-mu">mu</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-z-">z_</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-z">z</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1Constraint.html#variable-lambda">lambda</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-lambda-">lambda_</a></strong></td>
 </tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-isviolated">function isViolated</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-</code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classitk_1_1FreeFormConstraint.html#function-isviolated">itk::FreeFormConstraint::isViolated</a>, <a href="classitk_1_1PlaneConstraint.html#function-isviolated">itk::PlaneConstraint::isViolated</a>, <a href="classitk_1_1SphereConstraint.html#function-isviolated">itk::SphereConstraint::isViolated</a></p>
-<h3 id="function-isviolated_1">function isViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classitk_1_1FreeFormConstraint.html#function-isviolated">itk::FreeFormConstraint::isViolated</a>, <a href="classitk_1_1PlaneConstraint.html#function-isviolated">itk::PlaneConstraint::isViolated</a>, <a href="classitk_1_1SphereConstraint.html#function-isviolated">itk::SphereConstraint::isViolated</a></p>
-<h3 id="function-printc">function printC</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">printC</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-isviolated">shapeworks::Constraint::isViolated</a></p>
+<h3 id="function-print">function print</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classitk_1_1FreeFormConstraint.html#function-printc">itk::FreeFormConstraint::printC</a>, <a href="classitk_1_1PlaneConstraint.html#function-printc">itk::PlaneConstraint::printC</a>, <a href="classitk_1_1SphereConstraint.html#function-printc">itk::SphereConstraint::printC</a></p>
-<h3 id="function-getconstrainttype">function GetConstraintType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ConstraintType</span><span class="w"> </span><span class="n">GetConstraintType</span><span class="p">()</span><span class="w"></span>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-print">shapeworks::Constraint::print</a></p>
+<h3 id="function-getplanenormal">function getPlaneNormal</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getPlaneNormal</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setconstrainttype">function setConstraintType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setConstraintType</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ConstraintType</span><span class="w"> </span><span class="n">inType</span><span class="w"></span>
+<p>Get plane normal. </p>
+<h3 id="function-setplanenormal">function setPlaneNormal</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlaneNormal</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inPlane</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setz">function SetZ</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetZ</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">inz</span><span class="w"></span>
+<p>Set plane normal. </p>
+<h3 id="function-getplanepoint">function getPlanePoint</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getPlanePoint</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Get plane center point. </p>
+<h3 id="function-setplanepoint">function setPlanePoint</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlanePoint</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-getz">function GetZ</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetZ</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-setmu">function SetMu</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMu</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">inmu</span><span class="w"></span>
+<p>Set plane center point. </p>
+<h3 id="function-setplanepoint_1">function setPlanePoint</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlanePoint</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-getmu">function GetMu</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMu</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-setlambda">function SetLambda</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetLambda</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">inLambda</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-getlambda">function GetLambda</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetLambda</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-constraintgradient">function ConstraintGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ConstraintGradient</span><span class="p">(</span><span class="w"></span>
+<p>Set plane center point. </p>
+<h3 id="function-constraintgradient">function constraintGradient</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradient</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classitk_1_1FreeFormConstraint.html#function-constraintgradient">itk::FreeFormConstraint::ConstraintGradient</a>, <a href="classitk_1_1PlaneConstraint.html#function-constraintgradient">itk::PlaneConstraint::ConstraintGradient</a>, <a href="classitk_1_1SphereConstraint.html#function-constraintgradient">itk::SphereConstraint::ConstraintGradient</a></p>
-<h3 id="function-constrainteval">function ConstraintEval</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ConstraintEval</span><span class="p">(</span><span class="w"></span>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constraintgradient">shapeworks::Constraint::constraintGradient</a></p>
+<h3 id="function-points">function points</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getoffset">function getOffset</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getOffset</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setoffset">function setOffset</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setOffset</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">offset</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-constrainteval">function constraintEval</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">constraintEval</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classitk_1_1FreeFormConstraint.html#function-constrainteval">itk::FreeFormConstraint::ConstraintEval</a>, <a href="classitk_1_1PlaneConstraint.html#function-constrainteval">itk::PlaneConstraint::ConstraintEval</a>, <a href="classitk_1_1SphereConstraint.html#function-constrainteval">itk::SphereConstraint::ConstraintEval</a></p>
-<h3 id="function-updatez">function UpdateZ</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZ</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constrainteval">shapeworks::Constraint::constraintEval</a></p>
+<h3 id="function-updateplanefrompoints">function updatePlaneFromPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updatePlaneFromPoints</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-updatemu">function UpdateMu</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateMu</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<h3 id="function-getvtkplane">function getVTKPlane</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPlane</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKPlane</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-lagragiangradient">function LagragianGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">LagragianGradient</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
-<h3 id="function-sgn">function sgn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sgn</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">val</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
-<h3 id="variable-type">variable type</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">ConstraintType</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-mu">variable mu</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">mu</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-z">variable z</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-lambda">variable lambda</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">lambda</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
+<p>Return this plane as a vtkPlane. </p>
 <hr />
-<p>Updated on 2022-03-05 at 23:20:32 +0000</p>
+<p>Updated on 2022-03-07 at 00:21:27 +0000</p>
               
             </div>
           </div>

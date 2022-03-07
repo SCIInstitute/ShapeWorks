@@ -19,6 +19,7 @@ Inherits from QWidget
 | void | **[delete_landmarks_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-delete-landmarks-clicked)**() |
 | void | **[set_placing_button_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-set-placing-button-clicked)**(int id) |
 | void | **[handle_landmark_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-landmark-mode-changed)**() |
+| void | **[handle_constraints_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-constraints-mode-changed)**() |
 
 ## Public Signals
 
@@ -39,6 +40,8 @@ Inherits from QWidget
 | void | **[update_table](../Classes/classshapeworks_1_1DataTool.md#function-update-table)**() |
 | void | **[update_landmark_table](../Classes/classshapeworks_1_1DataTool.md#function-update-landmark-table)**() |
 | void | **[landmark_domain_changed](../Classes/classshapeworks_1_1DataTool.md#function-landmark-domain-changed)**() |
+| void | **[constraints_domain_changed](../Classes/classshapeworks_1_1DataTool.md#function-constraints-domain-changed)**() |
+| void | **[delete_planes_clicked](../Classes/classshapeworks_1_1DataTool.md#function-delete-planes-clicked)**() |
 | void | **[update_notes](../Classes/classshapeworks_1_1DataTool.md#function-update-notes)**() |
 | std::string | **[get_notes](../Classes/classshapeworks_1_1DataTool.md#function-get-notes)**() |
 | void | **[store_data](../Classes/classshapeworks_1_1DataTool.md#function-store-data)**() |
@@ -72,6 +75,13 @@ void set_placing_button_clicked(
 
 ```cpp
 void handle_landmark_mode_changed()
+```
+
+
+### slot handle_constraints_mode_changed
+
+```cpp
+void handle_constraints_mode_changed()
 ```
 
 
@@ -155,6 +165,20 @@ void landmark_domain_changed()
 ```
 
 
+### function constraints_domain_changed
+
+```cpp
+void constraints_domain_changed()
+```
+
+
+### function delete_planes_clicked
+
+```cpp
+void delete_planes_clicked()
+```
+
+
 ### function update_notes
 
 ```cpp
@@ -178,4 +202,4 @@ void store_data()
 
 -------------------------------
 
-Updated on 2022-03-05 at 23:20:33 +0000
+Updated on 2022-03-07 at 00:21:27 +0000
