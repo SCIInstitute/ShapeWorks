@@ -713,6 +713,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         }
         ////mapper->ScalarVisibilityOff();
 
+        shape_->get_constraints(i).getFreeformConstraint().applyToPolyData(poly_data);
+
         mapper->ScalarVisibilityOn();
         mapper->SetScalarModeToUsePointData();
         mapper->SetScalarRange(0, 1);
