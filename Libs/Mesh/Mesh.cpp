@@ -1313,8 +1313,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
     tmp_locator->BuildLocator();
 
     // Create path creator
-    vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra =
-      vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+    auto dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
     dijkstra->SetInputData(this->mesh);
 
     vtkIdType lastId = 0;
@@ -1332,7 +1331,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
         selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
         boundaryVerts.push_back(ptid);
       }
-      // If the current and last vetices are different, then add all vertices in the path to the boundaryVerts list
+      // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
       if (lastId != ptid) {
         //std::cout << pt[0] << " " << pt[1] << " " << pt[2] << " -> " << ptdob[0] << " " << ptdob[1] << " " << ptdob[2] << std::endl;
         // Add points in path
@@ -1353,17 +1352,16 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
 
     //std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
-    vtkSmartPointer<vtkSelectPolyData> select = vtkSelectPolyData::New();
+    auto select = vtkSmartPointer<vtkSelectPolyData>::New();
     select->SetLoop(selectionPoints);
     select->SetInputData(this->mesh);
     select->GenerateSelectionScalarsOn();
     select->SetSelectionModeToLargestRegion();
 
     // Clipping mesh
-    vtkSmartPointer<vtkClipPolyData> selectclip = vtkClipPolyData::New();
+    auto selectclip = vtkSmartPointer<vtkClipPolyData>::New();
     selectclip->SetInputConnection(select->GetOutputPort());
     selectclip->SetValue(0.0);
-
     selectclip->Update();
 
     MeshType halfmesh = selectclip->GetOutput();
@@ -1498,13 +1496,14 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   vtkIdType fulli = this->pointLocator->FindClosestPoint(querypt);
 
   double halfp[3];
-  this->mesh->GetPoint(halfi, halfp);
+  halfmesh->GetPoint(halfi, halfp);
 
   double fullp[3];
-  halfmesh->GetPoint(fulli, fullp);
+  this->mesh->GetPoint(fulli, fullp);
 
-  if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2])
+  if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2]) {
     halfmeshisin = false; // If the closest point in halfmesh is not the closest point in fullmesh, then halfmesh is not the in mesh.
+  }
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
   inout->SetNumberOfComponents(1);
@@ -1517,13 +1516,9 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
     halfi = kdhalf_locator->FindClosestPoint(fullp);
     halfmesh->GetPoint(halfi, halfp);
     //std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] << " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
-    bool ptinhalfmesh;
+    bool ptinhalfmesh = true;
     if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
       // If in halfmesh
-      ptinhalfmesh = true;
-    }
-    else {
-      // Else, not in half mesh
       ptinhalfmesh = false;
     }
     // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point is in or out. Thus we set values for the scalar field.
