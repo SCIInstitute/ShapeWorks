@@ -940,6 +940,7 @@ void Viewer::update_actors() {
 
   cell_picker_->InitializePickList();
   prop_picker_->InitializePickList();
+  point_placer_->RemoveAllProps();
   point_placer_->GetPolys()->RemoveAllItems();
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
