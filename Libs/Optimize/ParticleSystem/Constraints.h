@@ -83,10 +83,14 @@ class Constraints {
   void Read(std::string filename);
   void Write(std::string filename);
 
+  FreeFormConstraint& getFreeformConstraint();
+
  private:
   std::vector<PlaneConstraint> planeConstraints_;
   std::vector<SphereConstraint> sphereConstraints_;
   std::vector<FreeFormConstraint> freeFormConstraints_;
+
+  FreeFormConstraint freeFormConstraint_;
 
   // Projections and intersects
   bool active_;

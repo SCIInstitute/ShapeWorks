@@ -515,6 +515,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   return gradE;
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::InitializeLagrangianParameters(double lambda, double mu, double z) {
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].setLambda(lambda);
@@ -533,6 +534,7 @@ void Constraints::InitializeLagrangianParameters(double lambda, double mu, doubl
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::UpdateZs(const Point3 &pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -549,6 +551,7 @@ void Constraints::UpdateZs(const Point3 &pos, double C) {
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::UpdateMus(const Point3 &pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -565,6 +568,7 @@ void Constraints::UpdateMus(const Point3 &pos, double C) {
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh) {
   FreeFormConstraint ffc;
   ffc.setMesh(mesh);
@@ -609,6 +613,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 }
 */
 
+//-----------------------------------------------------------------------------
 void Constraints::Read(std::string filename) {
   std::ifstream in(filename);
   if (!in.good()) {
@@ -624,6 +629,9 @@ void Constraints::Read(std::string filename) {
         for (auto p : planeJson["points"]) {
           plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
         }
+        if (plane.points().size() != 3) {
+          throw std::runtime_error("Planes should have three points");
+        }
       }
       plane.updatePlaneFromPoints();
       planeConstraints_.push_back(plane);
@@ -631,6 +639,7 @@ void Constraints::Read(std::string filename) {
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::Write(std::string filename) {
   json planes;
   std::vector<json> planeJsons;
@@ -646,11 +655,32 @@ void Constraints::Write(std::string filename) {
 
   json j;
   j["planes"] = planeJsons;
+
+  if (!freeFormConstraint_.getExclusionPoints().empty()) {
+    json ffcJson;
+    std::vector<json> exclude;
+    for (const auto &point : freeFormConstraint_.getExclusionPoints()) {
+      exclude.push_back({point[0], point[1], point[2]});
+    }
+    ffcJson["exclusion_points"] = exclude;
+
+    std::vector<json> include;
+    for (const auto &point : freeFormConstraint_.getInclusionPoints()) {
+      include.push_back({point[0], point[1], point[2]});
+    }
+    ffcJson["inclusion_points"] = include;
+
+    j["free_form_constraints"] = ffcJson;
+  }
+
   std::ofstream file(filename);
   if (!file.good()) {
     throw std::runtime_error("Unable to open " + filename + " for writing");
   }
   file << j.dump(4);
 }
+
+//-----------------------------------------------------------------------------
+FreeFormConstraint &Constraints::getFreeformConstraint() { return freeFormConstraint_; }
 
 }  // namespace shapeworks

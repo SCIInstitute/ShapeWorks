@@ -6,6 +6,10 @@
 
 namespace shapeworks {
 
+//! FreeFormConstraint
+/*!
+ * Encapsulate functionality related to free form constraints
+ */
 class FreeFormConstraint : public Constraint {
  public:
   FreeFormConstraint() {}
@@ -23,15 +27,27 @@ class FreeFormConstraint : public Constraint {
   double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
 
   //! Set polydata where per-vertex free form constraint definition exists
-  void setDefinition(vtkSmartPointer<vtkPolyData> polyData) { definition_ = polyData; };
+  void setDefinition(vtkSmartPointer<vtkPolyData> polyData);;
 
   //! Get polydata where per-vertex free form constraint definition exists
-  vtkSmartPointer<vtkPolyData> getDefinition() { return definition_; };
+  vtkSmartPointer<vtkPolyData> getDefinition() { return definitionPolyData_; };
+
+  //! Apply the free form constraint to a polydata
+  void applyToPolyData(vtkSmartPointer<vtkPolyData> polyData);
+
+  std::vector<Eigen::Vector3d> &getExclusionPoints();
+
+  std::vector<Eigen::Vector3d> &getInclusionPoints();
 
  private:
+  void computeInclusionExclusionPoints();
+
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
-  vtkSmartPointer<vtkPolyData> definition_;
+  vtkSmartPointer<vtkPolyData> definitionPolyData_;
+
+  std::vector<Eigen::Vector3d> exclusionPoints_;
+  std::vector<Eigen::Vector3d> inclusionPoints_;
 };
 
 }  // namespace shapeworks

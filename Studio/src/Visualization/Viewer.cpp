@@ -569,6 +569,8 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
   transform->TransformPoint(world_pos, xyzt);
 
   mesh->paint_ffc(xyzt, paint_widget_->get_brush_size(), session_->get_ffc_paint_mode_inclusive());
+
+  shape_->get_constraints(domain).getFreeformConstraint().setDefinition(mesh->get_poly_data());
 }
 
 //-----------------------------------------------------------------------------
