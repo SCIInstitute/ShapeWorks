@@ -619,34 +619,39 @@ void Constraints::Read(std::string filename) {
   if (!in.good()) {
     throw std::runtime_error("Unable to open " + filename + " for reading");
   }
-  json j;
-  in >> j;
-  planeConstraints_.clear();
-  if (j.contains("planes")) {
-    for (const auto &planeJson : j["planes"]) {
-      PlaneConstraint plane;
-      if (planeJson.contains("points")) {
-        for (auto p : planeJson["points"]) {
-          plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+  try {
+    json j;
+    in >> j;
+    planeConstraints_.clear();
+    if (j.contains("planes")) {
+      for (const auto &planeJson : j["planes"]) {
+        PlaneConstraint plane;
+        if (planeJson.contains("points")) {
+          for (auto p : planeJson["points"]) {
+            plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+          }
+          if (plane.points().size() != 3) {
+            throw std::runtime_error("Planes should have three points");
+          }
         }
-        if (plane.points().size() != 3) {
-          throw std::runtime_error("Planes should have three points");
+        plane.updatePlaneFromPoints();
+        planeConstraints_.push_back(plane);
+      }
+    }
+    if (j.contains("free_form_constraints")) {
+      auto ffcJson = j["free_form_constraints"];
+      for (const auto &boundaryJson : ffcJson["boundaries"]) {
+        std::vector<Eigen::Vector3d> boundary;
+        for (auto p : boundaryJson["points"]) {
+          boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
         }
+        freeFormConstraint_.boundaries().push_back(boundary);
       }
-      plane.updatePlaneFromPoints();
-      planeConstraints_.push_back(plane);
+      auto p = ffcJson["query_point"];
+      freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
     }
-  }
-  if (j.contains("free_form_constrains")) {
-    for (const auto &boundaryJson : j["boundaries"]) {
-      std::vector<Eigen::Vector3d> boundary;
-      for (auto p : boundaryJson["points"]) {
-        boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
-      }
-      freeFormConstraint_.boundaries().push_back(boundary);
-    }
-    auto p = j["query_point"];
-    freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+  } catch (json::exception &e) {
+    throw std::runtime_error("Unabled to parse constraint file " + filename + " : " + e.what());
   }
 }
 
@@ -684,7 +689,7 @@ void Constraints::Write(std::string filename) {
 
     ffcJson["boundaries"] = boundariesJson;
     auto query = freeFormConstraint_.getQueryPoint();
-    ffcJson["query"] = {query[0], query[1], query[2]};
+    ffcJson["query_point"] = {query[0], query[1], query[2]};
 
     j["free_form_constraints"] = ffcJson;
   }
