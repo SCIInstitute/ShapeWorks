@@ -23,7 +23,31 @@ void FreeFormConstraint::setDefinition(vtkSmartPointer<vtkPolyData> polyData) {
 }
 
 //-----------------------------------------------------------------------------
-void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) {}
+void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) {
+  Mesh mesh(polyData);
+
+  if (boundaries_.empty()) {
+    return;
+  }
+  mesh.splitMesh(boundaries_, queryPoint_);
+
+  vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
+  if (!array) {
+    array = vtkFloatArray::New();
+    array->SetName("ffc_paint");
+    array->SetNumberOfTuples(polyData->GetNumberOfPoints());
+    array->FillComponent(0, 0.0);
+    polyData->GetPointData()->AddArray(array);
+  }
+
+  auto inout = mesh.getField("inout", Mesh::FieldType::Point);
+
+  for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
+    double *value = inout->GetTuple(i);
+    float f = value[0];
+    array->SetTuple(i, &f);
+  }
+}
 
 //-----------------------------------------------------------------------------
 std::vector<std::vector<Eigen::Vector3d> > &FreeFormConstraint::boundaries() {
