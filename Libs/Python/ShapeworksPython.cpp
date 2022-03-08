@@ -1633,6 +1633,15 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Subject::get_landmarks_filenames,
       "Get the landmarks filenames (one per domain)")
 
+  .def("set_constraints_filenames",
+      &Subject::set_constraints_filenames,
+      "Set the constraint filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_constraints_filenames",
+      &Subject::get_constraints_filenames,
+      "Get the constraints filenames (one per domain)")
+
   .def("set_number_of_domains",
       &Subject::set_number_of_domains,
       "Set the number of domains",
