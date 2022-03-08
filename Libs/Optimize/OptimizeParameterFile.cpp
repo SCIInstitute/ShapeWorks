@@ -528,7 +528,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       if (index < ffcs.size()) {
           for (size_t i = 0; i < ffcs[index].size(); i++) {
-            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query);
+            mesh.prepareFFCFields(ffcs[index][i].boundaries, ffcs[index][i].query);
             mesh = Mesh(mesh.clipByField("inout", 0.0));
           }
       }

@@ -210,7 +210,7 @@ public:
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
   /// Splits the mesh for FFCs by setting scalar and vector fields
-  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query);
+  bool prepareFFCFields(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query);
 
   /// Gets values for FFCs
   double getFFCValue(Eigen::Vector3d query) const;

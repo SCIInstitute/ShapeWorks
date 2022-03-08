@@ -1292,7 +1292,7 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 }
 
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
-bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query)
+bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query)
 {
   // Extract mesh vertices and faces
   Eigen::MatrixXd V;

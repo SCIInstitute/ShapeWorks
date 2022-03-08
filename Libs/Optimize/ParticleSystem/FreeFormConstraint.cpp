@@ -29,7 +29,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   if (boundaries_.empty()) {
     return;
   }
-  mesh.splitMesh(boundaries_, queryPoint_);
+  mesh.prepareFFCFields(boundaries_, queryPoint_);
 
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
