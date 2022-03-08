@@ -637,6 +637,17 @@ void Constraints::Read(std::string filename) {
       planeConstraints_.push_back(plane);
     }
   }
+  if (j.contains("free_form_constrains")) {
+    for (const auto &boundaryJson : j["boundaries"]) {
+      std::vector<Eigen::Vector3d> boundary;
+      for (auto p : boundaryJson["points"]) {
+        boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+      }
+      freeFormConstraint_.boundaries().push_back(boundary);
+    }
+    auto p = j["query_point"];
+    freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -654,21 +665,26 @@ void Constraints::Write(std::string filename) {
   }
 
   json j;
-  j["planes"] = planeJsons;
+  if (!planeJsons.empty()) {
+    j["planes"] = planeJsons;
+  }
 
-  if (!freeFormConstraint_.getExclusionPoints().empty()) {
+  if (!freeFormConstraint_.boundaries().empty()) {
     json ffcJson;
-    std::vector<json> exclude;
-    for (const auto &point : freeFormConstraint_.getExclusionPoints()) {
-      exclude.push_back({point[0], point[1], point[2]});
+    std::vector<json> boundariesJson;
+    for (const auto &boundary : freeFormConstraint_.boundaries()) {
+      json boundaryJson;
+      std::vector<json> points;
+      for (const auto &point : boundary) {
+        points.push_back({point[0], point[1], point[2]});
+      }
+      boundaryJson["points"] = points;
+      boundariesJson.push_back(boundaryJson);
     }
-    ffcJson["exclusion_points"] = exclude;
 
-    std::vector<json> include;
-    for (const auto &point : freeFormConstraint_.getInclusionPoints()) {
-      include.push_back({point[0], point[1], point[2]});
-    }
-    ffcJson["inclusion_points"] = include;
+    ffcJson["boundaries"] = boundariesJson;
+    auto query = freeFormConstraint_.getQueryPoint();
+    ffcJson["query"] = {query[0], query[1], query[2]};
 
     j["free_form_constraints"] = ffcJson;
   }

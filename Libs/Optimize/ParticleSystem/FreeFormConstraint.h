@@ -27,7 +27,7 @@ class FreeFormConstraint : public Constraint {
   double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
 
   //! Set polydata where per-vertex free form constraint definition exists
-  void setDefinition(vtkSmartPointer<vtkPolyData> polyData);;
+  void setDefinition(vtkSmartPointer<vtkPolyData> polyData);
 
   //! Get polydata where per-vertex free form constraint definition exists
   vtkSmartPointer<vtkPolyData> getDefinition() { return definitionPolyData_; };
@@ -35,19 +35,25 @@ class FreeFormConstraint : public Constraint {
   //! Apply the free form constraint to a polydata
   void applyToPolyData(vtkSmartPointer<vtkPolyData> polyData);
 
-  std::vector<Eigen::Vector3d> &getExclusionPoints();
+  //! Access the set of boundaries
+  std::vector<std::vector<Eigen::Vector3d>> &boundaries();
 
-  std::vector<Eigen::Vector3d> &getInclusionPoints();
+  //! Get query (inside) point
+  Eigen::Vector3d getQueryPoint() { return queryPoint_; };
+
+  //! Set query (inside) point
+  void setQueryPoint(Eigen::Vector3d queryPoint) { queryPoint_ = queryPoint; };
 
  private:
-  void computeInclusionExclusionPoints();
+  //! Compute boundaries from definition polydata with ffc_paint scalars
+  void computeBoundaries();
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
   vtkSmartPointer<vtkPolyData> definitionPolyData_;
 
-  std::vector<Eigen::Vector3d> exclusionPoints_;
-  std::vector<Eigen::Vector3d> inclusionPoints_;
+  std::vector<std::vector<Eigen::Vector3d>> boundaries_;
+  Eigen::Vector3d queryPoint_;
 };
 
 }  // namespace shapeworks
