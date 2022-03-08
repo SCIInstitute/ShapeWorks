@@ -1292,8 +1292,7 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 }
 
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
-bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query,
-                     size_t dom, size_t num)
+bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query)
 {
   // Extract mesh vertices and faces
   Eigen::MatrixXd V;
@@ -1375,8 +1374,7 @@ bool Mesh::splitMesh(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eige
     vtkSmartPointer<vtkDoubleArray> absvalues = setDistanceToBoundaryValueFieldForFFCs(values,
                                                                                        points,
                                                                                        boundaryVerts,
-                                                                                       inout, V, F,
-                                                                                       dom);
+                                                                                       inout, V, F);
 
     this->mesh->GetPointData()->SetActiveScalars("value");
 
@@ -1551,7 +1549,7 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
                                              vtkSmartPointer<vtkPoints> points,
                                              std::vector<size_t> boundaryVerts,
                                              vtkSmartPointer<vtkDoubleArray> inout,
-                                             Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom)
+                                             Eigen::MatrixXd V, Eigen::MatrixXi F)
 {
   auto arr = mesh->GetPointData()->GetArray("value"); // Check if a value field already exists
 
