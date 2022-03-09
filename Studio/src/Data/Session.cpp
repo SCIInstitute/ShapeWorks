@@ -1135,6 +1135,9 @@ void Session::set_ffc_paint_size(double size) {
 double Session::get_ffc_paint_size() { return ffc_paint_size; }
 
 //---------------------------------------------------------------------------
+void Session::trigger_repaint() { Q_EMIT repaint(); }
+
+//---------------------------------------------------------------------------
 void Session::set_ffc_paint_active(bool enabled) {
   ffc_painting_active_ = enabled;
   Q_EMIT ffc_paint_mode_changed();

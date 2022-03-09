@@ -135,6 +135,9 @@ class Visualizer : public QObject {
   //! Handle ctrl click
   void handle_ctrl_click(PickResult result);
 
+  //! Redraw renderers
+  void redraw();
+
  public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

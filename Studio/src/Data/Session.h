@@ -177,6 +177,8 @@ class Session : public QObject {
   void set_ffc_paint_size(double size);
   double get_ffc_paint_size();
 
+  void trigger_repaint();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -203,6 +205,7 @@ class Session : public QObject {
   void update_view_mode();
   void image_slice_settings_changed();
   void ffc_paint_mode_changed();
+  void repaint();
 
  public:
   // constants
@@ -254,7 +257,7 @@ class Session : public QObject {
   bool show_landmark_labels_ = false;
 
   bool ffc_painting_active_ = false;
-  bool ffc_painting_inclusive_mode_ = true;
+  bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size = 50;
 
   bool is_loading_ = false;

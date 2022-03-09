@@ -210,12 +210,10 @@ void DataTool::delete_ffc_clicked() {
     int shape_id = ui_->ffc_table_->item(row, 0)->data(Qt::UserRole).toInt();
     int domain_id = ui_->ffc_table_->item(row, 1)->data(Qt::UserRole).toInt();
     auto& ffc = shapes[shape_id]->get_constraints(domain_id).getFreeformConstraint();
-    //ffc = FreeFormConstraint{};  // reset
     ffc.reset();
-//    auto mesh_group = shapes[shape_id]->get_meshes();
-  //  if (mesh_group.va)
   }
   session_->trigger_ffc_changed();
+  session_->trigger_repaint();
 }
 
 //---------------------------------------------------------------------------

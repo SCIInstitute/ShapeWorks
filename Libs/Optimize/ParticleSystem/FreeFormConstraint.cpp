@@ -28,24 +28,16 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
 
   if (boundaries_.empty()) {
     if (!painted_) {
-      createFFCPaint(polyData);
+      definitionPolyData_->GetPointData()->RemoveArray("ffc_paint");
     }
+    createFFCPaint(polyData);
     return;
   }
 
   mesh.prepareFFCFields(boundaries_, queryPoint_, true);
-
-  vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
-  if (!array) {
-    array = vtkFloatArray::New();
-    array->SetName("ffc_paint");
-    array->SetNumberOfTuples(polyData->GetNumberOfPoints());
-    array->FillComponent(0, 1.0);  // all included by default
-    polyData->GetPointData()->AddArray(array);
-  }
-
   auto inout = mesh.getField("inout", Mesh::FieldType::Point);
 
+  auto array = createFFCPaint(polyData);
   for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
     double *value = inout->GetTuple(i);
     float f = value[0];
@@ -121,21 +113,20 @@ void FreeFormConstraint::computeBoundaries() {
 bool FreeFormConstraint::isSet() { return boundaries_.size() > 0 || (definitionPolyData_ != nullptr && painted_); }
 
 //-----------------------------------------------------------------------------
-bool FreeFormConstraint::setPainted(bool painted) { painted_ = painted; }
+void FreeFormConstraint::setPainted(bool painted) { painted_ = painted; }
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::reset() {
   if (definitionPolyData_) {
-    definitionPolyData_->GetPointData()->RemoveArray("ffc_paint");
-    createFFCPaint(definitionPolyData_);
+    auto array = createFFCPaint(definitionPolyData_);
+    array->FillComponent(0, 1.0);
   }
-  definitionPolyData_ = nullptr;
   boundaries_.clear();
   painted_ = false;
 }
 
 //-----------------------------------------------------------------------------
-void FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
+vtkFloatArray *FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
 
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
@@ -146,6 +137,7 @@ void FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
     polyData->GetPointData()->AddArray(array);
   }
   polyData->Modified();
+  return array;
 }
 //-----------------------------------------------------------------------------
 

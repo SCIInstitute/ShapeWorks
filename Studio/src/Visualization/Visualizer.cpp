@@ -52,6 +52,7 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
   connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
+  connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
 }
 
 //-----------------------------------------------------------------------------
@@ -470,5 +471,8 @@ double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; 
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
+
+//-----------------------------------------------------------------------------
+void Visualizer::redraw() { lightbox_->redraw(); }
 
 }  // namespace shapeworks

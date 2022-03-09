@@ -4,6 +4,8 @@
 
 #include "Constraint.h"
 
+class vtkFloatArray;
+
 namespace shapeworks {
 
 //! FreeFormConstraint
@@ -51,14 +53,14 @@ class FreeFormConstraint : public Constraint {
   bool isSet();
 
   //! Set if this FFC has paint on it or not
-  bool setPainted(bool painted);
+  void setPainted(bool painted);
 
   //! Reset to initial state
   void reset();
 
  private:
 
-  void createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
+  vtkFloatArray *createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
