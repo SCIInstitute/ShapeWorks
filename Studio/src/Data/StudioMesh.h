@@ -67,7 +67,7 @@ class StudioMesh {
   double get_largest_dimension_size();
 
   //! Get or create and return an array with a given name
-  vtkFloatArray* get_or_create_array(std::string name);
+  vtkFloatArray* get_or_create_array(std::string name, float default_value);
 
   //! Paint free form constraint
   void paint_ffc(double world_pos[], double radius, bool inclusive);

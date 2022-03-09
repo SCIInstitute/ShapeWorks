@@ -190,13 +190,13 @@ double StudioMesh::get_largest_dimension_size() {
 }
 
 //---------------------------------------------------------------------------
-vtkFloatArray* StudioMesh::get_or_create_array(std::string name) {
+vtkFloatArray* StudioMesh::get_or_create_array(std::string name, float default_value) {
   auto result = poly_data_->GetPointData()->GetArray(name.c_str());
   if (!result) {
     vtkFloatArray* array = vtkFloatArray::New();
     array->SetName(name.c_str());
     array->SetNumberOfTuples(poly_data_->GetNumberOfPoints());
-    array->FillComponent(0, 0.0);
+    array->FillComponent(0, default_value);
     poly_data_->GetPointData()->AddArray(array);
   }
 
@@ -212,14 +212,14 @@ void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
     locator_->BuildLocator();
   }
 
-  auto scalars = get_or_create_array(FFC_PAINT);
+  auto scalars = get_or_create_array(FFC_PAINT, 1.0);
 
   vtkNew<vtkIdList> result;
   /// find vertices within paint sphere
   locator_->FindPointsWithinRadius(radius, world_pos, result);
   for (vtkIdType i = 0; i < result->GetNumberOfIds(); i++) {
     vtkIdType point_ind = result->GetId(i);
-    float value = inclusive ? 0 : 1;
+    float value = inclusive ? 1 : 0;
     scalars->SetTuple1(point_ind, value);
     //std::cerr << "paint " << point_ind << " to " << value << "\n";
   }
