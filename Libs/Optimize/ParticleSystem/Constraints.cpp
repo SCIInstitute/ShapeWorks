@@ -674,6 +674,8 @@ void Constraints::Write(std::string filename) {
     j["planes"] = planeJsons;
   }
 
+  freeFormConstraint_.computeBoundaries();
+
   if (!freeFormConstraint_.boundaries().empty()) {
     json ffcJson;
     std::vector<json> boundariesJson;

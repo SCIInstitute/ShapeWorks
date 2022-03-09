@@ -44,9 +44,10 @@ class FreeFormConstraint : public Constraint {
   //! Set query (inside) point
   void setQueryPoint(Eigen::Vector3d queryPoint) { queryPoint_ = queryPoint; };
 
- private:
   //! Compute boundaries from definition polydata with ffc_paint scalars
   void computeBoundaries();
+
+ private:
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 

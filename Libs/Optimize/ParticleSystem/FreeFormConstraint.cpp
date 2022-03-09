@@ -29,14 +29,14 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   if (boundaries_.empty()) {
     return;
   }
-  mesh.prepareFFCFields(boundaries_, queryPoint_);
+  mesh.prepareFFCFields(boundaries_, queryPoint_, true);
 
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
     array = vtkFloatArray::New();
     array->SetName("ffc_paint");
     array->SetNumberOfTuples(polyData->GetNumberOfPoints());
-    array->FillComponent(0, 0.0);
+    array->FillComponent(0, 1.0); // all included by default
     polyData->GetPointData()->AddArray(array);
   }
 
@@ -50,19 +50,18 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::vector<Eigen::Vector3d> > &FreeFormConstraint::boundaries() {
-  if (boundaries_.empty()) {
-    computeBoundaries();
-  }
+std::vector<std::vector<Eigen::Vector3d>> &FreeFormConstraint::boundaries() {
   return boundaries_;
 }
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::computeBoundaries() {
-  boundaries_.clear();
+  std::cerr << "computeBoundaries\n";
   if (!definitionPolyData_) {
     return;
   }
+
+  boundaries_.clear();
 
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(definitionPolyData_->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
@@ -84,7 +83,7 @@ void FreeFormConstraint::computeBoundaries() {
     definitionPolyData_->GetPoint(i, pos.data());
     double value;
     array->GetTuple(i, &value);
-    if (value == 0.0) {
+    if (value == 1.0) { // find an included point
       queryPoint_ = pos;
     }
   }
