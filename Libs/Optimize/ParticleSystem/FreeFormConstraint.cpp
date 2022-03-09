@@ -27,6 +27,9 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   Mesh mesh(polyData);
 
   if (boundaries_.empty()) {
+    if (!painted_) {
+      createFFCPaint(polyData);
+    }
     return;
   }
 
@@ -89,7 +92,7 @@ void FreeFormConstraint::computeBoundaries() {
 
   auto contour = vtkSmartPointer<vtkContourFilter>::New();
   contour->SetInputData(definitionPolyData_);
-  contour->SetValue(0, 0.5); // between 0 and 1
+  contour->SetValue(0, 0.5);  // between 0 and 1
   contour->Update();
 
   auto loop = vtkSmartPointer<vtkContourLoopExtraction>::New();
@@ -113,5 +116,37 @@ void FreeFormConstraint::computeBoundaries() {
     boundaries_.push_back(boundary);
   }
 }
+
+//-----------------------------------------------------------------------------
+bool FreeFormConstraint::isSet() { return boundaries_.size() > 0 || (definitionPolyData_ != nullptr && painted_); }
+
+//-----------------------------------------------------------------------------
+bool FreeFormConstraint::setPainted(bool painted) { painted_ = painted; }
+
+//-----------------------------------------------------------------------------
+void FreeFormConstraint::reset() {
+  if (definitionPolyData_) {
+    definitionPolyData_->GetPointData()->RemoveArray("ffc_paint");
+    createFFCPaint(definitionPolyData_);
+  }
+  definitionPolyData_ = nullptr;
+  boundaries_.clear();
+  painted_ = false;
+}
+
+//-----------------------------------------------------------------------------
+void FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
+
+  vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
+  if (!array) {
+    array = vtkFloatArray::New();
+    array->SetName("ffc_paint");
+    array->SetNumberOfTuples(polyData->GetNumberOfPoints());
+    array->FillComponent(0, 1.0);  // all included by default
+    polyData->GetPointData()->AddArray(array);
+  }
+  polyData->Modified();
+}
+//-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

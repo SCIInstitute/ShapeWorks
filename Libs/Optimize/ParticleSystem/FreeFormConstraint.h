@@ -47,11 +47,23 @@ class FreeFormConstraint : public Constraint {
   //! Compute boundaries from definition polydata with ffc_paint scalars
   void computeBoundaries();
 
+  //! Return if this FFC is set or not
+  bool isSet();
+
+  //! Set if this FFC has paint on it or not
+  bool setPainted(bool painted);
+
+  //! Reset to initial state
+  void reset();
+
  private:
+
+  void createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
   vtkSmartPointer<vtkPolyData> definitionPolyData_;
+  bool painted_ = false;
 
   std::vector<std::vector<Eigen::Vector3d>> boundaries_;
   Eigen::Vector3d queryPoint_;

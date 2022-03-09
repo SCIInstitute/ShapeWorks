@@ -570,7 +570,12 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
 
   mesh->paint_ffc(xyzt, paint_widget_->get_brush_size(), session_->get_ffc_paint_mode_inclusive());
 
-  shape_->get_constraints(domain).getFreeformConstraint().setDefinition(mesh->get_poly_data());
+  auto& ffc = shape_->get_constraints(domain).getFreeformConstraint();
+  ffc.setDefinition(mesh->get_poly_data());
+  if (!ffc.isSet()) {
+    ffc.setPainted(true);
+    session_->trigger_ffc_changed();
+  }
 }
 
 //-----------------------------------------------------------------------------
