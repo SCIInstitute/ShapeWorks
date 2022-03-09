@@ -128,6 +128,7 @@ class Session : public QObject {
 
   void trigger_landmarks_changed();
   void trigger_planes_changed();
+  void trigger_ffc_changed();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -193,6 +194,7 @@ class Session : public QObject {
   void points_changed();
   void landmarks_changed();
   void planes_changed();
+  void ffc_changed();
   void update_display();
   void new_mesh();
   void message(QString);

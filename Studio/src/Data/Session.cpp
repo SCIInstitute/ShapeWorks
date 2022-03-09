@@ -984,6 +984,9 @@ void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
 void Session::trigger_planes_changed() { emit planes_changed(); }
 
 //---------------------------------------------------------------------------
+void Session::trigger_ffc_changed() { emit ffc_changed(); }
+
+//---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
 
 //---------------------------------------------------------------------------
