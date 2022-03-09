@@ -29,6 +29,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   if (boundaries_.empty()) {
     return;
   }
+
   mesh.prepareFFCFields(boundaries_, queryPoint_, true);
 
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
@@ -36,7 +37,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
     array = vtkFloatArray::New();
     array->SetName("ffc_paint");
     array->SetNumberOfTuples(polyData->GetNumberOfPoints());
-    array->FillComponent(0, 1.0); // all included by default
+    array->FillComponent(0, 1.0);  // all included by default
     polyData->GetPointData()->AddArray(array);
   }
 
@@ -50,9 +51,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::vector<Eigen::Vector3d>> &FreeFormConstraint::boundaries() {
-  return boundaries_;
-}
+std::vector<std::vector<Eigen::Vector3d>> &FreeFormConstraint::boundaries() { return boundaries_; }
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::computeBoundaries() {
@@ -83,14 +82,14 @@ void FreeFormConstraint::computeBoundaries() {
     definitionPolyData_->GetPoint(i, pos.data());
     double value;
     array->GetTuple(i, &value);
-    if (value == 1.0) { // find an included point
+    if (value == 1.0) {  // find an included point
       queryPoint_ = pos;
     }
   }
 
   auto contour = vtkSmartPointer<vtkContourFilter>::New();
   contour->SetInputData(definitionPolyData_);
-  contour->SetValue(0, 0.5);
+  contour->SetValue(0, 0.5); // between 0 and 1
   contour->Update();
 
   auto loop = vtkSmartPointer<vtkContourLoopExtraction>::New();

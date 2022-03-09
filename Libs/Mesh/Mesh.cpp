@@ -1362,6 +1362,11 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
     //std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
+    if (selectionPoints->GetNumberOfPoints() < 3) {
+      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this doesn't apply
+      continue;
+    }
+
     auto select = vtkSmartPointer<vtkSelectPolyData>::New();
     select->SetLoop(selectionPoints);
     select->SetInputData(this->mesh);
@@ -1377,7 +1382,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     MeshType halfmesh = selectclip->GetOutput();
 
     if (halfmesh->GetNumberOfPoints() == 0) {
-      throw std::runtime_error("FFC split resulted in empty mesh");
+      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this doesn't apply
+      continue;
     }
 
     vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
