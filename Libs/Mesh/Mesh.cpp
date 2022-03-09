@@ -1292,13 +1292,18 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 }
 
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
-bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d> > boundaries, Eigen::Vector3d query)
+bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut)
 {
+
   // Extract mesh vertices and faces
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
 
-  vtkSmartPointer<vtkPoints> points = getIGLMesh(V, F);
+  vtkSmartPointer<vtkPoints> points;
+  if (!onlyGenerateInOut) {
+    points = getIGLMesh(V, F);
+  }
+
 
   for (size_t bound = 0; bound < boundaries.size(); bound++) {
     //std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
@@ -1331,6 +1336,11 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d> > boundarie
         selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
         boundaryVerts.push_back(ptid);
       }
+
+      /* AKM: I'm not convinced this dijkstra stuff is necessary.  It's super slow with multiple dense boundaries.
+       * Assuming the free form constraint is defined by the user in Studio, it will be very dense already and there is no
+       * requirement of vtkSelectPolyData that a contigious set of vertices be supplied.  Indeed, they need not even be vertices */
+
       // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
       if (lastId != ptid) {
         //std::cout << pt[0] << " " << pt[1] << " " << pt[2] << " -> " << ptdob[0] << " " << ptdob[1] << " " << ptdob[2] << std::endl;
@@ -1366,21 +1376,20 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d> > boundarie
 
     MeshType halfmesh = selectclip->GetOutput();
 
+    if (halfmesh->GetNumberOfPoints() == 0) {
+      throw std::runtime_error("FFC split resulted in empty mesh");
+    }
+
     vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
 
-    vtkSmartPointer<vtkDoubleArray> values = vtkSmartPointer<vtkDoubleArray>::New();
-    vtkSmartPointer<vtkDoubleArray> absvalues = setDistanceToBoundaryValueFieldForFFCs(values,
-                                                                                       points,
-                                                                                       boundaryVerts,
-                                                                                       inout, V, F);
-
-    this->mesh->GetPointData()->SetActiveScalars("value");
-
-    std::vector<Eigen::Matrix3d> face_grad_ = this->setGradientFieldForFFCs(absvalues, V, F);
+    if (!onlyGenerateInOut) {
+      auto values = vtkSmartPointer<vtkDoubleArray>::New();
+      auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
+      this->mesh->GetPointData()->SetActiveScalars("value");
+      std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
+    }
 
   } // Per boundary for loop end
-
-
 
   // Write mesh for debug purposes
 //    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
@@ -1389,6 +1398,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d> > boundarie
   this->invalidateLocators();
   return true;
 }
+
 
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
@@ -1481,8 +1491,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   auto arr = mesh->GetPointData()->GetArray("inout"); // Check if an inout already exists
 
   // Create half-mesh tree
-  vtkSmartPointer<vtkKdTreePointLocator> kdhalf_locator =
-    vtkSmartPointer<vtkKdTreePointLocator>::New();
+  auto kdhalf_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
   kdhalf_locator->SetDataSet(halfmesh);
   kdhalf_locator->BuildLocator();
 
@@ -1516,10 +1525,10 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
     halfi = kdhalf_locator->FindClosestPoint(fullp);
     halfmesh->GetPoint(halfi, halfp);
     //std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] << " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
-    bool ptinhalfmesh = true;
+    bool ptinhalfmesh = false;
     if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
       // If in halfmesh
-      ptinhalfmesh = false;
+      ptinhalfmesh = true;
     }
     // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point is in or out. Thus we set values for the scalar field.
     if (!halfmeshisin ^ ptinhalfmesh) {
@@ -1629,13 +1638,13 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   Eigen::SparseMatrix<double> G;
   igl::grad(V, F, G);
   // Flattened version of libigl's gradient operator
-  std::vector<Eigen::Matrix3d> face_grad_;
+  std::vector<Eigen::Matrix3d> face_grad;
 
   Eigen::MatrixXd grads(this->mesh->GetNumberOfPoints(), 3);
   grads.fill(0.);
 
   // Flatten the gradient operator so we can quickly compute the gradient at a given point
-  face_grad_.resize(F.rows());
+  face_grad.resize(F.rows());
   size_t n_insertions = 0;
   for (int k = 0; k < G.outerSize(); k++) {
     for (Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
@@ -1647,7 +1656,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
       const auto axis = r / F.rows();
       for (int i = 0; i < 3; i++) {
         if (F(f, i) == c) {
-          face_grad_[f](axis, i) = val;
+          face_grad[f](axis, i) = val;
           n_insertions++;
           break;
         }
@@ -1669,7 +1678,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
                                      absvalues->GetValue(F(i, 2)));
 
     // Compute gradient of geodesics
-    const auto& G = face_grad_[i];
+    const auto& G = face_grad[i];
     Eigen::Vector3d out_grad_eigen = (G * vert_dists).rowwise().sum();
     grads.row(F(i, 0)) += out_grad_eigen;
     grads.row(F(i, 1)) += out_grad_eigen;
@@ -1688,7 +1697,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   this->setField("Gradient", vf, Mesh::Point);
   this->setField("vff", vff, Mesh::Face);
 
-  return face_grad_;
+  return face_grad;
 }
 
 Mesh& Mesh::operator+=(const Mesh& otherMesh)

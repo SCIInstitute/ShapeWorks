@@ -209,8 +209,8 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  /// Splits the mesh for FFCs by setting scalar and vector fields
-  bool prepareFFCFields(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query);
+  /// Prepares the mesh for FFCs by setting scalar and vector fields
+  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut = false);
 
   /// Gets values for FFCs
   double getFFCValue(Eigen::Vector3d query) const;
