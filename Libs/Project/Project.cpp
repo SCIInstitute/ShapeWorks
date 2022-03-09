@@ -330,8 +330,10 @@ void Project::store_subjects() {
 
     // segmentations
     auto seg_files = subject->get_segmentation_filenames();
-    if (seg_files.size() > seg_columns.size()) {
-      seg_columns.push_back(std::string(SHAPE_PREFIX) + "1");
+    int seg_count = 0;
+    while (seg_files.size() > seg_columns.size()) {
+      seg_columns.push_back(get_new_file_column(SHAPE_PREFIX, seg_count));
+      seg_count++;
     }
     this->set_list(seg_columns, i, seg_files);
 
@@ -358,14 +360,24 @@ void Project::store_subjects() {
 
     // landmarks
     auto landmark_files = subject->get_landmarks_filenames();
+    int landmark_count = 0;
+    while (landmark_files.size() > landmarks_columns.size()) {
+      landmarks_columns.push_back(get_new_file_column(LANDMARKS_FILE_PREFIX, landmark_count));
+      landmark_count++;
+    }
     if (landmark_files.size() > 0) {
-      this->set_list(landmarks_columns, i, landmark_files);
+      set_list(landmarks_columns, i, landmark_files);
     }
 
     // constraints
     auto constraints_files = subject->get_constraints_filenames();
+    int constraints_count = 0;
+    while (constraints_files.size() > constraints_columns.size()) {
+      constraints_columns.push_back(get_new_file_column(CONSTRAINTS_PREFIX, constraints_count));
+      constraints_count++;
+    }
     if (constraints_files.size() > 0) {
-      this->set_list(constraints_columns, i, constraints_files);
+      set_list(constraints_columns, i, constraints_files);
     }
 
     // features
