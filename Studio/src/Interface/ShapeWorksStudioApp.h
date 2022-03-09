@@ -235,6 +235,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
 
+  QStringList current_features_;
+  QStringList current_image_list_;
+
   QSharedPointer<PythonWorker> py_worker_;
 };
 }  // namespace shapeworks
