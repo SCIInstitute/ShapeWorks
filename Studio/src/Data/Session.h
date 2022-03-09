@@ -127,14 +127,21 @@ class Session : public QObject {
   void handle_ctrl_click(PickResult result);
 
   void trigger_landmarks_changed();
+  void trigger_planes_changed();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
   void set_placing_landmark(int id);
   int get_placing_landmark();
   void set_landmarks_active(bool active);
-  void set_show_landmarks(bool show);
-  bool get_show_landmarks();
+  bool get_landmarks_active();
+  void set_planes_active(bool active);
+  bool get_planes_active();
+  void set_show_landmark_labels(bool show);
+  bool get_show_landmark_labels();
+
+  void set_show_planes(bool show);
+  bool get_show_planes();
 
   // image volume
   bool set_image_name(std::string image_name);
@@ -152,8 +159,13 @@ class Session : public QObject {
   void set_image_share_window_and_level(bool enabled);
   bool get_image_share_window_and_level();
 
+  bool has_constraints();
+
   void set_loading(bool loading);
   bool is_loading();
+
+  void set_tool_state(std::string state);
+  std::string get_tool_state();
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -171,6 +183,7 @@ class Session : public QObject {
   void data_changed();
   void points_changed();
   void landmarks_changed();
+  void planes_changed();
   void update_display();
   void new_mesh();
   void message(QString);
@@ -193,6 +206,10 @@ class Session : public QObject {
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
+
+  void new_landmark(PickResult result);
+
+  void new_plane_point(PickResult result);
 
   QWidget* parent_{nullptr};
 
@@ -221,6 +238,7 @@ class Session : public QObject {
   int placing_landmark_ = -1;
   bool landmark_drag_mode_ = false;
   bool landmarks_active_ = false;
+  bool planes_active_ = false;
   bool show_landmark_labels_ = false;
   bool is_loading_ = false;
 };

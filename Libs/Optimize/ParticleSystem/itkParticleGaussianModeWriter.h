@@ -39,7 +39,7 @@ public:
   itkTypeMacro( ParticleGaussianModeWriter, DataObject);
 
   /** Type of particle system and associated classes. */
-  typedef ParticleSystem<VDimension> ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
   typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
   typedef typename ShapeMatrixType::DataType DataType;
   

@@ -53,5 +53,7 @@
         <file>Images/Brush.png</file>
         <file>Images/flag_on.png</file>
         <file>Images/flag_off.png</file>
+        <file>Images/planes_on.png</file>
+        <file>Images/planes_off.png</file>
     </qresource>
 </RCC>

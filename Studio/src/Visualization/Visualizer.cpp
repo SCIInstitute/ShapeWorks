@@ -48,7 +48,9 @@ void Visualizer::set_session(SessionHandle session) {
   lightbox_->set_session(session);
   connect(session_.data(), &Session::feature_range_changed, this, &Visualizer::handle_feature_range_changed);
   connect(session_.data(), &Session::landmarks_changed, this, &Visualizer::update_landmarks);
-  connect(session_.data(), &Session::image_slice_settings_changed, this, &Visualizer::handle_image_slice_settings_changed);
+  connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
+  connect(session_.data(), &Session::image_slice_settings_changed, this,
+          &Visualizer::handle_image_slice_settings_changed);
 }
 
 //-----------------------------------------------------------------------------
@@ -76,6 +78,12 @@ void Visualizer::update_samples() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_planes() {
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
   lightbox_->redraw();
 }
 
@@ -233,14 +241,11 @@ void Visualizer::handle_feature_range_changed() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::handle_image_slice_settings_changed()
-{
+void Visualizer::handle_image_slice_settings_changed() {
   lightbox_->update_interactor_style();
 
   if (this->lightbox_) {
-    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) {
-      v->update_image_volume();
-    }
+    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) { v->update_image_volume(); }
   }
   lightbox_->redraw();
 }

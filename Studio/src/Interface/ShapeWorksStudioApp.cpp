@@ -96,6 +96,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>(new WheelEventForwarder(ui_->vertical_scroll_bar));
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
+  ui_->qvtkWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   create_glyph_submenu();
   // analysis tool initializations
@@ -510,6 +511,7 @@ void ShapeWorksStudioApp::update_from_preferences() {
   if (session_) {
     ui_->feature_uniform_scale->setChecked(get_feature_uniform_scale());
     ui_->feature_auto_scale->setChecked(session_->get_feature_auto_scale());
+    ui_->planes_visible_button_->setChecked(session_->get_show_planes());
     ui_->feature_min->setValue(session_->get_feature_range_min());
     ui_->feature_max->setValue(session_->get_feature_range_max());
   }
@@ -795,6 +797,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
 
+  connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
+
   data_tool_->update_notes();
 
   visualizer_->clear_viewers();
@@ -829,7 +833,7 @@ void ShapeWorksStudioApp::new_session() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_tool_mode() {
-  std::string tool_state = session_->parameters().get("tool_state", Session::DATA_C);
+  std::string tool_state = session_->get_tool_state();
 
   analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
@@ -880,12 +884,6 @@ void ShapeWorksStudioApp::update_tool_mode() {
 }
 
 //---------------------------------------------------------------------------
-std::string ShapeWorksStudioApp::get_tool_state() {
-  std::string tool_state = session_->parameters().get("tool_state", Session::DATA_C);
-  return tool_state;
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
   auto view_mode = get_view_mode();
   ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
@@ -906,11 +904,11 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     std::string feature_map_override = "";
-    if (get_tool_state() == Session::DEEPSSM_C) {
+    if (session_->get_tool_state() == Session::DEEPSSM_C) {
       if (deepssm_tool_->get_display_feature() != "") {
         feature_map_override = deepssm_tool_->get_display_feature();
       }
-    } else if (get_tool_state() == Session::ANALYSIS_C) {
+    } else if (session_->get_tool_state() == Session::ANALYSIS_C) {
       if (analysis_tool_->get_display_feature_map() != feature_map) {
         feature_map_override = analysis_tool_->get_display_feature_map();
       }
@@ -953,33 +951,33 @@ bool ShapeWorksStudioApp::is_view_combo_item_enabled(int item) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered() {
-  session_->parameters().set("tool_state", Session::DATA_C);
+  session_->set_tool_state(Session::DATA_C);
   update_tool_mode();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered() {
-  session_->parameters().set("tool_state", Session::GROOM_C);
+  session_->set_tool_state(Session::GROOM_C);
   update_tool_mode();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered() {
-  session_->parameters().set("tool_state", Session::OPTIMIZE_C);
+  session_->set_tool_state(Session::OPTIMIZE_C);
   update_tool_mode();
   visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered() {
-  session_->parameters().set("tool_state", Session::ANALYSIS_C);
+  session_->set_tool_state(Session::ANALYSIS_C);
   update_tool_mode();
   visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() {
-  session_->parameters().set("tool_state", Session::DEEPSSM_C);
+  session_->set_tool_state(Session::DEEPSSM_C);
   update_tool_mode();
   visualizer_->reset_camera();
 }
@@ -1200,7 +1198,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
     return;
   }
 
-  std::string tool_state = session_->parameters().get("tool_state", Session::DATA_C);
+  std::string tool_state = session_->get_tool_state();
 
   update_view_mode();
 

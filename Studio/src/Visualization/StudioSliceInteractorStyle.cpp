@@ -24,7 +24,6 @@ void StudioSliceInteractorStyle::OnLeftButtonDown() {
   }
   */
 
-  std::cerr << "slice left button down\n";
   // forward events
   vtkInteractorStyleImage::OnLeftButtonDown();
   // this->GetCurrentRenderer()->ResetCameraClippingRange();

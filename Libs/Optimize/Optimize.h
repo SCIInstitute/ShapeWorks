@@ -288,6 +288,9 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  //! transform a point if necessary
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback

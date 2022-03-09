@@ -1,7 +1,9 @@
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
+#include <Visualization/PlaneWidget.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
 #include <vtkArrowSource.h>
@@ -14,12 +16,17 @@
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
+#include <vtkPickingManager.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataCollection.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkPolyDataPointPlacer.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 #include <vtkScalarBarActor.h>
@@ -34,7 +41,15 @@ namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
+  cell_picker_ = vtkSmartPointer<vtkCellPicker>::New();
+  cell_picker_->SetPickFromList(1);
+  prop_picker_ = vtkSmartPointer<vtkPropPicker>::New();
+  prop_picker_->SetPickFromList(1);
+  point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+  point_placer_->SetDistanceOffset(0);
+
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
+  plane_widget_ = std::make_shared<PlaneWidget>(this);
 
   sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
@@ -465,6 +480,27 @@ std::string Viewer::get_displayed_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPlane> Viewer::transform_plane(vtkSmartPointer<vtkPlane> plane,
+                                                  vtkSmartPointer<vtkTransform> transform) {
+  vtkSmartPointer<vtkPlane> new_plane = vtkSmartPointer<vtkPlane>::New();
+  double new_origin[3];
+  double new_normal[3];
+  double normal[3];
+  plane->GetNormal(normal);
+  normal[0] = normal[0] + plane->GetOrigin()[0];
+  normal[1] = normal[1] + plane->GetOrigin()[1];
+  normal[2] = normal[2] + plane->GetOrigin()[2];
+  transform->TransformPoint(normal, new_normal);
+  transform->TransformPoint(plane->GetOrigin(), new_origin);
+  new_normal[0] = new_normal[0] - new_origin[0];
+  new_normal[1] = new_normal[1] - new_origin[1];
+  new_normal[2] = new_normal[2] - new_origin[2];
+  new_plane->SetNormal(new_normal);
+  new_plane->SetOrigin(new_origin);
+  return new_plane;
+}
+
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPoints> Viewer::get_glyph_points() { return glyph_points_; }
 
 //-----------------------------------------------------------------------------
@@ -476,10 +512,54 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_clipping_planes() {
+  for (int i = 0; i < surface_mappers_.size(); i++) {
+    auto mapper = surface_mappers_[i];
+    auto clipped_mapper = clipped_surface_mappers_[i];
+    mapper->RemoveAllClippingPlanes();
+    clipped_mapper->RemoveAllClippingPlanes();
+    auto& constraints = shape_->get_constraints(i);
+    for (auto& plane : constraints.getPlaneConstraints()) {
+      if (plane.points().size() == 3) {
+        auto vtk_plane = plane.getVTKPlane();
+        auto transform = get_transform(visualizer_->get_alignment_domain(), i);
+
+        vtk_plane = transform_plane(vtk_plane, transform);
+        mapper->AddClippingPlane(vtk_plane);
+/*
+        auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
+        opposite_plane->SetOrigin(vtk_plane->GetOrigin());
+        double normal[3];
+        vtk_plane->GetNormal(normal);
+        normal[0] = -normal[0];
+        normal[1] = -normal[1];
+        normal[2] = -normal[2];
+        opposite_plane->SetNormal(normal);
+        // clipped_mapper->AddClippingPlane(opposite_plane);
+*/
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_planes() {
+  update_actors();
+  update_clipping_planes();
+  plane_widget_->update();
+}
+
+//-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
+
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkActor>> Viewer::get_clipped_surface_actors() { return clipped_surface_actors_; }
 
 //-----------------------------------------------------------------------------
 MeshGroup Viewer::get_meshes() { return meshes_; }
@@ -541,8 +621,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         }
       }
 
-      vtkSmartPointer<vtkPolyDataMapper> mapper = surface_mappers_[i];
-      vtkSmartPointer<vtkActor> actor = surface_actors_[i];
+      auto mapper = surface_mappers_[i];
+      auto actor = surface_actors_[i];
 
       draw_exclusion_spheres(shape);
 
@@ -556,7 +636,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         poly_data = reverse_filter->GetOutput();
       }
       actor->SetUserTransform(transform);
+      clipped_surface_actors_[i]->SetUserTransform(transform);
       mapper->SetInputData(poly_data);
+      clipped_surface_mappers_[i]->SetInputData(poly_data);
 
       int domain_scheme = (scheme_ + i) % color_schemes_.size();
 
@@ -583,7 +665,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       } else {
         mapper->ScalarVisibilityOff();
       }
-
     }
     update_points();
 
@@ -592,10 +673,13 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   update_image_volume();
 
+  update_clipping_planes();
   update_actors();
   update_glyph_properties();
   landmark_widget_->clear_landmarks();
+  plane_widget_->clear_planes();
   update_landmarks();
+  update_planes();
   ren->AddViewProp(corner_annotation_);
 }
 
@@ -672,6 +756,7 @@ void Viewer::update_glyph_properties() {
   glyphs_->Update();
   arrow_glyphs_->Update();
   landmark_widget_->update_glyph_properties();
+  plane_widget_->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -733,7 +818,7 @@ void Viewer::update_points() {
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      if (slice_view_.should_point_show(x,y,z)) {
+      if (slice_view_.should_point_show(x, y, z)) {
         if (scalar_values.size() > i) {
           scalars->InsertNextValue(scalar_values[i]);
         } else {
@@ -797,8 +882,14 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
 
+  cell_picker_->InitializePickList();
+  prop_picker_->InitializePickList();
+  point_placer_->GetPolys()->RemoveAllItems();
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
+  }
+  for (size_t i = 0; i < clipped_surface_actors_.size(); i++) {
+    renderer_->RemoveActor(clipped_surface_actors_[i]);
   }
 
   if (show_glyphs_) {
@@ -816,8 +907,27 @@ void Viewer::update_actors() {
 
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
-      surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      /*
+      if (shape_->has_planes()) {
+        renderer_->AddActor(surface_actors_[i]);
+        renderer_->AddActor(clipped_surface_actors_[i]);
+      } else {
+        renderer_->AddActor(clipped_surface_actors_[i]);
+        renderer_->AddActor(surface_actors_[i]);
+      }
+*/
+      renderer_->AddActor(clipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
+
+      surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      //cell_picker_->AddPickList(surface_actors_[i]);
+      //prop_picker_->AddPickList(surface_actors_[i]);
+      cell_picker_->AddPickList(clipped_surface_actors_[i]);
+      prop_picker_->AddPickList(clipped_surface_actors_[i]);
+      // point_placer_->AddProp(surface_actors_[i]);
+      point_placer_->AddProp(clipped_surface_actors_[i]);
+      point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
     }
   }
 
@@ -858,16 +968,19 @@ void Viewer::update_image_volume() {
 //-----------------------------------------------------------------------------
 int Viewer::handle_pick(int* click_pos) {
   // First determine what was picked
-  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
-  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
+  // we use a new prop picker here since the member one only uses the surface actors
+  auto prop_picker = vtkSmartPointer<vtkPropPicker>::New();
 
+  // check that the glyph actor was picked
+  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
   if (prop_picker->GetActor() != glyph_actor_) {
     return -1;
   }
 
-  vtkSmartPointer<vtkCellPicker> cell_picker = vtkSmartPointer<vtkCellPicker>::New();
+  // now determine which point was picked
+  // we use a new cell picker here since the member only only uses the surface actors
+  auto cell_picker = vtkSmartPointer<vtkCellPicker>::New();
   cell_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
-
   vtkDataArray* input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
 
   if (input_ids) {
@@ -881,7 +994,7 @@ int Viewer::handle_pick(int* click_pos) {
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
       if (glyph_id >= 0) {
-        std::cerr << "picked correspondence point :" << glyph_id << "\n";
+        STUDIO_LOG_MESSAGE("picked correspondence point :" + QString::number(glyph_id));
         return glyph_id;
       }
     }
@@ -893,13 +1006,12 @@ int Viewer::handle_pick(int* click_pos) {
 //-----------------------------------------------------------------------------
 PickResult Viewer::handle_ctrl_click(int* click_pos) {
   // First determine what was picked
-  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
-  prop_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
+  cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
-  for (int i = 0; i < surface_actors_.size(); i++) {
-    if (prop_picker->GetActor() == surface_actors_[i]) {
-      double* pos = prop_picker->GetPickPosition();
+  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
+    if (cell_picker_->GetActor() == clipped_surface_actors_[i]) {
+      double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
       transform->DeepCopy(get_landmark_transform(i));
@@ -1021,11 +1133,20 @@ void Viewer::initialize_surfaces() {
   if (number_of_domains_ > surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
+    clipped_surface_mappers_.resize(number_of_domains_);
+    clipped_surface_actors_.resize(number_of_domains_);
 
     for (int i = 0; i < number_of_domains_; i++) {
       surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
       surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       surface_actors_[i]->SetMapper(surface_mappers_[i]);
+      clipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      clipped_surface_mappers_[i]->ScalarVisibilityOff();
+
+      clipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
+      // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
+      clipped_surface_actors_[i]->GetProperty()->SetColor(0.45, 0.45, 0.45);
+      clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
     }
   }
 }
@@ -1038,6 +1159,15 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int alignment_domain, int do
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_landmark_transform(int domain) {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), domain);
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_inverse_landmark_transform(int domain) {
+  auto transform = get_landmark_transform(domain);
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(transform);
+  inverse->Inverse();
+  return inverse;
 }
 
 //-----------------------------------------------------------------------------

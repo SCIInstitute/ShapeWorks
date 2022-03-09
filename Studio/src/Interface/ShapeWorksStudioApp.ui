@@ -104,6 +104,30 @@ QWidget#image_widget {
            </widget>
           </item>
           <item>
+           <widget class="QToolButton" name="planes_visible_button_">
+            <property name="toolTip">
+             <string>Show landmarks</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../Resources/ShapeWorksStudio.qrc">
+              <normaloff>:/Studio/Images/planes_off.png</normaloff>
+              <normalon>:/Studio/Images/planes_on.png</normalon>:/Studio/Images/planes_off.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::DelayedPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="landmarks_visible_button">
             <property name="toolTip">
              <string>Show landmarks</string>

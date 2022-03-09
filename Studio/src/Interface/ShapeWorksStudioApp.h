@@ -157,8 +157,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
 
-  std::string get_tool_state();
-
   void disable_all_actions();
 
   void enable_possible_actions();
