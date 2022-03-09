@@ -214,8 +214,8 @@ void Viewer::set_color_scheme(int scheme) {
                       color_schemes_[scheme].foreground.b, 1.0};
     surface_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
 
-    ffc_luts_[i]->SetTableValue(0, rgba);
-    ffc_luts_[i]->SetTableValue(1, EXCLUDED_COLOR);
+    ffc_luts_[i]->SetTableValue(0, EXCLUDED_COLOR);
+    ffc_luts_[i]->SetTableValue(1, rgba);
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
@@ -713,13 +713,22 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         }
         ////mapper->ScalarVisibilityOff();
 
-        shape_->get_constraints(i).getFreeformConstraint().applyToPolyData(poly_data);
+        try {
+          auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
+          if (ffc.getDefinition() != poly_data) {
+            ffc.computeBoundaries();
+            ffc.applyToPolyData(poly_data);
+            ffc.setDefinition(poly_data);
+          }
+        } catch (std::exception& e) {
+          STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
+        }
 
         mapper->ScalarVisibilityOn();
         mapper->SetScalarModeToUsePointData();
         mapper->SetScalarRange(0, 1);
         mapper->SetLookupTable(ffc_luts_[i]);
-        mesh->get_or_create_array(StudioMesh::FFC_PAINT);
+        mesh->get_or_create_array(StudioMesh::FFC_PAINT, 1.0);
         poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
       }
     }
