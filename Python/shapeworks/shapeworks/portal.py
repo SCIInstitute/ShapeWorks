@@ -98,6 +98,7 @@ def download_subset(use_case,datasetName,outputDirectory):
     # fileList = DatasetUtils.getFileList(datasetName)
     outputDirectory = outputDirectory #+ datasetName+"/"
     print('Downloading subset')
+    print(outputDirectory)
     with swcc_session()  as session:
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
@@ -114,10 +115,12 @@ def download_subset(use_case,datasetName,outputDirectory):
                     image_dir = outputDirectory_1+ "/images"
                     image.file.download(image_dir)
         elif(use_case in ["ellipsoid_mesh","femur_cut","lumps","thin_cavity_bean"]):
+            print(outputDirectory_1 +"/meshes/")
             if(generate_download_flag(outputDirectory_1+"/","meshes")):
-                print("folder doesn't exists")
                 for mesh in islice(dataset.meshes, 3):
+                    print(mesh)
                     mesh_dir = outputDirectory_1+ "/meshes"
+                    print(mesh_dir)
                     mesh.file.download(mesh_dir)
 
         
@@ -178,13 +181,14 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
         # Check if the unzipped data is present and number of files are more than 3 for full use case
         if generate_download_flag(outputDirectory,datasetName):
             # Download a full dataset in bulk
+            print("not enough files")
             dataset = Dataset.from_name(datasetName)
             print(outputDirectory+datasetName+"/")
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
                 
-            dataset.download(datasetName)
+            dataset.download(download_path)
 
 
 
