@@ -481,7 +481,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> planes = optimize->GetSampler()->ComputeCuttingPlanes();
   auto ffcs = optimize->GetSampler()->GetFFCs();
 
   for (int index = 0; index < meshFiles.size(); index++) {
