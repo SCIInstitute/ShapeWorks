@@ -442,7 +442,7 @@ public:
     else{
         std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
         std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs." << std::endl;
-        exit (EXIT_FAILURE);
+        throw std::runtime_error("Error computing plane normal");
     }
 
   }
