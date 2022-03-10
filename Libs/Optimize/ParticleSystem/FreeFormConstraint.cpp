@@ -28,7 +28,8 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
 
   if (boundaries_.empty()) {
     if (!painted_) {
-      definitionPolyData_->GetPointData()->RemoveArray("ffc_paint");
+      auto array = createFFCPaint(polyData);
+      array->FillComponent(0, 1.0);
     }
     createFFCPaint(polyData);
     return;
