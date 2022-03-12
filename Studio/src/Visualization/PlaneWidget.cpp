@@ -18,6 +18,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkReverseSense.h>
 #include <vtkSphereSource.h>
 #include <vtkWidgetEventTranslator.h>
 
@@ -231,14 +232,21 @@ void PlaneWidget::update_planes() {
       center = center + plane.getPlaneNormal() * plane.getOffset() / get_offset_scale(domain_id);
 
       plane.updatePlaneFromPoints();
-      auto tmp = vtkSmartPointer<vtkPlaneSource>::New();
-      plane_sources_[plane_it] = tmp;
-      plane_mappers_[plane_it]->SetInputConnection(tmp->GetOutputPort());
+      plane_sources_[plane_it] = vtkSmartPointer<vtkPlaneSource>::New();
       plane_sources_[plane_it]->SetNormal(0, 0, 1);
       plane_sources_[plane_it]->SetPoint1(size, 0, 0);
       plane_sources_[plane_it]->SetPoint2(0, size, 0);
       plane_sources_[plane_it]->SetNormal(plane.getPlaneNormal().data());
       plane_sources_[plane_it]->SetCenter(center.data());
+      if (Viewer::is_reverse(transform)) {
+        auto reverse_plane = vtkSmartPointer<vtkReverseSense>::New();
+        reverse_plane->SetInputConnection(plane_sources_[plane_it]->GetOutputPort());
+        reverse_plane->ReverseNormalsOff();
+        reverse_plane->ReverseCellsOn();
+        plane_mappers_[plane_it]->SetInputConnection(reverse_plane->GetOutputPort());
+      } else {
+        plane_mappers_[plane_it]->SetInputConnection(plane_sources_[plane_it]->GetOutputPort());
+      }
       plane_actors_[plane_it]->SetUserTransform(transform);
       plane_actors_[plane_it]->GetProperty()->SetColor(qcolor.red() / 255.0, qcolor.green() / 255.0,
                                                        qcolor.blue() / 255.0);
