@@ -202,6 +202,7 @@ def Run_Pipeline(args):
         "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.01,
+        "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
@@ -214,8 +215,8 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimze",parameters)
-    spreadsheet_file = output_directory + "shape_models/" + args.option_set+ ".xlsx"
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
