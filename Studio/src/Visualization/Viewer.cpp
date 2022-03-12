@@ -737,7 +737,7 @@ void Viewer::update_glyph_properties() {
     renderer_->ComputeVisiblePropBounds(bounds);
     double sum_range = bounds[1] - bounds[0];
     sum_range += bounds[3] - bounds[2];
-    sum_range += bounds[5] - bounds[3];
+    sum_range += bounds[5] - bounds[4];
     double average_range = sum_range / 3.0;
     // sanity clamp
     glyph_size_ = std::max<double>(glyph_size_, average_range * 0.03);
@@ -844,7 +844,8 @@ void Viewer::update_points() {
 
   int alignment_domain = visualizer_->get_alignment_domain();
 
-  // glyph_actor_->SetUserTransform(get_transform(alignment_domain));
+  // reset
+  glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
   if (visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
