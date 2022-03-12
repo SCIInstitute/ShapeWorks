@@ -141,8 +141,9 @@ class Viewer {
 
   void handle_ffc_paint(double display_pos[2], double world_pos[3]);
 
- private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
+
+ private:
 
   void initialize_surfaces();
 
