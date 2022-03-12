@@ -641,7 +641,8 @@ void Distance::buildParser()
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
-  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
+  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-cell").help("Method used to compute distance (point-to-point or point-to-cell) [default: %default].");
+  parser.add_option("--ids").action("store").type("bool").set_default(false).help("Set shared field to the ids of the closest points/cells instead of the distances [default: false].");
   parser.add_option("--summary").action("store").type("bool").set_default(true).help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
@@ -656,15 +657,9 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   bool summary = static_cast<bool>(options.get("summary"));
+  bool ids = static_cast<bool>(options.get("ids"));
 
   std::string methodopt(options.get("method"));
-  auto method{Mesh::PointToPoint};
-  if (methodopt == "point-to-point") method = Mesh::PointToPoint;
-  else if (methodopt == "point-to-cell") method = Mesh::PointToCell;
-  else {
-    std::cerr << "no such distance method: " << methodopt << std::endl;
-    return false;
-  }
 
   std::string otherMesh = static_cast<std::string>(options.get("name"));
   if (otherMesh == "")
@@ -674,12 +669,22 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   Mesh other(otherMesh);
-  sharedData.mesh->distance(other, method);
 
-  if (summary)
+  if (methodopt == "point-to-point") {
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToPoint)[ids];
+  }
+  else if (methodopt == "point-to-cell") {
+    sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToCell)[ids];
+  }
+  else {
+    std::cerr << "no such distance method: " << methodopt << std::endl;
+    return false;
+  }
+
+  if (summary && !ids)
   {
-    auto range = sharedData.mesh->getFieldRange("distance");
-    auto dist = std::max(range[0], range[1]);
+    auto distRange = range(sharedData.field);
+    auto dist = std::max(distRange[0], distRange[1]);
     std::cout << "Maximum distance to target mesh: " << dist << std::endl;
   }
 
@@ -801,7 +806,14 @@ bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &s
                static_cast<double>(options.get("y")),
                static_cast<double>(options.get("z"))});
 
-  std::cout << "Closest point to given point on mesh: " << sharedData.mesh->closestPoint(point) << "\n";
+  bool outside = false;
+  double distance;
+  vtkIdType face_id = -1;
+  auto closest_pt = sharedData.mesh->closestPoint(point, outside, distance, face_id);
+  std::cout << "Closest point to given point on mesh: " << closest_pt << std::endl
+            << "- outside mesh: " << (outside ? "true" : "false") << std::endl
+            << "- distance: " << distance << std::endl
+            << "- face_id: " << face_id << std::endl;
   return sharedData.validMesh();
 }
 
@@ -902,6 +914,8 @@ void SetField::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to set (point or face).");
 
   Command::buildParser();
 }
@@ -921,8 +935,19 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  sharedData.mesh->setField(name, sharedData.field);
+  if (typeopt == "point") {
+    sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Point);
+  }
+  else if (typeopt == "face") {
+    sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Face);
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 
@@ -936,6 +961,8 @@ void GetField::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to get (point or face).");
 
   Command::buildParser();
 }
@@ -949,8 +976,19 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  sharedData.field = sharedData.mesh->getField<vtkDataArray>(name);
+  if (typeopt == "point") {
+    sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Point);
+  }
+  else if (typeopt == "face") {
+    sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Face);
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return true;
 }
 
@@ -1067,6 +1105,8 @@ void FieldRange::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1080,9 +1120,21 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
+  std::vector<double> fieldRange;
 
-  std::vector<double> range = sharedData.mesh->getFieldRange(name);
-  std::cout << "[" << range[0] << "," << range[1] << "]\n";
+  if (typeopt == "point") {
+    fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Point));
+  }
+  else if (typeopt == "face") {
+    fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Face));
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
+  std::cout << "[" << fieldRange[0] << "," << fieldRange[1] << "]\n";
   return sharedData.validMesh();
 }
 
@@ -1096,6 +1148,8 @@ void FieldMean::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1109,8 +1163,19 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  std::cout << sharedData.mesh->getFieldMean(name) << "\n";
+  if (typeopt == "point") {
+    std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
+  }
+  else if (typeopt == "face") {
+    std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 
@@ -1124,6 +1189,8 @@ void FieldStd::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  std::list<std::string> type{"point", "face"};
+  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
@@ -1137,8 +1204,19 @@ bool FieldStd::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string name = static_cast<std::string>(options.get("name"));
+  std::string typeopt(options.get("type"));
 
-  std::cout << sharedData.mesh->getFieldStd(name) << "\n";
+  if (typeopt == "point") {
+    std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
+  }
+  else if (typeopt == "face") {
+    std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
+  }
+  else {
+    std::cerr << "no such type: " << typeopt << std::endl;
+    return false;
+  }
+
   return sharedData.validMesh();
 }
 
@@ -1217,7 +1295,7 @@ void MeshToDT::buildParser()
   parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
   parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
   parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
-  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
+  parser.add_option("--pad").action("store").type("int").set_default(1).help("Number of pixels to pad the output region [default: 1].");
 
   Command::buildParser();
 }
@@ -1233,12 +1311,13 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double x = static_cast<double>(options.get("sx"));
   double y = static_cast<double>(options.get("sy"));
   double z = static_cast<double>(options.get("sz"));
-  double pad = static_cast<double>(options.get("pad"));
+  unsigned pad = static_cast<unsigned>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox().pad(pad);
-  
-  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
+  auto region = sharedData.mesh->boundingBox();
+  Dims padding({pad, pad, pad});
+
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing, padding);
   return true;
 }
 

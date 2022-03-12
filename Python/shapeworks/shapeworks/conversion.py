@@ -1,6 +1,7 @@
 import pyvista as pv
 import numpy as np
 import os
+import shapeworks as sw
 
 # converts shapeworks Image object to vtk image
 def sw2vtkImage(swImg, verbose = False):
@@ -46,7 +47,7 @@ def sw2vtkMesh(swMesh, verbose = False):
     fieldNames = swMesh.getFieldNames()
 
     for name in fieldNames:
-        field = swMesh.getField(name)
+        field = swMesh.getField(name, sw.Mesh.FieldType.Point)
         vtkMesh.field_arrays.append(field, name)
 
     if verbose:

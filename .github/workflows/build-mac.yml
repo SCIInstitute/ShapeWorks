@@ -37,7 +37,7 @@ jobs:
 
     - name: Acquire 10.13 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
+        curl --retry 5 -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
         cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
         
     - name: Checkout code

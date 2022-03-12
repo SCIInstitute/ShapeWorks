@@ -2,6 +2,7 @@
 
 #include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
+#include <Visualization/SliceView.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -23,6 +24,11 @@ class vtkTransform;
 class vtkReverseSense;
 class vtkHandleWidget;
 class vtkPolygonalSurfacePointPlacer;
+class vtkImageSlice;
+class vtkImageSliceMapper;
+class vtkImageData;
+class vtkCellPicker;
+class vtkPropPicker;
 
 namespace shapeworks {
 
@@ -31,6 +37,7 @@ class Viewer;
 class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
+class PlaneWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -60,6 +67,7 @@ class Viewer {
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
+  void reset_camera();
 
   void set_glyph_size_and_quality(double size, double quality);
   double get_glyph_size();
@@ -79,11 +87,9 @@ class Viewer {
 
   PickResult handle_ctrl_click(int* click_pos);
 
-
   void set_selected_point(int id);
 
   void set_lut(vtkSmartPointer<vtkLookupTable> lut);
-
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -102,8 +108,10 @@ class Viewer {
   QSharedPointer<Shape> get_shape();
 
   void update_landmarks();
+  void update_planes();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
+  std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
 
   MeshGroup get_meshes();
 
@@ -111,8 +119,25 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);
 
- private:
+  vtkSmartPointer<vtkTransform> get_inverse_landmark_transform(int domain);
 
+  vtkSmartPointer<vtkTransform> get_image_transform();
+
+  void handle_key(int* click_pos, std::string key);
+
+  void set_window_and_level(double window, double level);
+
+  void update_image_volume();
+
+  vtkSmartPointer<vtkPoints> get_glyph_points();
+
+  vtkSmartPointer<vtkTransform> get_alignment_transform();
+
+  void update_clipping_planes();
+
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
+
+ private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void initialize_surfaces();
@@ -132,6 +157,8 @@ class Viewer {
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
+
+  vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
   bool visible_;
 
@@ -163,6 +190,8 @@ class Viewer {
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
@@ -193,6 +222,18 @@ class Viewer {
   int number_of_domains_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
+  std::shared_ptr<PlaneWidget> plane_widget_;
+
   QSharedPointer<Session> session_;
+
+  std::string current_image_name_;
+
+  vtkSmartPointer<vtkCellPicker> cell_picker_;
+  vtkSmartPointer<vtkPropPicker> prop_picker_;
+  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
+
+
+  // slice viewer
+  SliceView slice_view_{this};
 };
 }  // namespace shapeworks

@@ -10,6 +10,7 @@ namespace shapeworks {
 
 class Viewer;
 class LandmarkCallback;
+
 //! LandmarkWidget
 /*!
  * Widget to display and manipulate landmarks
@@ -22,7 +23,7 @@ class LandmarkWidget {
 
   void update_landmarks();
 
-  void update_positions();
+  void store_positions();
 
   void update_glyph_properties();
 

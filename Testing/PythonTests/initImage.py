@@ -1,5 +1,6 @@
 import os
 import sys
+import builtins
 import numpy as np
 from shapeworks import *
 
@@ -97,9 +98,9 @@ def imageArr():
   farr = np.ndarray(dims, dtype=np.float32)
 
   ival = 10; jval = 50; kval = 1.75
-  for i in range(0, farr.shape[2]):
-    for j in range(0, farr.shape[1]):
-      for k in range(0, farr.shape[0]):
+  for i in builtins.range(0, farr.shape[2]):
+    for j in builtins.range(0, farr.shape[1]):
+      for k in builtins.range(0, farr.shape[0]):
         farr[k][j][i] = ival*(i/farr.shape[2]) + jval*(j/farr.shape[1]) + kval/farr.shape[0]
 
   return farr

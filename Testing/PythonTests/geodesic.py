@@ -22,7 +22,7 @@ success &= utils.test(geodesicTest1)
 def geodesicTest2():
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
   distField = mesh.geodesicDistance(mesh.getPoint(200))
-  mesh.setField("GeodesicDistanceToLandmark", distField)
+  mesh.setField("GeodesicDistanceToLandmark", distField, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/geodesic1.vtk")
 
@@ -39,7 +39,7 @@ def geodesicTest3():
   curve.append(mesh.getPoint(300))
 
   distField = mesh.geodesicDistance(curve)
-  mesh.setField("GeodesicDistanceToCurve", distField)
+  mesh.setField("GeodesicDistanceToCurve", distField, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/geodesic_curve_py.vtk")
 

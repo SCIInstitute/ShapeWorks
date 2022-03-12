@@ -8,7 +8,7 @@ def meanCurvatureEllipsoidTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
 
   arr = mesh.curvature(Mesh.CurvatureType.Mean)
-  mesh.setField("MeanCurvature", arr)
+  mesh.setField("MeanCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meanCurvatureEllipsoid.vtk")
 
@@ -20,7 +20,7 @@ def principalCurvatureEllipsoidTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
 
   arr = mesh.curvature()
-  mesh.setField("PrincipalCurvature", arr)
+  mesh.setField("PrincipalCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/principalCurvatureEllipsoid.vtk")
 
@@ -32,7 +32,7 @@ def gaussianCurvatureEllipsoidTest():
   mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
 
   arr = mesh.curvature(Mesh.CurvatureType.Gaussian)
-  mesh.setField("GaussianCurvature", arr)
+  mesh.setField("GaussianCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/gaussianCurvatureEllipsoid.vtk")
 
@@ -44,7 +44,7 @@ def meanCurvatureFemurTest():
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
 
   arr = mesh.curvature(Mesh.CurvatureType.Mean)
-  mesh.setField("MeanCurvature", arr)
+  mesh.setField("MeanCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meanCurvatureFemur.vtk")
 
@@ -56,7 +56,7 @@ def principalCurvatureFemurTest():
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
 
   arr = mesh.curvature()
-  mesh.setField("PrincipalCurvature", arr)
+  mesh.setField("PrincipalCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/principalCurvatureFemur.vtk")
 
@@ -68,7 +68,7 @@ def gaussianCurvatureFemurTest():
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
 
   arr = mesh.curvature(Mesh.CurvatureType.Gaussian)
-  mesh.setField("GaussianCurvature", arr)
+  mesh.setField("GaussianCurvature", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/gaussianCurvatureFemur.vtk")
 
@@ -79,7 +79,7 @@ success &= utils.test(gaussianCurvatureFemurTest)
 def curvaturefailTest():
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
 
-  arr = mesh.curvature(Mesh.CurvatureType.Mea)
+  arr = mesh.curvature(Mesh.CurvatureType.Mea, Mesh.Point)
 
 success &= utils.expectException(curvaturefailTest, AttributeError)
 

@@ -12,7 +12,7 @@ def sw2vtkTest():
   fieldNames = swMesh.getFieldNames()
 
   for name in fieldNames:
-    swField = swMesh.getField(name)
+    swField = swMesh.getField(name, Mesh.Point)
     swField.resize(swField.shape[0], 1)
     vtkField = vtkMesh.field_arrays.get_array(name)
     vtkField.resize(vtkField.shape[0], 1)

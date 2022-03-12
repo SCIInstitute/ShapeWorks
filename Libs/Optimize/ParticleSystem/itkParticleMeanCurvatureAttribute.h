@@ -41,7 +41,7 @@ public:
   typedef WeakPointer<const Self>  ConstWeakPointer;
   
   /** Numeric types. */
-  typedef ParticleSystem<VDimension> ParticleSystemType; 
+  typedef ParticleSystem ParticleSystemType;
   typedef typename ParticleSystemType::PointType PointType;
   typedef  vnl_vector_fixed<TNumericType, VDimension> VnlVectorType;
 
