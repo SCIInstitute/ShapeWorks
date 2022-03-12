@@ -137,8 +137,9 @@ class Viewer {
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
- private:
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
+
+ private:
 
   void initialize_surfaces();
 
