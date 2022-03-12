@@ -25,7 +25,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur-v1"
+    dataset_name = "femur-v2"
     output_directory = "Output/femur_cut/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -33,24 +33,25 @@ def Run_Pipeline(args):
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = True
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        sw.data.download_subset(args.use_case, dataset_name, output_directory) 
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
-        image_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/images/*.nrrd"))[:3]
+        plane_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/constraints/*.json"))[:3]
     # else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
-        image_files = sorted(glob.glob(output_directory + 
-                            dataset_name + "/images/*.nrrd"))
+        plane_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/constraints/*.json"))
 
         # Select data if using subsample
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
+            plane_files = [plane_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed meshes from the portal
     if args.skip_grooming:
@@ -141,7 +142,7 @@ def Run_Pipeline(args):
             Grooming Step 4: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
-            print('Finding alingment transfrom from ' + name + ' to ' + ref_name)
+            print('Finding alignment transform from ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
@@ -165,7 +166,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
+    point_dir = output_directory + 'shape_models/'
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
@@ -173,12 +174,13 @@ def Run_Pipeline(args):
     subjects = []
     number_domains = 1
     for i in range(len(mesh_list)):
-        print(names[i])
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
+        subject.set_segmentation_filenames([os.getcwd() + '/' + mesh_files[i]])
         subject.set_groomed_filenames([os.getcwd() + '/' + groomed_mesh_files[i]])
         transform = [ transforms[i].flatten() ]
         subject.set_groomed_transforms(transform)
+        subject.set_constraints_filenames([os.getcwd() + '/' + plane_files[i]])
         subjects.append(subject)
 
     project = sw.Project()
@@ -200,6 +202,7 @@ def Run_Pipeline(args):
         "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.01,
+        "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
@@ -212,12 +215,12 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimze",parameters)
-    spreadsheet_file = output_directory + "shape_models/proj_parm.xlsx"
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
-    AnalysisCmd = ('ShapeWorksStudio ' + output_directory + "shape_models/proj_parm.xlsx").split()
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     subprocess.check_call(AnalysisCmd)

@@ -57,7 +57,6 @@ if __name__ == '__main__':
     parser.add_argument("--num_subsample", help="Size of subset to run on (default: %(default)s)", type=int, default=3)
     parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
     parser.add_argument("--skip_grooming", help="Skip the grooming steps and start with already prepped (i.e., groomed) data", action="store_true")
-    parser.add_argument("--groom_images", help = "Apply grooming steps to both the shapes (segmentations or surface meshes) and raw images", action="store_true")
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
     parser.add_argument("--mesh_mode", help="Run optimization on meshes rather than distance transforms.",action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
@@ -74,8 +73,6 @@ if __name__ == '__main__':
     mode = ""
     if args.mesh_mode:
         mode = "_mesh_mode"
-    if args.groom_images:
-        mode = f"{mode}_groom_images"
     args.option_set = f"{type}{scale}{mode}"
 
     if args.use_subsample:
@@ -87,13 +84,6 @@ if __name__ == '__main__':
 
     # import use case and run
     module = __import__(args.use_case.lower())
-
-    image_use_cases = ['femur', 'femur_cut', 'left_atrium']
-    if args.groom_images and args.use_case.lower() not in image_use_cases:
-        print("\n\n*************************** WARNING ***************************")
-        print("'groom_images' tag was used but use case does not have images.")
-        print("Running use case with segmentations or meshes only.")
-        print("***************************************************************\n\n")
 
     try:
         module.Run_Pipeline(args)
