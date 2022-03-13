@@ -120,7 +120,7 @@ def Run_Pipeline(args):
             """
             reflection = np.eye(4) # Identity
             if ref_side in name:
-                print("Finding reflection transform for: " + name)
+                print("Creating reflection transform for: " + name)
                 reflection[0][0] = -1 # Reflect across X
                 mesh.applyTransform(reflection)
             reflections.append(reflection)
@@ -130,6 +130,7 @@ def Run_Pipeline(args):
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
+        print("Finding reference mesh...")
         ref_index = sw.find_reference_mesh_index(mesh_list)
         # Make a copy of the reference mesh
         ref_mesh = mesh_list[ref_index].copy().write(groom_dir + 'reference.vtk')
@@ -142,7 +143,7 @@ def Run_Pipeline(args):
             Grooming Step 4: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
-            print('Finding alignment transform from ' + name + ' to ' + ref_name)
+            print('Creating alignment transform from ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
             # apply rigid transform
@@ -171,16 +172,20 @@ def Run_Pipeline(args):
         os.makedirs(point_dir)
 
     # Create spreadsheet
+    project_location = output_directory + "shape_models/"
     subjects = []
     number_domains = 1
     for i in range(len(mesh_list)):
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
-        subject.set_segmentation_filenames([os.getcwd() + '/' + mesh_files[i]])
-        subject.set_groomed_filenames([os.getcwd() + '/' + groomed_mesh_files[i]])
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i]], project_location)
+        subject.set_segmentation_filenames(rel_mesh_files)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_mesh_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_files)
         transform = [ transforms[i].flatten() ]
         subject.set_groomed_transforms(transform)
-        subject.set_constraints_filenames([os.getcwd() + '/' + plane_files[i]])
+        rel_plane_files = sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i]], project_location)
+        subject.set_constraints_filenames(rel_plane_files)
         subjects.append(subject)
 
     project = sw.Project()
