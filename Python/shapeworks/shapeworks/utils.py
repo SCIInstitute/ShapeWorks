@@ -91,6 +91,14 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
+# a helper function to convert absolute paths to a relative path from a base dir
+def get_relative_paths(files, base):
+    relative_paths = []
+    for f in files:
+        path = os.path.relpath(f, base)
+        relative_paths.append(path)
+    return relative_paths
+        
 def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
