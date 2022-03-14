@@ -593,6 +593,7 @@ void Viewer::update_ffc_mode() {
   paint_widget_->SetDefaultRenderer(renderer_);
   paint_widget_->SetRenderer(renderer_);
   paint_widget_->SetInteractor(renderer_->GetRenderWindow()->GetInteractor());
+  paint_widget_->SetEnabled(0);
   paint_widget_->SetEnabled(session_->get_ffc_paint_active());
 
   double paint_size = session_->get_ffc_paint_size() * 0.10;
