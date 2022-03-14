@@ -27,11 +27,10 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   Mesh mesh(polyData);
 
   if (boundaries_.empty()) {
+    auto array = createFFCPaint(polyData);
     if (!painted_) {
-      auto array = createFFCPaint(polyData);
       array->FillComponent(0, 1.0);
     }
-    createFFCPaint(polyData);
     return;
   }
 
@@ -39,6 +38,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   auto inout = mesh.getField("inout", Mesh::FieldType::Point);
 
   auto array = createFFCPaint(polyData);
+  array->FillComponent(0, 1.0);
   for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
     double *value = inout->GetTuple(i);
     float f = value[0];
@@ -95,7 +95,7 @@ void FreeFormConstraint::computeBoundaries() {
 
   auto output = loop->GetOutput();
 
-  std::cerr << "number of cells = " << output->GetNumberOfCells() << "\n";
+  std::cerr << "number of FFC boundaries = " << output->GetNumberOfCells() << "\n";
   for (int i = 0; i < output->GetNumberOfCells(); i++) {
     std::vector<Eigen::Vector3d> boundary;
     auto cell = output->GetCell(i);
@@ -128,7 +128,6 @@ void FreeFormConstraint::reset() {
 
 //-----------------------------------------------------------------------------
 vtkFloatArray *FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
-
   vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
     array = vtkFloatArray::New();
