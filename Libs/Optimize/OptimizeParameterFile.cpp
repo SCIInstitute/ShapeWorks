@@ -482,6 +482,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
   std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  auto ffcs = optimize->GetSampler()->GetFFCs();
 
   for (int index = 0; index < meshFiles.size(); index++) {
     bool fixed_domain = false;
@@ -521,6 +522,17 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
           mesh.clip(plane);
         }
       }
+
+      if (this->verbosity_level_ > 1) {
+        std::cout << "ffcssize " << ffcs.size() << std::endl;
+      }
+      if (index < ffcs.size()) {
+          for (size_t i = 0; i < ffcs[index].size(); i++) {
+            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
+            mesh = Mesh(mesh.clipByField("inout", 0.0));
+          }
+      }
+
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
@@ -853,9 +865,9 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
       // If initial transform provided, transform cutting plane points
       if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-        itk::ParticleSystem<3>::PointType pa;
-        itk::ParticleSystem<3>::PointType pb;
-        itk::ParticleSystem<3>::PointType pc;
+        itk::ParticleSystem::PointType pa;
+        itk::ParticleSystem::PointType pb;
+        itk::ParticleSystem::PointType pc;
 
         pa[0] = a[0];
         pa[1] = a[1];
@@ -867,10 +879,10 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
         pc[1] = c[1];
         pc[2] = c[2];
 
-        itk::ParticleSystem<3>::TransformType T =
+        itk::ParticleSystem::TransformType T =
           optimize->GetSampler()->GetParticleSystem()->GetTransform(
             shapeCount);
-        itk::ParticleSystem<3>::TransformType prefT =
+        itk::ParticleSystem::TransformType prefT =
           optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
         pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
         pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1006,9 +1018,9 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
         // If initial transform provided, transform cutting plane points
         if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-          itk::ParticleSystem<3>::PointType pa;
-          itk::ParticleSystem<3>::PointType pb;
-          itk::ParticleSystem<3>::PointType pc;
+          itk::ParticleSystem::PointType pa;
+          itk::ParticleSystem::PointType pb;
+          itk::ParticleSystem::PointType pc;
 
           pa[0] = a[0];
           pa[1] = a[1];
@@ -1020,10 +1032,10 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           pc[1] = c[1];
           pc[2] = c[2];
 
-          itk::ParticleSystem<3>::TransformType T =
+          itk::ParticleSystem::TransformType T =
             optimize->GetSampler()->GetParticleSystem()->GetTransform(
               shapeCount);
-          itk::ParticleSystem<3>::TransformType prefT =
+          itk::ParticleSystem::TransformType prefT =
             optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
           pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
           pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);

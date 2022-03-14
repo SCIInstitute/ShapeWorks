@@ -24,7 +24,7 @@ class LandmarkCallback : public vtkCommand {
 
   static LandmarkCallback *New() { return new LandmarkCallback; }
 
-  void Execute(vtkObject *caller, unsigned long, void *user_data) override { widget_->update_positions(); }
+  void Execute(vtkObject *caller, unsigned long, void *user_data) override { widget_->store_positions(); }
 
   void setWidget(LandmarkWidget *widget) { widget_ = widget; };
 
@@ -67,8 +67,7 @@ void LandmarkWidget::update_landmarks() {
   auto domain_names = session->get_project()->get_domain_names();
 
   for (int i = 0; i < num_points; i++) {
-    vtkPolygonalHandleRepresentation3D *rep =
-        vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
+    auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
     double xyz[3];
     int domain_id = landmarks(i, 0);
     int point_id = landmarks(i, 1);
@@ -79,10 +78,8 @@ void LandmarkWidget::update_landmarks() {
     double xyzt[3];
     auto transform = viewer_->get_landmark_transform(domain_id);
     transform->TransformPoint(xyz, xyzt);
-
     rep->SetWorldPosition(xyzt);
-
-    rep->SetLabelVisibility(session->get_show_landmarks());
+    rep->SetLabelVisibility(session->get_show_landmark_labels());
     rep->SetLabelText(definitions[domain_id][point_id].name_.c_str());
     rep->GetLabelTextActor()->GetProperty()->SetColor(1, 1, 1);
 
@@ -97,7 +94,7 @@ void LandmarkWidget::update_landmarks() {
 
     bool enabled = true;
     bool visible = definitions[domain_id][point_id].visible_;
-    if (!session->get_landmark_drag_mode()) {
+    if (!session->get_landmark_drag_mode() || !session->get_landmarks_active()) {
       enabled = false;
     }
 
@@ -118,13 +115,12 @@ void LandmarkWidget::update_landmarks() {
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::update_positions() {
+void LandmarkWidget::store_positions() {
   auto shape = viewer_->get_shape();
   auto &landmarks = shape->landmarks();
 
   for (int i = 0; i < handles_.size(); i++) {
-    vtkPolygonalHandleRepresentation3D *rep =
-        vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
+    auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handles_[i]->GetRepresentation());
 
     double position[3];
     rep->GetWorldPosition(position);
@@ -165,13 +161,12 @@ void LandmarkWidget::clear_landmarks() {
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
   auto handle = vtkSmartPointer<vtkHandleWidget>::New();
-
-  vtkPolygonalHandleRepresentation3D *rep = vtkPolygonalHandleRepresentation3D::New();
+  auto *rep = vtkPolygonalHandleRepresentation3D::New();
 
   static_cast<vtkPolygonalHandleRepresentation3D *>(rep)->SetHandle(sphere_->GetOutput());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  for (const auto &actor : viewer_->get_surface_actors()) {
+  for (const auto &actor : viewer_->get_clipped_surface_actors()) {
     point_placer->AddProp(actor);
   }
   auto shape = viewer_->get_shape();
@@ -211,7 +206,7 @@ void LandmarkWidget::assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> ha
       vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  auto actors = viewer_->get_surface_actors();
+  auto actors = viewer_->get_clipped_surface_actors();
   if (domain_id < actors.size()) {
     point_placer->AddProp(actors[domain_id]);
   }
