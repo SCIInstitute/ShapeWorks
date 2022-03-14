@@ -31,6 +31,7 @@ target_include_directories(Testing PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Testing
   GTest::Main
+  ${Boost_LIBRARIES}
   )
 set_target_properties(Testing PROPERTIES PUBLIC_HEADER
   "${Testing_headers}")

@@ -316,57 +316,21 @@ TEST(ParticlesTests, reconstructPCATest2)
   ASSERT_TRUE(success);
 }
 
-TEST(ParticlesTests, reconstructmeansurfaceTest)
+TEST(ParticlesTests, reconstructMeanSurfaceTest)
 {
+  auto temp_dir = TestUtils::Instance().get_output_dir("reconstruct_mean_surface");
   ReconstructSurface<RBFSSparseTransform> reconstructor;
-  reconstructor.setOutPrefix(std::string(TEST_DATA_DIR));
-  reconstructor.setOutPath(std::string(TEST_DATA_DIR));
+  reconstructor.setOutPrefix(temp_dir);
+  reconstructor.setOutPath(temp_dir);
   reconstructor.setNumOfParticles(128);
   reconstructor.setNumOfClusters(3);
   reconstructor.meanSurface(distanceTransformsFiles, localParticlesFiles, worldParticlesFiles);
 
-  std::vector<std::string> baselineLocalGoodBadParticlesFiles = {
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_00.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_00.local_local-bad.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_01.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_01.local_local-bad.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_02.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_local_good_bad/ellipsoid_02.local_local-bad.particles"
-  };
+  auto baseline_mesh = Mesh(std::string(TEST_DATA_DIR) + "/reconstruct_mean_surface.vtk");
+  auto compare_mesh = Mesh(temp_dir + "/_dense_rcout.vtk");
+  ASSERT_TRUE(baseline_mesh == compare_mesh);
 
-  std::vector<std::string> localGoodBadParticlesFiles = {
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_00.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_00.local_local-bad.particles",
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_01.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_01.local_local-bad.particles",
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_02.local_local-good.particles",
-  std::string(TEST_DATA_DIR) + "/local_good_bad/ellipsoid_02.local_local-bad.particles"
-  };
-
-  std::vector<std::string> baselineWorldGoodBadParticlesFiles = {
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_00.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_00.local_global-bad.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_01.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_01.local_global-bad.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_02.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/baseline_global_good_bad/ellipsoid_02.local_global-bad.particles"
-  };
-
-  std::vector<std::string> worldGoodBadParticlesFiles = {
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_00.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_00.local_global-bad.particles",
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_01.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_01.local_global-bad.particles",
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_02.local_global-good.particles",
-  std::string(TEST_DATA_DIR) + "/global_good_bad/ellipsoid_02.local_global-bad.particles"
-  };
-
-  ParticleSystem baselineLocalGoodBadParticles(baselineLocalGoodBadParticlesFiles);
-  ParticleSystem localGoodBadParticles(localGoodBadParticlesFiles);
-
-  ParticleSystem baselineWorldGoodBadParticles(baselineWorldGoodBadParticlesFiles);
-  ParticleSystem worldGoodBadParticles(worldGoodBadParticlesFiles);
-
-  ASSERT_TRUE(baselineLocalGoodBadParticles.EvaluationCompare(localGoodBadParticles) &&
-              baselineWorldGoodBadParticles.EvaluationCompare(worldGoodBadParticles));
+  auto baseline_dt = Image(std::string(TEST_DATA_DIR) + "/reconstruct_mean_surface.nrrd");
+  auto compare_dt = Image(temp_dir + "/_meanDT.nrrd");
+  ASSERT_TRUE(baseline_dt == compare_dt);
 }
