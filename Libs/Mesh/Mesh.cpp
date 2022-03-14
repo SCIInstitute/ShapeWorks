@@ -1294,6 +1294,10 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
 bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut)
 {
+  if (mesh->GetPointData()->GetArray("inout")) {
+    // clear out any old versions of the inout array or else they will get merged in
+    mesh->GetPointData()->RemoveArray("inout");
+  }
 
   // Extract mesh vertices and faces
   Eigen::MatrixXd V;
@@ -1494,7 +1498,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
 
   // Finding which half is in and which is out.
   bool halfmeshisin = true;
-  auto arr = mesh->GetPointData()->GetArray("inout"); // Check if an inout already exists
+  auto* arr = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("inout")); // Check if an inout already exists
 
   // Create half-mesh tree
   auto kdhalf_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
@@ -1538,10 +1542,11 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
     }
     // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point is in or out. Thus we set values for the scalar field.
     if (!halfmeshisin ^ ptinhalfmesh) {
-      if (arr)
-        inout->SetValue(i, std::min(1., this->getFieldValue("inout", i)));
-      else
+      if (arr) {
+        inout->SetValue(i, std::min(1., arr->GetValue(i)));
+      } else {
         inout->SetValue(i, 1.);
+      }
     }
     else {
       inout->SetValue(i, 0.);
@@ -1561,7 +1566,7 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
                                              vtkSmartPointer<vtkDoubleArray> inout,
                                              Eigen::MatrixXd V, Eigen::MatrixXi F)
 {
-  auto arr = mesh->GetPointData()->GetArray("value"); // Check if a value field already exists
+  auto* arr = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("value")); // Check if a value field already exists
 
   values->SetNumberOfComponents(1);
   values->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
@@ -1600,10 +1605,11 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
         if (distToSource[i] < std::abs(values->GetValue(i))) {
           absvalues->SetValue(i, distToSource[i]);
           if (inout->GetValue(i) == 0.) {
-            if (arr)
-              values->SetValue(i, std::max(this->getFieldValue("value", i), -distToSource[i]));
-            else
+            if (arr) {
+              values->SetValue(i, std::max<double>(arr->GetValue(i), -distToSource[i]));
+            } else {
               values->SetValue(i, -distToSource[i]);
+            }
             C(i, 0) = -distToSource[i];
             C(i, 1) = -distToSource[i];
             C(i, 2) = -distToSource[i];
