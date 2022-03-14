@@ -285,7 +285,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (constraint.getFreeformConstraint().isSet()) {
           auto& ffc = constraint.getFreeformConstraint();
           mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint());
-          mesh = Mesh(mesh.clipByField("inout", 0.0));
+          mesh = Mesh(mesh.clipByField("inout", 1.0));
         }
 
         auto poly_data = mesh.getVTKMesh();
