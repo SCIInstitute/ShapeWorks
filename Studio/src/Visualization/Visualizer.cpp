@@ -262,7 +262,7 @@ void Visualizer::handle_image_slice_settings_changed() {
 void Visualizer::update_lut() {
   int num_points = this->cached_mean_.size() / 3;
 
-  num_points = std::min<int>(num_points, 512);
+  num_points = std::max<int>(num_points, 512);
 
   this->glyph_lut_->SetNumberOfTableValues(num_points + 1);
   this->glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
