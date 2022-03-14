@@ -43,7 +43,6 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
     this->property_->SetOpacity(0.4);
     this->property_->SetLineWidth(0.1);
     this->property_->SetPointSize(3);
-    // this->property_->SetRepresentationToWireframe();
 
     this->mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
     this->mapper_->SetInputConnection(this->sphere_source_->GetOutputPort());
@@ -146,9 +145,6 @@ PaintWidget::PaintWidget() {
                                           PaintWidget::LeaveAction);
 
   this->CallbackMapper->SetCallbackMethod(vtkCommand::KeyPressEvent, 100, this, PaintWidget::KeyPressAction);
-
-  // this->CallbackMapper->SetCallbackMethod(vtkCommand::KeyReleaseEvent,
-  // 100, this, PaintWidget::KeyPressAction);
 
   this->CreateDefaultRepresentation();
 }
