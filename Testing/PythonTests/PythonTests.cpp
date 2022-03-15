@@ -3,9 +3,14 @@
 //---------------------------------------------------------------------------
 void run_use_case(const std::string& name)
 {
-  setupenv(std::string(TEST_DATA_DIR) + "/../PythonTests");
+  std::string python_test_dir = std::string(TEST_DATA_DIR) + "/../PythonTests";
+  setupenv(python_test_dir);
 
-  std::string command = "python -u " + name; // -u generates unbuffered output, shown even if crashes
+  auto temp_dir = shapeworks::TestUtils::Instance().get_output_dir(name);
+  std::cerr << "chdir to " << temp_dir << "\n";
+  chdir(temp_dir.c_str());
+
+  std::string command = "python -u " + python_test_dir + "/" + name; // -u generates unbuffered output, shown even if crashes
   ASSERT_FALSE(system(command.c_str()));
 }
 
