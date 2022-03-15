@@ -182,7 +182,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_recent_files();
   void update_alignment_options();
 
-  void save_project(std::string filename);
+  void save_project(QString filename);
 
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);

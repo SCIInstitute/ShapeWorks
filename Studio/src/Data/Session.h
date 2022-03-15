@@ -44,7 +44,7 @@ class Session : public QObject {
   void set_parent(QWidget* parent);
 
   /// save project to file
-  bool save_project(std::string filename);
+  bool save_project(QString filename);
 
   /// load project from file
   bool load_project(QString filename);

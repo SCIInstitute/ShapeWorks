@@ -283,12 +283,11 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
     handle_message("No project");
   }
 
-  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
-
   QProcess process;
   process.setReadChannelMode(QProcess::MergedChannels);
 
 #ifdef _WIN32
+  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
   qstring_path = qstring_path.replace(QString("/"), QString("\\"));
   process.start("explorer.exe", QStringList() << qstring_path);
 #else
@@ -306,7 +305,7 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
   if (session_->get_filename() == "") {
     return on_action_save_project_as_triggered();
   } else {
-    save_project(session_->get_filename().toStdString());
+    save_project(session_->get_filename());
   }
   return true;
 }
@@ -326,7 +325,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
 
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  save_project(filename.toStdString());
+  save_project(filename);
 
   preferences_.add_recent_file(filename, QDir::currentPath());
   update_recent_files();
@@ -1655,7 +1654,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::save_project(std::string filename) {
+void ShapeWorksStudioApp::save_project(QString filename) {
   session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
 
   session_->parameters().set("notes", data_tool_->get_notes());

@@ -90,8 +90,7 @@ void Session::calculate_reconstructed_samples() {
 void Session::set_parent(QWidget* parent) { this->parent_ = parent; }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname) {
-  QString filename = QString::fromStdString(fname);
+bool Session::save_project(QString filename) {
   if (filename == "") {
     filename = this->filename_;
   }
@@ -1111,7 +1110,7 @@ void Session::set_tool_state(string state) {
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
-  ffc_paint_mode_changed();
+  Q_EMIT ffc_paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
