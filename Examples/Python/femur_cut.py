@@ -3,19 +3,16 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-This use case is similar to the femur use case except instead of clipping femurs,
-cutting planes are used as an optimization constraint.
+This use case demonstrates optimizing on meshes with alignment transforms and cutting planes.
 The femur data set is comprised of segmented meshes of femurs and corresponding CT
 images that are not segmented.
-The full images can be carried through every step of grooming.
 """
 import os
+import json
 import glob
 import subprocess
 import numpy as np
 import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -71,10 +68,10 @@ def Run_Pipeline(args):
         Step 2: GROOMING
         The required grooming steps are:
         1. Apply smoothing and remeshing and save groomed meshes
-        2. Find reflection tansfrom
-        3. Select reference mesh
-        4. Find rigid alignment transform
-        Option to groom corresponding images (includes applying transforms)
+        2. Apply clipping with planes for finding alignment transform
+        3. Find reflection tansfrom
+        4. Select reference mesh
+        5. Find rigid alignment transform
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
         """
@@ -114,7 +111,19 @@ def Run_Pipeline(args):
         center_translations = []
         for mesh, name in zip(mesh_list, names):
             """
-            Grooming Step 2: Get reflection transform - We have left and 
+            Grooming step 2: Apply clipping for finsing alignment transform
+            """
+            # Load plane
+            for plane_file in plane_files:
+                if name in plane_file:
+                    corresponding_plane_file = plane_file
+            with open(corresponding_plane_file) as json_file:
+                plane = json.load(json_file)['planes'][0]['points']
+            # Clip mesh
+            print("Clipping: " + name)
+            mesh.clip(plane[0], plane[1], plane[2])
+            """
+            Grooming Step 3: Get reflection transform - We have left and 
             right femurs, so we reflect the non-reference side meshes 
             so that all of the femurs can be aligned.
             """
@@ -126,7 +135,7 @@ def Run_Pipeline(args):
             reflections.append(reflection)
 
         """
-        Grooming Step 3: Select a reference
+        Grooming Step 4: Select a reference
         This step requires loading all of the meshes at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
@@ -140,7 +149,7 @@ def Run_Pipeline(args):
         rigid_transforms = [] # save in case grooming images
         for mesh, name in zip(mesh_list, names):
             """
-            Grooming Step 4: Rigid alignment
+            Grooming Step 5: Rigid alignment
             This step rigidly aligns each shape to the selected reference. 
             """
             print('Creating alignment transform from ' + name + ' to ' + ref_name)
@@ -206,7 +215,7 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
@@ -215,7 +224,15 @@ def Run_Pipeline(args):
         "verbosity" : 0,
         "use_statistics_in_init" : 0,
         "adaptivity_mode": 0
-    }  
+    } 
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["use_shape_statistics_after"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
@@ -224,8 +241,10 @@ def Run_Pipeline(args):
     spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
+    # Run optimization
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
+    # Analyze - open in studio
     AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     subprocess.check_call(AnalysisCmd)
