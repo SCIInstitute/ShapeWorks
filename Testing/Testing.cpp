@@ -33,6 +33,9 @@ TestUtils::~TestUtils() {
   if (!temp_base_.empty() && !should_keep_dir()) {
     boost::filesystem::remove_all(temp_base_);
   }
+  if (should_keep_dir()) {
+    std::cerr << "Test output left in: " << temp_base_ << "\n";
+  }
 }
 
 //-----------------------------------------------------------------------------
