@@ -94,10 +94,10 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 1024,
         "use_normals": 1,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 150,
+        "iterations_per_split": 300,
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
@@ -109,7 +109,7 @@ def Run_Pipeline(args):
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "geodesics_enabled": 1,
+        "use_geodesic_distance": 1,
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:

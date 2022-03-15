@@ -10,6 +10,7 @@ import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
 import subprocess
+import numpy as np
 from ShapeCohortGen.CohortGenerator import Supershapes2DCohortGenerator
 
 def Run_Pipeline(args):
@@ -56,6 +57,8 @@ def Run_Pipeline(args):
         subject.set_segmentation_filenames(rel_files)
         #groomed file is same as input file
         subject.set_groomed_filenames(rel_files)
+        transform = [ np.eye(4).flatten() ]
+        subject.set_groomed_transforms(transform)
         subjects.append(subject)
 
     project = sw.Project()
@@ -67,8 +70,7 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles" : 64,
         "use_normals": 0,
-        "normal_weight": 0.0,
-        "checkpointing_interval" : 5000,
+        "normals_strength": 0.0,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 100,
         "optimization_iterations" : 500,
@@ -78,11 +80,13 @@ def Run_Pipeline(args):
         "domains_per_shape" : 1,
         "relative_weighting" : 5,
         "initial_relative_weighting" : 0.1,
+        "procrustes" : 1,
         "procrustes_interval" : 2,
-        "procrustes_scaling" : 0,
+        "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "verbosity" : 0,
-        "use_shape_statistics_after": 4,
+        "verbosity" : 5,
+        "multiscale": 1,
+        "multiscale_particles": 4,
       }
 
     """
@@ -90,7 +94,7 @@ def Run_Pipeline(args):
     """
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('contour'))
+    # parameters.set("domain_type",sw.Variant('contour'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/supershapes_1mode_contour_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
