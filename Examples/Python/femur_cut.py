@@ -215,7 +215,7 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
@@ -224,7 +224,15 @@ def Run_Pipeline(args):
         "verbosity" : 0,
         "use_statistics_in_init" : 0,
         "adaptivity_mode": 0
-    }  
+    } 
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["use_shape_statistics_after"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
