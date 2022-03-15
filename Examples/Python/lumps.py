@@ -77,7 +77,7 @@ def Run_Pipeline(args):
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
-     # Create spreadsheet
+    # Create spreadsheet
     project_location = output_directory + "shape_models/"
     subjects = []
     number_domains = 1
@@ -88,9 +88,6 @@ def Run_Pipeline(args):
         subject.set_segmentation_filenames(rel_mesh_files)
         #groomed file is same as input file
         subject.set_groomed_filenames(rel_mesh_files)
-        #dataset already groomed so transform is identity
-        transform = [ np.eye(4).flatten() ]
-        subject.set_groomed_transforms(transform)
         subjects.append(subject)
 
     project = sw.Project()
