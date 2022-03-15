@@ -71,6 +71,7 @@ def Run_Pipeline(args):
     print(str(len(train_mesh_files))+" in train set, "+str(len(val_mesh_files))+
             " in validation set, and "+str(len(test_mesh_files))+" in test set")
 
+
     print("\nStep 3. Find Training Mesh Transforms")
     # TODO - pass planes instead of clipped meshes
     """
@@ -88,6 +89,7 @@ def Run_Pipeline(args):
     train_mesh_list = []
     train_names = []
     train_reflections = [] 
+    train_plane_files = []
     print("Loading meshes and finding reflection transforms...")
     for train_mesh_file in train_mesh_files:
         # Get name
@@ -100,15 +102,11 @@ def Run_Pipeline(args):
         for plane_file in plane_files:
             if train_name in plane_file:
                 corresponding_plane_file = plane_file
+        train_plane_files.append(corresponding_plane_file)
         with open(corresponding_plane_file) as json_file:
             plane = json.load(json_file)['planes'][0]['points']
         # Clip meshes
         train_mesh.clip(plane[0], plane[1], plane[2])
-    # TODO - remove  Write groomed meshes
-    print("Writing groomed meshes.")
-    groomed_mesh_files = sw.utils.save_meshes(data_dir + 'groomed_meshes/', train_mesh_list,
-                            train_names, extension='vtk', compressed=False, verbose=False)
-    for train_mesh, train_name in zip(train_mesh_list, train_names):
         # Find reflection transform if needed
         train_reflection = np.eye(4) # Identity
         if ref_side in train_name:
@@ -222,9 +220,15 @@ def Run_Pipeline(args):
         itk_transform_matrix = np.eye(4)
         itk_transform_matrix[:3,:3] = rotation_matrix
         itk_transform_matrix[-1,:3] = translation
-        vtk_tranform_matrix = sw.utils.getVTKtransform(itk_transform_matrix)
-        os.remove("temp.txt")
-        return vtk_tranform_matrix
+        # debug
+        ref_image = sw.Image(fixed_image_file)
+        sw.Image(moving_image_file).applyTransform(itk_transform_matrix,
+                             ref_image.origin(),  ref_image.dims(),
+                             ref_image.spacing(), ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False).write(out_image_file.replace(".nrrd","2.nrrd"))
+        vtk_transform_matrix = sw.utils.getVTKtransform(itk_transform_matrix)
+        # os.remove("temp.txt")
+        return vtk_transform_matrix
     # Get reference
     ref_image_file = data_dir + 'reference_image.nrrd'
     ref_image = sw.Image(ref_image_file)
@@ -270,7 +274,7 @@ def Run_Pipeline(args):
         # Get rigid transform from image registration and apply
         # Roughly align, roughly crop, then realign
         print("Finding rigid transform for: " + vt_name)
-        rigid_transform = rigid_image_registration_transform(ref_image_file, vt_image_file, vt_image_file)
+        rigid_transform1 = rigid_image_registration_transform(ref_image_file, vt_image_file, vt_image_file)
         # vt_image = sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
         # rigid_transform2 = rigid_image_registration_transform(cropped_ref_image_file, vt_image_file, vt_image_file)
         # Crop
@@ -280,90 +284,110 @@ def Run_Pipeline(args):
         translation_marix[:3,-1] = translation
         transform = np.matmul(translation_marix, reflection)
         transform = np.matmul(rigid_transform1, transform)
+        # transform = np.matmul(rigid_transform2, transform)
         val_test_transforms.append(transform)
-        np.save(val_test_transforms_dir, transform)
+        np.save(val_test_transforms_dir + ID + '.npy', transform)        
 
-    # Debug
-    groomed_meshes = []
-    names = []
-    for mesh_file, transform in zip(train_mesh_files, train_transforms):
-    	names.append(mesh_file.split('/')[-1])
-    	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    m_files = sw.utils.save_meshes(data_dir + 'train_meshes/', groomed_meshes, names)
-    groomed_meshes = []
-    names = []
-    for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
-    	names.append(mesh_file.split('/')[-1])
-    	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    m_files = sw.utils.save_meshes(data_dir + 'val_test_meshes/', groomed_meshes, names)
+    # # debug
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(train_mesh_files, train_transforms):
+    # 	names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    # 	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_train_meshes/', groomed_meshes, names)
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
+    # 	names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    # 	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_val_test_meshes/', groomed_meshes, names)
 
 
-    # # print("\nStep 6. Optimize Training Particles")
-    # # """
-    # # Step 6: OPTIMIZE - Particle based optimization on training meshes
-    # # Local particles will be in alignment with original images and meshes
-    # # World particles would be in alignment with groomed images from the previous
-    # # step if Procrustes was set to off
-    # # Visit this link for more information about optimization: 
-    # # http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    # # """
-    # # # Create spreadsheet
-    # # subjects = []
-    # # for i in range(len(train_mesh_list)):
-    # #     subject = sw.Subject()
-    # #     subject.set_number_of_domains(1)
-    # #     subject.set_segmentation_filenames([train_mesh_files[i]])
-    # #     subject.set_groomed_filenames([train_mesh_files[i]])
-    # #     subject.set_groomed_transforms([train_transforms[i].flatten()])
-    # #     subjects.append(subject)
-    # # project = sw.Project()
-    # # project.set_subjects(subjects)
-    # # parameters = sw.Parameters()
-    # # # Create a dictionary for all the parameters required by optimization
-    # # parameter_dictionary = {
-    # #     "number_of_particles" : 512,
-    # #     "use_normals": 0,
-    # #     "normal_weight": 10.0,
-    # #     "checkpointing_interval" : 200,
-    # #     "keep_checkpoints" : 0,
-    # #     "iterations_per_split" : 1000,
-    # #     "optimization_iterations" : 500,
-    # #     "starting_regularization" : 100,
-    # #     "ending_regularization" : 0.1,
-    # #     "recompute_regularization_interval" : 2,
-    # #     "domains_per_shape" : 1,
-    # #     "relative_weighting" : 10,
-    # #     "initial_relative_weighting" : 0.01,
-    # #     "procrustes_interval" : 1,
-    # #     "procrustes_scaling" : 1,
-    # #     "save_init_splits" : 1,
-    # #     "debug_projection" : 0,
-    # #     "verbosity" : 0,
-    # #     "use_statistics_in_init" : 0,
-    # #     "adaptivity_mode": 0
-    # # }  
-    # # # Set params and save spreadsheet
-    # # for key in parameter_dictionary:
-    # #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    # # parameters.set("domain_type",sw.Variant('mesh'))
-    # # project.set_parameters("optimze",parameters)
-    # # spreadsheet_file = data_dir + "train_optimize.xlsx"
-    # # project.save(spreadsheet_file)
-    # # # Optimize 
-    # # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    # # subprocess.check_call(optimizeCmd)
-    # # # Analyze
-    # # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # # subprocess.check_call(AnalysisCmd)
-    # # # Get lists of particle files
-    # # train_particle_dir = data_dir+"train_optimize_particles/"
-    # # train_world_particle_files = []
-    # # train_local_particle_files = []
-    # # for file in sorted(os.listdir(train_particle_dir)):
-    # #     if "local.particles" in file:
-    # #         train_local_particle_files.append(train_particle_dir + file)
-    # #     elif "world.particles" in file:
-    # #         train_world_particle_files.append(train_particle_dir + file)
+    print("\nStep 6. Optimize Training Particles")
+    """
+    Step 6: OPTIMIZE - Particle based optimization on training meshes
+    Local particles will be in alignment with original images and meshes
+    World particles would be in alignment with groomed images from the previous
+    step if Procrustes was set to off
+    Visit this link for more information about optimization: 
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
+    # Make directory to save optimization output
+    point_dir = data_dir + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
+
+    # Create spreadsheet
+    project_location = data_dir + "shape_models/"
+    subjects = []
+    number_domains = 1
+    # Create spreadsheet
+    subjects = []
+    for i in range(len(train_mesh_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(1)
+        rel_mesh_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
+        subject.set_segmentation_filenames(rel_mesh_files)
+        rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_files)
+        transform = [ train_transforms[i].flatten() ]
+        subject.set_groomed_transforms(transform)
+        rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
+        subject.set_constraints_filenames(rel_plane_files)
+        subjects.append(subject)
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+    # Create a dictionary for all the parameters required by optimization
+ # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+        "number_of_particles" : 512,
+        "use_normals": 0,
+        "normal_weight": 10.0,
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 1000,
+        "optimization_iterations" : 500,
+        "starting_regularization" : 100,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "relative_weighting" : 10,
+        "initial_relative_weighting" : 0.1,
+        "procrustes" : 0,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 1,
+        "debug_projection" : 0,
+        "verbosity" : 0,
+        "use_statistics_in_init" : 0,
+        "adaptivity_mode": 0,
+        "use_shape_statistics_after":64
+    } 
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = data_dir + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
+
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
+
+    # Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)
+
+    # Get lists of particle files
+    train_particle_dir = data_dir+"train_optimize_particles/"
+    train_world_particle_files = []
+    train_local_particle_files = []
+    for file in sorted(os.listdir(train_particle_dir)):
+        if "local.particles" in file:
+            train_local_particle_files.append(train_particle_dir + file)
+        elif "world.particles" in file:
+            train_world_particle_files.append(train_particle_dir + file)
 
 
     # print("\nStep 7. Optimize Validation and Test Particles Using Fixed Domain")
