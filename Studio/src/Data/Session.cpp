@@ -1111,6 +1111,7 @@ void Session::set_tool_state(string state) {
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
+  ffc_paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1144,7 +1145,7 @@ void Session::set_ffc_paint_active(bool enabled) {
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_ffc_paint_active() { return ffc_painting_active_; }
+bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
