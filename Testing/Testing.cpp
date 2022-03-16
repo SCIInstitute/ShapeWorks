@@ -31,7 +31,12 @@ TestUtils::TestUtils() {}
 //-----------------------------------------------------------------------------
 TestUtils::~TestUtils() {
   if (!temp_base_.empty() && !should_keep_dir()) {
-    boost::filesystem::remove_all(temp_base_);
+    try {
+      boost::filesystem::remove_all(temp_base_);
+    } catch (std::exception &e) {
+      std::cerr << "Error removing test output directory: " << temp_base_ << "\n";
+      std::cerr << "Error: " << e.what();
+    }
   }
   if (should_keep_dir()) {
     std::cerr << "Test output left in: " << temp_base_ << "\n";
