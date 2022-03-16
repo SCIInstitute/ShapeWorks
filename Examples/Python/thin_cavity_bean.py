@@ -118,7 +118,8 @@ def Run_Pipeline(args):
         parameter_dictionary["iterations_per_split"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
