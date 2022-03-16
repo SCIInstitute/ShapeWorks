@@ -1,4 +1,3 @@
-# from shapeworks import ParticleSystem
 import shapeworks as sw
 import numpy as np
 from hotelling.stats import hotelling_t2
@@ -7,7 +6,7 @@ from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 from scipy import stats
-import matplotlib.pyplot as plt
+
 '''
 This function calculates the p-values per correspondence point for the group difference.
 Input are:
