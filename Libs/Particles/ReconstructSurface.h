@@ -107,14 +107,14 @@ private:
   bool pairwiseNormalsDiffForGoodBad = false;
   bool meanBeforeWarp = true;
   bool enableOutput = true;
-  int modeIndex;
-  int numOfModes;
-  int numOfSamplesPerMode;
-  int numOfParticles;
-  int numOfClusters;
-  float maxStdDev;
-  float maxVarianceCaptured;
-  float maxAngleDegrees;
+  int modeIndex = -1;
+  int numOfModes = -1;
+  int numOfSamplesPerMode = -1;
+  int numOfParticles = -1;
+  int numOfClusters = -1;
+  float maxStdDev = 0;
+  float maxVarianceCaptured = 0;
+  float maxAngleDegrees = 0;
 
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);

@@ -58,6 +58,7 @@ def pcamodesTestThinPlateSpline():
   reconstructor.setNumOfParticles(128)
   reconstructor.setNumOfModes(1)
   reconstructor.setNumOfSamplesPerMode(3)
+  reconstructor.setMaxStdDev(5)
   reconstructor.samplesAlongPCAModes(worldParticles)
 
   baselineDenseMesh1 = Mesh(os.environ["DATA"] + "/reconstruct_pca_python/tps_mode-00_sample-000_dense.vtk")
