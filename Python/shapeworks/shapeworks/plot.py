@@ -475,6 +475,7 @@ def visualize_reconstruction(save_dir):
 def lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,lda_dir,labels):
 
     plt.figure(dpi=50,figsize=(14,14))
+    fig = plt.gcf()
     plt.rcParams['font.size'] = '20'
     group1_num = len(group1_map)
     group2_num = len(group2_map)
@@ -487,6 +488,7 @@ def lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,lda_d
     plt.xlabel('Shape mapping to linear discrimination of variation between population means')
     plt.legend(loc='upper right')
     plt.savefig(lda_dir+"/LDA.png")
-    plt.show()
+    plt.close(fig)
 
-    plt.close()
+    print("Figure saved in directory -" + lda_dir)
+    print()

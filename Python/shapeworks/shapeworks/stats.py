@@ -141,4 +141,4 @@ def lda(data):
 
     group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
     group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
-    return group1_x,group2_x,group1_pdf,group2_pdf,group1_num,group2_num,group1_map,group2_map
+    return group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map

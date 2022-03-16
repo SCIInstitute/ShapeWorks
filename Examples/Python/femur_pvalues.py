@@ -31,5 +31,5 @@ def Run_Pipeline(args):
     np.savetxt(filename, pvalues)
 
     print("Performing LDA")
-    group1_x,group2_x,group1_pdf,group2_pdf,group1_num,group2_num,group1_map,group2_map = sw.stats.lda(data)
+    group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map = sw.stats.lda(data)
     sw.plot.lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,output_directory,['Femur Pathology','Femur Control'])
