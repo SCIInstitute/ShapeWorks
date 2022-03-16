@@ -376,8 +376,8 @@ bool Constraints::isAnyViolated(const Point3 &pos) {
       return true;
     }
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    if (freeFormConstraints_[i].isViolated(pt)) {
+  if (freeFormConstraint_.getMesh()) {
+    if (freeFormConstraint_.isViolated(pt)) {
       return true;
     }
   }
@@ -403,10 +403,6 @@ void Constraints::printAll() {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].print();
   }
-  std::cout << "Cutting Free form constraints " << freeFormConstraints_.size() << std::endl;
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].print();
-  }
 }
 
 std::string Constraints::violationReport(const Point3 &pos) {
@@ -426,16 +422,16 @@ std::string Constraints::violationReport(const Point3 &pos) {
       stream << "Sphere " << i << "/" << planeConstraints_.size() << ": " << sphereConstraints_[i].constraintEval(pt)
              << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1).transpose() << std::endl;
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    if (freeFormConstraints_[i].constraintEval(pt) > 0)
-      stream << "FreeForm " << i << "/" << planeConstraints_.size() << ": "
-             << freeFormConstraints_[i].constraintEval(pt) << " gradient(c=1) "
-             << freeFormConstraints_[i].lagragianGradient(pt, 1).transpose() << std::endl;
+  if (freeFormConstraint_.getMesh()) {
+    if (freeFormConstraint_.constraintEval(pt) > 0)
+      stream << "FreeForm " << ": "
+             << freeFormConstraint_.constraintEval(pt) << " gradient(c=1) "
+             << freeFormConstraint_.lagragianGradient(pt, 1).transpose() << std::endl;
   }
   return stream.str();
 }
 
-std::vector<std::vector<double> > Constraints::violationReportData(const Point3 &pos) {
+std::vector<std::vector<double>> Constraints::violationReportData(const Point3 &pos) {
   std::vector<std::vector<double> > alls;
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -453,8 +449,8 @@ std::vector<std::vector<double> > Constraints::violationReportData(const Point3 
   }
   alls.push_back(sp);
   std::vector<double> ff;
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    ff.push_back(freeFormConstraints_[i].constraintEval(pt));
+  if (freeFormConstraint_.readyForOptimize()) {
+    ff.push_back(freeFormConstraint_.constraintEval(pt));
   }
   alls.push_back(ff);
   return alls;
@@ -472,8 +468,8 @@ vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3 &pos) 
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     grad -= sphereConstraints_[i].constraintGradient(pt);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    grad -= freeFormConstraints_[i].constraintGradient(pt);
+  if (freeFormConstraint_.readyForOptimize()) {
+    grad -= freeFormConstraint_.constraintGradient(pt);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
@@ -503,8 +499,8 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     grad += sphereConstraints_[i].lagragianGradient(prept, pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    grad += freeFormConstraints_[i].lagragianGradient(pt, C);
+  if (freeFormConstraint_.readyForOptimize()) {
+    grad += freeFormConstraint_.lagragianGradient(pt, C);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
@@ -527,10 +523,10 @@ void Constraints::InitializeLagrangianParameters(double lambda, double mu, doubl
     sphereConstraints_[i].setMu(mu);
     sphereConstraints_[i].setZ(z);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].setLambda(lambda);
-    freeFormConstraints_[i].setMu(mu);
-    freeFormConstraints_[i].setZ(z);
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.setLambda(lambda);
+    freeFormConstraint_.setMu(mu);
+    freeFormConstraint_.setZ(z);
   }
 }
 
@@ -546,8 +542,8 @@ void Constraints::UpdateZs(const Point3 &pos, double C) {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].updateZ(pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].updateZ(pt, C);
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.updateZ(pt, C);
   }
 }
 
@@ -563,16 +559,15 @@ void Constraints::UpdateMus(const Point3 &pos, double C) {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].updateMu(pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].updateMu(pt, C);
+
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.updateMu(pt, C);
   }
 }
 
 //-----------------------------------------------------------------------------
 void Constraints::addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh) {
-  FreeFormConstraint ffc;
-  ffc.setMesh(mesh);
-  this->freeFormConstraints_.push_back(ffc);
+  freeFormConstraint_.setMesh(mesh);
   active_ = true;
 }
 

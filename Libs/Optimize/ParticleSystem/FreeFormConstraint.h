@@ -20,6 +20,8 @@ class FreeFormConstraint : public Constraint {
 
   std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
 
+  bool readyForOptimize() const;
+
   bool isViolated(const Eigen::Vector3d &pt) const override;
 
   void print() const override { std::cout << "FF" << std::endl; }
