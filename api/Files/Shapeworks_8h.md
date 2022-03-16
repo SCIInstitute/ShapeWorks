@@ -59,8 +59,11 @@ using Plane         = vtkSmartPointer<vtkPlane>;
 // explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
+using PointArray    = std::vector<Point3>;
 
 Vector3 makeVector(std::array<double, 3>&& arr);
+
+PointArray makePointArray(int size, Point3 value);
 
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
@@ -286,4 +289,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 -------------------------------
 
-Updated on 2022-03-16 at 15:32:09 +0000
+Updated on 2022-03-16 at 19:03:09 +0000

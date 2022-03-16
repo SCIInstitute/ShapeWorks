@@ -820,6 +820,10 @@
 <td><strong><a href="namespaceshapeworks.html#using-field">Field</a></strong></td>
 </tr>
 <tr>
+<td>using std::vector&lt; Point3 &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-pointarray">PointArray</a></strong></td>
+</tr>
+<tr>
 <td>using itk::Transform&lt; double, 3 &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#using-generictransform">GenericTransform</a></strong> <br>All transforms can be accessed using a generic transform pointer.</td>
 </tr>
@@ -1273,6 +1277,10 @@
 <tr>
 <td>Vector3</td>
 <td><strong><a href="namespaceshapeworks.html#function-makevector">makeVector</a></strong>(std::array&lt; double, 3 &gt; &amp;&amp; arr)<br>Enables <code>makeVector({1,2,3});</code>, construction using an initializer list (likely an accidental omission in current ITK version)</td>
+</tr>
+<tr>
+<td>PointArray</td>
+<td><strong><a href="namespaceshapeworks.html#function-makepointarray">makePointArray</a></strong>(int size, Point3 value)</td>
 </tr>
 <tr>
 <td>TransformPtr</td>
@@ -1868,6 +1876,9 @@
 </code></pre></div>
 <h3 id="using-field">using Field</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">Array</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-pointarray">using PointArray</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">PointArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="using-generictransform">using GenericTransform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Transform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
@@ -2476,6 +2487,12 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Enables <code>makeVector({1,2,3});</code>, construction using an initializer list (likely an accidental omission in current ITK version) </p>
+<h3 id="function-makepointarray">function makePointArray</h3>
+<div class="highlight"><pre><span></span><code><span class="n">PointArray</span><span class="w"> </span><span class="n">makePointArray</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point3</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-createtransform">function createTransform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">TransformPtr</span><span class="w"> </span><span class="n">createTransform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span><span class="p">,</span><span class="w"></span>
@@ -2919,7 +2936,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-03-16 at 15:32:07 +0000</p>
+<p>Updated on 2022-03-16 at 19:03:08 +0000</p>
               
             </div>
           </div>

@@ -42,15 +42,17 @@ class VectorImage
 public:
 
   using GradientImageFilter = itk::GradientImageFilter<Image::ImageType>;
-  using ImageType = GradientImageFilter::OutputImageType;
+  using ImageType = itk::Image<Covariant, 3>;
   using GradientInterpolator = itk::VectorLinearInterpolateImageFunction<
     ImageType, typename Image::PixelType>;
+  using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   VectorImage(const Image& dt_img);
   VectorImage() = delete;
   ~VectorImage() = default;
 
   Vector evaluate(Point p) { return toVector(interpolator->Evaluate(p)); }
+  ImageIterator setIterator();
 
 private:
   itk::SmartPointer<ImageType> image;
@@ -63,4 +65,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-16 at 15:32:09 +0000
+Updated on 2022-03-16 at 19:03:09 +0000

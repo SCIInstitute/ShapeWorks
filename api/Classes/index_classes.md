@@ -41,7 +41,6 @@ title: Classes
 * **class [FEVTKExport](../Classes/classFEVTKExport.md)** 
 * **class [FEVTKimport](../Classes/classFEVTKimport.md)** 
 * **class [GLCOLOR](../Classes/classGLCOLOR.md)** 
-* **class [InputParams](../Classes/classInputParams.md)** 
 * **struct [Intersection](../Classes/structIntersection.md)** 
 * **class [LegacyMeshGenerator](../Classes/classLegacyMeshGenerator.md)** 
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
@@ -242,4 +241,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-03-16 at 15:32:09 +0000
+Updated on 2022-03-16 at 19:03:10 +0000

@@ -22,6 +22,7 @@ title: shapeworks::Image
 | using float | **[PixelType](../Classes/classshapeworks_1_1Image.md#using-pixeltype)**  |
 | using itk::Image< PixelType, 3 > | **[ImageType](../Classes/classshapeworks_1_1Image.md#using-imagetype)**  |
 | using itk::StatisticsImageFilter< ImageType >::Pointer | **[StatsPtr](../Classes/classshapeworks_1_1Image.md#using-statsptr)**  |
+| using itk::ImageRegionIterator< ImageType > | **[ImageIterator](../Classes/classshapeworks_1_1Image.md#using-imageiterator)**  |
 
 ## Public Functions
 
@@ -43,6 +44,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator+=](../Classes/classshapeworks_1_1Image.md#function-operator+=)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator-](../Classes/classshapeworks_1_1Image.md#function-operator-)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>minus operator to add two images  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator-=](../Classes/classshapeworks_1_1Image.md#function-operator-=)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) |
+| [Image](../Classes/classshapeworks_1_1Image.md) | **[operator*](../Classes/classshapeworks_1_1Image.md#function-operator*)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>multiply operator to multiply two images  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator*](../Classes/classshapeworks_1_1Image.md#function-operator*)**(const PixelType x) const<br>multiply operator to scale contents of an image  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator*=](../Classes/classshapeworks_1_1Image.md#function-operator*=)**(const PixelType x) |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator/](../Classes/classshapeworks_1_1Image.md#function-operator/)**(const PixelType x) const<br>divide operator to scale contents of an image  |
@@ -104,6 +106,7 @@ title: shapeworks::Image
 | [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region) const<br>converts a bounding box in physical space to this image's logical (index) coordinates  |
 | Point3 | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**(const Coord & c) const<br>converts from pixel coordinates to physical space  |
 | Coord | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
+| ImageIterator | **[setIterator](../Classes/classshapeworks_1_1Image.md#function-setiterator)**()<br>creates an image iterator and returns it  |
 | bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
@@ -154,6 +157,13 @@ using shapeworks::Image::ImageType =  itk::Image<PixelType, 3>;
 
 ```cpp
 using shapeworks::Image::StatsPtr =  itk::StatisticsImageFilter<ImageType>::Pointer;
+```
+
+
+### using ImageIterator
+
+```cpp
+using shapeworks::Image::ImageIterator =  itk::ImageRegionIterator<ImageType>;
 ```
 
 
@@ -303,6 +313,16 @@ Image & operator-=(
 )
 ```
 
+
+### function operator*
+
+```cpp
+Image operator*(
+    const Image & other
+) const
+```
+
+multiply operator to multiply two images 
 
 ### function operator*
 
@@ -914,6 +934,14 @@ Coord physicalToLogical(
 
 converts from a physical coordinate to a logical coordinate 
 
+### function setIterator
+
+```cpp
+ImageIterator setIterator()
+```
+
+creates an image iterator and returns it 
+
 ### function compare
 
 ```cpp
@@ -969,4 +997,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-03-16 at 15:32:09 +0000
+Updated on 2022-03-16 at 19:03:09 +0000

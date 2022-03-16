@@ -139,6 +139,7 @@ title: shapeworks
 | using vtkSmartPointer< vtkPlane > | **[Plane](../Namespaces/namespaceshapeworks.md#using-plane)**  |
 | using vtkSmartPointer< vtkDataArray > | **[Array](../Namespaces/namespaceshapeworks.md#using-array)**  |
 | using Array | **[Field](../Namespaces/namespaceshapeworks.md#using-field)**  |
+| using std::vector< Point3 > | **[PointArray](../Namespaces/namespaceshapeworks.md#using-pointarray)**  |
 | using itk::Transform< double, 3 > | **[GenericTransform](../Namespaces/namespaceshapeworks.md#using-generictransform)** <br>All transforms can be accessed using a generic transform pointer.  |
 | using itk::IdentityTransform< double, 3 > | **[IdentityTransform](../Namespaces/namespaceshapeworks.md#using-identitytransform)**  |
 | using GenericTransform::Pointer | **[TransformPtr](../Namespaces/namespaceshapeworks.md#using-transformptr)**  |
@@ -255,6 +256,7 @@ title: shapeworks
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & region) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & region) |
 | Vector3 | **[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)**(std::array< double, 3 > && arr)<br>Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)  |
+| PointArray | **[makePointArray](../Namespaces/namespaceshapeworks.md#function-makepointarray)**(int size, Point3 value) |
 | TransformPtr | **[createTransform](../Namespaces/namespaceshapeworks.md#function-createtransform)**(const Matrix33 & mat, const Vector3 & translate =makeVector({0, 0, 0})) |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p, const Vector3 & n)<br>Make a plane.  |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p0, const Point & p1, const Point & p2) |
@@ -533,6 +535,13 @@ using shapeworks::Array = typedef vtkSmartPointer<vtkDataArray>;
 
 ```cpp
 using shapeworks::Field = typedef Array;
+```
+
+
+### using PointArray
+
+```cpp
+using shapeworks::PointArray = typedef std::vector<Point3>;
 ```
 
 
@@ -1589,6 +1598,16 @@ Vector3 makeVector(
 
 Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version) 
 
+### function makePointArray
+
+```cpp
+PointArray makePointArray(
+    int size,
+    Point3 value
+)
+```
+
+
 ### function createTransform
 
 ```cpp
@@ -2314,4 +2333,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-03-16 at 15:32:07 +0000
+Updated on 2022-03-16 at 19:03:08 +0000

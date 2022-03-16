@@ -362,7 +362,39 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-getmesh">getMesh</a></strong>(std::vector&lt; Point3 &gt; localPoints)</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-getmesh">getMesh</a></strong>(PointArray localPoints)</td>
+</tr>
+<tr>
+<td>Mesh::MeshPoints</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-converttoimagecoordinates">convertToImageCoordinates</a></strong>(Mesh::MeshPoints particles, const Vector &amp; spacing, const Point3 &amp; origin)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computemedianshape">computeMedianShape</a></strong>(std::vector&lt; Eigen::MatrixXd &gt; &amp; shapeList)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-performkmeansclustering">performKMeansClustering</a></strong>(std::vector&lt; PointArray &gt; worldPoints, int numberOfParticles, std::vector&lt; int &gt; &amp; centroidIndices)</td>
+</tr>
+<tr>
+<td>Eigen::MatrixXd</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computeparticlesnormals">computeParticlesNormals</a></strong>(vtkSmartPointer&lt; vtkPoints &gt; particles, <a href="classshapeworks_1_1Image.html">Image</a> dt)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-getdensemean">getDenseMean</a></strong>(std::vector&lt; PointArray &gt; localPoints, std::vector&lt; PointArray &gt; worldPoints, std::vector&lt; std::string &gt; distance_transform)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computedensemean">computeDenseMean</a></strong>(std::vector&lt; PointArray &gt; localPoints, std::vector&lt; PointArray &gt; worldPoints, std::vector&lt; std::string &gt; distanceTransform)</td>
+</tr>
+<tr>
+<td>std::vector&lt; PointArray &gt;</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computesparsemean">computeSparseMean</a></strong>(std::vector&lt; PointArray &gt; localPoints, Point3 commonCenter)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-writemeaninfo">writeMeanInfo</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -374,11 +406,35 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-meansurface">meanSurface</a></strong>(const std::vector&lt; std::string &gt; distanceTransformFiles, const std::vector&lt; std::string &gt; localPointsFiles, const std::vector&lt; std::string &gt; worldPointsFiles)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setoutprefix">setOutPrefix</a></strong>(std::string prefix)</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setoutpath">setOutPath</a></strong>(std::string path)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setdoprocrustes">setDoProcrustes</a></strong>(bool doProcrusts)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setdoprocrustesscaling">setDoProcrustesScaling</a></strong>(bool doProcrustsScaling)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setpairwisenormalsdiffforgoodbad">setPairwiseNormalsDiffForGoodBad</a></strong>(bool pairwiseNormalsDiffForGoodBad)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setmeanbeforewarp">setMeanBeforeWarp</a></strong>(bool meanBeforeWarp)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setenableoutput">setEnableOutput</a></strong>(bool enableOutput)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -390,7 +446,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setmaxvariancecaptured">setMaxVarianceCaptured</a></strong>(float maxVarianceCaptured)</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setnumofsamplespermode">setNumOfSamplesPerMode</a></strong>(int numOfSamplesPerMode)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -398,11 +454,19 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setnumofclusters">setNumOfClusters</a></strong>(int numOfClusters)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setmaxstddev">setMaxStdDev</a></strong>(float maxStdDev)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setnumofsamplespermode">setNumOfSamplesPerMode</a></strong>(int numOfSamplesPerMode)</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setmaxvariancecaptured">setMaxVarianceCaptured</a></strong>(float maxVarianceCaptured)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-setmaxangledegrees">setMaxAngleDegrees</a></strong>(float maxAngleDegrees)</td>
 </tr>
 </tbody>
 </table>
@@ -452,8 +516,56 @@
 </code></pre></div>
 <h3 id="function-getmesh">function getMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="n">getMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointArray</span><span class="w"> </span><span class="n">localPoints</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-converttoimagecoordinates">function convertToImageCoordinates</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">convertToImageCoordinates</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computemedianshape">function computeMedianShape</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">computeMedianShape</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shapeList</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-performkmeansclustering">function performKMeansClustering</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">performKMeansClustering</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numberOfParticles</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">centroidIndices</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computeparticlesnormals">function computeParticlesNormals</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">computeParticlesNormals</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="n">dt</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-getdensemean">function getDenseMean</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDenseMean</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computedensemean">function computeDenseMean</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeDenseMean</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransform</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-computesparsemean">function computeSparseMean</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">computeSparseMean</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point3</span><span class="w"> </span><span class="n">commonCenter</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-writemeaninfo">function writeMeanInfo</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">writeMeanInfo</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-surface">function surface</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">surface</span><span class="p">(</span><span class="w"></span>
@@ -462,6 +574,13 @@
 </code></pre></div>
 <h3 id="function-samplesalongpcamodes">function samplesAlongPCAModes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">samplesAlongPCAModes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-meansurface">function meanSurface</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">meanSurface</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransformFiles</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFiles</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -475,6 +594,31 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">path</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-setdoprocrustes">function setDoProcrustes</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setDoProcrustes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrusts</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setdoprocrustesscaling">function setDoProcrustesScaling</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setDoProcrustesScaling</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrustsScaling</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setpairwisenormalsdiffforgoodbad">function setPairwiseNormalsDiffForGoodBad</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPairwiseNormalsDiffForGoodBad</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">pairwiseNormalsDiffForGoodBad</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setmeanbeforewarp">function setMeanBeforeWarp</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMeanBeforeWarp</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">meanBeforeWarp</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setenableoutput">function setEnableOutput</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setEnableOutput</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableOutput</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-setmodeindex">function setModeIndex</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setModeIndex</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">modeIndex</span><span class="w"></span>
@@ -485,9 +629,9 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfModes</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setmaxvariancecaptured">function setMaxVarianceCaptured</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMaxVarianceCaptured</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">maxVarianceCaptured</span><span class="w"></span>
+<h3 id="function-setnumofsamplespermode">function setNumOfSamplesPerMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setNumOfSamplesPerMode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfSamplesPerMode</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-setnumofparticles">function setNumOfParticles</h3>
@@ -495,18 +639,28 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfParticles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-setnumofclusters">function setNumOfClusters</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setNumOfClusters</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfClusters</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-setmaxstddev">function setMaxStdDev</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMaxStdDev</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">maxStdDev</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-setnumofsamplespermode">function setNumOfSamplesPerMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setNumOfSamplesPerMode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfSamplesPerMode</span><span class="w"></span>
+<h3 id="function-setmaxvariancecaptured">function setMaxVarianceCaptured</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMaxVarianceCaptured</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">maxVarianceCaptured</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-setmaxangledegrees">function setMaxAngleDegrees</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMaxAngleDegrees</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">maxAngleDegrees</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-16 at 15:32:08 +0000</p>
+<p>Updated on 2022-03-16 at 19:03:09 +0000</p>
               
             </div>
           </div>
