@@ -105,7 +105,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(analysis_tool_.data());
   connect(analysis_tool_.data(), SIGNAL(update_view()), this, SLOT(handle_display_setting_changed()));
   connect(analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
-  connect(analysis_tool_.data(), SIGNAL(rppca_update()), this, SLOT(handle_pca_update()));
+  connect(analysis_tool_.data(), SIGNAL(rppca_update()), this, SLOT(handle_rppca_update()));
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(analysis_tool_.data(), SIGNAL(reconstruction_complete()), this, SLOT(handle_reconstruction_complete()));
 
@@ -592,17 +592,17 @@ void ShapeWorksStudioApp::handle_pca_changed() {
 }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_rppca_changed() {
-  if (!this->session_->particles_present()) {
+  if (!session_->particles_present()) {
     return;
   }
-  this->session_->handle_clear_cache();
-  this->visualizer_->update_lut();
-  this->compute_rppca_mode_shape();
+  session_->handle_clear_cache();
+  visualizer_->update_lut();
+  compute_rppca_mode_shape();
 }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_rppca_slider_update()
 {
-  this->analysis_tool_->updateRPPCASlider();
+  analysis_tool_->updateRPPCASlider();
 }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->updateSlider(); }
@@ -615,8 +615,8 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_rppca_update() {
-  if (this->analysis_tool_->get_active() && this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_RPPCA_C) {
-    this->compute_rppca_mode_shape();
+  if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_RPPCA_C) {
+    compute_rppca_mode_shape();
   }
 }
 //---------------------------------------------------------------------------
@@ -1636,10 +1636,10 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_rppca_mode_shape() {
   std::cout << "In compute rppca mode shape" << std::endl;
-  int rppca_mode = this->analysis_tool_->getRPPCAMode();
-  double rppca_value = this->analysis_tool_->get_rppca_value();
+  int rppca_mode = analysis_tool_->getRPPCAMode();
+  double rppca_value = analysis_tool_->get_rppca_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->get_rppca_mode_shape(rppca_mode, rppca_value));
+  visualizer_->display_shape(analysis_tool_->get_rppca_mode_shape(rppca_mode, rppca_value));
 }
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode) {
