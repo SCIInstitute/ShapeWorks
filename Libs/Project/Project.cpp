@@ -665,26 +665,26 @@ int Project::get_index_for_column(const std::string& name, bool create_if_not_fo
   xlnt::worksheet ws = this->wb_->sheet_by_index(sheet);
 
   auto headers = ws.rows(false)[0];
-  // std::cerr << "Get index for column: " << name << "\n";
-  // std::cerr << "number of headers = " << headers.length() << "\n";
+  //std::cerr << "Get index for column: " << name << "\n";
+  //std::cerr << "number of headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    // std::cerr << "header: " << headers[i].to_string() << "\n";
+    //std::cerr << "header: " << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i + 1;
     }
   }
 
   if (create_if_not_found) {
-    // std::cerr << "couldn't find: " << name << "\n";
+    //std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
-    // std::cerr << "highest column is " << column.index << "\n";
+    //std::cerr << "highest column is " << column.index << "\n";
     if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>().empty()) {
       ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
-      // std::cerr << "returning " << column.index << "\n";
+      //std::cerr << "returning " << column.index << "\n";
       return column.index;
     } else {
       ws.cell(xlnt::cell_reference(column.index + 1, 1)).value(name);
-      // std::cerr << "returning " << column.index + 1 << "\n";
+      //std::cerr << "returning " << column.index + 1 << "\n";
       return column.index + 1;
     }
   }
@@ -743,9 +743,9 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   int value_column = 1;  // single domain
   if (domain_name != "") {
-    for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
-      if (rows[0][i].to_string() == "value_" + domain_name) {
-        value_column = i;
+    for (auto i = ws.lowest_column(); i < ws.highest_column(); i++) {
+      if (rows[0][i.index].to_string() == "value_" + domain_name) {
+        value_column = i.index;
       }
     }
   }
@@ -760,8 +760,11 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(const std::string& name, Parameters params, const std::string& domain_name) {
+void Project::set_parameters(const std::string& name, Parameters params, std::string domain_name) {
   try {
+    if (get_number_of_domains_per_subject() == 1) {
+      domain_name = "";
+    }
     int id = this->get_or_create_worksheet(name);
     auto ws = this->wb_->sheet_by_index(id);
 
