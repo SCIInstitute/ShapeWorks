@@ -85,10 +85,11 @@ class Constraints {
 
   FreeFormConstraint& getFreeformConstraint();
 
+  bool hasConstraints();
+
  private:
   std::vector<PlaneConstraint> planeConstraints_;
   std::vector<SphereConstraint> sphereConstraints_;
-  //std::vector<FreeFormConstraint> freeFormConstraints_;
 
   FreeFormConstraint freeFormConstraint_;
 

@@ -269,7 +269,19 @@ bool Shape::store_constraints() {
     filenames.push_back(filename);
   }
 
-  if (constraints_.size() == 0) {
+  if (constraints_.empty()) {
+    filenames = {};
+  }
+
+  bool has_constraints = false;
+
+  for (int i = 0; i < filenames.size(); i++) {
+    if (get_constraints(i).hasConstraints()) {
+      has_constraints = true;
+    }
+  }
+
+  if (!has_constraints) {
     filenames = {};
   }
 

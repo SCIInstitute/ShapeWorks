@@ -424,15 +424,15 @@ std::string Constraints::violationReport(const Point3 &pos) {
   }
   if (freeFormConstraint_.getMesh()) {
     if (freeFormConstraint_.constraintEval(pt) > 0)
-      stream << "FreeForm " << ": "
-             << freeFormConstraint_.constraintEval(pt) << " gradient(c=1) "
+      stream << "FreeForm "
+             << ": " << freeFormConstraint_.constraintEval(pt) << " gradient(c=1) "
              << freeFormConstraint_.lagragianGradient(pt, 1).transpose() << std::endl;
   }
   return stream.str();
 }
 
 std::vector<std::vector<double>> Constraints::violationReportData(const Point3 &pos) {
-  std::vector<std::vector<double> > alls;
+  std::vector<std::vector<double>> alls;
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -700,5 +700,18 @@ void Constraints::Write(std::string filename) {
 
 //-----------------------------------------------------------------------------
 FreeFormConstraint &Constraints::getFreeformConstraint() { return freeFormConstraint_; }
+
+//-----------------------------------------------------------------------------
+bool Constraints::hasConstraints() {
+  if (!planeConstraints_.empty() || !sphereConstraints_.empty()) {
+    return true;
+  }
+
+  freeFormConstraint_.computeBoundaries();
+  if (!freeFormConstraint_.boundaries().empty()) {
+    return true;
+  }
+  return false;
+}
 
 }  // namespace shapeworks
