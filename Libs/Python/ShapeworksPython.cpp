@@ -1471,6 +1471,13 @@ PYBIND11_MODULE(shapeworks_py, m)
        &optimize_get_particle_system)
   ;
 
+  // DomainType
+  py::enum_<DomainType>(m, "DomainType")
+  .value("MeshDomain", DomainType::Mesh)
+  .value("ImageDomain", DomainType::Image)
+  .value("ContourDomain", DomainType::Contour)
+  .export_values();
+  ;
 
   // Project 
   // py::class_<Project>(m, "Project")
@@ -1513,6 +1520,24 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_number_of_domains_per_subject,
       "Return the number of domains")
 
+  .def("get_original_domain_types",
+      &Project::get_original_domain_types,
+      "Return the original domain types")
+
+  .def("set_original_domain_types",
+      &Project::set_original_domain_types,
+      "Set the original domain types",
+       "types"_a)
+
+  .def("get_groomed_domain_types",
+      &Project::get_groomed_domain_types,
+      "Return the groomed domain types")
+
+  .def("set_groomed_domain_types",
+      &Project::set_groomed_domain_types,
+      "Set the groomed domain types",
+       "types"_a)
+
   .def("get_domain_names",
       &Project::get_domain_names,
       "Return the domain names (e.g. femur, pelvis, etc)")
@@ -1521,9 +1546,9 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_subjects,
       "Return the list of Subjects")
 
-  .def("get_segmentations_present",
-      &Project::get_segmentations_present,
-      "Return if segmentations are present")
+  .def("get_originals_present",
+      &Project::get_originals_present,
+      "Return if original files are present")
 
   .def("get_groomed_present",
       &Project::get_groomed_present,
@@ -1584,18 +1609,14 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
-  .def("set_segmentation_filenames",
-      &Subject::set_segmentation_filenames,
-      "Set segmentatation filenames (one per domain)",
+  .def("set_original_filenames",
+      &Subject::set_original_filenames,
+      "Set original filenames (one per domain)",
       "filenames"_a)
 
-  .def("get_segmentations_filenames",
-      &Subject::get_segmentation_filenames,
-      "Get segmentation filenames")
-
-  .def("get_domain_types",
-      &Subject::get_domain_types,
-      "Return the domain types")
+  .def("get_original_filenames",
+      &Subject::get_original_filenames,
+      "Get original filenames")
 
   .def("set_groomed_filenames",
       &Subject::set_groomed_filenames,

@@ -457,7 +457,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   // export / save / new / open
   bool reconstructed = session_->particles_present();
 
-  bool original_present = session_->get_project()->get_segmentations_present();
+  bool original_present = session_->get_project()->get_originals_present();
 
   auto filename = session_->get_filename();
   bool save_enabled = filename == "" || filename.endsWith(".xlsx");

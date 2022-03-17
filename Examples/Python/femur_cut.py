@@ -188,7 +188,7 @@ def Run_Pipeline(args):
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
         rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i]], project_location)
-        subject.set_segmentation_filenames(rel_mesh_files)
+        subject.set_original_filenames(rel_mesh_files)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_mesh_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_files)
         transform = [ transforms[i].flatten() ]

@@ -44,8 +44,8 @@ bool Groom::run() {
           continue;
         }
 
-        bool is_image = subjects[0]->get_domain_types()[domain] == DomainType::Image;
-        bool is_mesh = subjects[0]->get_domain_types()[domain] == DomainType::Mesh;
+        bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
+        bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
 
         if (is_image) {
           if (!this->image_pipeline(subjects[i], domain)) {
@@ -76,7 +76,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_segmentation_filenames()[domain];
+  auto path = subject->get_original_filenames()[domain];
 
   // load the image
   Image image(path);
@@ -258,7 +258,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_segmentation_filenames()[domain];
+  auto path = subject->get_original_filenames()[domain];
 
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
@@ -362,7 +362,7 @@ int Groom::get_total_ops() {
   for (int i = 0; i < domains.size(); i++) {
     auto params = GroomParameters(this->project_, domains[i]);
 
-    if (subjects[i]->get_domain_types()[i] == DomainType::Image) {
+    if (project_->get_original_domain_types()[i] == DomainType::Image) {
       num_tools += params.get_isolate_tool() ? 1 : 0;
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
       num_tools += params.get_crop() ? 1 : 0;
@@ -373,8 +373,8 @@ int Groom::get_total_ops() {
       num_tools += params.get_blur_tool() ? 1 : 0;
     }
 
-    bool run_mesh = subjects[i]->get_domain_types()[i] == DomainType::Mesh ||
-                    (subjects[i]->get_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+    bool run_mesh = project_->get_original_domain_types()[i] == DomainType::Mesh ||
+                    (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -573,12 +573,12 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 //---------------------------------------------------------------------------
 Mesh Groom::get_mesh(int subject, int domain) {
   auto subjects = this->project_->get_subjects();
-  auto path = subjects[subject]->get_segmentation_filenames()[domain];
+  auto path = subjects[subject]->get_original_filenames()[domain];
 
-  if (subjects[subject]->get_domain_types()[domain] == DomainType::Image) {
+  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
     Image image(path);
     return image.toMesh(0.5);
-  } else if (subjects[subject]->get_domain_types()[domain] == DomainType::Mesh) {
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     return mesh;
   }

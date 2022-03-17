@@ -270,7 +270,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
-      auto domain_type = s->get_domain_types(true)[i];
+      auto domain_type = project_->get_groomed_domain_types()[i];
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {
@@ -292,6 +292,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           optimize->AddMesh(poly_data);
         } else {
           throw std::invalid_argument("Error loading mesh: " + filename);
+        }
+      } else if (domain_type == DomainType::Contour) {
+        Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+        auto poly_data = mesh.getVTKMesh();
+        if (poly_data) {
+          optimize->AddContour(poly_data);
+        } else {
+          throw std::invalid_argument("Error loading contour: " + filename);
         }
       } else {
         Image image(filename);

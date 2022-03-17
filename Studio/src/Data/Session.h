@@ -105,7 +105,7 @@ class Session : public QObject {
 
   shapeworks::Parameters& parameters();
 
-  std::vector<DomainType> get_domain_types();
+  std::vector<DomainType> get_groomed_domain_types();
 
   double update_auto_glyph_size();
 

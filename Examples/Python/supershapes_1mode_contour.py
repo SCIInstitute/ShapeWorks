@@ -54,7 +54,7 @@ def Run_Pipeline(args):
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
         rel_files = sw.utils.get_relative_paths([os.getcwd() + '/' + contour_files[i]], project_location)
-        subject.set_segmentation_filenames(rel_files)
+        subject.set_original_filenames(rel_files)
         #groomed file is same as input file
         subject.set_groomed_filenames(rel_files)
         transform = [ np.eye(4).flatten() ]
@@ -63,6 +63,8 @@ def Run_Pipeline(args):
 
     project = sw.Project()
     project.set_subjects(subjects)
+    project.set_original_domain_types([sw.DomainType.ContourDomain])
+    project.set_groomed_domain_types([sw.DomainType.ContourDomain])
     parameters = sw.Parameters()
 
 
