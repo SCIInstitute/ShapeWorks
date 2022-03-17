@@ -642,6 +642,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   ren->RemoveAllViewProps();
 
+  number_of_domains_ = session_->get_domains_per_shape();
+  initialize_surfaces();
+
   if (!meshes_.valid()) {
     mesh_ready_ = false;
     viewer_ready_ = false;
@@ -651,8 +654,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
     loading_displayed_ = false;
     viewer_ready_ = true;
 
-    number_of_domains_ = meshes_.meshes().size();
-    initialize_surfaces();
 
     for (size_t i = 0; i < meshes_.meshes().size(); i++) {
       MeshHandle mesh = meshes_.meshes()[i];
@@ -1216,6 +1217,8 @@ void Viewer::initialize_surfaces() {
       ffc_luts_[i]->SetHueRange(.667, 0.0);
       ffc_luts_[i]->SetNumberOfTableValues(2);
       ffc_luts_[i]->SetRange(0, 1);
+      ffc_luts_[i]->SetValueRange(0, 1);
+      ffc_luts_[i]->SetTableRange(0, 1);
       ffc_luts_[i]->Build();
     }
   }

@@ -389,6 +389,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
     update_table();
     enable_possible_actions();
     update_display(true);
+    visualizer_->update_viewer_properties();
 
     reset_num_viewers();
 

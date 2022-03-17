@@ -8,9 +8,7 @@
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
-bool FreeFormConstraint::readyForOptimize() const {
-  return mesh_ != nullptr;
-}
+bool FreeFormConstraint::readyForOptimize() const { return mesh_ != nullptr; }
 
 bool FreeFormConstraint::isViolated(const Eigen::Vector3d &pt) const {
   if (constraintEval(pt) >= 0) {
@@ -55,7 +53,6 @@ std::vector<std::vector<Eigen::Vector3d>> &FreeFormConstraint::boundaries() { re
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::computeBoundaries() {
-  std::cerr << "computeBoundaries\n";
   if (!definitionPolyData_) {
     return;
   }
