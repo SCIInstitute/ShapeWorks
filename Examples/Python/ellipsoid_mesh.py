@@ -11,6 +11,7 @@ import OptimizeUtils
 import AnalyzeUtils
 import subprocess
 import shutil
+import numpy as np 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -110,12 +111,10 @@ def Run_Pipeline(args):
             print('Aligning ' + name + ' to ' + ref_name)
             # compute rigid transformation
             rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
-            # apply rigid transform
-            # mesh.applyTransform(rigid_transform)
             Rigid_transforms.append(rigid_transform)
 
         # Save groomed meshes
-        mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
+        groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
 
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
@@ -134,20 +133,22 @@ def Run_Pipeline(args):
 
 
 
+    # Create spreadsheet
+    project_location = output_directory + "shape_models/"
     subjects = []
     number_domains = 1
-    mesh_dir = output_directory+"/ellipsoid_1mode/meshes/"
+    
     for i in range(len(mesh_names)):
-        # print(shape_names[i])
+        
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
-        # subject.set_segmentation_filenames([groomed_seg_files[i]])
-        subject.set_segmentation_filenames([mesh_dir+mesh_names[i]+".vtk"])
-        subject.set_groomed_filenames([mesh_files[i]])
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mesh_files[i]],project_location)
+        subject.set_segmentation_filenames(rel_mesh_files)
+        rel_groom_file = sw.utils.get_relative_paths([os.getcwd() + "/" + groomed_mesh_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_file)
         transform = Rigid_transforms[i]
         transforms = [ transform.flatten() ]
         subject.set_groomed_transforms(transforms)
-        print(subject.get_groomed_transforms())
         subjects.append(subject)
 
     project = sw.Project()
@@ -175,17 +176,26 @@ def Run_Pipeline(args):
         "verbosity": 0
     }
 
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["use_shape_statistics_after"] = 64
+
     for key in parameter_dictionary:
-            parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimze",parameters)
-    project.save("ellipsoid_mesh.xlsx")
-    
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_mesh_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
 
-    opt = sw.Optimize()
-    opt.SetUpOptimize(project)
-    opt.Run()
-    project.save("ellipsoid_mesh.xlsx")
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
-    AnalysisCmd = 'ShapeWorksStudio ellipsoid_mesh.xlsx'.split()
+    # Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     subprocess.check_call(AnalysisCmd)
