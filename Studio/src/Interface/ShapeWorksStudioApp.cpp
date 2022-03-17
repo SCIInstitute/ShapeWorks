@@ -393,6 +393,8 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
 
     reset_num_viewers();
 
+    preferences_.set_last_directory(QFileInfo(file_names[0]).absolutePath());
+
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
       set_feature_map(session_->get_default_feature_map());
