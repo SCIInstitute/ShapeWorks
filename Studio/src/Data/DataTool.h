@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <Data/Preferences.h>
 
 #include <QElapsedTimer>
@@ -9,9 +7,11 @@
 #include <QProgressDialog>
 #include <QSharedPointer>
 #include <QWidget>
+#include <memory>
 #include <string>
 
 class Ui_DataTool;
+class QComboBox;
 
 namespace shapeworks {
 
@@ -41,12 +41,15 @@ class DataTool : public QWidget {
 
   void landmark_domain_changed();
 
+  void constraints_domain_changed();
+
+  void delete_planes_clicked();
+
   void update_notes();
 
   std::string get_notes();
 
   void store_data();
-
 
  public Q_SLOTS:
 
@@ -57,12 +60,15 @@ class DataTool : public QWidget {
   void set_placing_button_clicked(int id);
 
   void handle_landmark_mode_changed();
+  void handle_constraints_mode_changed();
 
  Q_SIGNALS:
   void import_button_clicked();
 
  private:
-  void update_domain_box();
+  void update_domain_box(QComboBox* box);
+
+  void update_plane_table();
 
   Preferences& preferences_;
 

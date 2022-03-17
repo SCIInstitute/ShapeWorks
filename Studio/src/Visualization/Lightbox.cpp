@@ -2,6 +2,7 @@
 #include <Data/StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
+#include <Visualization/StudioSliceInteractorStyle.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkAxesActor.h>
@@ -23,10 +24,12 @@ Lightbox::Lightbox() {
   this->camera_ = this->renderer_->GetActiveCamera();
 
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  this->slice_style_ = vtkSmartPointer<StudioSliceInteractorStyle>::New();
   this->orientation_marker_widget_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
 
   this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox(this);
+  this->slice_style_->set_lightbox(this);
 
   // prepare the loading spinner
   QPixmap pixmap;
@@ -82,8 +85,9 @@ void Lightbox::handle_new_mesh() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::reset_camera() {
-  this->viewers_[0]->get_renderer()->ResetCameraClippingRange();
-  this->viewers_[0]->get_renderer()->ResetCamera();
+  if (!viewers_.empty()) {
+    viewers_[0]->reset_camera();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -119,6 +123,7 @@ void Lightbox::display_shapes() {
 
   // bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
+    // std::cerr << "insert shape into viewer\n";
     this->insert_shape_into_viewer(this->shapes_[i], position);
 
     position++;
@@ -176,7 +181,7 @@ void Lightbox::setup_renderers() {
         renderer = this->viewers_[i]->get_renderer();
       }
 
-      renderer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(this->style_);
+      // renderer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(this->style_);
 
       renderer->SetActiveCamera(this->camera_);
 
@@ -222,11 +227,14 @@ void Lightbox::setup_renderers() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_tile_layout(int width, int height) {
-  this->tile_layout_width_ = width;
-  this->tile_layout_height_ = height;
+  if (width == tile_layout_width_ && height == tile_layout_height_) {
+    return;
+  }
+  tile_layout_width_ = width;
+  tile_layout_height_ = height;
 
-  this->setup_renderers();
-  this->display_shapes();
+  setup_renderers();
+  display_shapes();
 }
 
 //-----------------------------------------------------------------------------
@@ -291,6 +299,13 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
 
 //-----------------------------------------------------------------------------
 void Lightbox::handle_hover(int* click_pos) {}
+
+//-----------------------------------------------------------------------------
+void Lightbox::handle_key(int* click_pos, std::string key) {
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->handle_key(click_pos, key);
+  }
+}
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
@@ -454,6 +469,36 @@ void Lightbox::update_feature_range() {
         this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
       }
     }
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::update_interactor_style() {
+  if (!render_window_) {
+    return;
+  }
+
+  auto current_style = this->render_window_->GetInteractor()->GetInteractorStyle();
+  vtkInteractorObserver* new_style = nullptr;
+
+  if (session_->get_image_name() == "-none-" || session_->get_image_3d_mode()) {
+    new_style = style_;
+  } else {
+    new_style = slice_style_;
+  }
+  if (current_style != new_style) {
+    render_window_->GetInteractor()->SetInteractorStyle(new_style);
+    reset_camera();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::set_shared_window_and_level(double window, double level) {
+  if (!session_->get_image_share_window_and_level()) {
+    return;
+  }
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->set_window_and_level(window, level);
   }
 }
 }  // namespace shapeworks

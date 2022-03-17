@@ -1,17 +1,15 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QString>
-#include <QSharedPointer>
-
+#include <itkImage.h>
+#include <vnl/vnl_vector.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <itkImage.h>
 
-#include <vnl/vnl_vector.h>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
@@ -22,7 +20,6 @@ class StudioMesh;
 using MeshHandle = std::shared_ptr<StudioMesh>;
 using MeshList = std::vector<MeshHandle>;
 
-
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file or set of particles.
@@ -30,8 +27,7 @@ using MeshList = std::vector<MeshHandle>;
  *
  */
 class StudioMesh {
-public:
-
+ public:
   //! Constructor
   StudioMesh();
 
@@ -63,11 +59,12 @@ public:
   void apply_scalars(MeshHandle mesh);
 
   //! Interpolation scalars at positions to this mesh
-  void interpolate_scalars_to_mesh(std::string name,
-                                   Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
 
-private:
+  //! Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)
+  double get_largest_dimension_size();
 
+ private:
   // metadata
   int dimensions_[3];
   vnl_vector<double> center_transform_;
@@ -77,6 +74,5 @@ private:
 
   // error message if the polydata didn't load
   std::string error_message_;
-
 };
-}
+}  // namespace shapeworks

@@ -24,9 +24,7 @@
 namespace itk
 {
 
-#ifndef __itkParticleSystem_h
-template<unsigned int VDimension> class ParticleSystem;
-#endif
+//class ParticleSystem;
 
 /** \class ParticleAttribute
  *  \brief 

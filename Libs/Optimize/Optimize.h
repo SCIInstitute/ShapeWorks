@@ -306,11 +306,16 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+
   bool GetOptimizing() {
     return this->m_optimizing;
   }
 
   double Get_MinimumVariance();
+
+  //! transform a point if necessary
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
 
 protected:
 

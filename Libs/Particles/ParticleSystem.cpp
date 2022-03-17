@@ -35,6 +35,10 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
             = itk::ParticlePositionReader<VDimension>::New();
     reader->SetFileName(paths[i]);
     reader->Update();
+    int count = reader->GetOutput().size() * VDimension;
+    if (count != D) {
+      throw std::runtime_error("ParticleSystem files must have the same number of particles");
+    }
     P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *) reader->GetOutput().data(), D);
   }
 }

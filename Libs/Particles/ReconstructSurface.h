@@ -29,11 +29,35 @@ public:
 
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
-  Mesh getMesh(std::vector<Point3> localPoints);
+  Mesh getMesh(PointArray localPoints);
+
+  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, const Vector& spacing, const Point3& origin);
+
+  int computeMedianShape(std::vector<Eigen::MatrixXd>& shapeList);
+
+  void performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>& centroidIndices);
+
+  Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);
+
+  vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
+                                            std::vector<PointArray> worldPoints,
+                                            std::vector<std::string> distance_transform);
+
+  void computeDenseMean(std::vector<PointArray> localPoints,
+                        std::vector<PointArray> worldPoints,
+                        std::vector<std::string> distanceTransform);
+
+  std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter);
+
+  void writeMeanInfo();
 
   void surface(const std::vector<std::string> localPointsFiles);
 
   void samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles);
+
+  void meanSurface(const std::vector<std::string> distanceTransformFiles,
+                   const std::vector<std::string> localPointsFiles,
+                   const std::vector<std::string> worldPointsFiles);
 
   // set operations //
 
@@ -41,39 +65,61 @@ public:
 
   void setOutPath(std::string path) { this->outPath = path; }
 
+  void setDoProcrustes(bool doProcrusts) { this->doProcrustes = doProcrustes; }
+
+  void setDoProcrustesScaling(bool doProcrustsScaling) { this->doProcrustesScaling = doProcrustesScaling; }
+
+  void setPairwiseNormalsDiffForGoodBad(bool pairwiseNormalsDiffForGoodBad) { this->pairwiseNormalsDiffForGoodBad = pairwiseNormalsDiffForGoodBad; }
+
+  void setMeanBeforeWarp(bool meanBeforeWarp) { this->meanBeforeWarp = meanBeforeWarp; }
+
+  void setEnableOutput(bool enableOutput) { this->enableOutput = enableOutput; }
+
   void setModeIndex(int modeIndex) { this->modeIndex = modeIndex; }
 
   void setNumOfModes(int numOfModes) { this->numOfModes = numOfModes; }
 
-  void setMaxVarianceCaptured(float maxVarianceCaptured) { this->maxVarianceCaptured = maxVarianceCaptured; }
+  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }
 
   void setNumOfParticles(int numOfParticles) { this->numOfParticles = numOfParticles; }
 
+  void setNumOfClusters(int numOfClusters) { this->numOfClusters = numOfClusters; }
+
   void setMaxStdDev(float maxStdDev) { this->maxStdDev = maxStdDev; }
 
-  void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this->numOfSamplesPerMode = numOfSamplesPerMode; }  
+  void setMaxVarianceCaptured(float maxVarianceCaptured) { this->maxVarianceCaptured = maxVarianceCaptured; }
+
+  void setMaxAngleDegrees(float maxAngleDegrees) { this->maxAngleDegrees = maxAngleDegrees; }
 
 private:
   float normalAngle = Pi/2.0;
   std::vector<std::string> localPointsFiles;
   std::vector<std::string> worldPointsFiles;
+  std::vector<std::string> distanceTransformFiles;
   vtkSmartPointer<vtkPolyData> denseMean;
   Mesh::MeshPoints sparseMean;
   std::vector<bool> goodPoints;
   std::string outPrefix;
   std::string outPath;
   bool denseDone = true;
+  bool doProcrustes;
+  bool doProcrustesScaling;
+  bool pairwiseNormalsDiffForGoodBad = false;
+  bool meanBeforeWarp = true;
+  bool enableOutput = true;
   int modeIndex = -1;
-  int numOfModes;
-  float maxVarianceCaptured = 0.95;
-  int numOfParticles;
-  float maxStdDev = 2.0;
-  int numOfSamplesPerMode;
+  int numOfModes = -1;
+  int numOfSamplesPerMode = -1;
+  int numOfParticles = -1;
+  int numOfClusters = -1;
+  float maxStdDev = 0;
+  float maxVarianceCaptured = 0;
+  float maxAngleDegrees = 0;
 
   Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
-  std::vector<std::vector<Point3>> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
-  std::vector<std::vector<Point3>> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
+  std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
+  std::vector<PointArray> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);
 
 };
 
