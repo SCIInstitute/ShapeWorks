@@ -447,7 +447,7 @@ public:
 
   }
 
-  std::vector<std::vector<FFCType> > GetFFCs(){return m_FFCs;}
+  std::vector<FFCType> GetFFCs() { return m_FFCs; }
 
 protected:
 
@@ -539,7 +539,7 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
   std::vector<std::vector<SphereType>> m_Spheres;
-  std::vector<std::vector<FFCType>>  m_FFCs;
+  std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
 
   unsigned int m_verbosity;

@@ -91,6 +91,14 @@ def get_file_with_ext(file_list,extension):
     extList = sorted(extList)
     return extList
 
+# a helper function to convert absolute paths to a relative path from a base dir
+def get_relative_paths(files, base):
+    relative_paths = []
+    for f in files:
+        path = os.path.relpath(f, base)
+        relative_paths.append(path)
+    return relative_paths
+        
 def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
@@ -214,3 +222,25 @@ def expectException(name, etype):
     except Exception as e:
         print(name.__name__ + " failed (expected a different kind of exception): " + str(e))
         return False
+
+def getVTKtransform(itkTransform):
+    
+    flippedITKtransform = np.copy(itkTransform)
+    lastColumn = itkTransform[:,-1]
+    lastRow = itkTransform[-1,:]
+    flippedITKtransform[:,-1] = lastRow
+    flippedITKtransform[-1,:] = lastColumn
+    vtkTransform = np.linalg.inv(flippedITKtransform)
+
+    return vtkTransform
+
+def getITKtransform(vtkTransform):
+    
+    inverseVTKtransform = np.linalg.inv(vtkTransform)
+    itkTransform = np.copy(inverseVTKtransform)
+    lastColumn = inverseVTKtransform[:,-1]
+    lastRow = inverseVTKtransform[-1,:]
+    itkTransform[:,-1] = lastRow
+    itkTransform[-1,:] = lastColumn
+
+    return itkTransform

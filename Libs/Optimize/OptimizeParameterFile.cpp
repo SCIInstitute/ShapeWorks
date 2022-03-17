@@ -527,10 +527,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         std::cout << "ffcssize " << ffcs.size() << std::endl;
       }
       if (index < ffcs.size()) {
-          for (size_t i = 0; i < ffcs[index].size(); i++) {
-            mesh.prepareFFCFields(ffcs[index][i].boundaries, ffcs[index][i].query);
-            mesh = Mesh(mesh.clipByField("inout", 1.0));
-          }
+        mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
+        mesh = Mesh(mesh.clipByField("inout", 1.0));
       }
 
       auto poly_data = mesh.getVTKMesh();
@@ -1192,7 +1190,7 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
       //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
       bool query_read = true;
 
-      std::vector<std::vector<Eigen::Vector3d> > boundaries;
+      std::vector<std::vector<Eigen::Vector3d>> boundaries;
       int boundary_count = -1;
       Eigen::Vector3d query;
 
@@ -1250,7 +1248,7 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
       }
       else {
         std::cerr << "ERROR: File " << fn
-                  << " could not be open. Please check that the file is available." << std::endl;
+                  << " could not be opened. Please check that the file is available." << std::endl;
         throw 1;
       }
       optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);

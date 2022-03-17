@@ -12,7 +12,9 @@ import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-
+import subprocess
+import shutil
+import numpy as np 
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -43,8 +45,18 @@ def Run_Pipeline(args):
         if args.use_subsample:
             sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
-
-    # This dataset is prealigned and does not require any grooming steps.
+    
+    """
+    This dataset is prealigned and does not require any grooming steps.
+    We loop over the files and load the meshes.
+    """
+    
+    mesh_list = []
+    for mesh_filename in mesh_files:
+        print('Loading: ' + mesh_filename)
+        # Get mesh
+        mesh = sw.Mesh(mesh_filename)
+        mesh_list.append(mesh)
 
     print("\nStep 2. Optimize with Geodesics\n")
     """
@@ -60,11 +72,29 @@ def Run_Pipeline(args):
     point_dir = output_directory + 'shape_models/' + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
+
+    # Create spreadsheet
+    project_location = output_directory + "shape_models/"
+    subjects = []
+    number_domains = 1
+    for i in range(len(mesh_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i]], project_location)
+        subject.set_original_filenames(rel_mesh_files)
+        #groomed file is same as input file
+        subject.set_groomed_filenames(rel_mesh_files)
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles": 1024,
         "use_normals": 1,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 300,
@@ -73,14 +103,13 @@ def Run_Pipeline(args):
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": 'mesh',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.01,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "geodesics_enabled": 1,
+        "use_geodesic_distance": 1,
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -89,24 +118,19 @@ def Run_Pipeline(args):
         parameter_dictionary["iterations_per_split"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
-    # Execute the optimization function
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, mesh_files, parameter_dictionary)
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/thin_cavity_bean_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
 
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/thin_cavity_bean_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
-    # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
-
-    print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    """
-    Step 3: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    """
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    # Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)

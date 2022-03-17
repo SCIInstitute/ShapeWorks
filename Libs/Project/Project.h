@@ -71,11 +71,14 @@ public:
   //! Return the domain names (e.g. femur, pelvis, etc)
   std::vector<std::string> get_domain_names();
 
-  //! Return the list of Subjects
+  //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
-  //! Return if segmentations are present
-  bool get_segmentations_present() const;
+  //! Set the Subjects
+  void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
+
+  //! Return if originals are present
+  bool get_originals_present() const;
 
   //! Return if groomed files are present
   bool get_groomed_present() const;
@@ -132,12 +135,30 @@ public:
   //! Add a new landmark
   void new_landmark(int domain_id);
 
+  //! Return the original domain types
+  std::vector<DomainType> get_original_domain_types();
+
+  //! Return the groomed domain types
+  std::vector<DomainType> get_groomed_domain_types();
+
+  //! Set the original domain types
+  void set_original_domain_types(std::vector<DomainType> domain_types);
+
+  //! Get the groomed domain types
+  void set_groomed_domain_types(std::vector<DomainType> domain_types);
+
 private:
 
   void load_landmark_definitions();
   void store_landmark_definitions();
 
   void set_default_landmark_colors();
+
+  void determine_domain_types();
+
+  DomainType determine_domain_type(std::string filename);
+
+  static bool starts_with(std::string str, std::string prefix);
 
   int get_or_create_worksheet(std::string name);
   std::string get_new_file_column(std::string name, int idx);
@@ -148,7 +169,10 @@ private:
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* SHAPE_PREFIX = "shape_";
+  static constexpr const char* MESH_PREFIX = "mesh_";
+  static constexpr const char* CONTOUR_PREFIX = "contour_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
+  static constexpr const char* GROOMED_CONTOUR_PREFIX = "groomed_contour_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
   static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
@@ -174,7 +198,7 @@ private:
 
   std::vector<std::string> get_matching_columns(const std::string& prefix);
 
-  std::vector<std::string> get_matching_columns(const std::vector<std::string> prefixes);
+  std::vector<std::string> get_matching_columns(const std::vector<std::string>& prefixes);
 
   std::vector<std::string> get_extra_columns() const;
 
@@ -207,7 +231,7 @@ private:
   std::vector<std::string> default_landmark_colors_;
 
 
-  bool segmentations_present_{false};
+  bool originals_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
 
@@ -222,6 +246,9 @@ private:
   std::vector<std::string> input_prefixes_;
 
   std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
+
+  std::vector<DomainType> original_domain_types_;
+  std::vector<DomainType> groomed_domain_types_;
 
   const int supported_version_{2};
   int version_{2};

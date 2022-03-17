@@ -28,6 +28,8 @@
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "OptimizeParameters.h"
+#include <Libs/Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
@@ -2375,6 +2377,13 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
+bool Optimize::SetUpOptimize(ProjectHandle projectFile)
+{
+  
+  OptimizeParameters param(projectFile);
+  param.set_up_optimize(this);
+  return true;
+}
 //---------------------------------------------------------------------------
 void Optimize::SetProject(std::shared_ptr<Project> project)
 {

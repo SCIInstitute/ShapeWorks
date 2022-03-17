@@ -73,6 +73,9 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
   for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++) {
     this->poly_data_->GetCell(i, cell);
+    if (cell->GetNumberOfPoints() != 3) {
+      throw std::runtime_error("Mesh input was not triangular");
+    }
 
     vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
     triangle->GetPointIds()->SetNumberOfIds(3);

@@ -241,7 +241,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         b = optimize->TransformPoint(domain_count, b);
         c = optimize->TransformPoint(domain_count, c);
 
-        auto domain_type = s->get_domain_types(true)[f];
+        auto domain_type = project_->get_groomed_domain_types()[f];
         if (domain_type != DomainType::Mesh) {
           // don't add the cutting plane to the system, we are just going to clip the mesh instead
           optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
@@ -272,7 +272,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
-      auto domain_type = s->get_domain_types(true)[i];
+      auto domain_type = project_->get_groomed_domain_types()[i];
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {
@@ -294,6 +294,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           optimize->AddMesh(poly_data);
         } else {
           throw std::invalid_argument("Error loading mesh: " + filename);
+        }
+      } else if (domain_type == DomainType::Contour) {
+        Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+        auto poly_data = mesh.getVTKMesh();
+        if (poly_data) {
+          optimize->AddContour(poly_data);
+        } else {
+          throw std::invalid_argument("Error loading contour: " + filename);
         }
       } else {
         Image image(filename);

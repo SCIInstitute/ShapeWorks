@@ -16,8 +16,9 @@ import numpy as np
 import OptimizeUtils
 import AnalyzeUtils
 import subprocess
-
+import shutil
 def Run_Pipeline(args):
+
     print("\nStep 1. Extract Data\n")
     """
     Step 1: EXTRACT DATA
@@ -26,7 +27,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     dataset_name = "ellipsoid_1mode"
-    output_directory = "Output/ellipsoid/"
+    output_directory = "Output/ellipsoid_proj/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -45,8 +46,9 @@ def Run_Pipeline(args):
 
         # Select representative data if using subsample
         if args.use_subsample:
-            inputImages =[sw.Image(filename) for filename in file_list]
-            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
+            inputImages = [sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(
+                inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
@@ -110,14 +112,16 @@ def Run_Pipeline(args):
             
             rigidTransform = shape_seg.createRigidRegistrationTransform(
                 ref_seg, iso_value, icp_iterations)
+            # rigidTransform[:,-1] = center_transform[idx][:,-1]
+            # idx+=1
             rigidTransform = sw.utils.getVTKtransform(rigidTransform)
             shape_center = ref_seg.centerOfMass()
-            
+            # # input(rigidTransform)
             transform = np.eye(4)
 
             Rigid_transforms.append(rigidTransform)
-            
-           
+            # input(rigidTransform)
+            print(rigidTransform)
         """
         Now we can loop over the segmentations and apply the initial grooming steps to themm
         """
@@ -135,7 +139,7 @@ def Run_Pipeline(args):
             # append to the shape list
             shape_seg_list.append(shape_seg)
 
-        
+        center_transform = []
         i = 0 
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
             # parameters for padding
@@ -159,47 +163,33 @@ def Run_Pipeline(args):
         dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
                                         shape_names, extension='nrrd', compressed=True, verbose=True)
 
-    print("\nStep 3. Optimize - Particle Based Optimization\n")
-    """
-    Step 3: OPTIMIZE - Particle Based Optimization
 
-    Now that we have the distance transform representation of data we create 
-    the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer 
-    to docs/workflow/optimze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    """
+       
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
+        subjects = []
+        number_domains = 1
+        seg_dir = output_directory+"ellipsoid_1mode/segmentations/"
+        for i in range(len(shape_seg_list)):
+            print(shape_names[i])
+            subject = sw.Subject()
+            subject.set_number_of_domains(number_domains)
+            # subject.set_original_filenames([groomed_seg_files[i]])
+            subject.set_original_filenames([seg_dir+shape_names[i]+".nrrd"])
+            subject.set_groomed_filenames([dt_files[i]])
+            transform = Rigid_transforms[i]
+            transforms = [ transform.flatten() ]
+            subject.set_groomed_transforms(transforms)
+            print(subject.get_groomed_transforms())
+            subjects.append(subject)
 
+        project = sw.Project()
+        project.set_subjects(subjects)
+        parameters = sw.Parameters()
 
-    # Create spreadsheet
-    project_location = output_directory + "shape_models/"
-    subjects = []
-    number_domains = 1
-    for i in range(len(shape_seg_list)):
-        subject = sw.Subject()
-        subject.set_number_of_domains(number_domains)
-        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i]], project_location)
-        subject.set_original_filenames(rel_mesh_files)
-        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i]], project_location)
-        subject.set_groomed_filenames(rel_groom_files)
-        transform = [ Rigid_transforms[i].flatten() ]
-        subject.set_groomed_transforms(transform)
-        subjects.append(subject)
-
-    project = sw.Project()
-    project.set_subjects(subjects)
-    parameters = sw.Parameters()
-
-    # Create a dictionary for all the parameters required by optimization
-    parameter_dictionary = {
+        parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normals_strength": 10.0,
+        "normal_weight": 10.0,
         "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
         "iterations_per_split": 1000,
@@ -208,56 +198,27 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
+        "narrow_band":4,
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0
-    }
-    # If running a tiny test, reduce some parameters
-    if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 25
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["multiscale_particles"] = 32
+        } 
 
-    for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('image'))
-    project.set_parameters("optimize",parameters)
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_" + args.option_set+ ".xlsx"
-    project.save(spreadsheet_file)
+        for key in parameter_dictionary:
+            parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+        parameters.set("domain_type",sw.Variant('image'))
+        project.set_parameters("optimze",parameters)
+        project.set_filename("test_proj_parm.xlsx")
+        project.save("test_proj_parm.xlsx")
 
-    # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+        opt = sw.Optimize()
+        opt.SetUpOptimize(project)
+        opt.Run()
+        project.save("test_proj_parm.xlsx")
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
-    # # Get data input (meshes if running in mesh mode, else distance transforms)
-    # parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+        AnalysisCmd = 'ShapeWorksStudio test_proj_parm.xlsx'.split()
+        subprocess.check_call(AnalysisCmd)
 
-    # # Execute the optimization function on distance transforms
-    # [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-    #     point_dir, input_files, parameter_dictionary)
-
-    # # Prepare analysis XML
-    # analyze_xml = point_dir + "/ellipsoid_analyze.xml"
-    # AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
-
-    # # If tiny test or verify, check results and exit
-    # AnalyzeUtils.check_results(args, world_point_files)
-
-    # print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    # """
-    # Step 4: ANALYZE - Shape Analysis and Visualization
-
-    # Now we launch studio to analyze the resulting shape model.
-    # For more information about the analysis step, see docs/workflow/analyze.md
-    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    # """
-    # AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
