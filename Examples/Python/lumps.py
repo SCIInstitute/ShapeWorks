@@ -98,7 +98,7 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 100,
         "keep_checkpoints": 0,
         "iterations_per_split": 2000,
@@ -122,7 +122,8 @@ def Run_Pipeline(args):
         parameter_dictionary["visualizer_enable"] = 0
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
     
     
     for key in parameter_dictionary:
