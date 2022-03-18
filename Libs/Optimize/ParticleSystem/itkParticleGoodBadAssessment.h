@@ -1,9 +1,8 @@
-#ifndef ITKPARTICLEGOODBADASSESSMENT_H
-#define ITKPARTICLEGOODBADASSESSMENT_H
+#pragma once
 
 #include "itkParticleSystem.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithCurvature.h"
+#include "ParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithCurvature.h"
 #include <algorithm>
 namespace itk
 {
@@ -93,10 +92,5 @@ private:
 
 } //end namespace
 
-#if ITK_TEMPLATE_TXX
-# include "itkParticleGoodBadAssessment.txx"
-#endif
 
 #include "itkParticleGoodBadAssessment.txx"
-
-#endif // ITKPARTICLEGOODBADASSESSMENT_H

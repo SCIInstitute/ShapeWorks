@@ -23,8 +23,8 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
+#include "ParticleSystem/ParticleImageDomain.h"
+#include "ParticleSystem/ParticleImplicitSurfaceDomain.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"

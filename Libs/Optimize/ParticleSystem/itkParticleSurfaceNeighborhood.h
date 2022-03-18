@@ -1,22 +1,7 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleSurfaceNeighborhood.h,v $
-  Date:      $Date: 2011/03/24 01:17:34 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleSurfaceNeighborhood_h
-#define __itkParticleSurfaceNeighborhood_h
+#pragma once
 
 #include "itkParticleRegionNeighborhood.h"
-#include "itkParticleImplicitSurfaceDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
 #include "vnl/vnl_vector_fixed.h"
 
 namespace itk
@@ -94,14 +79,4 @@ private:
 } // end namespace itk
 
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleSurfaceNeighborhood+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleSurfaceNeighborhood.txx"
-#endif
-
 #include "itkParticleSurfaceNeighborhood.txx"
-
-#endif

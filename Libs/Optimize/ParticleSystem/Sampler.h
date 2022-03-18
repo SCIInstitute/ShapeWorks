@@ -3,7 +3,7 @@
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleImplicitSurfaceDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"

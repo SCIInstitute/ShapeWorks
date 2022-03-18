@@ -1,23 +1,8 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h,v $
-  Date:      $Date: 2014/08/18 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: shireen $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleConstrainedModifiedCotangentEntropyGradientFunction_h
-#define __itkParticleConstrainedModifiedCotangentEntropyGradientFunction_h
+#pragma once
 
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithCurvature.h"
+#include "ParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 
@@ -226,14 +211,4 @@ protected:
 
 } //end namespace
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleConstrainedModifiedCotangentEntropyGradientFunction+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.txx"
-#endif
-
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.txx"
-
-#endif

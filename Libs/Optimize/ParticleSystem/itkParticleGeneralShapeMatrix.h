@@ -1,5 +1,4 @@
-#ifndef ITKPARTICLEGENERALSHAPEMATRIX_H
-#define ITKPARTICLEGENERALSHAPEMATRIX_H
+#pragma once
 
 #include "itkParticleAttribute.h"
 #include "itkDataObject.h"
@@ -7,8 +6,8 @@
 #include "itkParticleContainer.h"
 #include "vnl/vnl_matrix.h"
 
-#include "itkParticleImplicitSurfaceDomain.h"
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "ParticleImageDomainWithGradients.h"
 #include "TriMesh.h"
 
 #include "itkParticleSystem.h"
@@ -271,5 +270,3 @@ private:
 }; // end class
 
 } // end namespace
-
-#endif // ITKPARTICLEGENERALSHAPEMATRIX_H

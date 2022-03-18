@@ -1,21 +1,6 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleEntropyGradientFunction.txx,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
+#pragma once
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleEntropyGradientFunction_txx
-#define __itkParticleEntropyGradientFunction_txx
-
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 namespace itk {
 
 template <class TGradientNumericType, unsigned int VDimension>
@@ -287,5 +272,4 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 
 
 }// end namespace
-#endif
 

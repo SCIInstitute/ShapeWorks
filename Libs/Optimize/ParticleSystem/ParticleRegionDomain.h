@@ -1,16 +1,9 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
 #include "ParticleDomain.h"
 
 namespace shapeworks {
+
 class ParticleRegionDomain : public ParticleDomain {
  public:
   /** Standard class typedefs */

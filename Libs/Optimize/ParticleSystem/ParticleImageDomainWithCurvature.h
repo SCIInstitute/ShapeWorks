@@ -8,7 +8,7 @@
 =========================================================================*/
 #pragma once
 
-#include "itkParticleImageDomainWithGradN.h"
+#include "ParticleImageDomainWithGradN.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"
 #include "itkDiscreteGaussianImageFilter.h"

@@ -8,7 +8,7 @@
 =========================================================================*/
 #pragma once
 
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include "itkImage.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"

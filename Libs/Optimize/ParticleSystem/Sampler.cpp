@@ -3,7 +3,7 @@
 
 #include "ContourDomain.h"
 #include "itkImageRegionIterator.h"
-#include "itkParticleImageDomain.h"
+#include "ParticleImageDomain.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"
 

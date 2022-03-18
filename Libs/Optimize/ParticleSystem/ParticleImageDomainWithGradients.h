@@ -10,7 +10,7 @@
 
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
-#include "itkParticleImageDomain.h"
+#include "ParticleImageDomain.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
 
