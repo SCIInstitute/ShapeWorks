@@ -11,7 +11,8 @@ import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-
+import numpy as np 
+import subprocess
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -32,17 +33,21 @@ def Run_Pipeline(args):
             args.use_case, dataset_name, output_directory)
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))[:3]
+        plane_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/constraints/*.json"))[:3]
     # Else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
-
+        plane_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/constraints/*.json"))
         # Select representative data if using subsample
         if args.use_subsample:
             inputImages =[sw.Image(filename) for filename in file_list]
             sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
+            plane_files = [plane_files[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """
@@ -111,23 +116,38 @@ def Run_Pipeline(args):
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
-    # Define the cutting planes
-    cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
-    cutting_plane_points2 = [[10, 0, 10], [-10, 0 ,10], [10, 0, -10]]
-    cp = [cutting_plane_points1, cutting_plane_points2]
-    # Cutting planes
-    cutting_planes = []
-    cutting_plane_counts = []
-    for i in range(len(dt_files)):
-        cutting_planes.append(cutting_plane_points1)
-        cutting_planes.append(cutting_plane_points2)
-        cutting_plane_counts.append(2)
+    # Make directory to save optimization output
+    point_dir = output_directory + 'shape_models/' + args.option_set
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
+
+
+    # Create spreadsheet
+    project_location = output_directory + "shape_models/"
+    subjects = []
+    number_domains = 1
+    for i in range(len(file_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i]], project_location)
+        subject.set_original_filenames(rel_seg_files)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_files)
+        transform = [ np.eye(4).flatten() ]
+        subject.set_groomed_transforms(transform)
+        rel_plane_files = sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i]], project_location)
+        subject.set_constraints_filenames(rel_plane_files)
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles": 32,
         "use_normals": 1,
-        "normal_weight": 15.0,
+        "normals_strength": 15,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 3000,
@@ -136,16 +156,9 @@ def Run_Pipeline(args):
         "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "domain_type": 'image',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 0,
-        "save_init_splits": 0,
         "verbosity": 0,
-        "adaptivity_mode": 0,
-        "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -153,28 +166,21 @@ def Run_Pipeline(args):
         parameter_dictionary["optimization_iterations"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 16
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 16
 
-    # Get data input (meshes if running in mesh mode, else distance transforms)
-    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('image'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_cut_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
 
-    # Execute the optimization function on distance transforms
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, input_files, parameter_dictionary)
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/ellipsoid_cut_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files)
+    # Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)
 
-    # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
-
-    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    """
-    Step 4: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    """
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
