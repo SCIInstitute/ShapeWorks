@@ -47,7 +47,6 @@ void RPPCAJob::run()
 
   // }
   
-  
 
   this->m_rppcaeigenvalues.resize(rppcaEigenValues.size());
     for(int i = 0; i<rppcaEigenValues.size(); i++){
