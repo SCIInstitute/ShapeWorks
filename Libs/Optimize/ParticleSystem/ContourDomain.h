@@ -26,7 +26,7 @@ public:
   itkSimpleNewMacro(ContourDomain);
 
   /** Point type used to store particle locations. */
-  typedef typename ParticleDomain::PointType PointType;
+  using PointType = ParticleDomain::PointType;
 
   explicit ContourDomain() {}
   virtual ~ContourDomain() {}
@@ -40,16 +40,16 @@ public:
   virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const override;
 
   virtual PointType UpdateParticlePosition(const PointType &point,
-                                           int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
+                                           int idx, VectorDoubleType &update) const override;
 
-  virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE,
+  virtual VectorDoubleType ProjectVectorToSurfaceTangent(VectorDoubleType& gradE,
                                                                             const PointType &pos, int idx) const override;
 
-  virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
+  virtual VectorFloatType SampleNormalAtPoint(const PointType &point, int idx) const override {
     throw std::runtime_error("Contours do not have normals");
   }
 
-  virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override {
+  virtual VectorFloatType SampleGradientAtPoint(const PointType &point, int idx) const override {
     throw std::runtime_error("Contours do not have gradients");
   }
 
@@ -87,7 +87,7 @@ public:
   }
 
   double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
-                         vnl_vector_fixed<double, 3>* out_grad=nullptr) const override;
+                         VectorDoubleType* out_grad=nullptr) const override;
 
   double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override;
 
@@ -117,10 +117,10 @@ public:
     // TODO what?
   }
 
-  virtual void InvalidateParticlePosition(int idx) const override;
+  void InvalidateParticlePosition(int idx) const override;
 
-  virtual PointType GetPositionAfterSplit(const PointType& pt,
-                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const override;
+  PointType GetPositionAfterSplit(const PointType& pt,
+                                          const VectorDoubleType& local_direction, const VectorDoubleType& global_direction, double epsilon) const override;
 
 protected:
   void PrintSelf(std::ostream& os, Indent indent) const override

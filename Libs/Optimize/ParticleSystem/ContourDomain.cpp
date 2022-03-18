@@ -313,7 +313,8 @@ void ContourDomain::InvalidateParticlePosition(int idx) const {
 }
 
 ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& pt,
-                                                              const vnl_vector_fixed<double, 3>& random,
+                                                              const vnl_vector_fixed<double, 3>& local_direction,
+                                                              const vnl_vector_fixed<double, 3>& global_direction,
                                                               double epsilon) const {
   // This relies on all the lines being in a consistent order(either clockwise or anticlockwise). With that, it ensures
   // that given a seed(`random`) all the domains end up returning a consistent split direction
@@ -329,7 +330,7 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
 
   // pick one of two directions depending on the `random` passed in
   Eigen::Vector3d split_dir = (p1 - p0).normalized();
-  if(random[0] < 0.0) {
+  if(global_direction[0] < 0.0) {
     split_dir *= -1;
   }
 
