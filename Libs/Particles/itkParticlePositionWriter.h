@@ -23,7 +23,6 @@ namespace itk {
  *
  * etc..
  */
-template <unsigned int VDimension>
 class ITK_EXPORT ParticlePositionWriter : public DataObject {
  public:
   /** Standard class typedefs */
@@ -34,7 +33,7 @@ class ITK_EXPORT ParticlePositionWriter : public DataObject {
   typedef WeakPointer<const Self> ConstWeakPointer;
 
   /** The point type that this class reads. */
-  typedef Point<double, VDimension> PointType;
+  typedef Point<double, 3> PointType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -63,7 +62,7 @@ class ITK_EXPORT ParticlePositionWriter : public DataObject {
 
     // Write points.
     for (typename std::vector<PointType>::const_iterator it = m_Input.begin(); it != m_Input.end(); it++) {
-      for (unsigned int i = 0; i < VDimension; i++) {
+      for (unsigned int i = 0; i < 3; i++) {
         out << (*it)[i] << " ";
       }
       out << std::endl;

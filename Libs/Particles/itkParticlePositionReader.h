@@ -24,7 +24,6 @@ namespace itk {
  *
  * etc..
  */
-template <unsigned int VDimension>
 class ITK_EXPORT ParticlePositionReader : public DataObject {
  public:
   /** Standard class typedefs */
@@ -35,7 +34,7 @@ class ITK_EXPORT ParticlePositionReader : public DataObject {
   typedef WeakPointer<const Self> ConstWeakPointer;
 
   /** The point type that this class reads. */
-  typedef Point<double, VDimension> PointType;
+  typedef Point<double, 3> PointType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -60,12 +59,10 @@ class ITK_EXPORT ParticlePositionReader : public DataObject {
       itkExceptionMacro("Could not open point file for input: " << m_FileName.c_str());
     }
 
-    //  in >> num_points;
-
     // Read all of the points, one point per line.
     while (in) {
       PointType pt;
-      for (unsigned int d = 0; d < VDimension; d++) {
+      for (unsigned int d = 0; d < 3; d++) {
         in >> pt[d];
       }
 
@@ -74,7 +71,6 @@ class ITK_EXPORT ParticlePositionReader : public DataObject {
     }
     // this algorithm pushes the last point twice
     m_Output.pop_back();
-    //  std::cout << "Read " << counter-1 << " points. " << std::endl;
     in.close();
   };
 

@@ -168,7 +168,7 @@ void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      itk::ParticlePositionReader<3>::Pointer reader = itk::ParticlePositionReader<3>::New();
+      itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
       reader->SetFileName(m_PointsFiles[i].c_str());
       reader->Update();
       this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);

@@ -87,8 +87,7 @@ ParticleGaussianModeWriter<VDimension>
       }
     
     std::string tmpstr = fn + ".mean";
-    typename ParticlePositionWriter<VDimension>::Pointer writer
-      = ParticlePositionWriter<VDimension>::New();
+    ParticlePositionWriter::Pointer writer = ParticlePositionWriter::New();
     writer->SetFileName(tmpstr.c_str());
     writer->SetInput(meanlist);
     writer->Update();
