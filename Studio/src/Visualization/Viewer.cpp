@@ -814,7 +814,7 @@ void Viewer::update_glyph_properties() {
     sum_range += bounds[5] - bounds[4];
     double average_range = sum_range / 3.0;
     // sanity clamp
-    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.03);
+    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.01);
     glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
   }
 

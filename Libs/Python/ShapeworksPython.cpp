@@ -1369,6 +1369,22 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setOutPath,
        "path"_a)
 
+  .def("setDoProcrustes",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<ThinPlateSplineTransform>::setEnableOutput,
+       "enableOutput"_a)
+
   .def("setModeIndex",
        &ReconstructSurface<ThinPlateSplineTransform>::setModeIndex,
        "modeIndex"_a)
@@ -1377,21 +1393,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<ThinPlateSplineTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a) 
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a)  
 
   .def("surface",
        &ReconstructSurface<ThinPlateSplineTransform>::surface,
@@ -1400,6 +1424,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<ThinPlateSplineTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<ThinPlateSplineTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
@@ -1412,9 +1440,25 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
        "prefix"_a)
 
-    .def("setOutPath",
+  .def("setOutPath",
        &ReconstructSurface<RBFSSparseTransform>::setOutPath,
        "path"_a)
+
+  .def("setDoProcrustes",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<RBFSSparseTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<RBFSSparseTransform>::setEnableOutput,
+       "enableOutput"_a)
 
   .def("setModeIndex",
        &ReconstructSurface<RBFSSparseTransform>::setModeIndex,
@@ -1424,21 +1468,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<RBFSSparseTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<RBFSSparseTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a)
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a) 
 
   .def("surface",
        &ReconstructSurface<RBFSSparseTransform>::surface,
@@ -1447,6 +1499,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<RBFSSparseTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<RBFSSparseTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   // Optimize (TODO)
