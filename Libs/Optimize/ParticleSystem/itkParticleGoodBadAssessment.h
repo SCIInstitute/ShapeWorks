@@ -29,7 +29,7 @@ public:
     typedef typename ParticleSystemType::PointType PointType;
 
     /** Type of the domain. */
-    typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+    typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
     typedef typename DomainType::VnlVectorType NormalType;
 
     typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;

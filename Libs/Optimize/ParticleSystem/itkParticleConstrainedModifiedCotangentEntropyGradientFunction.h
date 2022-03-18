@@ -67,7 +67,7 @@ public:
     typedef typename Superclass::PointType PointType;
     typedef typename Superclass::GradientVectorType GradientVectorType;
 
-    typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+    typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self);

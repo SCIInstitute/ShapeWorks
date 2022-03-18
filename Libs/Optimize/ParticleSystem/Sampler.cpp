@@ -109,7 +109,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     }
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
-      auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
+      auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
       // Adding free-form constraints to constraint object
       // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
@@ -286,7 +286,7 @@ void Sampler::ReInitialize() {
 }
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
-  auto domain = itk::MeshDomain::New();
+  auto domain = std::make_shared<MeshDomain>();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (mesh) {
     this->m_Spacing = 1;
@@ -297,7 +297,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
 }
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
-  auto domain = itk::ContourDomain::New();
+  auto domain = std::make_shared<ContourDomain>();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
@@ -367,7 +367,8 @@ void Sampler::AddFreeFormConstraint(unsigned int i, const std::vector<std::vecto
 }
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
-  const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
+  auto domain = std::make_shared<ParticleImplicitSurfaceDomain<ImageType::PixelType>>();
+
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
 
   if (image) {

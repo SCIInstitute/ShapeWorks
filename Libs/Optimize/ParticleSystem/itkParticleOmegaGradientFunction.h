@@ -56,7 +56,7 @@ public:
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension>
     MeanCurvatureCacheType;
 
-  typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );

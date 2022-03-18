@@ -56,7 +56,7 @@ public:
   itkNewMacro(Self);
 
   /** Type of the domain. */
-  typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+  typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
   
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);

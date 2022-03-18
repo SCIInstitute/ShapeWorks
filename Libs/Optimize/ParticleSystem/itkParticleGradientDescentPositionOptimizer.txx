@@ -128,7 +128,7 @@ namespace itk
             return;
           }
 
-          const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+          const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 

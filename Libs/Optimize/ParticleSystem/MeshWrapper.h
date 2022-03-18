@@ -10,8 +10,8 @@ namespace shapeworks
 class MeshWrapper
 {
 public:
-  typedef typename itk::ParticleDomain::PointType PointType;
-  typedef typename itk::ParticleDomain::GradNType GradNType;
+  typedef typename ParticleDomain::PointType PointType;
+  typedef typename ParticleDomain::GradNType GradNType;
 
   // Computed distance between points. If out_grad != nullptr, returns the gradient of the distance in that vector
   virtual double ComputeDistance(const PointType& pointa, int idx_a,

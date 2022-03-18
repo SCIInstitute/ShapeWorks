@@ -59,7 +59,7 @@ public:
 
   /** Domain type.  The Domain object provides bounds and distance
       information. */
-  typedef ParticleDomain DomainType;
+  using DomainType = shapeworks::ParticleDomain;
   
   /** Container type for points.  This matches the itkParticleSystem container
       type. */
@@ -101,8 +101,10 @@ public:
 
   /** Set the Domain that this neighborhood will use.  The Domain object is
       important because it defines bounds and distance measures. */
-  itkSetObjectMacro(Domain, DomainType);
-  itkGetConstObjectMacro(Domain, DomainType);
+  //itkSetObjectMacro(Domain, DomainType);
+  //itkGetConstObjectMacro(Domain, DomainType);
+  virtual void SetDomain(DomainType::Pointer domain) { m_Domain = domain; this->Modified(); };
+  DomainType::Pointer GetDomain() const { return m_Domain; };
 
   /**  For efficiency, itkNeighborhoods are not necessarily observers of
       itkParticleSystem, but have specific methods invoked for various events.

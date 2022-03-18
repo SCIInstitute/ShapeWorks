@@ -1,11 +1,3 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
 #include <fstream>
@@ -29,7 +21,7 @@
 #include <openvdb/math/Transform.h>
 #endif
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleImageDomain
  *  A bounding-box region domain that sets its bounding box according to the
@@ -42,20 +34,20 @@ class ParticleImageDomain : public ParticleRegionDomain
 {
 public:
   /** Standard class typedefs */
-  typedef SmartPointer<ParticleImageDomain>  Pointer;
+  using Pointer = std::shared_ptr<ParticleImageDomain>;
 
   /** Type of the ITK image used by this class. */
-  typedef Image<T, DIMENSION> ImageType;
+  using ImageType = itk::Image<T, DIMENSION>;
 
   /** Point type of the domain (not the image). */
-  typedef typename ParticleRegionDomain::PointType PointType;
+  using PointType = ParticleRegionDomain::PointType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I, double narrow_band)
   {
     this->m_FixedDomain = false;
-    this->Modified();
+    //this->Modified();
 
     openvdb::initialize(); // It is safe to initialize multiple times.
 
@@ -79,7 +71,7 @@ public:
     const auto xform = openvdb::math::Transform::createLinearTransform(mat);
     m_VDBImage->setTransform(xform);
 
-    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    itk::ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
     while(!it.IsAtEnd()) {
@@ -159,7 +151,10 @@ public:
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      itkExceptionMacro("Domain " << this->m_DomainID << ": " << this->m_DomainName << " : Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
+      std::ostringstream message;                                                         \
+      message << "Domain " << m_DomainID << ": " << m_DomainName << " : Distance transform queried for a Point, "
+              << p << ", outside the given image domain. Consider increasing the narrow band";
+      throw std::runtime_error(message.str());
     }
   }
 
@@ -206,7 +201,7 @@ protected:
   ParticleImageDomain() { }
   virtual ~ParticleImageDomain() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     ParticleRegionDomain::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBImage->activeVoxelCount() << std::endl;
@@ -228,7 +223,10 @@ protected:
       // If multiple threads crash here at the same time, the error message displayed is just "terminate called recursively",
       // which isn't helpful. So we std::cerr the error to make sure its printed to the console.
       std::cerr << "Sampled point outside the narrow band: " << p << std::endl;
-      itkExceptionMacro("Attempt to sample at a point outside the narrow band: " << p << ". Consider increasing the narrow band")
+
+      std::ostringstream message;                                                         \
+      message << "Attempt to sample at a point outside the narrow band: " << p << ". Consider increasing the narrow band";
+      throw std::runtime_error(message.str());
     }
 
     return idxCoord;

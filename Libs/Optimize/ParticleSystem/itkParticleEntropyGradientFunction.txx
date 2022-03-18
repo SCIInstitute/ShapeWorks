@@ -45,7 +45,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::ComputeAngularWeights(const PointType &pos,
                         int idx,
                         const typename ParticleSystemType::PointVectorType &neighborhood,
-                        const ParticleDomain *domain,
+                        const shapeworks::ParticleDomain *domain,
                         std::vector<double> &weights) const
 {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos, idx);
@@ -62,7 +62,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 template <class TGradientNumericType, unsigned int VDimension>
 double
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
-::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
+::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
                 const std::vector<double> &weights,
                 const PointType &pos,  double initial_sigma,  double precision,
                 int &err) const

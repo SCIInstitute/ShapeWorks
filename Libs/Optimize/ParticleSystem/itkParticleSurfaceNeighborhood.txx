@@ -26,7 +26,7 @@ ParticleSurfaceNeighborhood<TImage>
                          std::vector<double> &distances,
                          double radius) const
 {
-  const auto *domain = this->GetDomain();
+  const auto domain = this->GetDomain();
 
   GradientVectorType posnormal;
   if(m_WeightingEnabled) { // uninitialized otherwise, but we're trying to avoid looking up the normal if we can

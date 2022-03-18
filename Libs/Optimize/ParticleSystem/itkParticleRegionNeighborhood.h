@@ -38,6 +38,7 @@ public:
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
+  using DomainType = shapeworks::ParticleDomain;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -51,7 +52,7 @@ public:
   /** Inherited typedefs from parent class. */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::PointContainerType PointContainerType;
-  typedef typename Superclass::DomainType DomainType;
+
   typedef typename Superclass::PointVectorType PointVectorType;
 
   /** PowerOfTwoTree type used to sort points according to location. */
@@ -65,7 +66,7 @@ public:
 
   /** Override SetDomain so that we can grab the region extent info and
       construct our tree. */
-  virtual void SetDomain( DomainType *p);
+  void SetDomain(DomainType::Pointer p) override;
 
   /** Set/Get the number of levels in the sorting tree.  */
   itkSetMacro(TreeLevels, unsigned int);

@@ -496,7 +496,7 @@ protected:
 
   itk::ParticleSystem::Pointer m_ParticleSystem;
 
-  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
+  std::vector<ParticleDomain::Pointer> m_DomainList;
 
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 

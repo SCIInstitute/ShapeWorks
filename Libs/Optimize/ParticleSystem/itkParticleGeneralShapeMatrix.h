@@ -162,7 +162,7 @@ public:
             pt[1] = posLocal[1];
             pt[2] = posLocal[2];
             fVals.clear();
-            const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
+            const shapeworks::ParticleImplicitSurfaceDomain<float> * domain = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
             meshFIM *ptr = domain->GetMesh();
             ptr->GetFeatureValues(pt, fVals);
             for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)

@@ -19,7 +19,7 @@
 #include "vnl/vnl_cross.h"
 #define PARTICLE_DEBUG_FLAG 1
 
-namespace itk
+namespace shapeworks
 {
 
 template<class T>

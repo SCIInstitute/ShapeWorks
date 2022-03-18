@@ -66,7 +66,7 @@ public:
     typedef typename Superclass::PointType PointType;
     typedef typename Superclass::GradientVectorType GradientVectorType;
 
-    typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+    typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self);
@@ -179,13 +179,6 @@ protected:
 
 } //end namespace
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleModifiedCotangentEntropyGradientFunction+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
-#endif
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
 

@@ -18,7 +18,7 @@
 namespace itk
 {
 template<unsigned int VDimension>
-void ParticleRegionNeighborhood<VDimension>::SetDomain(DomainType *d)
+void ParticleRegionNeighborhood<VDimension>::SetDomain(DomainType::Pointer d)
 {
   Superclass::SetDomain(d);
   m_Tree->ConstructTree(d->GetLowerBound(), d->GetUpperBound(), m_TreeLevels);

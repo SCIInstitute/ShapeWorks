@@ -56,7 +56,7 @@ class ParticleSystem : public DataObject {
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Define the base domain type. */
-  typedef ParticleDomain DomainType;
+  using DomainType = shapeworks::ParticleDomain;
 
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
@@ -205,7 +205,7 @@ class ParticleSystem : public DataObject {
       for a list of positions that are contained within the domain, and a
       default neighborhood calculator.  The final, optional argument indicates
       the calling thread id.*/
-  void AddDomain(DomainType *, int threadId = 0);
+  void AddDomain(DomainType::Pointer input, int threadId = 0);
 
   /** Return an iterator that points to the first element of the list of the
       domains. */
@@ -216,16 +216,16 @@ class ParticleSystem : public DataObject {
   std::vector<DomainType::Pointer>::const_iterator GetDomainsEnd() const { return m_Domains.end(); }
 
   /** Return the i'th domain object. */
-  DomainType *GetDomain(unsigned int i) { return m_Domains[i].GetPointer(); }
+  DomainType *GetDomain(unsigned int i) { return m_Domains[i].get(); }
 
   /** API for the single domain case. */
-  DomainType *GetDomain() { return m_Domains[0].GetPointer(); }
+  DomainType *GetDomain() { return m_Domains[0].get(); }
 
   /** Return the i'th domain object. */
-  const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].GetPointer(); }
+  const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].get(); }
 
   /** API for the single domain case. */
-  const DomainType *GetDomain() const { return m_Domains[0].GetPointer(); }
+  const DomainType *GetDomain() const { return m_Domains[0].get(); }
 
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const { return m_Domains.size(); }

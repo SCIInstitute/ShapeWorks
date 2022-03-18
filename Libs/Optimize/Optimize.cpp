@@ -1665,8 +1665,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const itk::ParticleImplicitSurfaceDomain<float>* domain
-              = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
+      const ParticleImplicitSurfaceDomain<float>* domain
+              = dynamic_cast <const ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
                       ->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {

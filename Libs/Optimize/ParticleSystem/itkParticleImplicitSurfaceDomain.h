@@ -17,7 +17,7 @@
 
 #include "meshFIM.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleImplicitSurfaceDomain
  *
@@ -33,13 +33,13 @@ class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T>
 public:
   /** Standard class typedefs */
   typedef ParticleImageDomainWithCurvature<T> Superclass;
-  typedef SmartPointer<ParticleImplicitSurfaceDomain>  Pointer;
+  typedef std::shared_ptr<ParticleImplicitSurfaceDomain>  Pointer;
 
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(ParticleImplicitSurfaceDomain);
+  //itkNewMacro(ParticleImplicitSurfaceDomain);
 
   /** Set/Get the precision of the projection operation.  The resulting projection
       will be within the specified tolerance. */
@@ -47,7 +47,7 @@ public:
     if (this->m_Tolerance != _Tolerance)
     {
       this->m_Tolerance = _Tolerance;
-      this->Modified();
+      //this->Modified();
     }
   }
   virtual T GetTolerance() {
@@ -126,12 +126,11 @@ public:
       return p;
     }
 
-protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4)
   {
     m_mesh = NULL;
   }
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;

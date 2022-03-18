@@ -17,7 +17,7 @@
 #include "itkDerivativeImageFilter.h"
 #include "vnl/vnl_matrix_fixed.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleImageDomainWithGradN
  *
@@ -34,7 +34,7 @@ class ParticleImageDomainWithGradN : public ParticleImageDomainWithGradients<T>
 public:
   /** Standard class typedefs */
   typedef ParticleImageDomainWithGradients<T> Superclass;
-  typedef SmartPointer<ParticleImageDomainWithGradN>  Pointer;
+  using Pointer = std::shared_ptr<ParticleImageDomainWithGradN>;
 
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
@@ -100,7 +100,7 @@ protected:
   ParticleImageDomainWithGradN() {}
   virtual ~ParticleImageDomainWithGradN() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
