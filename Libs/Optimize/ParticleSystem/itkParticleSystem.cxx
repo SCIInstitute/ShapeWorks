@@ -267,7 +267,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         double norm = random.magnitude();
         random /= norm;
 
-        // Check where the update will take us after applying it to the point and th constraints.
+        // Check where the update will take us after applying it to the point and the constraints.
         newposs_good.clear();
         bool good = true;  // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
