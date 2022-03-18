@@ -195,7 +195,7 @@ def calculate_minVariance(matrix):
     
     explained_variance = sorted(eigen_values/sum(eigen_values),reverse=True)
     cumulative_variance = np.array(explained_variance).cumsum()
-    min_dims = np.where(cumulative_variance <=60)[0]
+    min_dims = np.where(cumulative_variance <=95)[0]
     #if the first mode is the most dominant, min_dims will be empty
     if(min_dims.size==0):
         min_dims = 1
@@ -238,10 +238,10 @@ class WPPCA():
         self.mu = np.mean(self.x,axis=1).reshape((-1,1))
         self.W = np.random.random((self.feature_dim,self.latent_dim))
         self.sigma2 = 1
-        self.a = 0.5
-        self.b = 0.1
-        # self.a = self.num_samples/1e5
-        # self.b = self.num_samples/1e6
+        # self.a = 0.05
+        # self.b = 0.01
+        self.a = self.num_samples/1e5
+        self.b = self.num_samples/1e6
 
     def standarize(self):
         self.mean = np.mean(self.x, axis=1).reshape((-1,1))
