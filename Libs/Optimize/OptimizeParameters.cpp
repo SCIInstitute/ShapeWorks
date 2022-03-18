@@ -206,7 +206,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   if (get_use_landmarks()) {
     // landmarks/point files
     std::vector<std::string> point_files;
-    for (auto &s : subjects) {
+    for (auto& s : subjects) {
       auto landmarks = s->get_landmarks_filenames();
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
@@ -218,20 +218,20 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   // add cutting planes
   int domain_count = 0;
   std::vector<Constraints> constraints;
-  for (auto &s : subjects) {
+  for (auto& s : subjects) {
     auto files = s->get_constraints_filenames();
     for (int f = 0; f < files.size(); f++) {
       auto file = files[f];
       Constraints constraint;
       constraint.Read(file);
       constraints.push_back(constraint);
-      for (auto &plane : constraint.getPlaneConstraints()) {
+      for (auto& plane : constraint.getPlaneConstraints()) {
         auto& points = plane.points();
         vnl_vector_fixed<double, 3> a, b, c;
         if (points.size() != 3) {
           throw std::runtime_error("Error reading plane constraint: " + file);
         }
-        for (int i=0;i<3;i++) {
+        for (int i = 0; i < 3; i++) {
           a[i] = points[0][i];
           b[i] = points[1][i];
           c[i] = points[2][i];
@@ -246,14 +246,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           // don't add the cutting plane to the system, we are just going to clip the mesh instead
           optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
         }
-
       }
 
       domain_count++;
-
     }
   }
-
 
   std::vector<std::string> filenames;
   int count = 0;
@@ -277,15 +274,17 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       if (domain_type == DomainType::Mesh) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
-        Constraints constraint = constraints[domain_count];
-        for (auto& plane : constraint.getPlaneConstraints()) {
-          mesh.clip(plane.getVTKPlane());
-        }
+        if (domain_count < constraints.size()) {
+          Constraints constraint = constraints[domain_count];
+          for (auto& plane : constraint.getPlaneConstraints()) {
+            mesh.clip(plane.getVTKPlane());
+          }
 
-        if (constraint.getFreeformConstraint().isSet()) {
-          auto& ffc = constraint.getFreeformConstraint();
-          mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-          mesh = Mesh(mesh.clipByField("inout", 1.0));
+          if (constraint.getFreeformConstraint().isSet()) {
+            auto& ffc = constraint.getFreeformConstraint();
+            mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
+            mesh = Mesh(mesh.clipByField("inout", 1.0));
+          }
         }
 
         auto poly_data = mesh.getVTKMesh();

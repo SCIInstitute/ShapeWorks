@@ -50,7 +50,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   // start with these off
   ui_->landmarks_open_button->toggle();
-   ui_->constraints_open_button->toggle();
+  ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
 
   // table on
