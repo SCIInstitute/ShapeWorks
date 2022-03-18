@@ -2,7 +2,7 @@
 
 #include <vnl/vnl_vector_fixed.h>
 
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "DomainType.h"
 
 namespace shapeworks

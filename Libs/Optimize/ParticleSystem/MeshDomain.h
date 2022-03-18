@@ -4,7 +4,7 @@
 
 #include "MeshWrapper.h"
 #include "TriMeshWrapper.h"
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 
 namespace shapeworks {
 

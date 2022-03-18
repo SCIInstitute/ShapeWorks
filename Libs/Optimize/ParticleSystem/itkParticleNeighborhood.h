@@ -18,7 +18,7 @@
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "itkParticleContainer.h"
 #include "itkParticlePointIndexPair.h"
 #include <vector>

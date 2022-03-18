@@ -8,7 +8,7 @@
 
 #include <Eigen/Dense>
 
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 
 namespace shapeworks {
 

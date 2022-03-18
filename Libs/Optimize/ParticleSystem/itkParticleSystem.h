@@ -10,7 +10,7 @@
 #include "itkObjectFactory.h"
 #include "itkParticleAttribute.h"
 #include "itkParticleContainer.h"
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "itkParticleEvents.h"
 #include "itkParticleNeighborhood.h"
 #include "itkPoint.h"

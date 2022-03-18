@@ -8,7 +8,7 @@
 =========================================================================*/
 #pragma once
 
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 
 namespace shapeworks {
 class ParticleRegionDomain : public ParticleDomain {
