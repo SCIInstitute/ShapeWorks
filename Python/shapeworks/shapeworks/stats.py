@@ -188,6 +188,26 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
 #     X_minusMean = data.detach().numpy() - mu
 #     # return W,mu,sigma2,un,nu
 #     return eigen_values,eigen_vector_W,mu,exp_var,X_minusMean
+
+def calculate_minVariance(matrix):
+    eigen_values,eigen_vectors = np.linalg.eigh(matrix)
+    eigen_values = sorted(eigen_values,reverse=True)
+    
+    explained_variance = sorted(eigen_values/sum(eigen_values),reverse=True)
+    cumulative_variance = np.array(explained_variance).cumsum()
+    min_dims = np.where(cumulative_variance <=60)[0]
+    #if the first mode is the most dominant, min_dims will be empty
+    if(min_dims.size==0):
+        min_dims = 1
+    else:
+        min_dims = min_dims[-1]+1
+    if(min_dims==matrix.shape[1]):
+        min_dims = min_dims -1
+    
+    
+    m_MinimumVariance = np.sum(np.absolute(eigen_values[min_dims:]))
+    return m_MinimumVariance
+
 class WPPCA():
     def __init__(self,x,latent_dim=2,num_iterations=10):
 
@@ -218,8 +238,8 @@ class WPPCA():
         self.mu = np.mean(self.x,axis=1).reshape((-1,1))
         self.W = np.random.random((self.feature_dim,self.latent_dim))
         self.sigma2 = 1
-        self.a = 0.1
-        self.b = 0.001
+        self.a = 0.5
+        self.b = 0.1
         # self.a = self.num_samples/1e5
         # self.b = self.num_samples/1e6
 
@@ -311,7 +331,7 @@ class WPPCA():
 
     def wppca_em(self):
 
-        self.standarize()
+        # self.standarize()
         L_old = -1000000000
         for i in range(self.num_iterations):
             '''
@@ -324,7 +344,7 @@ class WPPCA():
             
             
             Minv,E_tn,weighted_E_tn_tnT_sample = self.get_expectation_terms_per_sample(self.W,self.mu,self.sigma2,self.weights)
-            weighted_E_tn_tnT = np.mean(weighted_E_tn_tnT_sample,axis=2)/self.feature_dim
+            weighted_E_tn_tnT = np.mean(weighted_E_tn_tnT_sample,axis=2)
             
             
 
@@ -351,7 +371,9 @@ class WPPCA():
             '''
             data_minus_mean = self.x - new_mu
             weighted_data = np.multiply(data_minus_mean,self.weights[np.newaxis,:])
-            W_new = (weighted_data.dot(E_tn.T)).dot(np.linalg.inv(weighted_E_tn_tnT))
+            m_MinimumVariance = calculate_minVariance(weighted_E_tn_tnT)
+
+            W_new = (weighted_data.dot(E_tn.T)).dot(np.linalg.inv(weighted_E_tn_tnT + m_MinimumVariance))
             
             '''
             update sigma
@@ -366,16 +388,16 @@ class WPPCA():
                         np.trace(weighted_E_tn_tnT.dot(W_new.T.dot(W_new))))
 
             sigma2_new = np.absolute(sigma2_new)
-            # print("Sigma2: ",sigma2_new)
+            print("Sigma2: ",sigma2_new)
 
             '''
             update weights
             '''
 
-            L = self.get_likelihood(E_tn,weighted_E_tn_tnT_sample,new_mu,W_new,sigma2_new)/self.feature_dim/self.num_samples
-            # plt.figure()
-            # plt.bar(list(range(self.num_samples)),L)
-            # plt.show()
+            L = self.get_likelihood(E_tn,weighted_E_tn_tnT_sample,new_mu,W_new,sigma2_new)
+            plt.figure()
+            plt.bar(list(range(self.num_samples)),L)
+            plt.show()
             
 
             coeff = np.zeros((self.num_samples,3))
@@ -386,15 +408,12 @@ class WPPCA():
             weights_new = self.weights*0
             for ids in range(self.num_samples):
                 roots = np.roots(coeff[ids,:]) 
-                # print(roots)
+                print(roots)
                 # # weights_new[ids] = roots[np.where(roots>0)]
                 # roots = np.polynomial.Polynomial(coefs[ids,:]).roots()
                 # print(roots)
-                weights_new[ids] = np.absolute(roots[0])
-            print(weights_new)
-            # scaler = MinMaxScaler(feature_range=(1e-5, 1))
-            # un_array = weights_new.reshape(-1,1)
-            # weights_new = scaler.fit_transform(un_array)[:,0]
+                weights_new[ids] = roots[0]
+            weights_new = np.absolute(weights_new)
             # weights_new[np.where(weights_new<0)] = 1e-5
             # weights_new = (weights_new - 0.1)/(np.max(weights_new)-0.1)
             # print(weights_new)
@@ -410,15 +429,14 @@ class WPPCA():
             total_likelihood = np.sum((self.a-1)*np.log(weights_new) + np.log(1-weights_new)*(1-self.b) ) + np.sum(weights_new*L)
             total_likelihood = total_likelihood/self.num_samples
             print("Total Likelihood: ",total_likelihood)
-            print(weights_new)
             self.weights = weights_new
             if(total_likelihood>L_old):
             # if(True):
                 L_old = total_likelihood
 
                 self.W = np.copy(W_new)
-                self.sigma2 = sigma2_new
-                self.mu = new_mu.reshape((-1,1))
+                self.sigma2 = np.copy(sigma2_new)
+                self.mu = np.copy(new_mu.reshape((-1,1)))
                 
                 
             else:
@@ -426,20 +444,17 @@ class WPPCA():
                 break
             
 
-        # self.W = self.W/np.linalg.norm(self.W,axis=0)
+        self.W = self.W/np.linalg.norm(self.W,axis=0)
         matrix = np.matmul(self.W.T,self.W)
 
         eigen_values, rotation_matrix = np.linalg.eigh(matrix)
         self.W = np.matmul(self.W,rotation_matrix)
-        
-
-        index = eigen_values.argsort()[::-1]
-        eigen_values = eigen_values[index]
         self.eigen_values = eigen_values
-
-        self.W = self.W[:,index]
-        norms = np.linalg.norm(self.W,axis=0)
-        self.W = self.W/norms
+        index = self.eigen_values.argsort()[::-1]
+        self.eigen_values = self.eigen_values[index]
+        eigen_vector_W = self.W[:,index]
+        norms = np.linalg.norm(eigen_vector_W,axis=0)
+        self.W = eigen_vector_W/norms
         
             
 
