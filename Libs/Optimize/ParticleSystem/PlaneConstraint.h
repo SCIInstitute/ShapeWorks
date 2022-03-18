@@ -51,7 +51,7 @@ class PlaneConstraint : public Constraint {
   Eigen::Vector3d planePoint_;
 
   std::vector<Eigen::Vector3d> points_;
-  double offset_;
+  double offset_ = 0;
 };
 
 }  // namespace shapeworks
