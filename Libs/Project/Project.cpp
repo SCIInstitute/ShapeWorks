@@ -119,14 +119,10 @@ std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return this->su
 
 //---------------------------------------------------------------------------
 
-void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects)
-{
-  this->subjects_ = subjects;
-}
+void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) { this->subjects_ = subjects; }
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(const std::string& prefix) {
-
   std::vector<std::string> prefixes;
   prefixes.push_back(prefix);
   return this->get_matching_columns(prefixes);
@@ -363,7 +359,6 @@ void Project::store_subjects() {
       groomed_present = true;
       int groom_count = 0;
       while (groomed_files.size() > groomed_columns.size()) {
-
         auto prefix = GROOMED_PREFIX;
         int domain_index = groomed_columns.size();
 
@@ -372,15 +367,13 @@ void Project::store_subjects() {
         }
 
         groomed_columns.push_back(this->get_new_file_column(prefix, groom_count));
-        groomed_transform_columns.push_back(
-          this->get_new_file_column(GROOMED_TRANSFORMS_PREFIX, groom_count));
+        groomed_transform_columns.push_back(this->get_new_file_column(GROOMED_TRANSFORMS_PREFIX, groom_count));
         groom_count++;
       }
       this->set_list(groomed_columns, i, groomed_files);
 
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
-      this->set_transform_list(procrustes_transform_columns, i,
-                               subject->get_procrustes_transforms());
+      this->set_transform_list(procrustes_transform_columns, i, subject->get_procrustes_transforms());
     }
 
     // landmarks
@@ -407,14 +400,14 @@ void Project::store_subjects() {
 
     // features
     auto features = subject->get_feature_filenames();
-    for (auto const& x: features) {
+    for (auto const& x : features) {
       int idx = this->get_index_for_column("feature_" + x.first, true);
       this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
 
     // extra values
     auto extra_values = subject->get_extra_values();
-    for (auto const& x: extra_values) {
+    for (auto const& x : extra_values) {
       int idx = this->get_index_for_column(x.first, true);
       this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
@@ -494,28 +487,16 @@ void Project::new_landmark(int domain_id) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Project::get_original_domain_types()
-{
-  return original_domain_types_;
-}
+std::vector<DomainType> Project::get_original_domain_types() { return original_domain_types_; }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Project::get_groomed_domain_types()
-{
-  return groomed_domain_types_;
-}
+std::vector<DomainType> Project::get_groomed_domain_types() { return groomed_domain_types_; }
 
 //---------------------------------------------------------------------------
-void Project::set_original_domain_types(std::vector<DomainType> domain_types)
-{
-  original_domain_types_ = domain_types;
-}
+void Project::set_original_domain_types(std::vector<DomainType> domain_types) { original_domain_types_ = domain_types; }
 
 //---------------------------------------------------------------------------
-void Project::set_groomed_domain_types(std::vector<DomainType> domain_types)
-{
-  groomed_domain_types_ = domain_types;
-}
+void Project::set_groomed_domain_types(std::vector<DomainType> domain_types) { groomed_domain_types_ = domain_types; }
 
 //---------------------------------------------------------------------------
 void Project::load_landmark_definitions() {
@@ -598,8 +579,7 @@ void Project::set_default_landmark_colors() {
 }
 
 //---------------------------------------------------------------------------
-void Project::determine_domain_types()
-{
+void Project::determine_domain_types() {
   if (subjects_.empty()) {
     return;
   }
@@ -608,13 +588,11 @@ void Project::determine_domain_types()
   original_domain_types_.clear();
   auto original_columns = get_matching_columns(input_prefixes_);
   for (const auto& col : original_columns) {
-    if (starts_with(col,SEGMENTATION_PREFIX)) {
+    if (starts_with(col, SEGMENTATION_PREFIX)) {
       original_domain_types_.push_back(DomainType::Image);
-    }
-    else if (starts_with(col,MESH_PREFIX)) {
+    } else if (starts_with(col, MESH_PREFIX)) {
       original_domain_types_.push_back(DomainType::Mesh);
-    }
-    else if (starts_with(col,CONTOUR_PREFIX)) {
+    } else if (starts_with(col, CONTOUR_PREFIX)) {
       original_domain_types_.push_back(DomainType::Contour);
     } else {
       // determine by file type of first subject
@@ -625,11 +603,10 @@ void Project::determine_domain_types()
     }
   }
 
-
   groomed_domain_types_.clear();
   auto groomed_columns = get_matching_columns(GROOMED_PREFIX);
   for (const auto& col : groomed_columns) {
-    if (starts_with(col,GROOMED_CONTOUR_PREFIX)) {
+    if (starts_with(col, GROOMED_CONTOUR_PREFIX)) {
       groomed_domain_types_.push_back(DomainType::Contour);
     } else {
       // determine by file type of first subject
@@ -642,11 +619,10 @@ void Project::determine_domain_types()
 }
 
 //---------------------------------------------------------------------------
-DomainType Project::determine_domain_type(std::string filename)
-{
+DomainType Project::determine_domain_type(std::string filename) {
   std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
 
-  for (const auto &type : Mesh::getSupportedTypes()) {
+  for (const auto& type : Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       return DomainType::Mesh;
     }
@@ -655,10 +631,7 @@ DomainType Project::determine_domain_type(std::string filename)
 }
 
 //---------------------------------------------------------------------------
-bool Project::starts_with(std::string str, std::string prefix)
-{
-  return str.substr(0, prefix.size()) == prefix;
-}
+bool Project::starts_with(std::string str, std::string prefix) { return str.substr(0, prefix.size()) == prefix; }
 
 //---------------------------------------------------------------------------
 int Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const {
@@ -743,9 +716,9 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   int value_column = 1;  // single domain
   if (domain_name != "") {
-    for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
-      if (rows[0][i].to_string() == "value_" + domain_name) {
-        value_column = i;
+    for (auto i = ws.lowest_column(); i < ws.highest_column(); i++) {
+      if (rows[0][i.index].to_string() == "value_" + domain_name) {
+        value_column = i.index;
       }
     }
   }
@@ -760,8 +733,11 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(const std::string& name, Parameters params, const std::string& domain_name) {
+void Project::set_parameters(const std::string& name, Parameters params, std::string domain_name) {
   try {
+    if (get_number_of_domains_per_subject() == 1) {
+      domain_name = "";
+    }
     int id = this->get_or_create_worksheet(name);
     auto ws = this->wb_->sheet_by_index(id);
 
@@ -816,7 +792,6 @@ void Project::set_list(std::vector<std::string> columns, int subject, std::vecto
     int column_index = get_index_for_column(column, true);
     // std::cerr << "get_index_for_column(" << column << ") returned " << column_index << "\n";
     this->set_value(column_index, subject + 2, values[s]);  // +1 for header, +1 for 1-indexed
-
   }
 }
 
@@ -824,7 +799,6 @@ void Project::set_list(std::vector<std::string> columns, int subject, std::vecto
 
 void Project::set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map) {
   for (const auto& pair : map) {
-
     int column_index = get_index_for_column(prefix + pair.first, true);
     this->set_value(column_index, subject + 2, pair.second);  // +1 for header, +1 for 1-indexed
   }
@@ -908,7 +882,6 @@ std::vector<std::string> Project::get_group_names() {
 
   std::vector<std::string> group_names;
 
-
   for (std::string group : raw_names) {
     group.erase(0, std::strlen(GROUP_PREFIX));  // erase "group_"
 
@@ -978,7 +951,6 @@ std::vector<std::string> Project::get_extra_columns() const {
   for (int i = 0; i < headers.length(); i++) {
     bool match = false;
     for (const auto& prefix : this->matching_columns_) {
-
       if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
         match = true;
       }
@@ -997,13 +969,12 @@ std::string Project::get_filename() { return this->filename_; }
 
 void Project::set_filename(std::string filename) { this->filename_ = filename; }
 
-
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_domain_names() {
   auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   if (!seg_columns.empty()) {
     std::vector<std::string> names;
-    for (auto&& item: seg_columns) {
+    for (auto&& item : seg_columns) {
       names.push_back(this->get_column_identifier(item));
     }
     return names;
@@ -1012,7 +983,7 @@ std::vector<std::string> Project::get_domain_names() {
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
   if (!groom_columns.empty()) {
     std::vector<std::string> names;
-    for (auto&& item: groom_columns) {
+    for (auto&& item : groom_columns) {
       names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
     }
     return names;
@@ -1044,7 +1015,6 @@ std::string Project::get_new_file_column(std::string name, int idx) { return nam
 //---------------------------------------------------------------------------
 std::string Project::get_column_identifier(std::string name) {
   for (const auto& prefix : this->input_prefixes_) {
-
     if (name.substr(0, prefix.size()) == prefix) {
       return name.substr(prefix.size(), name.size());
     }

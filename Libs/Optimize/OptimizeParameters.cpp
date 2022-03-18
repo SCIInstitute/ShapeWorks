@@ -217,16 +217,19 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   // add cutting planes
   int domain_count = 0;
+  std::vector<Constraints> constraints;
   for (auto &s : subjects) {
     auto files = s->get_constraints_filenames();
-    for (auto &file : files) {
-      Constraints c;
-      c.Read(file);
-      for (auto &plane : c.getPlaneConstraints()) {
+    for (int f = 0; f < files.size(); f++) {
+      auto file = files[f];
+      Constraints constraint;
+      constraint.Read(file);
+      constraints.push_back(constraint);
+      for (auto &plane : constraint.getPlaneConstraints()) {
         auto& points = plane.points();
         vnl_vector_fixed<double, 3> a, b, c;
         if (points.size() != 3) {
-          throw std::runtime_error("Error reading plane constrain: " + file);
+          throw std::runtime_error("Error reading plane constraint: " + file);
         }
         for (int i=0;i<3;i++) {
           a[i] = points[0][i];
@@ -238,7 +241,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         b = optimize->TransformPoint(domain_count, b);
         c = optimize->TransformPoint(domain_count, c);
 
-        optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
+        auto domain_type = project_->get_groomed_domain_types()[f];
+        if (domain_type != DomainType::Mesh) {
+          // don't add the cutting plane to the system, we are just going to clip the mesh instead
+          optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
+        }
 
       }
 
@@ -247,11 +254,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
-
-  // passing cutting plane constraints
-  // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes =
-      optimize->GetSampler()->ComputeCuttingPlanes();
 
   std::vector<std::string> filenames;
   int count = 0;
@@ -275,17 +277,17 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       if (domain_type == DomainType::Mesh) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
-
-        if (count < planes.size()) {
-          for (size_t i = 0; i < planes[count].size(); i++) {
-            // Create vtk plane
-            auto plane = vtkSmartPointer<vtkPlane>::New();
-            plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1], planes[count][i].first[2]);
-            plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1], planes[count][i].second[2]);
-
-            mesh.clip(plane);
-          }
+        Constraints constraint = constraints[domain_count];
+        for (auto& plane : constraint.getPlaneConstraints()) {
+          mesh.clip(plane.getVTKPlane());
         }
+
+        if (constraint.getFreeformConstraint().isSet()) {
+          auto& ffc = constraint.getFreeformConstraint();
+          mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
+          mesh = Mesh(mesh.clipByField("inout", 1.0));
+        }
+
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {

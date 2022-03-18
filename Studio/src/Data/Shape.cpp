@@ -250,7 +250,9 @@ bool Shape::import_constraints(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Constraints constraints;
     try {
-      constraints.Read(filenames[i].toStdString());
+      if (!filenames[i].isEmpty()) {
+        constraints.Read(filenames[i].toStdString());
+      }
     } catch (std::exception& e) {
       STUDIO_SHOW_ERROR(e.what());
       return false;
@@ -269,7 +271,19 @@ bool Shape::store_constraints() {
     filenames.push_back(filename);
   }
 
-  if (constraints_.size() == 0) {
+  if (constraints_.empty()) {
+    filenames = {};
+  }
+
+  bool has_constraints = false;
+
+  for (int i = 0; i < filenames.size(); i++) {
+    if (get_constraints(i).hasConstraints()) {
+      has_constraints = true;
+    }
+  }
+
+  if (!has_constraints) {
     filenames = {};
   }
 

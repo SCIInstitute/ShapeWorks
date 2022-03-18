@@ -182,7 +182,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_recent_files();
   void update_alignment_options();
 
-  void save_project(std::string filename);
+  void save_project(QString filename);
 
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
@@ -234,6 +234,9 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
+
+  QStringList current_features_;
+  QStringList current_image_list_;
 
   QSharedPointer<PythonWorker> py_worker_;
 };

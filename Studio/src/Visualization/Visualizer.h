@@ -64,6 +64,7 @@ class Visualizer : public QObject {
 
   void update_landmarks();
   void update_planes();
+  void update_ffc_mode();
 
   void display_sample(int i);
 
@@ -133,6 +134,9 @@ class Visualizer : public QObject {
 
   //! Handle ctrl click
   void handle_ctrl_click(PickResult result);
+
+  //! Redraw renderers
+  void redraw();
 
  public Q_SLOTS:
 

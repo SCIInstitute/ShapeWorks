@@ -90,8 +90,7 @@ void Session::calculate_reconstructed_samples() {
 void Session::set_parent(QWidget* parent) { this->parent_ = parent; }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname) {
-  QString filename = QString::fromStdString(fname);
+bool Session::save_project(QString filename) {
   if (filename == "") {
     filename = this->filename_;
   }
@@ -980,6 +979,9 @@ void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
 void Session::trigger_planes_changed() { emit planes_changed(); }
 
 //---------------------------------------------------------------------------
+void Session::trigger_ffc_changed() { emit ffc_changed(); }
+
+//---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
 
 //---------------------------------------------------------------------------
@@ -1104,15 +1106,46 @@ void Session::set_tool_state(string state) {
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
+  Q_EMIT ffc_paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
+void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
+  ffc_painting_inclusive_mode_ = inclusive;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mode_; }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_size(double size) {
+  ffc_paint_size = size;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_ffc_paint_size() { return ffc_paint_size; }
+
+//---------------------------------------------------------------------------
+void Session::trigger_repaint() { Q_EMIT repaint(); }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_active(bool enabled) {
+  ffc_painting_active_ = enabled;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
-  emit landmarks_changed();
+  Q_EMIT landmarks_changed();
 }
 
 //---------------------------------------------------------------------------

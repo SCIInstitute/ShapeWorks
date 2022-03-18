@@ -106,7 +106,7 @@ public:
 
   //! Store parameters based on key
   void
-  set_parameters(const std::string& name, Parameters params, const std::string& domain_name = "");
+  set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
 
   //! Clear parameters based on key
   void clear_parameters(const std::string& name);

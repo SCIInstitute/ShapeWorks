@@ -150,6 +150,14 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     emit optimize_complete();
     return;
   }
+
+  if (session_->get_filename() == "") {
+    emit error_message("Project must be saved before running Optimize");
+    return;
+  } else {
+    session_->save_project(session_->get_filename());
+  }
+
   this->optimization_is_running_ = true;
   emit optimize_start();
 
