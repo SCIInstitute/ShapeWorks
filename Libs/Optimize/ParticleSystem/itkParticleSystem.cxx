@@ -276,7 +276,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
           int local_domain = dom_to_process + j * domains_per_shape;
           auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
-          PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, epsilon);
+          PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
 
           // Go to surface
           if (!this->m_DomainFlags[local_domain] &&
