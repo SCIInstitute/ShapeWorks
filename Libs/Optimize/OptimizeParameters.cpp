@@ -316,14 +316,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     std::vector<int> domain_flags;
     int count = 0;
     for (auto& subject : subjects) {
-      auto table = subject->get_table_values();
-      if (table.find(get_fixed_subjects_column()) != table.end()) {
-        for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
-          if (table[get_fixed_subjects_column()] == get_fixed_subjects_choice()) {
-            domain_flags.push_back(count);
-          }
-          count++;
+      for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
+        if (is_subject_fixed(subject)) {
+          domain_flags.push_back(count);
         }
+        count++;
       }
     }
     optimize->SetDomainFlags(domain_flags);
@@ -418,7 +415,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         }
       } else {
         Image image(filename);
-        optimize->AddImage(image);
+        if (is_subject_fixed(s)) {
+          optimize->AddImage(nullptr);
+        } else {
+          optimize->AddImage(image);
+        }
       }
 
       using TransformType = vnl_matrix_fixed<double, 4, 4>;
@@ -461,4 +462,15 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetOutputTransformFile("transform");
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::is_subject_fixed(std::shared_ptr<Subject> subject) {
+  auto table = subject->get_table_values();
+  if (table.find(get_fixed_subjects_column()) != table.end()) {
+    if (table[get_fixed_subjects_column()] == get_fixed_subjects_choice()) {
+      return true;
+    }
+  }
+  return false;
 }

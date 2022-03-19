@@ -86,6 +86,8 @@ class OptimizeParameters {
 
   bool set_up_optimize(Optimize* optimize);
 
+  bool is_subject_fixed(std::shared_ptr<Subject> subject);
+
  private:
   std::string get_output_prefix();
 
