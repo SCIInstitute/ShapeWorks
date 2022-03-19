@@ -133,6 +133,103 @@ int OptimizeParameters::get_multiscale_particles() { return this->params_.get("m
 void OptimizeParameters::set_multiscale_particles(int value) { this->params_.set("multiscale_particles", value); }
 
 //---------------------------------------------------------------------------
+void OptimizeParameters::set_abort_load(bool value) { this->abort_load_ = value; }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_load_callback(const std::function<void(int)>& f) { this->load_callback_ = f; }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_optimize_output_prefix() {
+  return this->params_.get("optimize_output_prefix", "<project>_particles");
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_optimize_output_prefix(std::string prefix) {
+  this->params_.set("optimize_output_prefix", prefix);
+}
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_output_prefix() {
+  // if the project is not saved, use the path of the input filename
+  auto filename = this->project_->get_filename();
+  if (filename == "") {
+    filename = ".";
+  }
+
+  auto base = StringUtils::getPath(filename);
+  if (base == filename) {
+    base = ".";
+  }
+
+  auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
+
+  if (project_name == "") {
+    project_name = "new_project";
+  }
+
+  auto prefix = this->get_optimize_output_prefix();
+  boost::replace_all(prefix, "<project>", project_name);
+
+  auto path = base;
+  if (prefix != "") {
+    path = base + "/" + prefix;
+
+    try {
+      boost::filesystem::create_directories(path);
+    } catch (std::exception& e) {
+      throw std::runtime_error("Unable to create output directory: \"" + path + "\"");
+    }
+  }
+
+  auto output = path + "/";
+  return output;
+}
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_geodesic_cache_multiplier() { return this->params_.get("geodesic_cache_multiplier", 0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_cache_multiplier(int value) {
+  this->params_.set("geodesic_cache_multiplier", value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_narrow_band() { return this->params_.get("narrow_band", 4.0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_narrow_band(double value) { this->params_.set("narrow_band", value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_landmarks(bool value) { this->params_.set("use_landmarks", value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_fixed_subjects() { return params_.get("use_fixed_subjects", false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_fixed_subjects(bool value) { params_.set("use_fixed_subjects", value); }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_fixed_subjects_column() { return params_.get("fixed_subjects_column", ""); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_fixed_subject_column(std::string column) { params_.set("fixed_subjects_column", column); }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_fixed_subjects_choice() { return params_.get("fixed_subjects_choice", ""); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_fixed_subjects_choice(std::string choice) { params_.set("fixed_subjects_choice", choice); }
+
+//---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
@@ -213,6 +310,23 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (point_files.size() > 0) {
       optimize->SetPointFiles(point_files);
     }
+  }
+
+  if (get_use_fixed_subjects()) {
+    std::vector<int> domain_flags;
+    int count = 0;
+    for (auto& subject : subjects) {
+      auto table = subject->get_table_values();
+      if (table.find(get_fixed_subjects_column()) != table.end()) {
+        for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
+          if (table[get_fixed_subjects_column()] == get_fixed_subjects_choice()) {
+            domain_flags.push_back(count);
+          }
+          count++;
+        }
+      }
+    }
+    optimize->SetDomainFlags(domain_flags);
   }
 
   // add cutting planes
@@ -348,82 +462,3 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   return true;
 }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_abort_load(bool value) { this->abort_load_ = value; }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_load_callback(const std::function<void(int)>& f) { this->load_callback_ = f; }
-
-//---------------------------------------------------------------------------
-std::string OptimizeParameters::get_optimize_output_prefix() {
-  return this->params_.get("optimize_output_prefix", "<project>_particles");
-}
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_optimize_output_prefix(std::string prefix) {
-  this->params_.set("optimize_output_prefix", prefix);
-}
-
-//---------------------------------------------------------------------------
-std::string OptimizeParameters::get_output_prefix() {
-  // if the project is not saved, use the path of the input filename
-  auto filename = this->project_->get_filename();
-  if (filename == "") {
-    filename = ".";
-  }
-
-  auto base = StringUtils::getPath(filename);
-  if (base == filename) {
-    base = ".";
-  }
-
-  auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
-
-  if (project_name == "") {
-    project_name = "new_project";
-  }
-
-  auto prefix = this->get_optimize_output_prefix();
-  boost::replace_all(prefix, "<project>", project_name);
-
-  auto path = base;
-  if (prefix != "") {
-    path = base + "/" + prefix;
-
-    try {
-      boost::filesystem::create_directories(path);
-    } catch (std::exception& e) {
-      throw std::runtime_error("Unable to create output directory: \"" + path + "\"");
-    }
-  }
-
-  auto output = path + "/";
-  return output;
-}
-
-//---------------------------------------------------------------------------
-int OptimizeParameters::get_geodesic_cache_multiplier() { return this->params_.get("geodesic_cache_multiplier", 0); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_geodesic_cache_multiplier(int value) {
-  this->params_.set("geodesic_cache_multiplier", value);
-}
-
-//---------------------------------------------------------------------------
-double OptimizeParameters::get_narrow_band() { return this->params_.get("narrow_band", 4.0); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_narrow_band(double value) { this->params_.set("narrow_band", value); }
-
-//---------------------------------------------------------------------------
-int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 0); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
-
-//---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_use_landmarks(bool value) { this->params_.set("use_landmarks", value); }
