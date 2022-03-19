@@ -15,6 +15,8 @@ import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
+import subprocess
+
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -30,10 +32,14 @@ def Run_Pipeline(args):
         os.makedirs(output_directory)
     sw.data.download_and_unzip_dataset(dataset_name, output_directory)
 
-    file_list_dts = sorted(glob.glob(
-        output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
-    file_list_new_segs = sorted(
-        glob.glob(output_directory + dataset_name + "/fd_segmentations/*.nrrd"))
+    file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
+    file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
+    
+    print (f"\nfile_list_segs = {file_list_segs}")
+    print (f"\nfile_list_dts = {file_list_dts}")
+
+    file_list_new_segs = sorted(glob.glob(output_directory + dataset_name + "/fd_segmentations/*.nrrd"))
+
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """
@@ -111,6 +117,42 @@ def Run_Pipeline(args):
     shape_model_dir = output_directory + dataset_name + "/shape_models/ellipsoid/128/"
     OptimizeUtils.findMeanShape(shape_model_dir)
     mean_shape_path = shape_model_dir + '/meanshape_local.particles'
+    fixed_local_particles = sorted(glob.glob(shape_model_dir + "/*_local.particles"))
+    all_local_particles = fixed_local_particles + [mean_shape_path, mean_shape_path, mean_shape_path, mean_shape_path];
+
+    # Create spreadsheet
+    project_location = output_directory + "shape_models/"
+    subjects = []
+    number_domains = 1
+    # Add fixed shapes
+    for i in range(len(file_list_segs)):
+        subject = sw.Subject()
+        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_segs[i]], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
+        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]], project_location)
+    #        subject.set_original_filenames(rel_seg_files)
+        subject.set_original_filenames(rel_groom_files)
+        subject.set_groomed_filenames(rel_groom_files)
+        subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_extra_values({"fixed" : "yes"})
+        subjects.append(subject)
+
+    # Add new shapes
+    for i in range(len(file_list_new_segs)):
+        subject = sw.Subject()
+        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_new_segs[i]], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + new_dt_files[i]], project_location)
+        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
+#        subject.set_original_filenames(rel_seg_files)
+        subject.set_original_filenames(rel_groom_files)
+        subject.set_groomed_filenames(rel_groom_files)
+        subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_extra_values({"fixed" : "no"})
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
@@ -125,7 +167,6 @@ def Run_Pipeline(args):
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "domain_type": 'image',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -133,20 +174,21 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0,
         "number_fixed_domains": len(file_list_dts),
-        "fixed_domain_model_dir": shape_model_dir,
-        "mean_shape_path": mean_shape_path,
     }
 
-    # Execute the optimization function
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize_FixedDomains(
-        point_dir, dt_files, parameter_dictionary)
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
 
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/ellipsoid_fd_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, dt_files, local_point_files, world_point_files)
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
+
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
     # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
+    ##AnalyzeUtils.check_results(args, world_point_files)
 
     """
     Step 4: ANALYZE - Shape Analysis and Visualization
@@ -155,5 +197,5 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)
