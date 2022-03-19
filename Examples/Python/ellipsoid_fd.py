@@ -123,7 +123,6 @@ def Run_Pipeline(args):
     # Create spreadsheet
     project_location = output_directory + "shape_models/"
     subjects = []
-    number_domains = 1
     # Add fixed shapes
     for i in range(len(file_list_segs)):
         subject = sw.Subject()
@@ -172,12 +171,16 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 0,
-        "number_fixed_domains": len(file_list_dts),
+        "verbosity": 10,
+        "use_landmarks": 1,
+        "use_fixed_subjects" : 1,
+        "narrow_band" : 1e10,
+        "fixed_subjects_column" : "fixed",
+        "fixed_subjects_choice" : "yes" 
     }
 
     for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+        parameters.set(key,sw.Variant(parameter_dictionary[key]))
 
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set+ ".xlsx"
