@@ -9,7 +9,7 @@ from DatasetUtils import GirderAPI
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
 _CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.utah.edu'
-_VERSION = 'v2'
+_VERSION = 'v3'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
 serverAddress = 'https://girder.shapeworks-cloud.org/'
