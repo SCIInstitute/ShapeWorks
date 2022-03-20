@@ -107,7 +107,7 @@ def Run_Pipeline(args):
         os.makedirs(point_dir)
 
     """
-    Evaluate the meanshape of the existing shape model and use that to initialize the 
+    Evaluate the mean shape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
     shape_model_dir = output_directory + dataset_name + "/shape_models/ellipsoid/128/"
@@ -119,14 +119,14 @@ def Run_Pipeline(args):
     # Create spreadsheet
     project_location = output_directory + "shape_models/"
     subjects = []
-    # Add fixed shapes
+
+    # Add current shape model (e.g. fixed subjects)
     for i in range(len(file_list_segs)):
         subject = sw.Subject()
         rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],
                                                          project_location)
-        #        subject.set_original_filenames(rel_seg_files)
         subject.set_original_filenames(rel_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
@@ -139,7 +139,6 @@ def Run_Pipeline(args):
         rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_new_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + new_dt_files[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
-        #        subject.set_original_filenames(rel_seg_files)
         subject.set_original_filenames(rel_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
@@ -197,7 +196,9 @@ def Run_Pipeline(args):
     subprocess.check_call(optimizeCmd)
 
     # If tiny test or verify, check results and exit
-    ##AnalyzeUtils.check_results(args, world_point_files)
+    world_point_files = sorted(
+        glob.glob(output_directory + "shape_models/ellipsoid_fd_" + args.option_set + "_particles/*_world.particles"))
+    AnalyzeUtils.check_results(args, world_point_files)
 
     """
     Step 4: ANALYZE - Shape Analysis and Visualization
