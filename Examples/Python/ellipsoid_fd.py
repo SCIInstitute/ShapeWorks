@@ -5,9 +5,9 @@ Fixed Domains Example for Statistical Shape Modeling using ShapeWorks
 =====================================================================
 
 In this example we work with a dataset of axis aligned ellipsoids. 
-This examples is a use case for fixed domains, i.e. we have an existing 
-shape model using some ellipsoids and we want to place correspondences 
-on new ellisoids (we are provided fully prepped binary images) according 
+This example is a use case for fixed domains, i.e. we have an existing
+shape model using some ellipsoids, and we want to place correspondences
+on new ellipsoids (we are provided fully prepped binary images) according
 to the existing shape model.
 """
 import os
@@ -41,7 +41,7 @@ def Run_Pipeline(args):
     """
     Step 2: GROOMING 
     
-    The new segmentations are prealigned so the only grooming step 
+    The new segmentations are pre-aligned so the only grooming step 
     required is to convert them to distance transforms.
 
     For more information on grooming see docs/workflow/groom.md
@@ -81,8 +81,7 @@ def Run_Pipeline(args):
         # load segmentation
         shape_seg = sw.Image(shape_filename)
         print('Compute DT for segmentation: ' + shape_name)
-        shape_seg.antialias(antialias_iterations).computeDT(
-            iso_value).gaussianBlur(sigma)
+        shape_seg.antialias(antialias_iterations).computeDT(iso_value).gaussianBlur(sigma)
         dt_list.append(shape_seg)
     # Save distance transforms
     new_dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
@@ -123,7 +122,6 @@ def Run_Pipeline(args):
     # Add current shape model (e.g. fixed subjects)
     for i in range(len(file_list_segs)):
         subject = sw.Subject()
-        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],
                                                          project_location)
@@ -136,7 +134,6 @@ def Run_Pipeline(args):
     # Add new shapes
     for i in range(len(file_list_new_segs)):
         subject = sw.Subject()
-        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_new_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + new_dt_files[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
         subject.set_original_filenames(rel_groom_files)
@@ -179,6 +176,7 @@ def Run_Pipeline(args):
 
     project.set_parameters("optimize", parameters)
 
+    # Set studio parameters
     studio_dictionary = {
         "show_landmarks": 0,
         "tool_state": "analysis"
@@ -192,8 +190,8 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
     world_point_files = sorted(
@@ -207,5 +205,5 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    analysis_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analysis_cmd)
