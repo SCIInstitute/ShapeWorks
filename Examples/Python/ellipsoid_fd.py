@@ -183,6 +183,16 @@ def Run_Pipeline(args):
         parameters.set(key,sw.Variant(parameter_dictionary[key]))
 
     project.set_parameters("optimize",parameters)
+    
+    studio_dictionary = {
+        "show_landmarks" : 0,
+        "tool_state" : "analysis"
+    }
+    studio_parameters = sw.Parameters()
+    for key in studio_dictionary:
+        studio_parameters.set(key,sw.Variant(studio_dictionary[key]))
+    project.set_parameters("studio",studio_parameters)
+    
     spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
