@@ -654,7 +654,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
     loading_displayed_ = false;
     viewer_ready_ = true;
 
-
     for (size_t i = 0; i < meshes_.meshes().size(); i++) {
       MeshHandle mesh = meshes_.meshes()[i];
 
@@ -844,15 +843,6 @@ void Viewer::set_show_surface(bool show) {
   show_surface_ = show;
   update_actors();
 }
-
-//-----------------------------------------------------------------------------
-void Viewer::set_show_landmarks(bool show) {
-  show_landmarks_ = show;
-  update_landmarks();
-}
-
-//-----------------------------------------------------------------------------
-bool Viewer::get_show_landmarks() { return show_landmarks_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_points() {

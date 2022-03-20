@@ -54,9 +54,6 @@ class Visualizer : public QObject {
   /// turn on/off surface display
   void set_show_surface(bool show);
 
-  /// turn on/off landmark display
-  void set_show_landmarks(bool show);
-
   /// update the display using the current settings
   void display_samples();
 
@@ -162,7 +159,6 @@ class Visualizer : public QObject {
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
-  bool show_landmarks_ = true;
 
   LightboxHandle lightbox_;
   SessionHandle session_;

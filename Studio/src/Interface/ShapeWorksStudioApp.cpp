@@ -215,7 +215,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // glyph options signals/slots
   connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(ui_->landmarks_visible_button, &QToolButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
@@ -776,7 +775,6 @@ void ShapeWorksStudioApp::handle_clear_cache() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session() {
-  // project initializations
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
   setWindowTitle(session_->get_display_name());
@@ -808,6 +806,8 @@ void ShapeWorksStudioApp::new_session() {
           &Session::set_image_share_window_and_level);
 
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
+  connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);
+
 
   data_tool_->update_notes();
 
@@ -1114,7 +1114,6 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
 void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_show_surface(ui_->surface_visible_button->isChecked());
   visualizer_->set_show_glyphs(ui_->glyphs_visible_button->isChecked());
-  visualizer_->set_show_landmarks(ui_->landmarks_visible_button->isChecked());
   preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
   preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());
@@ -1341,6 +1340,8 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   int zoom_value = session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
 
   ui_->zoom_slider->setValue(zoom_value);
+  ui_->landmarks_visible_button->setChecked(session_->get_show_landmarks());
+  ui_->planes_visible_button_->setChecked(session_->get_show_planes());
 
   data_tool_->update_notes();
 

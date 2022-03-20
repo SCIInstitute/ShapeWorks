@@ -886,7 +886,7 @@ std::string Session::get_default_feature_map() {
 
 //---------------------------------------------------------------------------
 bool Session::is_supported_file_format(std::string filename) {
-  for (const auto &type : Mesh::getSupportedTypes()) {
+  for (const auto& type : Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       return true;
     }
@@ -900,9 +900,7 @@ bool Session::is_supported_file_format(std::string filename) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Session::get_groomed_domain_types() {
-  return project_->get_groomed_domain_types();
-}
+std::vector<DomainType> Session::get_groomed_domain_types() { return project_->get_groomed_domain_types(); }
 
 //---------------------------------------------------------------------------
 Point3 Session::get_point(const Eigen::VectorXd& points, int i) {
@@ -1030,6 +1028,18 @@ void Session::set_show_planes(bool show) {
 bool Session::get_show_planes() { return params_.get("show_planes", true); }
 
 //---------------------------------------------------------------------------
+void Session::set_show_landmarks(bool show) {
+  bool old_value = get_show_landmarks();
+  if (show != old_value) {
+    params_.set("show_landmarks", show);
+    emit landmarks_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_show_landmarks() { return params_.get("show_landmarks", true); }
+
+//---------------------------------------------------------------------------
 bool Session::set_image_name(std::string image_name) {
   if (image_name == get_image_name() || is_loading()) {
     return false;
@@ -1101,7 +1111,7 @@ void Session::set_loading(bool loading) { is_loading_ = loading; }
 bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
-void Session::set_tool_state(string state) {
+void Session::set_tool_state(std::string state) {
   parameters().set("tool_state", state);
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
