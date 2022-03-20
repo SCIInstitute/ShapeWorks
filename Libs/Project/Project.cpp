@@ -500,6 +500,11 @@ void Project::set_groomed_domain_types(std::vector<DomainType> domain_types) { g
 
 //---------------------------------------------------------------------------
 void Project::load_landmark_definitions() {
+  if (landmarks_loaded_) {
+    return;
+  }
+  landmarks_loaded_ = true;
+
   auto domain_names = get_domain_names();
   landmark_definitions_.clear();
   landmark_definitions_.resize(domain_names.size());

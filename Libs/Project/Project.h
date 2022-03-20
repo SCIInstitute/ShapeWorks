@@ -245,6 +245,7 @@ private:
 
   std::vector<std::string> input_prefixes_;
 
+  bool landmarks_loaded_{false};
   std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
 
   std::vector<DomainType> original_domain_types_;
