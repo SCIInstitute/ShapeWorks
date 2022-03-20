@@ -41,7 +41,6 @@ LandmarkWidget::LandmarkWidget(Viewer *viewer) : viewer_(viewer) {
   callback_ = vtkSmartPointer<LandmarkCallback>::New();
   callback_->setWidget(this);
 
-  sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   glyph_points_ = vtkSmartPointer<vtkPoints>::New();
   glyph_points_->SetDataTypeToDouble();
   glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
@@ -53,7 +52,7 @@ LandmarkWidget::LandmarkWidget(Viewer *viewer) : viewer_(viewer) {
   glyphs_->ScalingOn();
   glyphs_->ClampingOff();
   glyphs_->SetScaleModeToDataScalingOff();
-  glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+  glyphs_->SetSourceConnection(sphere_->GetOutputPort());
   glyphs_->GeneratePointIdsOn();
 
   glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
@@ -86,8 +85,9 @@ void LandmarkWidget::update_landmarks() {
     update_glyphs();
     return;
   }
+  viewer_->get_renderer()->RemoveActor(glyph_actor_);
 
-  if (!shape || !viewer_->get_show_landmarks()) {
+  if (!shape || !viewer_->get_session()->get_show_landmarks()) {
     clear_landmark_handles();
     return;
   }
@@ -132,6 +132,11 @@ void LandmarkWidget::update_landmarks() {
     color[1] = qcolor.green() / 255.0;
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
+    rep->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
+    rep->GetProperty()->SetDiffuse(0.8);
+    rep->GetProperty()->SetSpecular(0.3);
+    rep->GetProperty()->SetSpecularPower(10.0);
+
 
     bool enabled = is_drag_mode();
     bool visible = definitions[domain_id][point_id].visible_;
@@ -185,9 +190,6 @@ void LandmarkWidget::update_glyph_properties() {
   sphere_->SetPhiResolution(viewer_->get_glyph_quality());
   sphere_->SetRadius(viewer_->get_glyph_size());
   sphere_->Update();
-  sphere_source_->SetThetaResolution(viewer_->get_glyph_quality());
-  sphere_source_->SetPhiResolution(viewer_->get_glyph_quality());
-  sphere_source_->SetRadius(viewer_->get_glyph_size());
 }
 
 //-----------------------------------------------------------------------------
@@ -231,8 +233,6 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
   handle->SetAllowHandleResize(false);
 
   double selectedColor[3] = {1.0, 1.0, 1.0};
-
-  rep->GetProperty()->SetLineWidth(1.0);
   rep->GetSelectedProperty()->SetColor(selectedColor);
   rep->Delete();
 
@@ -255,7 +255,7 @@ bool LandmarkWidget::is_drag_mode() {
 //-----------------------------------------------------------------------------
 void LandmarkWidget::update_glyphs() {
   auto shape = viewer_->get_shape();
-  if (!shape || !viewer_->get_show_landmarks()) {
+  if (!shape || !viewer_->get_session()->get_show_landmarks()) {
     viewer_->get_renderer()->RemoveActor(glyph_actor_);
     return;
   }

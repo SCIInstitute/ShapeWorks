@@ -51,15 +51,12 @@ class LandmarkWidget {
   vtkSmartPointer<vtkSphereSource> sphere_;
   vtkSmartPointer<LandmarkCallback> callback_;
 
-
   vtkSmartPointer<vtkPoints> glyph_points_;
   vtkSmartPointer<vtkPolyData> glyph_point_set_;
   vtkSmartPointer<vtkGlyph3D> glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
-  vtkSmartPointer<vtkSphereSource> sphere_source_;
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
-
 };
 
 }  // namespace shapeworks
