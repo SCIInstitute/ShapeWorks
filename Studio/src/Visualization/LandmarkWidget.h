@@ -40,6 +40,8 @@ class LandmarkWidget {
 
   bool is_drag_mode();
 
+  bool is_glyph_mode();
+
   void update_glyphs();
 
   void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);

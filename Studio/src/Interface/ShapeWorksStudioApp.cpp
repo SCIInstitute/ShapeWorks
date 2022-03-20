@@ -1350,8 +1350,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   on_zoom_slider_valueChanged();
 
-  // update_table();
-
   session_->set_loading(false);
 
   handle_project_changed();

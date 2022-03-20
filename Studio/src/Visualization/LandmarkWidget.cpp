@@ -80,7 +80,7 @@ LandmarkWidget::~LandmarkWidget() { clear_landmark_handles(); }
 void LandmarkWidget::update_landmarks() {
   auto shape = viewer_->get_shape();
 
-  if (!is_drag_mode()) {
+  if (is_glyph_mode()) {
     clear_landmark_handles();
     update_glyphs();
     return;
@@ -136,7 +136,6 @@ void LandmarkWidget::update_landmarks() {
     rep->GetProperty()->SetDiffuse(0.8);
     rep->GetProperty()->SetSpecular(0.3);
     rep->GetProperty()->SetSpecularPower(10.0);
-
 
     bool enabled = is_drag_mode();
     bool visible = definitions[domain_id][point_id].visible_;
@@ -249,6 +248,16 @@ bool LandmarkWidget::is_drag_mode() {
     return false;
   }
 
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool LandmarkWidget::is_glyph_mode() {
+  auto session = viewer_->get_session();
+
+  if (session->get_landmarks_active() && (session->get_landmark_drag_mode() || session->get_show_landmark_labels())) {
+    return false;
+  }
   return true;
 }
 
