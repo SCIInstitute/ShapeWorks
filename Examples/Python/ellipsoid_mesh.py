@@ -12,6 +12,7 @@ import AnalyzeUtils
 import subprocess
 import shutil
 import numpy as np 
+
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -42,79 +43,65 @@ def Run_Pipeline(args):
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
-    # If skipping grooming, use the pregroomed meshes from the portal
-    if args.skip_grooming:
-        print("Skipping grooming.")
-        out_directory = output_directory + dataset_name + '/groomed/meshes/'
-        indices = []
-        if args.tiny_test:
-            indices = [0, 1, 2]
-        elif args.use_subsample:
-            indices = sample_idx
-        mesh_files = sw.data.get_file_list(
-            out_directory, ending=".vtk", indices=indices)
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    """
+    Step 2: GROOMING 
+    The required grooming steps are: 
+    1. Remesh 
+    2. Reference selection
+    3. Rigid Alignment
+    For more information on grooming see docs/workflow/groom.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
+    """
 
-    # Else groom the meshes for optimization
-    else:
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        """
-        Step 2: GROOMING 
-        The required grooming steps are: 
-        1. Remesh 
-        2. Reference selection
-        3. Rigid Alignment
-        For more information on grooming see docs/workflow/groom.md
-        http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
-        """
+    # Create a directory for groomed output
+    groom_dir = output_directory + 'groomed/'
+    if not os.path.exists(groom_dir):
+        os.makedirs(groom_dir)
 
-        # Create a directory for groomed output
-        groom_dir = output_directory + 'groomed/'
-        if not os.path.exists(groom_dir):
-            os.makedirs(groom_dir)
+    """
+    First, we need to loop over the mesh files and load them
+    """
+    mesh_list = []
+    mesh_names = []
+    for mesh_file in mesh_files:
+        print('Loading: ' + mesh_file)
+        # get current name
+        mesh_names.append(mesh_file.split('/')[-1].replace('.vtk', ''))
+        """
+        Grooming Step 1: load mesh and remesh
+        """
+        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=99, adaptivity=1.0)
+        # append to the list
+        mesh_list.append(mesh)
 
-        """
-        First, we need to loop over the mesh files and load them
-        """
-        mesh_list = []
-        mesh_names = []
-        for mesh_file in mesh_files:
-            print('Loading: ' + mesh_file)
-            # get current name
-            mesh_names.append(mesh_file.split('/')[-1].replace('.vtk', ''))
-            """
-            Grooming Step 1: load mesh and remesh
-            """
-            mesh = sw.Mesh(mesh_file).remeshPercent(percentage=99, adaptivity=1.0)
-            # append to the list
-            mesh_list.append(mesh)
+    """
+    Grooming Step 2: Select a reference
+    This step requires loading all of the meshes at once so the shape
+    closest to the mean can be found and selected as the reference. 
+    """
+    ref_index = sw.find_reference_mesh_index(mesh_list)
+    # Make a copy of the reference segmentation 
+    ref_mesh = mesh_list[ref_index]
+    # Center the reference mesh at 0,0,0
+    # ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
+    ref_mesh.write(groom_dir + 'reference.vtk')
+    ref_name = mesh_names[ref_index]
+    print("Reference found: " + ref_name)
 
-        """
-        Grooming Step 2: Select a reference
-        This step requires loading all of the meshes at once so the shape
-        closest to the mean can be found and selected as the reference. 
-        """
-        ref_index = sw.find_reference_mesh_index(mesh_list)
-        # Make a copy of the reference segmentation 
-        ref_mesh = mesh_list[ref_index]
-        # Center the reference mesh at 0,0,0
-        # ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
-        ref_mesh.write(groom_dir + 'reference.vtk')
-        ref_name = mesh_names[ref_index]
-        print("Reference found: " + ref_name)
+    """
+    Grooming Step 3: Rigid alignment
+    This step rigidly aligns each shape to the selected reference. 
+    """
+    Rigid_transforms = []
+    for mesh, name in zip(mesh_list, mesh_names):
+        print('Aligning ' + name + ' to ' + ref_name)
+        # compute rigid transformation
+        rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
+        Rigid_transforms.append(rigid_transform)
 
-        """
-        Grooming Step 3: Rigid alignment
-        This step rigidly aligns each shape to the selected reference. 
-        """
-        Rigid_transforms = []
-        for mesh, name in zip(mesh_list, mesh_names):
-            print('Aligning ' + name + ' to ' + ref_name)
-            # compute rigid transformation
-            rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
-            Rigid_transforms.append(rigid_transform)
-
-        # Save groomed meshes
-        groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
+    # Save groomed meshes
+    groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
 
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")

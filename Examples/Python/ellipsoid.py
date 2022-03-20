@@ -46,104 +46,90 @@ def Run_Pipeline(args):
             sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
             file_list = [file_list[i] for i in sample_idx]
 
-    # If skipping grooming, use the pregroomed distance transforms from the portal
-    if args.skip_grooming:
-        print("Skipping grooming.")
-        dt_directory = output_directory + dataset_name + '/groomed/distance_transforms/'
-        indices = []
-        if args.tiny_test:
-            indices = [0, 1, 2]
-        elif args.use_subsample:
-            indices = sample_idx
-        groomed_files = sw.data.get_file_list(
-            dt_directory, ending=".nrrd", indices=indices)
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    """
+    Step 2: GROOM
+    The following grooming steps are performed:
+        - Crop (cropping first makes resampling faster)
+        - Resample to have isotropic spacing
+        - Pad with zeros
+        - Compute alignment transforms to use in optimization
+        - Compute distance transforms
+    For more information about grooming, please refer to:
+    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
+    """
+   
+    # Create a directory for groomed output
+    groom_dir = output_directory + 'groomed/'
+    if not os.path.exists(groom_dir):
+        os.makedirs(groom_dir)
 
-    # Else groom the segmentations and get distance transforms for optimization
-    else:
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        """
-        Step 2: GROOM
-        The following grooming steps are performed:
-            - Crop (cropping first makes resampling faster)
-            - Resample to have isotropic spacing
-            - Pad with zeros
-            - Compute alignment transforms to use in optimization
-            - Compute distance transforms
-        For more information about grooming, please refer to:
-        http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
-        """
-       
-        # Create a directory for groomed output
-        groom_dir = output_directory + 'groomed/'
-        if not os.path.exists(groom_dir):
-            os.makedirs(groom_dir)
+    """
+    We loop over the shape segmentation files and load the segmentations
+    and apply the intial grooming steps
+    """
+    # list of shape segmentations
+    shape_seg_list = []
+    # list of shape names (shape files prefixes) to be used for saving outputs
+    shape_names = []
+    for shape_filename in file_list:
+        print('Loading: ' + shape_filename)
+        # get current shape name
+        shape_name = shape_filename.split('/')[-1].replace('.nrrd', '')
+        shape_names.append(shape_name)
+        # load segmentation
+        shape_seg = sw.Image(shape_filename)
+        shape_seg_list.append(shape_seg)
 
-        """
-        We loop over the shape segmentation files and load the segmentations
-        and apply the intial grooming steps
-        """
-        # list of shape segmentations
-        shape_seg_list = []
-        # list of shape names (shape files prefixes) to be used for saving outputs
-        shape_names = []
-        for shape_filename in file_list:
-            print('Loading: ' + shape_filename)
-            # get current shape name
-            shape_name = shape_filename.split('/')[-1].replace('.nrrd', '')
-            shape_names.append(shape_name)
-            # load segmentation
-            shape_seg = sw.Image(shape_filename)
-            shape_seg_list.append(shape_seg)
+        # do initial grooming steps
+        print("Grooming: " + shape_name)
+         # Individually crop each segmentation using a computed bounding box
+        iso_value = 0.5  # voxel value for isosurface
+        bounding_box = sw.ImageUtils.boundingBox([shape_seg], iso_value).pad(2)
+        shape_seg.crop(bounding_box)
+        # Resample to isotropic spacing using linear interpolation
+        antialias_iterations = 30   # number of iterations for antialiasing
+        iso_spacing = [1, 1, 1]     # isotropic spacing
+        shape_seg.antialias(antialias_iterations).resample(iso_spacing, sw.InterpolationType.Linear).binarize()
+        # Pad segmentations with zeros
+        pad_size = 5    # number of voxels to pad for each dimension
+        pad_value = 0   # the constant value used to pad the segmentations
+        shape_seg.pad(pad_size, pad_value)
+        
+    """
+    To find the alignment transforms and save them for optimization,
+    we must break the loop to select a reference segmentation
+    """
+    ref_index = sw.find_reference_image_index(shape_seg_list)
+    ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
+    ref_name = shape_names[ref_index]
+    print("Reference found: " + ref_name)
 
-            # do initial grooming steps
-            print("Grooming: " + shape_name)
-             # Individually crop each segmentation using a computed bounding box
-            iso_value = 0.5  # voxel value for isosurface
-            bounding_box = sw.ImageUtils.boundingBox([shape_seg], iso_value).pad(2)
-            shape_seg.crop(bounding_box)
-            # Resample to isotropic spacing using linear interpolation
-            antialias_iterations = 30   # number of iterations for antialiasing
-            iso_spacing = [1, 1, 1]     # isotropic spacing
-            shape_seg.antialias(antialias_iterations).resample(iso_spacing, sw.InterpolationType.Linear).binarize()
-            # Pad segmentations with zeros
-            pad_size = 5    # number of voxels to pad for each dimension
-            pad_value = 0   # the constant value used to pad the segmentations
-            shape_seg.pad(pad_size, pad_value)
-            
-        """
-        To find the alignment transforms and save them for optimization,
-        we must break the loop to select a reference segmentation
-        """
-        ref_index = sw.find_reference_image_index(shape_seg_list)
-        ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
-        ref_name = shape_names[ref_index]
-        print("Reference found: " + ref_name)
+    """
+    Now we can loop over all of the segmentations again to find the rigid
+    alignment transform and compute a distance transform
+    """
+    rigid_transforms = [] # Save rigid transorm matrices
+    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+        print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
+        # Get rigid transform
+        iso_value = 0.5      # voxel value for isosurface
+        icp_iterations = 100 # number of ICP iterations
+        rigid_transform = shape_seg.createRigidRegistrationTransform(
+            ref_seg, iso_value, icp_iterations)
+        # Convert to vtk format for optimization
+        rigid_transform = sw.utils.getVTKtransform(rigid_transform)
+        rigid_transforms.append(rigid_transform)
 
-        """
-        Now we can loop over all of the segmentations again to find the rigid
-        alignment transform and compute a distance transform
-        """
-        rigid_transforms = [] # Save rigid transorm matrices
-        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-            print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
-            # Get rigid transform
-            iso_value = 0.5      # voxel value for isosurface
-            icp_iterations = 100 # number of ICP iterations
-            rigid_transform = shape_seg.createRigidRegistrationTransform(
-                ref_seg, iso_value, icp_iterations)
-            # Convert to vtk format for optimization
-            rigid_transform = sw.utils.getVTKtransform(rigid_transform)
-            rigid_transforms.append(rigid_transform)
+        # Convert segmentations to smooth signed distance transforms
+        print("Converting " + shape_name + " to distance transform")
+        iso_value = 0   # voxel value for isosurface
+        sigma = 1.5     # for Gaussian blur
+        shape_seg.antialias(antialias_iterations).computeDT(iso_value).gaussianBlur(sigma)
 
-            # Convert segmentations to smooth signed distance transforms
-            print("Converting " + shape_name + " to distance transform")
-            iso_value = 0   # voxel value for isosurface
-            sigma = 1.5     # for Gaussian blur
-            shape_seg.antialias(antialias_iterations).computeDT(iso_value).gaussianBlur(sigma)
-
-        # Save distance transforms
-        groomed_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_names, extension='nrrd', compressed=True, verbose=True)
+    # Save distance transforms
+    groomed_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
+                                    shape_names, extension='nrrd', compressed=True, verbose=True)
 
 
     # Get data input (meshes if running in mesh mode, else distance transforms)

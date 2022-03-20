@@ -59,116 +59,102 @@ def Run_Pipeline(args):
         else:
             sample_idx = []
 
-    # If skipping grooming, use the pregroomed distance transforms from the portal
-    if args.skip_grooming:
-        print("Skipping grooming.")
-        dtDirecory = output_directory + dataset_name + '/groomed/distance_transforms/'
-        indices = []
-        if args.tiny_test:
-            indices = [0, 1, 2]
-        elif args.use_subsample:
-            indices = sample_idx
-        dt_files = sw.data.get_file_list(
-            dtDirecory, ending=".nrrd", indices=indices)
+    print("\nStep 2. Groom - Data Pre-processing\n")
+   
+    # Create a directory for groomed output
+    groom_dir = output_directory + 'groomed/'
+    if not os.path.exists(groom_dir):
+        os.makedirs(groom_dir)
 
-    # Else groom the segmentations and get distance transforms for optimization
-    else:
-        print("\nStep 2. Groom - Data Pre-processing\n")
+    """
+    First, we need to loop over the shape segmentation files and load the segmentations
+    """
+    # list of shape segmentations
+    shape_seg_list = []
+    # list of shape names (shape files prefixes) to be used for saving outputs
+    shape_names = []
+    for shape_filename in file_list:
+        print('Loading: ' + shape_filename)
+        # get current shape name
+        shape_names.append(shape_filename.split('/')
+                           [-1].replace('.nrrd', ''))
+        # load segmentation
+        shape_seg = sw.Image(shape_filename)
+        # append to the shape list
+        shape_seg_list.append(shape_seg)
+
+
+
+
+    #Select a reference
+    ref_index = sw.find_reference_image_index(shape_seg_list)
+    # Make a copy of the reference segmentation
+    ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
+    ref_name = shape_names[ref_index]
+    print("Reference found: " + ref_name)
+
+    # Set the alignment parameters
+    iso_value = 0.5
+    icp_iterations = 100
+    Rigid_transforms = []
+    idx = 0
+    
+    #Now loop through all the segmentations and calculate ICP transform
+    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+        print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
+        
+        
+        rigidTransform = shape_seg.createRigidRegistrationTransform(
+            ref_seg, iso_value, icp_iterations)
+        rigidTransform = sw.utils.getVTKtransform(rigidTransform)
+        shape_center = ref_seg.centerOfMass()
+        
+        transform = np.eye(4)
+
+        Rigid_transforms.append(rigidTransform)
+        
        
-        # Create a directory for groomed output
-        groom_dir = output_directory + 'groomed/'
-        if not os.path.exists(groom_dir):
-            os.makedirs(groom_dir)
+    """
+    Now we can loop over the segmentations and apply the initial grooming steps to themm
+    """
+    # list of shape segmentations
+    shape_seg_list = []
+    # list of shape names (shape files prefixes) to be used for saving outputs
+    shape_names = []
+    for shape_filename in file_list:
+        print('Loading: ' + shape_filename)
+        # get current shape name
+        shape_names.append(shape_filename.split('/')
+                           [-1].replace('.nrrd', ''))
+        # load segmentation
+        shape_seg = sw.Image(shape_filename)
+        # append to the shape list
+        shape_seg_list.append(shape_seg)
 
-        """
-        First, we need to loop over the shape segmentation files and load the segmentations
-        """
-        # list of shape segmentations
-        shape_seg_list = []
-        # list of shape names (shape files prefixes) to be used for saving outputs
-        shape_names = []
-        for shape_filename in file_list:
-            print('Loading: ' + shape_filename)
-            # get current shape name
-            shape_names.append(shape_filename.split('/')
-                               [-1].replace('.nrrd', ''))
-            # load segmentation
-            shape_seg = sw.Image(shape_filename)
-            # append to the shape list
-            shape_seg_list.append(shape_seg)
+    
+    i = 0 
+    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+        # parameters for padding
+        print('Converting to DT: '+ shape_name)
+        padding_size = 10  # number of voxels to pad for each dimension
+        padding_value = 0  # the constant value used to pad the segmentations
+        # pad the image 
+        shape_seg.pad(padding_size,padding_value)
 
-
-
-
-        #Select a reference
-        ref_index = sw.find_reference_image_index(shape_seg_list)
-        # Make a copy of the reference segmentation
-        ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
-        ref_name = shape_names[ref_index]
-        print("Reference found: " + ref_name)
-
-        # Set the alignment parameters
-        iso_value = 0.5
-        icp_iterations = 100
-        Rigid_transforms = []
-        idx = 0
-        
-        #Now loop through all the segmentations and calculate ICP transform
-        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-            print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
-            
-            
-            rigidTransform = shape_seg.createRigidRegistrationTransform(
-                ref_seg, iso_value, icp_iterations)
-            rigidTransform = sw.utils.getVTKtransform(rigidTransform)
-            shape_center = ref_seg.centerOfMass()
-            
-            transform = np.eye(4)
-
-            Rigid_transforms.append(rigidTransform)
-            
-           
-        """
-        Now we can loop over the segmentations and apply the initial grooming steps to themm
-        """
-        # list of shape segmentations
-        shape_seg_list = []
-        # list of shape names (shape files prefixes) to be used for saving outputs
-        shape_names = []
-        for shape_filename in file_list:
-            print('Loading: ' + shape_filename)
-            # get current shape name
-            shape_names.append(shape_filename.split('/')
-                               [-1].replace('.nrrd', ''))
-            # load segmentation
-            shape_seg = sw.Image(shape_filename)
-            # append to the shape list
-            shape_seg_list.append(shape_seg)
-
-        
-        i = 0 
-        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-            # parameters for padding
-            print('Converting to DT: '+ shape_name)
-            padding_size = 10  # number of voxels to pad for each dimension
-            padding_value = 0  # the constant value used to pad the segmentations
-            # pad the image 
-            shape_seg.pad(padding_size,padding_value)
-
-            # antialias for 30 iterations
-            antialias_iterations = 30
-            shape_seg.antialias(antialias_iterations)
-            shape_seg.binarize()
-            # Define distance transform parameters
-            iso_value = 0
-            sigma = 1.3
-            #Converting segmentations to smooth signed distance transforms.
-            shape_seg.antialias(antialias_iterations).computeDT(
-                iso_value).gaussianBlur(sigma)
-        print('Saving DT')
-        #Save distance transforms
-        dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-                                        shape_names, extension='nrrd', compressed=True, verbose=True)
+        # antialias for 30 iterations
+        antialias_iterations = 30
+        shape_seg.antialias(antialias_iterations)
+        shape_seg.binarize()
+        # Define distance transform parameters
+        iso_value = 0
+        sigma = 1.3
+        #Converting segmentations to smooth signed distance transforms.
+        shape_seg.antialias(antialias_iterations).computeDT(
+            iso_value).gaussianBlur(sigma)
+    print('Saving DT')
+    #Save distance transforms
+    dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
+                                    shape_names, extension='nrrd', compressed=True, verbose=True)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
