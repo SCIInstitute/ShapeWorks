@@ -34,12 +34,8 @@ def Run_Pipeline(args):
 
     file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
     file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
-    
-    print (f"\nfile_list_segs = {file_list_segs}")
-    print (f"\nfile_list_dts = {file_list_dts}")
 
     file_list_new_segs = sorted(glob.glob(output_directory + dataset_name + "/fd_segmentations/*.nrrd"))
-
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """
@@ -128,12 +124,13 @@ def Run_Pipeline(args):
         subject = sw.Subject()
         rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
-        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]], project_location)
-    #        subject.set_original_filenames(rel_seg_files)
+        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],
+                                                         project_location)
+        #        subject.set_original_filenames(rel_seg_files)
         subject.set_original_filenames(rel_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
-        subject.set_extra_values({"fixed" : "yes"})
+        subject.set_extra_values({"fixed": "yes"})
         subjects.append(subject)
 
     # Add new shapes
@@ -142,11 +139,11 @@ def Run_Pipeline(args):
         rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_new_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + new_dt_files[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
-#        subject.set_original_filenames(rel_seg_files)
+        #        subject.set_original_filenames(rel_seg_files)
         subject.set_original_filenames(rel_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
-        subject.set_extra_values({"fixed" : "no"})
+        subject.set_extra_values({"fixed": "no"})
         subjects.append(subject)
 
     project = sw.Project()
@@ -158,42 +155,41 @@ def Run_Pipeline(args):
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 15.0,
-        "checkpointing_interval": 200,
+        "checkpointing_interval": 0,
         "keep_checkpoints": 0,
-        "iterations_per_split": 100,
-        "optimization_iterations": 2000,
+        "iterations_per_split": 10,
+        "optimization_iterations": 10,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 10,
+        "verbosity": 0,
         "use_landmarks": 1,
-        "use_fixed_subjects" : 1,
-        "narrow_band" : 1e10,
-        "fixed_subjects_column" : "fixed",
-        "fixed_subjects_choice" : "yes" 
+        "use_fixed_subjects": 1,
+        "narrow_band": 1e10,
+        "fixed_subjects_column": "fixed",
+        "fixed_subjects_choice": "yes"
     }
 
     for key in parameter_dictionary:
-        parameters.set(key,sw.Variant(parameter_dictionary[key]))
+        parameters.set(key, sw.Variant(parameter_dictionary[key]))
 
-    project.set_parameters("optimize",parameters)
-    
+    project.set_parameters("optimize", parameters)
+
     studio_dictionary = {
-        "show_landmarks" : 0,
-        "tool_state" : "analysis"
+        "show_landmarks": 0,
+        "tool_state": "analysis"
     }
     studio_parameters = sw.Parameters()
     for key in studio_dictionary:
-        studio_parameters.set(key,sw.Variant(studio_dictionary[key]))
-    project.set_parameters("studio",studio_parameters)
-    
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set+ ".xlsx"
+        studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
+    project.set_parameters("studio", studio_parameters)
+
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
 
     # Run optimization
