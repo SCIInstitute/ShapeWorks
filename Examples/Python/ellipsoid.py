@@ -11,11 +11,8 @@ First import the necessary modules
 """
 import os
 import glob
-import shapeworks as sw
-import numpy as np
-import OptimizeUtils
-import AnalyzeUtils
 import subprocess
+import shapeworks as sw
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -225,8 +222,8 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
-    # # If tiny test or verify, check results and exit
-    # AnalyzeUtils.check_results(args, world_point_files)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
