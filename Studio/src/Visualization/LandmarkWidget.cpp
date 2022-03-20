@@ -4,8 +4,11 @@
 #include <vtkActor.h>
 #include <vtkCommand.h>
 #include <vtkFollower.h>
+#include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
+#include <vtkLookupTable.h>
 #include <vtkPolyDataCollection.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkPolygonalHandleRepresentation3D.h>
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkProperty.h>
@@ -37,17 +40,55 @@ LandmarkWidget::LandmarkWidget(Viewer *viewer) : viewer_(viewer) {
   sphere_ = vtkSmartPointer<vtkSphereSource>::New();
   callback_ = vtkSmartPointer<LandmarkCallback>::New();
   callback_->setWidget(this);
+
+  sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
+  glyph_points_ = vtkSmartPointer<vtkPoints>::New();
+  glyph_points_->SetDataTypeToDouble();
+  glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
+  glyph_point_set_->SetPoints(glyph_points_);
+  glyph_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkFloatArray>::New());
+
+  glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
+  glyphs_->SetInputData(glyph_point_set_);
+  glyphs_->ScalingOn();
+  glyphs_->ClampingOff();
+  glyphs_->SetScaleModeToDataScalingOff();
+  glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+  glyphs_->GeneratePointIdsOn();
+
+  glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
+  glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+  glyph_mapper_->SetInputConnection(glyphs_->GetOutputPort());
+  glyph_mapper_->SetLookupTable(glyph_lut_);
+
+  glyph_actor_ = vtkSmartPointer<vtkActor>::New();
+  glyph_actor_->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
+  glyph_actor_->GetProperty()->SetDiffuse(0.8);
+  glyph_actor_->GetProperty()->SetSpecular(0.3);
+  glyph_actor_->GetProperty()->SetSpecularPower(10.0);
+  glyph_actor_->SetMapper(glyph_mapper_);
+
+  glyphs_->SetColorModeToColorByScalar();
+  glyphs_->SetScaleModeToDataScalingOff();
+  glyph_mapper_->SetColorModeToMapScalars();
+  glyph_mapper_->ScalarVisibilityOn();
 }
 
 //-----------------------------------------------------------------------------
-LandmarkWidget::~LandmarkWidget() { clear_landmarks(); }
+LandmarkWidget::~LandmarkWidget() { clear_landmark_handles(); }
 
 //-----------------------------------------------------------------------------
 void LandmarkWidget::update_landmarks() {
   auto shape = viewer_->get_shape();
 
+  if (!is_drag_mode()) {
+    clear_landmark_handles();
+    update_glyphs();
+    return;
+  }
+
   if (!shape || !viewer_->get_show_landmarks()) {
-    clear_landmarks();
+    clear_landmark_handles();
     return;
   }
 
@@ -92,11 +133,8 @@ void LandmarkWidget::update_landmarks() {
     color[2] = qcolor.blue() / 255.0;
     rep->GetProperty()->SetColor(color);
 
-    bool enabled = true;
+    bool enabled = is_drag_mode();
     bool visible = definitions[domain_id][point_id].visible_;
-    if (!session->get_landmark_drag_mode() || !session->get_landmarks_active()) {
-      enabled = false;
-    }
 
     if (!visible) {
       handles_[i]->SetShowInactive(0);
@@ -147,10 +185,13 @@ void LandmarkWidget::update_glyph_properties() {
   sphere_->SetPhiResolution(viewer_->get_glyph_quality());
   sphere_->SetRadius(viewer_->get_glyph_size());
   sphere_->Update();
+  sphere_source_->SetThetaResolution(viewer_->get_glyph_quality());
+  sphere_source_->SetPhiResolution(viewer_->get_glyph_quality());
+  sphere_source_->SetRadius(viewer_->get_glyph_size());
 }
 
 //-----------------------------------------------------------------------------
-void LandmarkWidget::clear_landmarks() {
+void LandmarkWidget::clear_landmark_handles() {
   while (!handles_.empty()) {
     handles_[handles_.size() - 1]->SetEnabled(0);
     handles_[handles_.size() - 1]->SetInteractor(nullptr);
@@ -198,6 +239,69 @@ vtkSmartPointer<vtkHandleWidget> LandmarkWidget::create_handle() {
   handle->AddObserver(vtkCommand::InteractionEvent, callback_);
   handle->EnabledOn();
   return handle;
+}
+
+//-----------------------------------------------------------------------------
+bool LandmarkWidget::is_drag_mode() {
+  auto session = viewer_->get_session();
+
+  if (!session->get_landmark_drag_mode() || !session->get_landmarks_active()) {
+    return false;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+void LandmarkWidget::update_glyphs() {
+  auto shape = viewer_->get_shape();
+  if (!shape || !viewer_->get_show_landmarks()) {
+    viewer_->get_renderer()->RemoveActor(glyph_actor_);
+    return;
+  }
+  auto &landmarks = shape->landmarks();
+  int num_points = landmarks.rows();
+  auto session = viewer_->get_session();
+
+  auto definitions = session->get_project()->get_all_landmark_definitions();
+
+  vtkFloatArray *scalars = (vtkFloatArray *)(glyph_point_set_->GetPointData()->GetScalars());
+
+  glyph_points_->Reset();
+  scalars->Reset();
+
+  glyph_lut_->SetNumberOfColors(num_points);
+  glyph_lut_->SetNumberOfTableValues(num_points);
+  glyph_lut_->SetTableRange(0, num_points);
+  glyph_mapper_->SetScalarRange(0, num_points);
+  for (int i = 0; i < num_points; i++) {
+    double xyz[3];
+    int domain_id = landmarks(i, 0);
+    int point_id = landmarks(i, 1);
+    xyz[0] = landmarks(i, 2);
+    xyz[1] = landmarks(i, 3);
+    xyz[2] = landmarks(i, 4);
+
+    bool visible = definitions[domain_id][point_id].visible_;
+    if (!visible) {
+      continue;
+    }
+
+    double xyzt[3];
+    auto transform = viewer_->get_landmark_transform(domain_id);
+    transform->TransformPoint(xyz, xyzt);
+    scalars->InsertNextValue(i);
+    glyph_points_->InsertNextPoint(xyzt[0], xyzt[1], xyzt[2]);
+
+    QColor qcolor(QString::fromStdString(definitions[domain_id][point_id].color_));
+    double color[3];
+    color[0] = qcolor.red() / 255.0;
+    color[1] = qcolor.green() / 255.0;
+    color[2] = qcolor.blue() / 255.0;
+    glyph_lut_->SetTableValue(i, color[0], color[1], color[2]);
+  }
+
+  viewer_->get_renderer()->AddActor(glyph_actor_);
 }
 
 //-----------------------------------------------------------------------------

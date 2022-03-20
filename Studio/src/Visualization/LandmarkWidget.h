@@ -5,6 +5,12 @@
 
 class vtkHandleWidget;
 class vtkSphereSource;
+class vtkPolyDataMapper;
+class vtkPoints;
+class vtkPolyData;
+class vtkGlyph3D;
+class vtkActor;
+class vtkLookupTable;
 
 namespace shapeworks {
 
@@ -27,10 +33,14 @@ class LandmarkWidget {
 
   void update_glyph_properties();
 
-  void clear_landmarks();
+  void clear_landmark_handles();
 
  private:
   vtkSmartPointer<vtkHandleWidget> create_handle();
+
+  bool is_drag_mode();
+
+  void update_glyphs();
 
   void assign_handle_to_domain(vtkSmartPointer<vtkHandleWidget> handle, int domain_id);
 
@@ -40,6 +50,16 @@ class LandmarkWidget {
 
   vtkSmartPointer<vtkSphereSource> sphere_;
   vtkSmartPointer<LandmarkCallback> callback_;
+
+
+  vtkSmartPointer<vtkPoints> glyph_points_;
+  vtkSmartPointer<vtkPolyData> glyph_point_set_;
+  vtkSmartPointer<vtkGlyph3D> glyphs_;
+  vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
+  vtkSmartPointer<vtkActor> glyph_actor_;
+  vtkSmartPointer<vtkSphereSource> sphere_source_;
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
+
 };
 
 }  // namespace shapeworks

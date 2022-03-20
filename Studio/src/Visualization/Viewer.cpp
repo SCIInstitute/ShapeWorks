@@ -749,7 +749,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   update_clipping_planes();
   update_actors();
   update_glyph_properties();
-  landmark_widget_->clear_landmarks();
+  landmark_widget_->clear_landmark_handles();
   plane_widget_->clear_planes();
   update_landmarks();
   update_planes();
