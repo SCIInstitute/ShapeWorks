@@ -28,7 +28,7 @@
 </iterations_per_split>
 
 <optimization_iterations>
-800
+900
 </optimization_iterations>
 
 <starting_regularization>
@@ -105,5 +105,5 @@ ffcs/sphere40.ffc
 </ffcs>
 
 <mesh_ffc_mode>
-1
+0
 </mesh_ffc_mode>
