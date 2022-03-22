@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sys
 import vtk
+import glob
 import shutil
 import shapeworks as sw
 
@@ -296,3 +297,14 @@ def check_results(args, project_spreadsheet):
             exit(-1)
         print("Done with test, verification succeeded.")
         exit()
+
+def findMeanShape(shapeModelDir):
+    fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
+    for i in range(len(fileList)):
+        if i == 0:
+            meanShape = np.loadtxt(fileList[i])
+        else:
+            meanShape += np.loadtxt(fileList[i])
+    meanShape = meanShape / len(fileList)
+    nmMS = shapeModelDir + '/meanshape_local.particles'
+    np.savetxt(nmMS, meanShape)
