@@ -336,26 +336,31 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       Constraints constraint;
       constraint.Read(file);
       constraints.push_back(constraint);
-      for (auto& plane : constraint.getPlaneConstraints()) {
-        auto& points = plane.points();
-        vnl_vector_fixed<double, 3> a, b, c;
-        if (points.size() != 3) {
-          throw std::runtime_error("Error reading plane constraint: " + file);
-        }
-        for (int i = 0; i < 3; i++) {
-          a[i] = points[0][i];
-          b[i] = points[1][i];
-          c[i] = points[2][i];
-        }
+      auto domain_type = project_->get_groomed_domain_types()[f];
+      if (domain_type != DomainType::Mesh) {
+        for (auto& plane : constraint.getPlaneConstraints()) {
+          auto& points = plane.points();
+          vnl_vector_fixed<double, 3> a, b, c;
+          if (points.size() != 3) {
+            throw std::runtime_error("Error reading plane constraint: " + file);
+          }
+          for (int i = 0; i < 3; i++) {
+            a[i] = points[0][i];
+            b[i] = points[1][i];
+            c[i] = points[2][i];
+          }
 
-        a = optimize->TransformPoint(domain_count, a);
-        b = optimize->TransformPoint(domain_count, b);
-        c = optimize->TransformPoint(domain_count, c);
+          a = optimize->TransformPoint(domain_count, a);
+          b = optimize->TransformPoint(domain_count, b);
+          c = optimize->TransformPoint(domain_count, c);
 
-        auto domain_type = project_->get_groomed_domain_types()[f];
-        if (domain_type != DomainType::Mesh) {
           // don't add the cutting plane to the system, we are just going to clip the mesh instead
           optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
+        }
+
+        auto &ffc = constraint.getFreeformConstraint();
+        if (ffc.isSet()) {
+          optimize->GetSampler()->AddFreeFormConstraint(domain_count, ffc.boundaries(), ffc.getQueryPoint());
         }
       }
 

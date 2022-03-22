@@ -96,11 +96,9 @@ void FreeFormConstraint::computeBoundaries() {
 
   auto output = loop->GetOutput();
 
-  std::cerr << "number of FFC boundaries = " << output->GetNumberOfCells() << "\n";
   for (int i = 0; i < output->GetNumberOfCells(); i++) {
     std::vector<Eigen::Vector3d> boundary;
     auto cell = output->GetCell(i);
-    std::cerr << "number of points = " << cell->GetNumberOfPoints() << "\n";
     auto points = cell->GetPoints();
     for (int p = 0; p < cell->GetNumberOfPoints(); p++) {
       Eigen::Vector3d pos;
