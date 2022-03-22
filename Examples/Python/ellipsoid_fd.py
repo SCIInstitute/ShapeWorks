@@ -12,11 +12,8 @@ to the existing shape model.
 """
 import os
 import glob
-import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
 import subprocess
-
+import shapeworks as sw
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -26,7 +23,7 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "ellipsoid_1mode"
+    dataset_name = "ellipsoid_1mode_aligned"
     output_directory = "Output/ellipsoid_fd/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -34,7 +31,6 @@ def Run_Pipeline(args):
 
     file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
     file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
-
     file_list_new_segs = sorted(glob.glob(output_directory + dataset_name + "/fd_segmentations/*.nrrd"))
 
     print("\nStep 2. Groom - Create distance transforms\n")
@@ -109,8 +105,8 @@ def Run_Pipeline(args):
     Evaluate the mean shape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shape_model_dir = output_directory + dataset_name + "/shape_models/ellipsoid/128/"
-    OptimizeUtils.findMeanShape(shape_model_dir)
+    shape_model_dir = output_directory + dataset_name + "/shape_models/ellipsoid_aligned_multiscale_particles/"
+    sw.utils.findMeanShape(shape_model_dir)
     mean_shape_path = shape_model_dir + '/meanshape_local.particles'
     fixed_local_particles = sorted(glob.glob(shape_model_dir + "/*_local.particles"))
     all_local_particles = fixed_local_particles + [mean_shape_path, mean_shape_path, mean_shape_path, mean_shape_path];
@@ -123,8 +119,7 @@ def Run_Pipeline(args):
     for i in range(len(file_list_segs)):
         subject = sw.Subject()
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
-        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],
-                                                         project_location)
+        rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],  project_location)
         subject.set_original_filenames(rel_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
@@ -185,7 +180,6 @@ def Run_Pipeline(args):
     for key in studio_dictionary:
         studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
     project.set_parameters("studio", studio_parameters)
-
     spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
 
@@ -194,16 +188,13 @@ def Run_Pipeline(args):
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
-    world_point_files = sorted(
-        glob.glob(output_directory + "shape_models/ellipsoid_fd_" + args.option_set + "_particles/*_world.particles"))
-    AnalyzeUtils.check_results(args, world_point_files)
+    sw.utils.check_results(args, spreadsheet_file)
 
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
-    Step 4: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    analysis_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(analysis_cmd)
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
