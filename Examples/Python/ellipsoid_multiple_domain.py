@@ -140,8 +140,6 @@ def Run_Pipeline(args):
 
     """
 
-    iso_value = 0.5
-    icp_iterations = 200
     domains_per_shape = 2
     domain_1_shapes = []
     # get domain 1 shapes 
@@ -163,6 +161,8 @@ def Run_Pipeline(args):
         - applying the rigid transformation to the segmentation
         - save the aligned images for the next step
     """
+    iso_value = 0.5
+    icp_iterations = 200
     transforms = []
     for i in range(len(domain_1_shapes)):
 
@@ -232,7 +232,6 @@ def Run_Pipeline(args):
         subject.set_groomed_transforms(transform)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_original_filenames(rel_seg_files)
-        
         subjects.append(subject)
     # Set project
     project = sw.Project()
