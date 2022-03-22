@@ -154,7 +154,6 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
