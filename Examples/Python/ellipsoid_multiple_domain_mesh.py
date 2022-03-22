@@ -132,7 +132,7 @@ def Run_Pipeline(args):
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
-    Step 2: OPTIMIZE - Particle Based Optimization
+    Step 3: OPTIMIZE - Particle Based Optimization
 
     Now we can run optimization directly on the meshes.
     For more details on the plethora of parameters for shapeworks please refer 
@@ -183,13 +183,22 @@ def Run_Pipeline(args):
         "verbosity" : 0
 
       }
+    num_particles = [512,512]
 
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        num_particles = [32,32]
+        parameter_dictionary["optimization_iterations"] = 30
+
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("number_of_particles" ,sw.Variant([512,512]))
-    # parameters.set("use_normals",sw.Variant([1,1]))
-    # parameters.set("normals_strength",sw.Variant([10,10]))
+    parameters.set("number_of_particles" ,sw.Variant(num_particles))
+    project.set_parameters("optimize", parameters)
     project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)

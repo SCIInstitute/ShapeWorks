@@ -255,10 +255,21 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0
       }
-       # Add param dictionary to spreadsheet
+    num_particles = [512,512]
+
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        num_particles = [32,32]
+        parameter_dictionary["optimization_iterations"] = 30
+
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
+    # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("number_of_particles" ,sw.Variant([512,512]))
+    parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
