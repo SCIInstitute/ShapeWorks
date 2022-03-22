@@ -1604,7 +1604,7 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
       for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
         if (distToSource[i] < std::abs(values->GetValue(i))) {
           absvalues->SetValue(i, distToSource[i]);
-          if (inout->GetValue(i) == 0.) {
+          if (inout->GetValue(i) == 1.) {
             if (arr) {
               values->SetValue(i, std::max<double>(arr->GetValue(i), -distToSource[i]));
             } else {
