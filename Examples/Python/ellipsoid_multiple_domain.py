@@ -15,6 +15,7 @@ import numpy as np
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
+import subprocess
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -55,19 +56,14 @@ def Run_Pipeline(args):
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     """
-    Step 2: GROOMING 
-    The segmentaions are pre-alinged during generation( EllipsoidJointsGenerator) 
-    such that they are centered w.r.t to each other. Hence we only perform the 
-    following two steps
-    The required grooming steps are: 
-    1. Isotropic resampling
-    2. Reference selection
-    3. Rigid Alignment - ICP
-    4. Find largest bounding box
-    5. Apply cropping and padding
-    6. Create smooth signed distance transforms
-
-    For more information on grooming see docs/workflow/groom.md
+    Step 2: GROOM
+    The following grooming steps are performed:
+        - Crop (cropping first makes resampling faster)
+        - Resample to have isotropic spacing
+        - Pad with zeros
+        - Compute alignment transforms to use in optimization
+        - Compute distance transforms
+    For more information about grooming, please refer to:
     http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
     """
 
@@ -77,7 +73,9 @@ def Run_Pipeline(args):
         os.makedirs(groom_dir)
 
     """
-    First, we need to loop over the shape segmentation files and load the segmentations
+
+    Grooming Step 1: First, we need to loop over the shape segmentation files and 
+    load the segmentations and apply the initial grooming steps
     """
     # list of shape segmentations
     shape_seg_list = []
@@ -87,7 +85,8 @@ def Run_Pipeline(args):
     for shape_filename in file_list:
         print('Loading: ' + shape_filename)
         # get current shape name
-        shape_names.append(shape_filename.split('/')[-1].replace('.nrrd', ''))
+        shape_name = shape_filename.split('/')[-1].replace('.nrrd', '')
+        shape_names.append(shape_name)
 
         # get domain identifiers
         name = shape_filename.split('/')[-1].replace('.nrrd', '')
@@ -95,6 +94,17 @@ def Run_Pipeline(args):
         
         # load segmentation
         shape_seg = sw.Image(shape_filename)
+        # do initial grooming steps
+        print("Grooming: " + shape_name)
+         # Individually crop each segmentation using a computed bounding box
+        iso_value = 0.5  # voxel value for isosurface
+        bounding_box = sw.ImageUtils.boundingBox([shape_seg], iso_value).pad(5)
+        shape_seg.crop(bounding_box)
+        # Resample to isotropic spacing using linear interpolation
+        antialias_iterations = 30   # number of iterations for antialiasing
+        iso_spacing = [1, 1, 1]     # isotropic spacing
+        shape_seg.antialias(antialias_iterations).resample(iso_spacing, sw.InterpolationType.Linear).binarize()
+
         # append to the shape list
         shape_seg_list.append(shape_seg)
     #domain identifiers for all shapes
@@ -103,34 +113,6 @@ def Run_Pipeline(args):
     domain1_indx = list(np.where(domain_ids == 'd1')[0])
     #shape index for all shapes in domain 2
     domain2_indx = list(np.where(domain_ids == 'd2')[0])
-
-
-
-
-
-    """
-    Now we can loop over the segmentations and apply the initial grooming steps to themm
-    """
-    
-    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-
-        """
-        Grooming Step 1: Resample segmentations to have isotropic (uniform) spacing
-            - Antialiase the binary segmentation to convert it to a smooth continuous-valued 
-            image for interpolation
-            - Resample the antialiased image using the same voxel spacing for all dimensions
-            - Binarize the resampled images to results in a binary segmentation with an 
-            isotropic voxel spacing
-        """
-        print('Resampling segmentation: ' + shape_name)
-        # antialias for 30 iterations
-        antialias_iterations = 30
-        shape_seg.antialias(antialias_iterations)
-        # resample to isotropic spacing using linear interpolation
-        iso_spacing = [1, 1, 1]
-        shape_seg.resample(iso_spacing, sw.InterpolationType.Linear)
-        # make segmetnation binary again
-        shape_seg.binarize()
 
 
 
@@ -158,7 +140,7 @@ def Run_Pipeline(args):
 
     """
 
-    iso_value = 1e-20
+    iso_value = 0.5
     icp_iterations = 200
     domains_per_shape = 2
     domain_1_shapes = []
@@ -167,10 +149,7 @@ def Run_Pipeline(args):
         domain_1_shapes.append(shape_seg_list[i*domains_per_shape])
 
     ref_index = sw.find_reference_image_index(domain_1_shapes)
-    
-    
     reference = domain_1_shapes[ref_index].copy()
-    reference.antialias(antialias_iterations)
     ref_name = shape_names[ref_index*domains_per_shape]
 
 
@@ -184,59 +163,21 @@ def Run_Pipeline(args):
         - applying the rigid transformation to the segmentation
         - save the aligned images for the next step
     """
-
+    transforms = []
     for i in range(len(domain_1_shapes)):
 
         # compute rigid transformation using the domain 1 segmentations
-        shape_seg_list[i*domains_per_shape].antialias(antialias_iterations)
+        
         rigidTransform = shape_seg_list[i*domains_per_shape].createRigidRegistrationTransform(
             reference, iso_value, icp_iterations)
-
+        rigid_transform = sw.utils.getVTKtransform(rigidTransform)
         # apply the transformation to each domain(each subject)
         for d in range(domains_per_shape):
             
-            print("Aligning " + shape_names[i*domains_per_shape+d] + ' to ' + ref_name)
-            
-            shape_seg_list[i*domains_per_shape+d].antialias(antialias_iterations)
-            
-            shape_seg_list[i*domains_per_shape+d].applyTransform(rigidTransform,
-                                     reference.origin(),  reference.dims(),
-                                     reference.spacing(), reference.coordsys(),
-                                     sw.InterpolationType.NearestNeighbor)
-            # then turn antialized-tranformed segmentation to a binary segmentation
-            shape_seg_list[i*domains_per_shape+d].binarize()
+            transforms.append(rigid_transform)
     
-
     """
-    Grooming Step 4: Finding the largest bounding box
-    We want to crop all of the segmentations to be the same size, so we need to find 
-    the largest bounding box as this will contain all the segmentations. This requires 
-    loading all segmentation files at once.
-    """
-    # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
-    iso_value = 0.5
-    segs_bounding_box = sw.ImageUtils.boundingBox(
-        shape_seg_list, iso_value)
-
-    """
-    Grooming Step 5: Apply cropping and padding
-    Now we need to loop over the segmentations and crop them to the size of the bounding box.
-    To avoid cropped segmentations to touch the image boundaries, we will crop then 
-    pad the segmentations.
-        - Crop to bounding box size
-        - Pad segmentations
-    """
-
-    # parameters for padding
-    padding_size = 10  # number of voxels to pad for each dimension
-    padding_value = 0  # the constant value used to pad the segmentations
-    # loop over segs to apply cropping and padding
-    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-        print('Cropping & padding segmentation: ' + shape_name)
-        shape_seg.crop(segs_bounding_box).pad(padding_size, padding_value)
-
-    """
-    Grooming Step 6: Converting segmentations to smooth signed distance transforms.
+    Grooming Step 4: Converting segmentations to smooth signed distance transforms.
     The computeDT API needs an iso_value that defines the foreground-background interface, to create 
     a smoother interface we first antialiasing the segmentation then compute the distance transform 
     at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
@@ -271,16 +212,35 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-    # Create a dictionary for all the parameters required by optimization
+    # Create project spreadsheet
+    project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
+    subjects = []
+    
+    for i in range(len(domain_1_shapes)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(domains_per_shape)
+        rel_seg_files = []
+        rel_groom_files = []
+        transform = []
+        for d in range(domains_per_shape):
+            rel_seg_files += sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i*domains_per_shape+d]], project_location)
+            rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i*domains_per_shape+d]], project_location)
+            transform.append(transforms[i*domains_per_shape+d].flatten())
+        subject.set_groomed_transforms(transform)
+        subject.set_groomed_filenames(rel_groom_files)
+        subject.set_original_filenames(rel_seg_files)
+        
+        subjects.append(subject)
+    # Set project
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
-        "number_of_particles" : [512,512],
-        "use_normals": [0,0],
-        "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 1000,
@@ -288,42 +248,34 @@ def Run_Pipeline(args):
         "starting_regularization" :1000,
         "ending_regularization" : 0.5,
         "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 2,
-        "domain_type" : 'image',
+        "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 100, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "verbosity" : 0
-
       }
+       # Add param dictionary to spreadsheet
+    for key in parameter_dictionary:
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    parameters.set("number_of_particles" ,sw.Variant([512,512]))
+    project.set_parameters("optimize", parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_" + args.option_set + ".xlsx"
+    project.save(spreadsheet_file)
 
-    if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = [32,32]
-        parameter_dictionary["optimization_iterations"] = 25
-    
-    # Get data input (meshes if running in mesh mode, else distance transforms)
-    parameter_dictionary["domain_type"], input_files = sw.data.get_optimize_input(dt_files, args.mesh_mode)
-
-    # Execute the optimization function on distance transforms
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, input_files, parameter_dictionary)
-
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/ellipsoid_multiple_domain_analyze.xml"
-    domains_per_shape = 2
-    AnalyzeUtils.create_analyze_xml(analyze_xml, input_files, local_point_files, world_point_files, domains_per_shape)
+    # Run optimization
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
+    sw.utils.check_results(args, spreadsheet_file)
 
-    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
-    Step 4: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
