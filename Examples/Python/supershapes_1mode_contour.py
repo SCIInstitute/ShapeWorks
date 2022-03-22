@@ -7,8 +7,6 @@ Example demonstrating Contour Domain in ShapeWorks
 import os
 import glob
 import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
 import subprocess
 import numpy as np
 from ShapeCohortGen.CohortGenerator import Supershapes2DCohortGenerator
@@ -19,7 +17,7 @@ def Run_Pipeline(args):
     process
     """
     print("\nStep 1. Extract Data\n")
-    dataset_name = "supershapes2D_1mode-v0"
+    dataset_name = "supershapes2D_1mode"
     output_directory = "Output/supershapes_1mode_contour/"
 
     # See the generate_supershapes() function in this file for how the data is generated
@@ -33,7 +31,6 @@ def Run_Pipeline(args):
     contour_list = []
     for contour_name in contour_files:
         print('Loading: ' + contour_name)
-        
         # Get contour
         contour = sw.Mesh(contour_name)
         contour_list.append(contour)
@@ -42,12 +39,11 @@ def Run_Pipeline(args):
     """
     Step 3: OPTIMIZE - Particle Based Optimization
     """
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-    # Create spreadsheet
+     # Create project spreadsheet
     project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
     subjects = []
     number_domains = 1
     for i in range(len(contour_files)):
@@ -60,15 +56,14 @@ def Run_Pipeline(args):
         transform = [ np.eye(4).flatten() ]
         subject.set_groomed_transforms(transform)
         subjects.append(subject)
-
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     project.set_original_domain_types([sw.DomainType.ContourDomain])
     project.set_groomed_domain_types([sw.DomainType.ContourDomain])
     parameters = sw.Parameters()
 
-
-
+    # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles" : 64,
         "use_normals": 0,
@@ -86,42 +81,37 @@ def Run_Pipeline(args):
         "procrustes_interval" : 2,
         "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "verbosity" : 5,
+        "verbosity" : 0,
         "multiscale": 1,
         "multiscale_particles": 4,
       }
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
 
-    """
-    Now we execute a single scale particle optimization function.
-    """
+    # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    # parameters.set("domain_type",sw.Variant('contour'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/supershapes_1mode_contour_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
 
-
-
-    # [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
-
-    # # Prepare analysis XML
-    # analyze_xml = point_dir + "/supershapes_1mode_contour_analyze.xml"
-    # AnalyzeUtils.create_analyze_xml(analyze_xml, contour_files, local_point_files, world_point_files)
-
-    # # If tiny test or verify, check results and exit
-    # AnalyzeUtils.check_results(args, world_point_files)
-
-    # print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    # AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
+    """
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
 
 def generate_supershapes(out_dir):
     m = 6
