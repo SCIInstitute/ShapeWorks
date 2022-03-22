@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 ====================================================================
-Example ShapeWorks Pipeline for mesh optimization
+Example ShapeWorks Pipeline for mesh grooming and optimization
 ====================================================================
 """
 import os
 import glob
-import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
 import subprocess
-import shutil
-import numpy as np 
+import shapeworks as sw
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -21,7 +17,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     dataset_name = "ellipsoid_1mode"
-    output_directory = "Output/ellipsoid_mesh_proj/"
+    output_directory = "Output/ellipsoid_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -42,6 +38,7 @@ def Run_Pipeline(args):
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
+
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     """
@@ -107,29 +104,24 @@ def Run_Pipeline(args):
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
     Step 3: OPTIMIZE - Particle Based Optimization
-    Now we can run optimization directly on the meshes.
+
+    Now that we have the groomed representation of data we create 
+    the spreadsheet for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer 
-    to docs/workflow/optimze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-
-
-    # Create spreadsheet
+    # Create project spreadsheet
     project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
     subjects = []
     number_domains = 1
-    
     for i in range(len(mesh_names)):
-        
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
-        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mesh_files[i]],project_location)
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mesh_files[i]], project_location)
         subject.set_original_filenames(rel_mesh_files)
         rel_groom_file = sw.utils.get_relative_paths([os.getcwd() + "/" + groomed_mesh_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_file)
@@ -137,10 +129,11 @@ def Run_Pipeline(args):
         transforms = [ transform.flatten() ]
         subject.set_groomed_transforms(transforms)
         subjects.append(subject)
-
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
+
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles": 128,
@@ -154,7 +147,6 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -162,27 +154,36 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0
     }
-
-    # If running a tiny test, reduce some parameters
+     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
         parameter_dictionary["iterations_per_split"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 64
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
 
+    # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimize",parameters)
+    project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_mesh_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
+
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
+    """
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
