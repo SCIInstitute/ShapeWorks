@@ -1003,7 +1003,7 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
     std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
   }
   if (array->GetNumberOfComponents() != 1) {
-    std::cerr << "WARNING: Added a multi-component mesh field\n";
+    //std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
 
   array->SetName(name.c_str());

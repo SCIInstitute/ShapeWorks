@@ -282,7 +282,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
   }
 
-  std::cerr << "WARNING: Added a multi-component mesh field\n";
+  //std::cerr << "WARNING: Added a multi-component mesh field\n";
 
   return normals;
 }
