@@ -4,15 +4,14 @@
 ShapeWorks Optimization with Multiple Cutting Planes
 ====================================================================
 This example demonstrates how to optimize with cutting planes on 
-simple ellipsoid data.
+simple aligned ellipsoid data.
 """
 import os
 import glob
-import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
-import numpy as np 
 import subprocess
+import numpy as np
+import shapeworks as sw
+
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -77,8 +76,6 @@ def Run_Pipeline(args):
         - Apply smoothing
         - Save the distance transform
     """
-
-    # Define distance transform parameters
     iso_value = 0
     sigma = 1.3
     antialias_iterations = 30
@@ -97,8 +94,11 @@ def Run_Pipeline(args):
             iso_value).gaussianBlur(sigma)
         dt_list.append(shape_seg)
     # Save distance transforms
-    dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
+    groomed_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
                                     shape_names, extension='nrrd', compressed=True, verbose=True)
+
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    domain_type, groomed_files = sw.data.get_optimize_input(groomed_files, args.mesh_mode)
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -111,19 +111,11 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-
-    # Create spreadsheet
+     # Create project spreadsheet
     project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
     subjects = []
     number_domains = 1
     for i in range(len(file_list)):
@@ -131,14 +123,14 @@ def Run_Pipeline(args):
         subject.set_number_of_domains(number_domains)
         rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i]], project_location)
         subject.set_original_filenames(rel_seg_files)
-        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i]], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_files)
         transform = [ np.eye(4).flatten() ]
         subject.set_groomed_transforms(transform)
         rel_plane_files = sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i]], project_location)
         subject.set_constraints_filenames(rel_plane_files)
         subjects.append(subject)
-
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
@@ -169,18 +161,26 @@ def Run_Pipeline(args):
         parameter_dictionary["multiscale"] = 1
         parameter_dictionary["multiscale_particles"] = 16
 
+    # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('image'))
+    parameters.set("domain_type", sw.Variant(domain_type[0]))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
 
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
+    """
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
