@@ -63,29 +63,29 @@ public:
   int FisherLinearDiscriminant(unsigned int numModes);
 
   /** Returns the sample size. */
-  const int SampleSize() { return m_numSamples; }
-  const int Group1SampleSize() { return m_numSamples1; }
-  const int Group2SampleSize() { return m_numSamples2; }
+  int SampleSize() const { return m_numSamples; }
+  int Group1SampleSize() const { return m_numSamples1; }
+  int Group2SampleSize() const { return m_numSamples2; }
 
   /** Returns the number of dimensions (this is number of points times Dimension) */
-  const int NumberOfDimensions() { return m_numDimensions; }
+  int NumberOfDimensions() const { return m_numDimensions; }
 
   /** Returns the group ids */
-  const int GroupID(unsigned int i) { return m_groupIDs[i]; }
-  const std::vector<int> &GroupID() { return m_groupIDs;}
+  int GroupID(unsigned int i) const { return m_groupIDs[i]; }
+  const std::vector<int> &GroupID() const { return m_groupIDs; }
 
   /** Returns the eigenvectors/values. */
-  const Eigen::MatrixXd &Eigenvectors() { return m_eigenvectors; }
-  const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
+  const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
+  const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
 
   /** Returns the mean shape. */
-  const Eigen::VectorXd &Mean() { return m_mean; }
-  const Eigen::VectorXd &Group1Mean() { return m_mean1; }
-  const Eigen::VectorXd &Group2Mean() { return m_mean2; }
+  const Eigen::VectorXd &Mean() const { return m_mean; }
+  const Eigen::VectorXd &Group1Mean() const { return m_mean1; }
+  const Eigen::VectorXd &Group2Mean() const { return m_mean2; }
 
   // Returns group2 - group1 mean
-  const Eigen::VectorXd &NormalizedGroupDifference() { return m_groupdiffnorm; }
-  const Eigen::VectorXd &GroupDifference() { return m_groupdiff; }
+  const Eigen::VectorXd &NormalizedGroupDifference() const { return m_groupdiffnorm; }
+  const Eigen::VectorXd &GroupDifference() const { return m_groupdiff; }
 
  /** Returns the median shape for the set of shapes with Group ID equal to the
       integer argument.  For example, ComputeMedianShape(0) returns the median
@@ -103,15 +103,15 @@ public:
   Eigen::MatrixXd &PCALoadings() { return m_principals; }
 
   /** Returns the Fisher linear discriminant */
-  const Eigen::VectorXd &FishersLDA() { return m_fishersLD; }
+  const Eigen::VectorXd &FishersLDA() const { return m_fishersLD; }
 
   /** Returns the shape matrix*/
-  const Eigen::MatrixXd &ShapeMatrix() { return m_shapes; }
+  const Eigen::MatrixXd &ShapeMatrix() const { return m_shapes; }
 
   /** Returns the shape with the mean subtracted */
-  const Eigen::MatrixXd &RecenteredShape() { return m_pointsMinusMean; }
+  const Eigen::MatrixXd &RecenteredShape() const { return m_pointsMinusMean; }
 
-  std::vector<double> PercentVarByMode() { return m_percentVarByMode; }
+  const std::vector<double>& PercentVarByMode() const { return m_percentVarByMode; }
 
   /** Computes a simple linear regression of the first list of values with
       respect to the second y=a + bx. Returns the estimated parameters a & b.
