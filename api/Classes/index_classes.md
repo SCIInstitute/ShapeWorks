@@ -66,7 +66,6 @@ title: Classes
     * **class [ContourDomain](../Classes/classitk_1_1ContourDomain.md)** 
     * **namespace [Functor](../Namespaces/namespaceitk_1_1Functor.md)** 
         * **class [MultiplyByConstant](../Classes/classitk_1_1Functor_1_1MultiplyByConstant.md)** 
-    * **class [ImageToVTKImageFilter](../Classes/classitk_1_1ImageToVTKImageFilter.md)** <br>Converts an ITK image into a VTK image and plugs a itk data pipeline to a VTK datapipeline. 
     * **class [KernelTransform2](../Classes/classitk_1_1KernelTransform2.md)** 
     * **class [MeshDomain](../Classes/classitk_1_1MeshDomain.md)** 
     * **class [MultiplyByConstantImageFilter](../Classes/classitk_1_1MultiplyByConstantImageFilter.md)** <br>Multiply input pixels by a constant. 
@@ -241,4 +240,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-03-16 at 19:03:10 +0000
+Updated on 2022-03-22 at 16:27:55 +0000

@@ -19,7 +19,7 @@ title: Reconstruction
 | typedef itk::ImageRegionIterator< GradientImageType > | **[GradientImageIteratorType](../Classes/classReconstruction.md#typedef-gradientimageiteratortype)**  |
 | typedef itk::ImageRegionIterator< ImageType > | **[ImageIteratorType](../Classes/classReconstruction.md#typedef-imageiteratortype)**  |
 | typedef itk::ImageFileWriter< ImageType > | **[WriterType](../Classes/classReconstruction.md#typedef-writertype)**  |
-| typedef [itk::ImageToVTKImageFilter](../Classes/classitk_1_1ImageToVTKImageFilter.md)< ImageType > | **[ITK2VTKConnectorType](../Classes/classReconstruction.md#typedef-itk2vtkconnectortype)**  |
+| typedef itk::ImageToVTKImageFilter< ImageType > | **[ITK2VTKConnectorType](../Classes/classReconstruction.md#typedef-itk2vtkconnectortype)**  |
 | typedef itk::AddImageFilter< ImageType, ImageType > | **[AddImageFilterType](../Classes/classReconstruction.md#typedef-addimagefiltertype)**  |
 | typedef itk::ResampleImageFilter< ImageType, ImageType > | **[ResampleFilterType](../Classes/classReconstruction.md#typedef-resamplefiltertype)**  |
 | typedef TInterpolatorType< ImageType, TCoordRep > | **[InterpolatorType](../Classes/classReconstruction.md#typedef-interpolatortype)**  |
@@ -451,4 +451,4 @@ inline void DisablePairwiseNormalsDifferencesForGoodBad()
 
 -------------------------------
 
-Updated on 2022-03-16 at 19:03:09 +0000
+Updated on 2022-03-22 at 16:27:54 +0000

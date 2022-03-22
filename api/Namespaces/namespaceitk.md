@@ -21,7 +21,6 @@ title: itk
 | class | **[itk::BSplineInterpolateImageFunctionWithDoubleCoefficents](../Classes/classitk_1_1BSplineInterpolateImageFunctionWithDoubleCoefficents.md)**  |
 | class | **[itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)**  |
 | class | **[itk::ContourDomain](../Classes/classitk_1_1ContourDomain.md)**  |
-| class | **[itk::ImageToVTKImageFilter](../Classes/classitk_1_1ImageToVTKImageFilter.md)** <br>Converts an ITK image into a VTK image and plugs a itk data pipeline to a VTK datapipeline.  |
 | class | **[itk::KernelTransform2](../Classes/classitk_1_1KernelTransform2.md)**  |
 | class | **[itk::MeshDomain](../Classes/classitk_1_1MeshDomain.md)**  |
 | class | **[itk::MultiplyByConstantImageFilter](../Classes/classitk_1_1MultiplyByConstantImageFilter.md)** <br>Multiply input pixels by a constant.  |
@@ -306,4 +305,4 @@ static int nbh26Table = {
 
 -------------------------------
 
-Updated on 2022-03-16 at 19:03:07 +0000
+Updated on 2022-03-22 at 16:27:53 +0000
