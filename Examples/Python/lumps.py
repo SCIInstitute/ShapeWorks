@@ -7,14 +7,12 @@ Example ShapeWorks Pipeline for mesh optimization
 In this example we provide a pipeline with a dataset of 
 pre-aligned lump meshes.
 """
+
 import os
 import glob
-import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
 import subprocess
-import shutil
-import numpy as np 
+import shapeworks as sw
+
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -23,7 +21,7 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "lumps-v0"
+    dataset_name = "lumps"
     output_directory = "Output/lumps/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -72,13 +70,11 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-    # Create spreadsheet
+    # Create project spreadsheet
     project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
     subjects = []
     number_domains = 1
     for i in range(len(mesh_list)):
@@ -89,7 +85,7 @@ def Run_Pipeline(args):
         #groomed file is same as input file
         subject.set_groomed_filenames(rel_mesh_files)
         subjects.append(subject)
-
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
@@ -125,7 +121,6 @@ def Run_Pipeline(args):
         parameter_dictionary["multiscale"] = 1
         parameter_dictionary["multiscale_particles"] = 32
     
-    
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
@@ -134,9 +129,17 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
+
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
+    """
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
