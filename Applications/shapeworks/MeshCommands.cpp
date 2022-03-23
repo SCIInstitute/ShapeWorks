@@ -1537,8 +1537,9 @@ bool WarpMeshWithLandmarks::execute(const optparse::Values &options, SharedComma
       size_t newline = 1;
       for (int i = 0; i < warped_landmarks.rows(); i++) {
         for (int j = 0; j < warped_landmarks.cols(); j++){
-          out << warped_landmarks(i, j) << (j % 3 == 0 ? "\n" : "    ");
+          out << warped_landmarks(i, j) << "    ";
         }
+        out << "\n";
       }
       out.close();
       if (out.bad()) {
@@ -1548,7 +1549,7 @@ bool WarpMeshWithLandmarks::execute(const optparse::Values &options, SharedComma
     }
     return true;
   } catch (std::exception &e) {
-    std::cerr << "exception during mesh warp: " << e.what() << std::endl;
+    std::cerr << "exception during mesh warp with landmarks: " << e.what() << std::endl;
     return false;
   } catch (...) {
     std::cerr << "unknown exception while mesh warping" << std::endl;
