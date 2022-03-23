@@ -31,6 +31,7 @@ using namespace pybind11::literals;
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
+#include "MeshWarper.h"
 #include "Optimize.h"
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
@@ -1219,6 +1220,51 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
   ;
 
+  // MeshWarping
+  py::class_<MeshWarper>(m, "MeshWarper")
+
+  .def(py::init<>())
+
+  .def("computeWarping",
+        [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref) -> decltype(auto) {
+         w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref);
+         return w.get_warp_available() && w.check_warp_ready();
+        },
+        "Assign the reference mesh/particles (matrix [Nx3]) and pre-compute the warping",
+        "reference_mesh"_a, "reference_particles"_a)
+
+  .def("getReferenceModel",
+      [](MeshWarper &w) -> decltype(auto) {
+        return Mesh(w.get_reference_mesh());
+      },
+      "Retrurn the mesh used for warping.")
+
+  .def("getReferenceParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_reference_particles();
+      },
+      "Retrurn the particles used for warping.")
+
+  .def("hasBadParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.has_bad_particles();
+      },
+      "Return true if warping has removed any bad particle(s).")
+
+  .def("getWarpMatrix",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_warp_matrix();
+      },
+      "Return the warping matrix (Vertices = Warp * Control).")
+
+  .def("buildMesh",
+      [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
+          return Mesh(w.build_mesh(particles));
+      },
+      "Build the mesh from particle positions (matrix [Nx3])",
+      "particles"_a)
+   ;
+
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
@@ -1263,6 +1309,16 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ParticleSystem>(m, "ParticleSystem")
 
   .def(py::init<const std::vector<std::string> &>())
+
+  .def("ShapeAsPointSet",
+      [](ParticleSystem &p, int id_shape) -> decltype(auto) {
+          Eigen::MatrixXd points = p.Particles().col(id_shape);
+          points.resize(3, points.size() / 3);
+          points.transposeInPlace();
+          return points;
+      },
+      "Return the particle pointset [Nx3] of the specified shape",
+      "id_shape"_a)
 
   .def("Particles",
        &ParticleSystem::Particles)
