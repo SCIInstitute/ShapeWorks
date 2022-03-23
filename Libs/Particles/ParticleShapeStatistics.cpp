@@ -85,6 +85,9 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 
 int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids)
 {
+  // local copy of points
+  points_ = points;
+
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
 
@@ -723,6 +726,12 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()
 Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
 {
   return this->m_group_2_matrix;
+}
+
+void ParticleShapeStatistics::compute_good_bad_points()
+{
+
+
 }
 
 } // shapeworks
