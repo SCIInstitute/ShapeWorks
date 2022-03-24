@@ -28,11 +28,11 @@ public:
   void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                           const Eigen::MatrixXd& reference_particles);
 
+  //! Generate warp, return true on success
+  bool generate_warp();
+
   //! Return if the warp is available
   bool get_warp_available();
-
-  //! Check if the warp is ready, if not do it (thread safely), return true if warp is valid
-  bool check_warp_ready();
 
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
@@ -41,7 +41,7 @@ public:
   bool is_contour() { return this->is_contour_; }
 
   //! Return true if warping has removed any bad particle(s)
-  bool has_bad_particles() const { return this->nb_bad_particles() > 0; }
+  bool has_bad_particles() const { return this->bad_particle_count() > 0; }
 
   vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this->reference_mesh_; }
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
@@ -54,8 +54,8 @@ protected:
 
 private:
 
-  //! Generate warp, return true on success
-  bool generate_warp();
+  //! Check if the warp is ready, if not do it (thread safely), return true if warp is valid
+  bool check_warp_ready();
 
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
@@ -87,10 +87,9 @@ private:
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   //! Return the number of bad particles
-  size_t nb_bad_particles() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
+  size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
 
   // Members
-
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;

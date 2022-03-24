@@ -1225,25 +1225,25 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
-  .def("computeWarping",
+  .def("generateWarp",
         [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref) -> decltype(auto) {
          w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref);
-         return w.get_warp_available() && w.check_warp_ready();
+         return w.generate_warp();
         },
         "Assign the reference mesh/particles (matrix [Nx3]) and pre-compute the warping",
         "reference_mesh"_a, "reference_particles"_a)
 
-  .def("getReferenceModel",
+  .def("getReferenceMesh",
       [](MeshWarper &w) -> decltype(auto) {
         return Mesh(w.get_reference_mesh());
       },
-      "Retrurn the mesh used for warping.")
+      "Return the mesh used for warping.")
 
   .def("getReferenceParticles",
       [](MeshWarper &w) -> decltype(auto) {
         return w.get_reference_particles();
       },
-      "Retrurn the particles used for warping.")
+      "Return the particles used for warping.")
 
   .def("hasBadParticles",
       [](MeshWarper &w) -> decltype(auto) {
