@@ -740,15 +740,12 @@ void Optimize::Initialize()
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
-
-  /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
 
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
   random = random.normalize() * this->m_spacing;
-  */
 
   double epsilon = this->m_spacing;
   bool flag_split = false;
@@ -762,37 +759,14 @@ void Optimize::Initialize()
   }
 
   while (flag_split) {
-      /*Old vector randomization
-    for (int i = 0; i < 3; i++) {
-      random[i] = static_cast <double> (this->m_rand());
-    }
-
-    // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
-    random = random.normalize() * this->m_spacing / 5.0;
-    */
-
-    //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
-    this->OptimizerStop();
-
-    /*Old vector randomization
-    for (int i = 0; i < n; i++) {
-      int d = i % m_domains_per_shape;
-      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
-      }
-    }
-    */
-
-    // Splits particles
-    // Strategy: For each domain (for all samples), we make very corresponding particle
-    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
-    //      in each domain are tested so that no particle will violate any inequality constraints
-    //      after its split.
-    for (int i = 0; i < m_domains_per_shape; i++) {
-      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
-        m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
-      }
-    }
+        //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
+        this->OptimizerStop();
+        for (size_t i = 0; i < n; i++) {
+          size_t d = i % m_domains_per_shape;
+          if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+            m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i);
+          }
+        }
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
