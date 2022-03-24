@@ -25,7 +25,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     
-    dataset_name = "ellipsoid_joint_size"
+    dataset_name = "ellipsoid_joint_size_rotation"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -75,7 +75,7 @@ def Run_Pipeline(args):
     for mesh_file in mesh_files:
         print('Loading: ' + mesh_file)
         # get current shape name
-        mesh_name = mesh_file.split('/')[-1].replace('.nrrd', '')
+        mesh_name = mesh_file.split('/')[-1].replace('.vtk', '')
         mesh_names.append(mesh_name)
         # get domain identifiers
         domain_ids.append(mesh_name.split(".")[0].split("_")[-1])
@@ -169,14 +169,14 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 500,
+        "iterations_per_split" : 1000,
         "optimization_iterations" : 500,
-        "starting_regularization" :10,
-        "ending_regularization" : 1,
+        "starting_regularization" :1000,
+        "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 1,
-        "domains_per_shape" : 2,
+        "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 10, 
-        "initial_relative_weighting" : 0.1,
+        "initial_relative_weighting" : 1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
@@ -198,8 +198,10 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
+    parameters.set("use_normals",sw.Variant([1,1]))
+    parameters.set("normals_strength",sw.Variant([10,10]))
     project.set_parameters("optimize", parameters)
-    project.set_parameters("optimize", parameters)
+    
     spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
 
