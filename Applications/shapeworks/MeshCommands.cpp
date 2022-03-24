@@ -1400,7 +1400,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   bool warp_along_with_landmarks = false;
   int numLandmarks = 0;
   std::string landmarkFilename = options["landmark_file"];
-  if (!landmarkFilename.length() == 0) {
+  if (!landmarkFilename.empty()) {
     warp_along_with_landmarks = true;
   }
 
