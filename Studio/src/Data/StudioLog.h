@@ -1,15 +1,16 @@
 #pragma once
 
-#include <string>
-#include <fstream>
+#include <QObject>
 #include <QString>
+#include <fstream>
+#include <string>
 
 namespace shapeworks {
 
-class StudioLog {
+class StudioLog : public QObject {
+  Q_OBJECT;
 
-public:
-
+ public:
   StudioLog();
 
   //! Return the singleton instance
@@ -27,6 +28,9 @@ public:
   //! Log an error, use STUDIO_LOG_ERROR macro
   void log_error(QString message, const int line, const char* file);
 
+  //! Log an error, use STUDIO_SHOW_ERROR macro
+  void show_error(QString message, const int line, const char* file);
+
   //! Log a debug message, use STUDIO_LOG_DEBUG macro
   void log_debug(QString message, const int line, const char* file);
 
@@ -42,13 +46,15 @@ public:
   //! Return the log filename
   QString get_log_filename();
 
-private:
+ Q_SIGNALS:
+  void error(QString message);
 
-  QString create_header(const int line, const char* filename );
+ private:
+  QString create_header(const int line, const char* filename);
 
   QString get_current_datetime();
 
-  std::ofstream log_; //! log file
+  std::ofstream log_;  //! log file
 
   QString log_filename_;
 
@@ -59,25 +65,21 @@ private:
   static const QString log_datetime_format_;
 };
 
-
-
 //! Log stack macro
-#define STUDIO_LOG_STACK(message) \
-  shapeworks::StudioLog::Instance().log_stack( message )
+#define STUDIO_LOG_STACK(message) shapeworks::StudioLog::Instance().log_stack(message)
 
 //! Log message macro
-#define STUDIO_LOG_MESSAGE(message) \
-  shapeworks::StudioLog::Instance().log_message( message, __LINE__, __FILE__ )
+#define STUDIO_LOG_MESSAGE(message) shapeworks::StudioLog::Instance().log_message(message, __LINE__, __FILE__)
 
 //! Log error macro
-#define STUDIO_LOG_ERROR(message) \
-  shapeworks::StudioLog::Instance().log_error( message, __LINE__, __FILE__ )
+#define STUDIO_LOG_ERROR(message) shapeworks::StudioLog::Instance().log_error(message, __LINE__, __FILE__)
+
+//! Log show error macro
+#define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
 
 //! Close session macro
-#define STUDIO_CLOSE_LOG() \
-  shapeworks::StudioLog::Instance().close_log();
+#define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();
 
 //! Close session macro
-#define STUDIO_FLUSH_LOG() \
-  shapeworks::StudioLog::Instance().flush_log();
-}
+#define STUDIO_FLUSH_LOG() shapeworks::StudioLog::Instance().flush_log();
+}  // namespace shapeworks

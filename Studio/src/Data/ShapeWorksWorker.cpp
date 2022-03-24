@@ -52,13 +52,10 @@ void ShapeworksWorker::process()
         emit error_message(QString("ITK Exception: ") + ex.GetDescription());
         return;
       } catch (std::runtime_error& e) {
-        emit error_message(QString("Error: ") + e.what());
+        emit error_message(e.what());
         return;
       } catch (std::exception& e) {
-        emit error_message(QString("Error: ") + e.what());
-        return;
-      } catch (...) {
-        emit error_message(QString("Error during grooming!"));
+        emit error_message(e.what());
         return;
       }
       if (this->groom_->get_aborted()) {

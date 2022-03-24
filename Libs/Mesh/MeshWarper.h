@@ -28,6 +28,9 @@ public:
   void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                           const Eigen::MatrixXd& reference_particles);
 
+  //! Generate warp, return true on success
+  bool generate_warp();
+
   //! Return if the warp is available
   bool get_warp_available();
 
@@ -45,6 +48,13 @@ public:
   std::map<int, int> get_landmarks_map() { return landmarks_map_;}
   Eigen::MatrixXd get_warp_matrix() { return warp_; }
 
+  //! Return true if warping has removed any bad particle(s)
+  bool has_bad_particles() const { return this->bad_particle_count() > 0; }
+
+  vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this->reference_mesh_; }
+  const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
+  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
+
 protected:
 
   //! For overriding to handle progress updates
@@ -52,8 +62,8 @@ protected:
 
 private:
 
-  //! Generate warp, return true on success
-  bool generate_warp();
+  //! Check if the warp is ready, if not do it (thread safely), return true if warp is valid
+  bool check_warp_ready();
 
   //! Add particles as vertices to reference mesh
   void add_particle_vertices(Eigen::MatrixXd& vertices);
@@ -67,9 +77,6 @@ private:
 
   //! Identify the good particles
   void find_good_particles();
-
-  //! Check if the warp is ready, return true if warp is valid
-  bool check_warp_ready();
 
   bool find_landmarks_vertices_on_ref_mesh();
 
@@ -89,6 +96,10 @@ private:
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
+  //! Return the number of bad particles
+  size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
+
+  // Members
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
@@ -101,12 +112,12 @@ private:
   bool warp_available_ = false;
 
   bool warp_landmarks_ = false;
-  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id 
+  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh
   vtkSmartPointer<vtkPolyData> reference_mesh_;
-  //! Reference particles
+  //! Reference particles (matrix [Nx3])
   Eigen::MatrixXd reference_particles_;
   //! Whether the reference is a contour
   bool is_contour_ = false;

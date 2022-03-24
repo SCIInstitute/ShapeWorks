@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1294</height>
+    <height>2256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -179,6 +179,9 @@ QWidget#specificity_panel {
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
    <property name="leftMargin">
     <number>3</number>
    </property>
@@ -523,63 +526,11 @@ QWidget#specificity_panel {
       <item>
        <widget class="QWidget" name="landmarks_content" native="true">
         <layout class="QGridLayout" name="gridLayout_12">
-         <item row="1" column="0" colspan="2">
-          <widget class="QTableView" name="landmark_table">
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::ContiguousSelection</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="landmark_drag_mode">
-           <property name="text">
-            <string>Drag to Move</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QPushButton" name="new_landmark_button">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1">
           <widget class="QPushButton" name="delete_landmark_button">
            <property name="text">
             <string>Delete</string>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QWidget" name="domainWidget" native="true">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="leftMargin">
-             <number>3</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>3</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Domain</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="domainBox"/>
-            </item>
-           </layout>
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
@@ -597,6 +548,58 @@ QWidget#specificity_panel {
            <property name="text">
             <string>Show Labels</string>
            </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QTableView" name="landmark_table">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ContiguousSelection</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="new_landmark_button">
+           <property name="text">
+            <string>New</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="landmark_drag_mode">
+           <property name="text">
+            <string>Drag to Move</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QWidget" name="landmark_domain_widget_" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Domain</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="landmark_domain_box_"/>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -719,7 +722,167 @@ QWidget#specificity_panel {
       </item>
       <item>
        <widget class="QWidget" name="constraints_content" native="true">
-        <layout class="QGridLayout" name="gridLayout_14"/>
+        <layout class="QGridLayout" name="gridLayout_14">
+         <item row="5" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QTableWidget" name="plane_table_">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ContiguousSelection</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Planes:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QLabel" name="plane_contraints_instruction_">
+           <property name="text">
+            <string>Plane Instructions</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QWidget" name="constraints_domain_widget_" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Domain</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="constraints_domain_box_"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QPushButton" name="delete_plane_">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QWidget" name="ffc_widget" native="true">
+           <layout class="QGridLayout" name="gridLayout_4">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Free Form Constraints:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableView" name="ffc_table_">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="new_ffc_">
+              <property name="text">
+               <string>New</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="delete_ffc_">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" colspan="2">
+             <widget class="QWidget" name="ffc_controls_" native="true">
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="0" column="1" colspan="2">
+                <widget class="QSlider" name="ffc_brush_size_">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Brush Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QRadioButton" name="ffc_included_mode_">
+                 <property name="text">
+                  <string>Included</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Paint Type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QRadioButton" name="ffc_excluded_mode_">
+                 <property name="text">
+                  <string>Excluded</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>

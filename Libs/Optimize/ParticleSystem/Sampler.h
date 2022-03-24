@@ -75,9 +75,9 @@ public:
   };
 
   /** Returns the particle system used in the surface sampling. */
-  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
 
-  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem);
 
   //! Constructor
   Sampler();
@@ -494,7 +494,7 @@ protected:
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+  itk::ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<itk::ParticleDomain::Pointer> m_DomainList;
 

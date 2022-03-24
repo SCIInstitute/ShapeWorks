@@ -216,6 +216,18 @@ std::vector<std::string> Subject::get_landmarks_filenames()
 }
 
 //---------------------------------------------------------------------------
+void Subject::set_constraints_filenames(std::vector<std::string> filenames)
+{
+  constraints_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_constraints_filenames()
+{
+  return constraints_filenames_;
+}
+
+//---------------------------------------------------------------------------
 void Subject::set_image_filenames(std::vector<std::string> filenames)
 {
   this->image_filenames_ = filenames;

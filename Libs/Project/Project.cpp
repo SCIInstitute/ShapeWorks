@@ -186,6 +186,7 @@ void Project::load_subjects() {
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto name_column = this->get_index_for_column(NAME);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
+  auto constraints_columns = get_matching_columns(CONSTRAINTS_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
   auto all_columns = this->get_headers();
@@ -197,6 +198,7 @@ void Project::load_subjects() {
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_landmarks_filenames(this->get_list(landmarks_columns, i));
+    subject->set_constraints_filenames(this->get_list(constraints_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
     subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));
     subject->set_image_filenames(this->get_list(image_columns, i));
@@ -272,6 +274,8 @@ void Project::store_subjects() {
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
   landmarks_columns.clear();
+  auto constraints_columns = get_matching_columns(CONSTRAINTS_PREFIX);
+  constraints_columns.clear();
 
   // groomed columns
   std::vector<std::string> groomed_columns;
@@ -309,6 +313,8 @@ void Project::store_subjects() {
     world_columns.push_back(column_name);
     column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(seg_columns[i]);
     landmarks_columns.push_back(column_name);
+    column_name = std::string(CONSTRAINTS_PREFIX) + this->get_column_identifier(seg_columns[i]);
+    constraints_columns.push_back(column_name);
   }
 
   bool groomed_present = false;
@@ -354,6 +360,12 @@ void Project::store_subjects() {
     auto landmark_files = subject->get_landmarks_filenames();
     if (landmark_files.size() > 0) {
       this->set_list(landmarks_columns, i, landmark_files);
+    }
+
+    // constraints
+    auto constraints_files = subject->get_constraints_filenames();
+    if (constraints_files.size() > 0) {
+      this->set_list(constraints_columns, i, constraints_files);
     }
 
     // features
@@ -411,9 +423,16 @@ std::vector<LandmarkDefinition> Project::get_landmarks(int domain_id) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitions()
-{
-  return landmark_definitions_;
+std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitions() { return landmark_definitions_; }
+
+//---------------------------------------------------------------------------
+bool Project::get_landmarks_present() {
+  for (const auto& def : landmark_definitions_) {
+    if (!def.empty()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -745,6 +764,13 @@ std::vector<std::string> Project::get_feature_names() {
   }
 
   return this->feature_names_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_image_names() {
+  // grab feature volumes
+  auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  return feature_names;
 }
 
 //---------------------------------------------------------------------------

@@ -40,9 +40,12 @@ using Plane         = vtkSmartPointer<vtkPlane>;
 // explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
+using PointArray    = std::vector<Point3>;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
+
+PointArray makePointArray(int size, Point3 value);
 
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
@@ -102,6 +105,7 @@ double length(const Vector3 &v);
 /// handy way to specify an axis
 enum Axis { invalid = -1, X, Y, Z };
 Axis toAxis(const std::string &str);
+std::string axisToString(Axis axis);
 
 /// Ensure an axis is valid
 bool axis_is_valid(const Vector3 &axis);
