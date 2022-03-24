@@ -1,21 +1,6 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleEntropyGradientFunction.txx,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
+#pragma once
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleEntropyGradientFunction_txx
-#define __itkParticleEntropyGradientFunction_txx
-
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 namespace itk {
 
 template <class TGradientNumericType, unsigned int VDimension>
@@ -45,7 +30,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::ComputeAngularWeights(const PointType &pos,
                         int idx,
                         const typename ParticleSystemType::PointVectorType &neighborhood,
-                        const ParticleDomain *domain,
+                        const shapeworks::ParticleDomain *domain,
                         std::vector<double> &weights) const
 {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos, idx);
@@ -62,7 +47,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 template <class TGradientNumericType, unsigned int VDimension>
 double
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
-::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
+::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
                 const std::vector<double> &weights,
                 const PointType &pos,  double initial_sigma,  double precision,
                 int &err) const
@@ -287,5 +272,4 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 
 
 }// end namespace
-#endif
 

@@ -1,29 +1,15 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticlePositionReader.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+#pragma once
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticlePositionReader_h
-#define __itkParticlePositionReader_h
+#include <fstream>
+#include <string>
+#include <vector>
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include <vector>
-#include <string>
 
-namespace itk
-{
+namespace itk {
 /** \class ParticlePositionReader
  *  This class reads a set of Points from disk and stores them in a vector.
  *  The file format is simple an ascii list of VDimension-tuples stored one per
@@ -38,20 +24,18 @@ namespace itk
  *
  * etc..
  */
-template <unsigned int VDimension>
-class ITK_EXPORT ParticlePositionReader : public DataObject
-{
-public:
+class ITK_EXPORT ParticlePositionReader : public DataObject {
+ public:
   /** Standard class typedefs */
   typedef ParticlePositionReader Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WeakPointer<const Self> ConstWeakPointer;
 
   /** The point type that this class reads. */
-  typedef Point<double, VDimension> PointType;
-  
+  typedef Point<double, 3> PointType;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -59,42 +43,52 @@ public:
   itkTypeMacro(ParticlePositionReader, DataObject);
 
   /** Get the output of the reader.  The output is a std::vector of PointType. */
-  const std::vector<PointType> &GetOutput() const
-  {
-    return m_Output;
-  }
+  const std::vector<PointType>& GetOutput() const { return m_Output; }
 
   /** Set/Get the filename. */
   itkSetStringMacro(FileName);
   itkGetStringMacro(FileName);
 
   /** Read the file. */
-  inline void Read()
-  { this->Update(); }
-  void Update();
-  
-protected:
-  ParticlePositionReader() { }
-  void PrintSelf(std::ostream& os, Indent indent) const
-  {
-    Superclass::PrintSelf(os,indent);
-  
+  inline void Read() { this->Update(); }
+  void Update() {
+    int counter = 0;
+    // Open the ascii file.
+    std::ifstream in(m_FileName.c_str());
+    if (!in) {
+      itkExceptionMacro("Could not open point file for input: " << m_FileName.c_str());
+    }
+
+    // Read all of the points, one point per line.
+    while (in) {
+      PointType pt;
+      for (unsigned int d = 0; d < 3; d++) {
+        in >> pt[d];
+      }
+
+      m_Output.push_back(pt);
+      counter++;
+    }
+    // this algorithm pushes the last point twice
+    m_Output.pop_back();
+    in.close();
+  };
+
+ protected:
+  ParticlePositionReader() {}
+  void PrintSelf(std::ostream& os, Indent indent) const {
+    Superclass::PrintSelf(os, indent);
+
     os << indent << "ParticlePositionReader: " << std::endl;
   }
-  virtual ~ParticlePositionReader() {};
+  virtual ~ParticlePositionReader(){};
 
  private:
-  ParticlePositionReader(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ParticlePositionReader(const Self&);  // purposely not implemented
+  void operator=(const Self&);          // purposely not implemented
 
   std::vector<PointType> m_Output;
   std::string m_FileName;
 };
 
-} // end namespace itk
-
-#include "itkParticlePositionReader.cpp"
-
-#endif
-
-
+}  // end namespace itk

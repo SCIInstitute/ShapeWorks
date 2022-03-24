@@ -1,19 +1,5 @@
-/*=========================================================================
-   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   Module:    $RCSfile: itkParticleOmegaGradientFunction.txx,v $
-   Date:      $Date: 2011/03/24 01:17:33 $
-   Version:   $Revision: 1.2 $
-   Author:    $Author: wmartin $
+#pragma once
 
-   Copyright (c) 2009 Scientific Computing and Imaging Institute.
-   See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-   =========================================================================*/
-#ifndef __itkParticleOmegaGradientFunction_txx
-#define __itkParticleOmegaGradientFunction_txx
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
@@ -161,8 +147,8 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     // Grab a pointer to the domain.  We need a Domain that has surface normal
     // information and a cutting plane
-    const ParticleImplicitSurfaceDomain<TGradientNumericType>* domain
-            = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType>*>( system->GetDomain( d ) );
+    const shapeworks::ParticleImplicitSurfaceDomain<TGradientNumericType>* domain
+            = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<TGradientNumericType>*>( system->GetDomain( d ) );
 
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition( idx, d );
@@ -391,8 +377,8 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     const double epsilon = 1.0e-6;
 
     // Grab a pointer to the domain.  We need a Domain that has surface normal information.
-    const ParticleImplicitSurfaceDomain<TGradientNumericType>* domain
-            = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType>*>( system->GetDomain( d ) );
+    const shapeworks::ParticleImplicitSurfaceDomain<TGradientNumericType>* domain
+            = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<TGradientNumericType>*>( system->GetDomain( d ) );
 
     unsigned int numspheres = 0;
     if (domain->GetConstraints()->isCuttingSphereDefined())
@@ -502,4 +488,3 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     return gradE;
 }
 } // end namespace
-#endif /* ifndef __itkParticleOmegaGradientFunction_txx */

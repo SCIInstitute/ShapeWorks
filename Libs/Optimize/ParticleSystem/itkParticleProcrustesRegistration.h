@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleProcrustesRegistration.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleProcrustesRegistration_h
-#define __itkParticleProcrustesRegistration_h
+#pragma once
 
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
@@ -122,5 +107,3 @@ private:
 };
 
 } // end namespace
-
-#endif
