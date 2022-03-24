@@ -73,9 +73,9 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   this->groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
   this->reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
-  if (!this->subject_->get_segmentation_filenames().empty()) {
+  if (!this->subject_->get_original_filenames().empty()) {
     /// TODO: Show multiple lines of filenames for multiple domains?
-    std::string filename = this->subject_->get_segmentation_filenames()[0];
+    std::string filename = this->subject_->get_original_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
 
@@ -89,7 +89,7 @@ std::shared_ptr<Subject> Shape::get_subject() { return this->subject_; }
 
 //---------------------------------------------------------------------------
 void Shape::import_original_image(const std::string& filename) {
-  this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
+  this->subject_->set_original_filenames(std::vector<std::string>{filename});
   this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
 }
 
@@ -101,7 +101,7 @@ MeshGroup Shape::get_original_meshes(bool wait) {
   }
 
   if (!this->original_meshes_.valid()) {
-    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_meshes_, true, wait);
+    this->generate_meshes(this->subject_->get_original_filenames(), this->original_meshes_, true, wait);
   }
   return this->original_meshes_;
 }
@@ -209,14 +209,14 @@ bool Shape::import_landmarks_files(QStringList filenames) {
 //---------------------------------------------------------------------------
 bool Shape::store_landmarks() {
   auto filenames = subject_->get_landmarks_filenames();
-  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
-    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
+  while (filenames.size() < subject_->get_original_filenames().size()) {
+    std::string filename = subject_->get_original_filenames()[filenames.size()];
     filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
   }
   for (int i = 0; i < filenames.size(); i++) {
     if (filenames[i] == "") {
-      std::string filename = subject_->get_segmentation_filenames()[i];
+      std::string filename = subject_->get_original_filenames()[i];
       filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
     }
   }
@@ -250,7 +250,9 @@ bool Shape::import_constraints(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Constraints constraints;
     try {
-      constraints.Read(filenames[i].toStdString());
+      if (!filenames[i].isEmpty()) {
+        constraints.Read(filenames[i].toStdString());
+      }
     } catch (std::exception& e) {
       STUDIO_SHOW_ERROR(e.what());
       return false;
@@ -263,13 +265,25 @@ bool Shape::import_constraints(QStringList filenames) {
 //---------------------------------------------------------------------------
 bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
-  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
-    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
+  while (filenames.size() < subject_->get_original_filenames().size()) {
+    std::string filename = subject_->get_original_filenames()[filenames.size()];
     filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
     filenames.push_back(filename);
   }
 
-  if (constraints_.size() == 0) {
+  if (constraints_.empty()) {
+    filenames = {};
+  }
+
+  bool has_constraints = false;
+
+  for (int i = 0; i < filenames.size(); i++) {
+    if (get_constraints(i).hasConstraints()) {
+      has_constraints = true;
+    }
+  }
+
+  if (!has_constraints) {
     filenames = {};
   }
 
@@ -300,30 +314,30 @@ void Shape::set_id(int id) { this->id_ = id; }
 
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
+  auto string = QString::fromStdString(this->subject_->get_original_filenames()[0]);
   QFileInfo info(string);
   return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
+  return QString::fromStdString(this->subject_->get_original_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
 std::vector<QString> Shape::get_original_filenames() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return std::vector<QString>();
   }
 
   std::vector<QString> filenames;
-  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+  for (auto&& name : this->subject_->get_original_filenames()) {
     filenames.push_back(QFileInfo(QString::fromStdString(name)).fileName());
   }
 
@@ -332,12 +346,12 @@ std::vector<QString> Shape::get_original_filenames() {
 
 //---------------------------------------------------------------------------
 std::vector<QString> Shape::get_original_filenames_with_path() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return std::vector<QString>();
   }
 
   std::vector<QString> filenames;
-  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+  for (auto&& name : this->subject_->get_original_filenames()) {
     filenames.push_back(QString::fromStdString(name));
   }
 

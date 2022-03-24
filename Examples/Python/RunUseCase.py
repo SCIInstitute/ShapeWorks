@@ -52,11 +52,10 @@ if __name__ == '__main__':
     parser.add_argument("use_case", help="Must specify which of these use cases to run.",
                         choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca", \
                                  "ellipsoid_multiple_domain","ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", \
-                                 "femur_cut","femur_pvalues","deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean","test_project"])
+                                 "femur_cut","femur_pvalues","deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
     parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data", action="store_true")
     parser.add_argument("--num_subsample", help="Size of subset to run on (default: %(default)s)", type=int, default=3)
     parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
-    parser.add_argument("--skip_grooming", help="Skip the grooming steps and start with already prepped (i.e., groomed) data", action="store_true")
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
     parser.add_argument("--mesh_mode", help="Run optimization on meshes rather than distance transforms.",action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")

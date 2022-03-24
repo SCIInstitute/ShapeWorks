@@ -1369,6 +1369,22 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setOutPath,
        "path"_a)
 
+  .def("setDoProcrustes",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<ThinPlateSplineTransform>::setEnableOutput,
+       "enableOutput"_a)
+
   .def("setModeIndex",
        &ReconstructSurface<ThinPlateSplineTransform>::setModeIndex,
        "modeIndex"_a)
@@ -1377,21 +1393,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<ThinPlateSplineTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a) 
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a)  
 
   .def("surface",
        &ReconstructSurface<ThinPlateSplineTransform>::surface,
@@ -1400,6 +1424,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<ThinPlateSplineTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<ThinPlateSplineTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
@@ -1412,9 +1440,25 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
        "prefix"_a)
 
-    .def("setOutPath",
+  .def("setOutPath",
        &ReconstructSurface<RBFSSparseTransform>::setOutPath,
        "path"_a)
+
+  .def("setDoProcrustes",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<RBFSSparseTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<RBFSSparseTransform>::setEnableOutput,
+       "enableOutput"_a)
 
   .def("setModeIndex",
        &ReconstructSurface<RBFSSparseTransform>::setModeIndex,
@@ -1424,21 +1468,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<RBFSSparseTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<RBFSSparseTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a)
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a) 
 
   .def("surface",
        &ReconstructSurface<RBFSSparseTransform>::surface,
@@ -1447,6 +1499,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<RBFSSparseTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<RBFSSparseTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   // Optimize (TODO)
@@ -1471,6 +1527,13 @@ PYBIND11_MODULE(shapeworks_py, m)
        &optimize_get_particle_system)
   ;
 
+  // DomainType
+  py::enum_<DomainType>(m, "DomainType")
+  .value("MeshDomain", DomainType::Mesh)
+  .value("ImageDomain", DomainType::Image)
+  .value("ContourDomain", DomainType::Contour)
+  .export_values();
+  ;
 
   // Project 
   // py::class_<Project>(m, "Project")
@@ -1513,6 +1576,24 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_number_of_domains_per_subject,
       "Return the number of domains")
 
+  .def("get_original_domain_types",
+      &Project::get_original_domain_types,
+      "Return the original domain types")
+
+  .def("set_original_domain_types",
+      &Project::set_original_domain_types,
+      "Set the original domain types",
+       "types"_a)
+
+  .def("get_groomed_domain_types",
+      &Project::get_groomed_domain_types,
+      "Return the groomed domain types")
+
+  .def("set_groomed_domain_types",
+      &Project::set_groomed_domain_types,
+      "Set the groomed domain types",
+       "types"_a)
+
   .def("get_domain_names",
       &Project::get_domain_names,
       "Return the domain names (e.g. femur, pelvis, etc)")
@@ -1521,9 +1602,9 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_subjects,
       "Return the list of Subjects")
 
-  .def("get_segmentations_present",
-      &Project::get_segmentations_present,
-      "Return if segmentations are present")
+  .def("get_originals_present",
+      &Project::get_originals_present,
+      "Return if original files are present")
 
   .def("get_groomed_present",
       &Project::get_groomed_present,
@@ -1584,18 +1665,14 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
-  .def("set_segmentation_filenames",
-      &Subject::set_segmentation_filenames,
-      "Set segmentatation filenames (one per domain)",
+  .def("set_original_filenames",
+      &Subject::set_original_filenames,
+      "Set original filenames (one per domain)",
       "filenames"_a)
 
-  .def("get_segmentations_filenames",
-      &Subject::get_segmentation_filenames,
-      "Get segmentation filenames")
-
-  .def("get_domain_types",
-      &Subject::get_domain_types,
-      "Return the domain types")
+  .def("get_original_filenames",
+      &Subject::get_original_filenames,
+      "Get original filenames")
 
   .def("set_groomed_filenames",
       &Subject::set_groomed_filenames,

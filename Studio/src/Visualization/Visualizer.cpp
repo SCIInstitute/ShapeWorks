@@ -51,6 +51,8 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
+  connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
+  connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,6 +86,12 @@ void Visualizer::update_landmarks() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_ffc_mode() {
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
   lightbox_->redraw();
 }
 
@@ -203,9 +211,6 @@ void Visualizer::set_show_glyphs(bool show) { show_glyphs_ = show; }
 void Visualizer::set_show_surface(bool show) { show_surface_ = show; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_show_landmarks(bool show) { show_landmarks_ = show; }
-
-//-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties() {
   double size = preferences_.get_glyph_size();
   double quality = preferences_.get_glyph_quality();
@@ -219,7 +224,6 @@ void Visualizer::update_viewer_properties() {
       viewer->set_glyph_size_and_quality(size, quality);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
-      viewer->set_show_landmarks(show_landmarks_);
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
@@ -254,9 +258,7 @@ void Visualizer::handle_image_slice_settings_changed() {
 void Visualizer::update_lut() {
   int num_points = this->cached_mean_.size() / 3;
 
-  if (num_points < 1) {
-    num_points = 512;
-  }
+  num_points = std::max<int>(num_points, 512);
 
   this->glyph_lut_->SetNumberOfTableValues(num_points + 1);
   this->glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
@@ -465,5 +467,8 @@ double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; 
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
+
+//-----------------------------------------------------------------------------
+void Visualizer::redraw() { lightbox_->redraw(); }
 
 }  // namespace shapeworks

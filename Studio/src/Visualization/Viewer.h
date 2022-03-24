@@ -38,6 +38,7 @@ class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
 class PlaneWidget;
+class PaintWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -77,8 +78,6 @@ class Viewer {
 
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
-  void set_show_landmarks(bool show);
-  bool get_show_landmarks();
 
   void update_points();
   void update_glyph_properties();
@@ -109,6 +108,7 @@ class Viewer {
 
   void update_landmarks();
   void update_planes();
+  void update_ffc_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
   std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
@@ -136,6 +136,8 @@ class Viewer {
   void update_clipping_planes();
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
+
+  void handle_ffc_paint(double display_pos[2], double world_pos[3]);
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -167,7 +169,6 @@ class Viewer {
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
-  bool show_landmarks_ = true;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
@@ -193,6 +194,7 @@ class Viewer {
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
+  std::vector<vtkSmartPointer<vtkLookupTable>> ffc_luts_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
@@ -224,6 +226,7 @@ class Viewer {
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;
+  vtkSmartPointer<PaintWidget> paint_widget_;
 
   QSharedPointer<Session> session_;
 
@@ -232,7 +235,6 @@ class Viewer {
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
-
 
   // slice viewer
   SliceView slice_view_{this};

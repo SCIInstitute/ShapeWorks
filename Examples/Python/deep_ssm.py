@@ -8,6 +8,8 @@ import os
 import glob
 import shapeworks as sw
 import platform
+import DataAugmentationUtils
+import DeepSSMUtils
 import torch
 import random
 import math
@@ -22,7 +24,6 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 random.seed(1)
 
 def Run_Pipeline(args):
-
     print("\nStep 1. Extract Data")
     """
     Step 1: EXTRACT DATA
@@ -30,7 +31,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur-v2"
+    dataset_name = "femur"
     output_directory = os.getcwd() + "/Output/deep_ssm/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)

@@ -2,6 +2,8 @@ import numpy as np
 import os
 import sys
 import vtk
+import glob
+import shutil
 import shapeworks as sw
 
 # Global shapeworks logger object (e.g. attached to Studio)
@@ -244,3 +246,65 @@ def getITKtransform(vtkTransform):
     itkTransform[-1,:] = lastColumn
 
     return itkTransform
+
+def verify(args, world_point_files):
+    # compare against baseline particles
+    files = world_point_files
+    ps1 = sw.ParticleSystem(files)
+
+    print(f"Comparing results in:")
+    for file in files:
+        print(file)
+
+    # Copy to results dir
+    check_dir = f"Output/Results/{args.use_case.lower()}/{args.option_set}/"
+    if not os.path.exists(check_dir):
+        os.makedirs(check_dir)
+
+    for file in files:
+        shutil.copy(file, check_dir)
+
+    verification_dir = f"Data/Verification/{args.use_case.lower()}/{args.option_set}/"
+
+    baseline = [verification_dir + os.path.basename(f) for f in files]
+
+    print(f"\nBaseline:")
+    for file in baseline:
+        print(file)
+
+    for file in baseline:
+        if not os.path.exists(file):
+            print(f"Error: baseline file {file} does not exist")
+            return False
+
+    ps2 = sw.ParticleSystem(baseline)
+
+    if not ps1.EvaluationCompare(ps2):
+        print("Error: particle system did not match ground truth")
+        return False
+    return True
+
+def check_results(args, project_spreadsheet):
+    # If tiny test or verify, check results and exit
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    world_point_files = []
+    for file in sorted(os.listdir(particle_dir)):
+        if "world" in file:
+            world_point_files.append(particle_dir + file)
+    if args.tiny_test or args.verify:
+        print("Verifying shape model")
+        if not verify(args, world_point_files):
+            exit(-1)
+        print("Done with test, verification succeeded.")
+        exit()
+
+def findMeanShape(shapeModelDir):
+    fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
+    for i in range(len(fileList)):
+        if i == 0:
+            meanShape = np.loadtxt(fileList[i])
+        else:
+            meanShape += np.loadtxt(fileList[i])
+    meanShape = meanShape / len(fileList)
+    nmMS = shapeModelDir + '/meanshape_local.particles'
+    np.savetxt(nmMS, meanShape)
