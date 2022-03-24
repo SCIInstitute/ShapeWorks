@@ -1410,15 +1410,15 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     Mesh inputMesh(inputMeshFilename);
     targetPointsFilenames.push_back(inputPointsFilename);
     ParticleSystem particlesystem(targetPointsFilenames);
-    if(warp_along_with_landmarks)
-    {
+    Eigen::MatrixXd landmarks;
+    if (warp_along_with_landmarks) {
       std::vector<std::string> landmarks_ar = {landmarkFilename};
       ParticleSystem landmarksystem(landmarks_ar);
       Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
       numLandmarks = landmarksPoints.rows() /3;
       landmarksPoints.resize(3, numLandmarks);
       landmarksPoints.transposeInPlace();
-      warper.initialize_use_landmarks(landmarksPoints);
+      landmarks = landmarksPoints;
     }
 
     Eigen::MatrixXd allPts = particlesystem.Particles();
@@ -1426,7 +1426,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     int numParticles = staticPoints.rows() / 3;
     staticPoints.resize(3, numParticles);
     staticPoints.transposeInPlace();
-    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints, landmarks);
     std::string filenm;
 
     if (saveDir.length() > 0) {

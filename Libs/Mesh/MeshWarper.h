@@ -18,13 +18,18 @@ namespace shapeworks {
  * \class MeshWarper
  * \ingroup Group-Mesh
  *
- * This class implements mesh warping based on correspondence particles
+ * This class implements mesh warping based on correspondence particles.
+ * Correspondence points are embedded into the mesh as new vertices (traingles split).  Then a biharmonic deformation
+ * is used to warp the mesh to new sets of correspondence particles.
+ *
+ * It can optionally be used to warp landmarks along with the mesh by embedding them as vertices
  *
  */
 class MeshWarper {
  public:
   //! Set the reference mesh and particles
-  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd& reference_particles);
+  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd& reference_particles,
+                          const Eigen::MatrixXd& landmarks = {});
 
   //! Generate warp, return true on success
   bool generate_warp();
@@ -38,19 +43,20 @@ class MeshWarper {
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
 
-  void initialize_use_landmarks(Eigen::MatrixXd& landmarks_points) {
-    this->warp_landmarks_ = true;
-    this->landmarksPoints_ = landmarks_points;
-  }
+  //! Return the map of landmarks to vertices
   std::map<int, int> get_landmarks_map() { return landmarks_map_; }
-  Eigen::MatrixXd get_warp_matrix() { return warp_; }
+
+  //! Return the warp matrix
+  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
   //! Return true if warping has removed any bad particle(s)
   bool has_bad_particles() const { return this->bad_particle_count() > 0; }
 
+  //! Return the reference mesh which has been cleaned and vertices added
   vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this->reference_mesh_; }
+
+  //! Return the reference particles
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
-  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
  protected:
   //! For overriding to handle progress updates
@@ -97,7 +103,7 @@ class MeshWarper {
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
-  Eigen::MatrixXd landmarksPoints_;
+  Eigen::MatrixXd landmarks_points_;
 
   std::vector<int> good_particles_;
 

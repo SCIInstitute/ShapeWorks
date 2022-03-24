@@ -48,16 +48,21 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                                    const Eigen::MatrixXd& reference_particles) {
+                                    const Eigen::MatrixXd& reference_particles, const Eigen::MatrixXd& landmarks) {
   if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
-      if (this->reference_particles_ == reference_particles) {
+      if (this->reference_particles_ == reference_particles && landmarks_points_ == landmarks) {
         // we can skip, nothing has changed
         return;
       }
     }
   }
 
+  if (landmarks.size() > 0) {
+    this->warp_landmarks_ = true;
+  }
+
+  this->landmarks_points_ = landmarks;
   this->incoming_reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
 
@@ -414,8 +419,8 @@ bool MeshWarper::generate_warp() {
 
   this->add_particle_vertices(this->vertices_);
   if (this->warp_landmarks_) {
-    this->add_particle_vertices(
-        this->landmarksPoints_);  // to ensure that the landmarks points sit on the ref mesh vertices
+    // to ensure that the landmark points sit on the ref mesh vertices
+    this->add_particle_vertices(this->landmarks_points_);
     this->find_landmarks_vertices_on_ref_mesh();
   }
 
@@ -479,8 +484,8 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh() {
   auto tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
   tree->SetDataSet(this->reference_mesh_);
   tree->BuildLocator();
-  for (int i = 0; i < this->landmarksPoints_.rows(); i++) {
-    double p[3]{this->landmarksPoints_(i, 0), this->landmarksPoints_(i, 1), this->landmarksPoints_(i, 2)};
+  for (int i = 0; i < this->landmarks_points_.rows(); i++) {
+    double p[3]{this->landmarks_points_(i, 0), this->landmarks_points_(i, 1), this->landmarks_points_(i, 2)};
     int id = tree->FindClosestPoint(p);
     landmarks_map_.insert({id, i});
     // std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
