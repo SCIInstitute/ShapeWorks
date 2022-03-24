@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
-
 #include <Libs/Particles/ParticleSystem.h>
+
+#include <memory>
 
 namespace shapeworks {
 
@@ -16,7 +16,9 @@ namespace shapeworks {
 class VtkMeshWrapper;
 class ParticleNormalEvaluation {
  public:
-  static std::vector<bool> evalaute_particle_normals(ParticleSystem local_particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes);
+  static std::vector<bool> evaluate_particle_normals(ParticleSystem local_particles,
+                                                     std::vector<std::shared_ptr<VtkMeshWrapper>> meshes,
+                                                     double max_angle_degrees);
 
  private:
 };

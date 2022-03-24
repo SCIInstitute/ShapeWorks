@@ -8,6 +8,7 @@
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
+#include <Libs/Particles/ParticleSystem.h>
 #include <QSharedPointer>
 #include <QVector>
 #include <cstdlib>
@@ -30,7 +31,7 @@ using TransformType = vtkSmartPointer<vtkTransform>;
  * The Session class encapsulates everything about a session/project.
  *
  */
-class Session : public QObject {
+class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
@@ -68,6 +69,11 @@ class Session : public QObject {
   bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
+
+  //! Return the total number of particles for all domains, combined
+  int get_num_particles();
+
+  ParticleSystem get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 

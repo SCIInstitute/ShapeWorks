@@ -573,6 +573,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 particles_indices.push_back(int(kk));
             }
         }
+        std::cout << "maxAngleDegrees_ = " << maxAngleDegrees_ << "\n";
         std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
                      " good points." << std::endl;
 

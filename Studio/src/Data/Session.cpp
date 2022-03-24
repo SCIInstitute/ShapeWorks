@@ -26,6 +26,7 @@
 #include <Libs/Project/Project.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
+#include <Utils/AnalysisUtils.h>
 #include <tinyxml.h>
 
 namespace shapeworks {
@@ -648,6 +649,22 @@ bool Session::update_particles(std::vector<StudioParticles> particles) {
   this->unsaved_particle_files_ = true;
   emit points_changed();
   return true;
+}
+
+//---------------------------------------------------------------------------
+int Session::get_num_particles()
+{
+  if (shapes_.empty()) {
+    return 0;
+  }
+  auto particles = shapes_[0]->get_particles();
+  return particles.get_combined_local_particles().size() / 3;
+}
+
+//---------------------------------------------------------------------------
+ParticleSystem Session::get_local_particle_system(int domain)
+{
+  return AnalysisUtils::get_local_particle_system(this, domain);
 }
 
 //---------------------------------------------------------------------------

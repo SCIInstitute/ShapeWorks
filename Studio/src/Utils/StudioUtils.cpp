@@ -26,7 +26,7 @@ bool StudioUtils::ask_multiple_domains_as_single(QWidget* parent, std::shared_pt
 QStringList StudioUtils::to_string_list(std::vector<std::string> vector)
 {
   QStringList list;
-  for (auto v : vector) {
+  for (const auto &v : vector) {
     list << QString::fromStdString(v);
   }
   return list;

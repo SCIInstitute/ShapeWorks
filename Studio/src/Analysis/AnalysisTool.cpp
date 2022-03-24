@@ -16,6 +16,7 @@
 #include <Data/StudioMesh.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
+#include <Job/ParticleNormalEvaluationJob.h>
 #include <Python/PythonWorker.h>
 #include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
@@ -89,8 +90,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
   }
 
+  connect(ui_->run_good_bad, &QPushButton::clicked, this, &AnalysisTool::run_good_bad_particles);
+
   ui_->explained_variance_panel->hide();
   ui_->reconstruction_options->hide();
+
+  ui_->particles_progress->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -391,7 +396,7 @@ bool AnalysisTool::compute_stats() {
   group1_list_.clear();
   group2_list_.clear();
 
-  for (ShapeHandle shape : session_->get_shapes()) {
+  Q_FOREACH (ShapeHandle shape, session_->get_shapes()) {
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
@@ -1096,6 +1101,16 @@ void AnalysisTool::handle_eval_thread_progress(ShapeEvaluationJob::JobType job_t
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_particle_normals_progress(float progress) {
+  ui_->particles_progress->setValue(progress * 100);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_eval_particle_normals_complete() {
+  ui_->particles_progress->hide();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::handle_group_pvalues_complete() {
   emit progress(100);
   emit update_view();
@@ -1132,7 +1147,16 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
 void AnalysisTool::show_good_bad_particles_toggled() {}
 
 //---------------------------------------------------------------------------
-void AnalysisTool::run_good_bad_particles() {}
+void AnalysisTool::run_good_bad_particles() {
+  auto worker = Worker::create_worker();
+  ui_->particles_progress->show();
+  auto job = QSharedPointer<ParticleNormalEvaluationJob>::create(session_, ui_->good_bad_max_angle->value());
+  connect(job.data(), &ParticleNormalEvaluationJob::finished, this,
+          &AnalysisTool::handle_eval_particle_normals_complete);
+  connect(job.data(), &ParticleNormalEvaluationJob::progress, this,
+          &AnalysisTool::handle_eval_particle_normals_progress);
+  worker->run_job(job);
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed() {

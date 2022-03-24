@@ -293,7 +293,7 @@ void Visualizer::update_lut() {
 
       std::vector<double> distances;
       double max_distance = 0;
-      for (int i = 0; i < num_points; i++) {
+      for (int i = 0; i < cached_mean_.size() / 3.0; i++) {
         double p2[3];
         p2[0] = this->cached_mean_[i * 3 + 0];
         p2[1] = this->cached_mean_[i * 3 + 1];

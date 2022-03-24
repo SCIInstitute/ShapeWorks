@@ -13,6 +13,7 @@ class ParticleSystem
 public:
   ParticleSystem(const std::vector<std::string> &paths);
 
+  // Initialize particle system from eigen matrix (rows=dimensions, cols=num_samples)
   ParticleSystem(const Eigen::MatrixXd &matrix);
 
   const Eigen::MatrixXd &Particles() const
@@ -25,11 +26,13 @@ public:
     return paths;
   }
 
+  //! Number of samples
   int N() const
   {
     return P.cols();
   }
 
+  //! Dimensions (e.g. x/y/z * number of particles)
   int D() const
   {
     return P.rows();
