@@ -34,19 +34,18 @@ public:
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
-  //! [Overloaded] for building a mesh for a given set of particles and also warping the landmarks
-  vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles, Eigen::MatrixXd& warped_landmarks);
-
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
 
-  void initialize_use_landmarks(bool use_landmark, bool num_landmarks, Eigen::MatrixXd& landmarks_points)
+  void initialize_use_landmarks(Eigen::MatrixXd& landmarks_points)
   {
+    this->warp_landmarks_ = true;
     this->landmarksPoints_ = landmarks_points;
-    this->warp_landmarks_ = use_landmark;
-    this->numLandmarks_ = num_landmarks;
   }
 
+  std::map<int, int> get_landmarks_map() { return landmarks_map_;}
+
+  Eigen::MatrixXd get_warp_matrix() { return warp_; }
 
 protected:
 
@@ -59,7 +58,7 @@ private:
   bool generate_warp();
 
   //! Add particles as vertices to reference mesh
-  void add_particle_vertices();
+  void add_particle_vertices(Eigen::MatrixXd& vertices);
 
   //! Remove the bad particles from a set of particles
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
@@ -92,8 +91,6 @@ private:
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
-  //![Overloaded to include Landmark warping] Generate a polydata from a set of points (e.g. warp the reference mesh)
-  vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points, Eigen::MatrixXd& warped_landmarks);
 
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
@@ -108,8 +105,6 @@ private:
   bool warp_available_ = false;
 
   bool warp_landmarks_ = false;
-  int numLandmarks_ = 0;
-  bool landmarks_vertices_computed;
 
   std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Mean mesh to the landmarks id 
   //! Reference mesh as it was given to us

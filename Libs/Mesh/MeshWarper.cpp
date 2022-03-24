@@ -51,39 +51,6 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
 
 //---------------------------------------------------------------------------
-//-------Overloaded for landmarks---------
-vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles, Eigen::MatrixXd& warped_landmarks)
-{
-  if (!this->warp_available_) {
-    return nullptr;
-  }
-
-  if (!this->check_warp_ready()) {
-    return nullptr;
-  }
-
-  if(!this->landmarks_vertices_computed){
-    this->find_landmarks_vertices_on_ref_mesh();
-  }
-
-  auto points = this->remove_bad_particles(particles);
-
-  vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points, warped_landmarks);
-
-  for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
-    double* p = poly_data->GetPoint(i);
-    if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
-      this->warp_available_ = false; // failed
-      std::cerr << "Reconstruction Failed\n";
-      return nullptr;
-    }
-  }
-
-
-  return poly_data;
-}
-
-//---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                                     const Eigen::MatrixXd& reference_particles)
 {
@@ -130,9 +97,9 @@ bool MeshWarper::check_warp_ready()
 }
 
 //---------------------------------------------------------------------------
-void MeshWarper::add_particle_vertices()
+void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices)
 {
-  std::vector<bool> done(this->vertices_.rows(), false);
+  std::vector<bool> done(vertices.rows(), false);
 
   bool not_all_done = true;
   float count = 0;
@@ -153,10 +120,10 @@ void MeshWarper::add_particle_vertices()
     vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
     int next_point = this->reference_mesh_->GetNumberOfPoints();
 
-    for (int i = 0; i < this->vertices_.rows(); i++) {
+    for (int i = 0; i < vertices.rows(); i++) {
       if (done[i]) { continue; }
 
-      double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
+      double pt[3]{vertices(i, 0), vertices(i, 1), vertices(i, 2)};
       double closest_point[3]; // the coordinates of the closest point will be returned here
       double closest_point_dist2; // the squared distance to the closest point will be returned here
       vtkIdType cell_id; // the cell id of the cell containing the closest point will be returned here
@@ -178,7 +145,7 @@ void MeshWarper::add_particle_vertices()
       // mark this particle as complete
       done[i] = true;
 
-      this->update_progress(count++ / this->vertices_.rows());
+      this->update_progress(count++ / vertices.rows());
 
       double point[3] = {pt[0], pt[1], pt[2]};
       double closest[3];
@@ -468,12 +435,17 @@ bool MeshWarper::generate_warp()
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
 
   // prep points
-  this->vertices_ = this->reference_particles_; // ref or mean points
+  this->vertices_ = this->reference_particles_; 
 
-  this->add_particle_vertices(); // ref mesh is recreated here
+  this->add_particle_vertices(this->vertices_);
+  if(this->warp_landmarks_)
+  {
+    this->add_particle_vertices(this->landmarksPoints_); // to ensure that the landmarks points sit on the ref mesh vertices
+    this->find_landmarks_vertices_on_ref_mesh();
+  }
 
-  this->find_good_particles(); // Find good mean points which are closer to the ref mesh
-  this->vertices_ = this->remove_bad_particles(this->vertices_); // remove the bad set of particles
+  this->find_good_particles(); 
+  this->vertices_ = this->remove_bad_particles(this->vertices_); 
 
   const Mesh referenceMesh(reference_mesh_);
   Eigen::MatrixXd vertices = referenceMesh.points();
@@ -533,45 +505,6 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   return true;
 }
 
-//---------------------------------------------------------------------------
-//-------overloaded function for landmarks-----
-vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points, Eigen::MatrixXd& warped_landmarks)
-{
-  int num_vertices = this->warp_.rows();
-  int num_faces = this->faces_.rows();
-  Eigen::MatrixXd v_out = this->warp_ * (points.rowwise() + Eigen::RowVector3d(0, 0, 0)); // dim is # of Mesh Vertices X 3
-  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
-  vtkSmartPointer<vtkPoints> out_points = vtkSmartPointer<vtkPoints>::New();
-  out_points->SetNumberOfPoints(num_vertices);
-  for (vtkIdType i = 0; i < num_vertices; i++) {
-    out_points->SetPoint(i, v_out(i, 0), v_out(i, 1), v_out(i, 2));
-  }
-  vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
-  for (vtkIdType i = 0; i < num_faces; i++) {
-    polys->InsertNextCell(3);
-    polys->InsertCellPoint(this->faces_(i, 0));
-    polys->InsertCellPoint(this->faces_(i, 1));
-    polys->InsertCellPoint(this->faces_(i, 2));
-  }
-  poly_data->SetPoints(out_points);
-  poly_data->SetPolys(polys);
-
-  Mesh tempMesh(poly_data);
-  Eigen::MatrixXd vertices_updated = tempMesh.points();
-  for (vtkIdType i = 0; i < num_vertices; i++) {
-    if(landmarks_map_.count(i))
-    {
-      // This vertex i corresponds to a landmark
-      int landmark_index = landmarks_map_.lower_bound(i)->second; // get the landmark id at ith vertex
-      warped_landmarks(landmark_index, 0) = vertices_updated(i, 0);
-      warped_landmarks(landmark_index, 1) = vertices_updated(i, 1);
-      warped_landmarks(landmark_index, 2) = vertices_updated(i, 2);
-      // std::cout << "landmark index " << landmark_index << " done " << std::endl;
-    }
-  }
-  return poly_data;
-}
-
 
 //---------------------------------------------------------------------------
 bool MeshWarper::find_landmarks_vertices_on_ref_mesh()
@@ -585,21 +518,6 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh()
     landmarks_map_.insert({id, i});
     // std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
   }
-  this->landmarks_vertices_computed = true;
-
-  // this->reference_mesh_->BuildLinks();
-  // auto locator = vtkSmartPointer<vtkPointLocator>::New();
-  // locator->SetDataSet(this->reference_mesh_);
-  // locator->BuildLocator();
-  // for (int i = 0; i < this->landmarksPoints_.rows(); i++) {
-  //   double p[3]{this->landmarksPoints_(i, 0), this->landmarksPoints_(i, 1), this->landmarksPoints_(i, 2)};
-  //   int id = locator->FindClosestPoint(p);
-  //   landmarks_ids.push_back(id);
-  //   landmarks_map_.insert({id, i});
-  //   std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
-  // }
-  // this->landmarks_vertices_computed = true;
-
 }
 
 //---------------------------------------------------------------------------

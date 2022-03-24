@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(MeshToDT::getCommand());
   shapeworks.addCommand(CompareMesh::getCommand());
   shapeworks.addCommand(WarpMesh::getCommand());
-  shapeworks.addCommand(WarpMeshWithLandmarks::getCommand());
 
 
   // Misc Commands
