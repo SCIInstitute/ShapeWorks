@@ -7,9 +7,10 @@
  * The MeshWarper provides an object to warp meshes for surface reconstruction
  */
 
-#include <vector>
 #include <vtkPolyData.h>
+
 #include <Eigen/Eigen>
+#include <vector>
 
 namespace shapeworks {
 
@@ -21,12 +22,9 @@ namespace shapeworks {
  *
  */
 class MeshWarper {
-
-public:
-
+ public:
   //! Set the reference mesh and particles
-  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                          const Eigen::MatrixXd& reference_particles);
+  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd& reference_particles);
 
   //! Generate warp, return true on success
   bool generate_warp();
@@ -40,12 +38,11 @@ public:
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
 
-  void initialize_use_landmarks(Eigen::MatrixXd& landmarks_points)
-  {
+  void initialize_use_landmarks(Eigen::MatrixXd& landmarks_points) {
     this->warp_landmarks_ = true;
     this->landmarksPoints_ = landmarks_points;
   }
-  std::map<int, int> get_landmarks_map() { return landmarks_map_;}
+  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
   Eigen::MatrixXd get_warp_matrix() { return warp_; }
 
   //! Return true if warping has removed any bad particle(s)
@@ -55,13 +52,11 @@ public:
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
   const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
-protected:
-
+ protected:
   //! For overriding to handle progress updates
   virtual void update_progress(float p) {}
 
-private:
-
+ private:
   //! Check if the warp is ready, if not do it (thread safely), return true if warp is valid
   bool check_warp_ready();
 
@@ -90,8 +85,7 @@ private:
   vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   //! Generate the warp matrix
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
-                            const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
@@ -112,7 +106,7 @@ private:
   bool warp_available_ = false;
 
   bool warp_landmarks_ = false;
-  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
+  std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh
@@ -122,4 +116,4 @@ private:
   //! Whether the reference is a contour
   bool is_contour_ = false;
 };
-}
+}  // namespace shapeworks
