@@ -526,15 +526,18 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         }
       }
 
-      if (this->verbosity_level_ > 1) {
-        std::cout << "ffcssize " << ffcs.size() << std::endl;
-      }
-      if (index < ffcs.size()) {
-          for (size_t i = 0; i < ffcs[index].size(); i++) {
-            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
-            mesh = Mesh(mesh.clipByField("inout", 0.0));
+
+      if(optimize->GetMeshFFCMode() == 0){
+          if (this->verbosity_level_ > 1) {
+            std::cout << "ffcssize " << ffcs.size() << std::endl;
           }
-      }
+            if (index < ffcs.size()) {
+                for (size_t i = 0; i < ffcs[index].size(); i++) {
+                  mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
+                  mesh = Mesh(mesh.clipByField("inout", 0.0));
+                }
+            }
+        }
 
       auto poly_data = mesh.getVTKMesh();
 
