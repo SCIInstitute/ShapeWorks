@@ -93,7 +93,6 @@ COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 COMMAND_DECLARE(WarpMesh, MeshCommand);
 
-
 // Misc Commands
 COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);

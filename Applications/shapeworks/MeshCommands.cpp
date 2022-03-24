@@ -1504,5 +1504,4 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   }
 }
 
-
 } //shapeworks

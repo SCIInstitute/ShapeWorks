@@ -101,7 +101,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(CompareMesh::getCommand());
   shapeworks.addCommand(WarpMesh::getCommand());
 
-
   // Misc Commands
   shapeworks.addCommand(Seed::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());

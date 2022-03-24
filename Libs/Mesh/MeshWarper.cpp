@@ -49,7 +49,6 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
   return poly_data;
 }
 
-
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                                     const Eigen::MatrixXd& reference_particles)
@@ -435,7 +434,7 @@ bool MeshWarper::generate_warp()
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
 
   // prep points
-  this->vertices_ = this->reference_particles_; 
+  this->vertices_ = this->reference_particles_;
 
   this->add_particle_vertices(this->vertices_);
   if(this->warp_landmarks_)
@@ -444,8 +443,8 @@ bool MeshWarper::generate_warp()
     this->find_landmarks_vertices_on_ref_mesh();
   }
 
-  this->find_good_particles(); 
-  this->vertices_ = this->remove_bad_particles(this->vertices_); 
+  this->find_good_particles();
+  this->vertices_ = this->remove_bad_particles(this->vertices_);
 
   const Mesh referenceMesh(reference_mesh_);
   Eigen::MatrixXd vertices = referenceMesh.points();
@@ -518,6 +517,7 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh()
     landmarks_map_.insert({id, i});
     // std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
   }
+  return true;
 }
 
 //---------------------------------------------------------------------------

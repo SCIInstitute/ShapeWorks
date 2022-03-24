@@ -42,9 +42,7 @@ public:
     this->warp_landmarks_ = true;
     this->landmarksPoints_ = landmarks_points;
   }
-
   std::map<int, int> get_landmarks_map() { return landmarks_map_;}
-
   Eigen::MatrixXd get_warp_matrix() { return warp_; }
 
 protected:
@@ -91,11 +89,9 @@ private:
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
-
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
-  
   Eigen::MatrixXd landmarksPoints_;
 
   std::vector<int> good_particles_;
@@ -105,8 +101,7 @@ private:
   bool warp_available_ = false;
 
   bool warp_landmarks_ = false;
-
-  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Mean mesh to the landmarks id 
+  std::map<int, int> landmarks_map_; // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id 
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh
