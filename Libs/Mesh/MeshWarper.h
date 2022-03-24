@@ -79,6 +79,7 @@ class MeshWarper {
   //! Identify the good particles
   void find_good_particles();
 
+  //! Construct the map from landmarks to vertex ids
   bool find_landmarks_vertices_on_ref_mesh();
 
   //! Prep incoming mesh
@@ -111,7 +112,6 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  bool warp_landmarks_ = false;
   std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;

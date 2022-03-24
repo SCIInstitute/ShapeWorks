@@ -58,10 +58,6 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
     }
   }
 
-  if (landmarks.size() > 0) {
-    this->warp_landmarks_ = true;
-  }
-
   this->landmarks_points_ = landmarks;
   this->incoming_reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
@@ -418,7 +414,8 @@ bool MeshWarper::generate_warp() {
   this->vertices_ = this->reference_particles_;
 
   this->add_particle_vertices(this->vertices_);
-  if (this->warp_landmarks_) {
+
+  if (this->landmarks_points_.size() > 0) {
     // to ensure that the landmark points sit on the ref mesh vertices
     this->add_particle_vertices(this->landmarks_points_);
     this->find_landmarks_vertices_on_ref_mesh();

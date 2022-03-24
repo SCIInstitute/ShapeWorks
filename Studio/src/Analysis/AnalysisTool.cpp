@@ -14,6 +14,7 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Data/StudioLog.h>
 #include <Data/StudioMesh.h>
+#include <Data/QMeshWarper.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Python/PythonWorker.h>
