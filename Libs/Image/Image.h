@@ -8,6 +8,7 @@
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <itkStatisticsImageFilter.h>
+#include <itkImageRegionIterator.h>
 
 #include <limits>
 
@@ -30,8 +31,10 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
+  using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   // constructors and assignment operators //
+  Image(const Dims dims);
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
@@ -59,6 +62,9 @@ public:
   /// minus operator to add two images
   Image operator-(const Image& other) const;
   Image& operator-=(const Image& other);
+
+  /// multiply operator to multiply two images
+  Image operator*(const Image& other) const;
 
   /// multiply operator to scale contents of an image
   Image operator*(const PixelType x) const;
@@ -236,6 +242,9 @@ public:
 
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3 &p) const;
+
+  /// creates an image iterator and returns it
+  ImageIterator setIterator();
 
   /// compares this with another image using the region of interest filter
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;

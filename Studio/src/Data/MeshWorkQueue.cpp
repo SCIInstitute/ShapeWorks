@@ -3,8 +3,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-bool operator<(const MeshWorkItem& a, const MeshWorkItem& b)
-{
+bool operator<(const MeshWorkItem& a, const MeshWorkItem& b) {
   if (a.filename == b.filename) {
     // either they are the same file, or both empty, meaning correspondence points and not a file
     if (a.filename == "") {
@@ -25,33 +24,30 @@ bool operator<(const MeshWorkItem& a, const MeshWorkItem& b)
       /// One possible approach is to round the input to multiples of the epsilon.
       /// For now, I am just disabling it.
       double eps = 1e-3f;
-      //double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
+      // double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
       for (unsigned i = 0; i < a.points.size(); i++) {
-        //if ((a.points[i] < b.points[i]) && ((b.points[i] - a.points[i]) > eps)) {
+        // if ((a.points[i] < b.points[i]) && ((b.points[i] - a.points[i]) > eps)) {
         if (a.points[i] < b.points[i]) {
           return true;
         }
-        //else if (b.points[i] < a.points[i] && ((a.points[i] - b.points[i]) > eps)) {
+        // else if (b.points[i] < a.points[i] && ((a.points[i] - b.points[i]) > eps)) {
         else if (b.points[i] < a.points[i]) {
           return false;
         }
       }
       return false;
-    }
-    else {
+    } else {
       // same
       return a.filename < b.filename;
     }
-  }
-  else {
+  } else {
     return a.filename < b.filename;
   }
 }
 
 //---------------------------------------------------------------------------
-bool operator==(const MeshWorkItem& a, const MeshWorkItem& b)
-{
-  //a == b *equals* !(a < b) && !(b < a)
+bool operator==(const MeshWorkItem& a, const MeshWorkItem& b) {
+  // a == b *equals* !(a < b) && !(b < a)
 
   if (!(a < b) && !(b < a)) {
     return true;
@@ -61,23 +57,19 @@ bool operator==(const MeshWorkItem& a, const MeshWorkItem& b)
 }
 
 //---------------------------------------------------------------------------
-MeshWorkQueue::MeshWorkQueue()
-{}
+MeshWorkQueue::MeshWorkQueue() {}
 
 //---------------------------------------------------------------------------
-MeshWorkQueue::~MeshWorkQueue()
-{}
+MeshWorkQueue::~MeshWorkQueue() {}
 
 //---------------------------------------------------------------------------
-void MeshWorkQueue::push(const MeshWorkItem& item)
-{
+void MeshWorkQueue::push(const MeshWorkItem& item) {
   QMutexLocker locker(&this->mutex_);
   this->work_list_.push_back(item);
 }
 
 //---------------------------------------------------------------------------
-MeshWorkItem* MeshWorkQueue::get_next_work_item()
-{
+MeshWorkItem* MeshWorkQueue::get_next_work_item() {
   QMutexLocker locker(&this->mutex_);
 
   if (this->work_list_.empty()) {
@@ -96,17 +88,14 @@ MeshWorkItem* MeshWorkQueue::get_next_work_item()
 }
 
 //---------------------------------------------------------------------------
-bool MeshWorkQueue::is_inside(const MeshWorkItem& item)
-{
+bool MeshWorkQueue::is_inside(const MeshWorkItem& item) {
   QMutexLocker locker(&this->mutex_);
 
-  return this->in_inside_list(item, this->work_list_) || this->in_inside_list(item,
-                                                                              this->processing_list_);
+  return this->in_inside_list(item, this->work_list_) || this->in_inside_list(item, this->processing_list_);
 }
 
 //---------------------------------------------------------------------------
-void MeshWorkQueue::remove(const MeshWorkItem& item)
-{
+void MeshWorkQueue::remove(const MeshWorkItem& item) {
   QMutexLocker locker(&this->mutex_);
 
   this->work_list_.remove(item);
@@ -114,34 +103,31 @@ void MeshWorkQueue::remove(const MeshWorkItem& item)
 }
 
 //---------------------------------------------------------------------------
-bool MeshWorkQueue::is_empty()
-{
+bool MeshWorkQueue::is_empty() {
   QMutexLocker locker(&this->mutex_);
   return this->work_list_.empty();
 }
 
 //---------------------------------------------------------------------------
-int MeshWorkQueue::size()
-{
+int MeshWorkQueue::size() {
   QMutexLocker locker(&this->mutex_);
   return this->work_list_.size();
 }
 
 //---------------------------------------------------------------------------
-bool MeshWorkQueue::in_inside_list(const MeshWorkItem& item, const WorkList& list)
-{
+bool MeshWorkQueue::in_inside_list(const MeshWorkItem& item, const WorkList& list) {
   for (WorkList::const_iterator it = list.begin(); it != list.end(); ++it) {
     if (it->filename != "") {
       if (it->filename == item.filename) {
         return true;
       }
-    }
-    else {
-      if (it->domain == item.domain && it->points == item.points) {
+    } else {
+      bool same_size = it->points.rows() == item.points.rows() && it->points.cols() == item.points.cols();
+      if (it->domain == item.domain && same_size && it->points == item.points) {
         return true;
       }
     }
   }
   return false;
 }
-}
+}  // namespace shapeworks

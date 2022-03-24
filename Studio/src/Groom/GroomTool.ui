@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>341</width>
-    <height>1840</height>
+    <width>332</width>
+    <height>1136</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1746,6 +1746,11 @@ QWidget#mesh_panel {
               <item>
                <property name="text">
                 <string>Iterative Closest Point</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Landmark</string>
                </property>
               </item>
              </widget>

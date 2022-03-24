@@ -47,7 +47,7 @@ MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape,
+MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape,
                                                  int domain)
 {
   MeshHandle mesh(new StudioMesh);
@@ -84,7 +84,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
            mesh_warpers.size() > domain && mesh_warpers[domain] &&
            mesh_warpers[domain]->get_warp_available()) {
 
-    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data_block(),
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data(),
                                                                shape.size());
     points.resize(3, shape.size() / 3);
     points.transposeInPlace();

@@ -111,6 +111,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       // set up Optimize class based on project parameters
       OptimizeParameters params(project);
       params.set_up_optimize(&app);
+      app.SetProject(project);
 
       bool success = app.Run();
 

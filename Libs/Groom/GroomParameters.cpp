@@ -9,6 +9,7 @@ const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSin
 
 const std::string GroomParameters::GROOM_ALIGNMENT_CENTER_C("Center");
 const std::string GroomParameters::GROOM_ALIGNMENT_ICP_C("Iterative Closest Point");
+const std::string GroomParameters::GROOM_ALIGNMENT_LANDMARK_C("Landmark");
 
 namespace Keys {
 constexpr const char* CROP = "crop";
@@ -359,6 +360,12 @@ bool GroomParameters::get_use_icp()
 bool GroomParameters::get_use_center()
 {
   return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_CENTER_C;
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_use_landmarks()
+{
+  return this->get_alignment_enabled() && this->get_alignment_method() == GROOM_ALIGNMENT_LANDMARK_C;
 }
 
 //---------------------------------------------------------------------------

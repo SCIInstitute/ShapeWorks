@@ -31,6 +31,8 @@ vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
   void Rotate() override;
 
+  void OnMouseMove() override;
+
 protected:
 
   void Dolly(double factor) override;

@@ -16,6 +16,8 @@
 // vnl
 #include "vnl/vnl_vector.h"
 
+#include <Eigen/Eigen>
+
 
 namespace shapeworks {
 
@@ -23,7 +25,7 @@ class MeshWorkItem
 {
 public:
   std::string filename;
-  vnl_vector<double> points;
+  Eigen::VectorXd points;
   int domain{0};
 
   size_t memory_size{0};
