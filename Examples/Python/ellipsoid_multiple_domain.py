@@ -25,12 +25,8 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    print("\nDataset options for running multiple domain use case: \n")
-    print("1. ellipsoid_joint_rotation \t 2. ellipsoid_joint_size \t 3. ellipsoid_joint_size_rotation \n")
-    print("You can change the dataset name and output directory name to try out this use case with other datasets")
-
-
-    dataset_name = "ellipsoid_joint_rotation"
+    
+    dataset_name = "ellipsoid_joint_size_rotation"
     output_directory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -229,6 +225,7 @@ def Run_Pipeline(args):
             rel_seg_files += sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i*domains_per_shape+d]], project_location)
             rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i*domains_per_shape+d]], project_location)
             transform.append(transforms[i*domains_per_shape+d].flatten())
+
         subject.set_groomed_transforms(transform)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_original_filenames(rel_seg_files)
@@ -245,11 +242,11 @@ def Run_Pipeline(args):
         "iterations_per_split" : 1000,
         "optimization_iterations" : 1000,
         "starting_regularization" :1000,
-        "ending_regularization" : 0.5,
-        "recompute_regularization_interval" : 2,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 1,
         "domains_per_shape" : domains_per_shape,
-        "relative_weighting" : 100, 
-        "initial_relative_weighting" : 0.1,
+        "relative_weighting" : 10, 
+        "initial_relative_weighting" : 1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
