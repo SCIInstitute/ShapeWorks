@@ -489,14 +489,15 @@ bool Groom::run_alignment() {
       assign_transforms(transforms, domain, true /* global */);
 
     } else {  // just center
-
+      std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
         Groom::add_center_transform(transform, meshes[i]);
-        size_t domain = num_domains;  // end
-        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+        transforms.push_back(ProjectUtils::convert_transform(transform));
       }
+      size_t domain = num_domains;  // end
+      assign_transforms(transforms, domain, true /* global */);
     }
   }
 
