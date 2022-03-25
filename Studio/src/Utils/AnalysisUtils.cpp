@@ -17,7 +17,9 @@ ParticleSystem AnalysisUtils::get_local_particle_system(Session* session, int do
   for (int i = 0; i < num_shapes; i++) {
     auto particles = shapes[i]->get_particles().get_local_particles(domain);
     for (int j = 0; j < num_particles; j++) {
-      matrix(j, i) = particles[j];
+      matrix(j*3+0, i) = particles[j*3+0];
+      matrix(j*3+1, i) = particles[j*3+1];
+      matrix(j*3+2, i) = particles[j*3+2];
     }
   }
 
