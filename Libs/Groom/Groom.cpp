@@ -487,7 +487,6 @@ bool Groom::run_alignment() {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
         Groom::add_center_transform(transform, meshes[i]);
-        // store transform
         size_t domain = num_domains;  // end
         subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
       }

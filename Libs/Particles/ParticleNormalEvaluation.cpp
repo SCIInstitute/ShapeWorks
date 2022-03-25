@@ -5,6 +5,7 @@
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
 std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
     ParticleSystem local_particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes, double max_angle_degrees) {
   std::vector<bool> result;
@@ -15,11 +16,6 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
 
   int num_shapes = local_particles.N();
   int num_particles = local_particles.D() / 3;
-
-  std::cerr << "local_particles.rows() = " << particles.rows() << "\n";
-  std::cerr << "local_particles.cols() = " << particles.cols() << "\n";
-  std::cerr << "num_shapes = " << num_shapes << "\n";
-  std::cerr << "num_particles = " << num_particles << "\n";
 
   thetas.resize(num_particles);
   phis.resize(num_particles);
@@ -94,13 +90,14 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
     // matter what the angle.  I'm commentting this out for now.
     // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
 
-    std::cerr << "cur_cos_appex = " << cur_cos_appex << "\n";
-    std::cerr << "max_angle_degrees = " << max_angle_degrees << "\n";
-    std::cerr << "check = " << (std::cos(max_angle_degrees * M_PI / 180.)) << "\n";
+    // std::cerr << "cur_cos_appex = " << cur_cos_appex << "\n";
+    // std::cerr << "max_angle_degrees = " << max_angle_degrees << "\n";
+    // std::cerr << "check = " << (std::cos(max_angle_degrees * M_PI / 180.)) << "\n";
     result[j] = cur_cos_appex > std::cos(max_angle_degrees * M_PI / 180.);
   }
 
   return result;
 }
+//---------------------------------------------------------------------------
 
 }  // namespace shapeworks
