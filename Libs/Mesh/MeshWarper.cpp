@@ -513,6 +513,28 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
 
   return poly_data;
 }
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh)
+{
+    Eigen::MatrixXd landmarks;
+    landmarks.resize(landmarks_map_.size(), 3);
+
+    vtkSmartPointer<vtkDataArray> data_array = warped_mesh->GetPoints()->GetData();
+
+    for (auto ids : landmarks_map_)
+    {
+        auto id_landmark = ids.second;
+        auto id_vertice = ids.first;
+
+        landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
+        landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);
+        landmarks(id_landmark, 2) = data_array->GetComponent(id_vertice, 2);
+    }
+
+    return landmarks;
+}
+
 }  // namespace shapeworks
 
 //---------------------------------------------------------------------------

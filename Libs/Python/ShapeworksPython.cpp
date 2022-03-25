@@ -914,6 +914,8 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::self == py::self)
   .def(py::self += py::self)
 
+  .def(py::init<const Eigen::MatrixXd&, const Eigen::MatrixXi&>()) // Mesh constructor from matrices
+
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
          std::stringstream stream;
@@ -1225,6 +1227,13 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
+  .def_static("prepareMesh",
+        [](const Mesh &mesh) -> decltype(auto) {
+        return Mesh(MeshWarper::prep_mesh(mesh.getVTKMesh()));
+        },
+        "Return the prepared mesh used for warping (before vertices were inserted).",
+        "mesh"_a)
+
   .def("generateWarp",
         [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref) -> decltype(auto) {
          w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref);
@@ -1232,6 +1241,14 @@ PYBIND11_MODULE(shapeworks_py, m)
         },
         "Assign the reference mesh/particles (matrix [Nx3]) and pre-compute the warping",
         "reference_mesh"_a, "reference_particles"_a)
+
+  .def("generateWarp",
+      [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref, const Eigen::MatrixXd &landmarks) -> decltype(auto) {
+        w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref, landmarks);
+        return w.generate_warp();
+      },
+      "Assign the reference mesh/particles (matrix [Nx3]) and landmarks (matrix [Nx3]) and pre-compute the warping",
+      "reference_mesh"_a, "reference_particles"_a, "landmarks"_a)
 
   .def("getReferenceMesh",
       [](MeshWarper &w) -> decltype(auto) {
@@ -1257,12 +1274,25 @@ PYBIND11_MODULE(shapeworks_py, m)
       },
       "Return the warping matrix (Vertices = Warp * Control).")
 
+  .def("getLandmarksMap",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_landmarks_map();
+      },
+      "Return the map of landmarks to vertices.")
+
   .def("buildMesh",
       [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
           return Mesh(w.build_mesh(particles));
       },
       "Build the mesh from particle positions (matrix [Nx3])",
       "particles"_a)
+
+  .def("extractLandmarks",
+      [](MeshWarper &w, const Mesh &warped_mesh) -> decltype(auto) {
+          return w.extract_landmarks(warped_mesh.getVTKMesh());
+      },
+      "Extract the landmarks from the warped mesh and return the landmarks (matrix [Nx3])",
+      "warped_mesh"_a)
    ;
 
   // MeshUtils
