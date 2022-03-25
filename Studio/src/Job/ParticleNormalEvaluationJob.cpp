@@ -1,6 +1,8 @@
+
 #include "ParticleNormalEvaluationJob.h"
 
 #include <Data/Session.h>
+#include <Data/StudioLog.h>
 
 #include "ParticleNormalEvaluation.h"
 
@@ -10,6 +12,7 @@ namespace shapeworks {
 ParticleNormalEvaluationJob::ParticleNormalEvaluationJob(QSharedPointer<Session> session, double max_angle_degrees) {
   session_ = session;
   max_angle_degrees_ = max_angle_degrees;
+  qRegisterMetaType<std::vector<bool>>("std::vector<bool>");
 }
 
 //---------------------------------------------------------------------------
@@ -35,17 +38,14 @@ void ParticleNormalEvaluationJob::run() {
     good_bad.insert(good_bad.end(), domain_good_bad.begin(), domain_good_bad.end());
   }
 
-  std::cerr << "good_bad.size() = " << good_bad.size() << "\n";
-  int count2 = 0;
-  for (int i = 0; i < good_bad.size(); i++) {
-    if (good_bad[i]) {
-      count2++;
-    }
-  }
-  std::cerr << "good count = " << count2 << "\n";
+  int good_count = std::count(good_bad.begin(), good_bad.end(), true);
+
+  STUDIO_LOG_MESSAGE("ParticleNormalEvaluationJob: found " + QString::number(good_count) + "/" +
+                     QString::number(good_bad.size()) + " good particles\n");
 
   emit progress(1.0);
 
+  emit result_ready(good_bad);
   good_bad_ = good_bad;
 }
 

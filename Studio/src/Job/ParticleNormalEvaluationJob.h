@@ -15,7 +15,10 @@ class ParticleNormalEvaluationJob : public Job {
   QString name() override;
 
   std::vector<bool> get_good_bad();
-  // Eigen::VectorXf get_group_pvalues();
+
+signals:
+
+  void result_ready(std::vector<bool> good_bad);
 
  private:
   QSharedPointer<Session> session_;

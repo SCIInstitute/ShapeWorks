@@ -228,6 +228,8 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group_p_values_button->setChecked(false);
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
+
+  connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
 
 //---------------------------------------------------------------------------
@@ -235,6 +237,13 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode() { handle_analysis_options(); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_interface()
+{
+  ui_->show_good_bad->setEnabled(session_->get_good_bad_particles().size() == session_->get_num_particles());
+  ui_->show_good_bad->setChecked(ui_->show_good_bad->isEnabled() && session_->get_show_good_bad_particles());
+}
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::group_pvalues_valid() {
@@ -1106,8 +1115,13 @@ void AnalysisTool::handle_eval_particle_normals_progress(float progress) {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_eval_particle_normals_complete() {
+void AnalysisTool::handle_eval_particle_normals_complete(std::vector<bool> good_bad) {
   ui_->particles_progress->hide();
+  ui_->run_good_bad->setEnabled(true);
+  session_->set_good_bad_particles(good_bad);
+  session_->set_show_good_bad_particles(true);
+  update_interface();
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1144,14 +1158,12 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::show_good_bad_particles_toggled() {}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::run_good_bad_particles() {
   auto worker = Worker::create_worker();
   ui_->particles_progress->show();
+  ui_->run_good_bad->setEnabled(false);
   auto job = QSharedPointer<ParticleNormalEvaluationJob>::create(session_, ui_->good_bad_max_angle->value());
-  connect(job.data(), &ParticleNormalEvaluationJob::finished, this,
+  connect(job.data(), &ParticleNormalEvaluationJob::result_ready, this,
           &AnalysisTool::handle_eval_particle_normals_complete);
   connect(job.data(), &ParticleNormalEvaluationJob::progress, this,
           &AnalysisTool::handle_eval_particle_normals_progress);
@@ -1183,6 +1195,7 @@ void AnalysisTool::set_active(bool active) {
     pca_animate_timer_.stop();
   }
   active_ = active;
+  update_interface();
 }
 
 //---------------------------------------------------------------------------

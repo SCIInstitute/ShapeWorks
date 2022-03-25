@@ -157,12 +157,11 @@ class AnalysisTool : public QWidget {
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
   void handle_eval_particle_normals_progress(float progress);
-  void handle_eval_particle_normals_complete();
+  void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
 
-  void show_good_bad_particles_toggled();
   void run_good_bad_particles();
 
  signals:
@@ -185,6 +184,7 @@ class AnalysisTool : public QWidget {
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+  void update_interface();
 
   bool group_pvalues_valid();
 

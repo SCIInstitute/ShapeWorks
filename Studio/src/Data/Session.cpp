@@ -24,9 +24,9 @@
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Libs/Project/Project.h>
+#include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
-#include <Utils/AnalysisUtils.h>
 #include <tinyxml.h>
 
 namespace shapeworks {
@@ -652,8 +652,7 @@ bool Session::update_particles(std::vector<StudioParticles> particles) {
 }
 
 //---------------------------------------------------------------------------
-int Session::get_num_particles()
-{
+int Session::get_num_particles() {
   if (shapes_.empty()) {
     return 0;
   }
@@ -662,8 +661,7 @@ int Session::get_num_particles()
 }
 
 //---------------------------------------------------------------------------
-ParticleSystem Session::get_local_particle_system(int domain)
-{
+ParticleSystem Session::get_local_particle_system(int domain) {
   return AnalysisUtils::get_local_particle_system(this, domain);
 }
 
@@ -864,7 +862,7 @@ int Session::get_num_shapes() { return this->shapes_.size(); }
 int Session::get_domains_per_shape() { return this->get_project()->get_number_of_domains_per_subject(); }
 
 //---------------------------------------------------------------------------
-Parameters& Session::parameters() { return this->params_; }
+Parameters& Session::parameters() { return params_; }
 
 //---------------------------------------------------------------------------
 QString Session::get_display_name() {
@@ -1156,6 +1154,23 @@ void Session::set_ffc_paint_size(double size) {
 
 //---------------------------------------------------------------------------
 double Session::get_ffc_paint_size() { return ffc_paint_size; }
+
+//---------------------------------------------------------------------------
+bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_show_good_bad_particles(bool enabled) {
+  if (enabled != get_show_good_bad_particles()) {
+    params_.set("show_good_bad_particles", enabled);
+    emit update_display();
+  }
+}
+//---------------------------------------------------------------------------
+
+std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_bad_particles", {}); }
+
+//---------------------------------------------------------------------------
+void Session::set_good_bad_particles(const std::vector<bool> &good_bad) { params_.set("good_bad_particles", good_bad); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }

@@ -186,6 +186,12 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_ffc_paint_size(double size);
   double get_ffc_paint_size();
 
+  bool get_show_good_bad_particles();
+  void set_show_good_bad_particles(bool enabled);
+
+  std::vector<bool> get_good_bad_particles();
+  void set_good_bad_particles(const std::vector<bool>& good_bad);
+
   void trigger_repaint();
 
  public Q_SLOTS:
