@@ -5,6 +5,7 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 """
 import os
+import pandas as pd
 import glob
 import shapeworks as sw
 import platform
@@ -18,12 +19,11 @@ import subprocess
 import itk
 import scipy
 import json
-# import DataAugmentationUtils
-# import DeepSSMUtils
 torch.multiprocessing.set_sharing_strategy('file_system')
 random.seed(1)
 
 def Run_Pipeline(args):
+    ######################################################################################
     print("\nStep 1. Extract Data")
     """
     Step 1: EXTRACT DATA
@@ -57,6 +57,7 @@ def Run_Pipeline(args):
         plane_files = sorted(glob.glob(output_directory +
                             dataset_name + "/constraints/*.json"))
 
+    ######################################################################################
     print("\nStep 2. Defining Split")
     """
     Step 2: Define random split for train (70%), validation (15%), and test (15%) sets
@@ -72,263 +73,112 @@ def Run_Pipeline(args):
     print(str(len(train_mesh_files))+" in train set, "+str(len(val_mesh_files))+
             " in validation set, and "+str(len(test_mesh_files))+" in test set")
 
-
+    ######################################################################################
     print("\nStep 3. Find Training Mesh Transforms")
-    # TODO - pass planes instead of clipped meshes
     """
     Step 3: Train Mesh Grooming 
-    1. Find reflection tansfrom
-    2. Select reference mesh
-    3. Find rigid alignment transform
+    The required grooming steps are:
+    1. Load mesh
+    2. Apply clipping with planes for finding alignment transform
+    3. Find reflection tansfrom
+    4. Select reference mesh
+    5. Find rigid alignment transform
+    For more information on grooming see docs/workflow/groom.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
     """
-    # Make folder to save data
+
+    # Create a directory for groomed output
     data_dir = output_directory + 'data/'
     if not os.path.exists(data_dir):
-         os.makedirs(data_dir)
-    # To begin grooming, we loop over the files and load the meshes
-    ref_side = "L" # chosen arbitrarily
-    train_mesh_list = []
-    train_names = []
+        os.makedirs(data_dir)
+
+    """
+    To begin grooming, we loop over the files and load the meshes
+    """
+    ref_side = "L" # chosen so reflection happens in tiny test 
     train_reflections = [] 
+    train_names = []
+    train_mesh_list = []
     train_plane_files = []
-    print("Loading meshes and finding reflection transforms...")
-    for train_mesh_file in train_mesh_files:
-        # Get name
-        train_name = os.path.basename(train_mesh_file).replace('.ply', '')
+    print('Loading meshes...')
+    for train_mesh_filename in train_mesh_files:
+        # Get shape name
+        train_name = os.path.basename(train_mesh_filename).replace('.ply', '')
         train_names.append(train_name)
-        # Load mesh
-        train_mesh = sw.Mesh(train_mesh_file)
+        # Get mesh
+        train_mesh = sw.Mesh(train_mesh_filename)
         train_mesh_list.append(train_mesh)
+        """
+        Grooming step 2: Apply clipping for finsing alignment transform
+        """
         # Load plane
         for plane_file in plane_files:
             if train_name in plane_file:
                 corresponding_plane_file = plane_file
-        train_plane_files.append(corresponding_plane_file)
         with open(corresponding_plane_file) as json_file:
             plane = json.load(json_file)['planes'][0]['points']
-        # Clip meshes
+        train_plane_files.append(corresponding_plane_file)
+        # Clip mesh
         train_mesh.clip(plane[0], plane[1], plane[2])
-        # Find reflection transform if needed
-        train_reflection = np.eye(4) # Identity
+        """
+        Grooming Step 3: Get reflection transform - We have left and 
+        right femurs, so we reflect the non-reference side meshes 
+        so that all of the femurs can be aligned.
+        """
+        reflection = np.eye(4) # Identity
         if ref_side in train_name:
-            train_reflection[0][0] = -1 # Reflect across X
-        train_mesh.applyTransform(train_reflection) # apply for rigid alignment
-        train_reflections.append(train_reflection)
-        
-    # Select reference mesh
-    print("Finding reference mesh...")
+            reflection[0][0] = -1 # Reflect across X
+            train_mesh.applyTransform(reflection)
+        train_reflections.append(reflection)
+
+    """
+    Grooming Step 4: Select a reference
+    This step requires loading all of the meshes at once so the shape
+    closest to the mean can be found and selected as the reference. 
+    """
     ref_index = sw.find_reference_mesh_index(train_mesh_list)
-    ref_mesh = train_mesh_list[ref_index].copy().write(data_dir + 'reference_mesh.vtk')
-    print("Reference found: " + train_names[ref_index])
-    # Find rigid transforms to align each mesh to the reference 
-    train_rigid_transforms = [] 
-    mesh_list = []
-    print("Finding rigid alignment transforms...")
+    # Make a copy of the reference mesh
+    ref_mesh = train_mesh_list[ref_index].copy()
+    ref_name = train_names[ref_index]
+    ref_mesh.write(data_dir + 'reference_' + ref_name + '.vtk')
+
+    print('Creating alignment transforms to ' + ref_name)
+    train_rigid_transforms = [] # save in case grooming images
     for train_mesh, train_name in zip(train_mesh_list, train_names):
+        """
+        Grooming Step 5: Rigid alignment
+        This step rigidly aligns each shape to the selected reference. 
+        """
         # compute rigid transformation
-        train_rigid_transform = train_mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
-        train_mesh.applyTransform(train_rigid_transform) # apply for finding bounding box
-        mesh_list.append(train_mesh)
-        train_rigid_transforms.append(train_rigid_transform)
-    print("Write transforms...")
-    # Make directory for train transform
+        rigid_transform = train_mesh.createTransform(ref_mesh, 
+                                        sw.Mesh.AlignmentType.Rigid, 100)
+        # apply rigid transform
+        train_rigid_transforms.append(rigid_transform)
+        train_mesh.applyTransform(rigid_transform)
+
+    # Combine transforms to pass to optimizer
     train_transform_dir = data_dir + 'train_transforms/'
     if not os.path.exists(train_transform_dir):
         os.makedirs(train_transform_dir)
-    # Combine transforms to pass to optimizer
     train_transforms = []
-    for train_name, train_reflection, train_rigid_transform in zip(train_names, train_reflections, train_rigid_transforms):
-        train_transform = np.matmul(train_rigid_transform, train_reflection)
+    for reflection, rigid_transform in zip(train_reflections, train_rigid_transforms):
+        train_transform = np.matmul(rigid_transform, reflection)
         train_transforms.append(train_transform)
         np.save(train_transform_dir, train_transform)
     print("Training mesh transforms found.")
 
-
-    print("\nStep 4. Groom Training Images")
-    """
-    Step 4: Load training images and apply transforms
-    """
-    train_image_list = []
-    print("Loading images and reflecting...")
-    for train_name, train_reflection in zip(train_names, train_reflections):
-        ID = train_name.split("_")[0]
-        # Get corresponding image
-        for index in range(len(image_files)):
-            if ID in image_files[index]:
-                corresponding_image_file = image_files[index]
-                break
-        train_image = sw.Image(corresponding_image_file)
-        train_image_list.append(train_image)
-        # Apply reflection transform 
-        train_image.applyTransform(train_reflection)
-    # Get reference image
-    print("Getting reference image.")
-    ref_image = train_image_list[ref_index].copy()
-    ref_image.resample([1,1,1], sw.InterpolationType.Linear)
-    ref_image.write(data_dir + 'reference_image.nrrd')
-    # Applyinfg rigid transform
-    print("Applying rigid transforms...")
-    for train_image, train_rigid_transform in zip(train_image_list, train_rigid_transforms):
-        # Align image
-        train_image.applyTransform(train_rigid_transform,
-                             ref_image.origin(),  ref_image.dims(),
-                             ref_image.spacing(), ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=True)
-    # Get bounding box
-    print("Getting bounding box.")
-    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list)
-    bounding_box.pad(10)
-    # bounding_box.write(data_dir + "bounding_box.txt")
-    print("Applying cropping...")
-    for train_image in train_image_list:
-        # Crop image
-        train_image.crop(bounding_box)
-    # Write images
-    print("Writing groomed train images.")
-    train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
-                    train_names, extension='nrrd', compressed=True, verbose=False)
-
-
-    print("\nStep 5. Find Test and Validation Transforms and Groom Images")
-    """
-    Step 5: Find test and validation transforms and images
-    1. Find reflection
-    2. Find alignment transform using rigid image registration
-    3. Apply alignment to image
-    4. Crop image
-    """
-    # Helper function - Works best if moving and fixed images have been centered
-    def rigid_image_registration_transform(fixed_image_file, moving_image_file, out_image_file):
-        fixed_image = itk.imread(fixed_image_file, itk.F)
-        moving_image = itk.imread(moving_image_file, itk.F)
-        # Import Default Parameter Map
-        parameter_object = itk.ParameterObject.New()
-        default_rigid_parameter_map = parameter_object.GetDefaultParameterMap('rigid')
-        parameter_object.AddParameterMap(default_rigid_parameter_map)
-        # Call registration function
-        result_image, result_transform_parameters = itk.elastix_registration_method(
-            fixed_image, moving_image, parameter_object=parameter_object)
-        itk.imwrite(result_image, out_image_file)
-        # Get transform matrix - can't find a way to do it without writing it
-        result_transform_parameters.WriteParameterFile("temp.txt")
-        with open("temp.txt") as f:
-            lines = f.readlines()
-        transform_params = lines[-2].replace(")\n","").split(" ")[1:]
-        transform_params = np.array(transform_params).astype(np.float)
-        thetas = transform_params[:3]
-        rotation_matrix = scipy.spatial.transform.Rotation.from_euler('XYZ',thetas).as_matrix()
-        translation = transform_params[3:]
-        itk_transform_matrix = np.eye(4)
-        itk_transform_matrix[:3,:3] = rotation_matrix
-        itk_transform_matrix[-1,:3] = translation
-        # debug
-        ref_image = sw.Image(fixed_image_file)
-        sw.Image(moving_image_file).applyTransform(itk_transform_matrix,
-                             ref_image.origin(),  ref_image.dims(),
-                             ref_image.spacing(), ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False).write(out_image_file.replace(".nrrd","2.nrrd"))
-        vtk_transform_matrix = sw.utils.getVTKtransform(itk_transform_matrix)
-        # os.remove("temp.txt")
-        return vtk_transform_matrix
-    # Get reference
-    ref_image_file = data_dir + 'reference_image.nrrd'
-    ref_image = sw.Image(ref_image_file)
-    padded_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(30)
-    cropped_ref_image_file = data_dir + 'roughly_cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(padded_bb).write(cropped_ref_image_file)
-    ref_center = ref_image.center() # get center
-    ref_side = "L" # chosen arbitrarily
-    # Make dirs 
-    val_test_images_dir = data_dir + 'val_and_test_images/'
-    if not os.path.exists(val_test_images_dir):
-    	os.makedirs(val_test_images_dir)
-    val_test_transforms_dir = data_dir + 'val_and_test_transforms/'
-    if not os.path.exists(val_test_transforms_dir):
-    	os.makedirs(val_test_transforms_dir)
-    # Combine mesh files
-    val_test_mesh_files = val_mesh_files + test_mesh_files
-    # Loop over
-    print("Grooming validation and test images...")
-    val_test_images = []
-    val_test_transforms = []
-    for vt_mesh_file in val_test_mesh_files:
-        # Get name
-        vt_name = os.path.basename(vt_mesh_file).replace('.ply', '')
-        ID = vt_name.split("_")[0]
-        # Get corresponding image
-        for index in range(len(image_files)):
-            if ID in image_files[index]:
-                corresponding_image_file = image_files[index]
-                break
-        vt_image = sw.Image(corresponding_image_file)
-        val_test_images.append(vt_image)
-        # Apply reflection transform 
-        reflection = np.eye(4) # Identity
-        if ref_side in vt_name:
-            reflection[0][0] = -1 # Reflect across X
-        vt_image.applyTransform(reflection)
-        # Translate to make rigid registration easier
-        translation = ref_center - vt_image.center()
-        vt_image.setOrigin(vt_image.origin() + translation)
-        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
-        vt_image.write(vt_image_file)
-        # Get rigid transform from image registration and apply
-        # Roughly align, roughly crop, then realign
-        print("Finding rigid transform for: " + vt_name)
-        rigid_transform1 = rigid_image_registration_transform(ref_image_file, vt_image_file, vt_image_file)
-        # vt_image = sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
-        # rigid_transform2 = rigid_image_registration_transform(cropped_ref_image_file, vt_image_file, vt_image_file)
-        # Crop
-        sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
-        # Get combined transform and write
-        translation_marix = np.eye(4)
-        translation_marix[:3,-1] = translation
-        transform = np.matmul(translation_marix, reflection)
-        transform = np.matmul(rigid_transform1, transform)
-        # transform = np.matmul(rigid_transform2, transform)
-        val_test_transforms.append(transform)
-        np.save(val_test_transforms_dir + ID + '.npy', transform)        
-
-    # # debug
-    # groomed_meshes = []
-    # names = []
-    # for mesh_file, transform in zip(train_mesh_files, train_transforms):
-    # 	names.append(mesh_file.split('/')[-1].replace(".ply",""))
-    # 	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    # m_files = sw.utils.save_meshes(data_dir + 'debug_train_meshes/', groomed_meshes, names)
-    # groomed_meshes = []
-    # names = []
-    # for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
-    # 	names.append(mesh_file.split('/')[-1].replace(".ply",""))
-    # 	groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    # m_files = sw.utils.save_meshes(data_dir + 'debug_val_test_meshes/', groomed_meshes, names)
-
-
-    print("\nStep 6. Optimize Training Particles")
-    """
-    Step 6: OPTIMIZE - Particle based optimization on training meshes
-    Local particles will be in alignment with original images and meshes
-    World particles would be in alignment with groomed images from the previous
-    step if Procrustes was set to off
-    Visit this link for more information about optimization: 
-    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    """
-    # Make directory to save optimization output
-    point_dir = data_dir + 'shape_models/'
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-    # Create spreadsheet
-    project_location = data_dir + "shape_models/"
+    ######################################################################################
+    print("\nStep 4. Optimize Training Particles")
+    # Create project spreadsheet
+    project_location = data_dir
+    # Set subjects
     subjects = []
     number_domains = 1
-    # Create spreadsheet
-    subjects = []
     for i in range(len(train_mesh_list)):
         subject = sw.Subject()
         subject.set_number_of_domains(1)
         rel_mesh_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
-        subject.set_segmentation_filenames(rel_mesh_files)
+        subject.set_original_filenames(rel_mesh_files)
         rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_files)
         transform = [ train_transforms[i].flatten() ]
@@ -336,11 +186,12 @@ def Run_Pipeline(args):
         rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
         subject.set_constraints_filenames(rel_plane_files)
         subjects.append(subject)
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
+
     # Create a dictionary for all the parameters required by optimization
- # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles" : 512,
         "use_normals": 0,
@@ -362,33 +213,209 @@ def Run_Pipeline(args):
         "debug_projection" : 0,
         "verbosity" : 0,
         "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0,
-        "use_shape_statistics_after":64
+        "adaptivity_mode": 0
     } 
-    for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimize",parameters)
-    spreadsheet_file = data_dir + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
-    project.save(spreadsheet_file)
+    # If running a tiny test, reduce some parameters
+    if args.tiny_test:
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["use_shape_statistics_after"] = 64
 
-    # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    # for key in parameter_dictionary:
+    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    # parameters.set("domain_type",sw.Variant('mesh'))
+    # project.set_parameters("optimize",parameters)
+    # spreadsheet_file = data_dir + "train_no_proc.xlsx"
+    # project.save(spreadsheet_file)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # # Run optimization
+    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    # subprocess.check_call(optimizeCmd)
 
-    # Get lists of particle files
-    train_particle_dir = data_dir+"train_optimize_particles/"
-    train_world_particle_files = []
-    train_local_particle_files = []
-    for file in sorted(os.listdir(train_particle_dir)):
-        if "local.particles" in file:
-            train_local_particle_files.append(train_particle_dir + file)
-        elif "world.particles" in file:
-            train_world_particle_files.append(train_particle_dir + file)
+    # # Analyze - open in studio
+    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    # subprocess.check_call(AnalysisCmd)
+
+    # Get transforms and particle files from project spreadsheet
+    spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train_no_proc.xlsx'
+    project = sw.Project()
+    project.load(spreadsheet_file)
+    train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
+    train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
+    train_local_particles = project.get_string_column("local_particles_1")
+    train_world_particles = project.get_string_column("world_particles_1")
+
+    ##########################################################################################################
+    """
+    Step 5: Load training images and apply transforms
+    """
+    print("\nStep 5. Groom Training Images")
+    # Get transfroms from spreadsheet
+    train_image_list = []
+    print("Loading images...")
+    for train_name in train_names:
+        ID = train_name.split("_")[0]
+        # Get corresponding image
+        for index in range(len(image_files)):
+            if ID in image_files[index]:
+                corresponding_image_file = image_files[index]
+                break
+        train_image = sw.Image(corresponding_image_file)
+        train_image_list.append(train_image)
+    # Get reference image
+    print("Getting reference image.")
+    ref_image = train_image_list[ref_index].copy()
+    ref_image.resample([1,1,1], sw.InterpolationType.Linear)
+    ref_image.write(data_dir + 'reference_image.nrrd')
+    ref_procrustes = sw.utils.getITKtransform(np.array(train_procrustes[ref_index]).reshape(4, 4))
+    # Applyinfg rigid transform
+    print("Applying transforms...")
+    for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
+        train_transform = np.matmul(np.array(train_proc).reshape(4, 4), np.array(train_align).reshape(4, 4))
+        # Align image
+        train_image.applyTransform(train_transform,
+                             ref_image.origin(),  ref_image.dims(),
+                             ref_image.spacing(), ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=True)
+    # Write images
+    print("Writing groomed train images.")
+    train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
+                    train_names, extension='nrrd', compressed=True, verbose=False)
+    # Get bounding box
+    print("Getting bounding box.")
+    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list)
+    bounding_box.pad(10)
+    # bounding_box.write(data_dir + "bounding_box.txt")
+    print("Applying cropping...")
+    for train_image in train_image_list:
+        # Crop image
+        train_image.crop(bounding_box)
+    # Write images
+    print("Writing groomed train images.")
+    train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
+                    train_names, extension='nrrd', compressed=True, verbose=False)
+
+    # ##########################################################################################################
+    # print("\nStep 5. Find Test and Validation Transforms and Groom Images")
+    # """
+    # Step 5: Find test and validation transforms and images
+    # 1. Find reflection
+    # 2. Find alignment transform using rigid image registration
+    # 3. Apply alignment to image
+    # 4. Crop image
+    # """
+    # # Helper function - Works best if moving and fixed images have been centered
+    # def rigid_image_registration_transform(fixed_image_file, moving_image_file, out_image_file):
+    #     fixed_image = itk.imread(fixed_image_file, itk.F)
+    #     moving_image = itk.imread(moving_image_file, itk.F)
+    #     # Import Default Parameter Map
+    #     parameter_object = itk.ParameterObject.New()
+    #     default_rigid_parameter_map = parameter_object.GetDefaultParameterMap('rigid')
+    #     parameter_object.AddParameterMap(default_rigid_parameter_map)
+    #     # Call registration function
+    #     result_image, result_transform_parameters = itk.elastix_registration_method(
+    #         fixed_image, moving_image, parameter_object=parameter_object)
+    #     itk.imwrite(result_image, out_image_file)
+    #     # Get transform matrix - can't find a way to do it without writing it
+    #     result_transform_parameters.WriteParameterFile("temp.txt")
+    #     with open("temp.txt") as f:
+    #         lines = f.readlines()
+    #     transform_params = lines[-2].replace(")\n","").split(" ")[1:]
+    #     transform_params = np.array(transform_params).astype(np.float)
+    #     thetas = transform_params[:3]
+    #     rotation_matrix = scipy.spatial.transform.Rotation.from_euler('XYZ',thetas).as_matrix()
+    #     translation = transform_params[3:]
+    #     itk_transform_matrix = np.eye(4)
+    #     itk_transform_matrix[:3,:3] = rotation_matrix
+    #     itk_transform_matrix[-1,:3] = translation
+    #     # debug
+    #     ref_image = sw.Image(fixed_image_file)
+    #     sw.Image(moving_image_file).applyTransform(itk_transform_matrix,
+    #                          ref_image.origin(),  ref_image.dims(),
+    #                          ref_image.spacing(), ref_image.coordsys(),
+    #                          sw.InterpolationType.Linear, meshTransform=False).write(out_image_file.replace(".nrrd","2.nrrd"))
+    #     vtk_transform_matrix = sw.utils.getVTKtransform(itk_transform_matrix)
+    #     # os.remove("temp.txt")
+    #     return vtk_transform_matrix
+    # # Get reference
+    # ref_image_file = data_dir + 'reference_image.nrrd'
+    # ref_image = sw.Image(ref_image_file)
+    # padded_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(30)
+    # cropped_ref_image_file = data_dir + 'roughly_cropped_reference_image.nrrd'
+    # cropped_ref_image = sw.Image(ref_image_file).crop(padded_bb).write(cropped_ref_image_file)
+    # ref_center = ref_image.center() # get center
+    # ref_side = "L" # chosen arbitrarily
+    # # Make dirs 
+    # val_test_images_dir = data_dir + 'val_and_test_images/'
+    # if not os.path.exists(val_test_images_dir):
+    #     os.makedirs(val_test_images_dir)
+    # val_test_transforms_dir = data_dir + 'val_and_test_transforms/'
+    # if not os.path.exists(val_test_transforms_dir):
+    #     os.makedirs(val_test_transforms_dir)
+    # # Combine mesh files
+    # val_test_mesh_files = val_mesh_files + test_mesh_files
+    # # Loop over
+    # print("Grooming validation and test images...")
+    # val_test_images = []
+    # val_test_transforms = []
+    # for vt_mesh_file in val_test_mesh_files:
+    #     # Get name
+    #     vt_name = os.path.basename(vt_mesh_file).replace('.ply', '')
+    #     ID = vt_name.split("_")[0]
+    #     # Get corresponding image
+    #     for index in range(len(image_files)):
+    #         if ID in image_files[index]:
+    #             corresponding_image_file = image_files[index]
+    #             break
+    #     vt_image = sw.Image(corresponding_image_file)
+    #     val_test_images.append(vt_image)
+    #     # Apply reflection transform 
+    #     reflection = np.eye(4) # Identity
+    #     if ref_side in vt_name:
+    #         reflection[0][0] = -1 # Reflect across X
+    #     vt_image.applyTransform(reflection)
+    #     # Translate to make rigid registration easier
+    #     translation = ref_center - vt_image.center()
+    #     vt_image.setOrigin(vt_image.origin() + translation)
+    #     vt_image_file = val_test_images_dir + vt_name + ".nrrd"
+    #     vt_image.write(vt_image_file)
+    #     # Get rigid transform from image registration and apply
+    #     # Roughly align, roughly crop, then realign
+    #     print("Finding rigid transform for: " + vt_name)
+    #     rigid_transform1 = rigid_image_registration_transform(ref_image_file, vt_image_file, vt_image_file)
+    #     # vt_image = sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
+    #     # rigid_transform2 = rigid_image_registration_transform(cropped_ref_image_file, vt_image_file, vt_image_file)
+    #     # Crop
+    #     sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
+    #     # Get combined transform and write
+    #     translation_marix = np.eye(4)
+    #     translation_marix[:3,-1] = translation
+    #     transform = np.matmul(translation_marix, reflection)
+    #     transform = np.matmul(rigid_transform1, transform)
+    #     # transform = np.matmul(rigid_transform2, transform)
+    #     val_test_transforms.append(transform)
+    #     np.save(val_test_transforms_dir + ID + '.npy', transform)        
+
+
+
+    
+    # # debug
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(train_mesh_files, train_transforms):
+    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_train_meshes/', groomed_meshes, names)
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
+    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_val_test_meshes/', groomed_meshes, names)
 
 
     # print("\nStep 7. Optimize Validation and Test Particles Using Fixed Domain")
