@@ -90,7 +90,9 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
     }
 
     cur_cos_appex /= num_shapes;
-    cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
+    // AKM: double this appears to put many/most particles well about 1.0, which becomes impossible to mark as bad no
+    // matter what the angle.  I'm commentting this out for now.
+    // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
 
     std::cerr << "cur_cos_appex = " << cur_cos_appex << "\n";
     std::cerr << "max_angle_degrees = " << max_angle_degrees << "\n";
