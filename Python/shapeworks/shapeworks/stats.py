@@ -238,10 +238,10 @@ class WPPCA():
         self.mu = np.mean(self.x,axis=1).reshape((-1,1))
         self.W = np.random.random((self.feature_dim,self.latent_dim))
         self.sigma2 = 1
-        # self.a = 0.05
-        # self.b = 0.01
-        self.a = self.num_samples/1e5
-        self.b = self.num_samples/1e6
+        self.a = 0.05
+        self.b = 0.5
+        # self.a = self.num_samples/1e5
+        # self.b = self.num_samples/1e6
 
     def standarize(self):
         self.mean = np.mean(self.x, axis=1).reshape((-1,1))
@@ -372,7 +372,7 @@ class WPPCA():
             data_minus_mean = self.x - new_mu
             weighted_data = np.multiply(data_minus_mean,self.weights[np.newaxis,:])
             m_MinimumVariance = calculate_minVariance(weighted_E_tn_tnT)
-
+            print(m_MinimumVariance)
             W_new = (weighted_data.dot(E_tn.T)).dot(np.linalg.inv(weighted_E_tn_tnT + m_MinimumVariance))
             
             '''
@@ -394,7 +394,7 @@ class WPPCA():
             update weights
             '''
 
-            L = self.get_likelihood(E_tn,weighted_E_tn_tnT_sample,new_mu,W_new,sigma2_new)
+            L = self.get_likelihood(E_tn,weighted_E_tn_tnT_sample,new_mu,W_new,sigma2_new)/self.num_samples
             plt.figure()
             plt.bar(list(range(self.num_samples)),L)
             plt.show()
@@ -408,17 +408,13 @@ class WPPCA():
             weights_new = self.weights*0
             for ids in range(self.num_samples):
                 roots = np.roots(coeff[ids,:]) 
-                print(roots)
-                # # weights_new[ids] = roots[np.where(roots>0)]
-                # roots = np.polynomial.Polynomial(coefs[ids,:]).roots()
                 # print(roots)
                 weights_new[ids] = roots[0]
             weights_new = np.absolute(weights_new)
-            # weights_new[np.where(weights_new<0)] = 1e-5
-            # weights_new = (weights_new - 0.1)/(np.max(weights_new)-0.1)
+            # scaler = MinMaxScaler(feature_range=(0.2, 0.9))
+            # un_array = weights_new.reshape(-1,1)
+            # weights_new = scaler.fit_transform(un_array)[:,0] 
             # print(weights_new)
-            # weights_new += 2
-
 
             '''
             calculate total likelihood
@@ -426,14 +422,14 @@ class WPPCA():
             _,E_tn_sample,E_tn_tnT_sample = self.get_expectation_terms_per_sample(W_new,new_mu,sigma2_new)
             
             L = self.get_likelihood(E_tn_sample,E_tn_tnT_sample,new_mu,W_new,sigma2_new)
-            total_likelihood = np.sum((self.a-1)*np.log(weights_new) + np.log(1-weights_new)*(1-self.b) ) + np.sum(weights_new*L)
+            total_likelihood = np.sum((self.a-1)*np.log(weights_new) + np.log(1-weights_new)*(1-self.b)  + weights_new*L)
             total_likelihood = total_likelihood/self.num_samples
             print("Total Likelihood: ",total_likelihood)
-            self.weights = weights_new
+            
             if(total_likelihood>L_old):
             # if(True):
                 L_old = total_likelihood
-
+                self.weights = weights_new
                 self.W = np.copy(W_new)
                 self.sigma2 = np.copy(sigma2_new)
                 self.mu = np.copy(new_mu.reshape((-1,1)))
@@ -444,17 +440,25 @@ class WPPCA():
                 break
             
 
+        '''
+        A final point to note is that, at convergence, although the columns of WML will span the principal
+        subspace, they need not be orthogonal since
+        See equation (32) in Probabilistic principal component analysis, Michael E. Tipping and Christopher M. Bishop
+        '''
         self.W = self.W/np.linalg.norm(self.W,axis=0)
         matrix = np.matmul(self.W.T,self.W)
-
         eigen_values, rotation_matrix = np.linalg.eigh(matrix)
         self.W = np.matmul(self.W,rotation_matrix)
+
+        '''
+        Sort eigen values and eigen vectors
+        '''
         self.eigen_values = eigen_values
         index = self.eigen_values.argsort()[::-1]
         self.eigen_values = self.eigen_values[index]
         eigen_vector_W = self.W[:,index]
-        norms = np.linalg.norm(eigen_vector_W,axis=0)
-        self.W = eigen_vector_W/norms
+        
+        self.W = eigen_vector_W
         
             
 
