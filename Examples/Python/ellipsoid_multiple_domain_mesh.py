@@ -196,7 +196,7 @@ def Run_Pipeline(args):
 
     #setting the argument to singlescale for the output filename
     args.use_single_scale = True
-    
+    args.option_set = args.option_set.replace("multiscale","singlescale")
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
