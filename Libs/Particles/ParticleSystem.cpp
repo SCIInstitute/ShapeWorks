@@ -19,8 +19,7 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
   // since this particle reader loads into a std::vector, which subsequently
   // is copied to Eigen. Refactor it to load directly to Eigen. (This is not a
   // huge problem for now because the particle files are quite small)
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader0
-          = itk::ParticlePositionReader<VDimension>::New();
+  itk::ParticlePositionReader::Pointer reader0 = itk::ParticlePositionReader::New();
 
   // Read the first file to find dimensions
   reader0->SetFileName(paths[0]);
@@ -31,8 +30,7 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
   P.col(0) = Eigen::Map<const Eigen::VectorXd>((double *) reader0->GetOutput().data(), D);
 
   for (int i = 1; i < N; i++) {
-    typename itk::ParticlePositionReader<VDimension>::Pointer reader
-            = itk::ParticlePositionReader<VDimension>::New();
+    itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
     reader->SetFileName(paths[i]);
     reader->Update();
     int count = reader->GetOutput().size() * VDimension;

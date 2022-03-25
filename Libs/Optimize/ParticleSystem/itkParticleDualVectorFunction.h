@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleDualVectorFunction.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleDualVectorFunction_h
-#define __itkParticleDualVectorFunction_h
+#pragma once
 
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
@@ -467,13 +452,3 @@ protected:
 
 
 } //end namespace
-
-#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleDualVectorFunction+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-//# include "itkParticleDualVectorFunction.txx"
-#endif
-
-#endif

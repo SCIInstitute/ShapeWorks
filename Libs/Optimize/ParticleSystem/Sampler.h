@@ -3,7 +3,7 @@
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleImplicitSurfaceDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
@@ -496,7 +496,7 @@ protected:
 
   itk::ParticleSystem::Pointer m_ParticleSystem;
 
-  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
+  std::vector<ParticleDomain::Pointer> m_DomainList;
 
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
