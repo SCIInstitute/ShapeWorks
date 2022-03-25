@@ -72,6 +72,41 @@
 
 namespace shapeworks {
 
+Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces)
+{
+    this->mesh = MeshType::New();
+
+    vtkNew<vtkPoints> vertices;
+    vtkNew<vtkCellArray> polys;
+
+    const int num_points = points.rows();
+
+    double p[3];
+    for (vtkIdType i = 0; i < num_points; ++i)
+    {
+        p[0] = points(i, 0);
+        p[1] = points(i, 1);
+        p[2] = points(i, 2);
+
+        vertices->InsertNextPoint(p);
+    }
+
+    const int num_cells = faces.rows();
+
+    vtkIdType pts[3];
+    for (vtkIdType i = 0; i < num_cells; ++i)
+    {
+        pts[0] = faces(i, 0);
+        pts[1] = faces(i, 1);
+        pts[2] = faces(i, 2);
+        polys->InsertNextCell(3, pts);
+    }
+
+    this->mesh->SetPoints(vertices);
+    this->mesh->SetPolys(polys);
+    this->computeNormals();
+}
+
 Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }

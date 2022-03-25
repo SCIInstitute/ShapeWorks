@@ -31,6 +31,8 @@ public:
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
   Mesh(const Mesh& orig) : mesh(MeshType::New()) { mesh->DeepCopy(orig.mesh); }
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
+  Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces);
+
   Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
 
