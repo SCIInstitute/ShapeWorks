@@ -1282,6 +1282,9 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
+  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
+  update_recent_files();
+
   session_->set_loading(true);
 
   try {
@@ -1314,8 +1317,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   preferences_window_->set_values_from_preferences();
   update_from_preferences();
 
-  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
-  update_recent_files();
 
   update_tool_mode();
 
