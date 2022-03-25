@@ -65,6 +65,7 @@ bool Groom::run() {
   if (!this->run_alignment()) {
     success = false;
   }
+  increment_progress(10); // alignment complete
 
   // store back to project
   this->project_->store_subjects();
@@ -383,7 +384,8 @@ int Groom::get_total_ops() {
     }
   }
 
-  return num_subjects * num_tools;
+  // +10 for alignment
+  return num_subjects * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------
