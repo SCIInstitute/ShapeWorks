@@ -6,6 +6,7 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 #include <vtkCenterOfMass.h>
@@ -16,6 +17,9 @@
 #include <vector>
 
 using namespace shapeworks;
+
+// for concurrent access
+static tbb::mutex mutex;
 
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
@@ -65,7 +69,7 @@ bool Groom::run() {
   if (!this->run_alignment()) {
     success = false;
   }
-  increment_progress(10); // alignment complete
+  increment_progress(10);  // alignment complete
 
   // store back to project
   this->project_->store_subjects();
@@ -390,6 +394,7 @@ int Groom::get_total_ops() {
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount) {
+  tbb::mutex::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
