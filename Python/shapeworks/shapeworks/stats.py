@@ -77,33 +77,15 @@ def normalize(subj_map, group1_mean_map, group2_mean_map):
     return subj_map_normalized
 
 
-def lda(data):
-    group_id = data["group_ids"].unique()
-    # group1_idxs = data["group_ids"] == group_id[0]
-    group1_idxs = data.index[data['group_ids'] == 0].tolist()
-    group2_idxs = data.index[data['group_ids'] == 1].tolist()
-    filenames = data["filename"]
-    # Provide the list of file names
-    particle_data = sw.ParticleSystem(filenames)
+def lda_loadings(group1_data, group2_data):
+    group1_num = np.shape(group1_data)[1]
+    group2_num = np.shape(group2_data)[1]
 
-    # Calculate the PCA for the read particle system
-    shape_statistics = sw.ParticleShapeStatistics()
-    shape_statistics.PCA(particleSystem=particle_data, domainsPerShape=1)
-
-    # Calculate the loadings
-    shape_statistics.principalComponentProjections()
-    pca_loadings = shape_statistics.pcaLoadings().T
-
-    group1_num = len(group1_idxs)
-    group2_num = len(group2_idxs)
-
-    group1_data = pca_loadings[:, group1_idxs]
-    group2_data = pca_loadings[:, group2_idxs]
-
+    combined_data = np.concatenate((group1_data, group2_data), axis=1)
     group1_mean = np.mean(group1_data, axis=1)
     group2_mean = np.mean(group2_data, axis=1)
 
-    overall_mean = np.mean(pca_loadings, axis=1)
+    overall_mean = np.mean(combined_data, axis=1)
 
     diffVect = group1_mean - group2_mean
 
@@ -141,3 +123,24 @@ def lda(data):
     group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
     group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
     return group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map
+
+
+def lda(data):
+    group_id = data["group_ids"].unique()
+    group1_idxs = data.index[data['group_ids'] == 0].tolist()
+    group2_idxs = data.index[data['group_ids'] == 1].tolist()
+    filenames = data["filename"]
+    # Provide the list of file names
+    particle_data = sw.ParticleSystem(filenames)
+
+    # Calculate the PCA for the read particle system
+    shape_statistics = sw.ParticleShapeStatistics()
+    shape_statistics.PCA(particleSystem=particle_data, domainsPerShape=1)
+
+    # Calculate the loadings
+    shape_statistics.principalComponentProjections()
+    pca_loadings = shape_statistics.pcaLoadings().T
+    group1_data = pca_loadings[:, group1_idxs]
+    group2_data = pca_loadings[:, group2_idxs]
+
+    return lda_loadings(group1_data, group2_data)
