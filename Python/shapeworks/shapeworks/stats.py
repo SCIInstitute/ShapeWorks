@@ -28,11 +28,13 @@ def compute_pvalues_for_group_difference(data, number_of_particles, permutations
 
     return compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations)
 
+
 def compute_pvalues_for_group_difference_studio(group_0_data, group_1_data, permutations=100):
     number_of_particles = int(group_0_data.shape[0] / 3)
     group_0 = np.reshape(group_0_data, (number_of_particles, 3, -1))
     group_1 = np.reshape(group_1_data, (number_of_particles, 3, -1))
     return compute_pvalues_for_group_difference_data(group_0, group_1, permutations)
+
 
 def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations=100):
     number_of_particles = group_0_data.shape[0]
@@ -67,8 +69,9 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
         corrected_pvalue_matrix[particle_id, 0] = np.mean(pval)
     return corrected_pvalue_matrix
 
+
 def normalize(subj_map, group1_mean_map, group2_mean_map):
-    slope     = (2.0/(group2_mean_map - group1_mean_map))
+    slope = (2.0 / (group2_mean_map - group1_mean_map))
     subj_diff = subj_map - group1_mean_map
     subj_map_normalized = slope * subj_diff - 1
     return subj_map_normalized
@@ -82,52 +85,48 @@ def lda(data):
     filenames = data["filename"]
     # Provide the list of file names
     particle_data = sw.ParticleSystem(filenames)
-    
+
     # Calculate the PCA for the read particle system
     shape_statistics = sw.ParticleShapeStatistics()
-    shape_statistics.PCA(particleSystem = particle_data,domainsPerShape=1)
-    
-    #Calculate the loadings
+    shape_statistics.PCA(particleSystem=particle_data, domainsPerShape=1)
+
+    # Calculate the loadings
     shape_statistics.principalComponentProjections()
     pca_loadings = shape_statistics.pcaLoadings().T
 
-    group1_num     = len(group1_idxs)
-    group2_num     = len(group2_idxs)
+    group1_num = len(group1_idxs)
+    group2_num = len(group2_idxs)
 
-    group1_data    = pca_loadings[:, group1_idxs]
-    group2_data    = pca_loadings[:, group2_idxs]
+    group1_data = pca_loadings[:, group1_idxs]
+    group2_data = pca_loadings[:, group2_idxs]
 
+    group1_mean = np.mean(group1_data, axis=1)
+    group2_mean = np.mean(group2_data, axis=1)
 
-    group1_mean    = np.mean(group1_data, axis=1)
-    group2_mean    = np.mean(group2_data, axis=1)
+    overall_mean = np.mean(pca_loadings, axis=1)
 
-    overall_mean   = np.mean(pca_loadings, axis=1)
-
-    
-
-    diffVect  = group1_mean - group2_mean
+    diffVect = group1_mean - group2_mean
 
     group1_mean_diff = group1_mean - overall_mean
     group2_mean_diff = group2_mean - overall_mean
 
-    group1_mean_map = np.dot(diffVect,group1_mean_diff)
-    group2_mean_map = np.dot(diffVect,group2_mean_diff)
+    group1_mean_map = np.dot(diffVect, group1_mean_diff)
+    group2_mean_map = np.dot(diffVect, group2_mean_diff)
 
     group1_mean_map_normalized = normalize(group1_mean_map, group1_mean_map, group2_mean_map)
     group2_mean_map_normalized = normalize(group2_mean_map, group1_mean_map, group2_mean_map)
 
-
     group1_map = np.zeros((group1_num,))
     group2_map = np.zeros((group2_num,))
-    
+
     for ii in range(group1_num):
-        subjDiff = group1_data[:,ii] - overall_mean
-        group1_map[ii] = np.dot(diffVect,subjDiff)
+        subjDiff = group1_data[:, ii] - overall_mean
+        group1_map[ii] = np.dot(diffVect, subjDiff)
         group1_map[ii] = normalize(group1_map[ii], group1_mean_map, group2_mean_map)
 
     for ii in range(group2_num):
-        subjDiff = group2_data[:,ii] - overall_mean
-        group2_map[ii] = np.dot(diffVect,subjDiff)
+        subjDiff = group2_data[:, ii] - overall_mean
+        group2_map[ii] = np.dot(diffVect, subjDiff)
         group2_map[ii] = normalize(group2_map[ii], group1_mean_map, group2_mean_map)
 
     group1_map_mean = group1_map.mean()
@@ -136,9 +135,9 @@ def lda(data):
     group1_map_std = group1_map.std()
     group2_map_std = group2_map.std()
 
-    group1_x = np.linspace(group1_map_mean-6, group1_map_mean+6, num=300)
-    group2_x = np.linspace(group2_map_mean-6, group2_map_mean+6, num=300)
+    group1_x = np.linspace(group1_map_mean - 6, group1_map_mean + 6, num=300)
+    group2_x = np.linspace(group2_map_mean - 6, group2_map_mean + 6, num=300)
 
     group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
     group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
-    return group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map
+    return group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map
