@@ -249,11 +249,17 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
     lists.push_back(list);
   }
 
+  size_t counter = 0;
+
   if (lists.size() > 0) {
     for (size_t i = 0; i < lists[0].size(); i++) {
       // While the random vector updated violates plane constraints
       // Breaks when it doesn't violate for any domain
-      std::vector<PointType> newposs_good;
+      std::vector<vnl_vector_fixed<double, VDimension> > newposs_good;
+
+      //Debuggg
+      std::vector<vnl_vector_fixed<double, VDimension> > dbgprojected;
+      std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;
 
       while (true) {
         // Generate random unit vector
@@ -273,26 +279,69 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         for (size_t j = 0; j < lists.size(); j++) {
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)
-                                 ->GetPositionAfterSplit(lists[j][i], random, epsilon);
-          // Go to surface
-          if (!this->m_DomainFlags[dom_to_process + j * domains_per_shape] &&
-              !this->GetDomain(dom_to_process + j * domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
-            this->GetDomain(dom_to_process + j * domains_per_shape)->ApplyConstraints(newpos, -1);
-          }
-          newposs_good.push_back(newpos);
-          // Check for plane constraint violations
+//          PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)
+//                                 ->GetPositionAfterSplit(lists[j][i], random, epsilon);
+//          // Go to surface
+//          if (!this->m_DomainFlags[dom_to_process + j * domains_per_shape] &&
+//              !this->GetDomain(dom_to_process + j * domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
+//            this->GetDomain(dom_to_process + j * domains_per_shape)->ApplyConstraints(newpos, -1);
+//          }
+//          newposs_good.push_back(newpos);
 
+          // Check for plane constraint violations
           /*if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
             good = false;
             //std::cout << "violation " << lists[j][i] << " new point " << std::endl;
             break;
           }*/
+
+          vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
+          vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], i);
+
+          vnl_vector_fixed<double, VDimension> normupdateVector = updateVector / updateVector.magnitude();
+          vnl_vector_fixed<double, VDimension> normprojected = projected / projected.magnitude();
+
+          //Debuggg
+          dbgoriginal.push_back(normupdateVector);
+          dbgprojected.push_back(normprojected);
+
+          double cosangle = normupdateVector[0]*normprojected[0] + normupdateVector[1]*normprojected[1] + normupdateVector[2]*normprojected[2];
+
+          if(cosangle > 3.14/1){
+              good = false;
+              counter++;
+          }
+
+          projected = projected * epsilon / projected.magnitude();
+
+          newposs_good.push_back(projected);
         }
+
+        //Debuggg
+        for(size_t l = 0; l < dbgprojected.size(); l++){
+            for(size_t m = 0; m < dbgprojected.size(); m++){
+                vnl_vector_fixed<double, VDimension> dbgpro1 = dbgprojected[l];
+                vnl_vector_fixed<double, VDimension> dbgpro2 = dbgprojected[m];
+                double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
+                std::cout << acos(cosangle)*180/3.14 << "\t";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl << std::endl;
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
-            this->AddPosition(newposs_good[j], dom_to_process + j * domains_per_shape, 0);
+            vnl_vector_fixed<double, VDimension> projected = newposs_good[j];
+
+            PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)->UpdateParticlePosition(lists[j][i], i, projected);
+            this->AddPosition(newpos, dom_to_process + j * domains_per_shape, 0);
+
+            // Apply opposite update to each original point in the split.
+            auto neg_projected = -projected;
+            newpos = this->GetDomain(dom_to_process + j * domains_per_shape)->UpdateParticlePosition(lists[j][i], i, neg_projected);
+            this->SetPosition(newpos, i, dom_to_process + j * domains_per_shape, 0);
+            const ParticleDomain *particle_domain = this->GetDomain(dom_to_process + j * domains_per_shape);
+            particle_domain->InvalidateParticlePosition(i);
             // Debuggg
             // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
@@ -303,6 +352,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
       }  // while end
     }    // for end
   }      // if end
+  std::cout << "Counter " << counter << std::endl;
 }
 
 void ParticleSystem::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, double epsilon, size_t domain, int threadId)
