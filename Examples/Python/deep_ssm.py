@@ -142,7 +142,7 @@ def Run_Pipeline(args):
     ref_name = train_names[ref_index]
     ref_translate = ref_mesh.center()
     ref_mesh.translate(-ref_translate)
-    ref_mesh.write(data_dir + 'reference_' + ref_name + '.vtk')
+    ref_mesh.write(data_dir + 'reference.vtk')
 
     print('Creating alignment transforms to ' + ref_name)
     train_rigid_transforms = [] # save in case grooming images
@@ -159,14 +159,10 @@ def Run_Pipeline(args):
         train_mesh.applyTransform(rigid_transform)
 
     # Combine transforms to pass to optimizer
-    train_transform_dir = data_dir + 'train_transforms/'
-    if not os.path.exists(train_transform_dir):
-        os.makedirs(train_transform_dir)
     train_transforms = []
     for reflection, rigid_transform in zip(train_reflections, train_rigid_transforms):
         train_transform = np.matmul(rigid_transform, reflection)
         train_transforms.append(train_transform)
-        np.save(train_transform_dir, train_transform)
     print("Training mesh transforms found.")
 
     ######################################################################################
@@ -222,28 +218,24 @@ def Run_Pipeline(args):
         parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
         parameter_dictionary["iterations_per_split"] = 25
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["use_shape_statistics_after"] = 64
 
-    for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimize",parameters)
-    spreadsheet_file = data_dir + "train.xlsx"
-    project.save(spreadsheet_file)
+    # for key in parameter_dictionary:
+    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    # parameters.set("domain_type",sw.Variant('mesh'))
+    # project.set_parameters("optimize",parameters)
+    # spreadsheet_file = data_dir + "train.xlsx"
+    # project.save(spreadsheet_file)
 
-    # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    # # Run optimization
+    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    # subprocess.check_call(optimizeCmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # # Analyze - open in studio
+    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    # subprocess.check_call(AnalysisCmd)
 
     # Get transforms and particle files from updated project spreadsheet
-    # spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
+    spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
     project = sw.Project()
     project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
@@ -259,7 +251,7 @@ def Run_Pipeline(args):
     print("\nStep 5. Groom Training Images")
     # Get transfroms from spreadsheet
     train_image_list = []
-    print("Loading images...")
+    print("Preparing training images...")
     for train_name in train_names:
         ID = train_name.split("_")[0]
         # Get corresponding image
@@ -270,14 +262,12 @@ def Run_Pipeline(args):
         train_image = sw.Image(corresponding_image_file)
         train_image_list.append(train_image)
     # Get reference image
-    print("Getting reference image.")
     ref_image = train_image_list[ref_index].copy()
     ref_image.resample([1,1,1], sw.InterpolationType.Linear)
     ref_image.setOrigin(ref_image.origin() - ref_translate)
     ref_image.write(data_dir + 'reference_image.nrrd')
     ref_procrustes = sw.utils.getITKtransform(np.array(train_procrustes[ref_index]).reshape(4, 4))
     # Applying rigid transform
-    print("Applying transforms...")
     for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
         train_transform = np.matmul(np.array(train_proc).reshape(4, 4), np.array(train_align).reshape(4, 4))
         train_image.applyTransform(train_transform,
@@ -285,11 +275,9 @@ def Run_Pipeline(args):
                              ref_image.spacing(), ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=True)
     # Get bounding box
-    print("Getting bounding box.")
     bounding_box = sw.MeshUtils.boundingBox(train_mesh_list)
     bounding_box.pad(10)
     # Crop images
-    print("Applying cropping...")
     for train_image in train_image_list:
         train_image.crop(bounding_box)
     # Write images
@@ -308,7 +296,7 @@ def Run_Pipeline(args):
     - percent_dim what percent of variablity to retain (used if num_dim is 0)
     - sampler_type is the distribution to use for sampling. Can be gaussian, mixture, or kde
     '''
-    num_samples = 4960
+    num_samples = 4 # 4960
     num_dim = 0
     percent_variability = 0.95
     sampler_type = "kde"
@@ -325,6 +313,155 @@ def Run_Pipeline(args):
 
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+
+    ######################################################################################
+    print("\nStep 7. Find Validation Mesh Transforms")
+    """
+    Step 7: Validation Mesh Grooming 
+    The required grooming steps are:
+    1. Load mesh
+    2. Apply clipping with planes for finding alignment transform
+    3. Find reflection tansfrom
+    4. Find rigid alignment transform
+    """
+
+    """
+    To begin grooming, we loop over the files and load the meshes
+    """
+    val_reflections = [] 
+    val_names = []
+    val_mesh_list = []
+    val_plane_files = []
+    print('Loading meshes...')
+    for val_mesh_filename in val_mesh_files:
+        # Get shape name
+        val_name = os.path.basename(val_mesh_filename).replace('.ply', '')
+        val_names.append(val_name)
+        # Get mesh
+        val_mesh = sw.Mesh(val_mesh_filename)
+        val_mesh_list.append(val_mesh)
+        """
+        Grooming step 2: Apply clipping for finsing alignment transform
+        """
+        # Load plane
+        for plane_file in plane_files:
+            if val_name in plane_file:
+                corresponding_plane_file = plane_file
+        with open(corresponding_plane_file) as json_file:
+            plane = json.load(json_file)['planes'][0]['points']
+        val_plane_files.append(corresponding_plane_file)
+        # Clip mesh
+        val_mesh.clip(plane[0], plane[1], plane[2])
+        """
+        Grooming Step 3: Get reflection transform - We have left and 
+        right femurs, so we reflect the non-reference side meshes 
+        so that all of the femurs can be aligned.
+        """
+        reflection = np.eye(4) # Identity
+        if ref_side in val_name:
+            reflection[0][0] = -1 # Reflect across X
+            val_mesh.applyTransform(reflection)
+        val_reflections.append(reflection)
+
+    print('Creating alignment transforms to ' + ref_name)
+    val_rigid_transforms = [] # save in case grooming images
+    for val_mesh, val_name in zip(val_mesh_list, val_names):
+        """
+        Grooming Step 4: Rigid alignment
+        This step rigidly aligns each shape to the selected reference. 
+        """
+        # compute rigid transformation
+        rigid_transform = val_mesh.createTransform(ref_mesh, 
+                                        sw.Mesh.AlignmentType.Rigid, 100)
+        # apply rigid transform
+        val_rigid_transforms.append(rigid_transform)
+        val_mesh.applyTransform(rigid_transform)
+
+    # Combine transforms to pass to optimizer
+    val_transforms = []
+    for reflection, rigid_transform in zip(val_reflections, val_rigid_transforms):
+        val_transform = np.matmul(rigid_transform, reflection)
+        val_transforms.append(val_transform)
+    print("Validation mesh transforms found.")
+
+
+    #################################################################################################
+    print("\nStep 8. Optimize Validation Particles with Fixed Domains")
+    # Get mean shape 
+    train_model_dir = data_dir + "/train_particles/"
+    file_list = sorted(glob.glob(train_model_dir + '/*world.particles'))
+    mean_shape = np.loadtxt(file_list[0])
+    for i in range(1,len(file_list)):
+        mean_shape += np.loadtxt(file_list[i])
+    mean_shape = mean_shape / len(file_list)
+    mean_shape_path = train_model_dir + '/meanshape_local.particles'
+    np.savetxt(mean_shape_path, mean_shape)
+    # Create spreadsheet
+    project_location = data_dir
+    subjects = []
+    # Add fixed training shapes
+    for i in range(len(train_mesh_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(1)
+        rel_mesh_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
+        rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
+        subject.set_original_filenames(rel_mesh_files)
+        subject.set_groomed_filenames(rel_groom_files)
+        transform = [ train_transforms[i].flatten() ]
+        subject.set_groomed_transforms(transform)
+        subject.set_constraints_filenames(rel_plane_files)
+        subject.set_landmarks_filenames([train_local_particles[i]])
+        subject.set_extra_values({"fixed": "yes"})
+        subjects.append(subject)
+    # Add new validation shapes
+    for i in range(len(val_mesh_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(1)
+        rel_mesh_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
+        rel_plane_files = sw.utils.get_relative_paths([val_plane_files[i]], project_location)
+        # rel_particle_files = sw.utils.get_relative_paths([mean_shape_path], project_location)
+        subject.set_original_filenames(rel_mesh_files)
+        subject.set_groomed_filenames(rel_groom_files)
+        transform = [ val_transforms[i].flatten() ]
+        subject.set_groomed_transforms(transform)
+        subject.set_constraints_filenames(rel_plane_files)
+        # subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_extra_values({"fixed": "no"})
+        subjects.append(subject)
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+
+    # Update parameter dictionary
+    parameter_dictionary["use_landmarks"] = 1
+    parameter_dictionary["use_fixed_subjects"] = 1
+    parameter_dictionary["narrow_band"] = 1e10
+    parameter_dictionary["fixed_subjects_column"] = "fixed"
+    parameter_dictionary["fixed_subjects_choice"] = "yes"
+    parameter_dictionary["verbosity"] = 3
+    for key in parameter_dictionary:
+        parameters.set(key, sw.Variant(parameter_dictionary[key]))
+    project.set_parameters("optimize", parameters)
+    # Set studio parameters
+    studio_dictionary = {
+        "show_landmarks": 0,
+        "tool_state": "analysis"
+    }
+    studio_parameters = sw.Parameters()
+    for key in studio_dictionary:
+        studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
+    project.set_parameters("studio", studio_parameters)
+    spreadsheet_file = data_dir + "validation.xlsx"
+    project.save(spreadsheet_file)
+
+    # Run optimization
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
+
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
 
     # ##########################################################################################################
     # print("\nStep 5. Find Test and Validation Transforms and Groom Images")
@@ -425,4 +562,88 @@ def Run_Pipeline(args):
     #     transform = np.matmul(rigid_transform1, transform)
     #     # transform = np.matmul(rigid_transform2, transform)
     #     val_test_transforms.append(transform)
-    #     np.save(val_test_transforms_dir + ID + '.npy', transform)
+    #     np.save(val_test_transforms_dir + ID + '.npy', transform)        
+
+
+
+    
+    # # debug
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(train_mesh_files, train_transforms):
+    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_train_meshes/', groomed_meshes, names)
+    # groomed_meshes = []
+    # names = []
+    # for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
+    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
+    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
+    # m_files = sw.utils.save_meshes(data_dir + 'debug_val_test_meshes/', groomed_meshes, names)
+
+
+    # print("\nStep 7. Optimize Validation and Test Particles Using Fixed Domain")
+    # """
+    # TODO: Make this fixed domain!!
+    # Step 7: FIXED DOMAIN OPTIMIZE - Particle based optimization for validation and test using fixed domains
+    # Particles for training meshes will not be updated
+    # Local particles will be in alignment with original images and meshes
+    # World particles would be in alignment with groomed images from the previous step if Procrustes was set to off
+    # Visit this link for more information about optimization: 
+    # http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    # """
+    # # Create spreadsheet
+    # subjects = []
+    # for i in range(len(train_mesh_files)):
+    #     subject = sw.Subject()
+    #     subject.set_number_of_domains(1)
+    #     subject.set_segmentation_filenames([train_mesh_files[i]])
+    #     subject.set_groomed_filenames([train_mesh_files[i]])
+    #     subject.set_groomed_transforms([train_transforms[i].flatten()])
+    #     subjects.append(subject)
+    # for i in range(len(val_test_mesh_files)):
+    #     subject = sw.Subject()
+    #     subject.set_number_of_domains(1)
+    #     subject.set_segmentation_filenames([val_test_mesh_files[i]])
+    #     subject.set_groomed_filenames([val_test_mesh_files[i]])
+    #     subject.set_groomed_transforms([val_test_transforms[i].flatten()])
+    #     subjects.append(subject)
+    # project = sw.Project()
+    # project.set_subjects(subjects)
+    # parameters = sw.Parameters()
+    # # Create a dictionary for all the parameters required by optimization
+    # parameter_dictionary = {
+    #     "number_of_particles" : 512,
+    #     "use_normals": 0,
+    #     "normal_weight": 10.0,
+    #     "checkpointing_interval" : 200,
+    #     "keep_checkpoints" : 0,
+    #     "iterations_per_split" : 1000,
+    #     "optimization_iterations" : 500,
+    #     "starting_regularization" : 100,
+    #     "ending_regularization" : 0.1,
+    #     "recompute_regularization_interval" : 2,
+    #     "domains_per_shape" : 1,
+    #     "relative_weighting" : 10,
+    #     "initial_relative_weighting" : 0.01,
+    #     "procrustes_interval" : 1,
+    #     "procrustes_scaling" : 1,
+    #     "save_init_splits" : 1,
+    #     "debug_projection" : 0,
+    #     "verbosity" : 0,
+    #     "use_statistics_in_init" : 0,
+    #     "adaptivity_mode": 0
+    # }  
+    # # Set params and save spreadsheet
+    # for key in parameter_dictionary:
+    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    # parameters.set("domain_type",sw.Variant('mesh'))
+    # project.set_parameters("optimze",parameters)
+    # spreadsheet_file = data_dir + "val_test_optimize.xlsx"
+    # project.save(spreadsheet_file)
+    # # Optimize 
+    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    # subprocess.check_call(optimizeCmd)
+    # # Analyze
+    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    # subprocess.check_call(AnalysisCmd)
