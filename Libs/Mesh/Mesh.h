@@ -28,15 +28,19 @@ public:
   using MeshPoints = vtkSmartPointer<vtkPoints>;
 
   Mesh(const std::string& pathname);
+
   Mesh(MeshType meshPtr) : mesh(meshPtr) {
     if (!mesh) throw std::invalid_argument("null meshPtr");
     invalidateLocators();
   }
+
   Mesh(const Mesh& orig) : mesh(MeshType::New()) {
     mesh->DeepCopy(orig.mesh);
     invalidateLocators();
   }
+
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
+
   Mesh& operator=(const Mesh& orig) {
     mesh = MeshType::New();
     mesh->DeepCopy(orig.mesh);
@@ -45,7 +49,6 @@ public:
 
   Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces);
 
-  Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
 
   /// append two meshes
