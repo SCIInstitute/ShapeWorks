@@ -1,15 +1,19 @@
 #pragma once
 
+#include <vtkSmartPointer.h>
+
 #include <vector>
 
 #include "Constraint.h"
-
-#include <vtkSmartPointer.h>
 
 class vtkPlane;
 
 namespace shapeworks {
 
+//! PlaneConstraint
+/*!
+ * Encapsulate functionality related to plane constraints
+ */
 class PlaneConstraint : public Constraint {
  public:
   bool isViolated(const Eigen::Vector3d &pt) const override;
@@ -47,7 +51,7 @@ class PlaneConstraint : public Constraint {
   Eigen::Vector3d planePoint_;
 
   std::vector<Eigen::Vector3d> points_;
-  double offset_;
+  double offset_ = 0;
 };
 
 }  // namespace shapeworks

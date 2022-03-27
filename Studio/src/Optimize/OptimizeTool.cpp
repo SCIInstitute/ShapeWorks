@@ -64,7 +64,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   ui_->normals_strength->setValidator(double_validator);
   ui_->procrustes_interval->setValidator(zero_and_up);
   ui_->multiscale_particles->setValidator(above_zero);
-  ui_->narrow_band->setValidator(above_zero);
+  ui_->narrow_band->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -150,6 +150,14 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     emit optimize_complete();
     return;
   }
+
+  if (session_->get_filename() == "") {
+    emit error_message("Project must be saved before running Optimize");
+    return;
+  } else {
+    session_->save_project(session_->get_filename());
+  }
+
   this->optimization_is_running_ = true;
   emit optimize_start();
 

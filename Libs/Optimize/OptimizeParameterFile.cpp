@@ -481,7 +481,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> planes = optimize->GetSampler()->ComputeCuttingPlanes();
   auto ffcs = optimize->GetSampler()->GetFFCs();
 
   for (int index = 0; index < meshFiles.size(); index++) {
@@ -527,10 +527,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         std::cout << "ffcssize " << ffcs.size() << std::endl;
       }
       if (index < ffcs.size()) {
-          for (size_t i = 0; i < ffcs[index].size(); i++) {
-            mesh.splitMesh(ffcs[index][i].boundaries, ffcs[index][i].query, index, i);
-            mesh = Mesh(mesh.clipByField("inout", 0.0));
-          }
+        mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
+        mesh = Mesh(mesh.clipByField("inout", 1.0));
       }
 
       auto poly_data = mesh.getVTKMesh();
@@ -1156,37 +1154,14 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
   std::istringstream inputsBuffer;
   int num_inputs = this->get_num_inputs(docHandle);
 
-  std::vector<int> ffcs_per_input;
-
-  elem = docHandle->FirstChild("num_ffcs_per_input").Element();
-  if (elem) {
-    inputsBuffer.str(elem->GetText());
-    double val;
-
-    while (inputsBuffer >> val) {
-      ffcs_per_input.push_back(val);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-    if (ffcs_per_input.size() != num_inputs) {
-      std::cerr <<
-                "ERROR: Incomplete free-form constraint(ffc) data! Number of ffcs for every input shape is required!!"
-                << std::endl;
-      throw 1;
-    }
-  }
-
-  int num_ffcs = std::accumulate(
-    ffcs_per_input.begin(), ffcs_per_input.end(), 0);
+  int num_ffcs = num_inputs;
 
   if (this->verbosity_level_ > 1) {
     std::cout << "Number of free-form constraints " << num_ffcs << std::endl;
   }
-
   // Check that if ffcs are not given, return true. If we expected ffcs(num_ffcs_per_input was given), print a warning to cerr.
   elem = docHandle->FirstChild("ffcs").Element();
   if (!elem) {
-    if (num_ffcs > 0) std::cerr << "Warning: No free-form constraint(ffc) filenames provided. Running without free form constraints\n";
     return true;
   }
 
@@ -1210,76 +1185,74 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
   }
   else {
     for (size_t shapeCount = 0; shapeCount < num_inputs; shapeCount++) {
-      for (size_t ffcCount = 0; ffcCount < ffcs_per_input[shapeCount]; ffcCount++) {
-        // Reading in ffc file for shape shapeCount # ffcCount
-        std::string fn = ffcFiles[count];
-        //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
-        bool query_read = true;
+      // Reading in ffc file for shape shapeCount # ffcCount
+      std::string fn = ffcFiles[count];
+      //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
+      bool query_read = true;
 
-        std::vector<std::vector<Eigen::Vector3d> > boundaries;
-        int boundary_count = -1;
-        Eigen::Vector3d query;
+      std::vector<std::vector<Eigen::Vector3d>> boundaries;
+      int boundary_count = -1;
+      Eigen::Vector3d query;
 
-        fstream newfile;
-        newfile.open(fn, ios::in);
+      fstream newfile;
+      newfile.open(fn, ios::in);
 
-        if (newfile.is_open()) {   //checking whether the file is open
-          std::string tp;
-          while (getline(newfile, tp)) { //read data from file object and put it into string.
-            //cout << tp << "\n"; //print the data of the string
-            if (tp == "query") {
-              query_read = true;
-            }
-            else if (tp == "boundary_pts") {
-              query_read = false;
-              std::vector<Eigen::Vector3d> boundary;
-              boundaries.push_back(boundary);
-              boundary_count++;
-            }
-            else {
-              try {
-                if (query_read) {
-                  std::istringstream iss(tp);
-                  iss >> buffer;
-                  query(0) = std::stod(buffer);
-                  iss >> buffer;
-                  query(1) = std::stod(buffer);
-                  iss >> buffer;
-                  query(2) = std::stod(buffer);
-                  //cout << "Added query " << query.transpose() << "\n";
-                }
-                else {
-                  Eigen::Vector3d bpt;
-                  std::istringstream iss(tp);
-                  iss >> buffer;
-                  bpt(0) = std::stod(buffer);
-                  iss >> buffer;
-                  bpt(1) = std::stod(buffer);
-                  iss >> buffer;
-                  bpt(2) = std::stod(buffer);
-                  boundaries[boundary_count].push_back(bpt);
-                  //cout << "Added boundary " << bpt.transpose() << "\n";
-                }
+      if (newfile.is_open()) {   //checking whether the file is open
+        std::string tp;
+        while (getline(newfile, tp)) { //read data from file object and put it into string.
+          //cout << tp << "\n"; //print the data of the string
+          if (tp == "query") {
+            query_read = true;
+          }
+          else if (tp == "boundary_pts") {
+            query_read = false;
+            std::vector<Eigen::Vector3d> boundary;
+            boundaries.push_back(boundary);
+            boundary_count++;
+          }
+          else {
+            try {
+              if (query_read) {
+                std::istringstream iss(tp);
+                iss >> buffer;
+                query(0) = std::stod(buffer);
+                iss >> buffer;
+                query(1) = std::stod(buffer);
+                iss >> buffer;
+                query(2) = std::stod(buffer);
+                //cout << "Added query " << query.transpose() << "\n";
               }
-              catch (std::exception& e) {
-                cout << e.what() << '\n';
-                std::cerr << "ERROR: File " << fn
-                          << " threw an exception. Please check the correctness and formating of the file."
-                          << std::endl;
-                throw 1;
+              else {
+                Eigen::Vector3d bpt;
+                std::istringstream iss(tp);
+                iss >> buffer;
+                bpt(0) = std::stod(buffer);
+                iss >> buffer;
+                bpt(1) = std::stod(buffer);
+                iss >> buffer;
+                bpt(2) = std::stod(buffer);
+                boundaries[boundary_count].push_back(bpt);
+                //cout << "Added boundary " << bpt.transpose() << "\n";
               }
+            }
+            catch (std::exception& e) {
+              cout << e.what() << '\n';
+              std::cerr << "ERROR: File " << fn
+                        << " threw an exception. Please check the correctness and formating of the file."
+                        << std::endl;
+              throw 1;
             }
           }
-          newfile.close(); //close the file object.
         }
-        else {
-          std::cerr << "ERROR: File " << fn
-                    << " could not be open. Please check that the file is available." << std::endl;
-          throw 1;
-        }
-        optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
-        count++;
+        newfile.close(); //close the file object.
       }
+      else {
+        std::cerr << "ERROR: File " << fn
+                  << " could not be opened. Please check that the file is available." << std::endl;
+        throw 1;
+      }
+      optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
+      count++;
     }
   }
 

@@ -45,6 +45,8 @@ class DataTool : public QWidget {
 
   void delete_planes_clicked();
 
+  void delete_ffc_clicked();
+
   void update_notes();
 
   std::string get_notes();
@@ -61,6 +63,7 @@ class DataTool : public QWidget {
 
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
+  void handle_ffc_active_changed();
 
  Q_SIGNALS:
   void import_button_clicked();
@@ -69,6 +72,7 @@ class DataTool : public QWidget {
   void update_domain_box(QComboBox* box);
 
   void update_plane_table();
+  void update_ffc_table();
 
   Preferences& preferences_;
 

@@ -723,40 +723,18 @@ QWidget#specificity_panel {
       <item>
        <widget class="QWidget" name="constraints_content" native="true">
         <layout class="QGridLayout" name="gridLayout_14">
-         <item row="5" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QTableWidget" name="plane_table_">
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::ContiguousSelection</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Planes:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0" colspan="2">
-          <widget class="QLabel" name="plane_contraints_instruction_">
-           <property name="text">
-            <string>Plane Instructions</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item row="0" column="0" colspan="2">
           <widget class="QWidget" name="constraints_domain_widget_" native="true">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -772,27 +750,69 @@ QWidget#specificity_panel {
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item>
-             <widget class="QLabel" name="label_5">
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QWidget" name="plane_widget" native="true">
+           <layout class="QGridLayout" name="gridLayout_5">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Domain</string>
+               <string>Planes:</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QComboBox" name="constraints_domain_box_"/>
+            <item row="1" column="0">
+             <widget class="QTableWidget" name="plane_table_">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="delete_plane_">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="plane_contraints_instruction_">
+              <property name="text">
+               <string>Plane Instructions</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
          </item>
          <item row="3" column="0" colspan="2">
-          <widget class="QPushButton" name="delete_plane_">
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
           <widget class="QWidget" name="ffc_widget" native="true">
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
@@ -814,69 +834,84 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QTableView" name="ffc_table_">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::ContiguousSelection</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="new_ffc_">
-              <property name="text">
-               <string>New</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="delete_ffc_">
-              <property name="text">
-               <string>Delete</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0" colspan="2">
              <widget class="QWidget" name="ffc_controls_" native="true">
               <layout class="QGridLayout" name="gridLayout_3">
-               <item row="0" column="1" colspan="2">
+               <item row="2" column="1">
+                <widget class="QRadioButton" name="ffc_included_mode_">
+                 <property name="text">
+                  <string>Included</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" colspan="2">
                 <widget class="QSlider" name="ffc_brush_size_">
+                 <property name="minimum">
+                  <number>5</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="value">
+                  <number>80</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Brush Size</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QRadioButton" name="ffc_included_mode_">
-                 <property name="text">
-                  <string>Included</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
                   <string>Paint Type</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Brush Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
                 <widget class="QRadioButton" name="ffc_excluded_mode_">
                  <property name="text">
                   <string>Excluded</string>
                  </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="ffc_active_">
+                 <property name="text">
+                  <string>Painting Enabled</string>
+                 </property>
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QPushButton" name="delete_ffc_">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableWidget" name="ffc_table_">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
              </widget>
             </item>
            </layout>

@@ -7,12 +7,11 @@ Example ShapeWorks Pipeline for mesh optimization
 In this example we provide a pipeline with a dataset of 
 pre-aligned lump meshes.
 """
+
 import os
 import glob
+import subprocess
 import shapeworks as sw
-import OptimizeUtils
-import AnalyzeUtils
-
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
@@ -22,7 +21,7 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "lumps-v0"
+    dataset_name = "lumps"
     output_directory = "Output/lumps/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -45,7 +44,21 @@ def Run_Pipeline(args):
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
-    # This dataset is prealigned and does not require any grooming steps.
+    """
+    This dataset is prealigned and does not require any grooming steps.
+    We loop over the files and load the meshes.
+    """
+    names = []
+    mesh_list = []
+    for mesh_filename in mesh_files:
+        print('Loading: ' + mesh_filename)
+        # Get shape name
+        name = os.path.basename(mesh_filename).replace('.ply', '')
+        names.append(name)
+        # Get mesh
+        mesh = sw.Mesh(mesh_filename)
+        mesh_list.append(mesh)
+
 
     print("\nStep 2. Optimize - Particle Based Optimization\n")
     """
@@ -57,27 +70,39 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
+    # Create project spreadsheet
+    project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
+    subjects = []
+    number_domains = 1
+    for i in range(len(mesh_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i]], project_location)
+        subject.set_original_filenames(rel_mesh_files)
+        #groomed file is same as input file
+        subject.set_groomed_filenames(rel_mesh_files)
+        subjects.append(subject)
+    # Set project
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
         "number_of_particles": 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 100,
         "keep_checkpoints": 0,
         "iterations_per_split": 2000,
         "optimization_iterations": 500,
         "starting_regularization": 10,
         "ending_regularization": 1,
-        # "visualizer_enable": 1,
-        # "visualizer_wireframe": 1,
-        # "visualizer_screenshot_directory": testDirectory + 'screenshots/',
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": "mesh",
         "relative_weighting": 10,
         "initial_relative_weighting": 1,
         "procrustes_interval": 0,
@@ -93,25 +118,28 @@ def Run_Pipeline(args):
         parameter_dictionary["visualizer_enable"] = 0
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameter_dictionary["use_shape_statistics_after"] = 32
-    # Execute the optimization function
-    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-        point_dir, mesh_files, parameter_dictionary)
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
+    
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = output_directory + "shape_models/lumps_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
 
-    # Prepare analysis XML
-    analyze_xml = point_dir + "/lumps_analyze.xml"
-    AnalyzeUtils.create_analyze_xml(analyze_xml, mesh_files, local_point_files, world_point_files)
+    # Run optimization
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
-    AnalyzeUtils.check_results(args, world_point_files)
+    sw.utils.check_results(args, spreadsheet_file)
 
-    print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
-    Step 3: ANALYZE - Shape Analysis and Visualization
-
-    Now we launch studio to analyze the resulting shape model.
-    For more information about the analysis step, see docs/workflow/analyze.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    AnalyzeUtils.launch_shapeworks_studio(analyze_xml)
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)

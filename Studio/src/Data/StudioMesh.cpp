@@ -8,6 +8,7 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkStaticPointLocator.h>
 #include <vtkTriangleFilter.h>
 
 #include <QMessageBox>
@@ -188,6 +189,48 @@ double StudioMesh::get_largest_dimension_size() {
   return max;
 }
 
+//---------------------------------------------------------------------------
+vtkFloatArray* StudioMesh::get_or_create_array(std::string name, float default_value) {
+  auto result = poly_data_->GetPointData()->GetArray(name.c_str());
+  if (!result) {
+    vtkFloatArray* array = vtkFloatArray::New();
+    array->SetName(name.c_str());
+    array->SetNumberOfTuples(poly_data_->GetNumberOfPoints());
+    array->FillComponent(0, default_value);
+    poly_data_->GetPointData()->AddArray(array);
+  }
+
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(poly_data_->GetPointData()->GetArray(name.c_str()));
+  return array;
+}
+
+//---------------------------------------------------------------------------
+void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
+  if (!locator_) {
+    locator_ = vtkSmartPointer<vtkStaticPointLocator>::New();
+    locator_->SetDataSet(poly_data_);
+    locator_->BuildLocator();
+  }
+
+  auto scalars = get_or_create_array(FFC_PAINT, 1.0);
+
+  vtkNew<vtkIdList> result;
+  /// find vertices within paint sphere
+  locator_->FindPointsWithinRadius(radius, world_pos, result);
+  for (vtkIdType i = 0; i < result->GetNumberOfIds(); i++) {
+    vtkIdType point_ind = result->GetId(i);
+    float value = inclusive ? 1 : 0;
+    scalars->SetTuple1(point_ind, value);
+    //std::cerr << "paint " << point_ind << " to " << value << "\n";
+  }
+  scalars->Modified();
+}
+
+//---------------------------------------------------------------------------
+bool StudioMesh::has_ffc_paint() {
+  auto result = poly_data_->GetPointData()->GetArray(FFC_PAINT);
+  return result != nullptr;
+}
 
 //---------------------------------------------------------------------------
 void StudioMesh::apply_scalars(MeshHandle mesh) {

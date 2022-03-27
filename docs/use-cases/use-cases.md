@@ -69,14 +69,7 @@ When this argument is used, the grooming steps (if any) are skipped. Instead the
 ```
 $ python RunUseCase.py [use case name] --skip_grooming
 ```
-           
-#### --groom_images
-Some use case datasets include both segmentations and corresponding unsegmented imaging data. In these cases, when the '--groom_images' argument is used, the images are carried through the grooming process with the segmentations so that they remain in alignment. This is useful if the user wishes to analyze the correspondence model in relation to unsegmented images.
-
-```
-$ python RunUseCase.py [use case name] --groom_images
-```
-          
+      
 #### --use_single_scale
 Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo *initialization* and *optimization* stages. The multi-scale argument triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). 
 
