@@ -140,6 +140,8 @@ def Run_Pipeline(args):
     # Make a copy of the reference mesh
     ref_mesh = train_mesh_list[ref_index].copy()
     ref_name = train_names[ref_index]
+    ref_translate = ref_mesh.center()
+    ref_mesh.translate(-ref_translate)
     ref_mesh.write(data_dir + 'reference_' + ref_name + '.vtk')
 
     print('Creating alignment transforms to ' + ref_name)
@@ -206,9 +208,9 @@ def Run_Pipeline(args):
         "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.1,
-        "procrustes" : 0,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
+        "procrustes" : 1,
+        "procrustes_interval" : 1,
+        "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "debug_projection" : 0,
         "verbosity" : 0,
@@ -225,29 +227,30 @@ def Run_Pipeline(args):
         parameter_dictionary["multiscale"] = 1
         parameter_dictionary["use_shape_statistics_after"] = 64
 
-    # for key in parameter_dictionary:
-    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    # parameters.set("domain_type",sw.Variant('mesh'))
-    # project.set_parameters("optimize",parameters)
-    # spreadsheet_file = data_dir + "train_no_proc.xlsx"
-    # project.save(spreadsheet_file)
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = data_dir + "train.xlsx"
+    project.save(spreadsheet_file)
 
-    # # Run optimization
-    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    # subprocess.check_call(optimizeCmd)
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
-    # # Analyze - open in studio
-    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # subprocess.check_call(AnalysisCmd)
+    # Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)
 
-    # Get transforms and particle files from project spreadsheet
-    spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train_no_proc.xlsx'
+    # Get transforms and particle files from updated project spreadsheet
+    # spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
     project = sw.Project()
     project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
     train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
     train_local_particles = project.get_string_column("local_particles_1")
-    train_world_particles = project.get_string_column("world_particles_1")
+    train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
+
 
     ##########################################################################################################
     """
@@ -270,34 +273,58 @@ def Run_Pipeline(args):
     print("Getting reference image.")
     ref_image = train_image_list[ref_index].copy()
     ref_image.resample([1,1,1], sw.InterpolationType.Linear)
+    ref_image.setOrigin(ref_image.origin() - ref_translate)
     ref_image.write(data_dir + 'reference_image.nrrd')
     ref_procrustes = sw.utils.getITKtransform(np.array(train_procrustes[ref_index]).reshape(4, 4))
-    # Applyinfg rigid transform
+    # Applying rigid transform
     print("Applying transforms...")
     for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
         train_transform = np.matmul(np.array(train_proc).reshape(4, 4), np.array(train_align).reshape(4, 4))
-        # Align image
         train_image.applyTransform(train_transform,
                              ref_image.origin(),  ref_image.dims(),
                              ref_image.spacing(), ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=True)
-    # Write images
-    print("Writing groomed train images.")
-    train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
-                    train_names, extension='nrrd', compressed=True, verbose=False)
     # Get bounding box
     print("Getting bounding box.")
     bounding_box = sw.MeshUtils.boundingBox(train_mesh_list)
     bounding_box.pad(10)
-    # bounding_box.write(data_dir + "bounding_box.txt")
+    # Crop images
     print("Applying cropping...")
     for train_image in train_image_list:
-        # Crop image
         train_image.crop(bounding_box)
     # Write images
     print("Writing groomed train images.")
     train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
                     train_names, extension='nrrd', compressed=True, verbose=False)
+
+    ##########################################################################################################
+    """
+    Step 6: Create additional training data
+    """
+    print("\nStep 6. Augment data\n")
+    '''
+    - num_samples is how many samples to generate 
+    - num_dim is the number of PCA scores to use
+    - percent_dim what percent of variablity to retain (used if num_dim is 0)
+    - sampler_type is the distribution to use for sampling. Can be gaussian, mixture, or kde
+    '''
+    num_samples = 4960
+    num_dim = 0
+    percent_variability = 0.95
+    sampler_type = "kde"
+    if args.tiny_test:
+        num_samples = 2
+        num_dim = 0
+        percent_variability = 0.99
+    aug_dir = data_dir + "augmentation/"
+    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, train_world_particles,
+                                                             num_samples, num_dim, percent_variability, sampler_type,
+                                                             mixture_num=0, processes=1)
+    print("Dimensions retained: " + str(embedded_dim))
+    aug_data_csv = aug_dir + "TotalData.csv"
+
+    if not args.tiny_test and not args.verify:
+        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
     # ##########################################################################################################
     # print("\nStep 5. Find Test and Validation Transforms and Groom Images")
@@ -398,88 +425,4 @@ def Run_Pipeline(args):
     #     transform = np.matmul(rigid_transform1, transform)
     #     # transform = np.matmul(rigid_transform2, transform)
     #     val_test_transforms.append(transform)
-    #     np.save(val_test_transforms_dir + ID + '.npy', transform)        
-
-
-
-    
-    # # debug
-    # groomed_meshes = []
-    # names = []
-    # for mesh_file, transform in zip(train_mesh_files, train_transforms):
-    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
-    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    # m_files = sw.utils.save_meshes(data_dir + 'debug_train_meshes/', groomed_meshes, names)
-    # groomed_meshes = []
-    # names = []
-    # for mesh_file, transform in zip(val_test_mesh_files, val_test_transforms):
-    #   names.append(mesh_file.split('/')[-1].replace(".ply",""))
-    #   groomed_meshes.append(sw.Mesh(mesh_file).applyTransform(transform))
-    # m_files = sw.utils.save_meshes(data_dir + 'debug_val_test_meshes/', groomed_meshes, names)
-
-
-    # print("\nStep 7. Optimize Validation and Test Particles Using Fixed Domain")
-    # """
-    # TODO: Make this fixed domain!!
-    # Step 7: FIXED DOMAIN OPTIMIZE - Particle based optimization for validation and test using fixed domains
-    # Particles for training meshes will not be updated
-    # Local particles will be in alignment with original images and meshes
-    # World particles would be in alignment with groomed images from the previous step if Procrustes was set to off
-    # Visit this link for more information about optimization: 
-    # http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    # """
-    # # Create spreadsheet
-    # subjects = []
-    # for i in range(len(train_mesh_files)):
-    #     subject = sw.Subject()
-    #     subject.set_number_of_domains(1)
-    #     subject.set_segmentation_filenames([train_mesh_files[i]])
-    #     subject.set_groomed_filenames([train_mesh_files[i]])
-    #     subject.set_groomed_transforms([train_transforms[i].flatten()])
-    #     subjects.append(subject)
-    # for i in range(len(val_test_mesh_files)):
-    #     subject = sw.Subject()
-    #     subject.set_number_of_domains(1)
-    #     subject.set_segmentation_filenames([val_test_mesh_files[i]])
-    #     subject.set_groomed_filenames([val_test_mesh_files[i]])
-    #     subject.set_groomed_transforms([val_test_transforms[i].flatten()])
-    #     subjects.append(subject)
-    # project = sw.Project()
-    # project.set_subjects(subjects)
-    # parameters = sw.Parameters()
-    # # Create a dictionary for all the parameters required by optimization
-    # parameter_dictionary = {
-    #     "number_of_particles" : 512,
-    #     "use_normals": 0,
-    #     "normal_weight": 10.0,
-    #     "checkpointing_interval" : 200,
-    #     "keep_checkpoints" : 0,
-    #     "iterations_per_split" : 1000,
-    #     "optimization_iterations" : 500,
-    #     "starting_regularization" : 100,
-    #     "ending_regularization" : 0.1,
-    #     "recompute_regularization_interval" : 2,
-    #     "domains_per_shape" : 1,
-    #     "relative_weighting" : 10,
-    #     "initial_relative_weighting" : 0.01,
-    #     "procrustes_interval" : 1,
-    #     "procrustes_scaling" : 1,
-    #     "save_init_splits" : 1,
-    #     "debug_projection" : 0,
-    #     "verbosity" : 0,
-    #     "use_statistics_in_init" : 0,
-    #     "adaptivity_mode": 0
-    # }  
-    # # Set params and save spreadsheet
-    # for key in parameter_dictionary:
-    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    # parameters.set("domain_type",sw.Variant('mesh'))
-    # project.set_parameters("optimze",parameters)
-    # spreadsheet_file = data_dir + "val_test_optimize.xlsx"
-    # project.save(spreadsheet_file)
-    # # Optimize 
-    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    # subprocess.check_call(optimizeCmd)
-    # # Analyze
-    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # subprocess.check_call(AnalysisCmd)
+    #     np.save(val_test_transforms_dir + ID + '.npy', transform)
