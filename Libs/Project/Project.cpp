@@ -202,15 +202,15 @@ void Project::load_subjects() {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
     subject->set_number_of_domains(this->num_domains_per_subject_);
-    subject->set_original_filenames(this->get_list(original_columns, i));
-    subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_original_filenames(this->get_file_list(original_columns, i));
+    subject->set_groomed_filenames(this->get_file_list(groomed_columns, i));
     subject->set_landmarks_filenames(this->get_list(landmarks_columns, i));
-    subject->set_constraints_filenames(this->get_list(constraints_columns, i));
+    subject->set_constraints_filenames(this->get_file_list(constraints_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
     subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));
-    subject->set_image_filenames(this->get_list(image_columns, i));
+    subject->set_image_filenames(this->get_file_list(image_columns, i));
 
-    auto feature_list = this->get_list(feature_columns, i);
+    auto feature_list = this->get_file_list(feature_columns, i);
     std::map<std::string, std::string> map;
     for (int j = 0; j < feature_columns.size(); j++) {
       std::string feature = feature_columns[j].substr(std::strlen(FEATURE_PREFIX));
@@ -226,8 +226,8 @@ void Project::load_subjects() {
     }
     subject->set_group_values(group_map);
 
-    auto locals = this->get_list(local_particle_columns, i);
-    auto worlds = this->get_list(world_particle_columns, i);
+    auto locals = this->get_file_list(local_particle_columns, i);
+    auto worlds = this->get_file_list(world_particle_columns, i);
     subject->set_local_particle_filenames(locals);
     subject->set_world_particle_filenames(worlds);
 
@@ -778,6 +778,16 @@ void Project::clear_parameters(const std::string& name) {
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> Project::get_file_list(std::vector<std::string> columns, int subject)
+{
+  auto list = get_list(columns, subject);
+  for (auto& item : list) {
+    item = replace_string(item, "\\", "/");
+  }
+  return list;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_list(std::vector<std::string> columns, int subject) {
   std::vector<std::string> list;
   for (int s = 0; s < columns.size(); s++) {
@@ -1026,5 +1036,6 @@ std::string Project::get_column_identifier(std::string name) {
   }
   return name;
 }
+
 
 //---------------------------------------------------------------------------

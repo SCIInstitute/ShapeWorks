@@ -26,7 +26,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     
-    dataset_name = "ellipsoid_joint_size_rotation"
+    dataset_name = "ellipsoid_joint_rotation"
     output_directory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -145,33 +145,34 @@ def Run_Pipeline(args):
     ref_index = sw.find_reference_image_index(domain_1_shapes)
     reference = domain_1_shapes[ref_index].copy()
     ref_name = shape_names[ref_index*domains_per_shape]
-
+    domain1_reference = domain_1_shapes[ref_index].copy()
+    domain2_reference = shape_seg_list[ref_index*domains_per_shape+1].copy()
+    domain1_ref_name = shape_names[ref_index*domains_per_shape]
+    domain2_ref_name = shape_names[ref_index*domains_per_shape+1]
+    reference = [domain1_reference,domain2_reference]
+    ref_name = [domain1_ref_name,domain2_ref_name]
 
     """
     Grooming Step 3: Rigid alignment
-    This step rigidly aligns each shape to the selected references. 
-    Rigid alignment involves interpolation, hence we need to convert binary segmentations 
-    to continuous-valued images again. There are two steps:
-        - computing the rigid transformation parameters that would align a segmentation 
-        to the reference shape
-        - applying the rigid transformation to the segmentation
-        - save the aligned images for the next step
+    Now we can loop over all of the segmentations again to find the rigid
+    alignment transform and compute a distance transform
     """
     iso_value = 0.5
     icp_iterations = 200
     transforms = []
     for i in range(len(domain_1_shapes)):
 
-        # compute rigid transformation using the domain 1 segmentations
         
-        rigidTransform = shape_seg_list[i*domains_per_shape].createRigidRegistrationTransform(
-            reference, iso_value, icp_iterations)
-        rigid_transform = sw.utils.getVTKtransform(rigidTransform)
-        # apply the transformation to each domain(each subject)
+        # get the transformation to each domain(each subject)
         for d in range(domains_per_shape):
-            
+            # compute rigid transformation using the domain 1 segmentations
+            name = shape_names[i*domains_per_shape+d]
+            print('Aligning ' + name + ' to ' + ref_name[d]) 
+            rigidTransform = shape_seg_list[i*domains_per_shape+d].createRigidRegistrationTransform(
+            reference[d], iso_value, icp_iterations)
+            rigid_transform = sw.utils.getVTKtransform(rigidTransform)
             transforms.append(rigid_transform)
-    
+   
     """
     Grooming Step 4: Converting segmentations to smooth signed distance transforms.
     The computeDT API needs an iso_value that defines the foreground-background interface, to create 
@@ -239,30 +240,30 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 1000,
-        "optimization_iterations" : 1000,
+        "iterations_per_split" : 200,
+        "optimization_iterations" : 200,
         "starting_regularization" :1000,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 1,
         "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 10, 
-        "initial_relative_weighting" : 1,
+        "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "verbosity" : 0
       }
-    num_particles = [512,512]
+    num_particles = [128,128]
 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         num_particles = [32,32]
         parameter_dictionary["optimization_iterations"] = 30
 
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["multiscale_particles"] = 32
+    #setting the argument to singlescale for the output filename
+    args.use_single_scale = True
+    args.option_set = args.option_set.replace("multiscale","singlescale")
+        
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))

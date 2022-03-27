@@ -71,7 +71,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"contours")):
             contourFilesList = sorted([files for files in fileList if re.search("^contours(?:/|\\\).*vtp$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = contourFilesList)
-    if(use_case in ["femur_cut"]):
+    if(use_case in ["femur_cut","ellipsoid_cut"]):
         if(generate_download_flag(outputDirectory,"constraints")):
             planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)

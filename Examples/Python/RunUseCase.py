@@ -91,4 +91,5 @@ if __name__ == '__main__':
         print("KeyboardInterrupt exception caught")
         sys.exit(1)
     except subprocess.CalledProcessError as e:
-        print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
+        print(f"\nCalled Process Error:\n\tReturncode: {e.returncode}\n\tstdout: {e.stdout}\n\tstderr: {e.stderr}")
+        sys.exit(1)
