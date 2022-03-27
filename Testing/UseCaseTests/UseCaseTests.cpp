@@ -28,7 +28,8 @@ void run_use_case(const std::string& name)
   std::remove(outputname.c_str());
 
   // run python
-  std::string command = "python RunUseCase.py " + name + " --tiny_test 1>" + outputname + " 2>&1";
+//  std::string command = "python RunUseCase.py " + name + " --tiny_test 1>" + outputname + " 2>&1";
+  std::string command = "python RunUseCase.py " + name + " --tiny_test";
   std::cerr << "Running command: " << command << "\n";
   bool result = system(command.c_str());
   if (result) {

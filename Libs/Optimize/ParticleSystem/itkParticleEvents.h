@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleEvents.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleEvents_h
-#define __itkParticleEvents_h
+#pragma once
 
 #include "itkEventObject.h"
 
@@ -113,13 +98,3 @@ itkEventMacro( ParticlePositionRemoveEvent, ParticleEventWithIndex );
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleEvents+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-//# include "itkParticleEvents.txx"
-#endif
-
-#endif

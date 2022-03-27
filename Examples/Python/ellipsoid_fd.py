@@ -97,7 +97,7 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
+    point_dir = output_directory + 'shape_models/'
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 

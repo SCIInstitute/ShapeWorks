@@ -1,11 +1,3 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
 #include <itkObjectFactory.h>
@@ -16,21 +8,20 @@
 
 #include <Eigen/Dense>
 
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 
-namespace itk {
+namespace shapeworks {
+
 class ContourDomain : public ParticleDomain {
  public:
-  /** Standard class typedefs */
-  typedef SmartPointer<ContourDomain> Pointer;
-  itkSimpleNewMacro(ContourDomain);
+  using Pointer = std::shared_ptr<ContourDomain>;
 
   explicit ContourDomain() {}
   virtual ~ContourDomain() {}
 
   void SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data);
 
-  shapeworks::DomainType GetDomainType() const override { return shapeworks::DomainType::Contour; }
+  DomainType GetDomainType() const override { return DomainType::Contour; }
 
   virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const override;
 
@@ -108,12 +99,6 @@ class ContourDomain : public ParticleDomain {
   PointType GetPositionAfterSplit(const PointType& pt, const VectorDoubleType& local_direction,
                                   const VectorDoubleType& global_direction, double epsilon) const override;
 
- protected:
-  void PrintSelf(std::ostream& os, Indent indent) const override {
-    DataObject::Superclass::PrintSelf(os, indent);
-    os << indent << "ContourDomain\n";
-  }
-
  private:
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
@@ -148,4 +133,4 @@ class ContourDomain : public ParticleDomain {
   mutable double geo_lq_dist_ = -1;
 };
 
-}  // end namespace itk
+}  // namespace shapeworks

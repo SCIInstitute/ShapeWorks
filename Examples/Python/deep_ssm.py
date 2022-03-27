@@ -10,7 +10,6 @@ import platform
 import DataAugmentationUtils
 import DeepSSMUtils
 import json
-import platform
 import torch
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -24,7 +23,7 @@ def Run_Pipeline(args):
     Femur data is downloaded in a zip folder to Data/
     It gets extracted to Output/deep_ssm
     '''
-    dataset_name = "femur-v0"
+    dataset_name = "deepssm"
     out_dir = "Output/deep_ssm/"
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -42,13 +41,13 @@ def Run_Pipeline(args):
 
     input_dir = out_dir + dataset_name + '/'
     # Get image path list
-    img_dir = input_dir + "groomed/images/"
+    img_dir = input_dir + "images/"
     img_list = []
     for file in os.listdir(img_dir):
         img_list.append(img_dir + file)
     img_list = sorted(img_list)
     # Get particles path list
-    model_dir = input_dir + "shape_models/femur/1024/"
+    model_dir = input_dir + "particles/"
     world_particle_list = []
     local_particle_list = []
     for file in os.listdir(model_dir):

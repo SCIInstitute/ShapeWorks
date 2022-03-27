@@ -72,7 +72,7 @@
 
 namespace shapeworks {
 
-Mesh::MeshType Mesh::read(const std::string &pathname)
+Mesh::MeshType MeshReader::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
   if (!ShapeworksUtils::exists(pathname)) { throw std::invalid_argument(pathname + " does not exist"); }
@@ -119,6 +119,10 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
   catch (const std::exception &exp) {
     throw std::invalid_argument("Failed to read: " + pathname);
   }
+}
+
+Mesh::Mesh(const std::string& pathname) : mesh(MeshReader::read(pathname)) {
+  invalidateLocators();
 }
 
 Mesh& Mesh::write(const std::string &pathname, bool binaryFile)

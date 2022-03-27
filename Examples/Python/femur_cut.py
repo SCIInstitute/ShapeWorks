@@ -22,7 +22,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur-v2"
+    dataset_name = "femur"
     output_directory = "Output/femur_cut/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -162,13 +162,11 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/'
-    if not os.path.exists(point_dir):
-        os.makedirs(point_dir)
-
-    # Create spreadsheet
+    # Create project spreadsheet
     project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
     subjects = []
     number_domains = 1
     for i in range(len(mesh_list)):
@@ -183,7 +181,7 @@ def Run_Pipeline(args):
         rel_plane_files = sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i]], project_location)
         subject.set_constraints_filenames(rel_plane_files)
         subjects.append(subject)
-
+    # Set project
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
@@ -219,6 +217,7 @@ def Run_Pipeline(args):
         parameter_dictionary["iterations_per_split"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
         parameter_dictionary["use_shape_statistics_after"] = 64
 
     for key in parameter_dictionary:
@@ -232,6 +231,14 @@ def Run_Pipeline(args):
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
-    # Analyze - open in studio
-    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(AnalysisCmd)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
+
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
+    """
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
