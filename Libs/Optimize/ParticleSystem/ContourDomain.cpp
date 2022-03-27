@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace itk {
+namespace shapeworks {
 
 const double epsilon = 1e-6;
 

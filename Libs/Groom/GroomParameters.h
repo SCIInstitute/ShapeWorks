@@ -98,7 +98,7 @@ public:
   std::string get_reflect_choice();
   void set_reflect_choice(std::string choice);
   std::string get_reflect_axis();
-  void  set_reflect_axis(std::string axies);
+  void set_reflect_axis(std::string axies);
 
   // resampling
   bool get_resample();

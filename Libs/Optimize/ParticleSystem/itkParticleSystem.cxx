@@ -56,7 +56,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   this->Modified();
 }
 
-void ParticleSystem::AddDomain(DomainType *input, int threadId) {
+void ParticleSystem::AddDomain(DomainType::Pointer input, int threadId) {
   this->Modified();
 
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx) {

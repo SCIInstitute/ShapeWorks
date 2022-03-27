@@ -23,11 +23,13 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
+#include "ParticleSystem/ParticleImageDomain.h"
+#include "ParticleSystem/ParticleImplicitSurfaceDomain.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "OptimizeParameters.h"
+#include <Libs/Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
@@ -1665,8 +1667,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const itk::ParticleImplicitSurfaceDomain<float>* domain
-              = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
+      const ParticleImplicitSurfaceDomain<float>* domain
+              = dynamic_cast <const ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
                       ->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
@@ -2375,6 +2377,13 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
+bool Optimize::SetUpOptimize(ProjectHandle projectFile)
+{
+  
+  OptimizeParameters param(projectFile);
+  param.set_up_optimize(this);
+  return true;
+}
 //---------------------------------------------------------------------------
 void Optimize::SetProject(std::shared_ptr<Project> project)
 {

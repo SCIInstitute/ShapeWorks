@@ -1,13 +1,4 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleGradientDescentPositionOptimizer_txx
-#define __itkParticleGradientDescentPositionOptimizer_txx
+#pragma once
 
 const int global_iteration = 1;
 
@@ -15,7 +6,7 @@ const int global_iteration = 1;
 #include <ctime>
 #include <time.h>
 #include <string>
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -128,7 +119,7 @@ namespace itk
             return;
           }
 
-          const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+          const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 
@@ -284,5 +275,3 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
 }
 
 } // end namespace
-
-#endif
