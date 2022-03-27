@@ -27,11 +27,21 @@ public:
   using MeshType = vtkSmartPointer<vtkPolyData>;
   using MeshPoints = vtkSmartPointer<vtkPoints>;
 
-  Mesh(const std::string& pathname) : mesh(read(pathname)) {}
-  Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
-  Mesh(const Mesh& orig) : mesh(MeshType::New()) { mesh->DeepCopy(orig.mesh); }
+  Mesh(const std::string& pathname);
+  Mesh(MeshType meshPtr) : mesh(meshPtr) {
+    if (!mesh) throw std::invalid_argument("null meshPtr");
+    invalidateLocators();
+  }
+  Mesh(const Mesh& orig) : mesh(MeshType::New()) {
+    mesh->DeepCopy(orig.mesh);
+    invalidateLocators();
+  }
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
-  Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
+  Mesh& operator=(const Mesh& orig) {
+    mesh = MeshType::New();
+    mesh->DeepCopy(orig.mesh);
+    invalidateLocators();
+    return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
 
   /// append two meshes
@@ -228,9 +238,6 @@ private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
 
-  /// reads mesh (used only by constructor)
-  static MeshType read(const std::string& pathname);
-
   /// Creates transform from source mesh to target using ICP registration
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
 
@@ -270,5 +277,11 @@ private:
 
 /// stream insertion operators for Mesh
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
+
+/// reads mesh (used only by one of the Mesh constructors)
+class MeshReader {
+  static Mesh::MeshType read(const std::string& pathname);
+  friend Mesh::Mesh(const std::string& pathname);
+};
 
 } // shapeworks

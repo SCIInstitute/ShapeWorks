@@ -25,7 +25,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     
-    dataset_name = "ellipsoid_joint_size"
+    dataset_name = "ellipsoid_joint_rotation"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -75,7 +75,7 @@ def Run_Pipeline(args):
     for mesh_file in mesh_files:
         print('Loading: ' + mesh_file)
         # get current shape name
-        mesh_name = mesh_file.split('/')[-1].replace('.nrrd', '')
+        mesh_name = mesh_file.split('/')[-1].replace('.vtk', '')
         mesh_names.append(mesh_name)
         # get domain identifiers
         domain_ids.append(mesh_name.split(".")[0].split("_")[-1])
@@ -107,23 +107,27 @@ def Run_Pipeline(args):
         domain_1_meshes.append(mesh_list[i*domains_per_shape])
 
     ref_index = sw.find_reference_mesh_index(domain_1_meshes)
-    reference = domain_1_meshes[ref_index].copy()
-    ref_name = mesh_names[ref_index*domains_per_shape]
+    domain1_reference = mesh_list[ref_index*domains_per_shape].copy()
+    domain2_reference = mesh_list[ref_index*domains_per_shape+1].copy()
+    domain1_ref_name = mesh_names[ref_index*domains_per_shape]
+    domain2_ref_name = mesh_names[ref_index*domains_per_shape+1]
+    reference = [domain1_reference,domain2_reference]
+    ref_name = [domain1_ref_name,domain2_ref_name]
     """
     Grooming Step 3: Rigid alignment
-    This step rigidly aligns each shape to the selected reference. 
+    Now we can loop over all of the meshes again to find the rigid
+    alignment transform 
     """
+
     transforms = []
     for i in range(len(domain_1_meshes)):
-
-        
-        # compute rigid transformation
-        rigidTransform = mesh_list[i*domains_per_shape].createTransform(reference,sw.Mesh.AlignmentType.Rigid,100)
             
-        # apply the transformation to each domain(each subject)
+        # calculate the transformation 
         for d in range(domains_per_shape):
+            # compute rigid transformation
+            rigidTransform = mesh_list[i*domains_per_shape+d].createTransform(reference[d],sw.Mesh.AlignmentType.Rigid,100)
             name = mesh_names[i*domains_per_shape+d]
-            print('Aligning ' + name + ' to ' + ref_name)    
+            print('Aligning ' + name + ' to ' + ref_name[d])    
             transforms.append(rigidTransform)
 
     # Save groomed meshes
@@ -169,12 +173,12 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 500,
-        "optimization_iterations" : 500,
-        "starting_regularization" :10,
-        "ending_regularization" : 1,
+        "iterations_per_split" : 200,
+        "optimization_iterations" : 200,
+        "starting_regularization" :1000,
+        "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 1,
-        "domains_per_shape" : 2,
+        "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
@@ -183,23 +187,22 @@ def Run_Pipeline(args):
         "verbosity" : 0
 
       }
-    num_particles = [512,512]
+    num_particles = [128,128]
 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         num_particles = [32,32]
         parameter_dictionary["optimization_iterations"] = 30
 
-    # Run multiscale optimization unless single scale is specified
-    if not args.use_single_scale:
-        parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["multiscale_particles"] = 32
+    #setting the argument to singlescale for the output filename
+    args.use_single_scale = True
+    args.option_set = args.option_set.replace("multiscale","singlescale")
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    project.set_parameters("optimize", parameters)
+    
     spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
 
