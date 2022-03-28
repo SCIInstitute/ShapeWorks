@@ -95,7 +95,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   ui_->explained_variance_panel->hide();
   ui_->reconstruction_options->hide();
-
+  ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
 }
 
