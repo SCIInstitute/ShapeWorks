@@ -277,23 +277,6 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         newposs_good.clear();
         bool good = true;  // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
-          // Add epsilon times random direction to existing point and apply domain
-          // constraints to generate a new particle position.
-//          PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)
-//                                 ->GetPositionAfterSplit(lists[j][i], random, epsilon);
-//          // Go to surface
-//          if (!this->m_DomainFlags[dom_to_process + j * domains_per_shape] &&
-//              !this->GetDomain(dom_to_process + j * domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
-//            this->GetDomain(dom_to_process + j * domains_per_shape)->ApplyConstraints(newpos, -1);
-//          }
-//          newposs_good.push_back(newpos);
-
-          // Check for plane constraint violations
-          /*if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
-            good = false;
-            //std::cout << "violation " << lists[j][i] << " new point " << std::endl;
-            break;
-          }*/
 
           vnl_vector_fixed<double, VDimension> updateVector = random * 1000.;
           vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], j);
@@ -358,7 +341,6 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
       }  // while end
     }    // for end
   }      // if end
-  std::cout << "Counter " << counter << std::endl;
 }
 
 void ParticleSystem::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, double epsilon, size_t domain, int threadId)
