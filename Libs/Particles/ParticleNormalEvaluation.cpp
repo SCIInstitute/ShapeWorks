@@ -86,7 +86,7 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
 
     cur_cos_appex /= num_shapes;
     // AKM: double this appears to put many/most particles well about 1.0, which becomes impossible to mark as bad no
-    // matter what the angle.  I'm commentting this out for now.
+    // matter what the angle.  I'm commenting this out for now.
     // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
 
     // std::cerr << "cur_cos_appex = " << cur_cos_appex << "\n";
@@ -96,6 +96,34 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
   }
 
   return result;
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd ParticleNormalEvaluation::compute_particle_normals(
+    const Eigen::MatrixXd& particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes) {
+  Eigen::MatrixXd normals;
+  normals.resize(particles.rows(), particles.cols());
+
+  int num_shapes = particles.cols();
+  int num_particles = particles.rows() / 3;
+
+  if (num_shapes != meshes.size()) {
+    throw std::runtime_error("Number of shapes do not match");
+  }
+  for (size_t j = 0; j < num_particles; j++) {
+    for (int shape = 0; shape < num_shapes; shape++) {
+      double position[3];
+      position[0] = particles(j * 3 + 0, shape);
+      position[1] = particles(j * 3 + 1, shape);
+      position[2] = particles(j * 3 + 2, shape);
+
+      auto normal = meshes[shape]->SampleNormalAtPoint(position);
+      normals(j * 3 + 0, shape) = normal[0];
+      normals(j * 3 + 1, shape) = normal[1];
+      normals(j * 3 + 2, shape) = normal[2];
+    }
+  }
+  return normals;
 }
 //---------------------------------------------------------------------------
 

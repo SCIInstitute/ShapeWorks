@@ -20,6 +20,9 @@ class ParticleNormalEvaluation {
                                                      std::vector<std::shared_ptr<VtkMeshWrapper>> meshes,
                                                      double max_angle_degrees);
 
+  //! Compute normals at particle positions
+  static Eigen::MatrixXd compute_particle_normals(const Eigen::MatrixXd &particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes);
+
  private:
 };
 
