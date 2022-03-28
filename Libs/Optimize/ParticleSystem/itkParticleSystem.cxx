@@ -296,7 +296,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           }*/
 
           vnl_vector_fixed<double, VDimension> updateVector = random * 1000.;
-          vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], i);
+          vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], j);
 
           vnl_vector_fixed<double, VDimension> normupdateVector = updateVector / updateVector.magnitude();
           vnl_vector_fixed<double, VDimension> normprojected = projected / projected.magnitude();
@@ -312,9 +312,9 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           newposs_good.push_back(projected);
         }
 
-        // debuging
+        // debuggg
         // Should remain to examine whether splitting is going wrong
-        /*double allowedangle = 180;
+        /*double allowedangle = 55;
         for(size_t l = 0; l < dbgprojected.size(); l++){
             for(size_t m = 0; m < dbgprojected.size(); m++){
                 vnl_vector_fixed<double, VDimension> dbgpro1 = dbgprojected[l];
