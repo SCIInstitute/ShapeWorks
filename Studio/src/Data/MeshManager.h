@@ -21,9 +21,9 @@
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 
-#include <Libs/Mesh/MeshWarper.h>
-
 namespace shapeworks {
+
+class MeshWarper;
 
 class MeshManager : public QObject {
 Q_OBJECT

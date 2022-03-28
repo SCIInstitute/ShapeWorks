@@ -7,9 +7,10 @@
  * The MeshWarper provides an object to warp meshes for surface reconstruction
  */
 
-#include <vector>
 #include <vtkPolyData.h>
+
 #include <Eigen/Eigen>
+#include <vector>
 
 namespace shapeworks {
 
@@ -17,16 +18,18 @@ namespace shapeworks {
  * \class MeshWarper
  * \ingroup Group-Mesh
  *
- * This class implements mesh warping based on correspondence particles
+ * This class implements mesh warping based on correspondence particles.
+ * Correspondence points are embedded into the mesh as new vertices (traingles split).  Then a biharmonic deformation
+ * is used to warp the mesh to new sets of correspondence particles.
+ *
+ * It can optionally be used to warp landmarks along with the mesh by embedding them as vertices
  *
  */
 class MeshWarper {
-
-public:
-
+ public:
   //! Set the reference mesh and particles
-  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                          const Eigen::MatrixXd& reference_particles);
+  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd& reference_particles,
+                          const Eigen::MatrixXd& landmarks = {});
 
   //! Generate warp, return true on success
   bool generate_warp();
@@ -37,28 +40,40 @@ public:
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
+  //! Return the landmarks (matrix [Nx3]) from the warped builded mesh
+  Eigen::MatrixXd extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh);
+
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
+
+  //! Return the map of landmarks to vertices
+  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
+
+  //! Return the warp matrix
+  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
   //! Return true if warping has removed any bad particle(s)
   bool has_bad_particles() const { return this->bad_particle_count() > 0; }
 
+  //! Return the reference mesh which has been cleaned and vertices added
   vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this->reference_mesh_; }
+
+  //! Return the reference particles
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
-  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
-protected:
+  //! Prep incoming mesh
+  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+ protected:
   //! For overriding to handle progress updates
   virtual void update_progress(float p) {}
 
-private:
-
+ private:
   //! Check if the warp is ready, if not do it (thread safely), return true if warp is valid
   bool check_warp_ready();
 
   //! Add particles as vertices to reference mesh
-  void add_particle_vertices();
+  void add_particle_vertices(Eigen::MatrixXd& vertices);
 
   //! Remove the bad particles from a set of particles
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
@@ -70,8 +85,8 @@ private:
   //! Identify the good particles
   void find_good_particles();
 
-  //! Prep incoming mesh
-  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
+  //! Construct the map from landmarks to vertex ids
+  bool find_landmarks_vertices_on_ref_mesh();
 
   //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
@@ -80,8 +95,7 @@ private:
   vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   //! Generate the warp matrix
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
-                            const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
@@ -93,6 +107,7 @@ private:
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
+  Eigen::MatrixXd landmarks_points_;
 
   std::vector<int> good_particles_;
 
@@ -100,6 +115,7 @@ private:
 
   bool warp_available_ = false;
 
+  std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh
@@ -109,4 +125,4 @@ private:
   //! Whether the reference is a contour
   bool is_contour_ = false;
 };
-}
+}  // namespace shapeworks

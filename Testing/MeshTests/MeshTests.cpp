@@ -871,3 +871,11 @@ TEST(MeshTests, addMesh)
 
   ASSERT_TRUE(mesh1 == baseline);
 }
+
+TEST(MeshTests, constructFromMatrixes)
+{
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  ground_truth.computeNormals();
+  Mesh construct(ground_truth.points(), ground_truth.faces());
+  ASSERT_TRUE(construct == ground_truth);
+}
