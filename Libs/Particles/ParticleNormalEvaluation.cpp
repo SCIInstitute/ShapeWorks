@@ -6,8 +6,9 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
-    Eigen::MatrixXd particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes, double max_angle_degrees) {
+std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(const Eigen::MatrixXd &particles,
+                                                                      const Eigen::MatrixXd &normals,
+                                                                      double max_angle_degrees) {
   std::vector<bool> result;
 
   std::vector<std::vector<double>> thetas;
@@ -34,11 +35,9 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
       position[1] = particles(j * 3 + 1, i);
       position[2] = particles(j * 3 + 2, i);
 
-      auto normal = meshes[i]->SampleNormalAtPoint(position);
-
-      cur_normal[0] = normal[0];
-      cur_normal[1] = normal[1];
-      cur_normal[2] = normal[2];
+      cur_normal[0] = normals(j * 3 + 0, i);
+      cur_normal[1] = normals(j * 3 + 1, i);
+      cur_normal[2] = normals(j * 3 + 2, i);
 
       double cur_normal_spherical[3];
       Utils::cartesian2spherical(cur_normal, cur_normal_spherical);
@@ -75,11 +74,9 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
       position[1] = particles(j * 3 + 1, shape);
       position[2] = particles(j * 3 + 2, shape);
 
-      auto normal = meshes[shape]->SampleNormalAtPoint(position);
-
-      double nx_kk = normal[0];
-      double ny_kk = normal[1];
-      double nz_kk = normal[2];
+      double nx_kk = normals(j * 3 + 0, shape);
+      double ny_kk = normals(j * 3 + 1, shape);
+      double nz_kk = normals(j * 3 + 2, shape);
 
       cur_cos_appex += (nx_jj * nx_kk + ny_jj * ny_kk + nz_jj * nz_kk);
     }
@@ -100,7 +97,7 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
 
 //---------------------------------------------------------------------------
 Eigen::MatrixXd ParticleNormalEvaluation::compute_particle_normals(
-    const Eigen::MatrixXd& particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes) {
+    const Eigen::MatrixXd &particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes) {
   Eigen::MatrixXd normals;
   normals.resize(particles.rows(), particles.cols());
 
