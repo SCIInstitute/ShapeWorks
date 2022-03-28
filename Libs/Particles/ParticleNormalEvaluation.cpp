@@ -28,8 +28,7 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
 
   for (int i = 0; i < num_shapes; i++) {
     for (size_t j = 0; j < num_particles; j++) {
-      double curNormal[3];
-      double curNormalSph[3];
+      double cur_normal[3];
 
       double position[3];
       position[0] = particles(j * 3 + 0, i);
@@ -38,29 +37,30 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
 
       auto normal = meshes[i]->SampleNormalAtPoint(position);
 
-      curNormal[0] = normal[0];
-      curNormal[1] = normal[1];
-      curNormal[2] = normal[2];
+      cur_normal[0] = normal[0];
+      cur_normal[1] = normal[1];
+      cur_normal[2] = normal[2];
 
-      Utils::cartesian2spherical(curNormal, curNormalSph);
-      phis[j][i] = curNormalSph[1];
-      thetas[j][i] = curNormalSph[2];
+      double cur_normal_spherical[3];
+      Utils::cartesian2spherical(cur_normal, cur_normal_spherical);
+      phis[j][i] = cur_normal_spherical[1];
+      thetas[j][i] = cur_normal_spherical[2];
     }
   }
 
   // compute mean normal for every particle
   vnl_matrix<double> average_normals(num_particles, 3);
   for (size_t j = 0; j < num_particles; j++) {
-    double avgNormal_sph[3];
-    double avgNormal_cart[3];
-    avgNormal_sph[0] = 1;
-    avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
-    avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
-    Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
+    double avg_normal_spherical[3];
+    double avg_normal_cart[3];
+    avg_normal_spherical[0] = 1;
+    avg_normal_spherical[1] = Utils::averageThetaArc(phis[j]);
+    avg_normal_spherical[2] = Utils::averageThetaArc(thetas[j]);
+    Utils::spherical2cartesian(avg_normal_spherical, avg_normal_cart);
 
-    average_normals(j, 0) = avgNormal_cart[0];
-    average_normals(j, 1) = avgNormal_cart[1];
-    average_normals(j, 2) = avgNormal_cart[2];
+    average_normals(j, 0) = avg_normal_cart[0];
+    average_normals(j, 1) = avg_normal_cart[1];
+    average_normals(j, 2) = avg_normal_cart[2];
   }
 
   for (size_t j = 0; j < num_particles; j++) {

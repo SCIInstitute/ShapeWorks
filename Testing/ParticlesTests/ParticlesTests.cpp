@@ -6,7 +6,9 @@
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "ParticleNormalEvaluation.h"
 #include "ReconstructSurface.h"
+#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 
 using namespace shapeworks;
 
@@ -255,4 +257,12 @@ TEST(ParticlesTests, reconstructMeanSurfaceTest)
   auto baseline_dt = Image(std::string(TEST_DATA_DIR) + "/reconstruct_mean_surface.nrrd");
   auto compare_dt = Image(temp_dir + "/_meanDT.nrrd");
   ASSERT_TRUE(baseline_dt == compare_dt);
+}
+
+TEST(ParticlesTests, particle_normal_evaluation_test)
+{
+
+
+
+
 }
