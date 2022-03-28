@@ -240,6 +240,7 @@ TEST(ParticlesTests, reconstructPCATest2)
   ASSERT_TRUE(baselineDenseMesh3 == denseMesh3);
 }
 
+//---------------------------------------------------------------------------
 TEST(ParticlesTests, reconstructMeanSurfaceTest)
 {
   ReconstructSurface<RBFSSparseTransform> reconstructor;
@@ -259,10 +260,38 @@ TEST(ParticlesTests, reconstructMeanSurfaceTest)
   ASSERT_TRUE(baseline_dt == compare_dt);
 }
 
+//---------------------------------------------------------------------------
 TEST(ParticlesTests, particle_normal_evaluation_test)
 {
+  Mesh mesh1(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals1_groomed.vtk");
+  Mesh mesh2(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals2_groomed.vtk");
+  Mesh mesh3(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals3_groomed.vtk");
 
+  std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
+  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh1.getVTKMesh()));
+  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh2.getVTKMesh()));
+  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh3.getVTKMesh()));
 
+  std::vector<std::string> particle_files = {
+    std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals1_groomed_groomed_local.particles",
+    std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals2_groomed_groomed_local.particles",
+    std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals3_groomed_groomed_local.particles"
+  };
 
+  ParticleSystem system(particle_files);
+  auto particles = system.Particles();
 
+  auto eval = [&](double angle, int expected_good_count) {
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles, meshes);
+    auto good_bad = ParticleNormalEvaluation::evaluate_particle_normals(particles, normals, angle);
+    int good_count = std::count(good_bad.begin(), good_bad.end(), true);
+    ASSERT_EQ(good_count, expected_good_count);
+  };
+
+  eval(80, 128); // at 80 degrees, all good
+  eval(45, 123); // at 45 degrees a few bad
+  eval(5, 9); // at 5 degrees, most are bad
+  eval(1, 0); // at 1 degree, all bad
 }
+//---------------------------------------------------------------------------
+
