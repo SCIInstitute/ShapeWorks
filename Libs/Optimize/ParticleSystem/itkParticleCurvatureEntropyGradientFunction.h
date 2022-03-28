@@ -103,8 +103,7 @@ public:
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
-                                const std::vector<double> &weights, const std::vector<double> &distances,
+  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain *domain,
                                 const PointType &pos, double initial_sigma,  double precision,  int &err, double &avgKappa) const;
 
   /** */

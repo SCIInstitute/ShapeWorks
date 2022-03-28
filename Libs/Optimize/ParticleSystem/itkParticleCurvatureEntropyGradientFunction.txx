@@ -13,10 +13,7 @@ double
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::EstimateSigma(unsigned int idx,
                 unsigned int dom,
-                const typename ParticleSystemType::PointVectorType &neighborhood, 
                 const shapeworks::ParticleDomain *domain,
-                const std::vector<double> &weights,
-                const std::vector<double> &distances,
                 const PointType &pos,
                 double initial_sigma,
                 double precision,
