@@ -32,7 +32,7 @@
 </optimization_iterations>
 
 <starting_regularization>
-0.5
+0.1
 </starting_regularization>
 
 <ending_regularization>
