@@ -295,7 +295,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           newposs_good.push_back(projected);
         }
 
-        // debuggg
+        // Useful for debugging and examining raw splitting performance
         // Should remain to examine whether splitting is going wrong
         /*double allowedangle = 55;
         for(size_t l = 0; l < dbgprojected.size(); l++){
