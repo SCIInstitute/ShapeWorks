@@ -7,15 +7,14 @@ namespace shapeworks {
 
 //---------------------------------------------------------------------------
 std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(
-    ParticleSystem local_particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes, double max_angle_degrees) {
+    Eigen::MatrixXd particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes, double max_angle_degrees) {
   std::vector<bool> result;
-  Eigen::MatrixXd particles = local_particles.Particles();
 
   std::vector<std::vector<double>> thetas;
   std::vector<std::vector<double>> phis;
 
-  int num_shapes = local_particles.N();
-  int num_particles = local_particles.D() / 3;
+  int num_shapes = particles.cols();
+  int num_particles = particles.rows() / 3;
 
   thetas.resize(num_particles);
   phis.resize(num_particles);
