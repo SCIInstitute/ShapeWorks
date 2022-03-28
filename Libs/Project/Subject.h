@@ -21,13 +21,10 @@ public:
   Subject();
   ~Subject();
 
-  //! Set segmentatation filenames (one per domain)
-  void set_segmentation_filenames(std::vector<std::string> filenames);
-  //! Get segmentation filenames
-  std::vector<std::string> get_segmentation_filenames();
-
-  //! Return the domain types
-  std::vector<DomainType> get_domain_types(bool groomed = false);
+  //! Set original filenames (one per domain)
+  void set_original_filenames(std::vector<std::string> filenames);
+  //! Get original filenames
+  std::vector<std::string> get_original_filenames();
 
   //! Set groomed filenames
   void set_groomed_filenames(std::vector<std::string> filenames);
@@ -48,6 +45,11 @@ public:
   void set_landmarks_filenames(std::vector<std::string> filenames);
   //! Set the landmarks filenames
   std::vector<std::string> get_landmarks_filenames();
+
+  //! Get the constraints filenames (one per domain)
+  void set_constraints_filenames(std::vector<std::string> filenames);
+  //! Set the constratins filenames
+  std::vector<std::string> get_constraints_filenames();
 
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
@@ -103,11 +105,12 @@ private:
 
   std::string display_name_;
   std::vector<std::string> image_filenames_;
-  std::vector<std::string> segmentation_filenames_;
+  std::vector<std::string> original_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
   std::vector<std::string> landmarks_filenames_;
+  std::vector<std::string> constraints_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;
 
@@ -115,5 +118,8 @@ private:
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
   std::map<std::string, std::string> table_values_;
+
+  std::vector<DomainType> original_domain_types_;
+  std::vector<DomainType> groomed_domain_types_;
 };
 }

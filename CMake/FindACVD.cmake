@@ -8,21 +8,21 @@ find_path(ACVD_INCLUDE_DIR
 
 find_library(ACVD_DISCRETE_LIBRARY 
   libvtkDiscreteRemeshing
-  NAMES libvtkDiscreteRemeshing.dylib libvtkDiscreteRemeshing.so vtkDiscreteRemeshing.lib
+  NAMES libvtkDiscreteRemeshing.dylib libvtkDiscreteRemeshing.so vtkDiscreteRemeshing.lib libvtkDiscreteRemeshin-dg.dylib libvtkDiscreteRemeshing-d.so vtkDiscreteRemeshing-d.lib
   HINTS /usr/local/lib
   HINTS ${ACVD_DIR}/build/source
   HINTS ${ACVD_DIR}/lib
   )
 find_library(ACVD_VOLUME_LIBRARY 
   libvtkVolumeProcessing
-  NAMES libvtkVolumeProcessing.dylib libvtkVolumeProcessing.so vtkVolumeProcessing.lib
+  NAMES libvtkVolumeProcessing.dylib libvtkVolumeProcessing.so vtkVolumeProcessing.lib libvtkVolumeProcessing-d.dylib libvtkVolumeProcessing-d.so vtkVolumeProcessing-d.lib
   HINTS /usr/local/lib
   HINTS ${ACVD_DIR}/build/source
   HINTS ${ACVD_DIR}/lib
   )
 find_library(ACVD_SURFACE_LIBRARY 
   libvtkSurface
-  NAMES libvtkSurface.dylib libvtkSurface.so vtkSurface.lib
+  NAMES libvtkSurface.dylib libvtkSurface.so vtkSurface.lib libvtkSurface-d.dylib libvtkSurface-d.so vtkSurface-d.lib
   HINTS /usr/local/lib
   HINTS ${ACVD_DIR}/build/source
   HINTS ${ACVD_DIR}/lib

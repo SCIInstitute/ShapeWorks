@@ -84,16 +84,12 @@ INSTALL(TARGETS boundary_loop_extractor RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
 
-# ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
-# TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
-# INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)
-
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFilesFromMeshes RUNTIME DESTINATION bin)
 
 # Added to backlog
-ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
-TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
+# ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
+# TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
+# INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)

@@ -1,11 +1,38 @@
 #include "Testing.h"
 
+#include "Exception.h"
 #include "Image.h"
 #include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 
 using namespace shapeworks;
+
+TEST(ImageTests, exceptionTestString)
+{
+  try {
+    throw shapeworks_exception(std::string("ShapeWorks"));
+  } catch(shapeworks_exception const& exp) {
+    std::cerr << exp.what() << std::endl;
+    ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, exceptionTestChar)
+{
+  try {
+    throw shapeworks_exception("ShapeWorks");
+  } catch(shapeworks_exception const& exp) {
+    std::cerr << exp.what() << std::endl;
+    ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
 
 TEST(ImageTests, dicomReadTest)
 {

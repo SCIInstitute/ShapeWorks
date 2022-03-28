@@ -1,13 +1,4 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleGradientDescentPositionOptimizer_txx
-#define __itkParticleGradientDescentPositionOptimizer_txx
+#pragma once
 
 const int global_iteration = 1;
 
@@ -15,7 +6,7 @@ const int global_iteration = 1;
 #include <ctime>
 #include <time.h>
 #include <string>
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -130,7 +121,7 @@ namespace itk
                 return;
               }
 
-            const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+          const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
             typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 
@@ -272,7 +263,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
   double multiplier = 2;
   m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
   VectorType constraint_energy = m_ParticleSystem->GetDomain(
-    dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, pt, c);
+    dom)->GetConstraints()->constraintsLagrangianGradient(upd_pt, pt, c);
   if (constraint_energy.magnitude() > multiplier * gradmag) {
     constraint_energy *= multiplier * gradmag / constraint_energy.magnitude();
   }
@@ -284,5 +275,3 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
 }
 
 } // end namespace
-
-#endif

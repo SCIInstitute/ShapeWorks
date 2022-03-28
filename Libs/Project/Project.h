@@ -19,6 +19,19 @@ namespace shapeworks {
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
+//! Landmark class containing properties of each landmark
+class LandmarkDefinition {
+public:
+  std::string domain_;
+  int domain_id_ = -1;
+  int landmark_id = -1;
+  std::string name_;
+  bool visible_ = true;
+  std::string color_;
+  std::string comment_;
+};
+
+
 //! Representation of a project.
 /*!
  * The Project class encapsulates the spreadsheet based file format for storing project data.
@@ -58,11 +71,14 @@ public:
   //! Return the domain names (e.g. femur, pelvis, etc)
   std::vector<std::string> get_domain_names();
 
-  //! Return the list of Subjects
+  //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
-  //! Return if segmentations are present
-  bool get_segmentations_present() const;
+  //! Set the Subjects
+  void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
+
+  //! Return if originals are present
+  bool get_originals_present() const;
 
   //! Return if groomed files are present
   bool get_groomed_present() const;
@@ -76,6 +92,9 @@ public:
   //! Get feature names
   std::vector<std::string> get_feature_names();
 
+  //! Get image names
+  std::vector<std::string> get_image_names();
+
   //! Get group names
   std::vector<std::string> get_group_names();
 
@@ -87,7 +106,7 @@ public:
 
   //! Store parameters based on key
   void
-  set_parameters(const std::string& name, Parameters params, const std::string& domain_name = "");
+  set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
 
   //! Clear parameters based on key
   void clear_parameters(const std::string& name);
@@ -101,7 +120,45 @@ public:
   //! Get the version of the currently loaded project
   int get_version() const;
 
+  //! Return the set of landmarks definitions for a particular domain
+  std::vector<LandmarkDefinition> get_landmarks(int domain_id);
+
+  //! Return all landmark definitions
+  std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  //! Return if landmarks are present
+  bool get_landmarks_present();
+
+  //! Set landmarks for this project
+  void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
+
+  //! Add a new landmark
+  void new_landmark(int domain_id);
+
+  //! Return the original domain types
+  std::vector<DomainType> get_original_domain_types();
+
+  //! Return the groomed domain types
+  std::vector<DomainType> get_groomed_domain_types();
+
+  //! Set the original domain types
+  void set_original_domain_types(std::vector<DomainType> domain_types);
+
+  //! Get the groomed domain types
+  void set_groomed_domain_types(std::vector<DomainType> domain_types);
+
 private:
+
+  void load_landmark_definitions();
+  void store_landmark_definitions();
+
+  void set_default_landmark_colors();
+
+  void determine_domain_types();
+
+  DomainType determine_domain_type(std::string filename);
+
+  static bool starts_with(std::string str, std::string prefix);
 
   int get_or_create_worksheet(std::string name);
   std::string get_new_file_column(std::string name, int idx);
@@ -112,7 +169,10 @@ private:
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* SHAPE_PREFIX = "shape_";
+  static constexpr const char* MESH_PREFIX = "mesh_";
+  static constexpr const char* CONTOUR_PREFIX = "contour_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
+  static constexpr const char* GROOMED_CONTOUR_PREFIX = "groomed_contour_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
   static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
@@ -122,7 +182,9 @@ private:
   static constexpr const char* IMAGE_PREFIX = "image_";
   static constexpr const char* NAME = "name";
   static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
+  static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";
 
+  std::vector<std::string> get_file_list(std::vector<std::string> columns, int subject);
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
@@ -137,7 +199,7 @@ private:
 
   std::vector<std::string> get_matching_columns(const std::string& prefix);
 
-  std::vector<std::string> get_matching_columns(const std::vector<std::string> prefixes);
+  std::vector<std::string> get_matching_columns(const std::vector<std::string>& prefixes);
 
   std::vector<std::string> get_extra_columns() const;
 
@@ -154,6 +216,9 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
+  std::string get_next_landmark_name(int domain_id);
+  std::string get_next_landmark_color(int domain_id);
+
   int num_domains_per_subject_ = 1;
 
   std::unique_ptr<xlnt::workbook> wb_;
@@ -164,7 +229,10 @@ private:
 
   std::string filename_;
 
-  bool segmentations_present_{false};
+  std::vector<std::string> default_landmark_colors_;
+
+
+  bool originals_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
 
@@ -177,6 +245,12 @@ private:
   bool feature_names_read_done_{false};
 
   std::vector<std::string> input_prefixes_;
+
+  bool landmarks_loaded_{false};
+  std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
+
+  std::vector<DomainType> original_domain_types_;
+  std::vector<DomainType> groomed_domain_types_;
 
   const int supported_version_{2};
   int version_{2};

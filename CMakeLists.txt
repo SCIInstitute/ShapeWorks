@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.11)
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 2 CACHE INTERNAL "Minor version number" FORCE)
-SET(SHAPEWORKS_PATCH_VERSION 1 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.2.1-rc2")
+SET(SHAPEWORKS_MINOR_VERSION 3 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
+SET(SHAPEWORKS_VERSION_STRING "6.3.0-dev")
 
 
 
@@ -157,9 +157,13 @@ find_package (ACVD REQUIRED)
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
+### Boost
 find_package(Boost REQUIRED COMPONENTS
              filesystem)
 
+### Json library
+find_package(nlohmann_json 3.10.5 REQUIRED)
+	   
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
   set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)

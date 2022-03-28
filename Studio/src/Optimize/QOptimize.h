@@ -21,7 +21,7 @@ public:
 
   std::vector<StudioParticles> GetParticles();
 
-  std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+  std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms() override;
 
   void UpdateExportablePoints() override;
 

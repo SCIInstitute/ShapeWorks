@@ -1,23 +1,8 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleCurvatureEntropyGradientFunction.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleCurvatureEntropyGradientFunction_h
-#define __itkParticleCurvatureEntropyGradientFunction_h
+#pragma once
 
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithCurvature.h"
+#include "ParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 #include "itkParticleSurfaceNeighborhood.h"
@@ -56,7 +41,7 @@ public:
   
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
-  typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -118,7 +103,8 @@ public:
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const ParticleDomain *domain,
+  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
+                                const std::vector<double> &weights, const std::vector<double> &distances,
                                 const PointType &pos, double initial_sigma,  double precision,  int &err, double &avgKappa) const;
 
   /** */
@@ -217,7 +203,7 @@ protected:
   double m_avgKappa;
   bool m_IsSharedBoundaryEnabled{false};
   double m_SharedBoundaryWeight{1.0};
-  
+
   double m_CurrentSigma;
   struct CrossDomainNeighborhood {
     ParticlePointIndexPair<3> pi_pair;
@@ -305,14 +291,5 @@ protected:
 
 } //end namespace
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleCurvatureEntropyGradientFunction+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleCurvatureEntropyGradientFunction.txx"
-#endif
 
 #include "itkParticleCurvatureEntropyGradientFunction.txx"
-
-#endif

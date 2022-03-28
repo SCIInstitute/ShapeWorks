@@ -1,55 +1,57 @@
 #pragma once
 
+#include <vtkSmartPointer.h>
+
+#include <vector>
+
 #include "Constraint.h"
-#include "Eigen/Core"
-#include "vnl/vnl_math.h"
-#include <iostream>
 
-namespace itk
-{
+class vtkPlane;
 
-class PlaneConstraint: public Constraint{
-public:
+namespace shapeworks {
 
-  bool isViolated(const vnl_vector<double> &pt) const{
-    Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = pt[0]; pt_eigen(1) = pt[1]; pt_eigen(2) = pt[2];
-    return isViolated(pt_eigen);
-  }
+//! PlaneConstraint
+/*!
+ * Encapsulate functionality related to plane constraints
+ */
+class PlaneConstraint : public Constraint {
+ public:
+  bool isViolated(const Eigen::Vector3d &pt) const override;
 
-  bool isViolated(const Eigen::Vector3d &pt) const{
-    double dist = planeNormal.dot(pt-planePoint);
-    if(dist < 0)return true;
-    return false;
-  }
+  void print() const override;
 
-  void printC() const{
-      std::cout << "normal " << planeNormal.transpose() << " point " << planePoint.transpose() << std::endl;
-  }
+  //! Get plane normal
+  Eigen::Vector3d getPlaneNormal() { return planeNormal_; }
 
-  Eigen::Vector3d GetPlaneNormal(){return planeNormal;}
-  void SetPlaneNormal(const Eigen::Vector3d& inPlane){planeNormal = inPlane;}
-  Eigen::Vector3d GetPlanePoint(){return planePoint;}
-  void SetPlanePoint(const vnl_vector<double> & ina){
-    Eigen::Vector3d pt_eigen;
-    pt_eigen(0) = ina[0]; pt_eigen(1) = ina[1]; pt_eigen(2) = ina[2];
-    planePoint = pt_eigen;
-  }
-  void SetPlanePoint(const Eigen::Vector3d & p){planePoint = p;}
+  //! Set plane normal
+  void setPlaneNormal(const Eigen::Vector3d &inPlane) { planeNormal_ = inPlane; }
 
-  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
-      return -planeNormal;
-    }
+  //! Get plane center point
+  Eigen::Vector3d getPlanePoint() { return planePoint_; }
+  //! Set plane center point
+  void setPlanePoint(const vnl_vector<double> &point) { planePoint_ = Eigen::Vector3d(point[0], point[1], point[2]); }
+  //! Set plane center point
+  void setPlanePoint(const Eigen::Vector3d &p) { planePoint_ = p; }
 
-    double ConstraintEval(const Eigen::Vector3d &pt) const{
-      double val = -planeNormal.dot(pt-planePoint);
-      return val;
-    }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return -planeNormal_; }
 
-private:
-  Eigen::Vector3d planeNormal;
-  Eigen::Vector3d planePoint;
+  std::vector<Eigen::Vector3d> &points() { return points_; };
+  double getOffset();
+  void setOffset(double offset);
+
+  double constraintEval(const Eigen::Vector3d &pt) const override;
+
+  void updatePlaneFromPoints();
+
+  //! Return this plane as a vtkPlane
+  vtkSmartPointer<vtkPlane> getVTKPlane();
+
+ private:
+  Eigen::Vector3d planeNormal_;
+  Eigen::Vector3d planePoint_;
+
+  std::vector<Eigen::Vector3d> points_;
+  double offset_ = 0;
 };
 
-
-}
+}  // namespace shapeworks

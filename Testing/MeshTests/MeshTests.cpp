@@ -9,6 +9,25 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, meshLocators)
+{
+  Mesh mesh1(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
+  Mesh mesh2(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+  Point center_1 = mesh1.center();
+  Point center_2 = mesh2.center();
+  int center_id_1 = mesh1.closestPointId(center_1);
+  int center_id_2 = mesh2.closestPointId(center_2);
+  Point center_point_1 = mesh1.getPoint(center_id_1);
+  Point center_point_2 = mesh2.getPoint(center_id_2);
+  ASSERT_TRUE(center_id_1 != center_id_2 &&  // ensure next test doesn't succeed by coincidene
+              center_point_1 != center_point_2);
+
+  mesh2 = mesh1; // mesh2 should no longer use cached locators from mesh1
+  ASSERT_TRUE(mesh2.center() != center_2); // function doesn't update any locators, so uses cached
+  ASSERT_TRUE(mesh2.getPoint(center_id_1) == center_point_1); // doesn't update locators
+  ASSERT_TRUE(mesh2.closestPointId(center_1) == center_id_1); // updates point locater, so noop
+}
+
 TEST(MeshTests, writeTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
@@ -68,7 +87,7 @@ TEST(MeshTests, geodesicTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
   auto distField = femur.geodesicDistance(femur.getPoint(200));
-  femur.setField("GeodesicDistanceToLandmark", distField);
+  femur.setField("GeodesicDistanceToLandmark", distField, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic1.vtk"));
 
@@ -85,7 +104,7 @@ TEST(MeshTests, geodesicTest3)
   curve.push_back(ellipsoid.getPoint(300));
 
   auto distField = ellipsoid.geodesicDistance(curve);
-  ellipsoid.setField("GeodesicDistanceToCurve", distField);
+  ellipsoid.setField("GeodesicDistanceToCurve", distField, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/geodesic_curve.vtk"));
 
@@ -96,7 +115,7 @@ TEST(MeshTests, curvatureTest1)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
-  mesh.setField("MeanCurvature", curv);
+  mesh.setField("MeanCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureEllipsoid.vtk"));
 
@@ -107,7 +126,7 @@ TEST(MeshTests, curvatureTest2)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature();
-  mesh.setField("PrincipalCurvature", curv);
+  mesh.setField("PrincipalCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureEllipsoid.vtk"));
 
@@ -118,7 +137,7 @@ TEST(MeshTests, curvatureTest3)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
-  mesh.setField("GaussianCurvature", curv);
+  mesh.setField("GaussianCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureEllipsoid.vtk"));
 
@@ -129,7 +148,7 @@ TEST(MeshTests, curvatureTest4)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
-  mesh.setField("MeanCurvature", curv);
+  mesh.setField("MeanCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/meanCurvatureFemur.vtk"));
 
@@ -140,7 +159,7 @@ TEST(MeshTests, curvatureTest5)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature();
-  mesh.setField("PrincipalCurvature", curv);
+  mesh.setField("PrincipalCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/principalCurvatureFemur.vtk"));
 
@@ -151,7 +170,7 @@ TEST(MeshTests, curvatureTest6)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
-  mesh.setField("GaussianCurvature", curv);
+  mesh.setField("GaussianCurvature", curv, Mesh::Point);
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + std::string("/gaussianCurvatureFemur.vtk"));
 
@@ -168,7 +187,7 @@ TEST(MeshTests, computemeannormalsTest1)
 
   auto meanNormalsArray = MeshUtils::computeMeanNormals(meshes);
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
-  mesh.setField("MeanNormals", meanNormalsArray);
+  mesh.setField("MeanNormals", meanNormalsArray, Mesh::Point);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/meannormals.vtk");
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
@@ -182,7 +201,7 @@ TEST(MeshTests, computemeannormalsTest2)
 
   auto meanNormalsArray = MeshUtils::computeMeanNormals(filenames, true);
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
-  mesh.setField("MeanNormals", meanNormalsArray);
+  mesh.setField("MeanNormals", meanNormalsArray, Mesh::Point);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/meannormals.vtk");
 
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
@@ -543,11 +562,15 @@ TEST(MeshTests, distanceTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  femur.distance(pelvis);
-  pelvis.distance(femur);
+  auto f2p_distances = femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint);
+  auto p2f_distances = pelvis.distance(femur, Mesh::DistanceMethod::PointToPoint);
+  femur.setField("distance", f2p_distances[0], Mesh::Point);
+  pelvis.setField("distance", p2f_distances[0], Mesh::Point);
+  femur.setField("closestPoints", f2p_distances[1], Mesh::Point);
+  pelvis.setField("closestPoints", p2f_distances[1], Mesh::Point);
 
-  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
-  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
+  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance_point_fwd.vtk");
+  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance_point_rev.vtk");
   ASSERT_TRUE(femur == f2p);
   ASSERT_TRUE(pelvis == p2f);
 }
@@ -556,11 +579,15 @@ TEST(MeshTests, distanceTest2)
 {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
-  femur2.distance(femur1);
+  auto fwd_distances = femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
+  auto rev_distances = femur2.distance(femur1, Mesh::DistanceMethod::PointToCell);
+  femur1.setField("distance", fwd_distances[0], Mesh::Point);
+  femur2.setField("distance", rev_distances[0], Mesh::Point);
+  femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
+  femur2.setField("closestCells", rev_distances[1], Mesh::Point);
 
-  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
-  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
+  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
+  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
   ASSERT_TRUE(femur1 == fwd);
   ASSERT_TRUE(femur2 == rev);
 }
@@ -615,28 +642,34 @@ TEST(MeshTests, closestpointTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   ellipsoid.computeNormals();
-  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto normals = ellipsoid.getField("Normals", Mesh::Point);
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p + v;
-  auto closeToP = ellipsoid.closestPoint(pNew);
+  bool outside = false;
+  double distance;
+  vtkIdType face_id = -1;
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == true && epsEqual(distance, 1.0, 1e-5) && face_id == 90);
 }
 
 TEST(MeshTests, closestpointTest2)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/sphere_highres.ply");
   ellipsoid.computeNormals();
-  auto normals = ellipsoid.getField<vtkDataArray>("Normals");
+  auto normals = ellipsoid.getField("Normals", Mesh::Point);
   auto n = normals->GetTuple3(42);
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p - v * 1.1;
-  auto closeToP = ellipsoid.closestPoint(pNew);
+  bool outside = false;
+  double distance;
+  vtkIdType face_id = -1;
+  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-6));
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == false && epsEqual(distance, 1.1, 1e-5) && face_id == 9);
 }
 
 TEST(MeshTests, closestpointIdTest)
@@ -677,8 +710,8 @@ TEST(MeshTests, fieldTest2)
 TEST(MeshTests, fieldTest3)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
-  std::vector<double> scalarRange = mesh.getFieldRange("scalars");
-  std::vector<double> normalsRange = mesh.getFieldRange("Normals");
+  std::vector<double> scalarRange = range(mesh.getField("scalars", Mesh::Point));
+  std::vector<double> normalsRange = range(mesh.getField("Normals", Mesh::Point));
 
   ASSERT_TRUE(scalarRange[0]==1);
   ASSERT_TRUE(scalarRange[1]==1);
@@ -837,5 +870,12 @@ TEST(MeshTests, addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
+}
 
+TEST(MeshTests, constructFromMatrixes)
+{
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  ground_truth.computeNormals();
+  Mesh construct(ground_truth.points(), ground_truth.faces());
+  ASSERT_TRUE(construct == ground_truth);
 }

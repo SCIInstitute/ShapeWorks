@@ -145,38 +145,8 @@ std::vector<StudioParticles> QOptimize::GetParticles()
 std::vector<std::vector<std::vector<double>>> QOptimize::GetProcrustesTransforms()
 {
   QMutexLocker locker(&qmutex_);
-
-  std::vector<std::vector<std::vector<double>>> transforms;
-
-  int num_domains_per_subject = this->GetDomainsPerShape();
-  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
-  transforms.resize(num_subjects);
-
-  auto ps = this->GetSampler()->GetParticleSystem();
-
-  int subject = 0;
-  int domain = 0;
-  std::vector<std::vector<double>> subject_transform;
-  for (int i = 0; i < this->m_local_points.size(); i++) {  // iterate over all domains
-
-    auto procrustes = ps->GetTransform(i);
-    std::vector<double> transform;
-    for (int i = 0; i < procrustes.cols(); i++) {
-      for (int j = 0; j < procrustes.rows(); j++) {
-        transform.push_back(procrustes(i, j));
-      }
-    }
-    subject_transform.push_back(transform);
-
-    domain++;
-    if (domain == num_domains_per_subject) {
-      transforms[subject] = subject_transform;
-      subject++;
-      domain = 0;
-      subject_transform = std::vector<std::vector<double>>();
-    }
-  }
-
+  auto transforms = Optimize::GetProcrustesTransforms();
   return transforms;
 }
+
 }

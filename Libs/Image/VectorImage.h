@@ -16,9 +16,10 @@ class VectorImage
 public:
 
   using GradientImageFilter = itk::GradientImageFilter<Image::ImageType>;
-  using ImageType = GradientImageFilter::OutputImageType;
+  using ImageType = itk::Image<Covariant, 3>;
   using GradientInterpolator = itk::VectorLinearInterpolateImageFunction<
     ImageType, typename Image::PixelType>;
+  using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   /// Creates a gradient vector image of image (presumably a distance transform)
   VectorImage(const Image& dt_img);
@@ -27,6 +28,7 @@ public:
 
   /// Returns a Vector (which can be normalized using `v.Normalize()`).
   Vector evaluate(Point p) { return toVector(interpolator->Evaluate(p)); }
+  ImageIterator setIterator();
 
 private:
   itk::SmartPointer<ImageType> image;

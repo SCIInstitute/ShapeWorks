@@ -13,7 +13,7 @@ def computemeannormalsTest1():
   meshList.append(mesh2.computeNormals())
 
   arr = MeshUtils.computeMeanNormals(meshList)
-  mesh1.setField("MeanNormals", arr)
+  mesh1.setField("MeanNormals", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meannormals.vtk")
 
@@ -28,7 +28,7 @@ def computemeannormalsTest2():
   arr = MeshUtils.computeMeanNormals(filenames)
 
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
-  mesh.setField("MeanNormals", arr)
+  mesh.setField("MeanNormals", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meannormals.vtk")
 
@@ -43,7 +43,7 @@ def computemeannormalsTest3():
   arr = MeshUtils.computeMeanNormals(filenames, False)
 
   mesh = Mesh(os.environ["DATA"] + "/m03.vtk")
-  mesh.setField("MeanNormals", arr)
+  mesh.setField("MeanNormals", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meannormals.vtk")
 
@@ -60,7 +60,7 @@ def computemeannormalsTest4():
   meshList.append(mesh2)
 
   arr = MeshUtils.computeMeanNormals(meshList)
-  mesh1.setField("MeanNormals", arr)
+  mesh1.setField("MeanNormals", arr, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/meannormals.vtk")
 

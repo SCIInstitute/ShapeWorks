@@ -1,19 +1,5 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleCurvatureEntropyGradientFunction.txx,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+#pragma once
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleCurvatureEntropyGradientFunction_txx
-#define __itkParticleCurvatureEntropyGradientFunction_txx
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
@@ -27,7 +13,10 @@ double
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::EstimateSigma(unsigned int idx,
                 unsigned int dom,
-                const ParticleDomain *domain,
+                const typename ParticleSystemType::PointVectorType &neighborhood, 
+                const shapeworks::ParticleDomain *domain,
+                const std::vector<double> &weights,
+                const std::vector<double> &distances,
                 const PointType &pos,
                 double initial_sigma,
                 double precision,
@@ -299,5 +288,5 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 }
 
 }// end namespace
-#endif
+
 

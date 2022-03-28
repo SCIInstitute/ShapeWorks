@@ -18,7 +18,7 @@
 #include <Libs/Mesh/MeshUtils.h>
 
 #include <Libs/Utils/StringUtils.h>
-
+#include <Data/QMeshWarper.h>
 #include <Data/LegacyMeshGenerator.h>
 
 namespace shapeworks {

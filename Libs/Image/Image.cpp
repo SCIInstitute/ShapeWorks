@@ -2,6 +2,7 @@
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 #include "MeshUtils.h"
+#include "Exception.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -33,6 +34,7 @@
 #include <itkConnectedComponentImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -43,6 +45,16 @@
 #include <cmath>
 
 namespace shapeworks {
+
+Image::Image(const Dims dims) : image(ImageType::New())
+{
+  ImageType::RegionType region;
+  region.SetSize(dims);
+  region.SetIndex(Coord({0,0,0}));
+
+  image->SetRegions(region);
+  image->Allocate();
+}
 
 Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
 {
@@ -70,7 +82,7 @@ vtkSmartPointer<vtkImageData> Image::getVTKImage() const
 
   return connector->GetOutput();
 }
-  
+
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
@@ -108,7 +120,7 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
     reader->Update();
   }
   catch (itk::ExceptionObject &exp) {
-    throw std::invalid_argument(std::string(exp.what()));
+    throw shapeworks_exception(std::string(exp.what()));
   }
 
   // reorient the image to RAI if it's not already
@@ -221,6 +233,18 @@ Image& Image::operator-=(const PixelType x)
   }
 
   return *this;
+}
+
+Image Image::operator*(const Image &other) const
+{
+  using FilterType = itk::MultiplyImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput1(this->image);
+  filter->SetInput2(other.image);
+  filter->Update();
+
+  return Image(filter->GetOutput());
 }
 
 Image Image::operator*(const PixelType x) const
@@ -979,6 +1003,12 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
+}
+
+Image::ImageIterator Image::setIterator()
+{ 
+  ImageIterator iter(this->image, image->GetRequestedRegion());
+  return iter;
 }
 
 Mesh Image::toMesh(PixelType isoValue) const

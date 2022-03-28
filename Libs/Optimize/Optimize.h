@@ -24,10 +24,12 @@
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
-
+#include <Libs/Project/Project.h>
 
 
 namespace shapeworks {
+
+class Project;
 
 class MatrixContainer {
   public:
@@ -63,6 +65,12 @@ public:
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+
+  bool SetUpOptimize(ProjectHandle projectFile);
+
+  //! Set the Projects
+  void SetProject(std::shared_ptr<Project> project);
+
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -287,6 +295,9 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  //! transform a point if necessary
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback
@@ -337,6 +348,10 @@ protected:
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
   virtual void UpdateExportablePoints();
+
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
 
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
@@ -445,6 +460,8 @@ protected:
   std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }

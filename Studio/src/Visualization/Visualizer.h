@@ -1,11 +1,11 @@
 #pragma once
 
+#include <Data/Preferences.h>
+#include <Data/Session.h>
+#include <Visualization/Lightbox.h>
+
 #include <map>
 #include <string>
-
-#include <Data/Session.h>
-#include <Data/Preferences.h>
-#include <Visualization/Lightbox.h>
 
 namespace shapeworks {
 
@@ -19,9 +19,9 @@ typedef QSharedPointer<Visualizer> VisualizerHandle;
  * Additionally, it performs all shape-based statistical functions.
  */
 class Visualizer : public QObject {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
   Visualizer(Preferences& prefs);
   ~Visualizer();
 
@@ -58,6 +58,10 @@ public:
   void display_samples();
 
   void update_samples();
+
+  void update_landmarks();
+  void update_planes();
+  void update_ffc_mode();
 
   void display_sample(int i);
 
@@ -105,7 +109,7 @@ public:
   double* get_feature_range();
 
   //! Get the current raw feature range
-  double *get_feature_raw_range();
+  double* get_feature_raw_range();
 
   //! Return if the feature range is valid or not
   bool get_feature_range_valid();
@@ -125,16 +129,23 @@ public:
   //! Get the current glyph size
   double get_current_glyph_size();
 
-public Q_SLOTS:
+  //! Handle ctrl click
+  void handle_ctrl_click(PickResult result);
+
+  //! Redraw renderers
+  void redraw();
+
+ public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
   void update_viewer_properties();
 
   void handle_feature_range_changed();
 
-private:
-  ShapeHandle create_display_object(const StudioParticles& points,
-                                    const std::vector<Shape::Point>& vectors);
+  void handle_image_slice_settings_changed();
+
+ private:
+  ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
   void compute_measurements();
@@ -146,8 +157,8 @@ private:
   bool center_;
   bool needs_camera_reset_ = true;
 
-  bool show_glyphs_;
-  bool show_surface_;
+  bool show_glyphs_ = true;
+  bool show_surface_ = true;
 
   LightboxHandle lightbox_;
   SessionHandle session_;
@@ -167,7 +178,6 @@ private:
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};
-
 };
 
-}
+}  // namespace shapeworks

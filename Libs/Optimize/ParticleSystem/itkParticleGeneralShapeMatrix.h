@@ -1,5 +1,4 @@
-#ifndef ITKPARTICLEGENERALSHAPEMATRIX_H
-#define ITKPARTICLEGENERALSHAPEMATRIX_H
+#pragma once
 
 #include "itkParticleAttribute.h"
 #include "itkDataObject.h"
@@ -7,8 +6,8 @@
 #include "itkParticleContainer.h"
 #include "vnl/vnl_matrix.h"
 
-#include "itkParticleImplicitSurfaceDomain.h"
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "ParticleImageDomainWithGradients.h"
 #include "TriMesh.h"
 
 #include "itkParticleSystem.h"
@@ -36,7 +35,7 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self)
@@ -162,7 +161,7 @@ public:
             pt[1] = posLocal[1];
             pt[2] = posLocal[2];
             fVals.clear();
-            const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
+            const shapeworks::ParticleImplicitSurfaceDomain<float> * domain = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
             meshFIM *ptr = domain->GetMesh();
             ptr->GetFeatureValues(pt, fVals);
             for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
@@ -271,5 +270,3 @@ private:
 }; // end class
 
 } // end namespace
-
-#endif // ITKPARTICLEGENERALSHAPEMATRIX_H

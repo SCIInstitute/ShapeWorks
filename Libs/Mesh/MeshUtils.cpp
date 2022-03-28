@@ -166,11 +166,12 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
                                                     10, true);
         // transform
         auto transform = createMeshTransform(matrix);
-        Mesh transformed = meshes[pair.first];
+        Mesh transformed = poly_data1;
         transformed.applyTransform(transform);
 
         // compute distance
-        double distance = transformed.distance(meshes[pair.second]).getFieldMean("distance");
+        auto distances = transformed.distance(poly_data2)[0];
+        double distance = mean(distances);
         {
           // lock and store results
           tbb::mutex::scoped_lock lock(mutex);
@@ -484,7 +485,7 @@ void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>&
   {
     bool hasNormals = true;
     try {
-      meshes[i].get().getField<vtkDataArray>("Normals");
+      meshes[i].get().getField("Normals", Mesh::Point);
     }
     catch (...) {
       hasNormals = false;
@@ -538,7 +539,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
 
-    auto normals = meshes[j].get().getField<vtkDataArray>("Normals");
+    auto normals = meshes[j].get().getField("Normals", Mesh::Point);
 
     if (num_normals != normals->GetNumberOfTuples())
       throw std::invalid_argument("Expected a normal for every point in mesh. Please call generateNormals to accomplish this");
@@ -584,7 +585,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
   }
 
-  std::cerr << "WARNING: Added a multi-component mesh field\n";
+  //std::cerr << "WARNING: Added a multi-component mesh field\n";
 
   return normals;
 }
