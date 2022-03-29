@@ -108,7 +108,7 @@ nav:
  
 
 theme:
-   name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   name: material #readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
    include_sidebar: true
    highlightjs: true
    hljs_languages:
