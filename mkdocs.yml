@@ -147,3 +147,8 @@ plugins:
       javascript_dir: js       # the directory to put the version selector's JS
       canonical_version: null  # the version for <link rel="canonical">; `null`
                                # uses the version specified via `mike deploy`
+
+# for material theme, mike versioning is supported as an extra
+extra:
+  version:
+    provider: mike
