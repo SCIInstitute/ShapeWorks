@@ -16,9 +16,12 @@ namespace shapeworks {
 class VtkMeshWrapper;
 class ParticleNormalEvaluation {
  public:
-  static std::vector<bool> evaluate_particle_normals(ParticleSystem local_particles,
-                                                     std::vector<std::shared_ptr<VtkMeshWrapper>> meshes,
+  static std::vector<bool> evaluate_particle_normals(const Eigen::MatrixXd& particles, const Eigen::MatrixXd& normals,
                                                      double max_angle_degrees);
+
+  //! Compute normals at particle positions
+  static Eigen::MatrixXd compute_particle_normals(const Eigen::MatrixXd& particles,
+                                                  std::vector<std::shared_ptr<VtkMeshWrapper>> meshes);
 
  private:
 };

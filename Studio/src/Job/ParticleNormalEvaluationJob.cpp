@@ -34,14 +34,17 @@ void ParticleNormalEvaluationJob::run() {
       emit progress(count / total);
     }
 
-    auto domain_good_bad = ParticleNormalEvaluation::evaluate_particle_normals(particles, meshes, max_angle_degrees_);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.Particles(), meshes);
+
+    auto domain_good_bad =
+        ParticleNormalEvaluation::evaluate_particle_normals(particles.Particles(), normals, max_angle_degrees_);
     good_bad.insert(good_bad.end(), domain_good_bad.begin(), domain_good_bad.end());
   }
 
   int good_count = std::count(good_bad.begin(), good_bad.end(), true);
 
   STUDIO_LOG_MESSAGE("ParticleNormalEvaluationJob: found " + QString::number(good_count) + "/" +
-                     QString::number(good_bad.size()) + " good particles\n");
+                     QString::number(good_bad.size()) + " good particles");
 
   emit progress(1.0);
 
