@@ -52,7 +52,8 @@ def Run_Pipeline(args):
 
     # # 02. Extract shared boundaries
     # # TODO Uses the shared_boundary_extractor script that has to be consolidated into shapework.Mesh
-    extractedDir = groomDir + "02_extracted/"
+    #extractedDir = groomDir + "02_extracted/"
+    extractedDir = groomDir + "01_remesh/"
     if not os.path.exists(extractedDir):
         os.makedirs(extractedDir)
     mesh_list = sorted(glob.glob(extractedDir+"*.ply"))
@@ -61,14 +62,19 @@ def Run_Pipeline(args):
         fname_l = mesh_list[i*2]
         fname_r = mesh_list[i*2+1]
         tol = 1e-3 # distance threshold to consider two surfaces as "shared"
+        print("\n\nINPUT to sharedBoundaryExtractor:")
         print(fname_l,fname_r)
         # fname_out_l = f'{extractedDir}/{i:02d}_l.ply'
         # fname_out_r = f'{extractedDir}/{i:02d}_r.ply'
         # fname_out_m = f'{extractedDir}/{i:02d}_m.ply'
 
-        # (out_l,out_r,out_s) = 
-        sw.MeshUtils.sharedBoundaryExtractor(sw.Mesh(fname_l),sw.Mesh(fname_r),tol)
-        # print(out_l,out_r,out_s)
+        mesh_l = sw.Mesh(fname_l)
+        mesh_r = sw.Mesh(fname_r)
+        print(mesh_l)
+        print(mesh_r)
+        (out_l,out_r,out_s) = sw.MeshUtils.sharedBoundaryExtractor(mesh_l, mesh_r, tol)
+        print("\n\nOUTPUT of sharedBoundaryExtractor:")
+        print(out_l,out_r,out_s)
 
 
     # # 03. Smooth

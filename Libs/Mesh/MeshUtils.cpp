@@ -438,10 +438,8 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
 }
 
 // int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
-std::vector<Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Mesh mesh_r, double tol)
+std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol)
 {
-  
-
   std::vector<Mesh> output_meshes;
   Eigen::MatrixXd V_l, V_r;
   Eigen::MatrixXi F_l, F_r;
@@ -449,8 +447,6 @@ std::vector<Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Me
   F_l = mesh_l.faces();
   V_r = mesh_r.points();
   F_r = mesh_r.faces();
-
-
 
   Eigen::MatrixXd shared_V_l, shared_V_r, rem_V_l, rem_V_r;
   Eigen::MatrixXi shared_F_l, shared_F_r, rem_F_l, rem_F_r;
@@ -469,11 +465,11 @@ std::vector<Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Me
   // std::tie(bridge_V, bridge_F) = move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r);
   move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r,bridge_V,bridge_F);
 
-  
+  std::cerr << "A Mesh constructor from Vertices and Faces needs to be created for this" << std::endl;
   std::shared_ptr<Mesh> igl_l;
   igl_l->getIGLMesh(bridge_V,bridge_F);
   Mesh out_l(igl_l->getVTKMesh());
-  
+
   std::shared_ptr<Mesh> igl_r;
   igl_r->getIGLMesh(rem_V_r,rem_F_r);
   Mesh out_r(igl_r->getVTKMesh());
@@ -484,15 +480,16 @@ std::vector<Mesh> MeshUtils::sharedBoundaryExtractor(const Mesh mesh_l, const Me
 
   // igl::writePLY(filename_r, rem_V_r, rem_F_r);
   // igl::writePLY(filename_shared, shared_V_r, shared_F_r);
-  output_meshes.push_back(out_l);
-  output_meshes.push_back(out_r);
-  output_meshes.push_back(out_s);
+  // output_meshes.push_back(out_l);
+  // output_meshes.push_back(out_r);
+  // output_meshes.push_back(out_s);
   // auto eq =  std::make_tuple(out_l,out_r,out_s);
   // return eq;
-  return output_meshes;
+  //return output_meshes;
+
+  // pass ownership since they will just go out of scope and be deleted anyway
+  return std::array<Mesh, 3>{ std::move(out_l), std::move(out_r), std::move(out_s) };
 }
-
-
 
 void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen)
 {
