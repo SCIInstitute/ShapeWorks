@@ -1,0 +1,4397 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The official documentation of ShapeWorks">
+      
+      
+        <meta name="author" content="Shireen Elhabian et al.">
+      
+      
+        <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/6.99/tools/ShapeWorksCommands.html">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+    
+    
+      
+        <title>ShapeWorks Commands - ShapeWorks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.644de097.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shapeworks-commands" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ShapeWorks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ShapeWorks Commands
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    ShapeWorks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/shapes.html" class="md-nav__link">
+        Shapes, What & From Where?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workflow.html" class="md-nav__link">
+        Shape Modeling Workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/sw-stories.html" class="md-nav__link">
+        ShapeWorks Success Stories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/interfaces.html" class="md-nav__link">
+        ShapeWorks Interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/examples.html" class="md-nav__link">
+        Examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/how-tos.html" class="md-nav__link">
+        How-Tos
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          For Users
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Users" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          For Users
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/install.html" class="md-nav__link">
+        How to Install ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/citation.html" class="md-nav__link">
+        How to Cite ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/papers.html" class="md-nav__link">
+        Revelant Papers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Workflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/groom.html" class="md-nav__link">
+        How to Groom Your Dataset?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/optimize.html" class="md-nav__link">
+        How to Optimize Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/analyze.html" class="md-nav__link">
+        How to Analyze Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          What is New?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="What is New?" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          What is New?
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/new-studio.html" class="md-nav__link">
+        New in ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/openvdb.html" class="md-nav__link">
+        ShapeWorks Takes ~85% Less Memory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/sw-meshes.html" class="md-nav__link">
+        ShapeWorks Directly on Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-command.html" class="md-nav__link">
+        ShapeWorks Command
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ssm-eval.html" class="md-nav__link">
+        Shape Model Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-python.html" class="md-nav__link">
+        ShapeWorks in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ellipsoid-joint-generation.html" class="md-nav__link">
+        Ellipsoid Joint Generation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          ShapeWorks Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ShapeWorks Commands
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="ShapeWorksCommands.html" class="md-nav__link md-nav__link--active">
+        ShapeWorks Commands
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks" class="md-nav__link">
+    shapeworks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#groom-commands" class="md-nav__link">
+    Groom Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Groom Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#groom" class="md-nav__link">
+    groom
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-commands" class="md-nav__link">
+    Image Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    add
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#antialias" class="md-nav__link">
+    antialias
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binarize" class="md-nav__link">
+    binarize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blur" class="md-nav__link">
+    blur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounding-box-image" class="md-nav__link">
+    bounding-box-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-image" class="md-nav__link">
+    clip-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close-holes" class="md-nav__link">
+    close-holes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-image" class="md-nav__link">
+    compare-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compute-dt" class="md-nav__link">
+    compute-dt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop" class="md-nav__link">
+    crop
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#curvature" class="md-nav__link">
+    curvature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#divide" class="md-nav__link">
+    divide
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-label" class="md-nav__link">
+    extract-label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gradient" class="md-nav__link">
+    gradient
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#icp-image" class="md-nav__link">
+    icp-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-bounds" class="md-nav__link">
+    image-bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-info" class="md-nav__link">
+    image-info
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-to-mesh" class="md-nav__link">
+    image-to-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intensity" class="md-nav__link">
+    intensity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isolate" class="md-nav__link">
+    isolate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiply" class="md-nav__link">
+    multiply
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negate" class="md-nav__link">
+    negate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pad" class="md-nav__link">
+    pad
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-image" class="md-nav__link">
+    read-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recenter" class="md-nav__link">
+    recenter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect-image" class="md-nav__link">
+    reflect-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resample" class="md-nav__link">
+    resample
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resize" class="md-nav__link">
+    resize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate" class="md-nav__link">
+    rotate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-image" class="md-nav__link">
+    scale-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-origin" class="md-nav__link">
+    set-origin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-region" class="md-nav__link">
+    set-region
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-spacing" class="md-nav__link">
+    set-spacing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    sigmoid
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtract" class="md-nav__link">
+    subtract
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topo-preserving-smooth" class="md-nav__link">
+    topo-preserving-smooth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tp-levelset" class="md-nav__link">
+    tp-levelset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translate-image" class="md-nav__link">
+    translate-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warp-image" class="md-nav__link">
+    warp-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-image" class="md-nav__link">
+    write-image
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mesh-commands" class="md-nav__link">
+    Mesh Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Mesh Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bounding-box-mesh" class="md-nav__link">
+    bounding-box-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-closed-surface" class="md-nav__link">
+    clip-closed-surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-mesh" class="md-nav__link">
+    clip-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#closest-point" class="md-nav__link">
+    closest-point
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-mesh" class="md-nav__link">
+    compare-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compute-normals" class="md-nav__link">
+    compute-normals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    coverage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance" class="md-nav__link">
+    distance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-mean" class="md-nav__link">
+    field-mean
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-names" class="md-nav__link">
+    field-names
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-range" class="md-nav__link">
+    field-range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-std" class="md-nav__link">
+    field-std
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fill-holes" class="md-nav__link">
+    fill-holes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-element" class="md-nav__link">
+    fix-element
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-distance" class="md-nav__link">
+    geodesic-distance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-distance-landmark" class="md-nav__link">
+    geodesic-distance-landmark
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-field" class="md-nav__link">
+    get-field
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-field-value" class="md-nav__link">
+    get-field-value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invert-normal" class="md-nav__link">
+    invert-normal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mean-normals" class="md-nav__link">
+    mean-normals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-bounds" class="md-nav__link">
+    mesh-bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-curvature" class="md-nav__link">
+    mesh-curvature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-info" class="md-nav__link">
+    mesh-info
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-to-dt" class="md-nav__link">
+    mesh-to-dt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-to-image" class="md-nav__link">
+    mesh-to-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probe-volume" class="md-nav__link">
+    probe-volume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-mesh" class="md-nav__link">
+    read-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect-mesh" class="md-nav__link">
+    reflect-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh-percent" class="md-nav__link">
+    remesh-percent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-mesh" class="md-nav__link">
+    scale-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-field" class="md-nav__link">
+    set-field
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-field-value" class="md-nav__link">
+    set-field-value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth" class="md-nav__link">
+    smooth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth-sinc" class="md-nav__link">
+    smooth-sinc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform-mesh" class="md-nav__link">
+    transform-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translate-mesh" class="md-nav__link">
+    translate-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warp-mesh" class="md-nav__link">
+    warp-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-mesh" class="md-nav__link">
+    write-mesh
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimize-commands" class="md-nav__link">
+    Optimize Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Optimize Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimize" class="md-nav__link">
+    optimize
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#particlesystem-commands" class="md-nav__link">
+    ParticleSystem Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="ParticleSystem Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#compactness" class="md-nav__link">
+    compactness
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalization" class="md-nav__link">
+    generalization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-particle-system" class="md-nav__link">
+    read-particle-system
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specificity" class="md-nav__link">
+    specificity
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-commands_1" class="md-nav__link">
+    Shapeworks Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Shapeworks Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seed" class="md-nav__link">
+    seed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Studio
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Studio
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/getting-started-with-studio.html" class="md-nav__link">
+        Getting Started With ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/multiple-domains.html" class="md-nav__link">
+        Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/deepssm-in-studio.html" class="md-nav__link">
+        DeepSSM in Studio
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          ShapeWorks in Python
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks in Python
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+        Getting Started with Jupyter Notebooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+        Getting Started with Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+        Getting Started with Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+        Getting Started with Exploring Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+        Getting Started with Data Augmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+        Getting Started with Shape Cohort Generator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/array-passing-without-copying.html" class="md-nav__link">
+        Array passing without copying
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+        Transforms can be used to center image data or to align two images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+        Transforms can also be used to align two meshes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Deep Learning & SSMs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning & SSMs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/pytorch-gpu.html" class="md-nav__link">
+        PyTorch GPU Support for ShapeWorks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/data-augmentation.html" class="md-nav__link">
+        Data Augmentation for Deep Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/deep-ssm.html" class="md-nav__link">
+        SSMs Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/use-cases.html" class="md-nav__link">
+        Getting Started with Use Cases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_2">
+          Segmentation Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Segmentation Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+        Ellipsoid: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+        Left Atrium: Shape Model from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+        Shape Model for Multiple Domains from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_3">
+          Mesh Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_3">
+          <span class="md-nav__icon md-icon"></span>
+          Mesh Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+        Ellipsoid Mesh: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/lumps.html" class="md-nav__link">
+        Lumps: Shape Model directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+        Thin Cavity Bean: Shape Model with Geodesic Distances
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+        Shape Model for Multiple Domains directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_4">
+          Contour Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contour Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+        Supershapes:Shape Model for Contour Domains
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_5">
+          Constraints Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_5">
+          <span class="md-nav__icon md-icon"></span>
+          Constraints Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+        Ellipsoid: Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+        Femur:Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_6">
+          Statistics Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Statistics Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+        Ellipsoid: Shape Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+        Femur: Group Difference Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+        Ellipsoid: Shape Evaluation in Python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
+          Deep Learning Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_7">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+        Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/right-ventricle.html" class="md-nav__link">
+        Right Ventricle: Highly Variable Shapes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11">
+          For Developers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Developers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          For Developers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/build.html" class="md-nav__link">
+        How to Build ShapeWorks from Source?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/contribute.html" class="md-nav__link">
+        How to Contribute to ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/commands.html" class="md-nav__link">
+        How to Add ShapeWorks Commands?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/python-apis.html" class="md-nav__link">
+        How to Add Python APIs?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/tests.html" class="md-nav__link">
+        How to Add and Run Unit Tests?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-use-case.html" class="md-nav__link">
+        How to Add New Use Cases?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/datasets.html" class="md-nav__link">
+        How to Add New Datasets?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-notebook.html" class="md-nav__link">
+        How to Add New Notebooks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/modify-datasets.html" class="md-nav__link">
+        When Modifying Existing Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/docs.html" class="md-nav__link">
+        Getting Started with Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/gh-actions.html" class="md-nav__link">
+        Getting Started with GitHub Actions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/markdown.html" class="md-nav__link">
+        Getting Started with Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/paths.html" class="md-nav__link">
+        Adding to PATH Environment Variable
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_12">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_12">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+        Groups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+        Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+        Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Files/index_files.html" class="md-nav__link">
+        Files
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_13">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/team.html" class="md-nav__link">
+        Meet ShapeWorkers!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/release-notes.html" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/license.html" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/contact.html" class="md-nav__link">
+        Contact Us
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks" class="md-nav__link">
+    shapeworks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#groom-commands" class="md-nav__link">
+    Groom Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Groom Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#groom" class="md-nav__link">
+    groom
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-commands" class="md-nav__link">
+    Image Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    add
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#antialias" class="md-nav__link">
+    antialias
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binarize" class="md-nav__link">
+    binarize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blur" class="md-nav__link">
+    blur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bounding-box-image" class="md-nav__link">
+    bounding-box-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-image" class="md-nav__link">
+    clip-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close-holes" class="md-nav__link">
+    close-holes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-image" class="md-nav__link">
+    compare-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compute-dt" class="md-nav__link">
+    compute-dt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop" class="md-nav__link">
+    crop
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#curvature" class="md-nav__link">
+    curvature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#divide" class="md-nav__link">
+    divide
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-label" class="md-nav__link">
+    extract-label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gradient" class="md-nav__link">
+    gradient
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#icp-image" class="md-nav__link">
+    icp-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-bounds" class="md-nav__link">
+    image-bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-info" class="md-nav__link">
+    image-info
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-to-mesh" class="md-nav__link">
+    image-to-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intensity" class="md-nav__link">
+    intensity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isolate" class="md-nav__link">
+    isolate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiply" class="md-nav__link">
+    multiply
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negate" class="md-nav__link">
+    negate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pad" class="md-nav__link">
+    pad
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-image" class="md-nav__link">
+    read-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recenter" class="md-nav__link">
+    recenter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect-image" class="md-nav__link">
+    reflect-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resample" class="md-nav__link">
+    resample
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resize" class="md-nav__link">
+    resize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate" class="md-nav__link">
+    rotate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-image" class="md-nav__link">
+    scale-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-origin" class="md-nav__link">
+    set-origin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-region" class="md-nav__link">
+    set-region
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-spacing" class="md-nav__link">
+    set-spacing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    sigmoid
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtract" class="md-nav__link">
+    subtract
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topo-preserving-smooth" class="md-nav__link">
+    topo-preserving-smooth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tp-levelset" class="md-nav__link">
+    tp-levelset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translate-image" class="md-nav__link">
+    translate-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warp-image" class="md-nav__link">
+    warp-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-image" class="md-nav__link">
+    write-image
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mesh-commands" class="md-nav__link">
+    Mesh Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Mesh Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bounding-box-mesh" class="md-nav__link">
+    bounding-box-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-closed-surface" class="md-nav__link">
+    clip-closed-surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-mesh" class="md-nav__link">
+    clip-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#closest-point" class="md-nav__link">
+    closest-point
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-mesh" class="md-nav__link">
+    compare-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compute-normals" class="md-nav__link">
+    compute-normals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    coverage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance" class="md-nav__link">
+    distance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-mean" class="md-nav__link">
+    field-mean
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-names" class="md-nav__link">
+    field-names
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-range" class="md-nav__link">
+    field-range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-std" class="md-nav__link">
+    field-std
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fill-holes" class="md-nav__link">
+    fill-holes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fix-element" class="md-nav__link">
+    fix-element
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-distance" class="md-nav__link">
+    geodesic-distance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-distance-landmark" class="md-nav__link">
+    geodesic-distance-landmark
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-field" class="md-nav__link">
+    get-field
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-field-value" class="md-nav__link">
+    get-field-value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invert-normal" class="md-nav__link">
+    invert-normal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mean-normals" class="md-nav__link">
+    mean-normals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-bounds" class="md-nav__link">
+    mesh-bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-curvature" class="md-nav__link">
+    mesh-curvature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-info" class="md-nav__link">
+    mesh-info
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-to-dt" class="md-nav__link">
+    mesh-to-dt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh-to-image" class="md-nav__link">
+    mesh-to-image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probe-volume" class="md-nav__link">
+    probe-volume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-mesh" class="md-nav__link">
+    read-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect-mesh" class="md-nav__link">
+    reflect-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh-percent" class="md-nav__link">
+    remesh-percent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-mesh" class="md-nav__link">
+    scale-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-field" class="md-nav__link">
+    set-field
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-field-value" class="md-nav__link">
+    set-field-value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth" class="md-nav__link">
+    smooth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth-sinc" class="md-nav__link">
+    smooth-sinc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform-mesh" class="md-nav__link">
+    transform-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translate-mesh" class="md-nav__link">
+    translate-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warp-mesh" class="md-nav__link">
+    warp-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-mesh" class="md-nav__link">
+    write-mesh
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimize-commands" class="md-nav__link">
+    Optimize Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Optimize Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimize" class="md-nav__link">
+    optimize
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#particlesystem-commands" class="md-nav__link">
+    ParticleSystem Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="ParticleSystem Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#compactness" class="md-nav__link">
+    compactness
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalization" class="md-nav__link">
+    generalization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-particle-system" class="md-nav__link">
+    read-particle-system
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specificity" class="md-nav__link">
+    specificity
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-commands_1" class="md-nav__link">
+    Shapeworks Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Shapeworks Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seed" class="md-nav__link">
+    seed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/tools/ShapeWorksCommands.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+
+<h1 id="shapeworks-commands">ShapeWorks Commands</h1>
+<p><code>shapeworks</code> is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.</p>
+<div class="admonition danger">
+<p class="admonition-title">Activate shapeworks environment</p>
+<p>Each time you use ShapeWorks from the command line, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal. </p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Add shapeworks to your path</p>
+<p>Please make sure that <code>shapeworks</code> is in your path. See <a href="../dev/paths.html">Adding to PATH Environment Variable</a>. </p>
+</div>
+<h2 id="shapeworks">shapeworks</h2>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>  shapeworks &lt;command&gt; [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--version:</strong> show program's version number and exit</p>
+<p><strong>-q, --quiet:</strong> don't print status messages  </p>
+<p><a href="#top">Back to Top</a></p>
+<h2 id="groom-commands">Groom Commands</h2>
+<h3 id="groom">groom</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  groom [args]...
+</code></pre></div>
+<p><strong>Description:</strong> groom a shapeworks project  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Path to parameter file.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#groom-commands">Back to Groom Commands</a></p>
+<h2 id="image-commands">Image Commands</h2>
+<h3 id="add">add</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  add [args]...
+</code></pre></div>
+<p><strong>Description:</strong> add a value to each pixel in the given image and/or add another image in a pixelwise manner  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value to add to each pixel [default: 0.0].</p>
+<p><strong>--name=STRING:</strong> Name of image to add pixelwise.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="antialias">antialias</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  antialias [args]...
+</code></pre></div>
+<p><strong>Description:</strong> antialiases binary volumes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--iterations=INT:</strong> Maximum number of iterations [default: 50].</p>
+<p><strong>--maxrmserror=DOUBLE:</strong> Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].</p>
+<p><strong>--layers=INT:</strong> Number of layers around a 3d pixel to use for this computation [default: 3].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="binarize">binarize</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  binarize [args]...
+</code></pre></div>
+<p><strong>Description:</strong> sets portion of image greater than min and less than or equal to max to the specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--min=DOUBLE:</strong> Lower threshold level [default: 0.0].</p>
+<p><strong>--max=DOUBLE:</strong> Upper threshold level [default: inf ].</p>
+<p><strong>--value=DOUBLE:</strong> Value to set region [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="blur">blur</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  blur [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies gaussian blur  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--sigma=DOUBLE:</strong> Value of sigma [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="bounding-box-image">bounding-box-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  bounding-box-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute largest physical bounding box surrounding the specified isovalue of the specified set of images  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  Paths to images (must be followed by <code>--</code>), ex: "bounding-box-image --names *.nrrd -- --isovalue 1.5")</p>
+<p><strong>--isovalue=DOUBLE:</strong> Threshold value [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="clip-image">clip-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  clip-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> clips volume with the specified cutting planes defined by three 3D points  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--x1=DOUBLE:</strong> Value of x1 for cutting plane [default: 0].</p>
+<p><strong>--y1=DOUBLE:</strong> Value of y1 for cutting plane [default: 0].</p>
+<p><strong>--z1=DOUBLE:</strong> Value of z1 for cutting plane [default: 0].</p>
+<p><strong>--x2=DOUBLE:</strong> Value of x2 for cutting plane [default: 0].</p>
+<p><strong>--y2=DOUBLE:</strong> Value of y2 for cutting plane [default: 0].</p>
+<p><strong>--z2=DOUBLE:</strong> Value of z2 for cutting plane [default: 0].</p>
+<p><strong>--x3=DOUBLE:</strong> Value of x3 for cutting plane [default: 0].</p>
+<p><strong>--y3=DOUBLE:</strong> Value of y3 for cutting plane [default: 0].</p>
+<p><strong>--z3=DOUBLE:</strong> Value of z3 for cutting plane [default: 0].</p>
+<p><strong>--value=DOUBLE:</strong> Value of clipped pixels [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="close-holes">close-holes</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  close-holes [args]...
+</code></pre></div>
+<p><strong>Description:</strong> closes holes in a volume defined by values larger than specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--value=DOUBLE:</strong> Largest value not in volume [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="compare-image">compare-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compare-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compare two images  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Compare this image with another.</p>
+<p><strong>--verifyall=BOOL:</strong> Also verify origin, spacing, and direction matches [default: true].</p>
+<p><strong>--tolerance=DOUBLE:</strong> Allowed percentage of pixel differences [default: 0].</p>
+<p><strong>--precision=DOUBLE:</strong> Allowed difference between two pixels for them to still be considered equal [default: 1e-12].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="compute-dt">compute-dt</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compute-dt [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes signed distance transform volume from an image at the specified isovalue  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--isovalue=DOUBLE:</strong> Level set value that defines the interface between foreground and background [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="crop">crop</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  crop [args]...
+</code></pre></div>
+<p><strong>Description:</strong> crop image down to the current region of physical space (from bounding-box or set-region commands)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="curvature">curvature</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  curvature [args]...
+</code></pre></div>
+<p><strong>Description:</strong> denoises an image using curvature driven flow using curvature flow image filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--iterations=INT:</strong> Number of iterations [default: 10].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="divide">divide</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  divide [args]...
+</code></pre></div>
+<p><strong>Description:</strong> divide an image by a constant  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value with which to divide [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="extract-label">extract-label</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  extract-label [args]...
+</code></pre></div>
+<p><strong>Description:</strong> extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--label=DOUBLE:</strong> Label value to be extracted [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="gradient">gradient</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  gradient [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes gradient magnitude of an image region at each pixel using gradient magnitude filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="icp-image">icp-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  icp-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> transform current image using iterative closest point (ICP) 3D rigid registration computed from current distance map to target distance map  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=STRING:</strong> Distance map of target image.</p>
+<p><strong>--isovalue=DOUBLE:</strong> Isovalue of distance maps used to create ICPtransform [default: 0].</p>
+<p><strong>--iterations=UNSIGNED:</strong>  Number of iterations run ICP registration [default: 20].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="image-bounds">image-bounds</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  image-bounds [args]...
+</code></pre></div>
+<p><strong>Description:</strong> return bounds of image, optionally with an isovalue to restrict region  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--isovalue=DOUBLE:</strong> Isovalue [default: entire image].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="image-info">image-info</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  image-info [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--dims:</strong> Whether to display image dimensions [default: true].</p>
+<p><strong>--spacing:</strong> Whether to display physical spacing [default: true].</p>
+<p><strong>--size:</strong> Whether to display size [default: true].</p>
+<p><strong>--origin:</strong> Whether to display physical origin [default: true].</p>
+<p><strong>--direction:</strong> Whether to display direction [default: true].</p>
+<p><strong>--center:</strong> Whether to display center. [default: true]</p>
+<p><strong>--centerofmass:</strong> Whether to display center of mass. [default: true]</p>
+<p><strong>--boundingbox:</strong> Whether to display bounding box. [default: true]  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="image-to-mesh">image-to-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  image-to-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> converts the current image to a mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-v DOUBLE, --isovalue=DOUBLE:</strong>  Isovalue to determine mesh boundary [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="intensity">intensity</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  intensity [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies intensity windowing image filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--min=DOUBLE:</strong> Minimum value of window [default: 0].</p>
+<p><strong>--max=DOUBLE:</strong> Maximum value of window [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="isolate">isolate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  isolate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> finds the largest object in a binary segmentation and removes all other objects  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="multiply">multiply</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  multiply [args]...
+</code></pre></div>
+<p><strong>Description:</strong> multiply an image by a constant  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value with which to multiply [default: 1.0]  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="negate">negate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  negate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> negate the values in the given image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="pad">pad</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  pad [args]...
+</code></pre></div>
+<p><strong>Description:</strong> pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--padding=INT:</strong> Pad this many voxels in ALL directions (used if set) [default: 0].</p>
+<p><strong>-x INT, --padx=INT:</strong> Pad this many voxels in the x-direction [default: 0].</p>
+<p><strong>-y INT, --pady=INT:</strong> Pad this many voxels in the y-direction [default: 0].</p>
+<p><strong>-z INT, --padz=INT:</strong> Pad this many voxels in the z-direction [default: 0].</p>
+<p><strong>--value=DOUBLE:</strong> Value used to fill padded voxels [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="read-image">read-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads an image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to read.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="recenter">recenter</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  recenter [args]...
+</code></pre></div>
+<p><strong>Description:</strong> recenters an image by changing its origin in the image header to the physical coordinates of the center of the image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="reflect-image">reflect-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  reflect-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reflect image with respect to logical image center and the specified axis  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--axis=STRING:</strong> Axis along which to reflect (X, Y, or Z).  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="resample">resample</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  resample [args]...
+</code></pre></div>
+<p><strong>Description:</strong> resamples an image using new physical spacing (computes new dims)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--isospacing=DOUBLE:</strong> Use this spacing in all dimensions.</p>
+<p><strong>--spacex=DOUBLE:</strong> Pixel spacing in x-direction [default: 1].</p>
+<p><strong>--spacey=DOUBLE:</strong> Pixel spacing in y-direction [default: 1].</p>
+<p><strong>--spacez=DOUBLE:</strong> Pixel spacing in z-direction [default: 1].</p>
+<p><strong>--sizex=UNSIGNED:</strong> Output size in x-direction [default: current size].</p>
+<p><strong>--sizey=UNSIGNED:</strong> Output size in y-direction [default: current size].</p>
+<p><strong>--sizez=UNSIGNED:</strong> Output size in z-direction [default: current size].</p>
+<p><strong>--originx=DOUBLE:</strong> Output origin in x-direction [default: current origin].</p>
+<p><strong>--originy=DOUBLE:</strong> Output origin in y-direction [default: current origin].</p>
+<p><strong>--originz=DOUBLE:</strong> Output origin in z-direction [default: current origin].</p>
+<p><strong>--interp=CHOICE:</strong> Interpolation method to use [default: linear]. (choose from 'linear', 'nearest')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="resize">resize</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  resize [args]...
+</code></pre></div>
+<p><strong>Description:</strong> resizes an image (computes new physical spacing)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x UNSIGNED, --sizex=UNSIGNED:</strong>  Output size in x-direction [default: current size].</p>
+<p><strong>-y UNSIGNED, --sizey=UNSIGNED:</strong>  Output size in y-direction [default: current size].</p>
+<p><strong>-z UNSIGNED, --sizez=UNSIGNED:</strong>  Output size in z-direction [default: current size].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="rotate">rotate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  rotate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> rotates image by specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --rx=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis].</p>
+<p><strong>-y DOUBLE, --ry=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis].</p>
+<p><strong>-z DOUBLE, --rz=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis].</p>
+<p><strong>--radians=DOUBLE:</strong> Angle in radians.</p>
+<p><strong>--degrees=DOUBLE:</strong> Angle in degrees.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="scale-image">scale-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  scale-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> scales image by specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --sx=DOUBLE:</strong>  X scale.</p>
+<p><strong>-y DOUBLE, --sy=DOUBLE:</strong>  Y scale.</p>
+<p><strong>-z DOUBLE, --sz=DOUBLE:</strong>  Z scale.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="set-origin">set-origin</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-origin [args]...
+</code></pre></div>
+<p><strong>Description:</strong> set origin  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --x=DOUBLE:</strong>  X value of origin [default: 0].</p>
+<p><strong>-y DOUBLE, --y=DOUBLE:</strong>  Y value of origin [default: 0].</p>
+<p><strong>-z DOUBLE, --z=DOUBLE:</strong>  Z value of origin [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="set-region">set-region</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-region [args]...
+</code></pre></div>
+<p><strong>Description:</strong> set the current (physical) region to the specified min/max in each direction, for use with downstreams commands such as crop (note: could instead use the image-bounds command with an isovalue)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--xmin=DOUBLE:</strong> Minimum X.</p>
+<p><strong>--xmax=DOUBLE:</strong> Maximum X.</p>
+<p><strong>--ymin=DOUBLE:</strong> Minimum Y.</p>
+<p><strong>--ymax=DOUBLE:</strong> Maximum Y.</p>
+<p><strong>--zmin=DOUBLE:</strong> Minimum Z.</p>
+<p><strong>--zmax=DOUBLE:</strong> Maximum Z.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="set-spacing">set-spacing</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-spacing [args]...
+</code></pre></div>
+<p><strong>Description:</strong> set spacing  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --x=DOUBLE:</strong>  x value of spacing [default: 1].</p>
+<p><strong>-y DOUBLE, --y=DOUBLE:</strong>  y value of spacing [default: 1].</p>
+<p><strong>-z DOUBLE, --z=DOUBLE:</strong>  z value of spacing [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="sigmoid">sigmoid</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  sigmoid [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes sigmoid function pixel-wise using sigmoid image filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--alpha=DOUBLE:</strong> Value of alpha [default: 10].</p>
+<p><strong>--beta=DOUBLE:</strong> Value of beta [default: 10].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="subtract">subtract</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  subtract [args]...
+</code></pre></div>
+<p><strong>Description:</strong> subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value to subtract from each pixel [default: 0.0].</p>
+<p><strong>--name=STRING:</strong> Name of image to subtract pixelwise.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="topo-preserving-smooth">topo-preserving-smooth</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  topo-preserving-smooth [args]...
+</code></pre></div>
+<p><strong>Description:</strong> helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--scaling=DOUBLE:</strong> Scale for TPLevelSet level set filter [default: 20].</p>
+<p><strong>--alpha=DOUBLE:</strong> Value of alpha for sigmoid fitler [default: 10].</p>
+<p><strong>--beta=DOUBLE:</strong> Value of beta for sigmoid fitler [default: 10].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="tp-levelset">tp-levelset</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  tp-levelset [args]...
+</code></pre></div>
+<p><strong>Description:</strong> segments structures in image using topology preserving geodesic active contour level set filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--featureimage=STRING:</strong>  Path of feature image for filter</p>
+<p><strong>--scaling=DOUBLE:</strong> Value of scale [default: 20].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="translate-image">translate-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  translate-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> translates image by specified physical (image space) distance  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--centerofmass:</strong> Use center of mass [default: false].</p>
+<p><strong>-x DOUBLE, --tx=DOUBLE:</strong>  X distance.</p>
+<p><strong>-y DOUBLE, --ty=DOUBLE:</strong>  Y distance.</p>
+<p><strong>-z DOUBLE, --tz=DOUBLE:</strong>  Z distance.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="warp-image">warp-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  warp-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> finds the warp between the source and target landmarks and transforms image by this warp  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--source=STRING:</strong> Path to source landmarks.</p>
+<p><strong>--target=STRING:</strong> Path to target landmarks.</p>
+<p><strong>--stride=INT:</strong> Every <em>stride</em> points will be used for warping [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="write-image">write-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  write-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> writes the current image (determines type by its extension)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to write.</p>
+<p><strong>--compressed=BOOL:</strong> Whether to compress file [default: true].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h2 id="mesh-commands">Mesh Commands</h2>
+<h3 id="bounding-box-mesh">bounding-box-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  bounding-box-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute bounding box of mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  Paths to meshes (must be followed by <code>--</code>), ex: "bounding-box-mesh --names *.vtk -- --center 1")  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="clip-closed-surface">clip-closed-surface</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  clip-closed-surface [args]...
+</code></pre></div>
+<p><strong>Description:</strong> clips mesh resulting in a closed surface  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--px=DOUBLE:</strong> Value of point.x for cutting plane [default: 0].</p>
+<p><strong>--py=DOUBLE:</strong> Value of point.y for cutting plane [default: 0].</p>
+<p><strong>--pz=DOUBLE:</strong> Value of point.z for cutting plane [default: 0].</p>
+<p><strong>--nx=DOUBLE:</strong> Value of normal.x for cutting plane [default: 0].</p>
+<p><strong>--ny=DOUBLE:</strong> Value of normal.y for cutting plane [default: 0].</p>
+<p><strong>--nz=DOUBLE:</strong> Value of normal.z for cutting plane [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="clip-mesh">clip-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  clip-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> clips mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--px=DOUBLE:</strong> Value of point.x for cutting plane [default: 0].</p>
+<p><strong>--py=DOUBLE:</strong> Value of point.y for cutting plane [default: 0].</p>
+<p><strong>--pz=DOUBLE:</strong> Value of point.z for cutting plane [default: 0].</p>
+<p><strong>--nx=DOUBLE:</strong> Value of normal.x for cutting plane [default: 0].</p>
+<p><strong>--ny=DOUBLE:</strong> Value of normal.y for cutting plane [default: 0].</p>
+<p><strong>--nz=DOUBLE:</strong> Value of normal.z for cutting plane [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="closest-point">closest-point</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  closest-point [args]...
+</code></pre></div>
+<p><strong>Description:</strong> returns closest point to given point on mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--x=DOUBLE:</strong> Value of x for point.</p>
+<p><strong>--y=DOUBLE:</strong> Value of y for point.</p>
+<p><strong>--z=DOUBLE:</strong> Value of z for point.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="compare-mesh">compare-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compare-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compare two meshes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Compare this mesh with another.</p>
+<p><strong>--epsilon=DOUBLE:</strong> Epsilon [default: -1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="compute-normals">compute-normals</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compute-normals [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes and adds oriented point and cell normals  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="coverage">coverage</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  coverage [args]...
+</code></pre></div>
+<p><strong>Description:</strong> creates mesh of coverage between two meshes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Path to other mesh with which to create coverage.</p>
+<p><strong>--allowbackintersections=BOOL:</strong>  Allow back-intersections in coverage calculation [default: true].</p>
+<p><strong>--anglethreshold=DOUBLE:</strong>  This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: 0].</p>
+<p><strong>--backsearchradius=DOUBLE:</strong>  Max distance of a back-intersection [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="distance">distance</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  distance [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes the distance between two meshes, printing the largest distance between any point from source to target, target to source, and the Hausdorff distance (the largest of these two)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Filename of other mesh.</p>
+<p><strong>--method=CHOICE:</strong> Method used to compute distance (point-to-point or point-to-cell) [default: point-to-cell]. (choose from 'point-to-point', 'point-to-cell')</p>
+<p><strong>--ids=BOOL:</strong> Set shared field to the ids of the closest points/cells instead of the distances [default: false].</p>
+<p><strong>--summary=BOOL:</strong> Print largest distance of any point in mesh to target [default: true].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="field-mean">field-mean</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  field-mean [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints the mean of the given field  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="field-names">field-names</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  field-names [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints all the field names present in mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="field-range">field-range</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  field-range [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints the range of the given field  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="field-std">field-std</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  field-std [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints the standard deviation of the given field  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="fill-holes">fill-holes</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  fill-holes [args]...
+</code></pre></div>
+<p><strong>Description:</strong> finds holes in a mesh and closes them  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="fix-element">fix-element</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  fix-element [args]...
+</code></pre></div>
+<p><strong>Description:</strong> fix element winding of mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="geodesic-distance">geodesic-distance</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  geodesic-distance [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes geodesic distance between two vertices on mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--v1=INT:</strong> Index of first point in mesh.</p>
+<p><strong>--v2=INT:</strong> Index of second point in mesh.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="geodesic-distance-landmark">geodesic-distance-landmark</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  geodesic-distance-landmark [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes geodesic distance between a point (landmark) and each vertex on mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--x=DOUBLE:</strong> Value of x for landmark point.</p>
+<p><strong>--y=DOUBLE:</strong> Value of y for landmark point.</p>
+<p><strong>--z=DOUBLE:</strong> Value of z for landmark point.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="get-field">get-field</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  get-field [args]...
+</code></pre></div>
+<p><strong>Description:</strong> gets field of mesh with given name  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>--type=CHOICE:</strong> Type of field to get (point or face). (choose from 'point', 'face')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="get-field-value">get-field-value</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  get-field-value [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints value of element at index in given field of mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>-i INT, --index=INT:</strong> index of value to return [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="invert-normal">invert-normal</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  invert-normal [args]...
+</code></pre></div>
+<p><strong>Description:</strong> flips the normal  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mean-normals">mean-normals</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mean-normals [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes average normals for each point in given set of meshes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  Paths to meshes (must be followed by <code>--</code>), ex: "mean-normals --names *.vtk --")</p>
+<p><strong>--generatenormals=BOOL:</strong>  Auto generate normals if the mesh does not have normals [default: true].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mesh-bounds">mesh-bounds</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mesh-bounds [args]...
+</code></pre></div>
+<p><strong>Description:</strong> return physical bounds of mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mesh-curvature">mesh-curvature</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mesh-curvature [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes and adds curvature  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--type=CHOICE:</strong> Curvature type to use [default: principal]. (choose from 'principal', 'gaussian', 'mean')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mesh-info">mesh-info</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mesh-info [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: prints everything]  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--vertices:</strong> Whether to display number of vertices [default: true].</p>
+<p><strong>--faces:</strong> Whether to display number of faces [default: true].</p>
+<p><strong>--center:</strong> Whether to display center [default: true].</p>
+<p><strong>--centerofmass:</strong> Whether to display center of mass [default: true].</p>
+<p><strong>--boundingbox:</strong> Whether to display bounding box [default: true].</p>
+<p><strong>--fieldnames:</strong> Whether to display field names [default: true].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mesh-to-dt">mesh-to-dt</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mesh-to-dt [args]...
+</code></pre></div>
+<p><strong>Description:</strong> converts mesh to a distance transform, using unit spacing by default  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--sx=DOUBLE:</strong> Spacing of output image in x-direction [default: unit spacing].</p>
+<p><strong>--sy=DOUBLE:</strong> Spacing of output image in y-direction [default: unit spacing].</p>
+<p><strong>--sz=DOUBLE:</strong> Spacing of output image in z-direction [default: unit spacing].</p>
+<p><strong>--pad=INT:</strong> Number of pixels to pad the output region [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="mesh-to-image">mesh-to-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  mesh-to-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> converts mesh to a binary segmentation image, using unit spacing by default  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--sx=DOUBLE:</strong> Spacing of output image in x-direction [default: unit spacing].</p>
+<p><strong>--sy=DOUBLE:</strong> Spacing of output image in y-direction [default: unit spacing].</p>
+<p><strong>--sz=DOUBLE:</strong> Spacing of output image in z-direction [default: unit spacing].</p>
+<p><strong>--pad=DOUBLE:</strong> Pad the region to extract [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="probe-volume">probe-volume</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  probe-volume [args]...
+</code></pre></div>
+<p><strong>Description:</strong> probe feature volumes at each mesh vertex and output vtk meshes with scalar field defined based on such probing process  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--image=STRING:</strong> Path of image.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="read-mesh">read-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads a mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to read.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="reflect-mesh">reflect-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  reflect-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reflect meshes with respect to a specified center and specific axis  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--axis=STRING:</strong> Axis along which to reflect (X, Y, or Z).</p>
+<p><strong>-x DOUBLE, --originx=DOUBLE:</strong>  Origin about which reflection occurs in x-direction [default: 0].</p>
+<p><strong>-y DOUBLE, --originy=DOUBLE:</strong>  Origin about which reflection occurs in y-direction [default: 0].</p>
+<p><strong>-z DOUBLE, --originz=DOUBLE:</strong>  Origin about which reflection occurs in z-direction [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh">remesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=DOUBLE:</strong> Target number of vertices.</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh-percent">remesh-percent</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh-percent [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--percentage=DOUBLE:</strong> Target percentage number of vertices</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="scale-mesh">scale-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  scale-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> scales mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --sx=DOUBLE:</strong>  X scale.</p>
+<p><strong>-y DOUBLE, --sy=DOUBLE:</strong>  Y scale.</p>
+<p><strong>-z DOUBLE, --sz=DOUBLE:</strong>  Z scale.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="set-field">set-field</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-field [args]...
+</code></pre></div>
+<p><strong>Description:</strong> adds the current field to the current mesh with the given name.  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>--type=CHOICE:</strong> Type of field to set (point or face). (choose from 'point', 'face')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="set-field-value">set-field-value</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-field-value [args]...
+</code></pre></div>
+<p><strong>Description:</strong> sets value of element at index in given field of mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of scalar field.</p>
+<p><strong>-i INT, --index=INT:</strong> index of value to return [default: 0].</p>
+<p><strong>--value=DOUBLE:</strong> value to be set [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="smooth">smooth</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  smooth [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies laplacian smoothing  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--iterations=INT:</strong> Number of iterations [default: 0].</p>
+<p><strong>--relaxation=DOUBLE:</strong> Amount of displacement for a vertex to move in each iteration [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="smooth-sinc">smooth-sinc</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  smooth-sinc [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies windowed sinc smoothing  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--iterations=INT:</strong> Number of iterations [default: 0].</p>
+<p><strong>--passband=DOUBLE:</strong> Set the passband value for the windowed sinc filter [default: 0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="transform-mesh">transform-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  transform-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=STRING:</strong> Filename of target mesh.</p>
+<p><strong>--type=CHOICE:</strong> Alignment type to use [default: similarity]. (choose from 'rigid', 'similarity', 'affine')</p>
+<p><strong>--iterations=UNSIGNED:</strong>  Number of iterations run [default: 10].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="translate-mesh">translate-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  translate-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> translates mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --tx=DOUBLE:</strong>  X distance.</p>
+<p><strong>-y DOUBLE, --ty=DOUBLE:</strong>  Y distance.</p>
+<p><strong>-z DOUBLE, --tz=DOUBLE:</strong>  Z distance.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="warp-mesh">warp-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  warp-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> warps a mesh given reference and target particles  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--reference_mesh=STRING:</strong>  Name of reference mesh.</p>
+<p><strong>--reference_points=STRING:</strong>  Name of reference points.</p>
+<p><strong>--target_points <list of strings>:</strong>  Names of target points (must be followed by <code>--</code>), ex: "... --target_points *.particles -- ...</p>
+<p><strong>--save_dir=STRING:</strong> Optional: Path to the directory where the mesh files will be saved  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="write-mesh">write-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  write-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> writes the current mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to write.</p>
+<p><strong>--binary=BOOL:</strong> Whether to write file as binary.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h2 id="optimize-commands">Optimize Commands</h2>
+<h3 id="optimize">optimize</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  optimize [args]...
+</code></pre></div>
+<p><strong>Description:</strong> generate a particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Path to parameter file.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#optimize-commands">Back to Optimize Commands</a></p>
+<h2 id="particlesystem-commands">ParticleSystem Commands</h2>
+<h3 id="compactness">compactness</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compactness [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Compute compactness of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use [default: 1].</p>
+<p><strong>--saveto=STRING:</strong> Save the scree plots for all modes to a file.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="generalization">generalization</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  generalization [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute generalization of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use [default: 1].</p>
+<p><strong>--saveto=STRING:</strong> Save the reconstructions sorted by generalization along with the mapping to the original shape.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="read-particle-system">read-particle-system</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-particle-system [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads a particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  Paths to .particle files (must be followed by <code>--</code>), ex: "--names *.particle -- next-command...")  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="specificity">specificity</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  specificity [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute specificity of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use [default: 1].</p>
+<p><strong>--saveto=STRING:</strong> Save the reconstructions sorted by specificity along with the mapping to the original shape.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h2 id="shapeworks-commands_1">Shapeworks Commands</h2>
+<h3 id="seed">seed</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  seed [args]...
+</code></pre></div>
+<p><strong>Description:</strong> sets the seed for random number generation (useful for debugging)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--value=INT:</strong> Value of seed.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#shapeworks-commands">Back to Shapeworks Commands</a></p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../new/ellipsoid-joint-generation.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Ellipsoid Joint Generation" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Ellipsoid Joint Generation
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../studio/getting-started-with-studio.html" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started With ShapeWorks Studio" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Getting Started With ShapeWorks Studio
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c44cc438.min.js"></script>
+      
+        <script src="../assets/mathjaxhelper.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

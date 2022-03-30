@@ -1,0 +1,15 @@
+{
+  "baseUrl": "../",
+  "indexInFolders": true,
+  "linkSuffix": ".md",
+  "mainPageInRoot": true,
+  "mainPageName": "index",
+  "foldersToGenerate" : ["modules", "classes", "files", "namespaces"]
+    "linkSuffix": "/",
+    "indexClassesName": "index",
+    "indexFilesName": "index",
+    "indexGroupsName": "index",
+    "indexNamespacesName": "index",
+    "indexRelatedPagesName": "index",
+    "indexExamplesName": "index",
+}

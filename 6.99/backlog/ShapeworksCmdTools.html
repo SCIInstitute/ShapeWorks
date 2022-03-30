@@ -1,0 +1,2401 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The official documentation of ShapeWorks">
+      
+      
+        <meta name="author" content="Shireen Elhabian et al.">
+      
+      
+        <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/6.99/backlog/ShapeworksCmdTools.html">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+    
+    
+      
+        <title>ShapeworksCmdTools - ShapeWorks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.644de097.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ShapeWorks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ShapeworksCmdTools
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    ShapeWorks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/shapes.html" class="md-nav__link">
+        Shapes, What & From Where?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workflow.html" class="md-nav__link">
+        Shape Modeling Workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/sw-stories.html" class="md-nav__link">
+        ShapeWorks Success Stories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/interfaces.html" class="md-nav__link">
+        ShapeWorks Interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/examples.html" class="md-nav__link">
+        Examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/how-tos.html" class="md-nav__link">
+        How-Tos
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          For Users
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Users" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          For Users
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/install.html" class="md-nav__link">
+        How to Install ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/citation.html" class="md-nav__link">
+        How to Cite ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/papers.html" class="md-nav__link">
+        Revelant Papers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Workflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/groom.html" class="md-nav__link">
+        How to Groom Your Dataset?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/optimize.html" class="md-nav__link">
+        How to Optimize Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/analyze.html" class="md-nav__link">
+        How to Analyze Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          What is New?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="What is New?" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          What is New?
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/new-studio.html" class="md-nav__link">
+        New in ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/openvdb.html" class="md-nav__link">
+        ShapeWorks Takes ~85% Less Memory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/sw-meshes.html" class="md-nav__link">
+        ShapeWorks Directly on Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-command.html" class="md-nav__link">
+        ShapeWorks Command
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ssm-eval.html" class="md-nav__link">
+        Shape Model Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-python.html" class="md-nav__link">
+        ShapeWorks in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ellipsoid-joint-generation.html" class="md-nav__link">
+        Ellipsoid Joint Generation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          ShapeWorks Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/ShapeWorksCommands.html" class="md-nav__link">
+        ShapeWorks Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Studio
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Studio
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/getting-started-with-studio.html" class="md-nav__link">
+        Getting Started With ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/multiple-domains.html" class="md-nav__link">
+        Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/deepssm-in-studio.html" class="md-nav__link">
+        DeepSSM in Studio
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          ShapeWorks in Python
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks in Python
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+        Getting Started with Jupyter Notebooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+        Getting Started with Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+        Getting Started with Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+        Getting Started with Exploring Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+        Getting Started with Data Augmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+        Getting Started with Shape Cohort Generator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/array-passing-without-copying.html" class="md-nav__link">
+        Array passing without copying
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+        Transforms can be used to center image data or to align two images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+        Transforms can also be used to align two meshes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Deep Learning & SSMs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning & SSMs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/pytorch-gpu.html" class="md-nav__link">
+        PyTorch GPU Support for ShapeWorks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/data-augmentation.html" class="md-nav__link">
+        Data Augmentation for Deep Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/deep-ssm.html" class="md-nav__link">
+        SSMs Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/use-cases.html" class="md-nav__link">
+        Getting Started with Use Cases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_2">
+          Segmentation Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Segmentation Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+        Ellipsoid: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+        Left Atrium: Shape Model from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+        Shape Model for Multiple Domains from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_3">
+          Mesh Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_3">
+          <span class="md-nav__icon md-icon"></span>
+          Mesh Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+        Ellipsoid Mesh: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/lumps.html" class="md-nav__link">
+        Lumps: Shape Model directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+        Thin Cavity Bean: Shape Model with Geodesic Distances
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+        Shape Model for Multiple Domains directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_4">
+          Contour Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contour Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+        Supershapes:Shape Model for Contour Domains
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_5">
+          Constraints Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_5">
+          <span class="md-nav__icon md-icon"></span>
+          Constraints Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+        Ellipsoid: Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+        Femur:Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_6">
+          Statistics Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Statistics Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+        Ellipsoid: Shape Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+        Femur: Group Difference Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+        Ellipsoid: Shape Evaluation in Python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
+          Deep Learning Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_7">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+        Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/right-ventricle.html" class="md-nav__link">
+        Right Ventricle: Highly Variable Shapes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11">
+          For Developers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Developers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          For Developers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/build.html" class="md-nav__link">
+        How to Build ShapeWorks from Source?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/contribute.html" class="md-nav__link">
+        How to Contribute to ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/commands.html" class="md-nav__link">
+        How to Add ShapeWorks Commands?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/python-apis.html" class="md-nav__link">
+        How to Add Python APIs?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/tests.html" class="md-nav__link">
+        How to Add and Run Unit Tests?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-use-case.html" class="md-nav__link">
+        How to Add New Use Cases?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/datasets.html" class="md-nav__link">
+        How to Add New Datasets?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-notebook.html" class="md-nav__link">
+        How to Add New Notebooks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/modify-datasets.html" class="md-nav__link">
+        When Modifying Existing Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/docs.html" class="md-nav__link">
+        Getting Started with Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/gh-actions.html" class="md-nav__link">
+        Getting Started with GitHub Actions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/markdown.html" class="md-nav__link">
+        Getting Started with Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/paths.html" class="md-nav__link">
+        Adding to PATH Environment Variable
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_12">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_12">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+        Groups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+        Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+        Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Files/index_files.html" class="md-nav__link">
+        Files
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_13">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/team.html" class="md-nav__link">
+        Meet ShapeWorkers!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/release-notes.html" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/license.html" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/contact.html" class="md-nav__link">
+        Contact Us
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/backlog/ShapeworksCmdTools.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+
+<h1 id="_1"></h1>
+<h1 id="shapeworks-tools">ShapeWorks Tools</h1>
+<h1 id="_2"></h1>
+<p>The <code>shapeworks</code> executable has a variety of tools for data alignment, processing of images and meshes, reading and converting various file formats, optimization, and analysis. These tasks are described below.</p>
+<h1 id="_3"></h1>
+<p>[Image Tools]
+[Mesh Tools]
+[Alignment]
+[Analysis]
+[Optimization]
+[File Utilities]</p>
+<h1 id="image-tools">Image Tools</h1>
+<p>Image manipulation is used to blah blah blah...</p>
+<p>[AntiAliasing] (#anti-aliasing)
+[ClipVolume]
+[CloseHoles]
+[Cropping Images]
+[ExtractGivenLabelImage]
+[FastMarching]
+[FindLargestBoundingBox]
+[PadVolumeWithConstant]
+[ReflectVolumes]
+[ResampleVolumesToBeIsotropic]
+[ThresholdImages]
+[TopologyPreservingSmoothing]
+[WriteImageInfoToText]</p>
+<h2 id="read">Read</h2>
+<p>This tool reads an image.</p>
+<p>Command Line Name: read-image</p>
+<p>It uses the following input arguments:</p>
+<p>--name = Name of file to read.</p>
+<h2 id="write">Write</h2>
+<p>This tool writes an image.</p>
+<p>Command Line Name: write-image</p>
+<p>It uses the following input arguments:</p>
+<p>--name = Name of file to write.</p>
+<h2 id="antialiasing"><a name="anti-aliasing"></a> AntiAliasing</h2>
+<p>This tool antialiases binary volumes.</p>
+<p>Command Line Name: antialias</p>
+<p>It uses the following input arguments:  </p>
+<p>--maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].<br />
+  --numiterations = Number of iterations [default 50].<br />
+  --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].</p>
+<p><img src="images/Original.png" width="300px" align="left" hspace="20">
+<img src="images/Antialias.png" width="300px" align="left" hspace="20"></p>
+<h2 id="padvolumewithconstant">PadVolumeWithConstant</h2>
+<p>This tool pads a contant value in the x-, y-, and z- directions of a given volume.</p>
+<p>Command Line Name: pad</p>
+<p>It uses the following input arguments:</p>
+<p>--padding = Number of voxels to be padded in each direction.<br />
+  --value = Value to be used to fill padded voxels.  </p>
+<h2 id="resamplevolumestobeisotropic">ResampleVolumesToBeIsotropic</h2>
+<p>This tool resamples given mri/binary volumes to have isotropic voxel spacing.</p>
+<p>Command Line Name: isoresample</p>
+<p>It uses the following input arguments:</p>
+<p>--isospacing = The isotropic spacing in all dimensions.<br />
+  --sizez = Image size in x-direction [ize is autmatically estimated from input image].<br />
+  --sizey = Image size in y-direction [size is autmatically estimated from input image].<br />
+  --sizez = Image size in z-direction [size is autmatically estimated from input image].</p>
+<h2 id="binarize">Binarize</h2>
+<p>This tool binarizes an image at some given threshold.</p>
+<p>Command Line Name: binarize</p>
+<p>It uses the following input arguments:</p>
+<p>--threshold = Resulting image has two values for pixels: &gt; threshold set to inside value, &lt;= threshold set to outside value [default epsilon].<br />
+  --inside = Value of pixels &gt; threshold [default 1.0].<br />
+  --outside = Value of pixels &lt;= threshold [default 0.0].  </p>
+<h2 id="recenter">Recenter</h2>
+<p>This tool recenters an image by changing its origin in image header to the physical coordinates of the center of the image.</p>
+<p>Command Line Name: recenter-image</p>
+<h2 id="reflectvolumes">ReflectVolumes</h2>
+<p>A command line tool that reflect 3d volume images with respect to image center and specific axis.</p>
+<p>It uses the following input arguments:
+-inFilename - Image file name which needs to be reflected.
+- outFilename - Output file name for the reflected image
+- paddingSize - Axis along which it needs to be reflected
+- centerFilename - The filename where the image center information will be stored. </p>
+<h2 id="clipvolume">ClipVolume</h2>
+<p>Slice 3D Volume Using Cutting Planes</p>
+<p>Takes set of .nrrd volumes and corresponding cutting planes, and chops the volume accordingly 
+It uses a parameter file with the following tags 
+    - num_shapes: number of volumes to be processed (put this correctly) 
+    - inputs: paths to input files 
+    - outputs: paths to output files 
+    - cutting_planes : Set of cutting planes, expressed as 3 3D points separated by spaces 
+    example : 1 2 -3 0 34 102 -23.4 2 0.44 </p>
+<h2 id="closeholes">CloseHoles</h2>
+<p>TODO</p>
+<h2 id="cropping-images">Cropping Images</h2>
+<p>This tool is to crop the images given the starting index and bounding box size
+Provide the smallest index and bounding box values from the above tool to this tool as inputs.</p>
+<p>Inputs:</p>
+<p>-inFilename - Input image file name
+-outFilename - Output image file name
+-MRIinFilename - MRI image file name
+-MRIoutFilename - MRI output image file name
+-bbX - bounding box value in X direction 
+-bbY - bounding box value in Y direction 
+-bbZ - bounding box value in Z direction
+-startingIndexX - starting index in X direction
+-startingIndexY - starting index in Y direction
+-startingIndexZ - starting index in Z direction</p>
+<h2 id="extractgivenlabelimage">ExtractGivenLabelImage</h2>
+<p>A command line tool that extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image.</p>
+<p>It uses the following input arguments:
+  -inFilename               The filename of the input image from which label has to be extracted.
+  -labelVal                 The label value which has to be extracted.
+  -outFilename              The filename of the output image.</p>
+<h2 id="fastmarching">FastMarching</h2>
+<p>A command line tool that computes distance transform volume from a binary (antialiased) image ...</p>
+<p>--inFilename  = The filename of the input image to be processed.
+--outFilename = The filename of the output distance transform image.
+--isoValue    = The level set value that defines the interface between foreground and background.</p>
+<h2 id="findlargestboundingbox">FindLargestBoundingBox</h2>
+<p>A command line tool that o compute largest bounding box size given a set of images.</p>
+<p>It uses the following input arguments:
+ -inFilename - A text file with the file names for which the largest size has to be computed.
+- outPrefix - output prefix to be used to save the parameters for the estimated bounding box
+- paddingSize - number of extra voxels in each direction to pad the largest bounding box, checks agains min image size is performed to make sure that this padding won't get out of bounds for the smallest image in the file names provides</p>
+<h2 id="thresholdimages">ThresholdImages</h2>
+<p>A command line tool that threholds a given image into a binary label based on upper and lower intensity bounds given by the user.....</p>
+<pre><code>--inFilename = Input image file path.
+--outFilename = The filename of the output threshold image.
+--lowerThresholdLevel = The lower threshold level (optional, default = FLT_MIN)
+--upperThresholdLevel = The upper threshold level (optional, default = FLT_MAX)
+--insideValue = The inside pixel value after threshold
+--outsideValue = The outside pixel value after threshold
+</code></pre>
+<h2 id="topologypreservingsmoothing">TopologyPreservingSmoothing</h2>
+<p>A parameter file based tool that smoothes distance transforms while preserving shape's topology.
+<a href="TopologyPreservingSmoothingExample.xml">Here is an example of an input xml file that can be used.</a></p>
+<p>parameter file tags are as follows:
+ -inputs               The filenames of the input distance transforms to be smoothed.
+ -dtFiles              The filenames of the output smoothed distance transforms.
+ -outputs              The filenames of the output smoothed isosurface images.
+ -verbose                  Show each intermediate step [default 0].
+ -isoValue                 Isovalue to be used to define the surface in the input distance transform [default 0.0].
+ -smoothing_iterations      Number of iterations to perform smoothing [default 10].
+ -alpha                    Smoothing parameter in I' = (max-min). \frac{1}{1+exp(-\frac{1-\beta}{\alpha)} + min [default 10.5].
+ -beta                     Smoothing parameter in I' = (max-min). \frac{1}{1+exp(-\frac{1-\beta}{\alpha)} + min [default 10.0].
+ -propagationScale         The PropagationScaling parameter can be used to switch from propagation outwards (POSITIVE) versus propagating inwards (NEGATIVE). [default 20.0].</p>
+<h2 id="writeimageinfototext">WriteImageInfoToText</h2>
+<p>A command line tool that extracts header information from a nrrd file and write it to a text file</p>
+<p>It uses the following input arguments:
+ -inFilename               The filename of the input image to extract its header information (origin, size, spacing).
+ -outPrefix                The output prefix to be used to save header info to <outPrefix>_<info>.txt where info is origin, size, and spacing.</p>
+<h3 id="mesh-tools">Mesh Tools</h3>
+<p>Mesh manipulation is used to blah blah blah...</p>
+<h2 id="clipclosedsurface">ClipClosedSurface</h2>
+<h2 id="computecurvatureandcoordfiles">ComputeCurvatureAndCoordFiles</h2>
+<h2 id="computegeodesicdistancetocurve">ComputeGeodesicDistanceToCurve</h2>
+<h2 id="computegeodesicdistancetolandmark">ComputeGeodesicDistanceToLandmark</h2>
+<h2 id="computegeodesicdistancefromverticestopoints">ComputeGeodesicDistanceFromVerticesToPoints</h2>
+<h2 id="computemeshgeodesics">ComputeMeshGeodesics</h2>
+<h2 id="computerasterizationvolumeoriginandsize">ComputeRasterizationVolumeOriginAndSize</h2>
+<h2 id="extractvertexfeaturefrommesh">ExtractVertexFeatureFromMesh</h2>
+<h2 id="fillmeshholes">FillMeshHoles</h2>
+<h2 id="fixcuttingplanes">FixCuttingPlanes</h2>
+<h2 id="generatebinaryanddtimagesfrommeshes">GenerateBinaryAndDTImagesFromMeshes</h2>
+<h2 id="generatefeaturegradientfiles">GenerateFeatureGradientFiles</h2>
+<h2 id="generatefidsfiles">GenerateFidsFiles</h2>
+<h2 id="generatefidsfilesfrommeshes">GenerateFidsFilesFromMeshes</h2>
+<h2 id="getfeaturevolume">GetFeatureVolume</h2>
+<h2 id="particlebasedsurfacereconstruction">ParticleBasedSurfaceReconstruction</h2>
+<h2 id="previewcmd">PreviewCmd</h2>
+<h2 id="probefeaturevolumesatmeshvertices">ProbeFeatureVolumesAtMeshVertices</h2>
+<h2 id="probenormals">ProbeNormals</h2>
+<h2 id="projectpointsontomesh">ProjectPointsOntoMesh</h2>
+<h2 id="computemeannormals">ComputeMeanNormals</h2>
+<h2 id="generatenormalfeafiles">GenerateNormalFeaFiles</h2>
+<h2 id="reflect-meshes">Reflect Meshes</h2>
+<h2 id="removefidsdtleakage">RemoveFidsDTLeakage</h2>
+<h2 id="smoothmesh">SmoothMesh</h2>
+<h2 id="clipclosedsurface_1">ClipClosedSurface</h2>
+<p>Given a set of meshes (vtk) and corresponding cutting planes, this tool clip each mesh with its cutting plane and result in a 
+closed surface. A buffer distance can be used to move the cutting plane in the opposite direction of its normal to leave a buffer 
+region below the cutting plane</p>
+<p>It uses a parameter file with the following tags:
+  - input_meshes: a list of vtk file names for meshes to be processed
+  - output_meshes: the vtk filenames of the output to be produced 
+  - cutting_planes: a list of cutting planes in three-point form ( x1 y1 z1 x2 y2 z2 x3 y3 z3 )
+  - buffer_distance: phyical distance of the buffer region</p>
+<h2 id="computecurvatureandcoordfiles_1">ComputeCurvatureAndCoordFiles</h2>
+<p>Compute curvature and x,y,z on vertices on given triangular meshes (ply format) </p>
+<p>It uses a parameter file with the following tags
+- mesh:      a list of ply file names for meshes to be processed
+- outPath:   path to save feature files </p>
+<h2 id="computegeodesicdistancetocurve_1">ComputeGeodesicDistanceToCurve</h2>
+<p>Compute geodesic distances on given triangular meshes (ply format) to a set of given curves </p>
+<p>It uses a parameter file with the following tags
+ - with_fids: a flag to indicate whether to use fids to generate the geodesics, if 0, kdtree will be used instead (filenames will be affected), if true, we need to provide
+              the spacing, size and origin of their distance transforms that generated those fids files
+ - mesh:      a list of ply file names for meshes to be processed
+ - fids:      a list of corresponding fids files (in case with_fids = 1)
+ - origin_x, origin_t, origin_z: the origin in physical units of the resulting distance transform
+ - spacing_x, spacing_y, spacing_z: voxel spacing of the resulting distance transform
+ - size_x, size_y, size_z: the size (rows,cols,slices) of the resulting distance transform
+ - curves_prefix: where we can find the point files of the curves, this should be the common part of the filename for all given mesh files
+ - curves_suffix: string (optional) that will suffix all curve files
+ - curves_ext:    the extension of the curve files
+ - curve_labels:  the name of each curve according to the suffix given for each curve pts file, this will also be used in the naming of the output feature files (fea)</p>
+<p>This tool uses fids to project a given landmark onto the closest VERTEX on the mesh then use this vertex as a seed for geodesics computation. It will be more accurate to project the point onto 
+a triangle and use its vertices as seeds to initiate geodesics to the rest of the mesh then use geodesic approximation scheme to obtain the geodesic from the projected point to all the mesh vertices.</p>
+<h2 id="computegeodesicdistancetolandmark_1">ComputeGeodesicDistanceToLandmark</h2>
+<p>Compute geodesic distances on given triangular meshes (ply format) to a set of given landmarks </p>
+<p>It uses a parameter file with the following tags"
+  - with_fids: a flag to indicate whether to use fids to generate the geodesics, if 0, kdtree will be used instead (filenames will be affected), if true, we need to provide
+           the spacing, size and origin of their distance transforms that generated those fids files
+  - origin_x, origin_t, origin_z: the origin in physical units of the resulting distance transform
+  - spacing_x, spacing_y, spacing_z: voxel spacing of the resulting distance transform
+  - size_x, size_y, size_z: the size (rows,cols,slices) of the resulting distance transform
+  - mesh:      a list of ply file names for meshes to be processed
+  - fids:      a list of corresponding fids files (in case with_fids = 1)
+  - landmark_files: a list of text files containing the 3d point locations of the landmarks associated with each mesh (a single file for each mesh with each row a different landmark xyz)
+  - landmark_labels: the name of each landmark specified in landmark files, this will be used in the naming of the output feature files (fea)</p>
+<p>This tool uses fids to project a given landmark onto the closest VERTEX on the mesh then use this vertex as a seed for geodesics computation. It will be more accurate to project the point onto 
+a triangle and use its vertices as seeds to initiate geodesics to the rest of the mesh then use geodesic approximation scheme to obtain the geodesic from the projected point to all the mesh vertices.</p>
+<h2 id="computegeodesicdistancefromverticestopoints_1">ComputeGeodesicDistanceFromVerticesToPoints</h2>
+<p>Generate a text file containing geodesic distance to vertices of given triangular mesh (ply) for given set of 
+points with their triangle information (x y z triangleId alpha beta gamma)</p>
+<p>Usage: ComputeGeodesicDistanceFromVerticesToPoints meshFile(.ply) pointsFile outFileName</p>
+<h2 id="computemeshgeodesics_1">ComputeMeshGeodesics</h2>
+<p>Compute pairwise vertices geodesic distances on given triangular meshes (ply format) </p>
+<p>It uses a parameter file with the following tags"
+  - mesh: a list of ply file names for meshes to be processed
+  - geo: a list of geo file names for meshes to be saved
+  - stopping_distance_factor: percentage of the great circle circumference where vertices will be assigned an very large geodesic distance</p>
+<h2 id="computerasterizationvolumeoriginandsize_1">ComputeRasterizationVolumeOriginAndSize</h2>
+<p>Given a set of meshes (vtk), compute the origin and size of a volume that would contain the rasterization of each mesh 
+so that all meshes will be embedded within the same volume characteristics</p>
+<p>It uses a parameter file with the following tags"
+  - mesh: a list of vtk file names for meshes to be processed
+  - centering: a flag to indicate whether build the to-be built rasterization is centered on the shape's center
+  - spacing_x, spacing_y, spacing_z: voxel spacing of the resulting distance transform
+  - pad_pixels: number of pixels to be padded in each dimension
+  - out_origin_filename: the filename to save the origin information
+  - out_size_filename: the filename to save the size information</p>
+<h2 id="extractvertexfeaturefrommesh_1">ExtractVertexFeatureFromMesh</h2>
+<p>Extract scalar values associated to mesh vertices to txt file</p>
+<p>It uses a parameter file with the following tags:
+  - inputs: a list of vtk file names for meshes to be processed
+  - out_path: a directory (otional) to save output files, it not indicated, out files will be saved in the same directory as the mesh files
+  - vtk_feature_name: feature name in the vtk file
+  - out_feature_name: feature name to be used in the output file names, if not indicated, mesh filenames will be used as is
+  - read_as_ply: to read ply rather than vtk files</p>
+<h2 id="fillmeshholes_1">FillMeshHoles</h2>
+<p>Given a set of meshes (vtk), this tool finds holes in a mesh and closes them. </p>
+<p>It uses a parameter file with the following tags:
+  - inputs: a list of vtk file names for meshes to be processed
+  - outputs: the vtk filenames of the output to be produced </p>
+<h2 id="fixcuttingplanes_1">FixCuttingPlanes</h2>
+<p>Given bunch of curves/landmarks for each shape, fix the orientation of the provided cutting plane to point to the side where the curves/landmarks exist</p>
+<p>It uses a parameter file with the following tags
+ - mesh:      a list of vtk/ply file names for meshes to be processed
+ - input_planes:      a list of txt file names for the planes to be processed
+ - output_planes:      a list of txt file names for the fixed planes to be saved
+ - curves_prefix: where we can find the point files of the curves, this should be the common part of the filename for all given mesh files
+ - curves_suffix: string (optional) that will suffix all curve files
+ - curves_ext:    the extension of the curve files
+ - curve_labels:  the name of each curve according to the suffix given for each curve pts file</p>
+<h2 id="generatebinaryanddtimagesfrommeshes_1">GenerateBinaryAndDTImagesFromMeshes</h2>
+<p>Compute binary images (i.e. segmentation) and their distance transforms of a given set of meshes (ply format)</p>
+<p>It uses a parameter file with the following tags"
+  - mesh: a list of ply file names for meshes to be processed
+  - origin_x, origin_y, origin_z: the origin in physical units of the resulting distance transform
+  - spacing_x, spacing_y, spacing_z: voxel spacing of the resulting distance transform
+  - size_x, size_y, size_z: the size (rows,cols,slices) of the resulting distance transform</p>
+<h2 id="generatefeaturegradientfiles_1">GenerateFeatureGradientFiles</h2>
+<p>Probe gradient at vertices and generate feature gradient files</p>
+<p>It uses a parameter file with the following tags"
+  - mesh: a list of ply file names for meshes to be processed ".ply"
+  - fea_vol: feature volume(s) ".nrrd"
+  - fea_per_mesh: number of features "int"</p>
+<h2 id="generatefidsfiles_1">GenerateFidsFiles</h2>
+<p>Compute face index map of a given set of meshes (ply format) along with its signed distance transfrom using spatial hashing</p>
+<p>It uses a parameter file with the following tags"
+  - dist: a list of approximate distance transforms   <br />
+  - mesh: a list of ply file names for meshes to be processed
+  - number_of_subvoxels: : number of subvoxels to divid each voxel (higher improve subvoxel accuarcy esp for meshes with high curvature regions)
+  - number_of_voxels: number of voxels to construct a supervoxel
+  - narrow_band: a narrow band defined in phyical units to limit the supvoxel-accuarate distance transform computation, 
+             distance values of voxels outside this band will be inferred using fids
+  - ball_radius_factor: to reduce the radius(b) at each super-voxel. (At times b is too big and contains the whole mesh. Use &lt; 1)
+  - num_threads: number of thread to be spawned </p>
+<h2 id="generatefidsfilesfrommeshes_1">GenerateFidsFilesFromMeshes</h2>
+<p>Compute face index map of a given set of meshes (ply format) along with its signed distance transfrom using spatial hashing</p>
+<p>It uses a parameter file with the following tags"
+  - mesh: a list of ply file names for meshes to be processed
+  - origin_x, origin_y, origin_z: the origin in physical units of the resulting distance transform
+  - spacing_x, spacing_y, spacing_z: voxel spacing of the resulting distance transform
+  - size_x, size_y, size_z: the size (rows,cols,slices) of the resulting distance transform
+  - number_of_subvoxels: : number of subvoxels to divid each voxel (higher improve subvoxel accuarcy esp for meshes with high curvature regions)
+  - number_of_voxels: number of voxels to construct a supervoxel
+  - narrow_band: a narrow band defined in phyical units to limit the supvoxel-accuarate distance transform computation, 
+             distance values of voxels outside this band will be inferred using fids
+  - ball_radius_factor: to reduce the radius(b) at each super-voxel. (At times b is too big and contains the whole mesh. Use &lt; 1)
+  - num_threads: number of thread to be spawned</p>
+<h2 id="getfeaturevolume_1">GetFeatureVolume</h2>
+<p>Compute a volumetric representation of fea files by propagating feature values (from fea files) from mesh surface to a narrowband surrounding the mesh</p>
+<p>It uses a parameter file with the following tags"
+    - with_fids: a flag to indicate whether to use fids to generate the geodesics, if 0, kdtree will be used instead 
+    - mesh:      a list of ply file names for meshes to be processed
+    - fids:      a list of corresponding fids files (in case with_fids = 1)
+    - dist:       a list of corresponding distance transforms to indicate where to fill the feature volume, i.e. the narrowband
+    - fea_per_mesh:      number of fea files to be processed per mesh
+    - fea:      a list of fea files to be processed such that the first fea_per_mesh fea files correspond to the first mesh and so on.
+    - narrow_band:     distance in physical coordinates from the mesh its inside and outside where we propagate feature values.</p>
+<h2 id="previewcmd_1">PreviewCmd</h2>
+<p>This is a commandline tool that encapsulate preview-based triangular mesh processing tools including decimation, smoothing and fixing, it has the following inputs:
+    --inFile: the input vtk filename of the mesh to be processed.
+    --outFile: the output vtk filename.
+    --fixWinding: do element winding fix (default: 1)
+    --decimate: perform mesh decimation (default: 1)
+    --doLaplacianSmoothingBeforeDecimation: perform laplacian smoothing before decimation (default: 1)
+    --doLaplacianSmoothingAfterDecimation: perform laplacian smoothing after decimation (default: 1)
+    --smoothingLambda: laplacian smoothing lambda  (default: 0.5)
+    --smoothingIterations: laplacian smoothing number of iterations  (default: 1)
+    --decimationPercentage: percentage of target number of clusters/vertices  (default: 0.5)</p>
+<h2 id="probefeaturevolumesatmeshvertices_1">ProbeFeatureVolumesAtMeshVertices</h2>
+<p>Given a set of meshes (vtk) and corresponding feature volumes where these meshes live, this tool probe the feature volumes at each mesh vertex and 
+output vtk meshes with scalar field defined based on such probing process (report the feature values from the feature volumes at the mesh vertices)</p>
+<p>It uses a parameter file with the following tags"
+  - input_meshes: a list of vtk file names for meshes to be processed
+  - feature_volumes: a list of image files (3D) to be probed corresponding to the given set of meshes
+  - output_meshes: the vtk filenames of the output to be produced</p>
+<h2 id="probenormals_1">ProbeNormals</h2>
+<p>Usage: ProbeNormals DTfilename pointsFilename outFileName</p>
+<h2 id="computemeannormals_1">ComputeMeanNormals</h2>
+<p>Compute mean normals using spherical coordinates for given normals for a set of shapes</p>
+<p>It uses a parameter file with the following tags
+- normals:     a list of files containing normals at a set of points on each shape (output files from ProbeNormals)
+- pointsCount: number of points in every shape file
+- outFileName: full filename (with path) to save resulting file (default: mean.normals.txt)</p>
+<h2 id="generatenormalfeafiles_1">GenerateNormalFeaFiles</h2>
+<p>Probe normals at vertices and save as fea files</p>
+<p>It uses a parameter file with the following tags
+- DT:      a list of DT file names to be processed
+- mesh:    a list of mesh file names to be processed</p>
+<h2 id="reflect-meshes_1">Reflect Meshes</h2>
+<p>A command line tool that reflect meshes with respect to a specified center and specific axis.</p>
+<p>-inFilename - Mesh file to be reflected.
+-outFilename - The filename of the output reflection mesh.
+-reflectCenterFilename(Optional) - The filename for origin about which reflection occurs. (Default reflection happes about the center of the mesh bounding box)
+-inputDirection - Direction along which it needs to be reflected
+-meshFormat(Optional) - The IO mesh format (Default = vtk, another option is ply)</p>
+<h2 id="removefidsdtleakage_1">RemoveFidsDTLeakage</h2>
+<p>This tool can be used a postprocessing for fids distance trasnform to fix voxels that are mis-signed as in or out of the isosurface in fids computation (mainly due to irregular triangulation</p>
+<p>It uses a parameter file with the following tags"
+    - fids_dist:      a list of distance transforms computed via fids
+    - approx_dist:       the corresponding approximate distances (from rasterization then dt computation)
+    - out_dist:       output distance transform filenames</p>
+<h2 id="smoothmesh_1">SmoothMesh</h2>
+<p>Given a set of meshes (vtk), this tool laplacian smooth the mesh</p>
+<p>It uses a parameter file with the following tags:
+  - inputs: a list of vtk file names for meshes to be processed
+  - outputs: the vtk filenames of the output to be produced 
+  - iterations: number of smoothing iterations
+  - relaxation_factor: amount of vertex displacement in each iteration</p>
+<h3 id="alignment">Alignment</h3>
+<p>Alignment tools are used to blah blah blah...</p>
+<p>[ICPRigid3DImageRegistration]
+[ICPRigid3DMeshRegistration]
+[ReflectMeshes]
+[TranslateShapeToImageOrigin]
+[Resize_origin_resampleShape]</p>
+<h2 id="icprigid3dimageregistration">ICPRigid3DImageRegistration</h2>
+<p>A command line tool that performs iterative closed point (ICP) 3D rigid registration on a pair of images.</p>
+<p>It uses the following input arguments:
+Input:
+    -targetDistanceMap: the distance map of target image.
+    -sourceDistanceMap: the distance map of source image.
+    -sourceSegmentation: the segmentation of source image.
+    -isoValue: as we need to get point set from surface for ICP, this iso value is required to get the isosurface. The default value is 0.0.
+    -icpIterations: the number of iterations user want to run.</p>
+<p>Output:
+    -solutionSegmentation: the filename of the aligned segmentation of source image. </p>
+<h2 id="icprigid3dmeshregistration">ICPRigid3DMeshRegistration</h2>
+<p>Performs iterative closed point (ICP) rigid registration on a pair of vtk meshes.</p>
+<p>It uses a parameter file that would enable to specify the source mesh (moving) and the target mesh (fixed)
+to be used to estimated the rigid transformation matrix then apply the same transformation on other meshes defined 
+in the source mesh domain to be mapped to the target domain</p>
+<p>parameter file tags are as follows:
+  - source_mesh: vtk filename of the moving mesh
+  - target_mesh: vtk filename of the fixed mesh
+  - out_mesh : vtk filename of the aligned moving mesh to be save
+  - out_transform : txt filename to save the estimated transformation
+  - source_meshes: (optional) a list of vtk filenames for meshes defined in the source mesh domain 
+           to be mapped to the target domain using the same transformation matrix estimated.
+  - out_meshes : a list vtk filenames to save source_meshes after applying the transformation matrix.
+  - mode : Registration mode rigid, similarity, affine (default: similarity)
+  - icp_iterations: number of iterations
+  - debug: verbose debugging information
+  - visualize: display the resulting alignment</p>
+<h2 id="reflectmeshes">ReflectMeshes</h2>
+<p>Reflect meshes to make data in whole ensemble align in same direction. It uses a parameter file with the following tags"
+  - inputs: a list of vtk/ply file names for meshes to be relfected
+  - output: a list of output filenames
+  - is_unstructured_grid: : (a scalar 1/0 for each input file) indicated whether the input meshes are in vtk unstructured grid format (Default 0)
+  - direction: which axis to reflect with respect to, 0 for x-axis, 1 fir y-axis, and 2 for z-axis </p>
+<h2 id="translateshapetoimageorigin">TranslateShapeToImageOrigin</h2>
+<p>A command line tool that performs translational alignment of a given shape image based on either its center of mass or a given 3d point.</p>
+<p>It uses the following input arguments:
+-inFilename               The filename of the input shape to be transformed.
+-outFilename              The filename of the output transformed shape.
+-MRIinFilename            The assoicated image filename to be transformed.
+-MRIoutFilename           The filename of the output transformed image.
+-useCenterOfMass          A flag to transform image using center of mass.
+-centerX                  x-coordinate of a user-defined center point.
+-centerY                  y-coordinate of a user-defined center point.
+-centerZ                  z-coordinate of a user-defined center point.
+-parameterFilename        The filename to store the transform parameters</p>
+<h2 id="resize_origin_resampleshape">Resize_origin_resampleShape</h2>
+<p>TODO</p>
+<h3 id="analysis">Analysis</h3>
+<p>Analysis is used to blah blah blah...</p>
+<h3 id="optimization">Optimization</h3>
+<p>Optimization is used to blah blah blah...</p>
+<h3 id="file-utilities">File Utilities</h3>
+<p>The File Utilities are used to read and convert data stored in a variety of different formats.</p>
+<p>[GENERIC MESH FORMAT CONVERSION]
+[fea2vtk]
+[stl2ply]
+[stl2vtk]
+[vtk2ply]
+[VTKUnstructuredGridToPolyData]
+[MeshFromDT]</p>
+<h2 id="generic-mesh-format-conversion">GENERIC MESH FORMAT CONVERSION</h2>
+<p>Converts different mesh formats (vtk, ply, stl, obj) to other formats</p>
+<p>It uses a parameter file with the following tags
+- input_format: integer value specifying the input mesh file format
+     (1) .vtk 
+     (2) .ply 
+     (3) .stl 
+     (4) .obj 
+- output_format: integer value specifying the output mesh file format
+     (1) .vtk 
+     (2) .ply 
+     (3) .stl 
+- input_mesh: paths of the input meshes
+- output_mesh: paths of the output meshes</p>
+<p>Usage: 
+./GenericMeshConversion paramfile  </p>
+<h2 id="fea2vtk">fea2vtk</h2>
+<p>Read in feature files (.fea) and their corresponding triangular mesh (ply) and output a vtk file containing the feature values as scalar onto the mesh (colormap)</p>
+<p>It uses a parameter file with the following tags"
+  - mesh:      a list of ply file names for meshes to be processed
+  - fea_per_mesh:      number of fea files to be processed per mesh
+  - fea:      a list of fea files to be processed such that the first fea_per_mesh fea files correspond to the first mesh and so on. </p>
+<h2 id="stl2ply">stl2ply</h2>
+<p>Commandline tool to convert stl file format to ply file format ... </p>
+<p>"Usage: stl2vtk inFilename(.stl) outFilename(.ply) </p>
+<h2 id="stl2vtk">stl2vtk</h2>
+<p>Commandline tool to convert stl file format to vtk file format ... </p>
+<p>"Usage: stl2vtk inFilename(.stl) outFilename(.vtk) </p>
+<h2 id="vtk2ply">vtk2ply</h2>
+<p>Commandline tool to convert vtk file format to ply file format ... </p>
+<p>"Usage: vtk2ply inFilename(.vtk) outFilename(.ply)</p>
+<h2 id="vtkunstructuredgridtopolydata">VTKUnstructuredGridToPolyData</h2>
+<p>Convert vtk unstructered grid data to vtk polydata. It uses a paramfile of the following tags:
+  - inputs: list of input vtk files containing unstructured grid data
+  - outputs: list of output vtk files which will be saved containing the vtk polydata version of the corresponding input vtkfiles</p>
+<h2 id="meshfromdt">MeshFromDT</h2>
+<p>TODO</p>
+<h2 id="feafromvtk">FeaFromVTK</h2>
+<p>TODO</p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c44cc438.min.js"></script>
+      
+        <script src="../assets/mathjaxhelper.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
