@@ -31,6 +31,7 @@ using namespace pybind11::literals;
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
+#include "MeshWarper.h"
 #include "Optimize.h"
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
@@ -917,6 +918,8 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::self == py::self)
   .def(py::self += py::self)
 
+  .def(py::init<const Eigen::MatrixXd&, const Eigen::MatrixXi&>()) // Mesh constructor from matrices
+
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
          std::stringstream stream;
@@ -1223,6 +1226,79 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
   ;
 
+  // MeshWarping
+  py::class_<MeshWarper>(m, "MeshWarper")
+
+  .def(py::init<>())
+
+  .def_static("prepareMesh",
+        [](const Mesh &mesh) -> decltype(auto) {
+        return Mesh(MeshWarper::prep_mesh(mesh.getVTKMesh()));
+        },
+        "Return the prepared mesh used for warping (before vertices were inserted).",
+        "mesh"_a)
+
+  .def("generateWarp",
+        [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref) -> decltype(auto) {
+         w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref);
+         return w.generate_warp();
+        },
+        "Assign the reference mesh/particles (matrix [Nx3]) and pre-compute the warping",
+        "reference_mesh"_a, "reference_particles"_a)
+
+  .def("generateWarp",
+      [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref, const Eigen::MatrixXd &landmarks) -> decltype(auto) {
+        w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref, landmarks);
+        return w.generate_warp();
+      },
+      "Assign the reference mesh/particles (matrix [Nx3]) and landmarks (matrix [Nx3]) and pre-compute the warping",
+      "reference_mesh"_a, "reference_particles"_a, "landmarks"_a)
+
+  .def("getReferenceMesh",
+      [](MeshWarper &w) -> decltype(auto) {
+        return Mesh(w.get_reference_mesh());
+      },
+      "Return the mesh used for warping.")
+
+  .def("getReferenceParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_reference_particles();
+      },
+      "Return the particles used for warping.")
+
+  .def("hasBadParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.has_bad_particles();
+      },
+      "Return true if warping has removed any bad particle(s).")
+
+  .def("getWarpMatrix",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_warp_matrix();
+      },
+      "Return the warping matrix (Vertices = Warp * Control).")
+
+  .def("getLandmarksMap",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_landmarks_map();
+      },
+      "Return the map of landmarks to vertices.")
+
+  .def("buildMesh",
+      [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
+          return Mesh(w.build_mesh(particles));
+      },
+      "Build the mesh from particle positions (matrix [Nx3])",
+      "particles"_a)
+
+  .def("extractLandmarks",
+      [](MeshWarper &w, const Mesh &warped_mesh) -> decltype(auto) {
+          return w.extract_landmarks(warped_mesh.getVTKMesh());
+      },
+      "Extract the landmarks from the warped mesh and return the landmarks (matrix [Nx3])",
+      "warped_mesh"_a)
+   ;
+
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
@@ -1267,6 +1343,16 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::class_<ParticleSystem>(m, "ParticleSystem")
 
   .def(py::init<const std::vector<std::string> &>())
+
+  .def("ShapeAsPointSet",
+      [](ParticleSystem &p, int id_shape) -> decltype(auto) {
+          Eigen::MatrixXd points = p.Particles().col(id_shape);
+          points.resize(3, points.size() / 3);
+          points.transposeInPlace();
+          return points;
+      },
+      "Return the particle pointset [Nx3] of the specified shape",
+      "id_shape"_a)
 
   .def("Particles",
        &ParticleSystem::Particles)

@@ -8,12 +8,12 @@
 =========================================================================*/
 #pragma once
 
-#include "itkParticleImageDomainWithGradN.h"
+#include "ParticleImageDomainWithGradN.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"
 #include "itkDiscreteGaussianImageFilter.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleImageDomainWithCurvature
  *
@@ -67,7 +67,7 @@ public:
 protected:
   ParticleImageDomainWithCurvature() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBCurvature->activeVoxelCount() << std::endl;

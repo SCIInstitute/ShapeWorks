@@ -10,11 +10,11 @@
 
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
-#include "itkParticleImageDomain.h"
+#include "ParticleImageDomain.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleImageDomainWithGradients
  *
@@ -30,13 +30,13 @@ template <class T>
 class ParticleImageDomainWithGradients : public ParticleImageDomain<T>
 {
 public:
-  typedef SmartPointer<ParticleImageDomainWithGradients<T>>  Pointer;
+  using Pointer = std::shared_ptr<ParticleImageDomainWithGradients<T>>;
 
   /** Point type of the domain (not necessarily of the image). */
   typedef typename ParticleImageDomain<T>::PointType PointType;
   typedef typename ParticleImageDomain<T>::ImageType ImageType;
 
-  typedef FixedArray<T, DIMENSION> VectorType;
+  typedef itk::FixedArray<T, DIMENSION> VectorType;
   typedef vnl_vector_fixed<T, DIMENSION> VnlVectorType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
@@ -79,7 +79,7 @@ protected:
   ParticleImageDomainWithGradients() {}
   virtual ~ParticleImageDomainWithGradients() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     ParticleImageDomain<T>::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBGradient->activeVoxelCount() << std::endl;
@@ -109,7 +109,9 @@ private:
       return v;
     }
     else {
-      itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain.");
+      std::ostringstream message;                                                         \
+      message << "Gradient queried for a Point, " << p << ", outside the given image domain.";
+      throw std::runtime_error(message.str());
     }
   }
 
