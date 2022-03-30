@@ -11,15 +11,14 @@
 
 #include "vnl/vnl_vector.h"
 
-#include <Libs/Mesh/MeshWarper.h>
-
 #include <Data/StudioMesh.h>
-#include <Data/QMeshWarper.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWorkQueue.h>
 
 namespace shapeworks {
+
+class QMeshWarper;
 
 class MeshReconstructors {
 public:
