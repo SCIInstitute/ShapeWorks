@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shireen Elhabian et al." /><link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/6.2/workflow/groom.html" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>How to Groom Your Dataset? - ShapeWorks</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../css/custom.css" rel="stylesheet" />
+        <link href="../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "How to Groom Your Dataset?";
+        var mkdocs_page_input_path = "workflow/groom.md";
+        var mkdocs_page_url = "/software/shapeworks.html/6.2/workflow/groom.html";
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/c++.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-36723568-3', 'mkdocs.org');
+        ga('send', 'pageview');
+      </script>
+    
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../index.html" class="icon icon-home"> ShapeWorks
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">For Users</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Workflow</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="groom.html">How to Groom Your Dataset?</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#common-pre-processing-steps-for-segmentations">Common Pre-Processing Steps for Segmentations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#resampling-images-and-segmentations">Resampling images and segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aligning-segmentations">Aligning segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#clip-segmentations">Clip segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cropping-and-padding-segmentations">Cropping and padding segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#converting-segmentations-to-smooth-signed-distance-transforms">Converting segmentations to smooth signed distance transforms</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pre-processing-steps-for-meshes">Common Pre-Processing Steps for Meshes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#reflect-meshes">Reflect meshes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#meshes-to-volumes">Meshes to volumes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#remesh">Remesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aligning-meshes">Aligning meshes</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="optimize.html">How to Optimize Your Shape Model?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="analyze.html">How to Analyze Your Shape Model?</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">What is New?</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorks Studio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-command.html">ShapeWorks Command</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../new/ellipsoid-joint-generation.html">Ellipsoid Joint Generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">ShapeWorks Studio</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../studio/getting-started-with-studio.html">Getting Started With ShapeWorks Studio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../studio/multiple-domains.html">Multiple Domains SSM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-shape-cohort-generation.html">Getting Started with Shape Cohort Generator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/array-passing-without-copying.html">Array passing without copying</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/create-and-apply-image-transforms.html">Transforms can be used to center image data or to align two images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notebooks/create-and-apply-mesh-transforms.html">Transforms can also be used to align two meshes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Use Cases</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Segmentation Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/segmentation-based/ellipsoid.html">Ellipsoid: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/segmentation-based/left-atrium.html">Left Atrium: Shape Model from Segmentations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains Ellipsoid: Shape Model on New Shapes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html">Shape Model for Multiple Domains from Segmentations</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Mesh Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/ellipsoid_mesh.html">Ellipsoid Mesh: Basic Example</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/lumps.html">Lumps: Shape Model directly from Mesh</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/thin-cavity-bean.html">Thin Cavity Bean: Shape Model with Geodesic Distances</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html">Shape Model for Multiple Domains directly from Mesh</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Contour Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/contour-based/supershapes-contour.html">Supershapes:Shape Model for Contour Domains</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Constraints Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/constraint-based/ellipsoid-cutting-planes.html">Ellipsoid: Shape Model with Cutting Planes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/constraint-based/femur-cutting-planes.html">Femur:Shape Model with Cutting Planes</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Statistics Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/stats-based/ellipsoid-pca.html">Ellipsoid: Shape Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Deep Learning Based Use Cases</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../use-cases/deep-learning-based/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">For Developers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/new-notebook.html">How to Add New Notebooks?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/Modules/index_groups.html">Groups</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/Namespaces/index_namespaces.html">Namespaces</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/Classes/index_classes.html">Classes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/Files/index_files.html">Files</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ShapeWorks</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html" class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Workflow &raquo;</li><li>How to Groom Your Dataset?</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/workflow/groom.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-groom-your-dataset">How to Groom Your Dataset?</h1>
+<p>ShapeWorks needs suitable distance transforms or meshes for establishing shape correspondence. The groom stage has the pipeline to generate aligned distance transforms from binary segmentations or groomed meshes from unaligned meshes.  Common grooming steps are outlined below. For descriptions of the ShapeWorks commands used, see: <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a>.</p>
+<h2 id="common-pre-processing-steps-for-segmentations">Common Pre-Processing Steps for Segmentations</h2>
+<h3 id="resampling-images-and-segmentations">Resampling images and segmentations</h3>
+<p>This grooming step resamples all the binary volumes, which in a raw setting could be in different physical spaces (different dimensions and voxel spacing). This grooming step brings all segmentations to the same voxel spacing, typically isotropic spacing (e.g., 1,1,1).</p>
+<p>A smaller voxel spacing than the original spacing improves the resolution of the segmentations and reduces the aliasing (i.e., staircase) artifact resulting from the thresholding/binarization process. </p>
+<div class="admonition note">
+<p class="admonition-title">Resampling both images and segmentations</p>
+<p>If your dataset contains both images (e.g., CTs, MRIs) and binary segmentations, it is recommended that resampling is performed on both to keep them aligned for subsequent analyses that might entail/need imaging data. </p>
+</div>
+<p>Since image resampling entails interpolation, directly resampling binary segmentations will not result in a binary segmentation, but rather an interpolated version that does not have two distinct labels (i.e., foreground and background).</p>
+<p>To mitigate this behavior, we need first to convert the binary segmentations (with zero-one voxels) to a continuous-valued (gray-scale) image. This can be done by either antialiasing the segmentations, which smooths the foreground-background interface, or converting a segmentation to a signed distance transform, where each voxel encodes the physical distance to the closest surface point (zero-one interface) with the sign indicating whether the voxel is inside or outside the foreground region.</p>
+<p>Here is a resampling pipeline example for binary segmentation that uses antialiasing:</p>
+<ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>resample</code> the antialiased image using the same (and possible smaller) voxel spacing for all dimensions</li>
+<li><code>binarize</code> (aka thresholding) the resampled image to results in a binary segmentation with the desired voxel spacing</li>
+</ul>
+<p>Here is an example of resampling an ellipsoid with spacing (1,1,2) to have spacing (1,1,1):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">resample</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Resample example" src="../img/workflow/resampling.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Resampling images</p>
+<p>Images are already given as a continued-valued grid of pixels. Hence, images can be directly resampled without any pre- or post-processing steps.</p>
+</div>
+<p><em>Resampling images reduces pixelation and smooths out intensity noise.</em> <br />
+<img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
+<p><em>Resampling segmentations smooths out shape boundaries and reduces binarization aliasing.</em>
+<img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
+<h3 id="aligning-segmentations">Aligning segmentations</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Rigid alignment (aka registration) is an optimization process that might get stuck in a bad local minima if shapes are significantly out of alignment. To bring shapes closer, we can remove translation differences using center-of-mass alignment. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for subsequent rigid alignment.</p>
+<div class="admonition note">
+<p class="admonition-title">Applying transformation to segmentations</p>
+<p>Applying a transformation to segmentations entails interpolation due to image resampling in the new coordinate frame. Similar to the resampling workflow, we will first antialias the segmentation to convert it to a continuous-valued image with a smooth foreground-background interface, then apply the transformation, and finally binarize the tranformed image.</p>
+</div>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
+<ul>
+<li><em>Center-of-mass alignment for segmentations:</em> <ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>translate</code> the binary segmentation so that the center of the image doamin is the center of mass of the shape.</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+</li>
+<li>
+<p><code>recenter</code> moves the center of the image (which is now the center of mass) to (0,0,0)</p>
+</li>
+<li>
+<p><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</p>
+<ul>
+<li>Use the pymodule function <code>find_reference_image_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+<!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.--></li>
+</ul>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
+<ul>
+<li><code>antialias</code> the binary segmentation and reference to convert them to a smooth continuous-valued image</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+</li>
+</ul>
+<p>Here is an example of performing center of mass alignment on one ellipsoid:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">translation_vector</span>   <span class="o">=</span>  <span class="n">shape_seg</span><span class="o">.</span><span class="n">center</span><span class="p">()</span> <span class="o">-</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">centerOfMass</span><span class="p">()</span> 
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translation_vector</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Center of mass alignment example" src="../img/workflow/com.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-com-pv.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p>Finding the reference:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_image_index</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">)</span>
+<span class="n">ref_seg</span>   <span class="o">=</span> <span class="n">shape_seg_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;reference.nrrd&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reference selection example" src="../img/workflow/ref.png" /></p>
+<p>Rigid alignment:</p>
+<div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">ref_seg</span>    <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">ref_shape_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">ref_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+
+<span class="n">iso_value</span>      <span class="o">=</span> <span class="mf">1e-20</span>
+<span class="n">icp_iterations</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">rigidTransform</span> <span class="o">=</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_seg</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">TransformType</span><span class="o">.</span><span class="n">IterativeClosestPoint</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">,</span> <span class="n">icp_iterations</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigidTransform</span><span class="p">,</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">origin</span><span class="p">(),</span>  <span class="n">ref_seg</span><span class="o">.</span><span class="n">dims</span><span class="p">(),</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">spacing</span><span class="p">(),</span> <span class="n">ref_seg</span><span class="o">.</span><span class="n">coordsys</span><span class="p">(),</span>
+                         <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Rigid alignment example" src="../img/workflow/rigid.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-align.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="clip-segmentations">Clip segmentations</h3>
+<p>In some cases, binary segmentations need to be clipped with a cutting plane so that only the desired part of the shape is reflected in the shape model. To perform this step, you can use <code>clip</code> defined the cutting plane defined using three points.</p>
+<p>Example of clipping:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">cutting_plane_point_1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_2</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cutting_plane_point_1</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_2</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_3</span><span class="p">,</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[]()))</span>
+              <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="RClip segmentation example" src="../img/workflow/clip.png" /></p>
+<h3 id="cropping-and-padding-segmentations">Cropping and padding segmentations</h3>
+<p>In many cases, image boundaries are not tight around shapes. This leaves too much irrelevant background voxels that might increase the memory footprint when optimizing the shape model. We can remove this irrelevant background while keeping our segmentations intact and avoid cropped segmentations to touch image boundaries, which results in artifical holes in the shape boundary and does not allow particles to be distributed in regions touching the image boundary. </p>
+<p>This cropping and padding step entails the following steps:</p>
+<ul>
+<li><code>ImageUtils.boundingBox</code>: computes the smallest bounding box (ShapeWorks region) that fits all segmentations in the given shape cohort. Note that this step should be applied to at segmentations that share the same coordinate frame (i.e., aligned)</li>
+<li><code>crop</code> the segmentation using the computed bounding box</li>
+<li><code>pad</code> the cropped segmentation to ensure the shape is not touching the image boundary</li>
+</ul>
+<p>Example of cropping and padding:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span>         <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># a threshold value between 0 and 1 for binary segmentations</span>
+<span class="n">padding_size</span>      <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># number of voxels to pad for each dimension</span>
+<span class="n">padding_value</span>     <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># the constant value used to pad the segmentations</span>
+
+<span class="n">segs_bounding_box</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ImageUtils</span><span class="o">.</span><span class="n">boundingBox</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">)</span>
+<span class="n">shape_seg</span>         <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">segs_bounding_box</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">padding_size</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Cropping and padding example" src="../img/workflow/crop.png" /></p>
+<h3 id="converting-segmentations-to-smooth-signed-distance-transforms">Converting segmentations to smooth signed distance transforms</h3>
+<p>For numerical computations for correspondences optimization, we need to convert binary segmentations to a continuous-valued image that satisfies the following requirements.</p>
+<ul>
+<li>smooth for gradient updates stability</li>
+<li>reflect the shape's surface (i.e., foreground-background) interface</li>
+<li>provide a signal for the particle to snap (move back) to the surface in case particles gets off the surface during optimization, which is a typical scenario when using gradient descent based optimization</li>
+</ul>
+<p>An antialiased segmentation satisfies the first two requirements. However, if a particles leaves the surface (i.e., the zero-level set) during model optimization, which is typical in gradient descent based optimization, it would be challenging to snap it back to the surface.</p>
+<p>A representation that satisfies all the requirements is the <em>signed distance transform</em>. </p>
+<ul>
+<li>A signed distance transform assigns to each voxel the physical distance to the closest point on the surface (i.e., the minimum distance from that voxel to nearest voxel on the foreground-background interface).</li>
+<li>The sign is used to indicate whether that voxel is inside or outside the foreground object.</li>
+<li>The zero-level set (zero-distance to the surface) indicates the foreground-background interface (i.e., the shape's surface).</li>
+<li>The gradient of a signed distance transform at a voxels indicates what direction to move in from that voxels to most rapidly increase the value of this distance. Hence, we can use the negative of this gradient as a signal to move a particle back to the surface.</li>
+</ul>
+<p>The <code>computeDT</code> API needs an <code>iso_value</code> that defines the foreground-background interface. To create  a smoother interface, we first antialias the segmentation then compute the distance transform at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect of binarization. </p>
+<p>So the steps are:</p>
+<ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>computeDT</code>: Compute distance transform</li>
+<li><code>gaussianBlur</code>: Apply smoothing by convolving the image with a 3D gaussian filter with a given sigma (in physical coordinates)</li>
+<li>Save the distance transform</li>
+</ul>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">sigma</span>     <span class="o">=</span> <span class="mf">1.3</span>
+
+<span class="n">shape_seg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">computeDT</span><span class="p">(</span><span class="n">iso_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">gaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Distance transform example" src="../img/workflow/dt.png" /></p>
+<p><em>Gaussian blur with a small sigma. Note aliasing left-overs!</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth-small-sigma2.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p><em>Gaussian blur with a larger sigma. Note a smooth surface.</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<div class="admonition note">
+<p class="admonition-title">Caution when using Gaussian blur</p>
+<p>The <code>gaussianBlur</code> method could be use for blobby-like structures. However, for shapes with thin features and high curvature regions, the gaussian blurring method could impact the underlying geometrical features. For these shapes, topology-preserving smoothing is recommended. Topology-preserving smoothing is currently under developement and will be released soon.</p>
+</div>
+<h2 id="common-pre-processing-steps-for-meshes">Common Pre-Processing Steps for Meshes</h2>
+<h3 id="reflect-meshes">Reflect meshes</h3>
+<p>It is common in medical imaging data to have a left and right anatomy. To align and model all such shapes, we must reflect some meshes so that all are oriented the same.</p>
+<ul>
+<li><code>reflect</code>: reflects the mesh across the given axis (typically x-axis for anatomy)</li>
+</ul>
+<p>Here is an example of reflecting a mesh:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_mesh</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_mesh_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reflect mesh example" src="../img/workflow/reflect.png" /></p>
+<h3 id="meshes-to-volumes">Meshes to volumes</h3>
+<p>Meshes can be converted to binary segmentations if desired so that grooming can be done on segmentations and optimization on distance transforms. </p>
+<p>The steps to convert meshes to volumes are:</p>
+<ul>
+<li><code>toImage</code> convert the mesh to a signed distance transform</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+<p>Example of turning a mesh to a segmentation:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">shape_mesh</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">binarize</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Mesh to volume example" src="../img/workflow/mesh2seg.png" /></p>
+<p>For list of commands, check out <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a></p>
+<h3 id="remesh">Remesh</h3>
+<p>Remeshing creates meshes with evenly spaced vertices. 
+- <code>remeshPercent</code> remeshes the mesh to have a given percent of the current number of vertices</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">mesh</span><span class="o">.</span><span class="n">remeshPercent</span><span class="p">(</span><span class="n">percentage</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">adaptivity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Remeshing" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png" /></p>
+<h3 id="aligning-meshes">Aligning meshes</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
+<ul>
+<li><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</li>
+<li>
+<p>Use the pymodule function <code>find_reference_mesh_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+  <!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.-->
+</p>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
+</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+    to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+</ul>
+<p>Here is an example of performing reference selection and rigid alignment on a list of meshes:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># reference selection </span>
+<span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_mesh_index</span><span class="p">(</span><span class="n">mesh_list</span><span class="p">)</span>
+<span class="n">ref_mesh</span> <span class="o">=</span> <span class="n">mesh_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span>
+<span class="c1"># align all meshes in the list to the reference </span>
+<span class="k">for</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="n">mesh_list</span><span class="p">:</span>
+    <span class="c1"># compute rigid transformation</span>
+    <span class="n">rigid_transform</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_mesh</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="o">.</span><span class="n">AlignmentType</span><span class="o">.</span><span class="n">Rigid</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="c1"># apply rigid transform</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigid_transform</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Mesh alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh_alignment.png" /></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../users/papers.html" class="btn btn-neutral float-left" title="Revelant Papers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="optimize.html" class="btn btn-neutral float-right" title="How to Optimize Your Shape Model?">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/SCIInstitute/ShapeWorks" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../users/papers.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="optimize.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+      <script src="../js/version-select.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

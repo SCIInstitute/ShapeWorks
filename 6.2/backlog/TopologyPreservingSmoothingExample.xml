@@ -1,0 +1,30 @@
+<!-- The PropagationScaling parameter can be used to switch from propagation outwards (POSITIVE) versus propagating inwards (NEGATIVE). -->
+<propagationScale> 20.0 </propagationScale>
+
+<!-- I' = (max-min). \frac{1}{1+exp(-\frac{1-\beta}{\alpha)} + min -->
+<alpha> 10.5 </alpha>
+<beta> 10.0 </beta>
+
+<!-- Isovalue of the surface -->
+<isoValue> 1 </isoValue>
+
+<!-- Number of iterations of smoothing -->
+<smoothing_iterations> 15 </smoothing_iterations>
+
+<!-- Show each intermediate step -->
+<verbose> 1 </verbose>
+
+<!-- Input DT after fastmarching -->
+<inputs>
+/usr/sci/projects/FAI/DATA/femur_thickness_trialdata_shapeAnalysis/preprocessed/nih_pt02_femur_w_thick_align.Fastmarching.mha
+</inputs>
+
+<!-- Output smoothed DT -->
+<dtFiles>
+/usr/sci/projects/FAI/DATA/femur_thickness_trialdata_shapeAnalysis/preprocessed/nih_pt02_femur_w_thick_align.DT.mha
+</dtFiles>
+
+<!-- Zero-level isosurface -->
+<outputs>
+/usr/sci/projects/FAI/DATA/femur_thickness_trialdata_shapeAnalysis/preprocessed/nih_pt02_femur_w_thick_align.ISO.mha
+</outputs>
