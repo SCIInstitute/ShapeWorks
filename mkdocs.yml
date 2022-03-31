@@ -6,7 +6,7 @@ site_description: The official documentation of ShapeWorks
 site_author: Shireen Elhabian et al.
 use_directory_urls: false
 docs_dir: 'docs/'
-copyright: Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+copyright: Copyright © 1998 - 2022 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
 google_analytics: ['UA-36723568-3', 'mkdocs.org']
 
 nav:
@@ -109,12 +109,24 @@ nav:
 
 theme:
    name: material #readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   logo: assets/shapeworks-logo-small.png
    include_sidebar: true
    highlightjs: true
    hljs_languages:
       - yaml
       - python
       - c++
+   # features:     // pretty cool, and not necessarily problems, but leaving it off for now
+   #  - navigation.instant
+   palette:
+    - scheme: default
+      toggle:
+        icon: material/eye-outline 
+        name: Switch to dark mode
+    - scheme: slate 
+      toggle:
+        icon: material/eye
+        name: Switch to light mode
 
 markdown_extensions:
    - attr_list
@@ -152,3 +164,6 @@ plugins:
 extra:
   version:
     provider: mike
+  analytics:
+    provider: google
+    property: UA-36723568-3

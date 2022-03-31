@@ -41,11 +41,6 @@ git reset --hard HEAD
 git remote rm origin
 git remote add origin "${remote_repo}"
 
-# remove local gh-pages branch, if any
-git branch -D gh-pages
-# get remote gh-pages branch
-git checkout --track origin/gh-pages
-git pull --rebase
 git checkout master
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
