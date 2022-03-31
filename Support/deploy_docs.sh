@@ -42,6 +42,9 @@ git remote rm origin
 git remote add origin "${remote_repo}"
 
 git checkout master
+# clean out old api docs as mkdocs will just find whatever is there.
+rm -rf docs/api
+mkdir docs/api
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 cd "${GITHUB_WORKSPACE}" && mike deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml" --title "6.3.0 (dev)" 6.3 dev --branch gh-pages --update-aliases
