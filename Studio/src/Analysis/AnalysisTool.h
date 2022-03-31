@@ -26,6 +26,7 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
+class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -164,6 +165,9 @@ class AnalysisTool : public QWidget {
 
   void run_good_bad_particles();
 
+  void handle_lda_progress(double progress);
+  void handle_lda_complete();
+
  signals:
 
   void update_view();
@@ -194,6 +198,8 @@ class AnalysisTool : public QWidget {
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
+
+  void update_lda_graph();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 
@@ -234,6 +240,9 @@ class AnalysisTool : public QWidget {
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
+  QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  bool group_lda_job_running_ = false;
+  bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
 };

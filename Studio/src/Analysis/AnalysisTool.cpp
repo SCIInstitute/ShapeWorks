@@ -23,6 +23,7 @@
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
+#include <Job/StatsGroupLDAJob.h>
 
 namespace shapeworks {
 
@@ -97,6 +98,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->reconstruction_options->hide();
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
+
+  ui_->lda_panel->hide();
+  ui_->lda_graph->hide();
+  group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
+  connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
+  connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
+  connect(group_lda_job_.data(), &StatsGroupLDAJob::message, this, &AnalysisTool::message);
 }
 
 //---------------------------------------------------------------------------
@@ -915,6 +923,7 @@ void AnalysisTool::update_group_boxes() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
+  block_group_change_ = true;
   auto values =
       session_->get_project()->get_group_values(std::string("group_") + ui_->group_box->currentText().toStdString());
 
@@ -947,6 +956,7 @@ void AnalysisTool::update_group_values() {
   ui_->group_right->setEnabled(groups_on);
   ui_->group_animate_checkbox->setEnabled(groups_on);
 
+  block_group_change_ = false;
   group_changed();
 }
 
@@ -968,10 +978,30 @@ void AnalysisTool::update_domain_alignment_box() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::update_lda_graph()
+{
+  if (groups_active()) {
+    if (!group_lda_job_running_) {
+      group_lda_job_running_ = true;
+      ui_->lda_panel->show();
+      ui_->lda_progress->setValue(1);
+      group_lda_job_->set_stats(stats_);
+      app_->get_py_worker()->run_job(group_lda_job_);
+    }
+  } else {
+    ui_->lda_graph->setVisible(false);
+  }
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::group_changed() {
+  if (block_group_change_) {
+    return;
+  }
   stats_ready_ = false;
   group_pvalue_job_ = nullptr;
   compute_stats();
+  update_lda_graph();
 }
 
 //---------------------------------------------------------------------------
@@ -1169,6 +1199,24 @@ void AnalysisTool::run_good_bad_particles() {
   connect(job.data(), &ParticleNormalEvaluationJob::progress, this,
           &AnalysisTool::handle_eval_particle_normals_progress);
   worker->run_job(job);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_lda_progress(double progress)
+{
+  ui_->lda_progress->setVisible(progress < 1);
+  ui_->lda_progress->setValue(progress * 100);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_lda_complete()
+{
+  std::cerr << "LDA complete";
+  ui_->lda_progress->setVisible(false);
+  group_lda_job_running_ = false;
+
+  group_lda_job_->plot(ui_->lda_graph);
+  ui_->lda_graph->setVisible(true);
 }
 
 //---------------------------------------------------------------------------
