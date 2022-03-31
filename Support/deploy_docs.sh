@@ -43,6 +43,7 @@ git remote add origin "${remote_repo}"
 
 # get remote gh-pages branch
 git checkout --track origin/gh-pages
+git pull --rebase
 
 # build docs from master
 git checkout master
