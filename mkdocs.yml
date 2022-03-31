@@ -108,13 +108,25 @@ nav:
  
 
 theme:
-   name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   name: material #readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   logo: assets/shapeworks-logo-small.png
    include_sidebar: true
    highlightjs: true
    hljs_languages:
       - yaml
       - python
       - c++
+   # features:     // pretty cool, and not necessarily problems, but leaving it off for now
+   #  - navigation.instant
+   palette:
+    - scheme: default
+      toggle:
+        icon: material/eye-outline 
+        name: Switch to dark mode
+    - scheme: slate 
+      toggle:
+        icon: material/eye
+        name: Switch to light mode
 
 markdown_extensions:
    - attr_list
@@ -140,3 +152,18 @@ plugins:
   - mkdocs-jupyter:
       execute: False
       include_source: True
+  - mike:
+      # these fields are all optional; the defaults are as below...
+      version_selector: true   # set to false to leave out the version selector
+      css_dir: css             # the directory to put the version selector's CSS
+      javascript_dir: js       # the directory to put the version selector's JS
+      canonical_version: null  # the version for <link rel="canonical">; `null`
+                               # uses the version specified via `mike deploy`
+
+# for material theme, mike versioning is supported as an extra
+extra:
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: UA-36723568-3
