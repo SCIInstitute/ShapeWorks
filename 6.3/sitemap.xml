@@ -1871,11 +1871,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_551d0b2f9f7bff4cdbf0f36993977d0c.html</loc>
-         <lastmod>2022-03-31</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_55e6ce8615c819fee18162671e1bdfe2.html</loc>
          <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
@@ -1906,11 +1901,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_7c6f9f3331e56788ec84e2f17f1759d8.html</loc>
-         <lastmod>2022-03-31</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_85be493154e47884a39224bf31e366f0.html</loc>
          <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
@@ -1936,6 +1926,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_b61e4180fa497c41c4b364a945b36efe.html</loc>
+         <lastmod>2022-03-31</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_baf8d66207f3fc39faf866e67ca98ce2.html</loc>
          <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
@@ -1952,6 +1947,11 @@
     </url>
     <url>
          <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_c8ce71b7fc76205395f44c2291e69b75.html</loc>
+         <lastmod>2022-03-31</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/dir_cb8980ab440f994989990a6313097edf.html</loc>
          <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
