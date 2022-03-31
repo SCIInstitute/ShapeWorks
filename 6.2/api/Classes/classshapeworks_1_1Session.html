@@ -1,0 +1,3711 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The official documentation of ShapeWorks">
+      
+      
+        <meta name="author" content="Shireen Elhabian et al.">
+      
+      
+        <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/6.2/api/Classes/classshapeworks_1_1Session.html">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+    
+    
+      
+        <title>shapeworks::Session - ShapeWorks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.644de097.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-36723568-3","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){var e;this.value&&(e=document.location.pathname,ga("send","pageview",e+"?q="+this.value))}),"undefined"!=typeof location$&&location$.subscribe(function(e){ga("send","pageview",e.pathname)})})</script>
+  <script async src="https://www.google-analytics.com/analytics.js"></script>
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shapeworkssession" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ShapeWorks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              shapeworks::Session
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    ShapeWorks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/shapes.html" class="md-nav__link">
+        Shapes, What & From Where?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/workflow.html" class="md-nav__link">
+        Shape Modeling Workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/sw-stories.html" class="md-nav__link">
+        ShapeWorks Success Stories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/interfaces.html" class="md-nav__link">
+        ShapeWorks Interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/examples.html" class="md-nav__link">
+        Examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/how-tos.html" class="md-nav__link">
+        How-Tos
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          For Users
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Users" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          For Users
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../users/install.html" class="md-nav__link">
+        How to Install ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../users/citation.html" class="md-nav__link">
+        How to Cite ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../users/papers.html" class="md-nav__link">
+        Revelant Papers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Workflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow/groom.html" class="md-nav__link">
+        How to Groom Your Dataset?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow/optimize.html" class="md-nav__link">
+        How to Optimize Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow/analyze.html" class="md-nav__link">
+        How to Analyze Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          What is New?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="What is New?" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          What is New?
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/new-studio.html" class="md-nav__link">
+        New in ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/openvdb.html" class="md-nav__link">
+        ShapeWorks Takes ~85% Less Memory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/sw-meshes.html" class="md-nav__link">
+        ShapeWorks Directly on Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/shapeworks-command.html" class="md-nav__link">
+        ShapeWorks Command
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/ssm-eval.html" class="md-nav__link">
+        Shape Model Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/shapeworks-python.html" class="md-nav__link">
+        ShapeWorks in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/ellipsoid-joint-generation.html" class="md-nav__link">
+        Ellipsoid Joint Generation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          ShapeWorks Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/ShapeWorksCommands.html" class="md-nav__link">
+        ShapeWorks Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Studio
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Studio
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/getting-started-with-studio.html" class="md-nav__link">
+        Getting Started With ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/multiple-domains.html" class="md-nav__link">
+        Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/deepssm-in-studio.html" class="md-nav__link">
+        DeepSSM in Studio
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          ShapeWorks in Python
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks in Python
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+        Getting Started with Jupyter Notebooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+        Getting Started with Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+        Getting Started with Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+        Getting Started with Exploring Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+        Getting Started with Data Augmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+        Getting Started with Shape Cohort Generator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/array-passing-without-copying.html" class="md-nav__link">
+        Array passing without copying
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+        Transforms can be used to center image data or to align two images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+        Transforms can also be used to align two meshes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Deep Learning & SSMs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning & SSMs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-learning/pytorch-gpu.html" class="md-nav__link">
+        PyTorch GPU Support for ShapeWorks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-learning/data-augmentation.html" class="md-nav__link">
+        Data Augmentation for Deep Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-learning/deep-ssm.html" class="md-nav__link">
+        SSMs Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/use-cases.html" class="md-nav__link">
+        Getting Started with Use Cases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_2">
+          Segmentation Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Segmentation Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+        Ellipsoid: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+        Left Atrium: Shape Model from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/segmentation-based/fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+        Shape Model for Multiple Domains from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_3">
+          Mesh Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_3">
+          <span class="md-nav__icon md-icon"></span>
+          Mesh Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+        Ellipsoid Mesh: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/lumps.html" class="md-nav__link">
+        Lumps: Shape Model directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+        Thin Cavity Bean: Shape Model with Geodesic Distances
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+        Shape Model for Multiple Domains directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_4">
+          Contour Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contour Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+        Supershapes:Shape Model for Contour Domains
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_5">
+          Constraints Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_5">
+          <span class="md-nav__icon md-icon"></span>
+          Constraints Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+        Ellipsoid: Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+        Femur:Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_6">
+          Statistics Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Statistics Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+        Ellipsoid: Shape Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+        Femur: Group Difference Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+        Ellipsoid: Shape Evaluation in Python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
+          Deep Learning Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_7">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+        Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/right-ventricle.html" class="md-nav__link">
+        Right Ventricle: Highly Variable Shapes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11">
+          For Developers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Developers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          For Developers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/build.html" class="md-nav__link">
+        How to Build ShapeWorks from Source?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/contribute.html" class="md-nav__link">
+        How to Contribute to ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/commands.html" class="md-nav__link">
+        How to Add ShapeWorks Commands?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/python-apis.html" class="md-nav__link">
+        How to Add Python APIs?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/tests.html" class="md-nav__link">
+        How to Add and Run Unit Tests?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/new-use-case.html" class="md-nav__link">
+        How to Add New Use Cases?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/datasets.html" class="md-nav__link">
+        How to Add New Datasets?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/new-notebook.html" class="md-nav__link">
+        How to Add New Notebooks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/modify-datasets.html" class="md-nav__link">
+        When Modifying Existing Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/docs.html" class="md-nav__link">
+        Getting Started with Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/gh-actions.html" class="md-nav__link">
+        Getting Started with GitHub Actions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/markdown.html" class="md-nav__link">
+        Getting Started with Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/paths.html" class="md-nav__link">
+        Adding to PATH Environment Variable
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_12">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_12">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Modules/index_groups.html" class="md-nav__link">
+        Groups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Namespaces/index_namespaces.html" class="md-nav__link">
+        Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index_classes.html" class="md-nav__link">
+        Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Files/index_files.html" class="md-nav__link">
+        Files
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_13">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/team.html" class="md-nav__link">
+        Meet ShapeWorkers!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/release-notes.html" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/license.html" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/contact.html" class="md-nav__link">
+        Contact Us
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#public-slots" class="md-nav__link">
+    Public Slots
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-signals" class="md-nav__link">
+    Public Signals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-functions" class="md-nav__link">
+    Public Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-attributes" class="md-nav__link">
+    Public Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-description" class="md-nav__link">
+    Detailed Description
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-slots-documentation" class="md-nav__link">
+    Public Slots Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Slots Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slot-set_feature_auto_scale" class="md-nav__link">
+    slot set_feature_auto_scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-set_landmark_drag_mode" class="md-nav__link">
+    slot set_landmark_drag_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-get_landmark_drag_mode" class="md-nav__link">
+    slot get_landmark_drag_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_clear_cache" class="md-nav__link">
+    slot handle_clear_cache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_new_mesh" class="md-nav__link">
+    slot handle_new_mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_message" class="md-nav__link">
+    slot handle_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_thread_complete" class="md-nav__link">
+    slot handle_thread_complete
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-signals-documentation" class="md-nav__link">
+    Public Signals Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Signals Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signal-data_changed" class="md-nav__link">
+    signal data_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-points_changed" class="md-nav__link">
+    signal points_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-landmarks_changed" class="md-nav__link">
+    signal landmarks_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-planes_changed" class="md-nav__link">
+    signal planes_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-ffc_changed" class="md-nav__link">
+    signal ffc_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-update_display" class="md-nav__link">
+    signal update_display
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-new_mesh" class="md-nav__link">
+    signal new_mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-error" class="md-nav__link">
+    signal error
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-feature_range_changed" class="md-nav__link">
+    signal feature_range_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-update_view_mode" class="md-nav__link">
+    signal update_view_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-image_slice_settings_changed" class="md-nav__link">
+    signal image_slice_settings_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-ffc_paint_mode_changed" class="md-nav__link">
+    signal ffc_paint_mode_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-repaint" class="md-nav__link">
+    signal repaint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-functions-documentation" class="md-nav__link">
+    Public Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-session" class="md-nav__link">
+    function Session
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-session_1" class="md-nav__link">
+    function ~Session
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_parent" class="md-nav__link">
+    function set_parent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-save_project" class="md-nav__link">
+    function save_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_project" class="md-nav__link">
+    function load_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_light_project" class="md-nav__link">
+    function load_light_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_xl_project" class="md-nav__link">
+    function load_xl_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_project_path" class="md-nav__link">
+    function set_project_path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_project" class="md-nav__link">
+    function get_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_original_files" class="md-nav__link">
+    function load_original_files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_groomed_files" class="md-nav__link">
+    function load_groomed_files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-load_point_files" class="md-nav__link">
+    function load_point_files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-update_particles" class="md-nav__link">
+    function update_particles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-update_procrustes_transforms" class="md-nav__link">
+    function update_procrustes_transforms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_light_project" class="md-nav__link">
+    function is_light_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_groomed_present" class="md-nav__link">
+    function get_groomed_present
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-remove_shapes" class="md-nav__link">
+    function remove_shapes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_shapes" class="md-nav__link">
+    function get_shapes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-calculate_reconstructed_samples" class="md-nav__link">
+    function calculate_reconstructed_samples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_filename" class="md-nav__link">
+    function get_filename
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_display_name" class="md-nav__link">
+    function get_display_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-original_present" class="md-nav__link">
+    function original_present
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-groomed_present" class="md-nav__link">
+    function groomed_present
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-particles_present" class="md-nav__link">
+    function particles_present
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-groups_available" class="md-nav__link">
+    function groups_available
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_num_shapes" class="md-nav__link">
+    function get_num_shapes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_domains_per_shape" class="md-nav__link">
+    function get_domains_per_shape
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_default_feature_map" class="md-nav__link">
+    function get_default_feature_map
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_mesh_manager" class="md-nav__link">
+    function get_mesh_manager
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-parameters" class="md-nav__link">
+    function parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_groomed_domain_types" class="md-nav__link">
+    function get_groomed_domain_types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-update_auto_glyph_size" class="md-nav__link">
+    function update_auto_glyph_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_auto_glyph_size" class="md-nav__link">
+    function get_auto_glyph_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-clear_particles" class="md-nav__link">
+    function clear_particles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_feature_auto_scale" class="md-nav__link">
+    function get_feature_auto_scale
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_feature_range_max" class="md-nav__link">
+    function get_feature_range_max
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_feature_range_min" class="md-nav__link">
+    function get_feature_range_min
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_feature_range" class="md-nav__link">
+    function set_feature_range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_feature_range_min" class="md-nav__link">
+    function set_feature_range_min
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_feature_range_max" class="md-nav__link">
+    function set_feature_range_max
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-handle_ctrl_click" class="md-nav__link">
+    function handle_ctrl_click
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_landmarks_changed" class="md-nav__link">
+    function trigger_landmarks_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_planes_changed" class="md-nav__link">
+    function trigger_planes_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_ffc_changed" class="md-nav__link">
+    function trigger_ffc_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_active_landmark_domain" class="md-nav__link">
+    function set_active_landmark_domain
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_active_landmark_domain" class="md-nav__link">
+    function get_active_landmark_domain
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_placing_landmark" class="md-nav__link">
+    function set_placing_landmark
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_placing_landmark" class="md-nav__link">
+    function get_placing_landmark
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_landmarks_active" class="md-nav__link">
+    function set_landmarks_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_landmarks_active" class="md-nav__link">
+    function get_landmarks_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_planes_active" class="md-nav__link">
+    function set_planes_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_planes_active" class="md-nav__link">
+    function get_planes_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_show_landmark_labels" class="md-nav__link">
+    function set_show_landmark_labels
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_show_landmark_labels" class="md-nav__link">
+    function get_show_landmark_labels
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_show_planes" class="md-nav__link">
+    function set_show_planes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_show_planes" class="md-nav__link">
+    function get_show_planes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_show_landmarks" class="md-nav__link">
+    function set_show_landmarks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_show_landmarks" class="md-nav__link">
+    function get_show_landmarks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_image_name" class="md-nav__link">
+    function set_image_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_image_name" class="md-nav__link">
+    function get_image_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_image_axis" class="md-nav__link">
+    function set_image_axis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_image_axis" class="md-nav__link">
+    function get_image_axis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_image_3d_mode" class="md-nav__link">
+    function set_image_3d_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_image_3d_mode" class="md-nav__link">
+    function get_image_3d_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_image_share_window_and_level" class="md-nav__link">
+    function set_image_share_window_and_level
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_image_share_window_and_level" class="md-nav__link">
+    function get_image_share_window_and_level
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-has_constraints" class="md-nav__link">
+    function has_constraints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_loading" class="md-nav__link">
+    function set_loading
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_loading" class="md-nav__link">
+    function is_loading
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_tool_state" class="md-nav__link">
+    function set_tool_state
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_tool_state" class="md-nav__link">
+    function get_tool_state
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_ffc_paint_active" class="md-nav__link">
+    function set_ffc_paint_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_ffc_paint_active" class="md-nav__link">
+    function get_ffc_paint_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_ffc_paint_mode_inclusive" class="md-nav__link">
+    function set_ffc_paint_mode_inclusive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_ffc_paint_mode_inclusive" class="md-nav__link">
+    function get_ffc_paint_mode_inclusive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_ffc_paint_size" class="md-nav__link">
+    function set_ffc_paint_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_ffc_paint_size" class="md-nav__link">
+    function get_ffc_paint_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_repaint" class="md-nav__link">
+    function trigger_repaint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_supported_file_format" class="md-nav__link">
+    function is_supported_file_format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_point" class="md-nav__link">
+    function get_point
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-attributes-documentation" class="md-nav__link">
+    Public Attributes Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Attributes Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variable-data_c" class="md-nav__link">
+    variable DATA_C
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-groom_c" class="md-nav__link">
+    variable GROOM_C
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-optimize_c" class="md-nav__link">
+    variable OPTIMIZE_C
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-analysis_c" class="md-nav__link">
+    variable ANALYSIS_C
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-deepssm_c" class="md-nav__link">
+    variable DEEPSSM_C
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1Session.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+
+<h1 id="shapeworkssession">shapeworks::Session</h1>
+<p>Representation of a session.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;Session.h&gt;</code></p>
+<p>Inherits from QObject</p>
+<h2 id="public-slots">Public Slots</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-set-feature-auto-scale">set_feature_auto_scale</a></strong>(bool value)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-set-landmark-drag-mode">set_landmark_drag_mode</a></strong>(bool mode)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-get-landmark-drag-mode">get_landmark_drag_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-handle-clear-cache">handle_clear_cache</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-handle-new-mesh">handle_new_mesh</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-handle-message">handle_message</a></strong>(QString s)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-handle-thread-complete">handle_thread_complete</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-signals">Public Signals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-data-changed">data_changed</a></strong>()<br>signal that the data has changed</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-points-changed">points_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-landmarks-changed">landmarks_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-planes-changed">planes_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-ffc-changed">ffc_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-update-display">update_display</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-new-mesh">new_mesh</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-message">message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-error">error</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-feature-range-changed">feature_range_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-update-view-mode">update_view_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-image-slice-settings-changed">image_slice_settings_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-ffc-paint-mode-changed">ffc_paint_mode_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-repaint">repaint</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-session">Session</a></strong>(QWidget * parent, <a href="classPreferences.html">Preferences</a> &amp; prefs)<br>constructor</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-~session">~Session</a></strong>()<br>destructor</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-parent">set_parent</a></strong>(QWidget * parent)<br>set QWidget parent</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-save-project">save_project</a></strong>(QString filename)<br>save project to file</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-project">load_project</a></strong>(QString filename)<br>load project from file</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-light-project">load_light_project</a></strong>(QString filename)<br>read a lightweight project file</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-xl-project">load_xl_project</a></strong>(QString filename)<br>load a shapeworks project</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-project-path">set_project_path</a></strong>(QString relative_path)</td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">shapeworks::Project</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-project">get_project</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-original-files">load_original_files</a></strong>(std::vector&lt; std::string &gt; filenames)<br>import files</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-groomed-files">load_groomed_files</a></strong>(std::vector&lt; std::string &gt; file_names, double iso, int domains_per_shape)<br>load groomed files</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-load-point-files">load_point_files</a></strong>(std::vector&lt; std::string &gt; local, std::vector&lt; std::string &gt; world, int domains_per_shape)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-update-particles">update_particles</a></strong>(std::vector&lt; <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &gt; particles)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-update-procrustes-transforms">update_procrustes_transforms</a></strong>(std::vector&lt; std::vector&lt; std::vector&lt; double &gt;&gt;&gt; transforms)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-is-light-project">is_light_project</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-groomed-present">get_groomed_present</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-remove-shapes">remove_shapes</a></strong>(QList&lt; int &gt; list)<br>remove shapes</td>
+</tr>
+<tr>
+<td>QVector&lt; QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-shapes">get_shapes</a></strong>()<br>return all shapes</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-calculate-reconstructed-samples">calculate_reconstructed_samples</a></strong>()</td>
+</tr>
+<tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-filename">get_filename</a></strong>()<br>get the filename</td>
+</tr>
+<tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-display-name">get_display_name</a></strong>()<br>get file display name</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-original-present">original_present</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-groomed-present">groomed_present</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-particles-present">particles_present</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-groups-available">groups_available</a></strong>()</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-num-shapes">get_num_shapes</a></strong>()</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-domains-per-shape">get_domains_per_shape</a></strong>()</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-default-feature-map">get_default_feature_map</a></strong>()</td>
+</tr>
+<tr>
+<td>QSharedPointer&lt; <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-mesh-manager">get_mesh_manager</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Parameters.html">shapeworks::Parameters</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-parameters">parameters</a></strong>()</td>
+</tr>
+<tr>
+<td>std::vector&lt; DomainType &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-groomed-domain-types">get_groomed_domain_types</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-update-auto-glyph-size">update_auto_glyph_size</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-auto-glyph-size">get_auto_glyph_size</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-clear-particles">clear_particles</a></strong>()<br>clear particles from session (e.g. groom start, optimize start)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-feature-auto-scale">get_feature_auto_scale</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-feature-range-max">get_feature_range_max</a></strong>()</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-feature-range-min">get_feature_range_min</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-feature-range">set_feature_range</a></strong>(double min, double max)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-feature-range-min">set_feature_range_min</a></strong>(double value)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-feature-range-max">set_feature_range_max</a></strong>(double value)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-handle-ctrl-click">handle_ctrl_click</a></strong>(<a href="classshapeworks_1_1PickResult.html">PickResult</a> result)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-landmarks-changed">trigger_landmarks_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-planes-changed">trigger_planes_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-ffc-changed">trigger_ffc_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-active-landmark-domain">set_active_landmark_domain</a></strong>(int id)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-active-landmark-domain">get_active_landmark_domain</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-placing-landmark">set_placing_landmark</a></strong>(int id)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-placing-landmark">get_placing_landmark</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-landmarks-active">set_landmarks_active</a></strong>(bool active)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-landmarks-active">get_landmarks_active</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-planes-active">set_planes_active</a></strong>(bool active)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-planes-active">get_planes_active</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-landmark-labels">set_show_landmark_labels</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-landmark-labels">get_show_landmark_labels</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-planes">set_show_planes</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-planes">get_show_planes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-show-landmarks">set_show_landmarks</a></strong>(bool show)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-show-landmarks">get_show_landmarks</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-name">set_image_name</a></strong>(std::string image_name)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-name">get_image_name</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-axis">set_image_axis</a></strong>(QString axis)</td>
+</tr>
+<tr>
+<td>Axis</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-axis">get_image_axis</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-3d-mode">set_image_3d_mode</a></strong>(bool mode)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-3d-mode">get_image_3d_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-image-share-window-and-level">set_image_share_window_and_level</a></strong>(bool enabled)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-image-share-window-and-level">get_image_share_window_and_level</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-has-constraints">has_constraints</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-loading">set_loading</a></strong>(bool loading)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-is-loading">is_loading</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-tool-state">set_tool_state</a></strong>(std::string state)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-tool-state">get_tool_state</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-ffc-paint-active">set_ffc_paint_active</a></strong>(bool enabled)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-ffc-paint-active">get_ffc_paint_active</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-ffc-paint-mode-inclusive">set_ffc_paint_mode_inclusive</a></strong>(bool inclusive)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-ffc-paint-mode-inclusive">get_ffc_paint_mode_inclusive</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-ffc-paint-size">set_ffc_paint_size</a></strong>(double size)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-ffc-paint-size">get_ffc_paint_size</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-repaint">trigger_repaint</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
+</tr>
+<tr>
+<td>Point3</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-point">get_point</a></strong>(const Eigen::VectorXd &amp; points, int i)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-attributes">Public Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#variable-data-c">DATA_C</a></strong></td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#variable-groom-c">GROOM_C</a></strong></td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#variable-optimize-c">OPTIMIZE_C</a></strong></td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#variable-analysis-c">ANALYSIS_C</a></strong></td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Session.html#variable-deepssm-c">DEEPSSM_C</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Representation of a session. </p>
+<p>The <a href="classshapeworks_1_1Session.html">Session</a> class encapsulates everything about a session/project. </p>
+<h2 id="public-slots-documentation">Public Slots Documentation</h2>
+<h3 id="slot-set_feature_auto_scale">slot set_feature_auto_scale</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-set_landmark_drag_mode">slot set_landmark_drag_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmark_drag_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-get_landmark_drag_mode">slot get_landmark_drag_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmark_drag_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-handle_clear_cache">slot handle_clear_cache</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_clear_cache</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-handle_new_mesh">slot handle_new_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-handle_message">slot handle_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-handle_thread_complete">slot handle_thread_complete</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-data_changed">signal data_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">data_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>signal that the data has changed </p>
+<h3 id="signal-points_changed">signal points_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">points_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-landmarks_changed">signal landmarks_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">landmarks_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-planes_changed">signal planes_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">planes_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-ffc_changed">signal ffc_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ffc_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-update_display">signal update_display</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_display</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-new_mesh">signal new_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-error">signal error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-feature_range_changed">signal feature_range_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">feature_range_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-update_view_mode">signal update_view_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-image_slice_settings_changed">signal image_slice_settings_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">image_slice_settings_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-ffc_paint_mode_changed">signal ffc_paint_mode_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ffc_paint_mode_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-repaint">signal repaint</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">repaint</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-session">function Session</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Session</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>constructor </p>
+<h3 id="function-session_1">function ~Session</h3>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Session</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>destructor </p>
+<h3 id="function-set_parent">function set_parent</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parent</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>set QWidget parent </p>
+<h3 id="function-save_project">function save_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">save_project</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>save project to file </p>
+<h3 id="function-load_project">function load_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_project</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>load project from file </p>
+<h3 id="function-load_light_project">function load_light_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_light_project</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>read a lightweight project file </p>
+<h3 id="function-load_xl_project">function load_xl_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_xl_project</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>load a shapeworks project </p>
+<h3 id="function-set_project_path">function set_project_path</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_project_path</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">relative_path</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_project">function get_project</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_project</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-load_original_files">function load_original_files</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_original_files</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>import files </p>
+<h3 id="function-load_groomed_files">function load_groomed_files</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_groomed_files</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">file_names</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">iso</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>load groomed files </p>
+<h3 id="function-load_point_files">function load_point_files</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_point_files</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">world</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update_particles">function update_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">update_particles</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update_procrustes_transforms">function update_procrustes_transforms</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_procrustes_transforms</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-is_light_project">function is_light_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_light_project</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_groomed_present">function get_groomed_present</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_groomed_present</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-remove_shapes">function remove_shapes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_shapes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>remove shapes </p>
+<h3 id="function-get_shapes">function get_shapes</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>return all shapes </p>
+<h3 id="function-calculate_reconstructed_samples">function calculate_reconstructed_samples</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">calculate_reconstructed_samples</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_filename">function get_filename</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_filename</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>get the filename </p>
+<h3 id="function-get_display_name">function get_display_name</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>get file display name </p>
+<h3 id="function-original_present">function original_present</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">original_present</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-groomed_present">function groomed_present</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groomed_present</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-particles_present">function particles_present</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">particles_present</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-groups_available">function groups_available</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groups_available</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_num_shapes">function get_num_shapes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_shapes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_domains_per_shape">function get_domains_per_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_domains_per_shape</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_default_feature_map">function get_default_feature_map</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_default_feature_map</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_mesh_manager">function get_mesh_manager</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-parameters">function parameters</h3>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_groomed_domain_types">function get_groomed_domain_types</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-update_auto_glyph_size">function update_auto_glyph_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">update_auto_glyph_size</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_auto_glyph_size">function get_auto_glyph_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_auto_glyph_size</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-clear_particles">function clear_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_particles</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>clear particles from session (e.g. groom start, optimize start) </p>
+<h3 id="function-get_feature_auto_scale">function get_feature_auto_scale</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_feature_auto_scale</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_feature_range_max">function get_feature_range_max</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_feature_range_max</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_feature_range_min">function get_feature_range_min</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_feature_range_min</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_feature_range">function set_feature_range</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_feature_range_min">function set_feature_range_min</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range_min</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_feature_range_max">function set_feature_range_max</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range_max</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-trigger_landmarks_changed">function trigger_landmarks_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_landmarks_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-trigger_planes_changed">function trigger_planes_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_planes_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-trigger_ffc_changed">function trigger_ffc_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_ffc_changed</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_active_landmark_domain">function set_active_landmark_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_landmark_domain</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_active_landmark_domain">function get_active_landmark_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_active_landmark_domain</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_placing_landmark">function set_placing_landmark</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_placing_landmark</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_placing_landmark">function get_placing_landmark</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_placing_landmark</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_landmarks_active">function set_landmarks_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks_active</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_landmarks_active">function get_landmarks_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmarks_active</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_planes_active">function set_planes_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_planes_active</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_planes_active">function get_planes_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_planes_active</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_landmark_labels">function set_show_landmark_labels</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmark_labels</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_landmark_labels">function get_show_landmark_labels</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmark_labels</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_planes">function set_show_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_planes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_planes">function get_show_planes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_planes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_name">function set_image_name</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_image_name</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_name">function get_image_name</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_image_name</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_axis">function set_image_axis</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_axis</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_axis">function get_image_axis</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Axis</span><span class="w"> </span><span class="n">get_image_axis</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_3d_mode">function set_image_3d_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_3d_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_3d_mode">function get_image_3d_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_3d_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_image_share_window_and_level">function set_image_share_window_and_level</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_share_window_and_level</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_image_share_window_and_level">function get_image_share_window_and_level</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_share_window_and_level</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-has_constraints">function has_constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_constraints</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_loading">function set_loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_loading</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-is_loading">function is_loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_tool_state">function set_tool_state</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_tool_state</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_tool_state">function get_tool_state</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_tool_state</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_ffc_paint_active">function set_ffc_paint_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_active</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_ffc_paint_active">function get_ffc_paint_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_ffc_paint_active</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_ffc_paint_mode_inclusive">function set_ffc_paint_mode_inclusive</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_mode_inclusive</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_ffc_paint_mode_inclusive">function get_ffc_paint_mode_inclusive</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_ffc_paint_mode_inclusive</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_ffc_paint_size">function set_ffc_paint_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_size</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_ffc_paint_size">function get_ffc_paint_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_ffc_paint_size</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-trigger_repaint">function trigger_repaint</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_repaint</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_point">function get_point</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">get_point</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-data_c">variable DATA_C</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DATA_C</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-groom_c">variable GROOM_C</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_C</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-optimize_c">variable OPTIMIZE_C</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OPTIMIZE_C</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-analysis_c">variable ANALYSIS_C</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ANALYSIS_C</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-deepssm_c">variable DEEPSSM_C</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<hr />
+<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c44cc438.min.js"></script>
+      
+        <script src="../../assets/mathjaxhelper.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
