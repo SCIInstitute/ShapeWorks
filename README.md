@@ -2,6 +2,24 @@
 ![](https://github.com/SCIInstitute/ShapeWorks/workflows/Linux%20Build/badge.svg)
 ![](https://github.com/SCIInstitute/ShapeWorks/workflows/Windows%20Build/badge.svg)
 
+<!-- update docs -->
+This branch exists in order to update the 6.2.1 docs if necessary.
+Instructions:
+```
+git fetch origin gh-pages
+pip install mkdocs==1.1.2
+pip install mkdocs-material==8.2.8
+pip install mike==1.1.2
+pip install jinja2==3.0.3
+# build shapeworks with -DBUILD_DOCUMENTATION=ON
+# from shapeworks root:
+./build_docs.sh <install_or_build_dir>
+mike deploy --config-file ./mkdocs.yml --title "6.2.1" 6.2 --branch gh-pages --update-aliases
+# push updates:
+git push origin gh-pages
+```
+Pushing source to github should simply update 6.2, not overwrite what is currently there.
+
 <!--ShapeWorks
 =====================-->
 ![](docs/img/home/sw-logo-w-text.png)
