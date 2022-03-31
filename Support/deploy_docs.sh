@@ -57,7 +57,7 @@ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommand
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 
 # use mike to mkdocs w/ version
-cd "${GITHUB_WORKSPACE}" && mike deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml" --title "6.3.0b (dev)" 6.3 dev --branch gh-pages --update-aliases
+mike deploy --config-file ./mkdocs.yml --title "6.3.0b (dev)" 6.3 dev --branch gh-pages --update-aliases
 mike set-default dev
 
 # update docs on github
