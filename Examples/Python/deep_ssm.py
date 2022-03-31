@@ -215,34 +215,34 @@ def Run_Pipeline(args):
     } 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["number_of_particles"] = 128 # 32
         parameter_dictionary["optimization_iterations"] = 25
-        parameter_dictionary["iterations_per_split"] = 25
 
-    # for key in parameter_dictionary:
-    #     parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    # parameters.set("domain_type",sw.Variant('mesh'))
-    # project.set_parameters("optimize",parameters)
-    # spreadsheet_file = data_dir + "train.xlsx"
-    # project.save(spreadsheet_file)
+    for key in parameter_dictionary:
+        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize",parameters)
+    spreadsheet_file = data_dir + "train.xlsx"
+    project.save(spreadsheet_file)
 
-    # # Run optimization
-    # optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
-    # subprocess.check_call(optimizeCmd)
+    # Run optimization
+    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimizeCmd)
 
-    # # Analyze - open in studio
-    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # subprocess.check_call(AnalysisCmd)
+    # TODO remove - Analyze - open in studio
+    AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(AnalysisCmd)
 
     # Get transforms and particle files from updated project spreadsheet
-    spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
+    # spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
     project = sw.Project()
     project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
+    train_alignments = [np.array(x).reshape(4, 4) for x in train_alignments] # reshape
     train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
+    train_procrustes = [np.array(x).reshape(4, 4) for x in train_procrustes] #reshape
     train_local_particles = project.get_string_column("local_particles_1")
     train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
-
 
     ##########################################################################################################
     """
@@ -266,10 +266,10 @@ def Run_Pipeline(args):
     ref_image.resample([1,1,1], sw.InterpolationType.Linear)
     ref_image.setOrigin(ref_image.origin() - ref_translate)
     ref_image.write(data_dir + 'reference_image.nrrd')
-    ref_procrustes = sw.utils.getITKtransform(np.array(train_procrustes[ref_index]).reshape(4, 4))
+    ref_procrustes = sw.utils.getITKtransform(train_procrustes[ref_index])
     # Applying rigid transform
     for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
-        train_transform = np.matmul(np.array(train_proc).reshape(4, 4), np.array(train_align).reshape(4, 4))
+        train_transform = np.matmul(train_proc, train_align)
         train_image.applyTransform(train_transform,
                              ref_image.origin(),  ref_image.dims(),
                              ref_image.spacing(), ref_image.coordsys(),
@@ -387,15 +387,15 @@ def Run_Pipeline(args):
 
     #################################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")
-    # Get mean shape 
-    train_model_dir = data_dir + "/train_particles/"
-    file_list = sorted(glob.glob(train_model_dir + '/*world.particles'))
-    mean_shape = np.loadtxt(file_list[0])
-    for i in range(1,len(file_list)):
-        mean_shape += np.loadtxt(file_list[i])
-    mean_shape = mean_shape / len(file_list)
-    mean_shape_path = train_model_dir + '/meanshape_local.particles'
-    np.savetxt(mean_shape_path, mean_shape)
+    '''
+    Get initial particles using mean and reference transforms
+    '''
+    # Get meanshape in world particles
+    mean_shape = np.loadtxt(train_world_particles[0])
+    for i in range(1,len(train_world_particles)):
+        mean_shape += np.loadtxt(train_world_particles[i])
+    mean_shape = mean_shape / len(train_world_particles)
+    np.savetxt(data_dir + '/meanshape_world.particles', mean_shape)
     # Create spreadsheet
     project_location = data_dir
     subjects = []
@@ -421,26 +421,29 @@ def Run_Pipeline(args):
         rel_mesh_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
         rel_plane_files = sw.utils.get_relative_paths([val_plane_files[i]], project_location)
-        # rel_particle_files = sw.utils.get_relative_paths([mean_shape_path], project_location)
+        initial_particles = sw.utils.transformParticles(mean_shape, val_transforms[i], inverse=True)
+        initial_particle_file = data_dir + "validation_particles/" + val_names[i] + "_local.particles"
+        np.savetxt(initial_particle_file, initial_particles)
+        rel_particle_files = sw.utils.get_relative_paths([initial_particle_file], project_location)
         subject.set_original_filenames(rel_mesh_files)
         subject.set_groomed_filenames(rel_groom_files)
         transform = [ val_transforms[i].flatten() ]
         subject.set_groomed_transforms(transform)
         subject.set_constraints_filenames(rel_plane_files)
-        # subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_landmarks_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "no"})
         subjects.append(subject)
     project = sw.Project()
     project.set_subjects(subjects)
     parameters = sw.Parameters()
 
+    input() # TODO
     # Update parameter dictionary
     parameter_dictionary["use_landmarks"] = 1
     parameter_dictionary["use_fixed_subjects"] = 1
     parameter_dictionary["narrow_band"] = 1e10
     parameter_dictionary["fixed_subjects_column"] = "fixed"
     parameter_dictionary["fixed_subjects_choice"] = "yes"
-    parameter_dictionary["verbosity"] = 3
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant(parameter_dictionary[key]))
     project.set_parameters("optimize", parameters)
@@ -460,6 +463,7 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
+    # TODO remove - Analyze - open in studio
     analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     subprocess.check_call(analyze_cmd)
 

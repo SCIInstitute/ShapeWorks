@@ -43,7 +43,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["femur_cut","lumps","thin_cavity_bean", "deep_ssm"]):
+    elif(use_case in ["femur_cut","lumps","thin_cavity_bean"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
@@ -56,9 +56,15 @@ def download_subset(use_case,datasetName,outputDirectory):
             imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
     elif(use_case=="deep_ssm"):
+        if(generate_download_flag(outputDirectory,"meshes")):
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:7]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
         if(generate_download_flag(outputDirectory,"images/")):
             imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:7]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
+        if(generate_download_flag(outputDirectory,"constraints")):
+            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:7]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
     elif(use_case=="ellipsoid_multiple_domain"):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
