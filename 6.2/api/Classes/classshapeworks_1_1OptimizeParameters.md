@@ -17,6 +17,7 @@ title: shapeworks::OptimizeParameters
 | void | **[save_to_project](../Classes/classshapeworks_1_1OptimizeParameters.md#function-save-to-project)**() |
 | std::string | **[get_optimize_output_prefix](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-optimize-output-prefix)**() |
 | void | **[set_optimize_output_prefix](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-optimize-output-prefix)**(std::string prefix) |
+| bool | **[set_up_optimize](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-up-optimize)**([Optimize](../Classes/classshapeworks_1_1Optimize.md) * optimize) |
 | std::vector< int > | **[get_number_of_particles](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-number-of-particles)**() |
 | void | **[set_number_of_particles](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-number-of-particles)**(std::vector< int > number_of_particles) |
 | double | **[get_initial_relative_weighting](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-initial-relative-weighting)**() |
@@ -53,18 +54,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_narrow_band](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-narrow-band)**(double value) |
 | int | **[get_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-verbosity)**() |
 | void | **[set_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-verbosity)**(int value) |
-| bool | **[get_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-landmarks)**() |
-| void | **[set_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-landmarks)**(bool value) |
-| bool | **[get_use_fixed_subjects](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-fixed-subjects)**() |
-| void | **[set_use_fixed_subjects](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-fixed-subjects)**(bool value) |
-| std::string | **[get_fixed_subjects_column](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-fixed-subjects-column)**() |
-| void | **[set_fixed_subject_column](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-fixed-subject-column)**(std::string column) |
-| std::string | **[get_fixed_subjects_choice](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-fixed-subjects-choice)**() |
-| void | **[set_fixed_subjects_choice](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-fixed-subjects-choice)**(std::string choice) |
 | void | **[set_abort_load](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-abort-load)**(bool value) |
 | void | **[set_load_callback](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-load-callback)**(const std::function< void(int)> & f) |
-| bool | **[set_up_optimize](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-up-optimize)**([Optimize](../Classes/classshapeworks_1_1Optimize.md) * optimize) |
-| bool | **[is_subject_fixed](../Classes/classshapeworks_1_1OptimizeParameters.md#function-is-subject-fixed)**(std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
 
 ## Public Functions Documentation
 
@@ -96,6 +87,15 @@ std::string get_optimize_output_prefix()
 ```cpp
 void set_optimize_output_prefix(
     std::string prefix
+)
+```
+
+
+### function set_up_optimize
+
+```cpp
+bool set_up_optimize(
+    Optimize * optimize
 )
 ```
 
@@ -388,70 +388,6 @@ void set_verbosity(
 ```
 
 
-### function get_use_landmarks
-
-```cpp
-bool get_use_landmarks()
-```
-
-
-### function set_use_landmarks
-
-```cpp
-void set_use_landmarks(
-    bool value
-)
-```
-
-
-### function get_use_fixed_subjects
-
-```cpp
-bool get_use_fixed_subjects()
-```
-
-
-### function set_use_fixed_subjects
-
-```cpp
-void set_use_fixed_subjects(
-    bool value
-)
-```
-
-
-### function get_fixed_subjects_column
-
-```cpp
-std::string get_fixed_subjects_column()
-```
-
-
-### function set_fixed_subject_column
-
-```cpp
-void set_fixed_subject_column(
-    std::string column
-)
-```
-
-
-### function get_fixed_subjects_choice
-
-```cpp
-std::string get_fixed_subjects_choice()
-```
-
-
-### function set_fixed_subjects_choice
-
-```cpp
-void set_fixed_subjects_choice(
-    std::string choice
-)
-```
-
-
 ### function set_abort_load
 
 ```cpp
@@ -470,24 +406,6 @@ void set_load_callback(
 ```
 
 
-### function set_up_optimize
-
-```cpp
-bool set_up_optimize(
-    Optimize * optimize
-)
-```
-
-
-### function is_subject_fixed
-
-```cpp
-bool is_subject_fixed(
-    std::shared_ptr< Subject > subject
-)
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

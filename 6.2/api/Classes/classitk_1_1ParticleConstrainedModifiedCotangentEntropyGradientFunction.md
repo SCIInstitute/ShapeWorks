@@ -27,7 +27,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | typedef [Superclass::VectorType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-vectortype) | **[VectorType](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#typedef-vectortype)**  |
 | typedef Superclass::PointType | **[PointType](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#typedef-pointtype)**  |
 | typedef Superclass::GradientVectorType | **[GradientVectorType](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#typedef-gradientvectortype)**  |
-| typedef [shapeworks::ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)< TGradientNumericType >::VnlMatrixType | **[VnlMatrixType](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#typedef-vnlmatrixtype)**  |
+| typedef [ParticleImageDomainWithCurvature](../Classes/classitk_1_1ParticleImageDomainWithCurvature.md)< TGradientNumericType >::VnlMatrixType | **[VnlMatrixType](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#typedef-vnlmatrixtype)**  |
 
 ## Public Functions
 
@@ -87,7 +87,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 |                | Name           |
 | -------------- | -------------- |
 | virtual void | **[ResetBuffers](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-resetbuffers)**() |
-| virtual double | **[EstimateSigma](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-estimatesigma)**(unsigned int idx, const typename ParticleSystemType::PointVectorType & neighborhood, const [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) * domain, const std::vector< double > & weights, const PointType & pos, double initial_sigma, double precision, int & err) const |
+| virtual double | **[EstimateSigma](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-estimatesigma)**(unsigned int idx, const typename ParticleSystemType::PointVectorType & neighborhood, const [ParticleDomain](../Classes/classitk_1_1ParticleDomain.md) * domain, const std::vector< double > & weights, const PointType & pos, double initial_sigma, double precision, int & err) const |
 | TGradientNumericType | **[AngleCoefficient](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-anglecoefficient)**(const GradientVectorType & , const GradientVectorType & ) const |
 | void | **[SetMinimumNeighborhoodRadius](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-setminimumneighborhoodradius)**(double s) |
 | double | **[GetMinimumNeighborhoodRadius](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-getminimumneighborhoodradius)**() const |
@@ -100,7 +100,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | void | **[SetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-setspatialsigmacache)**([SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * s) |
 | [SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * | **[GetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-getspatialsigmacache)**() |
 | const [SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * | **[GetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-getspatialsigmacache)**() const |
-| void | **[ComputeAngularWeights](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-computeangularweights)**(const PointType & , int , const typename ParticleSystemType::PointVectorType & , const [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) * , std::vector< double > & ) const |
+| void | **[ComputeAngularWeights](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-computeangularweights)**(const PointType & , int , const typename ParticleSystemType::PointVectorType & , const [ParticleDomain](../Classes/classitk_1_1ParticleDomain.md) * , std::vector< double > & ) const |
 
 **Protected Functions inherited from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)**
 
@@ -237,7 +237,7 @@ typedef Superclass::GradientVectorType itk::ParticleConstrainedModifiedCotangent
 ### typedef VnlMatrixType
 
 ```cpp
-typedef shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >::VnlMatrixType;
+typedef ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >::VnlMatrixType;
 ```
 
 
@@ -291,6 +291,9 @@ inline virtual VectorType Evaluate(
 ```
 
 
+**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
+
+
 The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. 
 
 
@@ -307,6 +310,9 @@ virtual VectorType Evaluate(
 ```
 
 
+**Reimplements**: [itk::ParticleEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-evaluate)
+
+
 ### function BeforeEvaluate
 
 ```cpp
@@ -318,6 +324,12 @@ virtual void BeforeEvaluate(
 ```
 
 
+**Reimplements**: [itk::ParticleVectorFunction::BeforeEvaluate](../Classes/classitk_1_1ParticleVectorFunction.md#function-beforeevaluate)
+
+
+This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. 
+
+
 ### function Energy
 
 ```cpp
@@ -327,6 +339,9 @@ inline virtual double Energy(
     const ParticleSystemType * c
 ) const
 ```
+
+
+**Reimplements**: [itk::ParticleEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-energy)
 
 
 ### function AfterIteration
@@ -530,4 +545,4 @@ float m_MaxMoveFactor;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

@@ -2548,13 +2548,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-getffcs" class="md-nav__link">
-    function GetFFCs
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2925,11 +2918,11 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1Sampler.html#function-itkgetobjectmacro">itkGetObjectMacro</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> , <a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a> )</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-itkgetobjectmacro">itkGetObjectMacro</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> , <a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a>&lt; Dimension &gt; )</td>
 </tr>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1Sampler.html#function-itkgetconstobjectmacro">itkGetConstObjectMacro</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> , <a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a> )</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-itkgetconstobjectmacro">itkGetConstObjectMacro</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> , <a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a>&lt; Dimension &gt; )</td>
 </tr>
 <tr>
 <td></td>
@@ -3227,10 +3220,6 @@
 <td>Eigen::Vector3d</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-computeplanenormal">ComputePlaneNormal</a></strong>(const vnl_vector&lt; double &gt; &amp; a, const vnl_vector&lt; double &gt; &amp; b, const vnl_vector&lt; double &gt; &amp; c)</td>
 </tr>
-<tr>
-<td>std::vector&lt; <a href="structshapeworks_1_1Sampler_1_1FFCType.html">FFCType</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1Sampler.html#function-getffcs">GetFFCs</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -3341,11 +3330,11 @@
 <td><strong><a href="classshapeworks_1_1Sampler.html#variable-m-meancurvaturecache">m_MeanCurvatureCache</a></strong></td>
 </tr>
 <tr>
-<td>itk::ParticleSystem::Pointer</td>
+<td><a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a>&lt; Dimension &gt;::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#variable-m-particlesystem">m_ParticleSystem</a></strong></td>
 </tr>
 <tr>
-<td>std::vector&lt; ParticleDomain::Pointer &gt;</td>
+<td>std::vector&lt; <a href="classitk_1_1ParticleDomain.html#typedef-pointer">itk::ParticleDomain::Pointer</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#variable-m-domainlist">m_DomainList</a></strong></td>
 </tr>
 <tr>
@@ -3425,14 +3414,14 @@
 <h3 id="function-itkgetobjectmacro">function itkGetObjectMacro</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Returns the particle system used in the surface sampling. </p>
 <h3 id="function-itkgetconstobjectmacro">function itkGetConstObjectMacro</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itkGetConstObjectMacro</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-sampler">function Sampler</h3>
@@ -3749,9 +3738,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-getffcs">function GetFFCs</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FFCType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-generatedata">function GenerateData</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GenerateData</span><span class="p">()</span><span class="w"></span>
@@ -3819,10 +3805,10 @@
 <div class="highlight"><pre><span></span><code><span class="n">MeanCurvatureCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_particlesystem">variable m_ParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_domainlist">variable m_DomainList</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_neighborhoodlist">variable m_NeighborhoodList</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSurfaceNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_NeighborhoodList</span><span class="p">;</span><span class="w"></span>
@@ -3864,7 +3850,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeshBasedGeneralEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

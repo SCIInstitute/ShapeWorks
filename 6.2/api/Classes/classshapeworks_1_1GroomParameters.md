@@ -55,7 +55,6 @@ title: shapeworks::GroomParameters
 | void | **[set_mesh_vtk_windowed_sinc_passband](../Classes/classshapeworks_1_1GroomParameters.md#function-set-mesh-vtk-windowed-sinc-passband)**(double passband) |
 | bool | **[get_use_icp](../Classes/classshapeworks_1_1GroomParameters.md#function-get-use-icp)**() |
 | bool | **[get_use_center](../Classes/classshapeworks_1_1GroomParameters.md#function-get-use-center)**() |
-| bool | **[get_use_landmarks](../Classes/classshapeworks_1_1GroomParameters.md#function-get-use-landmarks)**() |
 | bool | **[get_crop](../Classes/classshapeworks_1_1GroomParameters.md#function-get-crop)**() |
 | void | **[set_crop](../Classes/classshapeworks_1_1GroomParameters.md#function-set-crop)**(bool crop) |
 | bool | **[get_convert_to_mesh](../Classes/classshapeworks_1_1GroomParameters.md#function-get-convert-to-mesh)**() |
@@ -96,7 +95,6 @@ title: shapeworks::GroomParameters
 | const std::string | **[GROOM_SMOOTH_VTK_WINDOWED_SINC_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-smooth-vtk-windowed-sinc-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_CENTER_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-center-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_ICP_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-icp-c)**  |
-| const std::string | **[GROOM_ALIGNMENT_LANDMARK_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-landmark-c)**  |
 
 ## Public Functions Documentation
 
@@ -435,13 +433,6 @@ bool get_use_center()
 ```
 
 
-### function get_use_landmarks
-
-```cpp
-bool get_use_landmarks()
-```
-
-
 ### function get_crop
 
 ```cpp
@@ -719,13 +710,6 @@ static const std::string GROOM_ALIGNMENT_ICP_C;
 ```
 
 
-### variable GROOM_ALIGNMENT_LANDMARK_C
-
-```cpp
-static const std::string GROOM_ALIGNMENT_LANDMARK_C;
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

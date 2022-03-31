@@ -1980,7 +1980,22 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<div class="highlight"><pre><span></span><code><span class="cm">/*=========================================================================</span>
+<span class="cm">  Program:   ShapeWorks: Particle-based Shape Correspondence &amp; Visualization</span>
+<span class="cm">  Module:    $RCSfile: itkParticleProcrustesRegistration.h,v $</span>
+<span class="cm">  Date:      $Date: 2011/03/24 01:17:33 $</span>
+<span class="cm">  Version:   $Revision: 1.3 $</span>
+<span class="cm">  Author:    $Author: wmartin $</span>
+
+<span class="cm">  Copyright (c) 2009 Scientific Computing and Imaging Institute.</span>
+<span class="cm">  See ShapeWorksLicense.txt for details.</span>
+
+<span class="cm">     This software is distributed WITHOUT ANY WARRANTY; without even </span>
+<span class="cm">     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR </span>
+<span class="cm">     PURPOSE.  See the above copyright notices for more information.</span>
+<span class="cm">=========================================================================*/</span><span class="w"></span>
+<span class="cp">#ifndef __itkParticleProcrustesRegistration_h</span>
+<span class="cp">#define __itkParticleProcrustesRegistration_h</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span><span class="cp"></span>
@@ -2000,7 +2015,7 @@
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span><span class="w"></span>
@@ -2071,9 +2086,11 @@
 <span class="p">};</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace</span>
+
+<span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

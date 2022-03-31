@@ -29,9 +29,9 @@ Inherits from [itk::ParticleNeighborhood< 3 >](../Classes/classitk_1_1ParticleNe
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-constweakpointer)**  |
-| using [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) | **[DomainType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#using-domaintype)**  |
 | typedef [Superclass::PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtype)**  |
 | typedef [Superclass::PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype) | **[PointContainerType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointcontainertype)**  |
+| typedef [Superclass::DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) | **[DomainType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-domaintype)**  |
 | typedef [Superclass::PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[PointVectorType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointvectortype)**  |
 | typedef [PowerOfTwoPointTree](../Classes/classitk_1_1PowerOfTwoPointTree.md)< VDimension > | **[PointTreeType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtreetype)**  |
 
@@ -49,7 +49,7 @@ Inherits from [itk::ParticleNeighborhood< 3 >](../Classes/classitk_1_1ParticleNe
 | | **[itkTypeMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itktypemacro)**([ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md) , [ParticleNeighborhood](../Classes/classitk_1_1ParticleNeighborhood.md) ) |
 | | **[itkStaticConstMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension ) |
 | virtual PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtype) & , int idx, double ) const |
-| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain)**(DomainType::Pointer p) override |
+| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain)**([DomainType](../Classes/classitk_1_1ParticleDomain.md) * p) |
 | | **[itkSetMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itksetmacro)**(TreeLevels , unsigned int ) |
 | | **[itkGetMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itkgetmacro)**(TreeLevels , unsigned int ) |
 | void | **[PrintSelf](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-printself)**(std::ostream & os, Indent indent) const |
@@ -80,7 +80,8 @@ Inherits from [itk::ParticleNeighborhood< 3 >](../Classes/classitk_1_1ParticleNe
 | -------------- | -------------- |
 | | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itksetobjectmacro)**(PointContainer , [PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype) ) |
 | | **[itkGetConstObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itkgetconstobjectmacro)**(PointContainer , [PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype) ) |
-| DomainType::Pointer | **[GetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-getdomain)**() const |
+| | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itksetobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
+| | **[itkGetConstObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itkgetconstobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
 
 **Protected Functions inherited from [itk::ParticleNeighborhood< 3 >](../Classes/classitk_1_1ParticleNeighborhood.md)**
 
@@ -140,13 +141,6 @@ typedef WeakPointer<const Self> itk::ParticleRegionNeighborhood< VDimension >::C
 ```
 
 
-### using DomainType
-
-```cpp
-using itk::ParticleRegionNeighborhood< VDimension >::DomainType =  shapeworks::ParticleDomain;
-```
-
-
 ### typedef PointType
 
 ```cpp
@@ -161,6 +155,13 @@ Inherited typedefs from parent class.
 
 ```cpp
 typedef Superclass::PointContainerType itk::ParticleRegionNeighborhood< VDimension >::PointContainerType;
+```
+
+
+### typedef DomainType
+
+```cpp
+typedef Superclass::DomainType itk::ParticleRegionNeighborhood< VDimension >::DomainType;
 ```
 
 
@@ -252,12 +253,9 @@ Compile a list of points that are within a specified radius of a given point. Th
 
 ```cpp
 virtual void SetDomain(
-    DomainType::Pointer p
-) override
+    DomainType * p
+)
 ```
-
-
-**Reimplements**: [itk::ParticleNeighborhood::SetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-setdomain)
 
 
 Override SetDomain so that we can grab the region extent info and construct our tree. 
@@ -381,4 +379,4 @@ unsigned int m_TreeLevels;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

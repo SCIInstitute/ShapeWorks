@@ -25,20 +25,39 @@ title: Libs/Optimize/ParticleSystem/itkParticlePointIndexPair.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticlePointIndexPair.h,v $
+  Date:      $Date: 2011/03/23 22:40:10 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticlePointIndexPair_h
+#define __itkParticlePointIndexPair_h
 
 #include "itkPoint.h"
 namespace itk {
 template <unsigned int VDimension>
-struct ParticlePointIndexPair {
+struct ParticlePointIndexPair
+{
   typedef itk::Point<double, VDimension> PointType;
   ParticlePointIndexPair() {}
-  ParticlePointIndexPair(const PointType &p, unsigned int i = 0) {
+  ParticlePointIndexPair(const PointType &p, unsigned int i=0)
+  {
     Point = p;
     Index = i;
   }
-  ParticlePointIndexPair(const ParticlePointIndexPair &o) { this->operator=(o); }
-  const ParticlePointIndexPair &operator=(const ParticlePointIndexPair &o) {
+  ParticlePointIndexPair(const ParticlePointIndexPair &o)
+  { this->operator=(o); }
+  const ParticlePointIndexPair &operator=(const ParticlePointIndexPair &o)
+  {
     Point = o.Point;
     Index = o.Index;
     return *this;
@@ -47,10 +66,11 @@ struct ParticlePointIndexPair {
   unsigned int Index;
 };
 
-}  // namespace itk
+}
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

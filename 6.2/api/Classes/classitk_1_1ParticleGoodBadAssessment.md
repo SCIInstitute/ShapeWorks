@@ -25,9 +25,9 @@ Inherits from Object
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[Pointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[ConstPointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleGoodBadAssessment.md) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-constweakpointer)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-particlesystemtype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-pointtype)**  |
-| typedef [shapeworks::ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-domaintype)**  |
+| typedef [ParticleImageDomainWithGradients](../Classes/classitk_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-domaintype)**  |
 | typedef DomainType::VnlVectorType | **[NormalType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-normaltype)**  |
 | typedef [ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)< TGradientNumericType, VDimension > | **[MeanCurvatureCacheType](../Classes/classitk_1_1ParticleGoodBadAssessment.md#typedef-meancurvaturecachetype)**  |
 
@@ -92,7 +92,7 @@ typedef WeakPointer<const Self> itk::ParticleGoodBadAssessment< TGradientNumeric
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::ParticleSystemType;
+typedef ParticleSystem<VDimension> itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::ParticleSystemType;
 ```
 
 
@@ -109,7 +109,7 @@ typedef ParticleSystemType::PointType itk::ParticleGoodBadAssessment< TGradientN
 ### typedef DomainType
 
 ```cpp
-typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::DomainType;
+typedef ParticleImageDomainWithGradients<TGradientNumericType> itk::ParticleGoodBadAssessment< TGradientNumericType, VDimension >::DomainType;
 ```
 
 
@@ -228,4 +228,4 @@ inline virtual ~ParticleGoodBadAssessment()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

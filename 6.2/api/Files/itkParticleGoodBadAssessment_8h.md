@@ -26,11 +26,12 @@ title: Libs/Optimize/ParticleSystem/itkParticleGoodBadAssessment.h
 ## Source code
 
 ```cpp
-#pragma once
+#ifndef ITKPARTICLEGOODBADASSESSMENT_H
+#define ITKPARTICLEGOODBADASSESSMENT_H
 
 #include "itkParticleSystem.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImageDomainWithCurvature.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithCurvature.h"
 #include <algorithm>
 namespace itk
 {
@@ -44,10 +45,10 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem ParticleSystemType;
+    typedef ParticleSystem<VDimension> ParticleSystemType;
     typedef typename ParticleSystemType::PointType PointType;
 
-    typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+    typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
     typedef typename DomainType::VnlVectorType NormalType;
 
     typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
@@ -108,11 +109,16 @@ private:
 
 } //end namespace
 
+#if ITK_TEMPLATE_TXX
+# include "itkParticleGoodBadAssessment.txx"
+#endif
 
 #include "itkParticleGoodBadAssessment.txx"
+
+#endif // ITKPARTICLEGOODBADASSESSMENT_H
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -23,7 +23,7 @@ Inherits from DataObject
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-constweakpointer)**  |
-| typedef Point< double, 3 > | **[PointType](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-pointtype)**  |
+| typedef Point< double, VDimension > | **[PointType](../Classes/classitk_1_1ParticlePositionWriter.md#typedef-pointtype)**  |
 
 ## Public Functions
 
@@ -48,6 +48,7 @@ Inherits from DataObject
 ## Detailed Description
 
 ```cpp
+template <unsigned int VDimension>
 class itk::ParticlePositionWriter;
 ```
 
@@ -65,7 +66,7 @@ etc..
 ### typedef Self
 
 ```cpp
-typedef ParticlePositionWriter itk::ParticlePositionWriter::Self;
+typedef ParticlePositionWriter itk::ParticlePositionWriter< VDimension >::Self;
 ```
 
 
@@ -75,35 +76,35 @@ Standard class typedefs
 ### typedef Superclass
 
 ```cpp
-typedef DataObject itk::ParticlePositionWriter::Superclass;
+typedef DataObject itk::ParticlePositionWriter< VDimension >::Superclass;
 ```
 
 
 ### typedef Pointer
 
 ```cpp
-typedef SmartPointer<Self> itk::ParticlePositionWriter::Pointer;
+typedef SmartPointer<Self> itk::ParticlePositionWriter< VDimension >::Pointer;
 ```
 
 
 ### typedef ConstPointer
 
 ```cpp
-typedef SmartPointer<const Self> itk::ParticlePositionWriter::ConstPointer;
+typedef SmartPointer<const Self> itk::ParticlePositionWriter< VDimension >::ConstPointer;
 ```
 
 
 ### typedef ConstWeakPointer
 
 ```cpp
-typedef WeakPointer<const Self> itk::ParticlePositionWriter::ConstWeakPointer;
+typedef WeakPointer<const Self> itk::ParticlePositionWriter< VDimension >::ConstWeakPointer;
 ```
 
 
 ### typedef PointType
 
 ```cpp
-typedef Point<double, 3> itk::ParticlePositionWriter::PointType;
+typedef Point<double, VDimension> itk::ParticlePositionWriter< VDimension >::PointType;
 ```
 
 
@@ -183,7 +184,7 @@ Write the file.
 ### function Update
 
 ```cpp
-inline void Update()
+void Update()
 ```
 
 
@@ -215,4 +216,4 @@ inline virtual ~ParticlePositionWriter()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

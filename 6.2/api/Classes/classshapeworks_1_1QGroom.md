@@ -44,8 +44,6 @@ Inherits from QObject, [shapeworks::Groom](../Classes/classshapeworks_1_1Groom.m
 | void | **[set_skip_grooming](../Classes/classshapeworks_1_1Groom.md#function-set-skip-grooming)**(bool skip)<br>Set if grooming steps should be skipped.  |
 | void | **[abort](../Classes/classshapeworks_1_1Groom.md#function-abort)**()<br>Set abort as soon as possible.  |
 | bool | **[get_aborted](../Classes/classshapeworks_1_1Groom.md#function-get-aborted)**()<br>Return if grooming was aborted.  |
-| double | **[compute_landmark_distance](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-distance)**(vtkSmartPointer< vtkPoints > one, vtkSmartPointer< vtkPoints > two)<br>Util to compute square distance between paired landmarks.  |
-| vtkSmartPointer< vtkMatrix4x4 > | **[compute_landmark_transform](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-transform)**(vtkSmartPointer< vtkPoints > source, vtkSmartPointer< vtkPoints > target)<br>Util to compute landmark transform.  |
 
 **Protected Attributes inherited from [shapeworks::Groom](../Classes/classshapeworks_1_1Groom.md)**
 
@@ -103,4 +101,4 @@ call to be overridden by subclasses
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

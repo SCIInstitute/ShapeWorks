@@ -38,11 +38,8 @@ Inherits from QObject
 | void | **[set_start_row](../Classes/classshapeworks_1_1Lightbox.md#function-set-start-row)**(int row) |
 | ViewerList | **[get_viewers](../Classes/classshapeworks_1_1Lightbox.md#function-get-viewers)**() |
 | void | **[redraw](../Classes/classshapeworks_1_1Lightbox.md#function-redraw)**() |
-| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl) |
-| void | **[handle_hover](../Classes/classshapeworks_1_1Lightbox.md#function-handle-hover)**(int * click_pos) |
-| void | **[handle_key](../Classes/classshapeworks_1_1Lightbox.md#function-handle-key)**(int * click_pos, std::string key) |
+| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one) |
 | void | **[set_glyph_lut](../Classes/classshapeworks_1_1Lightbox.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
-| void | **[set_session](../Classes/classshapeworks_1_1Lightbox.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Lightbox.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | bool | **[render_window_ready](../Classes/classshapeworks_1_1Lightbox.md#function-render-window-ready)**() |
 | void | **[clear_renderers](../Classes/classshapeworks_1_1Lightbox.md#function-clear-renderers)**() |
@@ -53,8 +50,6 @@ Inherits from QObject
 | void | **[set_orientation_marker](../Classes/classshapeworks_1_1Lightbox.md#function-set-orientation-marker)**(Preferences::OrientationMarkerType type, Preferences::OrientationMarkerCorner corner) |
 | void | **[set_orientation_marker_viewport](../Classes/classshapeworks_1_1Lightbox.md#function-set-orientation-marker-viewport)**() |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Lightbox.md#function-update-feature-range)**() |
-| void | **[update_interactor_style](../Classes/classshapeworks_1_1Lightbox.md#function-update-interactor-style)**() |
-| void | **[set_shared_window_and_level](../Classes/classshapeworks_1_1Lightbox.md#function-set-shared-window-and-level)**(double window, double level) |
 
 ## Detailed Description
 
@@ -184,27 +179,7 @@ void redraw()
 ```cpp
 void handle_pick(
     int * click_pos,
-    bool one,
-    bool ctrl
-)
-```
-
-
-### function handle_hover
-
-```cpp
-void handle_hover(
-    int * click_pos
-)
-```
-
-
-### function handle_key
-
-```cpp
-void handle_key(
-    int * click_pos,
-    std::string key
+    bool one
 )
 ```
 
@@ -214,15 +189,6 @@ void handle_key(
 ```cpp
 void set_glyph_lut(
     vtkSmartPointer< vtkLookupTable > lut
-)
-```
-
-
-### function set_session
-
-```cpp
-void set_session(
-    QSharedPointer< Session > session
 )
 ```
 
@@ -302,23 +268,6 @@ void update_feature_range()
 ```
 
 
-### function update_interactor_style
-
-```cpp
-void update_interactor_style()
-```
-
-
-### function set_shared_window_and_level
-
-```cpp
-void set_shared_window_and_level(
-    double window,
-    double level
-)
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

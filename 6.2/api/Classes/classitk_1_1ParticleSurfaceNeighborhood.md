@@ -29,7 +29,7 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 | typedef vnl_vector_fixed< NumericType, TImage::ImageDimension > | **[GradientVectorType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-gradientvectortype)**  |
 | typedef Superclass::PointType | **[PointType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtype)**  |
 | typedef Superclass::PointContainerType | **[PointContainerType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointcontainertype)**  |
-| typedef [shapeworks::ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)< typename TImage::PixelType > | **[DomainType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-domaintype)**  |
+| typedef [ParticleImplicitSurfaceDomain](../Classes/classitk_1_1ParticleImplicitSurfaceDomain.md)< typename TImage::PixelType > | **[DomainType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-domaintype)**  |
 | typedef Superclass::PointVectorType | **[PointVectorType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointvectortype)**  |
 
 ## Public Functions
@@ -69,7 +69,7 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 
 |                | Name           |
 | -------------- | -------------- |
-| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain)**(DomainType::Pointer p) override |
+| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain)**([DomainType](../Classes/classitk_1_1ParticleDomain.md) * p) |
 | | **[itkSetMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itksetmacro)**(TreeLevels , unsigned int ) |
 | | **[itkGetMacro](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-itkgetmacro)**(TreeLevels , unsigned int ) |
 | virtual void | **[AddPosition](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-addposition)**(const [PointType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
@@ -97,8 +97,8 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 | -------------- | -------------- |
 | | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itksetobjectmacro)**(PointContainer , [PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype) ) |
 | | **[itkGetConstObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itkgetconstobjectmacro)**(PointContainer , [PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype) ) |
-| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-setdomain)**(DomainType::Pointer domain) |
-| DomainType::Pointer | **[GetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-getdomain)**() const |
+| | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itksetobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
+| | **[itkGetConstObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itkgetconstobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
 | virtual void | **[AddPosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-addposition)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[SetPosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-setposition)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[RemovePosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-removeposition)**(unsigned int idx, int threadId =0) |
@@ -209,7 +209,7 @@ typedef Superclass::PointContainerType itk::ParticleSurfaceNeighborhood< TImage 
 ### typedef DomainType
 
 ```cpp
-typedef shapeworks::ParticleImplicitSurfaceDomain<typename TImage::PixelType> itk::ParticleSurfaceNeighborhood< TImage >::DomainType;
+typedef ParticleImplicitSurfaceDomain<typename TImage::PixelType> itk::ParticleSurfaceNeighborhood< TImage >::DomainType;
 ```
 
 
@@ -335,4 +335,4 @@ inline virtual ~ParticleSurfaceNeighborhood()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

@@ -25,7 +25,22 @@ title: Libs/Optimize/ParticleSystem/itkParticleRegionNeighborhood.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleRegionNeighborhood.h,v $
+  Date:      $Date: 2011/03/24 01:17:34 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleRegionNeighborhood_h
+#define __itkParticleRegionNeighborhood_h
 
 #include "itkParticleNeighborhood.h"
 #include "itkPowerOfTwoPointTree.h"
@@ -41,7 +56,6 @@ public:
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
-  using DomainType = shapeworks::ParticleDomain;
 
   itkNewMacro(Self);
 
@@ -51,7 +65,7 @@ public:
 
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::PointContainerType PointContainerType;
-
+  typedef typename Superclass::DomainType DomainType;
   typedef typename Superclass::PointVectorType PointVectorType;
 
   typedef PowerOfTwoPointTree<VDimension> PointTreeType;
@@ -59,7 +73,7 @@ public:
   virtual PointVectorType FindNeighborhoodPoints(const PointType &, int idx, double) const;
   //  virtual unsigned int  FindNeighborhoodPoints(const PointType &, double, PointVectorType &) const;
 
-  void SetDomain(DomainType::Pointer p) override;
+  virtual void SetDomain( DomainType *p);
 
   itkSetMacro(TreeLevels, unsigned int);
   itkGetMacro(TreeLevels, unsigned int);
@@ -126,10 +140,20 @@ private:
 } // end namespace itk
 
 
+#if ITK_TEMPLATE_EXPLICIT
+# include "Templates/itkParticleRegionNeighborhood+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
+# include "itkParticleRegionNeighborhood.txx"
+#endif
+
 #include "itkParticleRegionNeighborhood.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

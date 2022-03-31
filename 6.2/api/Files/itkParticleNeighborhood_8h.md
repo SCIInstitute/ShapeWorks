@@ -25,12 +25,27 @@ title: Libs/Optimize/ParticleSystem/itkParticleNeighborhood.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleNeighborhood.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleNeighborhood_h
+#define __itkParticleNeighborhood_h
 
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include "ParticleDomain.h"
+#include "itkParticleDomain.h"
 #include "itkParticleContainer.h"
 #include "itkParticlePointIndexPair.h"
 #include <vector>
@@ -55,7 +70,7 @@ public:
 
   typedef Point<double, VDimension> PointType;
 
-  using DomainType = shapeworks::ParticleDomain;
+  typedef ParticleDomain DomainType;
   
   typedef ParticleContainer<PointType> PointContainerType;
 
@@ -84,10 +99,8 @@ public:
     return 0;
   }
 
-  //itkSetObjectMacro(Domain, DomainType);
-  //itkGetConstObjectMacro(Domain, DomainType);
-  virtual void SetDomain(DomainType::Pointer domain) { m_Domain = domain; this->Modified(); };
-  DomainType::Pointer GetDomain() const { return m_Domain; };
+  itkSetObjectMacro(Domain, DomainType);
+  itkGetConstObjectMacro(Domain, DomainType);
 
   virtual void AddPosition(const PointType &p, unsigned int idx, int threadId = 0) {}
   virtual void SetPosition(const PointType &p, unsigned int idx, int threadId = 0) {}
@@ -110,9 +123,20 @@ private:
 };
 
 } // end namespace itk
+
+
+#if ITK_TEMPLATE_EXPLICIT
+//# include "Templates/itkParticleNeighborhood+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
+//# include "itkParticleNeighborhood.txx"
+#endif
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

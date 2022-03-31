@@ -1948,15 +1948,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_original_filenames" class="md-nav__link">
-    function set_original_filenames
+  <a href="#function-set_segmentation_filenames" class="md-nav__link">
+    function set_segmentation_filenames
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_original_filenames" class="md-nav__link">
-    function get_original_filenames
+  <a href="#function-get_segmentation_filenames" class="md-nav__link">
+    function get_segmentation_filenames
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_domain_types" class="md-nav__link">
+    function get_domain_types
   </a>
   
 </li>
@@ -2013,20 +2020,6 @@
           <li class="md-nav__item">
   <a href="#function-get_landmarks_filenames" class="md-nav__link">
     function get_landmarks_filenames
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_constraints_filenames" class="md-nav__link">
-    function set_constraints_filenames
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_constraints_filenames" class="md-nav__link">
-    function get_constraints_filenames
   </a>
   
 </li>
@@ -2216,11 +2209,15 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Subject.html#function-set-original-filenames">set_original_filenames</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Set original filenames (one per domain)</td>
+<td><strong><a href="classshapeworks_1_1Subject.html#function-set-segmentation-filenames">set_segmentation_filenames</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Set segmentatation filenames (one per domain)</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Subject.html#function-get-original-filenames">get_original_filenames</a></strong>()<br>Get original filenames.</td>
+<td><strong><a href="classshapeworks_1_1Subject.html#function-get-segmentation-filenames">get_segmentation_filenames</a></strong>()<br>Get segmentation filenames.</td>
+</tr>
+<tr>
+<td>std::vector&lt; DomainType &gt;</td>
+<td><strong><a href="classshapeworks_1_1Subject.html#function-get-domain-types">get_domain_types</a></strong>(bool groomed =false)<br>Return the domain types.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2253,14 +2250,6 @@
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Subject.html#function-get-landmarks-filenames">get_landmarks_filenames</a></strong>()<br>Set the landmarks filenames.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Subject.html#function-set-constraints-filenames">set_constraints_filenames</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Get the constraints filenames (one per domain)</td>
-</tr>
-<tr>
-<td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Subject.html#function-get-constraints-filenames">get_constraints_filenames</a></strong>()<br>Set the constratins filenames.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2356,16 +2345,22 @@
 <h3 id="function-subject_1">function ~Subject</h3>
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Subject</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_original_filenames">function set_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_original_filenames</span><span class="p">(</span><span class="w"></span>
+<h3 id="function-set_segmentation_filenames">function set_segmentation_filenames</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_segmentation_filenames</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Set original filenames (one per domain) </p>
-<h3 id="function-get_original_filenames">function get_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span><span class="w"></span>
+<p>Set segmentatation filenames (one per domain) </p>
+<h3 id="function-get_segmentation_filenames">function get_segmentation_filenames</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_segmentation_filenames</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<p>Get original filenames. </p>
+<p>Get segmentation filenames. </p>
+<h3 id="function-get_domain_types">function get_domain_types</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_types</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">groomed</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Return the domain types. </p>
 <h3 id="function-set_groomed_filenames">function set_groomed_filenames</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_filenames</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
@@ -2406,16 +2401,6 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmarks_filenames</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Set the landmarks filenames. </p>
-<h3 id="function-set_constraints_filenames">function set_constraints_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_constraints_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Get the constraints filenames (one per domain) </p>
-<h3 id="function-get_constraints_filenames">function get_constraints_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_constraints_filenames</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Set the constratins filenames. </p>
 <h3 id="function-set_number_of_domains">function set_number_of_domains</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_domains</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains</span><span class="w"></span>
@@ -2518,7 +2503,7 @@
 </code></pre></div>
 <p>Set the display name. </p>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

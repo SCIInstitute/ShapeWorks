@@ -1984,11 +1984,12 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#ifndef ITKPARTICLEGOODBADASSESSMENT_H</span>
+<span class="cp">#define ITKPARTICLEGOODBADASSESSMENT_H</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleSystem.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradients.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithCurvature.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleImageDomainWithGradients.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleImageDomainWithCurvature.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
 <span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
@@ -2002,10 +2003,10 @@
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">DomainType</span><span class="o">::</span><span class="n">VnlVectorType</span><span class="w"> </span><span class="n">NormalType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleMeanCurvatureAttribute</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="p">;</span><span class="w"></span>
@@ -2066,11 +2067,16 @@
 
 <span class="p">}</span><span class="w"> </span><span class="c1">//end namespace</span>
 
+<span class="cp">#if ITK_TEMPLATE_TXX</span>
+<span class="cp">#</span><span class="w"> </span><span class="cp">include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGoodBadAssessment.txx&quot;</span><span class="cp"></span>
+<span class="cp">#endif</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGoodBadAssessment.txx&quot;</span><span class="cp"></span>
+
+<span class="cp">#endif </span><span class="c1">// ITKPARTICLEGOODBADASSESSMENT_H</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

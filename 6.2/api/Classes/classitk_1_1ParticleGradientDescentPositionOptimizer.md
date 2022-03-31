@@ -23,8 +23,8 @@ Inherits from Object
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-constweakpointer)**  |
-| typedef [shapeworks::ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-domaintype)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-particlesystemtype)**  |
+| typedef [ParticleImageDomainWithGradients](../Classes/classitk_1_1ParticleImageDomainWithGradients.md)< TGradientNumericType > | **[DomainType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-domaintype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-particlesystemtype)**  |
 | typedef [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< VDimension > | **[GradientFunctionType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-gradientfunctiontype)**  |
 | typedef [GradientFunctionType::VectorType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-vectortype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-pointtype)**  |
@@ -120,7 +120,7 @@ typedef WeakPointer<const Self> itk::ParticleGradientDescentPositionOptimizer< T
 ### typedef DomainType
 
 ```cpp
-typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::DomainType;
+typedef ParticleImageDomainWithGradients<TGradientNumericType> itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::DomainType;
 ```
 
 
@@ -130,7 +130,7 @@ Type of the domain.
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::ParticleSystemType;
+typedef ParticleSystem<VDimension> itk::ParticleGradientDescentPositionOptimizer< TGradientNumericType, VDimension >::ParticleSystemType;
 ```
 
 
@@ -454,4 +454,4 @@ inline virtual ~ParticleGradientDescentPositionOptimizer()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

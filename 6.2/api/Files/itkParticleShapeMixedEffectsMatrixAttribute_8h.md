@@ -148,11 +148,11 @@ public:
   {
     const itk::ParticlePositionAddEvent &event
       = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
-    const itk::ParticleSystem *ps
-      = dynamic_cast<const itk::ParticleSystem *>(o);
+    const itk::ParticleSystem<VDimension> *ps
+      = dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos
+    const typename itk::ParticleSystem<VDimension>::PointType pos
       = ps->GetTransformedPosition(idx, d);
     
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
@@ -184,11 +184,11 @@ public:
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   
-    const itk::ParticleSystem *ps
-      = dynamic_cast<const itk::ParticleSystem *>(o);
+    const itk::ParticleSystem<VDimension> *ps
+      = dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
     
     // Modify matrix info
@@ -465,4 +465,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

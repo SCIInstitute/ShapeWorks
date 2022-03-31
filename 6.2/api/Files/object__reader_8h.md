@@ -19,62 +19,71 @@ title: Libs/Optimize/ParticleSystem/object_reader.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: object_reader.h,v $
+  Date:      $Date: 2011/03/24 01:17:34 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
 
-#include <fstream>
-#include <string>
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __object_reader_h
+#define __object_reader_h
+
 #include <vector>
+#include <string>
+
 
 template <class T>
-class object_reader {
- public:
+class object_reader 
+{
+public:
   typedef object_reader Self;
   typedef T ObjectType;
 
-  const std::vector<ObjectType> &GetOutput() const { return m_Output; }
-  std::vector<ObjectType> &GetOutput() { return m_Output; }
-
-  void SetFileName(const char *fn) { m_FileName = fn; }
-  void SetFileName(const std::string &fn) { m_FileName = fn; }
-  const std::string &GetFileName() const { return m_FileName; }
-
-  inline void Read() { this->Update(); }
-  void Update() {
-    // Open the output file.
-    std::ifstream in(m_FileName.c_str(), std::ios::binary);
-
-    if (!in) {
-      std::cerr << "Could not open filename " << m_FileName << std::endl;
-      throw 1;
-    }
-    // Read the number of transforms
-    int N;
-    in.read(reinterpret_cast<char *>(&N), sizeof(int));
-
-    int sz = sizeof(ObjectType);
-    // Read the transforms
-    for (unsigned int i = 0; i < (unsigned int)N; i++) {
-      ObjectType q;  // maybe not the most efficient, but safe
-      in.read(reinterpret_cast<char *>(&q), sz);
-      m_Output.push_back(q);
-    }
-
-    in.close();
+  const std::vector<ObjectType> &GetOutput() const
+  {
+    return m_Output;
+  }
+  std::vector<ObjectType> &GetOutput()
+  {
+    return m_Output;
   }
 
-  object_reader() {}
-  virtual ~object_reader(){};
+ void SetFileName(const char *fn)
+  { m_FileName = fn; }
+  void SetFileName(const std::string &fn)
+  { m_FileName = fn; }
+  const std::string& GetFileName() const
+  { return m_FileName; }
+  
+  inline void Read()
+  { this->Update(); }
+  void Update();
+  
+  object_reader() { }
+  virtual ~object_reader() {};
 
  private:
-  object_reader(const Self &);   // purposely not implemented
-  void operator=(const Self &);  // purposely not implemented
+  object_reader(const Self&); //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
   std::vector<ObjectType> m_Output;
   std::string m_FileName;
 };
+
+# include "object_reader.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

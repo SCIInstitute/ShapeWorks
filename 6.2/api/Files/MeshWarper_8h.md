@@ -34,47 +34,34 @@ The MeshWarper provides an object to warp meshes for surface reconstruction
 ```cpp
 #pragma once
 
-#include <vtkPolyData.h>
-
-#include <Eigen/Eigen>
 #include <vector>
+#include <vtkPolyData.h>
+#include <Eigen/Eigen>
 
 namespace shapeworks {
 
 class MeshWarper {
- public:
-  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd& reference_particles,
-                          const Eigen::MatrixXd& landmarks = {});
 
-  bool generate_warp();
+public:
+
+  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
+                          const Eigen::MatrixXd& reference_particles);
 
   bool get_warp_available();
 
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
-  Eigen::MatrixXd extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh);
-
   bool is_contour() { return this->is_contour_; }
 
-  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
+protected:
 
-  const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
-
-  bool has_bad_particles() const { return this->bad_particle_count() > 0; }
-
-  vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this->reference_mesh_; }
-
-  const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
-
-  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
-
- protected:
   virtual void update_progress(float p) {}
 
- private:
-  bool check_warp_ready();
+private:
 
-  void add_particle_vertices(Eigen::MatrixXd& vertices);
+  bool generate_warp();
+
+  void add_particle_vertices();
 
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
@@ -83,23 +70,22 @@ class MeshWarper {
 
   void find_good_particles();
 
-  bool find_landmarks_vertices_on_ref_mesh();
+  bool check_warp_ready();
+
+  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
+                            const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
-  size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
-
-  // Members
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
-  Eigen::MatrixXd landmarks_points_;
 
   std::vector<int> good_particles_;
 
@@ -107,16 +93,15 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   Eigen::MatrixXd reference_particles_;
   bool is_contour_ = false;
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -27,20 +27,22 @@ title: Studio/src/Data/Session.h
 ```cpp
 #pragma once
 
-#include <Data/MeshManager.h>
-#include <Data/Preferences.h>
-#include <Data/StudioParticles.h>
-#include <Libs/Project/Project.h>
-#include <Shapeworks.h>
-#include <Visualization/Viewer.h>
-#include <itkMatrixOffsetTransformBase.h>
+#include <cstdlib>
+#include <string>
+#include <vector>
+#include <map>
 
 #include <QSharedPointer>
 #include <QVector>
-#include <cstdlib>
-#include <map>
-#include <string>
-#include <vector>
+
+#include <itkMatrixOffsetTransformBase.h>
+
+#include <Shapeworks.h>
+#include <Libs/Project/Project.h>
+
+#include <Data/Preferences.h>
+#include <Data/StudioParticles.h>
+#include <Data/MeshManager.h>
 
 namespace shapeworks {
 
@@ -53,16 +55,17 @@ using TransformType = vtkSmartPointer<vtkTransform>;
 
 
 class Session : public QObject {
-  Q_OBJECT;
+Q_OBJECT;
 
- public:
+public:
+
   Session(QWidget* parent, Preferences& prefs);
 
   ~Session();
 
   void set_parent(QWidget* parent);
 
-  bool save_project(QString filename);
+  bool save_project(std::string filename);
 
   bool load_project(QString filename);
 
@@ -78,7 +81,8 @@ class Session : public QObject {
 
   void load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape);
 
-  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
+  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world,
+                        int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
 
@@ -110,17 +114,18 @@ class Session : public QObject {
 
   static bool is_supported_file_format(std::string filename);
 
-  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  QSharedPointer<MeshManager> get_mesh_manager()
+  { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
 
-  std::vector<DomainType> get_groomed_domain_types();
+  std::vector<DomainType> get_domain_types();
 
   double update_auto_glyph_size();
 
   double get_auto_glyph_size();
 
-  static Point3 get_point(const Eigen::VectorXd& points, int i);
+  static Point3 get_point(const vnl_vector<double>& points, int i);
 
   void clear_particles();
 
@@ -132,92 +137,24 @@ class Session : public QObject {
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
 
-  void handle_ctrl_click(PickResult result);
-
-  void trigger_landmarks_changed();
-  void trigger_planes_changed();
-  void trigger_ffc_changed();
-
-  void set_active_landmark_domain(int id);
-  int get_active_landmark_domain();
-  void set_placing_landmark(int id);
-  int get_placing_landmark();
-  void set_landmarks_active(bool active);
-  bool get_landmarks_active();
-  void set_planes_active(bool active);
-  bool get_planes_active();
-  void set_show_landmark_labels(bool show);
-  bool get_show_landmark_labels();
-
-  void set_show_planes(bool show);
-  bool get_show_planes();
-
-  void set_show_landmarks(bool show);
-  bool get_show_landmarks();
-
-  // image volume
-  bool set_image_name(std::string image_name);
-  std::string get_image_name();
-
-  // image axis
-  void set_image_axis(QString axis);
-  Axis get_image_axis();
-
-  // image view 3d mode
-  void set_image_3d_mode(bool mode);
-  bool get_image_3d_mode();
-
-  // image sync/share window width and level
-  void set_image_share_window_and_level(bool enabled);
-  bool get_image_share_window_and_level();
-
-  bool has_constraints();
-
-  void set_loading(bool loading);
-  bool is_loading();
-
-  void set_tool_state(std::string state);
-  std::string get_tool_state();
-
-  void set_ffc_paint_active(bool enabled);
-  bool get_ffc_paint_active();
-
-  void set_ffc_paint_mode_inclusive(bool inclusive);
-  bool get_ffc_paint_mode_inclusive();
-
-  void set_ffc_paint_size(double size);
-  double get_ffc_paint_size();
-
-  void trigger_repaint();
-
- public Q_SLOTS:
+public Q_SLOTS:
   void set_feature_auto_scale(bool value);
-
-  void set_landmark_drag_mode(bool mode);
-  bool get_landmark_drag_mode();
 
   void handle_clear_cache();
   void handle_new_mesh();
   void handle_message(QString s);
   void handle_thread_complete();
 
- signals:
+signals:
   void data_changed();
   void points_changed();
-  void landmarks_changed();
-  void planes_changed();
-  void ffc_changed();
   void update_display();
   void new_mesh();
   void message(QString);
   void error(QString);
   void feature_range_changed();
-  void update_view_mode();
-  void image_slice_settings_changed();
-  void ffc_paint_mode_changed();
-  void repaint();
 
- public:
+public:
   // constants
   const static std::string DATA_C;
   const static std::string GROOM_C;
@@ -225,16 +162,13 @@ class Session : public QObject {
   const static std::string ANALYSIS_C;
   const static std::string DEEPSSM_C;
 
- private:
+private:
+
   Preferences& preferences_;
 
-  void save_particles_file(std::string filename, const Eigen::VectorXd& points);
+  void save_particles_file(std::string filename, const vnl_vector<double>& points);
 
   void renumber_shapes();
-
-  void new_landmark(PickResult result);
-
-  void new_plane_point(PickResult result);
 
   QWidget* parent_{nullptr};
 
@@ -256,25 +190,12 @@ class Session : public QObject {
   std::shared_ptr<Project> project_{new Project()};
 
   double auto_glyph_size_ = -1;
-
-  int active_landmark_domain_ = -1;
-  int placing_landmark_ = -1;
-  bool landmark_drag_mode_ = false;
-  bool landmarks_active_ = false;
-  bool planes_active_ = false;
-  bool show_landmark_labels_ = false;
-
-  bool ffc_painting_active_ = false;
-  bool ffc_painting_inclusive_mode_ = false;
-  double ffc_paint_size = 50;
-
-  bool is_loading_ = false;
 };
 
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

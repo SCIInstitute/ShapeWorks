@@ -19,8 +19,9 @@ Representation of a single subject.  [More...](#detailed-description)
 | -------------- | -------------- |
 | | **[Subject](../Classes/classshapeworks_1_1Subject.md#function-subject)**() |
 | | **[~Subject](../Classes/classshapeworks_1_1Subject.md#function-~subject)**() |
-| void | **[set_original_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-original-filenames)**(std::vector< std::string > filenames)<br>Set original filenames (one per domain)  |
-| std::vector< std::string > | **[get_original_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-original-filenames)**()<br>Get original filenames.  |
+| void | **[set_segmentation_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-segmentation-filenames)**(std::vector< std::string > filenames)<br>Set segmentatation filenames (one per domain)  |
+| std::vector< std::string > | **[get_segmentation_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-segmentation-filenames)**()<br>Get segmentation filenames.  |
+| std::vector< DomainType > | **[get_domain_types](../Classes/classshapeworks_1_1Subject.md#function-get-domain-types)**(bool groomed =false)<br>Return the domain types.  |
 | void | **[set_groomed_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-filenames)**(std::vector< std::string > filenames)<br>Set groomed filenames.  |
 | std::vector< std::string > | **[get_groomed_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-groomed-filenames)**()<br>Get groomed filenames.  |
 | void | **[set_local_particle_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-local-particle-filenames)**(std::vector< std::string > filenames)<br>Set local particle filenames (one per domain)  |
@@ -29,8 +30,6 @@ Representation of a single subject.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_world_particle_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-world-particle-filenames)**()<br>Get the world particle filenames.  |
 | void | **[set_landmarks_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-landmarks-filenames)**(std::vector< std::string > filenames)<br>Get the landmarks filenames (one per domain)  |
 | std::vector< std::string > | **[get_landmarks_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-landmarks-filenames)**()<br>Set the landmarks filenames.  |
-| void | **[set_constraints_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-constraints-filenames)**(std::vector< std::string > filenames)<br>Get the constraints filenames (one per domain)  |
-| std::vector< std::string > | **[get_constraints_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-constraints-filenames)**()<br>Set the constratins filenames.  |
 | void | **[set_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-set-number-of-domains)**(int number_of_domains)<br>Set the number of domains.  |
 | int | **[get_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-get-number-of-domains)**()<br>Get the number of domains.  |
 | void | **[set_image_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-image-filenames)**(std::vector< std::string > filenames)<br>Set image filenames.  |
@@ -78,23 +77,33 @@ Subject()
 ```
 
 
-### function set_original_filenames
+### function set_segmentation_filenames
 
 ```cpp
-void set_original_filenames(
+void set_segmentation_filenames(
     std::vector< std::string > filenames
 )
 ```
 
-Set original filenames (one per domain) 
+Set segmentatation filenames (one per domain) 
 
-### function get_original_filenames
+### function get_segmentation_filenames
 
 ```cpp
-std::vector< std::string > get_original_filenames()
+std::vector< std::string > get_segmentation_filenames()
 ```
 
-Get original filenames. 
+Get segmentation filenames. 
+
+### function get_domain_types
+
+```cpp
+std::vector< DomainType > get_domain_types(
+    bool groomed =false
+)
+```
+
+Return the domain types. 
 
 ### function set_groomed_filenames
 
@@ -167,24 +176,6 @@ std::vector< std::string > get_landmarks_filenames()
 ```
 
 Set the landmarks filenames. 
-
-### function set_constraints_filenames
-
-```cpp
-void set_constraints_filenames(
-    std::vector< std::string > filenames
-)
-```
-
-Get the constraints filenames (one per domain) 
-
-### function get_constraints_filenames
-
-```cpp
-std::vector< std::string > get_constraints_filenames()
-```
-
-Set the constratins filenames. 
 
 ### function set_number_of_domains
 
@@ -369,4 +360,4 @@ Set the display name.
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

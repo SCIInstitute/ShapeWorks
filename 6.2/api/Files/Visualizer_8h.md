@@ -27,12 +27,12 @@ title: Studio/src/Visualization/Visualizer.h
 ```cpp
 #pragma once
 
-#include <Data/Preferences.h>
-#include <Data/Session.h>
-#include <Visualization/Lightbox.h>
-
 #include <map>
 #include <string>
+
+#include <Data/Session.h>
+#include <Data/Preferences.h>
+#include <Visualization/Lightbox.h>
 
 namespace shapeworks {
 
@@ -42,9 +42,9 @@ typedef QSharedPointer<Visualizer> VisualizerHandle;
 
 
 class Visualizer : public QObject {
-  Q_OBJECT;
+Q_OBJECT;
 
- public:
+public:
   Visualizer(Preferences& prefs);
   ~Visualizer();
 
@@ -71,10 +71,6 @@ class Visualizer : public QObject {
 
   void update_samples();
 
-  void update_landmarks();
-  void update_planes();
-  void update_ffc_mode();
-
   void display_sample(int i);
 
   void display_shape(ShapeHandle shape);
@@ -87,7 +83,7 @@ class Visualizer : public QObject {
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-  void set_mean(const Eigen::VectorXd& mean);
+  void set_mean(const vnl_vector<double>& mean);
 
   void reset_camera();
 
@@ -113,7 +109,7 @@ class Visualizer : public QObject {
 
   double* get_feature_range();
 
-  double* get_feature_raw_range();
+  double *get_feature_raw_range();
 
   bool get_feature_range_valid();
 
@@ -127,20 +123,15 @@ class Visualizer : public QObject {
 
   double get_current_glyph_size();
 
-  void handle_ctrl_click(PickResult result);
-
-  void redraw();
-
- public Q_SLOTS:
+public Q_SLOTS:
 
   void update_viewer_properties();
 
   void handle_feature_range_changed();
 
-  void handle_image_slice_settings_changed();
-
- private:
-  ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
+private:
+  ShapeHandle create_display_object(const StudioParticles& points,
+                                    const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
   void compute_measurements();
@@ -152,8 +143,8 @@ class Visualizer : public QObject {
   bool center_;
   bool needs_camera_reset_ = true;
 
-  bool show_glyphs_ = true;
-  bool show_surface_ = true;
+  bool show_glyphs_;
+  bool show_surface_;
 
   LightboxHandle lightbox_;
   SessionHandle session_;
@@ -162,7 +153,7 @@ class Visualizer : public QObject {
   int selected_point_one_;
   int selected_point_two_;
 
-  Eigen::VectorXd cached_mean_;
+  vnl_vector<double> cached_mean_;
   StudioParticles current_shape_;
 
   double feature_range_[2] = {0, 0};
@@ -173,12 +164,13 @@ class Visualizer : public QObject {
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};
+
 };
 
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

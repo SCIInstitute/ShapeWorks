@@ -1975,13 +1975,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#using-imageiterator" class="md-nav__link">
-    using ImageIterator
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2025,13 +2018,6 @@
         
           <li class="md-nav__item">
   <a href="#function-image_4" class="md-nav__link">
-    function Image
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-image_5" class="md-nav__link">
     function Image
   </a>
   
@@ -2116,41 +2102,34 @@
         
           <li class="md-nav__item">
   <a href="#function-operator_5" class="md-nav__link">
-    function operator*
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-operator_6" class="md-nav__link">
     function operator*=
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator_7" class="md-nav__link">
+  <a href="#function-operator_6" class="md-nav__link">
     function operator/
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator_8" class="md-nav__link">
+  <a href="#function-operator_7" class="md-nav__link">
     function operator/=
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator_9" class="md-nav__link">
+  <a href="#function-operator_8" class="md-nav__link">
     function operator+
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator_10" class="md-nav__link">
+  <a href="#function-operator_9" class="md-nav__link">
     function operator+=
   </a>
   
@@ -2542,13 +2521,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setiterator" class="md-nav__link">
-    function setIterator
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-compare" class="md-nav__link">
     function compare
   </a>
@@ -2556,7 +2528,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator_11" class="md-nav__link">
+  <a href="#function-operator_10" class="md-nav__link">
     function operator==
   </a>
   
@@ -2648,10 +2620,6 @@
 <td>using itk::StatisticsImageFilter&lt; ImageType &gt;::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Image.html#using-statsptr">StatsPtr</a></strong></td>
 </tr>
-<tr>
-<td>using itk::ImageRegionIterator&lt; ImageType &gt;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#using-imageiterator">ImageIterator</a></strong></td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-functions">Public Functions</h2>
@@ -2663,10 +2631,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(const Dims dims)</td>
-</tr>
 <tr>
 <td></td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-image">Image</a></strong>(const std::string &amp; pathname)</td>
@@ -2726,10 +2690,6 @@
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-operator-=">operator-=</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other)</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Image.html">Image</a></td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-operator*">operator*</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other) const<br>multiply operator to multiply two images</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a></td>
@@ -2976,10 +2936,6 @@
 <td><strong><a href="classshapeworks_1_1Image.html#function-physicaltological">physicalToLogical</a></strong>(const Point3 &amp; p) const<br>converts from a physical coordinate to a logical coordinate</td>
 </tr>
 <tr>
-<td>ImageIterator</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-setiterator">setIterator</a></strong>()<br>creates an image iterator and returns it</td>
-</tr>
-<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-compare">compare</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter</td>
 </tr>
@@ -3048,36 +3004,28 @@
 <h3 id="using-statsptr">using StatsPtr</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">StatsPtr</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">StatisticsImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="using-imageiterator">using ImageIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-image">function Image</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-image_1">function Image</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-image_2">function Image</h3>
+<h3 id="function-image_1">function Image</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">imagePtr</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-image_3">function Image</h3>
+<h3 id="function-image_2">function Image</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtkImage</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-image_4">function Image</h3>
+<h3 id="function-image_3">function Image</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-image_5">function Image</h3>
+<h3 id="function-image_4">function Image</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
@@ -3133,39 +3081,33 @@
 </code></pre></div>
 <h3 id="function-operator_4">function operator*</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p>multiply operator to multiply two images </p>
-<h3 id="function-operator_5">function operator*</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>multiply operator to scale contents of an image </p>
-<h3 id="function-operator_6">function operator*=</h3>
+<h3 id="function-operator_5">function operator*=</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-operator_7">function operator/</h3>
+<h3 id="function-operator_6">function operator/</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>divide operator to scale contents of an image </p>
-<h3 id="function-operator_8">function operator/=</h3>
+<h3 id="function-operator_7">function operator/=</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-operator_9">function operator+</h3>
+<h3 id="function-operator_8">function operator+</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>plus operator to shift contents of an image </p>
-<h3 id="function-operator_10">function operator+=</h3>
+<h3 id="function-operator_9">function operator+=</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
@@ -3503,10 +3445,6 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>converts from a physical coordinate to a logical coordinate </p>
-<h3 id="function-setiterator">function setIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">setIterator</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>creates an image iterator and returns it </p>
 <h3 id="function-compare">function compare</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"></span>
@@ -3516,7 +3454,7 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>compares this with another image using the region of interest filter </p>
-<h3 id="function-operator_11">function operator==</h3>
+<h3 id="function-operator_10">function operator==</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
@@ -3540,7 +3478,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

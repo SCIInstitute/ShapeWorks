@@ -1948,13 +1948,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_display_name" class="md-nav__link">
-    function get_display_name
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get_meshes" class="md-nav__link">
     function get_meshes
   </a>
@@ -2041,34 +2034,6 @@
           <li class="md-nav__item">
   <a href="#function-import_local_point_files" class="md-nav__link">
     function import_local_point_files
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-import_landmarks_files" class="md-nav__link">
-    function import_landmarks_files
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-store_landmarks" class="md-nav__link">
-    function store_landmarks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-import_constraints" class="md-nav__link">
-    function import_constraints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-store_constraints" class="md-nav__link">
-    function store_constraints
   </a>
   
 </li>
@@ -2340,13 +2305,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_image_volume" class="md-nav__link">
-    function get_image_volume
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get_point_features" class="md-nav__link">
     function get_point_features
   </a>
@@ -2377,34 +2335,6 @@
           <li class="md-nav__item">
   <a href="#function-get_override_feature" class="md-nav__link">
     function get_override_feature
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-landmarks" class="md-nav__link">
-    function landmarks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-constraints" class="md-nav__link">
-    function constraints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_constraints" class="md-nav__link">
-    function get_constraints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-has_planes" class="md-nav__link">
-    function has_planes
   </a>
   
 </li>
@@ -2468,10 +2398,6 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-~shape">~Shape</a></strong>()</td>
 </tr>
 <tr>
-<td>QString</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-display-name">get_display_name</a></strong>()</td>
-</tr>
-<tr>
 <td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-meshes">get_meshes</a></strong>(const string &amp; display_mode)</td>
 </tr>
@@ -2517,27 +2443,11 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(QStringList filenames)<br>Import global correspondence point files.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(QStringList filenames)<br>Import global correspondence point file.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(QStringList filenames)<br>Import local correspondence point files.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-landmarks-files">import_landmarks_files</a></strong>(QStringList filenames)<br>Import landmarks files.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-store-landmarks">store_landmarks</a></strong>()<br>Store landmarks.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-constraints">import_constraints</a></strong>(QStringList filenames)<br>import constraints</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-store-constraints">store_constraints</a></strong>()<br>Store constraints.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(QStringList filenames)<br>Import local correspondence point file.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2552,15 +2462,15 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-particle-transform">set_particle_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
 </tr>
 <tr>
-<td>Eigen::VectorXd</td>
+<td>vnl_vector&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-global-correspondence-points">get_global_correspondence_points</a></strong>()<br>Get the global correspondence points.</td>
 </tr>
 <tr>
-<td>Eigen::VectorXd</td>
+<td>vnl_vector&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-global-correspondence-points-for-display">get_global_correspondence_points_for_display</a></strong>()<br>Get the global correspondence points for display.</td>
 </tr>
 <tr>
-<td>Eigen::VectorXd</td>
+<td>vnl_vector&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-local-correspondence-points">get_local_correspondence_points</a></strong>()<br>Get the local correspondence points.</td>
 </tr>
 <tr>
@@ -2692,10 +2602,6 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-load-feature">load_feature</a></strong>(std::string display_mode, std::string feature)</td>
 </tr>
 <tr>
-<td>vtkSmartPointer&lt; vtkImageData &gt;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-image-volume">get_image_volume</a></strong>(std::string image_volume_name)</td>
-</tr>
-<tr>
 <td>Eigen::VectorXf</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-point-features">get_point_features</a></strong>(std::string feature)</td>
 </tr>
@@ -2715,22 +2621,6 @@
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-override-feature">get_override_feature</a></strong>()</td>
 </tr>
-<tr>
-<td>Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-landmarks">landmarks</a></strong>()</td>
-</tr>
-<tr>
-<td>std::vector&lt; <a href="classshapeworks_1_1Constraints.html">Constraints</a> &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-constraints">constraints</a></strong>()</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Constraints.html">Constraints</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-constraints">get_constraints</a></strong>(int domain_id)</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-has-planes">has_planes</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -2739,9 +2629,6 @@
 </code></pre></div>
 <h3 id="function-shape_1">function ~Shape</h3>
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Shape</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_display_name">function get_display_name</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_meshes">function get_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">(</span><span class="w"></span>
@@ -2803,33 +2690,13 @@
 <span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Import global correspondence point files. </p>
+<p>Import global correspondence point file. </p>
 <h3 id="function-import_local_point_files">function import_local_point_files</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_local_point_files</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Import local correspondence point files. </p>
-<h3 id="function-import_landmarks_files">function import_landmarks_files</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_landmarks_files</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Import landmarks files. </p>
-<h3 id="function-store_landmarks">function store_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Store landmarks. </p>
-<h3 id="function-import_constraints">function import_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_constraints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>import constraints </p>
-<h3 id="function-store_constraints">function store_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_constraints</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Store constraints. </p>
+<p>Import local correspondence point file. </p>
 <h3 id="function-set_particles">function set_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
@@ -2844,15 +2711,15 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_global_correspondence_points">function get_global_correspondence_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get the global correspondence points. </p>
 <h3 id="function-get_global_correspondence_points_for_display">function get_global_correspondence_points_for_display</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_global_correspondence_points_for_display</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_global_correspondence_points_for_display</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get the global correspondence points for display. </p>
 <h3 id="function-get_local_correspondence_points">function get_local_correspondence_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_local_correspondence_points</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_correspondence_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get the local correspondence points. </p>
 <h3 id="function-clear_reconstructed_mesh">function clear_reconstructed_mesh</h3>
@@ -2984,11 +2851,6 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-get_image_volume">function get_image_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_volume</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_name</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
 <h3 id="function-get_point_features">function get_point_features</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">get_point_features</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="w"></span>
@@ -3014,22 +2876,8 @@
 <h3 id="function-get_override_feature">function get_override_feature</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_override_feature</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-landmarks">function landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-constraints">function constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Constraints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">constraints</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_constraints">function get_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Constraints</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_constraints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-has_planes">function has_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_planes</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

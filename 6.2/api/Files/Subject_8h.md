@@ -43,8 +43,10 @@ public:
   Subject();
   ~Subject();
 
-  void set_original_filenames(std::vector<std::string> filenames);
-  std::vector<std::string> get_original_filenames();
+  void set_segmentation_filenames(std::vector<std::string> filenames);
+  std::vector<std::string> get_segmentation_filenames();
+
+  std::vector<DomainType> get_domain_types(bool groomed = false);
 
   void set_groomed_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_groomed_filenames();
@@ -57,9 +59,6 @@ public:
 
   void set_landmarks_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_landmarks_filenames();
-
-  void set_constraints_filenames(std::vector<std::string> filenames);
-  std::vector<std::string> get_constraints_filenames();
 
   void set_number_of_domains(int number_of_domains);
   int get_number_of_domains();
@@ -97,12 +96,11 @@ private:
 
   std::string display_name_;
   std::vector<std::string> image_filenames_;
-  std::vector<std::string> original_filenames_;
+  std::vector<std::string> segmentation_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
   std::vector<std::string> landmarks_filenames_;
-  std::vector<std::string> constraints_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;
 
@@ -110,9 +108,6 @@ private:
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
   std::map<std::string, std::string> table_values_;
-
-  std::vector<DomainType> original_domain_types_;
-  std::vector<DomainType> groomed_domain_types_;
 };
 }
 ```
@@ -120,4 +115,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

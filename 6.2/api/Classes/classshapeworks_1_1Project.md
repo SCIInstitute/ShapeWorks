@@ -28,31 +28,20 @@ Representation of a project.  [More...](#detailed-description)
 | int | **[get_number_of_subjects](../Classes/classshapeworks_1_1Project.md#function-get-number-of-subjects)**()<br>Return the number of subjects in the project.  |
 | int | **[get_number_of_domains_per_subject](../Classes/classshapeworks_1_1Project.md#function-get-number-of-domains-per-subject)**()<br>Return the number of domains.  |
 | std::vector< std::string > | **[get_domain_names](../Classes/classshapeworks_1_1Project.md#function-get-domain-names)**()<br>Return the domain names (e.g. femur, pelvis, etc)  |
-| std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & | **[get_subjects](../Classes/classshapeworks_1_1Project.md#function-get-subjects)**()<br>Return the Subjects (as a reference)  |
-| void | **[set_subjects](../Classes/classshapeworks_1_1Project.md#function-set-subjects)**(const std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) >> & subjects)<br>Set the Subjects.  |
-| bool | **[get_originals_present](../Classes/classshapeworks_1_1Project.md#function-get-originals-present)**() const<br>Return if originals are present.  |
+| std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & | **[get_subjects](../Classes/classshapeworks_1_1Project.md#function-get-subjects)**()<br>Return the list of Subjects.  |
+| bool | **[get_segmentations_present](../Classes/classshapeworks_1_1Project.md#function-get-segmentations-present)**() const<br>Return if segmentations are present.  |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Project.md#function-get-groomed-present)**() const<br>Return if groomed files are present.  |
 | bool | **[get_particles_present](../Classes/classshapeworks_1_1Project.md#function-get-particles-present)**() const<br>Return if particle files are present.  |
 | bool | **[get_images_present](../Classes/classshapeworks_1_1Project.md#function-get-images-present)**()<br>Return if images are present (e.g. CT/MRI)  |
 | std::vector< std::string > | **[get_feature_names](../Classes/classshapeworks_1_1Project.md#function-get-feature-names)**()<br>Get feature names.  |
-| std::vector< std::string > | **[get_image_names](../Classes/classshapeworks_1_1Project.md#function-get-image-names)**()<br>Get image names.  |
 | std::vector< std::string > | **[get_group_names](../Classes/classshapeworks_1_1Project.md#function-get-group-names)**()<br>Get group names.  |
 | std::vector< std::string > | **[get_group_values](../Classes/classshapeworks_1_1Project.md#function-get-group-values)**(const std::string & group_name) const<br>Get possible group values.  |
 | [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1Project.md#function-get-parameters)**(const std::string & name, const std::string & domain_name ="")<br>Retrieve parameters based on key.  |
-| void | **[set_parameters](../Classes/classshapeworks_1_1Project.md#function-set-parameters)**(const std::string & name, [Parameters](../Classes/classshapeworks_1_1Parameters.md) params, std::string domain_name ="")<br>Store parameters based on key.  |
+| void | **[set_parameters](../Classes/classshapeworks_1_1Project.md#function-set-parameters)**(const std::string & name, [Parameters](../Classes/classshapeworks_1_1Parameters.md) params, const std::string & domain_name ="")<br>Store parameters based on key.  |
 | void | **[clear_parameters](../Classes/classshapeworks_1_1Project.md#function-clear-parameters)**(const std::string & name)<br>Clear parameters based on key.  |
 | void | **[store_subjects](../Classes/classshapeworks_1_1Project.md#function-store-subjects)**()<br>Store from subject list to spreadsheet.  |
 | int | **[get_supported_version](../Classes/classshapeworks_1_1Project.md#function-get-supported-version)**() const<br>Get the supported version (this version of the code)  |
 | int | **[get_version](../Classes/classshapeworks_1_1Project.md#function-get-version)**() const<br>Get the version of the currently loaded project.  |
-| std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > | **[get_landmarks](../Classes/classshapeworks_1_1Project.md#function-get-landmarks)**(int domain_id)<br>Return the set of landmarks definitions for a particular domain.  |
-| std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > | **[get_all_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-get-all-landmark-definitions)**()<br>Return all landmark definitions.  |
-| bool | **[get_landmarks_present](../Classes/classshapeworks_1_1Project.md#function-get-landmarks-present)**()<br>Return if landmarks are present.  |
-| void | **[set_landmarks](../Classes/classshapeworks_1_1Project.md#function-set-landmarks)**(int domain_id, std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > landmarks)<br>Set landmarks for this project.  |
-| void | **[new_landmark](../Classes/classshapeworks_1_1Project.md#function-new-landmark)**(int domain_id)<br>Add a new landmark.  |
-| std::vector< DomainType > | **[get_original_domain_types](../Classes/classshapeworks_1_1Project.md#function-get-original-domain-types)**()<br>Return the original domain types.  |
-| std::vector< DomainType > | **[get_groomed_domain_types](../Classes/classshapeworks_1_1Project.md#function-get-groomed-domain-types)**()<br>Return the groomed domain types.  |
-| void | **[set_original_domain_types](../Classes/classshapeworks_1_1Project.md#function-set-original-domain-types)**(std::vector< DomainType > domain_types)<br>Set the original domain types.  |
-| void | **[set_groomed_domain_types](../Classes/classshapeworks_1_1Project.md#function-set-groomed-domain-types)**(std::vector< DomainType > domain_types)<br>Get the groomed domain types.  |
 
 ## Detailed Description
 
@@ -166,25 +155,15 @@ Return the domain names (e.g. femur, pelvis, etc)
 std::vector< std::shared_ptr< Subject > > & get_subjects()
 ```
 
-Return the Subjects (as a reference) 
+Return the list of Subjects. 
 
-### function set_subjects
-
-```cpp
-void set_subjects(
-    const std::vector< std::shared_ptr< Subject >> & subjects
-)
-```
-
-Set the Subjects. 
-
-### function get_originals_present
+### function get_segmentations_present
 
 ```cpp
-bool get_originals_present() const
+bool get_segmentations_present() const
 ```
 
-Return if originals are present. 
+Return if segmentations are present. 
 
 ### function get_groomed_present
 
@@ -217,14 +196,6 @@ std::vector< std::string > get_feature_names()
 ```
 
 Get feature names. 
-
-### function get_image_names
-
-```cpp
-std::vector< std::string > get_image_names()
-```
-
-Get image names. 
 
 ### function get_group_names
 
@@ -261,7 +232,7 @@ Retrieve parameters based on key.
 void set_parameters(
     const std::string & name,
     Parameters params,
-    std::string domain_name =""
+    const std::string & domain_name =""
 )
 ```
 
@@ -301,89 +272,6 @@ int get_version() const
 
 Get the version of the currently loaded project. 
 
-### function get_landmarks
-
-```cpp
-std::vector< LandmarkDefinition > get_landmarks(
-    int domain_id
-)
-```
-
-Return the set of landmarks definitions for a particular domain. 
-
-### function get_all_landmark_definitions
-
-```cpp
-std::vector< std::vector< LandmarkDefinition > > get_all_landmark_definitions()
-```
-
-Return all landmark definitions. 
-
-### function get_landmarks_present
-
-```cpp
-bool get_landmarks_present()
-```
-
-Return if landmarks are present. 
-
-### function set_landmarks
-
-```cpp
-void set_landmarks(
-    int domain_id,
-    std::vector< LandmarkDefinition > landmarks
-)
-```
-
-Set landmarks for this project. 
-
-### function new_landmark
-
-```cpp
-void new_landmark(
-    int domain_id
-)
-```
-
-Add a new landmark. 
-
-### function get_original_domain_types
-
-```cpp
-std::vector< DomainType > get_original_domain_types()
-```
-
-Return the original domain types. 
-
-### function get_groomed_domain_types
-
-```cpp
-std::vector< DomainType > get_groomed_domain_types()
-```
-
-Return the groomed domain types. 
-
-### function set_original_domain_types
-
-```cpp
-void set_original_domain_types(
-    std::vector< DomainType > domain_types
-)
-```
-
-Set the original domain types. 
-
-### function set_groomed_domain_types
-
-```cpp
-void set_groomed_domain_types(
-    std::vector< DomainType > domain_types
-)
-```
-
-Get the groomed domain types. 
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

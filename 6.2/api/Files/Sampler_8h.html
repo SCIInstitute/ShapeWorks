@@ -1997,7 +1997,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleSystem.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGradientDescentPositionOptimizer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleEntropyGradientFunction.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImplicitSurfaceDomain.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleImplicitSurfaceDomain.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleContainerArrayAttribute.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleCurvatureEntropyGradientFunction.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleMeanCurvatureAttribute.h&quot;</span><span class="cp"></span>
@@ -2060,9 +2060,9 @@
 <span class="w">     </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">itkGetConstObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetConstObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Sampler</span><span class="p">();</span><span class="w"></span>
 
@@ -2411,12 +2411,10 @@
 <span class="w">    </span><span class="k">else</span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
 <span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Error computing plane normal&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">exit</span><span class="w"> </span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FFCType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FFCs</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
 
@@ -2463,9 +2461,9 @@
 
 <span class="w">  </span><span class="n">MeanCurvatureCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">Dimension</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSurfaceNeighborhood</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_NeighborhoodList</span><span class="p">;</span><span class="w"></span>
 
@@ -2508,7 +2506,7 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_PrefixTransformFile</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CuttingPlaneType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_CuttingPlanes</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SphereType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_Spheres</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FFCType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FFCs</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FFCType</span><span class="o">&gt;&gt;</span><span class="w">  </span><span class="n">m_FFCs</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_meshes</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"></span>
@@ -2517,7 +2515,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

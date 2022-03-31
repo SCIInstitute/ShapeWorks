@@ -21,7 +21,6 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[update_viewer_properties](../Classes/classshapeworks_1_1Visualizer.md#slot-update-viewer-properties)**()<br>update viewer properties (e.g. glyph size, quality, etc)  |
 | void | **[handle_feature_range_changed](../Classes/classshapeworks_1_1Visualizer.md#slot-handle-feature-range-changed)**() |
-| void | **[handle_image_slice_settings_changed](../Classes/classshapeworks_1_1Visualizer.md#slot-handle-image-slice-settings-changed)**() |
 
 ## Public Functions
 
@@ -41,15 +40,12 @@ Inherits from QObject
 | void | **[set_show_surface](../Classes/classshapeworks_1_1Visualizer.md#function-set-show-surface)**(bool show)<br>turn on/off surface display  |
 | void | **[display_samples](../Classes/classshapeworks_1_1Visualizer.md#function-display-samples)**()<br>update the display using the current settings  |
 | void | **[update_samples](../Classes/classshapeworks_1_1Visualizer.md#function-update-samples)**() |
-| void | **[update_landmarks](../Classes/classshapeworks_1_1Visualizer.md#function-update-landmarks)**() |
-| void | **[update_planes](../Classes/classshapeworks_1_1Visualizer.md#function-update-planes)**() |
-| void | **[update_ffc_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-ffc-mode)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
 | void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
-| void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
+| void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const vnl_vector< double > & mean) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
@@ -70,8 +66,6 @@ Inherits from QObject
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
-| void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Visualizer.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result)<br>Handle ctrl click.  |
-| void | **[redraw](../Classes/classshapeworks_1_1Visualizer.md#function-redraw)**()<br>Redraw renderers.  |
 
 ## Public Attributes
 
@@ -105,13 +99,6 @@ update viewer properties (e.g. glyph size, quality, etc)
 
 ```cpp
 void handle_feature_range_changed()
-```
-
-
-### slot handle_image_slice_settings_changed
-
-```cpp
-void handle_image_slice_settings_changed()
 ```
 
 
@@ -242,27 +229,6 @@ void update_samples()
 ```
 
 
-### function update_landmarks
-
-```cpp
-void update_landmarks()
-```
-
-
-### function update_planes
-
-```cpp
-void update_planes()
-```
-
-
-### function update_ffc_mode
-
-```cpp
-void update_ffc_mode()
-```
-
-
 ### function display_sample
 
 ```cpp
@@ -312,7 +278,7 @@ void set_selected_point_two(
 
 ```cpp
 void set_mean(
-    const Eigen::VectorXd & mean
+    const vnl_vector< double > & mean
 )
 ```
 
@@ -485,24 +451,6 @@ double get_current_glyph_size()
 
 Get the current glyph size. 
 
-### function handle_ctrl_click
-
-```cpp
-void handle_ctrl_click(
-    PickResult result
-)
-```
-
-Handle ctrl click. 
-
-### function redraw
-
-```cpp
-void redraw()
-```
-
-Redraw renderers. 
-
 ## Public Attributes Documentation
 
 ### variable MODE_ORIGINAL_C
@@ -528,4 +476,4 @@ static const std::string MODE_RECONSTRUCTION_C;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -39,7 +39,7 @@ title: SurfaceReconstructor
 | void | **[set_normal_angle](../Classes/classSurfaceReconstructor.md#function-set-normal-angle)**(double angle) |
 | void | **[set_decimation_percent](../Classes/classSurfaceReconstructor.md#function-set-decimation-percent)**(double decimation) |
 | bool | **[get_surface_reconstruction_available](../Classes/classSurfaceReconstructor.md#function-get-surface-reconstruction-available)**() |
-| vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classSurfaceReconstructor.md#function-build-mesh)**(const Eigen::VectorXd & shape) |
+| vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classSurfaceReconstructor.md#function-build-mesh)**(const vnl_vector< double > & shape) |
 
 ## Public Types Documentation
 
@@ -219,11 +219,11 @@ bool get_surface_reconstruction_available()
 
 ```cpp
 vtkSmartPointer< vtkPolyData > build_mesh(
-    const Eigen::VectorXd & shape
+    const vnl_vector< double > & shape
 )
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

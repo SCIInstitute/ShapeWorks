@@ -25,79 +25,86 @@ title: Libs/Particles/itkParticlePositionWriter.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticlePositionWriter.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
 
-#include <string>
-#include <vector>
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticlePositionWriter_h
+#define __itkParticlePositionWriter_h
 
 #include "itkDataObject.h"
-#include "itkObjectFactory.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
+#include "itkObjectFactory.h"
+#include <vector>
+#include <string>
 
-namespace itk {
-class ITK_EXPORT ParticlePositionWriter : public DataObject {
- public:
+namespace itk
+{
+template <unsigned int VDimension>
+class ITK_EXPORT ParticlePositionWriter : public DataObject
+{
+public:
   typedef ParticlePositionWriter Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef SmartPointer<Self>  Pointer;
+  typedef SmartPointer<const Self>  ConstPointer;
+  typedef WeakPointer<const Self>  ConstWeakPointer;
 
-  typedef Point<double, 3> PointType;
-
+  typedef Point<double, VDimension> PointType;
+  
   itkNewMacro(Self);
 
   itkTypeMacro(ParticlePositionWriter, DataObject);
 
-  void SetInput(const std::vector<PointType>& p) { m_Input = p; }
+  void SetInput( const std::vector<PointType> &p)
+  {
+   m_Input = p;
+  }
 
   itkSetStringMacro(FileName);
   itkGetStringMacro(FileName);
 
-  inline void Write() { this->Update(); }
-  void Update() {
-    // Open the output file.
-    std::ofstream out(m_FileName.c_str());
-
-    if (!out) {
-      itkExceptionMacro("Could not open point file for output: " << m_FileName.c_str());
-    }
-
-    //  out << num_points;
-
-    // Write points.
-    for (typename std::vector<PointType>::const_iterator it = m_Input.begin(); it != m_Input.end(); it++) {
-      for (unsigned int i = 0; i < 3; i++) {
-        out << (*it)[i] << " ";
-      }
-      out << std::endl;
-    }
-
-    out.close();
-  };
-
- protected:
-  ParticlePositionWriter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const {
-    Superclass::PrintSelf(os, indent);
-
+  inline void Write()
+  { this->Update(); }
+  void Update();
+  
+protected:
+  ParticlePositionWriter()  { }
+  void PrintSelf(std::ostream& os, Indent indent) const
+  {
+    Superclass::PrintSelf(os,indent);
+  
     os << indent << "ParticlePositionWriter: " << std::endl;
   }
-  virtual ~ParticlePositionWriter(){};
+  virtual ~ParticlePositionWriter() {};
 
  private:
-  ParticlePositionWriter(const Self&);  // purposely not implemented
-  void operator=(const Self&);          // purposely not implemented
+  ParticlePositionWriter(const Self&); //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
   std::vector<PointType> m_Input;
   std::string m_FileName;
 };
 
-}  // end namespace itk
+} // end namespace itk
+
+#include "itkParticlePositionWriter.cpp"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

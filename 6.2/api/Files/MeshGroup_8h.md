@@ -33,7 +33,8 @@ namespace shapeworks {
 
 
 class MeshGroup {
- public:
+
+public:
   MeshGroup();
 
   MeshGroup(unsigned long num_meshes);
@@ -48,13 +49,14 @@ class MeshGroup {
 
   MeshList& meshes();
 
- private:
+private:
   MeshList meshes_;
+
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

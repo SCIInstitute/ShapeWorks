@@ -23,12 +23,12 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-constpointer)**  |
 | typedef [ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)< TGradientNumericType, VDimension > | **[Superclass](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-superclass)**  |
 | typedef Superclass::GradientNumericType | **[GradientNumericType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-gradientnumerictype)**  |
-| typedef [Superclass::ParticleSystemType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-particlesystemtype) | **[ParticleSystemType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-particlesystemtype)**  |
+| typedef [Superclass::ParticleSystemType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-particlesystemtype) | **[ParticleSystemType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-particlesystemtype)**  |
 | typedef [Superclass::VectorType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-vectortype)**  |
 | typedef Superclass::PointType | **[PointType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-pointtype)**  |
 | typedef Superclass::GradientVectorType | **[GradientVectorType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-gradientvectortype)**  |
 | typedef [ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)< TGradientNumericType, VDimension > | **[MeanCurvatureCacheType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-meancurvaturecachetype)**  |
-| typedef [shapeworks::ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)< TGradientNumericType >::VnlMatrixType | **[VnlMatrixType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-vnlmatrixtype)**  |
+| typedef [ParticleImageDomainWithCurvature](../Classes/classitk_1_1ParticleImageDomainWithCurvature.md)< TGradientNumericType >::VnlMatrixType | **[VnlMatrixType](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#typedef-vnlmatrixtype)**  |
 
 ## Public Functions
 
@@ -102,7 +102,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | void | **[SetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-setspatialsigmacache)**([SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * s) |
 | [SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * | **[GetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-getspatialsigmacache)**() |
 | const [SigmaCacheType](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#typedef-sigmacachetype) * | **[GetSpatialSigmaCache](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-getspatialsigmacache)**() const |
-| void | **[ComputeAngularWeights](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-computeangularweights)**(const PointType & , int , const typename ParticleSystemType::PointVectorType & , const [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) * , std::vector< double > & ) const |
+| void | **[ComputeAngularWeights](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-computeangularweights)**(const PointType & , int , const typename ParticleSystemType::PointVectorType & , const [ParticleDomain](../Classes/classitk_1_1ParticleDomain.md) * , std::vector< double > & ) const |
 
 **Protected Functions inherited from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)**
 
@@ -240,7 +240,7 @@ typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> itk::Pa
 ### typedef VnlMatrixType
 
 ```cpp
-typedef shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType itk::ParticleOmegaGradientFunction< TGradientNumericType, VDimension >::VnlMatrixType;
+typedef ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType itk::ParticleOmegaGradientFunction< TGradientNumericType, VDimension >::VnlMatrixType;
 ```
 
 
@@ -576,4 +576,4 @@ float m_MaxMoveFactor;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

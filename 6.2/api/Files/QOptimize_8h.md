@@ -47,7 +47,7 @@ public:
 
   std::vector<StudioParticles> GetParticles();
 
-  std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms() override;
+  std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
 
   void UpdateExportablePoints() override;
 
@@ -75,4 +75,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

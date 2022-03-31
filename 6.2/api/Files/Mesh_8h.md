@@ -18,7 +18,6 @@ title: Libs/Mesh/Mesh.h
 |                | Name           |
 | -------------- | -------------- |
 | class | **[shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md)**  |
-| class | **[shapeworks::MeshReader](../Classes/classshapeworks_1_1MeshReader.md)** <br>reads mesh (used only by one of the [Mesh](../Classes/classshapeworks_1_1Mesh.md) constructors)  |
 
 
 
@@ -32,44 +31,25 @@ title: Libs/Mesh/Mesh.h
 #include "ImageUtils.h"
 
 class vtkCellLocator;
-class vtkKdTreePointLocator;
+#include <vtkPointData.h>
 
 namespace shapeworks {
 
 class Mesh
 {
 public:
-  enum FieldType { Point, Face };
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { PointToPoint, PointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
   enum SubdivisionType { Butterfly, Loop };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
-  using MeshPoints = vtkSmartPointer<vtkPoints>;
 
-  Mesh(const std::string& pathname);
-
-  Mesh(MeshType meshPtr) : mesh(meshPtr) {
-    if (!mesh) throw std::invalid_argument("null meshPtr");
-    invalidateLocators();
-  }
-
-  Mesh(const Mesh& orig) : mesh(MeshType::New()) {
-    mesh->DeepCopy(orig.mesh);
-    invalidateLocators();
-  }
-
+  Mesh(const std::string& pathname) : mesh(read(pathname)) {}
+  Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
+  Mesh(const Mesh& orig) : mesh(MeshType::New()) { mesh->DeepCopy(orig.mesh); }
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
-
-  Mesh& operator=(const Mesh& orig) {
-    mesh = MeshType::New();
-    mesh->DeepCopy(orig.mesh);
-    invalidateLocators();
-    return *this; }
-
-  Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces);
-
+  Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
 
   Mesh& operator+=(const Mesh& otherMesh);
@@ -111,31 +91,29 @@ public:
 
   Mesh& fixElement();
 
-  std::vector<Field> distance(const Mesh &target, const DistanceMethod method = PointToCell) const;
+  Mesh& distance(const Mesh &target, const DistanceMethod method = PointToPoint);
 
   Mesh& clipClosedSurface(const Plane plane);
 
   Mesh& computeNormals();
 
-  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
+  Point3 closestPoint(const Point3 point);
 
-  int closestPointId(const Point3 point) const;
+  int closestPointId(const Point3 point);
 
-  double geodesicDistance(int source, int target) const;
+  double geodesicDistance(int source, int target);
 
-  Field geodesicDistance(const Point3 landmark) const;
+  Field geodesicDistance(const Point3 landmark);
 
-  Field geodesicDistance(const std::vector<Point3> curve) const;
+  Field geodesicDistance(const std::vector<Point3> curve);
 
-  Field curvature(const CurvatureType type = Principal) const;
+  Field curvature(const CurvatureType type = Principal);
 
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
-  Image toImage(PhysicalRegion region = PhysicalRegion(), Point3 spacing = Point3({1., 1., 1.})) const;
+  Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
-  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(),
-                            const Point3 spacing = Point3({1., 1., 1.}),
-                            const Dims padding = Dims({1, 1, 1})) const;
+  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
   // query functions //
 
@@ -159,15 +137,34 @@ public:
 
   std::vector<std::string> getFieldNames() const;
 
-  Mesh& setField(const std::string name, Array array, const FieldType type);
+  Mesh& setField(std::string name, Array array);
 
-  Field getField(const std::string& name, const FieldType type) const;
+  Mesh& setFieldForFaces(std::string name, Array array);
+
+  template<typename T>
+  vtkSmartPointer<T> getField(const std::string& name) const
+  {
+    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+      throw std::invalid_argument("Mesh has no fields.");
+
+    auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    return rawarr;
+  }
 
   void setFieldValue(const std::string& name, int idx, double value);
 
   double getFieldValue(const std::string& name, int idx) const;
 
   Eigen::VectorXd getMultiFieldValue(const std::string& name, int idx) const;
+
+  std::vector<double> getFieldRange(const std::string& name) const;
+
+  double getFieldMean(const std::string& name) const;
+
+  double getFieldStd(const std::string& name) const;
+
+  // fields of mesh faces //
+  // todo: add support for fields of mesh faces (ex: their normals)
 
   // mesh comparison //
 
@@ -189,53 +186,41 @@ public:
 
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut = false);
+  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
 
-  double getFFCValue(Eigen::Vector3d query) const;
+  double getFFCValue(Eigen::Vector3d query);
+  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query);
 
-  Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-  MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const; // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-  vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
 
-  MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
+  static MeshType read(const std::string& pathname);
+
+  MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
 
-  Mesh& setFieldForFaces(const std::string name, Array array);
-
-  Field getFieldForFaces(const std::string& name) const;
-
-  void invalidateLocators() const;
-
-  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
-  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
-  void updateCellLocator() const;
-
-  mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
-  void updatePointLocator() const;
+  vtkSmartPointer<vtkCellLocator> locator;
 
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, vtkSmartPointer<vtkPoints> points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);
 
-  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh); // similar issues to above
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh);
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const; // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
 
 };
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
-class MeshReader {
-  static Mesh::MeshType read(const std::string& pathname);
-  friend Mesh::Mesh(const std::string& pathname);
-};
+
 
 } // shapeworks
 ```
@@ -243,4 +228,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

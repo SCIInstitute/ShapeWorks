@@ -47,9 +47,9 @@ The MeshManager handles all aspects of mesh generation and caching. It houses th
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 
-namespace shapeworks {
+#include <Libs/Mesh/MeshWarper.h>
 
-class MeshWarper;
+namespace shapeworks {
 
 class MeshManager : public QObject {
 Q_OBJECT
@@ -62,7 +62,7 @@ public:
 
   MeshHandle get_mesh(const MeshWorkItem& item, bool wait = false);
 
-  MeshHandle get_mesh(const Eigen::VectorXd& points, int domain);
+  MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
 
   std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor(int domain);
 
@@ -116,4 +116,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -39,14 +39,15 @@ The MeshGenerator performs the actual work of reconstructing a mesh from a shape
 
 #include "vnl/vnl_vector.h"
 
+#include <Libs/Mesh/MeshWarper.h>
+
 #include <Data/StudioMesh.h>
+#include <Data/QMeshWarper.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWorkQueue.h>
 
 namespace shapeworks {
-
-class QMeshWarper;
 
 class MeshReconstructors {
 public:
@@ -63,7 +64,7 @@ public:
 
   MeshHandle build_mesh(const MeshWorkItem& item);
 
-  MeshHandle build_mesh_from_points(const Eigen::VectorXd& shape, int domain);
+  MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
   MeshHandle build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.0001);
 
@@ -91,4 +92,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

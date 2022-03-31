@@ -2089,11 +2089,7 @@
 <tbody>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-set-reference-mesh">set_reference_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; reference_mesh, const Eigen::MatrixXd &amp; reference_particles, const Eigen::MatrixXd &amp; landmarks ={})<br>Set the reference mesh and particles.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-generate-warp">generate_warp</a></strong>()<br>Generate warp, return true on success.</td>
+<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-set-reference-mesh">set_reference_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; reference_mesh, const Eigen::MatrixXd &amp; reference_particles)<br>Set the reference mesh and particles.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2104,36 +2100,8 @@
 <td><strong><a href="classshapeworks_1_1MeshWarper.html#function-build-mesh">build_mesh</a></strong>(const Eigen::MatrixXd &amp; particles)<br>Build a mesh for a given set of particles.</td>
 </tr>
 <tr>
-<td>Eigen::MatrixXd</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-extract-landmarks">extract_landmarks</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; warped_mesh)<br>Return the landmarks (matrix [Nx3]) from the warped builded mesh.</td>
-</tr>
-<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1MeshWarper.html#function-is-contour">is_contour</a></strong>()<br>Return if set as a contour.</td>
-</tr>
-<tr>
-<td>std::map&lt; int, int &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-landmarks-map">get_landmarks_map</a></strong>()<br>Return the map of landmarks to vertices.</td>
-</tr>
-<tr>
-<td>const Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-warp-matrix">get_warp_matrix</a></strong>() const<br>Return the warp matrix.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-has-bad-particles">has_bad_particles</a></strong>() const<br>Return true if warping has removed any bad particle(s)</td>
-</tr>
-<tr>
-<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-reference-mesh">get_reference_mesh</a></strong>()<br>Return the reference mesh which has been cleaned and vertices added.</td>
-</tr>
-<tr>
-<td>const Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-reference-particles">get_reference_particles</a></strong>() const<br>Return the reference particles.</td>
-</tr>
-<tr>
-<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-prep-mesh">prep_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Prep incoming mesh.</td>
 </tr>
 </tbody>
 </table>
@@ -2159,7 +2127,7 @@
 <p>For overriding to handle progress updates. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWarper.html#function-update-progress">shapeworks::MeshWarper::update_progress</a></p>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:18 -0600</p>
 
               
             </article>

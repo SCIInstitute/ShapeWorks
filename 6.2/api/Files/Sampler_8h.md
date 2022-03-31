@@ -33,7 +33,7 @@ title: Libs/Optimize/ParticleSystem/Sampler.h
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
-#include "ParticleImplicitSurfaceDomain.h"
+#include "itkParticleImplicitSurfaceDomain.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
@@ -96,9 +96,9 @@ public:
      Eigen::Vector3d query;
   };
 
-  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
+  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
-  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem);
+  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
   Sampler();
 
@@ -447,12 +447,10 @@ public:
     else{
         std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
         std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs." << std::endl;
-        throw std::runtime_error("Error computing plane normal");
+        exit (EXIT_FAILURE);
     }
 
   }
-
-  std::vector<FFCType> GetFFCs() { return m_FFCs; }
 
 protected:
 
@@ -499,9 +497,9 @@ protected:
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  itk::ParticleSystem::Pointer m_ParticleSystem;
+  itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-  std::vector<ParticleDomain::Pointer> m_DomainList;
+  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
 
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
@@ -544,7 +542,7 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
   std::vector<std::vector<SphereType>> m_Spheres;
-  std::vector<FFCType> m_FFCs;
+  std::vector<std::vector<FFCType>>  m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
 
   unsigned int m_verbosity;
@@ -556,4 +554,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

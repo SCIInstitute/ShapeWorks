@@ -28,6 +28,8 @@ Inherits from QMainWindow
 | void | **[on_action_quit_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-quit-triggered)**() |
 | void | **[on_action_import_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-triggered)**() |
 | void | **[on_vertical_scroll_bar_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-vertical-scroll-bar-valuechanged)**() |
+| void | **[on_add_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-add-button-clicked)**() |
+| void | **[on_delete_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-delete-button-clicked)**() |
 | void | **[on_action_import_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-mode-triggered)**() |
 | void | **[on_action_groom_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-groom-mode-triggered)**() |
 | void | **[on_action_optimize_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-optimize-mode-triggered)**() |
@@ -73,7 +75,6 @@ Inherits from QMainWindow
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
 | void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(const QString & feature_map) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
-| void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(const QString & image_name) |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
 | void | **[keyboard_shortcuts](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-keyboard-shortcuts)**() |
@@ -172,6 +173,20 @@ void on_action_import_triggered()
 
 ```cpp
 void on_vertical_scroll_bar_valueChanged()
+```
+
+
+### slot on_add_button_clicked
+
+```cpp
+void on_add_button_clicked()
+```
+
+
+### slot on_delete_button_clicked
+
+```cpp
+void on_delete_button_clicked()
 ```
 
 
@@ -504,15 +519,6 @@ void update_feature_map_scale()
 ```
 
 
-### slot image_combo_changed
-
-```cpp
-void image_combo_changed(
-    const QString & image_name
-)
-```
-
-
 ### slot show_splash_screen
 
 ```cpp
@@ -620,4 +626,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

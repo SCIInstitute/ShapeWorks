@@ -27,7 +27,6 @@ Inherits from vtkInteractorStyleTrackballCamera
 | void | **[OnKeyDown](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onkeydown)**() override |
 | void | **[Dolly](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-dolly)**() override |
 | void | **[Rotate](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-rotate)**() override |
-| void | **[OnMouseMove](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onmousemove)**() override |
 
 ## Protected Functions
 
@@ -126,13 +125,6 @@ void Rotate() override
 ```
 
 
-### function OnMouseMove
-
-```cpp
-void OnMouseMove() override
-```
-
-
 ## Protected Functions Documentation
 
 ### function Dolly
@@ -146,4 +138,4 @@ void Dolly(
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

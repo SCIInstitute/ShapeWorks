@@ -2018,15 +2018,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_subjects" class="md-nav__link">
-    function set_subjects
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_originals_present" class="md-nav__link">
-    function get_originals_present
+  <a href="#function-get_segmentations_present" class="md-nav__link">
+    function get_segmentations_present
   </a>
   
 </li>
@@ -2055,13 +2048,6 @@
           <li class="md-nav__item">
   <a href="#function-get_feature_names" class="md-nav__link">
     function get_feature_names
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_image_names" class="md-nav__link">
-    function get_image_names
   </a>
   
 </li>
@@ -2118,69 +2104,6 @@
           <li class="md-nav__item">
   <a href="#function-get_version" class="md-nav__link">
     function get_version
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_landmarks" class="md-nav__link">
-    function get_landmarks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_all_landmark_definitions" class="md-nav__link">
-    function get_all_landmark_definitions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_landmarks_present" class="md-nav__link">
-    function get_landmarks_present
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_landmarks" class="md-nav__link">
-    function set_landmarks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-new_landmark" class="md-nav__link">
-    function new_landmark
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_original_domain_types" class="md-nav__link">
-    function get_original_domain_types
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_groomed_domain_types" class="md-nav__link">
-    function get_groomed_domain_types
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_original_domain_types" class="md-nav__link">
-    function set_original_domain_types
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_groomed_domain_types" class="md-nav__link">
-    function set_groomed_domain_types
   </a>
   
 </li>
@@ -2266,15 +2189,11 @@
 </tr>
 <tr>
 <td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-subjects">get_subjects</a></strong>()<br>Return the Subjects (as a reference)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-subjects">set_subjects</a></strong>(const std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt;&gt; &amp; subjects)<br>Set the Subjects.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-subjects">get_subjects</a></strong>()<br>Return the list of Subjects.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-originals-present">get_originals_present</a></strong>() const<br>Return if originals are present.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-segmentations-present">get_segmentations_present</a></strong>() const<br>Return if segmentations are present.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2294,10 +2213,6 @@
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-image-names">get_image_names</a></strong>()<br>Get image names.</td>
-</tr>
-<tr>
-<td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-group-names">get_group_names</a></strong>()<br>Get group names.</td>
 </tr>
 <tr>
@@ -2310,7 +2225,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-parameters">set_parameters</a></strong>(const std::string &amp; name, <a href="classshapeworks_1_1Parameters.html">Parameters</a> params, std::string domain_name ="")<br>Store parameters based on key.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-set-parameters">set_parameters</a></strong>(const std::string &amp; name, <a href="classshapeworks_1_1Parameters.html">Parameters</a> params, const std::string &amp; domain_name ="")<br>Store parameters based on key.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2327,42 +2242,6 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-version">get_version</a></strong>() const<br>Get the version of the currently loaded project.</td>
-</tr>
-<tr>
-<td>std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-landmarks">get_landmarks</a></strong>(int domain_id)<br>Return the set of landmarks definitions for a particular domain.</td>
-</tr>
-<tr>
-<td>std::vector&lt; std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-all-landmark-definitions">get_all_landmark_definitions</a></strong>()<br>Return all landmark definitions.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-landmarks-present">get_landmarks_present</a></strong>()<br>Return if landmarks are present.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-landmarks">set_landmarks</a></strong>(int domain_id, std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; landmarks)<br>Set landmarks for this project.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-new-landmark">new_landmark</a></strong>(int domain_id)<br>Add a new landmark.</td>
-</tr>
-<tr>
-<td>std::vector&lt; DomainType &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-original-domain-types">get_original_domain_types</a></strong>()<br>Return the original domain types.</td>
-</tr>
-<tr>
-<td>std::vector&lt; DomainType &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-groomed-domain-types">get_groomed_domain_types</a></strong>()<br>Return the groomed domain types.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-original-domain-types">set_original_domain_types</a></strong>(std::vector&lt; DomainType &gt; domain_types)<br>Set the original domain types.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-groomed-domain-types">set_groomed_domain_types</a></strong>(std::vector&lt; DomainType &gt; domain_types)<br>Get the groomed domain types.</td>
 </tr>
 </tbody>
 </table>
@@ -2425,17 +2304,11 @@
 <h3 id="function-get_subjects">function get_subjects</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_subjects</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<p>Return the Subjects (as a reference) </p>
-<h3 id="function-set_subjects">function set_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_subjects</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">subjects</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<p>Return the list of Subjects. </p>
+<h3 id="function-get_segmentations_present">function get_segmentations_present</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_segmentations_present</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
-<p>Set the Subjects. </p>
-<h3 id="function-get_originals_present">function get_originals_present</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_originals_present</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<p>Return if originals are present. </p>
+<p>Return if segmentations are present. </p>
 <h3 id="function-get_groomed_present">function get_groomed_present</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_groomed_present</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
@@ -2452,10 +2325,6 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_feature_names</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get feature names. </p>
-<h3 id="function-get_image_names">function get_image_names</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_names</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Get image names. </p>
 <h3 id="function-get_group_names">function get_group_names</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_group_names</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -2477,7 +2346,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parameters</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">domain_name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Store parameters based on key. </p>
@@ -2499,55 +2368,8 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_version</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Get the version of the currently loaded project. </p>
-<h3 id="function-get_landmarks">function get_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmarks</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Return the set of landmarks definitions for a particular domain. </p>
-<h3 id="function-get_all_landmark_definitions">function get_all_landmark_definitions</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_all_landmark_definitions</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Return all landmark definitions. </p>
-<h3 id="function-get_landmarks_present">function get_landmarks_present</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmarks_present</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Return if landmarks are present. </p>
-<h3 id="function-set_landmarks">function set_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Set landmarks for this project. </p>
-<h3 id="function-new_landmark">function new_landmark</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Add a new landmark. </p>
-<h3 id="function-get_original_domain_types">function get_original_domain_types</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_domain_types</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Return the original domain types. </p>
-<h3 id="function-get_groomed_domain_types">function get_groomed_domain_types</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Return the groomed domain types. </p>
-<h3 id="function-set_original_domain_types">function set_original_domain_types</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_original_domain_types</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Set the original domain types. </p>
-<h3 id="function-set_groomed_domain_types">function set_groomed_domain_types</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_domain_types</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Get the groomed domain types. </p>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:18 -0600</p>
 
               
             </article>

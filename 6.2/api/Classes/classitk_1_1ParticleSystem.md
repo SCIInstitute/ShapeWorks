@@ -13,8 +13,6 @@ A facade class managing interactions with a particle system.  [More...](#detaile
 
 `#include <itkParticleSystem.h>`
 
-Inherits from DataObject
-
 ## Public Types
 
 |                | Name           |
@@ -24,7 +22,7 @@ Inherits from DataObject
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleSystem.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleSystem.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleSystem.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleSystem.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleSystem.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleSystem.md#typedef-constweakpointer)**  |
-| using [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) | **[DomainType](../Classes/classitk_1_1ParticleSystem.md#using-domaintype)**  |
+| typedef [ParticleDomain](../Classes/classitk_1_1ParticleDomain.md) | **[DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype)**  |
 | typedef Point< double, VDimension > | **[PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype)**  |
 | typedef [ParticleNeighborhood](../Classes/classitk_1_1ParticleNeighborhood.md)< VDimension > | **[NeighborhoodType](../Classes/classitk_1_1ParticleSystem.md#typedef-neighborhoodtype)**  |
 | typedef [ParticleContainer](../Classes/classitk_1_1ParticleContainer.md)< [PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) > | **[PointContainerType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointcontainertype)**  |
@@ -64,13 +62,13 @@ Inherits from DataObject
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSystem.md#function-findneighborhoodpoints)**(unsigned int idx, double r, unsigned int d =0) const |
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSystem.md#function-findneighborhoodpoints)**(unsigned int idx, std::vector< double > & w, std::vector< double > & distances, double r, unsigned int d =0) const |
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSystem.md#function-findneighborhoodpoints)**(unsigned int idx, std::vector< double > & w, double r, unsigned int d =0) const |
-| void | **[AddDomain](../Classes/classitk_1_1ParticleSystem.md#function-adddomain)**(DomainType::Pointer input, int threadId =0) |
-| std::vector< DomainType::Pointer >::const_iterator | **[GetDomainsBegin](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsbegin)**() const |
-| std::vector< DomainType::Pointer >::const_iterator | **[GetDomainsEnd](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsend)**() const |
-| [DomainType](../Classes/classitk_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) |
-| [DomainType](../Classes/classitk_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**() |
-| const [DomainType](../Classes/classitk_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) const |
-| const [DomainType](../Classes/classitk_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**() const |
+| void | **[AddDomain](../Classes/classitk_1_1ParticleSystem.md#function-adddomain)**([DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype) * , int threadId =0) |
+| std::vector< typename [DomainType::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) >::const_iterator | **[GetDomainsBegin](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsbegin)**() const |
+| std::vector< typename [DomainType::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) >::const_iterator | **[GetDomainsEnd](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsend)**() const |
+| [DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) |
+| [DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**() |
+| const [DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) const |
+| const [DomainType](../Classes/classitk_1_1ParticleSystem.md#typedef-domaintype) * | **[GetDomain](../Classes/classitk_1_1ParticleSystem.md#function-getdomain)**() const |
 | unsigned int | **[GetNumberOfDomains](../Classes/classitk_1_1ParticleSystem.md#function-getnumberofdomains)**() const |
 | void | **[SetTransform](../Classes/classitk_1_1ParticleSystem.md#function-settransform)**(unsigned int i, const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & , int threadId =0) |
 | void | **[SetTransform](../Classes/classitk_1_1ParticleSystem.md#function-settransform)**(const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & p, int threadId =0) |
@@ -92,7 +90,7 @@ Inherits from DataObject
 | const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInverseTransform](../Classes/classitk_1_1ParticleSystem.md#function-getinversetransform)**() const |
 | const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInversePrefixTransform](../Classes/classitk_1_1ParticleSystem.md#function-getinverseprefixtransform)**(unsigned int i) const |
 | const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInversePrefixTransform](../Classes/classitk_1_1ParticleSystem.md#function-getinverseprefixtransform)**() const |
-| const std::vector< PointContainerType::Pointer > & | **[GetPositions](../Classes/classitk_1_1ParticleSystem.md#function-getpositions)**() const |
+| const std::vector< typename PointContainerType::Pointer > & | **[GetPositions](../Classes/classitk_1_1ParticleSystem.md#function-getpositions)**() const |
 | const PointContainerType::Pointer & | **[GetPositions](../Classes/classitk_1_1ParticleSystem.md#function-getpositions)**(unsigned int d) const |
 | void | **[AddPositionList](../Classes/classitk_1_1ParticleSystem.md#function-addpositionlist)**(const std::vector< [PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) > & , unsigned int d =0, int threadId =0) |
 | [PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[TransformPoint](../Classes/classitk_1_1ParticleSystem.md#function-transformpoint)**(const [PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) & , const [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & ) const |
@@ -120,8 +118,8 @@ Inherits from DataObject
 | | **[ParticleSystem](../Classes/classitk_1_1ParticleSystem.md#function-particlesystem)**() |
 | void | **[PrintSelf](../Classes/classitk_1_1ParticleSystem.md#function-printself)**(std::ostream & os, Indent indent) const |
 | virtual | **[~ParticleSystem](../Classes/classitk_1_1ParticleSystem.md#function-~particlesystem)**() |
-| std::vector< DomainType::Pointer >::iterator | **[GetDomainsBegin](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsbegin)**() |
-| std::vector< DomainType::Pointer >::iterator | **[GetDomainsEnd](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsend)**() |
+| std::vector< typename [DomainType::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) >::iterator | **[GetDomainsBegin](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsbegin)**() |
+| std::vector< typename [DomainType::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) >::iterator | **[GetDomainsEnd](../Classes/classitk_1_1ParticleSystem.md#function-getdomainsend)**() |
 | std::vector< [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetTransformsBegin](../Classes/classitk_1_1ParticleSystem.md#function-gettransformsbegin)**() |
 | std::vector< [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetTransformsEnd](../Classes/classitk_1_1ParticleSystem.md#function-gettransformsend)**() |
 | std::vector< [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetInverseTransformsBegin](../Classes/classitk_1_1ParticleSystem.md#function-getinversetransformsbegin)**() |
@@ -131,15 +129,10 @@ Inherits from DataObject
 | [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInversePrefixTransform](../Classes/classitk_1_1ParticleSystem.md#function-getinverseprefixtransform)**(unsigned int i) |
 | [TransformType](../Classes/classitk_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInversePrefixTransform](../Classes/classitk_1_1ParticleSystem.md#function-getinverseprefixtransform)**() |
 
-## Public Attributes
-
-|                | Name           |
-| -------------- | -------------- |
-| constexpr int | **[VDimension](../Classes/classitk_1_1ParticleSystem.md#variable-vdimension)**  |
-
 ## Detailed Description
 
 ```cpp
+template <unsigned int VDimension =3>
 class itk::ParticleSystem;
 ```
 
@@ -152,7 +145,7 @@ A particle system consists of a set of particle locations and domains in which t
 ### typedef Self
 
 ```cpp
-typedef ParticleSystem itk::ParticleSystem::Self;
+typedef ParticleSystem itk::ParticleSystem< VDimension >::Self;
 ```
 
 
@@ -162,35 +155,35 @@ Standard class typedefs
 ### typedef Superclass
 
 ```cpp
-typedef DataObject itk::ParticleSystem::Superclass;
+typedef DataObject itk::ParticleSystem< VDimension >::Superclass;
 ```
 
 
 ### typedef Pointer
 
 ```cpp
-typedef SmartPointer<Self> itk::ParticleSystem::Pointer;
+typedef SmartPointer<Self> itk::ParticleSystem< VDimension >::Pointer;
 ```
 
 
 ### typedef ConstPointer
 
 ```cpp
-typedef SmartPointer<const Self> itk::ParticleSystem::ConstPointer;
+typedef SmartPointer<const Self> itk::ParticleSystem< VDimension >::ConstPointer;
 ```
 
 
 ### typedef ConstWeakPointer
 
 ```cpp
-typedef WeakPointer<const Self> itk::ParticleSystem::ConstWeakPointer;
+typedef WeakPointer<const Self> itk::ParticleSystem< VDimension >::ConstWeakPointer;
 ```
 
 
-### using DomainType
+### typedef DomainType
 
 ```cpp
-using itk::ParticleSystem::DomainType =  shapeworks::ParticleDomain;
+typedef ParticleDomain itk::ParticleSystem< VDimension >::DomainType;
 ```
 
 
@@ -200,7 +193,7 @@ Define the base domain type.
 ### typedef PointType
 
 ```cpp
-typedef Point<double, VDimension> itk::ParticleSystem::PointType;
+typedef Point<double, VDimension> itk::ParticleSystem< VDimension >::PointType;
 ```
 
 
@@ -210,7 +203,7 @@ Point type used to store particle locations.
 ### typedef NeighborhoodType
 
 ```cpp
-typedef ParticleNeighborhood<VDimension> itk::ParticleSystem::NeighborhoodType;
+typedef ParticleNeighborhood<VDimension> itk::ParticleSystem< VDimension >::NeighborhoodType;
 ```
 
 
@@ -220,7 +213,7 @@ Class used to compute neighborhoods of points. One is associated with each domai
 ### typedef PointContainerType
 
 ```cpp
-typedef ParticleContainer<PointType> itk::ParticleSystem::PointContainerType;
+typedef ParticleContainer<PointType> itk::ParticleSystem< VDimension >::PointContainerType;
 ```
 
 
@@ -230,14 +223,14 @@ Point container type. One is associated with each domain.
 ### typedef PointVectorType
 
 ```cpp
-typedef NeighborhoodType::PointVectorType itk::ParticleSystem::PointVectorType;
+typedef NeighborhoodType::PointVectorType itk::ParticleSystem< VDimension >::PointVectorType;
 ```
 
 
 ### typedef TransformType
 
 ```cpp
-typedef vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> itk::ParticleSystem::TransformType;
+typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> itk::ParticleSystem< VDimension >::TransformType;
 ```
 
 
@@ -247,14 +240,14 @@ Defines a transform class type. One is associated with each domain. Transforms a
 ### typedef VectorType
 
 ```cpp
-typedef vnl_vector_fixed<double, VDimension> itk::ParticleSystem::VectorType;
+typedef vnl_vector_fixed<double, VDimension> itk::ParticleSystem< VDimension >::VectorType;
 ```
 
 
 ### typedef VnlMatrixType
 
 ```cpp
-typedef vnl_matrix<double> itk::ParticleSystem::VnlMatrixType;
+typedef vnl_matrix<double> itk::ParticleSystem< VDimension >::VnlMatrixType;
 ```
 
 
@@ -582,7 +575,7 @@ inline PointVectorType FindNeighborhoodPoints(
 
 ```cpp
 void AddDomain(
-    DomainType::Pointer input,
+    DomainType * ,
     int threadId =0
 )
 ```
@@ -594,7 +587,7 @@ Add a domain to the particle system. This method also allocates space for a list
 ### function GetDomainsBegin
 
 ```cpp
-inline std::vector< DomainType::Pointer >::const_iterator GetDomainsBegin() const
+inline std::vector< typename DomainType::Pointer >::const_iterator GetDomainsBegin() const
 ```
 
 
@@ -604,7 +597,7 @@ Return an iterator that points to the first element of the list of the domains.
 ### function GetDomainsEnd
 
 ```cpp
-inline std::vector< DomainType::Pointer >::const_iterator GetDomainsEnd() const
+inline std::vector< typename DomainType::Pointer >::const_iterator GetDomainsEnd() const
 ```
 
 
@@ -885,7 +878,7 @@ API for the single transform case.
 ### function GetPositions
 
 ```cpp
-inline const std::vector< PointContainerType::Pointer > & GetPositions() const
+inline const std::vector< typename PointContainerType::Pointer > & GetPositions() const
 ```
 
 
@@ -1027,7 +1020,9 @@ inline void SetFixedParticleFlag(
 ```
 
 
-The following methods provide functionality for specifying particle indices that are fixed landmarks. SetPosition() calls to these particle indices will silently fail. For simplicity, only one list of indices is maintained for all dimensions. If particle index n is flagged, for example, then particle index n in all domains is fixed. 
+The following methods provide functionality for specifying particle indices that are fixed landmarks. SetPosition() calls to these particle indices will silently fail. For simplicity, only one list of indices is 
+
+ maintained for all dimensions. If particle index n is flagged, for example, then particle index n in all domains is fixed. 
 
 
 ### function ResetFixedParticleFlag
@@ -1114,7 +1109,7 @@ inline virtual ~ParticleSystem()
 ### function GetDomainsBegin
 
 ```cpp
-inline std::vector< DomainType::Pointer >::iterator GetDomainsBegin()
+inline std::vector< typename DomainType::Pointer >::iterator GetDomainsBegin()
 ```
 
 
@@ -1124,7 +1119,7 @@ Return an iterator that points to the first element of the list of the domains.
 ### function GetDomainsEnd
 
 ```cpp
-inline std::vector< DomainType::Pointer >::iterator GetDomainsEnd()
+inline std::vector< typename DomainType::Pointer >::iterator GetDomainsEnd()
 ```
 
 
@@ -1215,15 +1210,6 @@ inline TransformType & GetInversePrefixTransform()
 API for the single transform case. 
 
 
-## Public Attributes Documentation
-
-### variable VDimension
-
-```cpp
-static constexpr int VDimension = 3;
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

@@ -2010,12 +2010,10 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/DomainType.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/MeshWrapper.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/OptimizationVisualizer.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span><span class="cp"></span>
+
 
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MatrixContainer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
@@ -2035,11 +2033,6 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">Run</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">LoadParameterFile</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SetUpOptimize</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">projectFile</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span><span class="w"></span>
-
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIterationCallbackFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">f</span><span class="p">)</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_iter_callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
@@ -2179,8 +2172,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShowVisualizer</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetShowVisualizer</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">);</span><span class="w"></span>
-
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">();</span><span class="w"></span>
@@ -2229,10 +2220,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintDoneMessage</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vlevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateExportablePoints</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateProject</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// return a checkpoint dir for the current iteration</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">GetCheckpointDir</span><span class="p">();</span><span class="w"></span>
@@ -2341,14 +2328,12 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_iter_callback</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

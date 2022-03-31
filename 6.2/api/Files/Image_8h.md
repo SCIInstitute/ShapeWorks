@@ -35,7 +35,6 @@ title: Libs/Image/Image.h
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <itkStatisticsImageFilter.h>
-#include <itkImageRegionIterator.h>
 
 #include <limits>
 
@@ -51,10 +50,8 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
-  using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   // constructors and assignment operators //
-  Image(const Dims dims);
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
@@ -77,8 +74,6 @@ public:
 
   Image operator-(const Image& other) const;
   Image& operator-=(const Image& other);
-
-  Image operator*(const Image& other) const;
 
   Image operator*(const PixelType x) const;
   Image& operator*=(const PixelType x);
@@ -200,8 +195,6 @@ public:
 
   Coord physicalToLogical(const Point3 &p) const;
 
-  ImageIterator setIterator();
-
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
 
   bool operator==(const Image& other) const { return compare(other); }
@@ -247,4 +240,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

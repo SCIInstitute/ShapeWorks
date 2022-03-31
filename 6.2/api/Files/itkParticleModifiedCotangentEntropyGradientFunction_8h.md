@@ -25,11 +25,26 @@ title: Libs/Optimize/ParticleSystem/itkParticleModifiedCotangentEntropyGradientF
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleModifiedCotangentEntropyGradientFunction.h,v $
+  Date:      $Date: 2017/06/26 $
+  Version:   $Revision: 4 $
+  Author:    $Author: Praful $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleModifiedCotangentEntropyGradientFunction_h
+#define __itkParticleModifiedCotangentEntropyGradientFunction_h
 
 #include "itkParticleEntropyGradientFunction.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImageDomainWithCurvature.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 
@@ -60,7 +75,7 @@ public:
     typedef typename Superclass::PointType PointType;
     typedef typename Superclass::GradientVectorType GradientVectorType;
 
-    typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+    typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
     itkNewMacro(Self);
 
@@ -164,11 +179,20 @@ protected:
 
 } //end namespace
 
+#if ITK_TEMPLATE_EXPLICIT
+# include "Templates/itkParticleModifiedCotangentEntropyGradientFunction+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
+# include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
+#endif
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -20,8 +20,6 @@ Inherits from QObject
 |                | Name           |
 | -------------- | -------------- |
 | void | **[set_feature_auto_scale](../Classes/classshapeworks_1_1Session.md#slot-set-feature-auto-scale)**(bool value) |
-| void | **[set_landmark_drag_mode](../Classes/classshapeworks_1_1Session.md#slot-set-landmark-drag-mode)**(bool mode) |
-| bool | **[get_landmark_drag_mode](../Classes/classshapeworks_1_1Session.md#slot-get-landmark-drag-mode)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1Session.md#slot-handle-clear-cache)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Session.md#slot-handle-new-mesh)**() |
 | void | **[handle_message](../Classes/classshapeworks_1_1Session.md#slot-handle-message)**(QString s) |
@@ -33,18 +31,11 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[data_changed](../Classes/classshapeworks_1_1Session.md#signal-data-changed)**()<br>signal that the data has changed  |
 | void | **[points_changed](../Classes/classshapeworks_1_1Session.md#signal-points-changed)**() |
-| void | **[landmarks_changed](../Classes/classshapeworks_1_1Session.md#signal-landmarks-changed)**() |
-| void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
-| void | **[ffc_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[message](../Classes/classshapeworks_1_1Session.md#signal-message)**(QString ) |
 | void | **[error](../Classes/classshapeworks_1_1Session.md#signal-error)**(QString ) |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
-| void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
-| void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
-| void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
-| void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
 
 ## Public Functions
 
@@ -53,7 +44,7 @@ Inherits from QObject
 | | **[Session](../Classes/classshapeworks_1_1Session.md#function-session)**(QWidget * parent, [Preferences](../Classes/classPreferences.md) & prefs)<br>constructor  |
 | | **[~Session](../Classes/classshapeworks_1_1Session.md#function-~session)**()<br>destructor  |
 | void | **[set_parent](../Classes/classshapeworks_1_1Session.md#function-set-parent)**(QWidget * parent)<br>set QWidget parent  |
-| bool | **[save_project](../Classes/classshapeworks_1_1Session.md#function-save-project)**(QString filename)<br>save project to file  |
+| bool | **[save_project](../Classes/classshapeworks_1_1Session.md#function-save-project)**(std::string filename)<br>save project to file  |
 | bool | **[load_project](../Classes/classshapeworks_1_1Session.md#function-load-project)**(QString filename)<br>load project from file  |
 | bool | **[load_light_project](../Classes/classshapeworks_1_1Session.md#function-load-light-project)**(QString filename)<br>read a lightweight project file  |
 | bool | **[load_xl_project](../Classes/classshapeworks_1_1Session.md#function-load-xl-project)**(QString filename)<br>load a shapeworks project  |
@@ -80,7 +71,7 @@ Inherits from QObject
 | std::string | **[get_default_feature_map](../Classes/classshapeworks_1_1Session.md#function-get-default-feature-map)**() |
 | QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > | **[get_mesh_manager](../Classes/classshapeworks_1_1Session.md#function-get-mesh-manager)**() |
 | [shapeworks::Parameters](../Classes/classshapeworks_1_1Parameters.md) & | **[parameters](../Classes/classshapeworks_1_1Session.md#function-parameters)**() |
-| std::vector< DomainType > | **[get_groomed_domain_types](../Classes/classshapeworks_1_1Session.md#function-get-groomed-domain-types)**() |
+| std::vector< DomainType > | **[get_domain_types](../Classes/classshapeworks_1_1Session.md#function-get-domain-types)**() |
 | double | **[update_auto_glyph_size](../Classes/classshapeworks_1_1Session.md#function-update-auto-glyph-size)**() |
 | double | **[get_auto_glyph_size](../Classes/classshapeworks_1_1Session.md#function-get-auto-glyph-size)**() |
 | void | **[clear_particles](../Classes/classshapeworks_1_1Session.md#function-clear-particles)**()<br>clear particles from session (e.g. groom start, optimize start)  |
@@ -90,46 +81,8 @@ Inherits from QObject
 | void | **[set_feature_range](../Classes/classshapeworks_1_1Session.md#function-set-feature-range)**(double min, double max) |
 | void | **[set_feature_range_min](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-min)**(double value) |
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
-| void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Session.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result) |
-| void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
-| void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
-| void | **[trigger_ffc_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-ffc-changed)**() |
-| void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
-| int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
-| void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
-| int | **[get_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-get-placing-landmark)**() |
-| void | **[set_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-set-landmarks-active)**(bool active) |
-| bool | **[get_landmarks_active](../Classes/classshapeworks_1_1Session.md#function-get-landmarks-active)**() |
-| void | **[set_planes_active](../Classes/classshapeworks_1_1Session.md#function-set-planes-active)**(bool active) |
-| bool | **[get_planes_active](../Classes/classshapeworks_1_1Session.md#function-get-planes-active)**() |
-| void | **[set_show_landmark_labels](../Classes/classshapeworks_1_1Session.md#function-set-show-landmark-labels)**(bool show) |
-| bool | **[get_show_landmark_labels](../Classes/classshapeworks_1_1Session.md#function-get-show-landmark-labels)**() |
-| void | **[set_show_planes](../Classes/classshapeworks_1_1Session.md#function-set-show-planes)**(bool show) |
-| bool | **[get_show_planes](../Classes/classshapeworks_1_1Session.md#function-get-show-planes)**() |
-| void | **[set_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-set-show-landmarks)**(bool show) |
-| bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-get-show-landmarks)**() |
-| bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
-| std::string | **[get_image_name](../Classes/classshapeworks_1_1Session.md#function-get-image-name)**() |
-| void | **[set_image_axis](../Classes/classshapeworks_1_1Session.md#function-set-image-axis)**(QString axis) |
-| Axis | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
-| void | **[set_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-set-image-3d-mode)**(bool mode) |
-| bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
-| void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
-| bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
-| bool | **[has_constraints](../Classes/classshapeworks_1_1Session.md#function-has-constraints)**() |
-| void | **[set_loading](../Classes/classshapeworks_1_1Session.md#function-set-loading)**(bool loading) |
-| bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
-| void | **[set_tool_state](../Classes/classshapeworks_1_1Session.md#function-set-tool-state)**(std::string state) |
-| std::string | **[get_tool_state](../Classes/classshapeworks_1_1Session.md#function-get-tool-state)**() |
-| void | **[set_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-active)**(bool enabled) |
-| bool | **[get_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-active)**() |
-| void | **[set_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-mode-inclusive)**(bool inclusive) |
-| bool | **[get_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-mode-inclusive)**() |
-| void | **[set_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-size)**(double size) |
-| double | **[get_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-size)**() |
-| void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
-| Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
+| Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const vnl_vector< double > & points, int i) |
 
 ## Public Attributes
 
@@ -159,22 +112,6 @@ The [Session](../Classes/classshapeworks_1_1Session.md) class encapsulates every
 void set_feature_auto_scale(
     bool value
 )
-```
-
-
-### slot set_landmark_drag_mode
-
-```cpp
-void set_landmark_drag_mode(
-    bool mode
-)
-```
-
-
-### slot get_landmark_drag_mode
-
-```cpp
-bool get_landmark_drag_mode()
 ```
 
 
@@ -225,27 +162,6 @@ void points_changed()
 ```
 
 
-### signal landmarks_changed
-
-```cpp
-void landmarks_changed()
-```
-
-
-### signal planes_changed
-
-```cpp
-void planes_changed()
-```
-
-
-### signal ffc_changed
-
-```cpp
-void ffc_changed()
-```
-
-
 ### signal update_display
 
 ```cpp
@@ -285,34 +201,6 @@ void feature_range_changed()
 ```
 
 
-### signal update_view_mode
-
-```cpp
-void update_view_mode()
-```
-
-
-### signal image_slice_settings_changed
-
-```cpp
-void image_slice_settings_changed()
-```
-
-
-### signal ffc_paint_mode_changed
-
-```cpp
-void ffc_paint_mode_changed()
-```
-
-
-### signal repaint
-
-```cpp
-void repaint()
-```
-
-
 ## Public Functions Documentation
 
 ### function Session
@@ -348,7 +236,7 @@ set QWidget parent
 
 ```cpp
 bool save_project(
-    QString filename
+    std::string filename
 )
 ```
 
@@ -569,10 +457,10 @@ shapeworks::Parameters & parameters()
 ```
 
 
-### function get_groomed_domain_types
+### function get_domain_types
 
 ```cpp
-std::vector< DomainType > get_groomed_domain_types()
+std::vector< DomainType > get_domain_types()
 ```
 
 
@@ -647,306 +535,6 @@ void set_feature_range_max(
 ```
 
 
-### function handle_ctrl_click
-
-```cpp
-void handle_ctrl_click(
-    PickResult result
-)
-```
-
-
-### function trigger_landmarks_changed
-
-```cpp
-void trigger_landmarks_changed()
-```
-
-
-### function trigger_planes_changed
-
-```cpp
-void trigger_planes_changed()
-```
-
-
-### function trigger_ffc_changed
-
-```cpp
-void trigger_ffc_changed()
-```
-
-
-### function set_active_landmark_domain
-
-```cpp
-void set_active_landmark_domain(
-    int id
-)
-```
-
-
-### function get_active_landmark_domain
-
-```cpp
-int get_active_landmark_domain()
-```
-
-
-### function set_placing_landmark
-
-```cpp
-void set_placing_landmark(
-    int id
-)
-```
-
-
-### function get_placing_landmark
-
-```cpp
-int get_placing_landmark()
-```
-
-
-### function set_landmarks_active
-
-```cpp
-void set_landmarks_active(
-    bool active
-)
-```
-
-
-### function get_landmarks_active
-
-```cpp
-bool get_landmarks_active()
-```
-
-
-### function set_planes_active
-
-```cpp
-void set_planes_active(
-    bool active
-)
-```
-
-
-### function get_planes_active
-
-```cpp
-bool get_planes_active()
-```
-
-
-### function set_show_landmark_labels
-
-```cpp
-void set_show_landmark_labels(
-    bool show
-)
-```
-
-
-### function get_show_landmark_labels
-
-```cpp
-bool get_show_landmark_labels()
-```
-
-
-### function set_show_planes
-
-```cpp
-void set_show_planes(
-    bool show
-)
-```
-
-
-### function get_show_planes
-
-```cpp
-bool get_show_planes()
-```
-
-
-### function set_show_landmarks
-
-```cpp
-void set_show_landmarks(
-    bool show
-)
-```
-
-
-### function get_show_landmarks
-
-```cpp
-bool get_show_landmarks()
-```
-
-
-### function set_image_name
-
-```cpp
-bool set_image_name(
-    std::string image_name
-)
-```
-
-
-### function get_image_name
-
-```cpp
-std::string get_image_name()
-```
-
-
-### function set_image_axis
-
-```cpp
-void set_image_axis(
-    QString axis
-)
-```
-
-
-### function get_image_axis
-
-```cpp
-Axis get_image_axis()
-```
-
-
-### function set_image_3d_mode
-
-```cpp
-void set_image_3d_mode(
-    bool mode
-)
-```
-
-
-### function get_image_3d_mode
-
-```cpp
-bool get_image_3d_mode()
-```
-
-
-### function set_image_share_window_and_level
-
-```cpp
-void set_image_share_window_and_level(
-    bool enabled
-)
-```
-
-
-### function get_image_share_window_and_level
-
-```cpp
-bool get_image_share_window_and_level()
-```
-
-
-### function has_constraints
-
-```cpp
-bool has_constraints()
-```
-
-
-### function set_loading
-
-```cpp
-void set_loading(
-    bool loading
-)
-```
-
-
-### function is_loading
-
-```cpp
-bool is_loading()
-```
-
-
-### function set_tool_state
-
-```cpp
-void set_tool_state(
-    std::string state
-)
-```
-
-
-### function get_tool_state
-
-```cpp
-std::string get_tool_state()
-```
-
-
-### function set_ffc_paint_active
-
-```cpp
-void set_ffc_paint_active(
-    bool enabled
-)
-```
-
-
-### function get_ffc_paint_active
-
-```cpp
-bool get_ffc_paint_active()
-```
-
-
-### function set_ffc_paint_mode_inclusive
-
-```cpp
-void set_ffc_paint_mode_inclusive(
-    bool inclusive
-)
-```
-
-
-### function get_ffc_paint_mode_inclusive
-
-```cpp
-bool get_ffc_paint_mode_inclusive()
-```
-
-
-### function set_ffc_paint_size
-
-```cpp
-void set_ffc_paint_size(
-    double size
-)
-```
-
-
-### function get_ffc_paint_size
-
-```cpp
-double get_ffc_paint_size()
-```
-
-
-### function trigger_repaint
-
-```cpp
-void trigger_repaint()
-```
-
-
 ### function is_supported_file_format
 
 ```cpp
@@ -960,7 +548,7 @@ static bool is_supported_file_format(
 
 ```cpp
 static Point3 get_point(
-    const Eigen::VectorXd & points,
+    const vnl_vector< double > & points,
     int i
 )
 ```
@@ -1005,4 +593,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

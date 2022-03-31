@@ -2017,20 +2017,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setupoptimize" class="md-nav__link">
-    function SetUpOptimize
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setproject" class="md-nav__link">
-    function SetProject
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-setiterationcallbackfunction" class="md-nav__link">
     function SetIterationCallbackFunction
   </a>
@@ -2653,13 +2639,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-transformpoint" class="md-nav__link">
-    function TransformPoint
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2900,20 +2879,6 @@
           <li class="md-nav__item">
   <a href="#function-updateexportablepoints" class="md-nav__link">
     function UpdateExportablePoints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getprocrustestransforms" class="md-nav__link">
-    function GetProcrustesTransforms
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-updateproject" class="md-nav__link">
-    function UpdateProject
   </a>
   
 </li>
@@ -3519,13 +3484,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#variable-project_" class="md-nav__link">
-    variable project_
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3600,14 +3558,6 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-loadparameterfile">LoadParameterFile</a></strong>(std::string filename)<br>Load a parameter file.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setupoptimize">SetUpOptimize</a></strong>(ProjectHandle projectFile)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setproject">SetProject</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)<br>Set the Projects.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3965,10 +3915,6 @@
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getshowvisualizer">GetShowVisualizer</a></strong>()</td>
 </tr>
-<tr>
-<td>vnl_vector_fixed&lt; double, 3 &gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-transformpoint">TransformPoint</a></strong>(int domain, vnl_vector_fixed&lt; double, 3 &gt; input)<br>transform a point if necessary</td>
-</tr>
 </tbody>
 </table>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -4111,14 +4057,6 @@
 <tr>
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-updateexportablepoints">UpdateExportablePoints</a></strong>()</td>
-</tr>
-<tr>
-<td>virtual std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getprocrustestransforms">GetProcrustesTransforms</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-updateproject">UpdateProject</a></strong>()</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -4467,10 +4405,6 @@
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer">visualizer</a></strong></td>
 </tr>
-<tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-project-">project_</a></strong></td>
-</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
@@ -4508,17 +4442,6 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Load a parameter file. </p>
-<h3 id="function-setupoptimize">function SetUpOptimize</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">SetUpOptimize</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">projectFile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-setproject">function SetProject</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProject</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Set the Projects. </p>
 <h3 id="function-setiterationcallbackfunction">function SetIterationCallbackFunction</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallbackFunction</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="w"></span>
@@ -5002,13 +4925,6 @@
 <h3 id="function-getshowvisualizer">function GetShowVisualizer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetShowVisualizer</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-transformpoint">function TransformPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>transform a point if necessary </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"></span>
@@ -5144,13 +5060,6 @@
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateExportablePoints</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-updateexportablepoints">shapeworks::QOptimize::UpdateExportablePoints</a></p>
-<h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-getprocrustestransforms">shapeworks::QOptimize::GetProcrustesTransforms</a></p>
-<h3 id="function-updateproject">function UpdateProject</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProject</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
 <h3 id="function-getcheckpointdir">function GetCheckpointDir</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GetCheckpointDir</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -5404,11 +5313,8 @@
 <h3 id="variable-visualizer">variable visualizer</h3>
 <div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-project_">variable project_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:16 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:18 -0600</p>
 
               
             </article>

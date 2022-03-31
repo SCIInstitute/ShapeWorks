@@ -26,7 +26,6 @@ title: Studio/src/Data/StudioLog.h
 |  | **[STUDIO_LOG_STACK](../Files/StudioLog_8h.md#define-studio-log-stack)**(message) <br>Log stack macro.  |
 |  | **[STUDIO_LOG_MESSAGE](../Files/StudioLog_8h.md#define-studio-log-message)**(message) <br>Log message macro.  |
 |  | **[STUDIO_LOG_ERROR](../Files/StudioLog_8h.md#define-studio-log-error)**(message) <br>Log error macro.  |
-|  | **[STUDIO_SHOW_ERROR](../Files/StudioLog_8h.md#define-studio-show-error)**(message) <br>Log show error macro.  |
 |  | **[STUDIO_CLOSE_LOG](../Files/StudioLog_8h.md#define-studio-close-log)**() <br>Close session macro.  |
 |  | **[STUDIO_FLUSH_LOG](../Files/StudioLog_8h.md#define-studio-flush-log)**() <br>Close session macro.  |
 
@@ -41,7 +40,7 @@ title: Studio/src/Data/StudioLog.h
 #define STUDIO_LOG_STACK(
     message
 )
-shapeworks::StudioLog::Instance().log_stack(message)
+shapeworks::StudioLog::Instance().log_stack( message )
 ```
 
 Log stack macro. 
@@ -52,7 +51,7 @@ Log stack macro.
 #define STUDIO_LOG_MESSAGE(
     message
 )
-shapeworks::StudioLog::Instance().log_message(message, __LINE__, __FILE__)
+shapeworks::StudioLog::Instance().log_message( message, __LINE__, __FILE__ )
 ```
 
 Log message macro. 
@@ -63,21 +62,10 @@ Log message macro.
 #define STUDIO_LOG_ERROR(
     message
 )
-shapeworks::StudioLog::Instance().log_error(message, __LINE__, __FILE__)
+shapeworks::StudioLog::Instance().log_error( message, __LINE__, __FILE__ )
 ```
 
 Log error macro. 
-
-### define STUDIO_SHOW_ERROR
-
-```cpp
-#define STUDIO_SHOW_ERROR(
-    message
-)
-shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
-```
-
-Log show error macro. 
 
 ### define STUDIO_CLOSE_LOG
 
@@ -106,17 +94,16 @@ Close session macro.
 ```cpp
 #pragma once
 
-#include <QObject>
-#include <QString>
-#include <fstream>
 #include <string>
+#include <fstream>
+#include <QString>
 
 namespace shapeworks {
 
-class StudioLog : public QObject {
-  Q_OBJECT;
+class StudioLog {
 
- public:
+public:
+
   StudioLog();
 
   static StudioLog& Instance();
@@ -129,8 +116,6 @@ class StudioLog : public QObject {
 
   void log_error(QString message, const int line, const char* file);
 
-  void show_error(QString message, const int line, const char* file);
-
   void log_debug(QString message, const int line, const char* file);
 
   void close_log();
@@ -141,15 +126,13 @@ class StudioLog : public QObject {
 
   QString get_log_filename();
 
- Q_SIGNALS:
-  void error(QString message);
+private:
 
- private:
-  QString create_header(const int line, const char* filename);
+  QString create_header(const int line, const char* filename );
 
   QString get_current_datetime();
 
-  std::ofstream log_;  
+  std::ofstream log_; 
 
   QString log_filename_;
 
@@ -158,21 +141,26 @@ class StudioLog : public QObject {
   static const QString log_datetime_format_;
 };
 
-#define STUDIO_LOG_STACK(message) shapeworks::StudioLog::Instance().log_stack(message)
 
-#define STUDIO_LOG_MESSAGE(message) shapeworks::StudioLog::Instance().log_message(message, __LINE__, __FILE__)
 
-#define STUDIO_LOG_ERROR(message) shapeworks::StudioLog::Instance().log_error(message, __LINE__, __FILE__)
+#define STUDIO_LOG_STACK(message) \
+  shapeworks::StudioLog::Instance().log_stack( message )
 
-#define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
+#define STUDIO_LOG_MESSAGE(message) \
+  shapeworks::StudioLog::Instance().log_message( message, __LINE__, __FILE__ )
 
-#define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();
+#define STUDIO_LOG_ERROR(message) \
+  shapeworks::StudioLog::Instance().log_error( message, __LINE__, __FILE__ )
 
-#define STUDIO_FLUSH_LOG() shapeworks::StudioLog::Instance().flush_log();
-}  // namespace shapeworks
+#define STUDIO_CLOSE_LOG() \
+  shapeworks::StudioLog::Instance().close_log();
+
+#define STUDIO_FLUSH_LOG() \
+  shapeworks::StudioLog::Instance().flush_log();
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

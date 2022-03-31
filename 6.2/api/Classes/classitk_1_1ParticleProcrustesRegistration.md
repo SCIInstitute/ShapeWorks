@@ -24,7 +24,7 @@ Inherits from DataObject
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-constweakpointer)**  |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-particlesystemtype)**  |
 | typedef [ParticleSystemType::PointType](../Classes/classitk_1_1ParticleSystem.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleProcrustesRegistration.md#typedef-pointtype)**  |
 
 ## Public Functions
@@ -108,7 +108,7 @@ typedef WeakPointer<const Self> itk::ParticleProcrustesRegistration< VDimension 
 ### typedef ParticleSystemType
 
 ```cpp
-typedef ParticleSystem itk::ParticleProcrustesRegistration< VDimension >::ParticleSystemType;
+typedef ParticleSystem<VDimension> itk::ParticleProcrustesRegistration< VDimension >::ParticleSystemType;
 ```
 
 
@@ -305,4 +305,4 @@ inline void PrintSelf(
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

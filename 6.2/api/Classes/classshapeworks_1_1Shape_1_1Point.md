@@ -13,13 +13,6 @@ TODO: replace this wherever it is used.
 
 `#include <Shape.h>`
 
-## Public Functions
-
-|                | Name           |
-| -------------- | -------------- |
-| | **[Point](../Classes/classshapeworks_1_1Shape_1_1Point.md#function-point)**() |
-| | **[Point](../Classes/classshapeworks_1_1Shape_1_1Point.md#function-point)**(double _x, double _y, double _z) |
-
 ## Public Attributes
 
 |                | Name           |
@@ -27,26 +20,6 @@ TODO: replace this wherever it is used.
 | double | **[x](../Classes/classshapeworks_1_1Shape_1_1Point.md#variable-x)**  |
 | double | **[y](../Classes/classshapeworks_1_1Shape_1_1Point.md#variable-y)**  |
 | double | **[z](../Classes/classshapeworks_1_1Shape_1_1Point.md#variable-z)**  |
-
-## Public Functions Documentation
-
-### function Point
-
-```cpp
-inline Point()
-```
-
-
-### function Point
-
-```cpp
-inline Point(
-    double _x,
-    double _y,
-    double _z
-)
-```
-
 
 ## Public Attributes Documentation
 
@@ -73,4 +46,4 @@ double z;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

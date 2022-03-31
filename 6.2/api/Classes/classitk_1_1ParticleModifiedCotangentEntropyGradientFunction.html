@@ -2283,7 +2283,7 @@
 <td><strong><a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#typedef-gradientvectortype">GradientVectorType</a></strong></td>
 </tr>
 <tr>
-<td>typedef <a href="classshapeworks_1_1ParticleImageDomainWithCurvature.html">shapeworks::ParticleImageDomainWithCurvature</a>&lt; TGradientNumericType &gt;::VnlMatrixType</td>
+<td>typedef <a href="classitk_1_1ParticleImageDomainWithCurvature.html">ParticleImageDomainWithCurvature</a>&lt; TGradientNumericType &gt;::VnlMatrixType</td>
 <td><strong><a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#typedef-vnlmatrixtype">VnlMatrixType</a></strong></td>
 </tr>
 </tbody>
@@ -2432,7 +2432,7 @@
 </tr>
 <tr>
 <td>virtual double</td>
-<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-estimatesigma">EstimateSigma</a></strong>(unsigned int idx, const typename ParticleSystemType::PointVectorType &amp; neighborhood, const <a href="classshapeworks_1_1ParticleDomain.html">shapeworks::ParticleDomain</a> * domain, const std::vector&lt; double &gt; &amp; weights, const PointType &amp; pos, double initial_sigma, double precision, int &amp; err) const</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-estimatesigma">EstimateSigma</a></strong>(unsigned int idx, const typename ParticleSystemType::PointVectorType &amp; neighborhood, const <a href="classitk_1_1ParticleDomain.html">ParticleDomain</a> * domain, const std::vector&lt; double &gt; &amp; weights, const PointType &amp; pos, double initial_sigma, double precision, int &amp; err) const</td>
 </tr>
 <tr>
 <td>TGradientNumericType</td>
@@ -2484,7 +2484,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-computeangularweights">ComputeAngularWeights</a></strong>(const PointType &amp; , int , const typename ParticleSystemType::PointVectorType &amp; , const <a href="classshapeworks_1_1ParticleDomain.html">shapeworks::ParticleDomain</a> * , std::vector&lt; double &gt; &amp; ) const</td>
+<td><strong><a href="classitk_1_1ParticleEntropyGradientFunction.html#function-computeangularweights">ComputeAngularWeights</a></strong>(const PointType &amp; , int , const typename ParticleSystemType::PointVectorType &amp; , const <a href="classitk_1_1ParticleDomain.html">ParticleDomain</a> * , std::vector&lt; double &gt; &amp; ) const</td>
 </tr>
 </tbody>
 </table>
@@ -2654,7 +2654,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradientVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientVectorType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
@@ -2775,7 +2775,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_GlobalSigma</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:16 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:18 -0600</p>
 
               
             </article>

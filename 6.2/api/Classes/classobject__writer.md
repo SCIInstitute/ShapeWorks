@@ -107,7 +107,7 @@ Write the file.
 ### function Update
 
 ```cpp
-inline void Update()
+void Update()
 ```
 
 
@@ -127,4 +127,4 @@ inline virtual ~object_writer()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

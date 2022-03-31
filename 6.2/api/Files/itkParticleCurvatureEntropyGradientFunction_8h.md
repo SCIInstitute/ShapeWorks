@@ -25,11 +25,26 @@ title: Libs/Optimize/ParticleSystem/itkParticleCurvatureEntropyGradientFunction.
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleCurvatureEntropyGradientFunction.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleCurvatureEntropyGradientFunction_h
+#define __itkParticleCurvatureEntropyGradientFunction_h
 
 #include "itkParticleEntropyGradientFunction.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImageDomainWithCurvature.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 
@@ -55,7 +70,7 @@ public:
   
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
-  typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   itkNewMacro(Self);
 
@@ -107,7 +122,7 @@ public:
     //  this->ComputeKappaValues();
   }
 
-  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
+  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
                                 const std::vector<double> &weights, const std::vector<double> &distances,
                                 const PointType &pos, double initial_sigma,  double precision,  int &err, double &avgKappa) const;
 
@@ -194,11 +209,20 @@ protected:
 
 } //end namespace
 
+#if ITK_TEMPLATE_EXPLICIT
+# include "Templates/itkParticleCurvatureEntropyGradientFunction+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
+# include "itkParticleCurvatureEntropyGradientFunction.txx"
+#endif
 
 #include "itkParticleCurvatureEntropyGradientFunction.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

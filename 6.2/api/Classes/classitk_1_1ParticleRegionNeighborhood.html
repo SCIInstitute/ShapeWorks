@@ -2011,13 +2011,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-domaintype" class="md-nav__link">
-    using DomainType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#typedef-pointtype" class="md-nav__link">
     typedef PointType
   </a>
@@ -2027,6 +2020,13 @@
           <li class="md-nav__item">
   <a href="#typedef-pointcontainertype" class="md-nav__link">
     typedef PointContainerType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typedef-domaintype" class="md-nav__link">
+    typedef DomainType
   </a>
   
 </li>
@@ -2288,16 +2288,16 @@
 <td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#typedef-constweakpointer">ConstWeakPointer</a></strong></td>
 </tr>
 <tr>
-<td>using <a href="classshapeworks_1_1ParticleDomain.html">shapeworks::ParticleDomain</a></td>
-<td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#using-domaintype">DomainType</a></strong></td>
-</tr>
-<tr>
 <td>typedef <a href="classitk_1_1ParticleNeighborhood.html#typedef-pointtype">Superclass::PointType</a></td>
 <td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#typedef-pointtype">PointType</a></strong></td>
 </tr>
 <tr>
 <td>typedef <a href="classitk_1_1ParticleNeighborhood.html#typedef-pointcontainertype">Superclass::PointContainerType</a></td>
 <td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#typedef-pointcontainertype">PointContainerType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classitk_1_1ParticleNeighborhood.html#typedef-domaintype">Superclass::DomainType</a></td>
+<td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#typedef-domaintype">DomainType</a></strong></td>
 </tr>
 <tr>
 <td>typedef <a href="classitk_1_1ParticleNeighborhood.html#typedef-pointvectortype">Superclass::PointVectorType</a></td>
@@ -2351,7 +2351,7 @@
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#function-setdomain">SetDomain</a></strong>(DomainType::Pointer p) override</td>
+<td><strong><a href="classitk_1_1ParticleRegionNeighborhood.html#function-setdomain">SetDomain</a></strong>(<a href="classitk_1_1ParticleDomain.html">DomainType</a> * p)</td>
 </tr>
 <tr>
 <td></td>
@@ -2440,8 +2440,12 @@
 <td><strong><a href="classitk_1_1ParticleNeighborhood.html#function-itkgetconstobjectmacro">itkGetConstObjectMacro</a></strong>(PointContainer , <a href="classitk_1_1ParticleNeighborhood.html#typedef-pointcontainertype">PointContainerType</a> )</td>
 </tr>
 <tr>
-<td>DomainType::Pointer</td>
-<td><strong><a href="classitk_1_1ParticleNeighborhood.html#function-getdomain">GetDomain</a></strong>() const</td>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleNeighborhood.html#function-itksetobjectmacro">itkSetObjectMacro</a></strong>(Domain , <a href="classitk_1_1ParticleNeighborhood.html#typedef-domaintype">DomainType</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classitk_1_1ParticleNeighborhood.html#function-itkgetconstobjectmacro">itkGetConstObjectMacro</a></strong>(Domain , <a href="classitk_1_1ParticleNeighborhood.html#typedef-domaintype">DomainType</a> )</td>
 </tr>
 </tbody>
 </table>
@@ -2486,15 +2490,15 @@
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="using-domaintype">using DomainType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DomainType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>Inherited typedefs from parent class. </p>
 <h3 id="typedef-pointcontainertype">typedef PointContainerType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointContainerType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="typedef-domaintype">typedef DomainType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="typedef-pointvectortype">typedef PointVectorType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
@@ -2540,10 +2544,9 @@
 <p>Compile a list of points that are within a specified radius of a given point. This implementation uses a PowerOfTwoTree to sort points according to location. </p>
 <h3 id="function-setdomain">function SetDomain</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<span class="w">    </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleNeighborhood.html#function-setdomain">itk::ParticleNeighborhood::SetDomain</a></p>
 <p>Override SetDomain so that we can grab the region extent info and construct our tree. </p>
 <h3 id="function-itksetmacro">function itkSetMacro</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itkSetMacro</span><span class="p">(</span><span class="w"></span>
@@ -2606,7 +2609,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_TreeLevels</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:16 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:18 -0600</p>
 
               
             </article>

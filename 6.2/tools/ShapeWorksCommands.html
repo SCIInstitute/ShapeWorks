@@ -897,6 +897,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#isolate" class="md-nav__link">
+    isolate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#multiply" class="md-nav__link">
     multiply
   </a>
@@ -1099,20 +1106,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cvd-decimate" class="md-nav__link">
-    cvd-decimate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#decimate" class="md-nav__link">
-    decimate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#distance" class="md-nav__link">
     distance
   </a>
@@ -1255,6 +1248,20 @@
           <li class="md-nav__item">
   <a href="#reflect-mesh" class="md-nav__link">
     reflect-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh-percent" class="md-nav__link">
+    remesh-percent
   </a>
   
 </li>
@@ -2796,6 +2803,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#isolate" class="md-nav__link">
+    isolate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#multiply" class="md-nav__link">
     multiply
   </a>
@@ -2998,20 +3012,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cvd-decimate" class="md-nav__link">
-    cvd-decimate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#decimate" class="md-nav__link">
-    decimate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#distance" class="md-nav__link">
     distance
   </a>
@@ -3154,6 +3154,20 @@
           <li class="md-nav__item">
   <a href="#reflect-mesh" class="md-nav__link">
     reflect-mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh-percent" class="md-nav__link">
+    remesh-percent
   </a>
   
 </li>
@@ -3573,6 +3587,15 @@
 <p><strong>--max=DOUBLE:</strong> Maximum value of window [default: 0].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="isolate">isolate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  isolate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> finds the largest object in a binary segmentation and removes all other objects  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
 <h3 id="multiply">multiply</h3>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>shapeworks  multiply [args]...
@@ -3899,28 +3922,6 @@
 <p><strong>--backsearchradius=DOUBLE:</strong>  Max distance of a back-intersection [default: 0].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
-<h3 id="cvd-decimate">cvd-decimate</h3>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>shapeworks  cvd-decimate [args]...
-</code></pre></div>
-<p><strong>Description:</strong> applies cvd (centroidal voronoi diagram) decimation filter  </p>
-<p><strong>Options:</strong></p>
-<p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--percentage=DOUBLE:</strong> Percentage of target number of clusters/vertices [default: 0.5].  </p>
-<p><a href="#top">Back to Top</a></p>
-<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
-<h3 id="decimate">decimate</h3>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>shapeworks  decimate [args]...
-</code></pre></div>
-<p><strong>Description:</strong> applies filter to reduce number of triangles in mesh  </p>
-<p><strong>Options:</strong></p>
-<p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--reduction=DOUBLE:</strong> Percent reduction of total number of polygons [default: 0.5].</p>
-<p><strong>--angle=DOUBLE:</strong> Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: 15].</p>
-<p><strong>--preservetopology=BOOL:</strong>  Whether to preserve topology [default: true].  </p>
-<p><a href="#top">Back to Top</a></p>
-<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="distance">distance</h3>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>shapeworks  distance [args]...
@@ -4147,6 +4148,28 @@
 <p><strong>-z DOUBLE, --originz=DOUBLE:</strong>  Origin about which reflection occurs in z-direction [default: 0].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh">remesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=DOUBLE:</strong> Target number of vertices.</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="remesh-percent">remesh-percent</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  remesh-percent [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--percentage=DOUBLE:</strong> Target percentage number of vertices</p>
+<p><strong>--adaptivity=DOUBLE:</strong> 0-2, low adaptivity to high adaptivity  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="scale-mesh">scale-mesh</h3>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>shapeworks  scale-mesh [args]...
@@ -4247,7 +4270,8 @@
 <p><strong>Description:</strong> writes the current mesh  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of file to write.  </p>
+<p><strong>--name=STRING:</strong> Name of file to write.</p>
+<p><strong>--binary=BOOL:</strong> Whether to write file as binary.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h2 id="optimize-commands">Optimize Commands</h2>

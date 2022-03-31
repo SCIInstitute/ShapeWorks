@@ -1919,13 +1919,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-attributes" class="md-nav__link">
-    Public Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
@@ -2017,54 +2010,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-get_largest_dimension_size" class="md-nav__link">
-    function get_largest_dimension_size
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_or_create_array" class="md-nav__link">
-    function get_or_create_array
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-paint_ffc" class="md-nav__link">
-    function paint_ffc
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-has_ffc_paint" class="md-nav__link">
-    function has_ffc_paint
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-attributes-documentation" class="md-nav__link">
-    Public Attributes Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Attributes Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#variable-ffc_paint" class="md-nav__link">
-    variable FFC_PAINT
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2142,38 +2087,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-interpolate-scalars-to-mesh">interpolate_scalars_to_mesh</a></strong>(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-get-largest-dimension-size">get_largest_dimension_size</a></strong>()<br>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)</td>
-</tr>
-<tr>
-<td>vtkFloatArray *</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-get-or-create-array">get_or_create_array</a></strong>(std::string name, float default_value)<br>Get or create and return an array with a given name.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-paint-ffc">paint_ffc</a></strong>(double world_pos[], double radius, bool inclusive)<br>Paint free form constraint.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-has-ffc-paint">has_ffc_paint</a></strong>()<br>Does this mesh have free form constraint paint?</td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-attributes">Public Attributes</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>constexpr const char *const</td>
-<td><strong><a href="classshapeworks_1_1StudioMesh.html#variable-ffc-paint">FFC_PAINT</a></strong></td>
+<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-interpolate-scalars-to-mesh">interpolate_scalars_to_mesh</a></strong>(std::string name, vnl_vector&lt; double &gt; positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.</td>
 </tr>
 </tbody>
 </table>
@@ -2235,40 +2149,13 @@
 <h3 id="function-interpolate_scalars_to_mesh">function interpolate_scalars_to_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">scalar_values</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Interpolation scalars at positions to this mesh. </p>
-<h3 id="function-get_largest_dimension_size">function get_largest_dimension_size</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_largest_dimension_size</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100) </p>
-<h3 id="function-get_or_create_array">function get_or_create_array</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_or_create_array</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">default_value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Get or create and return an array with a given name. </p>
-<h3 id="function-paint_ffc">function paint_ffc</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint_ffc</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[],</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Paint free form constraint. </p>
-<h3 id="function-has_ffc_paint">function has_ffc_paint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_ffc_paint</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Does this mesh have free form constraint paint? </p>
-<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
-<h3 id="variable-ffc_paint">variable FFC_PAINT</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

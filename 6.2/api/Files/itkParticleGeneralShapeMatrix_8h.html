@@ -1980,7 +1980,8 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#ifndef ITKPARTICLEGENERALSHAPEMATRIX_H</span>
+<span class="cp">#define ITKPARTICLEGENERALSHAPEMATRIX_H</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleAttribute.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span><span class="cp"></span>
@@ -1988,8 +1989,8 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleContainer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix.h&quot;</span><span class="cp"></span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImplicitSurfaceDomain.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradients.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleImplicitSurfaceDomain.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleImageDomainWithGradients.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;TriMesh.h&quot;</span><span class="cp"></span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleSystem.h&quot;</span><span class="cp"></span>
@@ -2007,7 +2008,7 @@
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">)</span><span class="w"></span>
 
@@ -2130,7 +2131,7 @@
 <span class="w">            </span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">posLocal</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
 <span class="w">            </span><span class="n">pt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">posLocal</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w"></span>
 <span class="w">            </span><span class="n">fVals</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
-<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetDomain</span><span class="p">(</span><span class="n">d</span><span class="p">));</span><span class="w"></span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetDomain</span><span class="p">(</span><span class="n">d</span><span class="p">));</span><span class="w"></span>
 <span class="w">            </span><span class="n">meshFIM</span><span class="w"> </span><span class="o">*</span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">domain</span><span class="o">-&gt;</span><span class="n">GetMesh</span><span class="p">();</span><span class="w"></span>
 <span class="w">            </span><span class="n">ptr</span><span class="o">-&gt;</span><span class="n">GetFeatureValues</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="n">fVals</span><span class="p">);</span><span class="w"></span>
 <span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">aa</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_AttributesPerDomain</span><span class="p">[</span><span class="n">dom</span><span class="p">];</span><span class="w"> </span><span class="n">aa</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
@@ -2239,9 +2240,11 @@
 <span class="p">};</span><span class="w"> </span><span class="c1">// end class</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace</span>
+
+<span class="cp">#endif </span><span class="c1">// ITKPARTICLEGENERALSHAPEMATRIX_H</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

@@ -25,11 +25,26 @@ title: Libs/Optimize/ParticleSystem/itkParticleEntropyGradientFunction.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleEntropyGradientFunction.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleEntropyGradientFunction_h
+#define __itkParticleEntropyGradientFunction_h
 
 #include "itkParticleVectorFunction.h"
 #include "itkParticleContainerArrayAttribute.h"
-#include "ParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithGradients.h"
 #include <vector>
 
 namespace itk
@@ -80,7 +95,7 @@ public:
   }
     
   
-  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
+  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
                                 const std::vector<double> &weights,
                                     const PointType &pos, double initial_sigma,  double precision,  int &err) const;
 
@@ -116,7 +131,7 @@ public:
   void ComputeAngularWeights(const PointType &,
                              int,
                              const typename ParticleSystemType::PointVectorType &,
-                             const shapeworks::ParticleDomain *,
+                             const ParticleDomain *,
                              std::vector<double> &) const;
 
 
@@ -169,9 +184,11 @@ protected:
 #endif
 
 #include "itkParticleEntropyGradientFunction.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

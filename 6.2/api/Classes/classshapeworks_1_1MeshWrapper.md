@@ -15,8 +15,8 @@ Inherited by [shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshW
 
 |                | Name           |
 | -------------- | -------------- |
-| typedef [ParticleDomain::PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) | **[PointType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-pointtype)**  |
-| typedef ParticleDomain::GradNType | **[GradNType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-gradntype)**  |
+| typedef [itk::ParticleDomain::PointType](../Classes/classitk_1_1ParticleDomain.md#typedef-pointtype) | **[PointType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-pointtype)**  |
+| typedef itk::ParticleDomain::GradNType | **[GradNType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-gradntype)**  |
 
 ## Public Functions
 
@@ -40,14 +40,14 @@ Inherited by [shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshW
 ### typedef PointType
 
 ```cpp
-typedef ParticleDomain::PointType shapeworks::MeshWrapper::PointType;
+typedef itk::ParticleDomain::PointType shapeworks::MeshWrapper::PointType;
 ```
 
 
 ### typedef GradNType
 
 ```cpp
-typedef ParticleDomain::GradNType shapeworks::MeshWrapper::GradNType;
+typedef itk::ParticleDomain::GradNType shapeworks::MeshWrapper::GradNType;
 ```
 
 
@@ -207,4 +207,4 @@ virtual bool IsGeodesicsEnabled() const =0
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

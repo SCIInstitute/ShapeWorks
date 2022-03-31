@@ -1961,13 +1961,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#slot-handle_image_slice_settings_changed" class="md-nav__link">
-    slot handle_image_slice_settings_changed
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2075,27 +2068,6 @@
           <li class="md-nav__item">
   <a href="#function-update_samples" class="md-nav__link">
     function update_samples
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update_landmarks" class="md-nav__link">
-    function update_landmarks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update_planes" class="md-nav__link">
-    function update_planes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update_ffc_mode" class="md-nav__link">
-    function update_ffc_mode
   </a>
   
 </li>
@@ -2282,20 +2254,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-handle_ctrl_click" class="md-nav__link">
-    function handle_ctrl_click
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-redraw" class="md-nav__link">
-    function redraw
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2374,10 +2332,6 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#slot-handle-feature-range-changed">handle_feature_range_changed</a></strong>()</td>
 </tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#slot-handle-image-slice-settings-changed">handle_image_slice_settings_changed</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-functions">Public Functions</h2>
@@ -2447,18 +2401,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-landmarks">update_landmarks</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-planes">update_planes</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-ffc-mode">update_ffc_mode</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-display-sample">display_sample</a></strong>(int i)</td>
 </tr>
 <tr>
@@ -2479,7 +2421,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-set-mean">set_mean</a></strong>(const Eigen::VectorXd &amp; mean)</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-set-mean">set_mean</a></strong>(const vnl_vector&lt; double &gt; &amp; mean)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2561,14 +2503,6 @@
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-glyph-size">get_current_glyph_size</a></strong>()<br>Get the current glyph size.</td>
 </tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-handle-ctrl-click">handle_ctrl_click</a></strong>(<a href="classshapeworks_1_1PickResult.html">PickResult</a> result)<br>Handle ctrl click.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-redraw">redraw</a></strong>()<br>Redraw renderers.</td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -2606,9 +2540,6 @@
 <p>update viewer properties (e.g. glyph size, quality, etc) </p>
 <h3 id="slot-handle_feature_range_changed">slot handle_feature_range_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_feature_range_changed</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-handle_image_slice_settings_changed">slot handle_image_slice_settings_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_image_slice_settings_changed</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-visualizer">function Visualizer</h3>
@@ -2680,15 +2611,6 @@
 <h3 id="function-update_samples">function update_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_samples</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-update_landmarks">function update_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-update_planes">function update_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-update_ffc_mode">function update_ffc_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_ffc_mode</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
 <h3 id="function-display_sample">function display_sample</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_sample</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
@@ -2716,7 +2638,7 @@
 </code></pre></div>
 <h3 id="function-set_mean">function set_mean</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-reset_camera">function reset_camera</h3>
@@ -2807,16 +2729,6 @@
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_current_glyph_size</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Get the current glyph size. </p>
-<h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Handle ctrl click. </p>
-<h3 id="function-redraw">function redraw</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Redraw renderers. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-mode_original_c">variable MODE_ORIGINAL_C</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
@@ -2828,7 +2740,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_RECONSTRUCTION_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-03-31 at 09:10:17 -0600</p>
+<p>Updated on 2022-03-31 at 09:51:19 -0600</p>
 
               
             </article>

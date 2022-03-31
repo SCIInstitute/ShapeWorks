@@ -109,7 +109,7 @@ Inherits from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_
 
 |                | Name           |
 | -------------- | -------------- |
-| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-particlesystemtype)**  |
+| typedef [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< VDimension > | **[ParticleSystemType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-particlesystemtype)**  |
 
 **Public Functions inherited from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_1ParticleVectorFunction.md)**
 
@@ -730,4 +730,4 @@ int num_samples;
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

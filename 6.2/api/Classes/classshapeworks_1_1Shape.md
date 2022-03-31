@@ -25,7 +25,6 @@ Representation of a single shape/patient/subject.
 | -------------- | -------------- |
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
-| QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const string & display_mode) |
 | void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
 | QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
@@ -37,18 +36,14 @@ Representation of a single shape/patient/subject.
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_reconstructed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-reconstructed-meshes)**(bool wait =false)<br>Retrieve the reconstructed meshes.  |
 | void | **[reset_groomed_mesh](../Classes/classshapeworks_1_1Shape.md#function-reset-groomed-mesh)**()<br>Reset the groomed mesh so that it will be re-created.  |
-| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(QStringList filenames)<br>Import global correspondence point files.  |
-| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point files.  |
-| bool | **[import_landmarks_files](../Classes/classshapeworks_1_1Shape.md#function-import-landmarks-files)**(QStringList filenames)<br>Import landmarks files.  |
-| bool | **[store_landmarks](../Classes/classshapeworks_1_1Shape.md#function-store-landmarks)**()<br>Store landmarks.  |
-| bool | **[import_constraints](../Classes/classshapeworks_1_1Shape.md#function-import-constraints)**(QStringList filenames)<br>import constraints  |
-| bool | **[store_constraints](../Classes/classshapeworks_1_1Shape.md#function-store-constraints)**()<br>Store constraints.  |
+| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(QStringList filenames)<br>Import global correspondence point file.  |
+| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point file.  |
 | void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
-| Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
-| Eigen::VectorXd | **[get_global_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
-| Eigen::VectorXd | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
+| vnl_vector< double > | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
+| vnl_vector< double > | **[get_global_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
+| vnl_vector< double > | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
 | void | **[set_id](../Classes/classshapeworks_1_1Shape.md#function-set-id)**(int id)<br>Set the id of this shape.  |
@@ -81,16 +76,11 @@ Representation of a single shape/patient/subject.
 | std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustest_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transforms)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(std::string display_mode, std::string feature) |
-| vtkSmartPointer< vtkImageData > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
 | Eigen::VectorXf | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
 | void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXf values) |
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
 | void | **[set_override_feature](../Classes/classshapeworks_1_1Shape.md#function-set-override-feature)**(std::string feature) |
 | std::string | **[get_override_feature](../Classes/classshapeworks_1_1Shape.md#function-get-override-feature)**() |
-| Eigen::MatrixXd & | **[landmarks](../Classes/classshapeworks_1_1Shape.md#function-landmarks)**() |
-| std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
-| [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
-| bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
 
 ## Public Functions Documentation
 
@@ -105,13 +95,6 @@ Shape()
 
 ```cpp
 ~Shape()
-```
-
-
-### function get_display_name
-
-```cpp
-QString get_display_name()
 ```
 
 
@@ -222,7 +205,7 @@ bool import_global_point_files(
 )
 ```
 
-Import global correspondence point files. 
+Import global correspondence point file. 
 
 ### function import_local_point_files
 
@@ -232,43 +215,7 @@ bool import_local_point_files(
 )
 ```
 
-Import local correspondence point files. 
-
-### function import_landmarks_files
-
-```cpp
-bool import_landmarks_files(
-    QStringList filenames
-)
-```
-
-Import landmarks files. 
-
-### function store_landmarks
-
-```cpp
-bool store_landmarks()
-```
-
-Store landmarks. 
-
-### function import_constraints
-
-```cpp
-bool import_constraints(
-    QStringList filenames
-)
-```
-
-import constraints 
-
-### function store_constraints
-
-```cpp
-bool store_constraints()
-```
-
-Store constraints. 
+Import local correspondence point file. 
 
 ### function set_particles
 
@@ -298,7 +245,7 @@ void set_particle_transform(
 ### function get_global_correspondence_points
 
 ```cpp
-Eigen::VectorXd get_global_correspondence_points()
+vnl_vector< double > get_global_correspondence_points()
 ```
 
 Get the global correspondence points. 
@@ -306,7 +253,7 @@ Get the global correspondence points.
 ### function get_global_correspondence_points_for_display
 
 ```cpp
-Eigen::VectorXd get_global_correspondence_points_for_display()
+vnl_vector< double > get_global_correspondence_points_for_display()
 ```
 
 Get the global correspondence points for display. 
@@ -314,7 +261,7 @@ Get the global correspondence points for display.
 ### function get_local_correspondence_points
 
 ```cpp
-Eigen::VectorXd get_local_correspondence_points()
+vnl_vector< double > get_local_correspondence_points()
 ```
 
 Get the local correspondence points. 
@@ -576,15 +523,6 @@ void load_feature(
 ```
 
 
-### function get_image_volume
-
-```cpp
-vtkSmartPointer< vtkImageData > get_image_volume(
-    std::string image_volume_name
-)
-```
-
-
 ### function get_point_features
 
 ```cpp
@@ -630,36 +568,6 @@ std::string get_override_feature()
 ```
 
 
-### function landmarks
-
-```cpp
-Eigen::MatrixXd & landmarks()
-```
-
-
-### function constraints
-
-```cpp
-std::vector< Constraints > & constraints()
-```
-
-
-### function get_constraints
-
-```cpp
-Constraints & get_constraints(
-    int domain_id
-)
-```
-
-
-### function has_planes
-
-```cpp
-bool has_planes()
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

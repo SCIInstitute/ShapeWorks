@@ -25,7 +25,22 @@ title: Libs/Optimize/ParticleSystem/itkParticleGradientDescentPositionOptimizer.
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleGradientDescentPositionOptimizer.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleGradientDescentPositionOptimizer_h
+#define __itkParticleGradientDescentPositionOptimizer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -35,7 +50,7 @@ title: Libs/Optimize/ParticleSystem/itkParticleGradientDescentPositionOptimizer.
 #include <vector>
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
-#include "ParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithGradients.h"
 #include <algorithm>
 #include <limits>
 
@@ -54,13 +69,13 @@ public:
 
   itkNewMacro(Self);
 
-  typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+  typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
   
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);
 
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  typedef ParticleSystem ParticleSystemType;
+  typedef ParticleSystem<VDimension> ParticleSystemType;
 
   typedef ParticleVectorFunction<VDimension> GradientFunctionType;
   
@@ -139,9 +154,11 @@ private:
 } // end namespace
 
 #include "itkParticleGradientDescentPositionOptimizer.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

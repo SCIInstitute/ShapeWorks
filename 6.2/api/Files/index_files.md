@@ -29,7 +29,6 @@ title: Files
         * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
         * **file [Libs/Analyze/Vis.h](../Files/Vis_8h.md#file-vis.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
-        * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
         * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
         * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
         * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
@@ -63,6 +62,7 @@ title: Files
         * **file [Libs/Mesh/Mesh.h](../Files/Mesh_8h.md#file-mesh.h)** 
         * **file [Libs/Mesh/MeshUtils.h](../Files/MeshUtils_8h.md#file-meshutils.h)** 
         * **file [Libs/Mesh/MeshWarper.h](../Files/MeshWarper_8h.md#file-meshwarper.h)** <br>Mesh warping capability. 
+        * **file [Libs/Mesh/ParticleBasedSurfaceReconstruction_InputParams.h](../Files/ParticleBasedSurfaceReconstruction__InputParams_8h.md#file-particlebasedsurfacereconstruction-inputparams.h)** 
         * **file [Libs/Mesh/itkMultiplyByConstantImageFilter.h](../Files/itkMultiplyByConstantImageFilter_8h.md#file-itkmultiplybyconstantimagefilter.h)** 
         * **file [Libs/Mesh/meshFIM.h](../Files/meshFIM_8h.md#file-meshfim.h)** 
     * **dir [Libs/Optimize](../Files/dir_f02d5d8e81e1edd3722111e50e18938d.md#dir-libs/optimize)** 
@@ -79,24 +79,19 @@ title: Files
             * **file [Libs/Optimize/ParticleSystem/MeshGeoEntry.h](../Files/MeshGeoEntry_8h.md#file-meshgeoentry.h)** 
             * **file [Libs/Optimize/ParticleSystem/MeshWrapper.h](../Files/MeshWrapper_8h.md#file-meshwrapper.h)** 
             * **file [Libs/Optimize/ParticleSystem/OptimizationVisualizer.h](../Files/OptimizationVisualizer_8h.md#file-optimizationvisualizer.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleDomain.h](../Files/ParticleDomain_8h.md#file-particledomain.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleImageDomain.h](../Files/ParticleImageDomain_8h.md#file-particleimagedomain.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleImageDomainWithCurvature.h](../Files/ParticleImageDomainWithCurvature_8h.md#file-particleimagedomainwithcurvature.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleImageDomainWithGradN.h](../Files/ParticleImageDomainWithGradN_8h.md#file-particleimagedomainwithgradn.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleImageDomainWithGradients.h](../Files/ParticleImageDomainWithGradients_8h.md#file-particleimagedomainwithgradients.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleImplicitSurfaceDomain.h](../Files/ParticleImplicitSurfaceDomain_8h.md#file-particleimplicitsurfacedomain.h)** 
-            * **file [Libs/Optimize/ParticleSystem/ParticleRegionDomain.h](../Files/ParticleRegionDomain_8h.md#file-particleregiondomain.h)** 
             * **file [Libs/Optimize/ParticleSystem/PlaneConstraint.h](../Files/PlaneConstraint_8h.md#file-planeconstraint.h)** 
             * **file [Libs/Optimize/ParticleSystem/Sampler.h](../Files/Sampler_8h.md#file-sampler.h)** 
             * **file [Libs/Optimize/ParticleSystem/SphereConstraint.h](../Files/SphereConstraint_8h.md#file-sphereconstraint.h)** 
             * **file [Libs/Optimize/ParticleSystem/TriMeshWrapper.h](../Files/TriMeshWrapper_8h.md#file-trimeshwrapper.h)** 
             * **file [Libs/Optimize/ParticleSystem/VtkMeshWrapper.h](../Files/VtkMeshWrapper_8h.md#file-vtkmeshwrapper.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkImageToVTKImageFilter.h](../Files/Optimize_2ParticleSystem_2itkImageToVTKImageFilter_8h.md#file-itkimagetovtkimagefilter.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleAttribute.h](../Files/itkParticleAttribute_8h.md#file-itkparticleattribute.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h](../Files/itkParticleConstrainedModifiedCotangentEntropyGradientFunction_8h.md#file-itkparticleconstrainedmodifiedcotangententropygradientfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleContainer.h](../Files/itkParticleContainer_8h.md#file-itkparticlecontainer.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleContainerArrayAttribute.h](../Files/itkParticleContainerArrayAttribute_8h.md#file-itkparticlecontainerarrayattribute.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleCurvatureEntropyGradientFunction.h](../Files/itkParticleCurvatureEntropyGradientFunction_8h.md#file-itkparticlecurvatureentropygradientfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleCurvatureEntropyPlanarConstraint.h](../Files/itkParticleCurvatureEntropyPlanarConstraint_8h.md#file-itkparticlecurvatureentropyplanarconstraint.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleDomain.h](../Files/itkParticleDomain_8h.md#file-itkparticledomain.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleDualVectorFunction.h](../Files/itkParticleDualVectorFunction_8h.md#file-itkparticledualvectorfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleEnsembleEntropyFunction.h](../Files/itkParticleEnsembleEntropyFunction_8h.md#file-itkparticleensembleentropyfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleEntropyGradientFunction.h](../Files/itkParticleEntropyGradientFunction_8h.md#file-itkparticleentropygradientfunction.h)** 
@@ -106,6 +101,11 @@ title: Files
             * **file [Libs/Optimize/ParticleSystem/itkParticleGeneralShapeMatrix.h](../Files/itkParticleGeneralShapeMatrix_8h.md#file-itkparticlegeneralshapematrix.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleGoodBadAssessment.h](../Files/itkParticleGoodBadAssessment_8h.md#file-itkparticlegoodbadassessment.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleGradientDescentPositionOptimizer.h](../Files/itkParticleGradientDescentPositionOptimizer_8h.md#file-itkparticlegradientdescentpositionoptimizer.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleImageDomain.h](../Files/itkParticleImageDomain_8h.md#file-itkparticleimagedomain.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleImageDomainWithCurvature.h](../Files/itkParticleImageDomainWithCurvature_8h.md#file-itkparticleimagedomainwithcurvature.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleImageDomainWithGradN.h](../Files/itkParticleImageDomainWithGradN_8h.md#file-itkparticleimagedomainwithgradn.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleImageDomainWithGradients.h](../Files/itkParticleImageDomainWithGradients_8h.md#file-itkparticleimagedomainwithgradients.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleImplicitSurfaceDomain.h](../Files/itkParticleImplicitSurfaceDomain_8h.md#file-itkparticleimplicitsurfacedomain.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleMeanCurvatureAttribute.h](../Files/itkParticleMeanCurvatureAttribute_8h.md#file-itkparticlemeancurvatureattribute.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleMeshBasedGeneralEntropyGradientFunction.h](../Files/itkParticleMeshBasedGeneralEntropyGradientFunction_8h.md#file-itkparticlemeshbasedgeneralentropygradientfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleModifiedCotangentEntropyGradientFunction.h](../Files/itkParticleModifiedCotangentEntropyGradientFunction_8h.md#file-itkparticlemodifiedcotangententropygradientfunction.h)** 
@@ -113,6 +113,7 @@ title: Files
             * **file [Libs/Optimize/ParticleSystem/itkParticleOmegaGradientFunction.h](../Files/itkParticleOmegaGradientFunction_8h.md#file-itkparticleomegagradientfunction.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticlePointIndexPair.h](../Files/itkParticlePointIndexPair_8h.md#file-itkparticlepointindexpair.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleProcrustesRegistration.h](../Files/itkParticleProcrustesRegistration_8h.md#file-itkparticleprocrustesregistration.h)** 
+            * **file [Libs/Optimize/ParticleSystem/itkParticleRegionDomain.h](../Files/itkParticleRegionDomain_8h.md#file-itkparticleregiondomain.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleRegionNeighborhood.h](../Files/itkParticleRegionNeighborhood_8h.md#file-itkparticleregionneighborhood.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleShapeLinearRegressionMatrixAttribute.h](../Files/itkParticleShapeLinearRegressionMatrixAttribute_8h.md#file-itkparticleshapelinearregressionmatrixattribute.h)** 
             * **file [Libs/Optimize/ParticleSystem/itkParticleShapeMatrixAttribute.h](../Files/itkParticleShapeMatrixAttribute_8h.md#file-itkparticleshapematrixattribute.h)** 
@@ -130,7 +131,6 @@ title: Files
         * **file [Libs/Particles/EvaluationUtil.h](../Files/EvaluationUtil_8h.md#file-evaluationutil.h)** 
         * **file [Libs/Particles/ParticleShapeStatistics.h](../Files/ParticleShapeStatistics_8h.md#file-particleshapestatistics.h)** 
         * **file [Libs/Particles/ParticleSystem.h](../Files/ParticleSystem_8h.md#file-particlesystem.h)** 
-        * **file [Libs/Particles/ReconstructSurface.h](../Files/ReconstructSurface_8h.md#file-reconstructsurface.h)** 
         * **file [Libs/Particles/ShapeEvaluation.h](../Files/ShapeEvaluation_8h.md#file-shapeevaluation.h)** 
         * **file [Libs/Particles/itkParticlePositionReader.h](../Files/itkParticlePositionReader_8h.md#file-itkparticlepositionreader.h)** 
         * **file [Libs/Particles/itkParticlePositionWriter.h](../Files/itkParticlePositionWriter_8h.md#file-itkparticlepositionwriter.h)** 
@@ -146,6 +146,7 @@ title: Files
         * **file [Libs/Utils/EigenUtils.h](../Files/EigenUtils_8h.md#file-eigenutils.h)** 
         * **file [Libs/Utils/StringUtils.h](../Files/StringUtils_8h.md#file-stringutils.h)** 
         * **file [Libs/Utils/Utils.h](../Files/Utils_8h.md#file-utils.h)** 
+        * **file [Libs/Utils/itkImageToVTKImageFilter.h](../Files/Utils_2itkImageToVTKImageFilter_8h.md#file-itkimagetovtkimagefilter.h)** 
 * **file [Module.dox](../Files/Module_8dox.md#file-module.dox)** 
 * **dir [Studio](../Files/dir_baf8d66207f3fc39faf866e67ca98ce2.md#dir-studio)** 
     * **dir [Studio/src](../Files/dir_15d8e205eb0e69868bf0703ef3760a37.md#dir-studio/src)** 
@@ -154,10 +155,7 @@ title: Files
             * **file [Studio/src/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
         * **dir [Studio/src/Data](../Files/dir_217db32785bc9a56b002739d3e5efbb6.md#dir-studio/src/data)** 
             * **file [Studio/src/Data/CustomSurfaceReconstructionFilter.h](../Files/CustomSurfaceReconstructionFilter_8h.md#file-customsurfacereconstructionfilter.h)** 
-            * **file [Studio/src/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
             * **file [Studio/src/Data/ItkToVtk.h](../Files/ItkToVtk_8h.md#file-itktovtk.h)** 
-            * **file [Studio/src/Data/LandmarkItemDelegate.h](../Files/LandmarkItemDelegate_8h.md#file-landmarkitemdelegate.h)** 
-            * **file [Studio/src/Data/LandmarkTableModel.h](../Files/LandmarkTableModel_8h.md#file-landmarktablemodel.h)** 
             * **file [Studio/src/Data/LegacyMeshGenerator.h](../Files/LegacyMeshGenerator_8h.md#file-legacymeshgenerator.h)** <br>Mesh generation. 
             * **file [Studio/src/Data/MeshCache.h](../Files/MeshCache_8h.md#file-meshcache.h)** <br>Thread safe cache for meshes index by shape. 
             * **file [Studio/src/Data/MeshGenerator.h](../Files/MeshGenerator_8h.md#file-meshgenerator.h)** <br>Mesh generation. 
@@ -210,15 +208,8 @@ title: Files
         * **dir [Studio/src/Visualization](../Files/dir_637230a14b7eb9dd0045894e3626aeed.md#dir-studio/src/visualization)** 
             * **file [Studio/src/Visualization/BarGraph.h](../Files/BarGraph_8h.md#file-bargraph.h)** 
             * **file [Studio/src/Visualization/ColorSchemes.h](../Files/ColorSchemes_8h.md#file-colorschemes.h)** 
-            * **file [Studio/src/Visualization/LandmarkWidget.h](../Files/LandmarkWidget_8h.md#file-landmarkwidget.h)** 
             * **file [Studio/src/Visualization/Lightbox.h](../Files/Lightbox_8h.md#file-lightbox.h)** 
-            * **file [Studio/src/Visualization/MeshSlice.h](../Files/MeshSlice_8h.md#file-meshslice.h)** 
-            * **file [Studio/src/Visualization/PaintWidget.h](../Files/PaintWidget_8h.md#file-paintwidget.h)** 
-            * **file [Studio/src/Visualization/PlaneWidget.h](../Files/PlaneWidget_8h.md#file-planewidget.h)** 
-            * **file [Studio/src/Visualization/SliceView.h](../Files/SliceView_8h.md#file-sliceview.h)** 
-            * **file [Studio/src/Visualization/StudioHandleWidget.h](../Files/StudioHandleWidget_8h.md#file-studiohandlewidget.h)** 
             * **file [Studio/src/Visualization/StudioInteractorStyle.h](../Files/StudioInteractorStyle_8h.md#file-studiointeractorstyle.h)** 
-            * **file [Studio/src/Visualization/StudioSliceInteractorStyle.h](../Files/StudioSliceInteractorStyle_8h.md#file-studiosliceinteractorstyle.h)** 
             * **file [Studio/src/Visualization/StudioVtkOutputWindow.h](../Files/StudioVtkOutputWindow_8h.md#file-studiovtkoutputwindow.h)** 
             * **file [Studio/src/Visualization/Viewer.h](../Files/Viewer_8h.md#file-viewer.h)** 
             * **file [Studio/src/Visualization/Visualizer.h](../Files/Visualizer_8h.md#file-visualizer.h)** 
@@ -227,4 +218,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

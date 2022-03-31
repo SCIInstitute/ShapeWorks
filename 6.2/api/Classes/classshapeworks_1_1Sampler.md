@@ -32,8 +32,8 @@ title: shapeworks::Sampler
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) ) |
-| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) ) |
+| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension > ) |
+| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension > ) |
 | | **[Sampler](../Classes/classshapeworks_1_1Sampler.md#function-sampler)**()<br>Constructor.  |
 | virtual | **[~Sampler](../Classes/classshapeworks_1_1Sampler.md#function-~sampler)**()<br>Destructor.  |
 | [itk::ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)< ImageType::PixelType, Dimension > * | **[GetGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getgradientfunction)**() |
@@ -108,7 +108,6 @@ title: shapeworks::Sampler
 | virtual void | **[Execute](../Classes/classshapeworks_1_1Sampler.md#function-execute)**() |
 | std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > | **[ComputeCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-computecuttingplanes)**() |
 | Eigen::Vector3d | **[ComputePlaneNormal](../Classes/classshapeworks_1_1Sampler.md#function-computeplanenormal)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c) |
-| std::vector< [FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md) > | **[GetFFCs](../Classes/classshapeworks_1_1Sampler.md#function-getffcs)**() |
 
 ## Protected Functions
 
@@ -143,8 +142,8 @@ title: shapeworks::Sampler
 | [itk::ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)< double, Dimension >::Pointer | **[m_Sigma1Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma1cache)**  |
 | [itk::ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)< double, Dimension >::Pointer | **[m_Sigma2Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma2cache)**  |
 | MeanCurvatureCacheType::Pointer | **[m_MeanCurvatureCache](../Classes/classshapeworks_1_1Sampler.md#variable-m-meancurvaturecache)**  |
-| itk::ParticleSystem::Pointer | **[m_ParticleSystem](../Classes/classshapeworks_1_1Sampler.md#variable-m-particlesystem)**  |
-| std::vector< ParticleDomain::Pointer > | **[m_DomainList](../Classes/classshapeworks_1_1Sampler.md#variable-m-domainlist)**  |
+| [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)< Dimension >::Pointer | **[m_ParticleSystem](../Classes/classshapeworks_1_1Sampler.md#variable-m-particlesystem)**  |
+| std::vector< [itk::ParticleDomain::Pointer](../Classes/classitk_1_1ParticleDomain.md#typedef-pointer) > | **[m_DomainList](../Classes/classshapeworks_1_1Sampler.md#variable-m-domainlist)**  |
 | std::vector< [itk::ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)< ImageType >::Pointer > | **[m_NeighborhoodList](../Classes/classshapeworks_1_1Sampler.md#variable-m-neighborhoodlist)**  |
 | int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Sampler.md#variable-m-pairwise-potential-type)**  |
 | shapeworks::CorrespondenceMode | **[m_CorrespondenceMode](../Classes/classshapeworks_1_1Sampler.md#variable-m-correspondencemode)**  |
@@ -210,7 +209,7 @@ using shapeworks::Sampler::OptimizerType =  itk::ParticleGradientDescentPosition
 ```cpp
 itkGetObjectMacro(
     ParticleSystem ,
-    itk::ParticleSystem 
+    itk::ParticleSystem< Dimension > 
 )
 ```
 
@@ -223,7 +222,7 @@ Returns the particle system used in the surface sampling.
 ```cpp
 itkGetConstObjectMacro(
     ParticleSystem ,
-    itk::ParticleSystem 
+    itk::ParticleSystem< Dimension > 
 )
 ```
 
@@ -856,13 +855,6 @@ inline Eigen::Vector3d ComputePlaneNormal(
 ```
 
 
-### function GetFFCs
-
-```cpp
-inline std::vector< FFCType > GetFFCs()
-```
-
-
 ## Protected Functions Documentation
 
 ### function GenerateData
@@ -1011,14 +1003,14 @@ MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 ### variable m_ParticleSystem
 
 ```cpp
-itk::ParticleSystem::Pointer m_ParticleSystem;
+itk::ParticleSystem< Dimension >::Pointer m_ParticleSystem;
 ```
 
 
 ### variable m_DomainList
 
 ```cpp
-std::vector< ParticleDomain::Pointer > m_DomainList;
+std::vector< itk::ParticleDomain::Pointer > m_DomainList;
 ```
 
 
@@ -1115,4 +1107,4 @@ itk::ParticleMeshBasedGeneralEntropyGradientFunction< Dimension >::Pointer m_Mes
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

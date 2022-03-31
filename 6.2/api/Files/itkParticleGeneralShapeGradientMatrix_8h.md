@@ -25,8 +25,8 @@ title: Libs/Optimize/ParticleSystem/itkParticleGeneralShapeGradientMatrix.h
 ## Source code
 
 ```cpp
-#pragma once
-
+#ifndef ITKPARTICLEGENERALSHAPEGRADIENTMATRIX_H
+#define ITKPARTICLEGENERALSHAPEGRADIENTMATRIX_H
 
 #include "itkParticleAttribute.h"
 #include "itkDataObject.h"
@@ -34,9 +34,9 @@ title: Libs/Optimize/ParticleSystem/itkParticleGeneralShapeGradientMatrix.h
 #include "itkParticleContainer.h"
 #include "vnl/vnl_matrix.h"
 
-#include "ParticleImplicitSurfaceDomain.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImageDomainWithGradN.h"
+#include "itkParticleImplicitSurfaceDomain.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithGradN.h"
 #include "TriMesh.h"
 
 #include "itkParticleSystem.h"
@@ -55,7 +55,7 @@ public:
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
-    typedef ParticleSystem ParticleSystemType;
+    typedef ParticleSystem<VDimension> ParticleSystemType;
     itkNewMacro(Self)
 
     
@@ -110,7 +110,7 @@ public:
 
     void SetValues(const ParticleSystemType *ps, int idx, int d)
     {
-        const typename itk::ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
+        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
 
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
@@ -173,14 +173,14 @@ public:
                 vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
                 vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
                 float grad_mag = gradient.magnitude(); //TODO This is always 1.0. Fix when correcting image gradient of normals
-                typename shapeworks::ParticleDomain::GradNType grad_n = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
+                typename ParticleDomain::GradNType grad_n = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
 
-                typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
                 mat1.set_identity();
                 vnl_matrix<float> nrml(VDimension, 1);
                 nrml.fill(0.0);
                 nrml(0,0) = normal[0]; nrml(1,0) = normal[1]; nrml(2,0) = normal[2];
-                typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
                 for (unsigned int x1 = 0; x1 < VDimension; x1++) {
                     for (unsigned int x2 = 0; x2 < VDimension; x2++) {
@@ -190,8 +190,8 @@ public:
                 }
 
                 // mat3 = H/|grad_f| * (I - n*n');
-                typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
-                typename itk::ParticleSystem::VnlMatrixType tmp;
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
+                typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);
                 for (unsigned int c = 0; c<VDimension; c++)
@@ -236,8 +236,7 @@ public:
                 {
                     point dc;
                     dc.clear();
-                    const shapeworks::ParticleImplicitSurfaceDomain<float> * domain
-                        = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
+                    const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
                     meshFIM *ptr = domain->GetMesh();
                     dc = ptr->GetFeatureDerivative(pt, aa);
                     for (int vd = 0; vd < VDimension; vd++)
@@ -260,7 +259,7 @@ public:
     {
         // update the size of matrix based on xyz, normals and number of attributes being used
         const itk::ParticlePositionAddEvent &event = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
-        const itk::ParticleSystem *ps= dynamic_cast<const itk::ParticleSystem *>(o);
+        const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
 
@@ -284,7 +283,7 @@ public:
     {
         // update xyz, normals and number of attributes being used
         const itk::ParticlePositionSetEvent &event = dynamic_cast<const itk::ParticlePositionSetEvent &>(e);
-        const itk::ParticleSystem *ps= dynamic_cast<const itk::ParticleSystem *>(o);
+        const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
 
@@ -325,9 +324,13 @@ private:
 }; // end class
 
 } // end namespace
+
+
+
+#endif // ITKPARTICLEGENERALSHAPEGRADIENTMATRIX_H
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

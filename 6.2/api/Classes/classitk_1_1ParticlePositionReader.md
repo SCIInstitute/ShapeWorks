@@ -23,7 +23,7 @@ Inherits from DataObject
 | typedef SmartPointer< [Self](../Classes/classitk_1_1ParticlePositionReader.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticlePositionReader.md#typedef-pointer)**  |
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticlePositionReader.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticlePositionReader.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticlePositionReader.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticlePositionReader.md#typedef-constweakpointer)**  |
-| typedef Point< double, 3 > | **[PointType](../Classes/classitk_1_1ParticlePositionReader.md#typedef-pointtype)**  |
+| typedef Point< double, VDimension > | **[PointType](../Classes/classitk_1_1ParticlePositionReader.md#typedef-pointtype)**  |
 
 ## Public Functions
 
@@ -48,6 +48,7 @@ Inherits from DataObject
 ## Detailed Description
 
 ```cpp
+template <unsigned int VDimension>
 class itk::ParticlePositionReader;
 ```
 
@@ -65,7 +66,7 @@ etc..
 ### typedef Self
 
 ```cpp
-typedef ParticlePositionReader itk::ParticlePositionReader::Self;
+typedef ParticlePositionReader itk::ParticlePositionReader< VDimension >::Self;
 ```
 
 
@@ -75,35 +76,35 @@ Standard class typedefs
 ### typedef Superclass
 
 ```cpp
-typedef DataObject itk::ParticlePositionReader::Superclass;
+typedef DataObject itk::ParticlePositionReader< VDimension >::Superclass;
 ```
 
 
 ### typedef Pointer
 
 ```cpp
-typedef SmartPointer<Self> itk::ParticlePositionReader::Pointer;
+typedef SmartPointer<Self> itk::ParticlePositionReader< VDimension >::Pointer;
 ```
 
 
 ### typedef ConstPointer
 
 ```cpp
-typedef SmartPointer<const Self> itk::ParticlePositionReader::ConstPointer;
+typedef SmartPointer<const Self> itk::ParticlePositionReader< VDimension >::ConstPointer;
 ```
 
 
 ### typedef ConstWeakPointer
 
 ```cpp
-typedef WeakPointer<const Self> itk::ParticlePositionReader::ConstWeakPointer;
+typedef WeakPointer<const Self> itk::ParticlePositionReader< VDimension >::ConstWeakPointer;
 ```
 
 
 ### typedef PointType
 
 ```cpp
-typedef Point<double, 3> itk::ParticlePositionReader::PointType;
+typedef Point<double, VDimension> itk::ParticlePositionReader< VDimension >::PointType;
 ```
 
 
@@ -181,7 +182,7 @@ Read the file.
 ### function Update
 
 ```cpp
-inline void Update()
+void Update()
 ```
 
 
@@ -213,4 +214,4 @@ inline virtual ~ParticlePositionReader()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

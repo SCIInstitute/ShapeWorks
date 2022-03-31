@@ -32,8 +32,6 @@ title: Studio/src/Data/StudioParticles.h
 #include <vtkSmartPointer.h>
 #include <itkPoint.h>
 
-#include "Shapeworks.h"
-
 class vtkTransform;
 
 namespace shapeworks {
@@ -47,18 +45,18 @@ public:
   void set_local_particles(int domain, std::vector<itk::Point<double>> particles);
   void set_world_particles(int domain, std::vector<itk::Point<double>> particles);
 
-  void set_local_particles(int domain, Eigen::VectorXd particles);
-  void set_world_particles(int domain, Eigen::VectorXd particles);
+  void set_local_particles(int domain, vnl_vector<double> particles);
+  void set_world_particles(int domain, vnl_vector<double> particles);
 
-  std::vector<Eigen::VectorXd> get_local_particles();
-  std::vector<Eigen::VectorXd> get_world_particles();
+  std::vector<vnl_vector<double>> get_local_particles();
+  std::vector<vnl_vector<double>> get_world_particles();
 
-  Eigen::VectorXd get_local_particles(int domain);
-  Eigen::VectorXd get_world_particles(int domain);
-  Eigen::VectorXd get_raw_world_particles(int domain);
+  vnl_vector<double> get_local_particles(int domain);
+  vnl_vector<double> get_world_particles(int domain);
+  vnl_vector<double> get_raw_world_particles(int domain);
 
-  Eigen::VectorXd get_combined_local_particles();
-  Eigen::VectorXd get_combined_global_particles();
+  vnl_vector<double> get_combined_local_particles();
+  vnl_vector<double> get_combined_global_particles();
 
   std::vector<itk::Point<double>> get_local_points(int domain);
   std::vector<itk::Point<double>> get_world_points(int domain);
@@ -72,14 +70,14 @@ private:
 
   void transform_global_particles();
 
-  std::vector<itk::Point<double>> vnl_to_point_vector(const Eigen::VectorXd& vnl);
+  std::vector<itk::Point<double>> vnl_to_point_vector(const vnl_vector<double>& vnl);
 
-  Eigen::VectorXd combine(const std::vector<Eigen::VectorXd>& vnl);
+  vnl_vector<double> combine(const std::vector<vnl_vector<double>>& vnl);
 
   void set_particles(int domain, std::vector<itk::Point<double>> particles, bool local);
-  std::vector<Eigen::VectorXd> local_particles_; // one for each domain
-  std::vector<Eigen::VectorXd> global_particles_; // one for each domain
-  std::vector<Eigen::VectorXd> transformed_global_particles_; // one for each domain
+  std::vector<vnl_vector<double>> local_particles_; // one for each domain
+  std::vector<vnl_vector<double>> global_particles_; // one for each domain
+  std::vector<vnl_vector<double>> transformed_global_particles_; // one for each domain
 
   vtkSmartPointer<vtkTransform> transform_;
   std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
@@ -90,4 +88,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -25,7 +25,22 @@ title: Libs/Optimize/ParticleSystem/itkParticleGaussianModeWriter.h
 ## Source code
 
 ```cpp
-#pragma once
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleGaussianModeWriter.h,v $
+  Date:      $Date: 2011/03/24 01:17:33 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#ifndef __itkParticleGaussianModeWriter_h
+#define __itkParticleGaussianModeWriter_h
 
 #include "itkParticleShapeMatrixAttribute.h"
 #include "itkDataObject.h"
@@ -45,7 +60,7 @@ public:
   typedef DataObject Superclass;
   itkTypeMacro( ParticleGaussianModeWriter, DataObject);
 
-  typedef ParticleSystem ParticleSystemType;
+  typedef ParticleSystem<VDimension> ParticleSystemType;
   typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
   typedef typename ShapeMatrixType::DataType DataType;
   
@@ -93,11 +108,20 @@ protected:
 
 } //end namespace
 
+#if ITK_TEMPLATE_EXPLICIT
+#include "Templates/itkParticleGaussianModeWriter+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
+#include "itkParticleGaussianModeWriter.txx"
+#endif
 
 #include "itkParticleGaussianModeWriter.txx"
+
+#endif
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

@@ -53,9 +53,6 @@ void printNumpyArrayInfo(const py::array& np_array) {
   for (auto& n: info.strides) {
     std::cout << n << " ";
   }
-  std::cout << "\nsize : ";
-  std::cout << np_array.size();
-
   std::cout << std::endl;
 }
 
@@ -136,9 +133,9 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   size[1] = np_array.shape()[1];
   size[2] = np_array.shape()[0];
 
-  assert(size[0]*size[1]*size[2] == np_array.size());
+  assert(size[0]*size[1]*size[2]*sizeof(Image::PixelType) == np_array.size());
   importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr),
-                             size[0]*size[1]*size[2],
+                             size[0]*size[1]*size[2]*sizeof(Image::PixelType),
                              true /*importer take_ownership*/);
   ImportType::IndexType start({0,0,0}); // i.e., Coord
   ImportType::RegionType region;
@@ -149,7 +146,7 @@ Image::ImageType::Pointer wrapNumpyArr(py::array& np_array) {
   return importer->GetOutput();
 }
 
-Array pyToArr(py::array& np_array, bool take_ownership = true) {
+Array pyToArr(py::array& np_array) {
   //printNumpyArrayInfo(np_array);
 
   //
@@ -174,7 +171,7 @@ Array pyToArr(py::array& np_array, bool take_ownership = true) {
 
   // array must own its data to transfer it to Image
   // NOTE: it could be shared, but this avoids a potential dangling pointer
-  if (take_ownership && !np_array.owndata()) {
+  if (!np_array.owndata()) {
     throw std::invalid_argument("numpy array must own the data to be transferred to Mesh (maybe pass `arr.copy()`)");
   }
 
@@ -189,12 +186,12 @@ Array pyToArr(py::array& np_array, bool take_ownership = true) {
   auto vtkarr = Array();
   if (info.format == py::format_descriptor<float>::format()) {
     auto arr = vtkFloatArray::New();
-    arr->SetArray(static_cast<float*>(info.ptr), nvalues * ncomponents, !take_ownership /*0 passes ownership*/);
+    arr->SetArray(static_cast<float*>(info.ptr), nvalues * ncomponents, 0 /*0 passes ownership*/);
     vtkarr = arr;
   }
   else if (info.format == py::format_descriptor<double>::format()) {
     auto arr = vtkDoubleArray::New();
-    arr->SetArray(static_cast<double*>(info.ptr), nvalues * ncomponents, !take_ownership /*0 passes ownership*/);
+    arr->SetArray(static_cast<double*>(info.ptr), nvalues * ncomponents, 0 /*0 passes ownership*/);
     vtkarr = arr;
   }
   else {
@@ -204,9 +201,7 @@ Array pyToArr(py::array& np_array, bool take_ownership = true) {
   vtkarr->SetNumberOfComponents(ncomponents);
 
   // prevent Python from deallocating since vtk will do that when it's time
-  if (take_ownership) {
-    setOwnership(np_array, false);
-  }
+  setOwnership(np_array, false);
 
   return vtkarr;
 }
@@ -290,4 +285,4 @@ py::array arrToPy(Array& array, ArrayTransferOptions xfer = COPY_ARRAY) {
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

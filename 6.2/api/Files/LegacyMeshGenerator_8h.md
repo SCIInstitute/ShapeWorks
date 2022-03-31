@@ -36,7 +36,6 @@ The [LegacyMeshGenerator](../Classes/classLegacyMeshGenerator.md) performs the a
 
 #include <vtkSmartPointer.h>
 #include <QSharedPointer>
-#include <Eigen/Eigen>
 
 //#include <SurfaceReconstructor.h>
 
@@ -65,7 +64,7 @@ public:
   void setUsePowerCrust( bool enabled );
   void setSmoothingAmount( float amount ); // 0-100
 
-  vtkSmartPointer<vtkPolyData> buildMesh( const Eigen::VectorXd& shape );
+  vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
   //void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 
@@ -95,4 +94,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

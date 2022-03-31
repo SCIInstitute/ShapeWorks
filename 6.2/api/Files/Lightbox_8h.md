@@ -27,17 +27,18 @@ title: Studio/src/Visualization/Lightbox.h
 ```cpp
 #pragma once
 
-#include <Data/Preferences.h>
-#include <Visualization/Viewer.h>
-#include <vtkActor.h>
-#include <vtkCamera.h>
-#include <vtkPoints.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkSmartPointer.h>
-
 #include <QSharedPointer>
-#include <QTimer>
 #include <QVector>
+#include <QTimer>
+
+#include <vtkSmartPointer.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkPoints.h>
+#include <vtkCamera.h>
+#include <Data/Preferences.h>
+
+#include <Visualization/Viewer.h>
 
 class vtkOrientationMarkerWidget;
 
@@ -46,7 +47,6 @@ namespace shapeworks {
 class StudioMesh;
 class Shape;
 class StudioInteractorStyle;
-class StudioSliceInteractorStyle;
 class Visualizer;
 
 class Lightbox;
@@ -54,9 +54,8 @@ typedef QSharedPointer<Lightbox> LightboxHandle;
 
 
 class Lightbox : public QObject {
-  Q_OBJECT;
-
- public:
+Q_OBJECT;
+public:
   Lightbox();
   ~Lightbox();
 
@@ -80,18 +79,14 @@ class Lightbox : public QObject {
 
   void redraw();
 
-  void handle_pick(int* click_pos, bool one, bool ctrl);
-
-  void handle_hover(int* click_pos);
-
-  void handle_key(int* click_pos, std::string key);
+  void handle_pick(int* click_pos, bool one);
 
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
-  void set_session(QSharedPointer<Session> session);
 
   void set_visualizer(Visualizer* visualizer);
 
-  bool render_window_ready() { return render_window_ != NULL; }
+  bool render_window_ready()
+  { return render_window_ != NULL; }
 
   void clear_renderers();
 
@@ -103,20 +98,18 @@ class Lightbox : public QObject {
 
   void reset_camera_clipping_range();
 
-  void set_orientation_marker(Preferences::OrientationMarkerType type, Preferences::OrientationMarkerCorner corner);
+  void set_orientation_marker(Preferences::OrientationMarkerType type,
+                              Preferences::OrientationMarkerCorner corner);
 
   void set_orientation_marker_viewport();
 
   void update_feature_range();
 
-  void update_interactor_style();
-
-  void set_shared_window_and_level(double window, double level);
-
- public Q_SLOTS:
+public Q_SLOTS:
   void handle_timer_callback();
 
- private:
+private:
+
   vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();
 
   void check_for_first_draw();
@@ -146,7 +139,6 @@ class Lightbox : public QObject {
   bool first_draw_ = true;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
-  vtkSmartPointer<StudioSliceInteractorStyle> slice_style_;
 
   Visualizer* visualizer_{nullptr};
 
@@ -160,16 +152,15 @@ class Lightbox : public QObject {
 
   vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;
 
-  Preferences::OrientationMarkerType current_orientation_marker_type_ = Preferences::OrientationMarkerType::none;
-  Preferences::OrientationMarkerCorner current_orientation_marker_corner_ =
-      Preferences::OrientationMarkerCorner::upper_right;
-
-  QSharedPointer<Session> session_;
+  Preferences::OrientationMarkerType current_orientation_marker_type_
+    = Preferences::OrientationMarkerType::none;
+  Preferences::OrientationMarkerCorner current_orientation_marker_corner_
+    = Preferences::OrientationMarkerCorner::upper_right;
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600

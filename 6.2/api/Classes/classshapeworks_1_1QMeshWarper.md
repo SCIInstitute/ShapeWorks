@@ -40,18 +40,10 @@ Inherits from QObject, [shapeworks::MeshWarper](../Classes/classshapeworks_1_1Me
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[set_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-set-reference-mesh)**(vtkSmartPointer< vtkPolyData > reference_mesh, const Eigen::MatrixXd & reference_particles, const Eigen::MatrixXd & landmarks ={})<br>Set the reference mesh and particles.  |
-| bool | **[generate_warp](../Classes/classshapeworks_1_1MeshWarper.md#function-generate-warp)**()<br>Generate warp, return true on success.  |
+| void | **[set_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-set-reference-mesh)**(vtkSmartPointer< vtkPolyData > reference_mesh, const Eigen::MatrixXd & reference_particles)<br>Set the reference mesh and particles.  |
 | bool | **[get_warp_available](../Classes/classshapeworks_1_1MeshWarper.md#function-get-warp-available)**()<br>Return if the warp is available.  |
 | vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-build-mesh)**(const Eigen::MatrixXd & particles)<br>Build a mesh for a given set of particles.  |
-| Eigen::MatrixXd | **[extract_landmarks](../Classes/classshapeworks_1_1MeshWarper.md#function-extract-landmarks)**(vtkSmartPointer< vtkPolyData > warped_mesh)<br>Return the landmarks (matrix [Nx3]) from the warped builded mesh.  |
 | bool | **[is_contour](../Classes/classshapeworks_1_1MeshWarper.md#function-is-contour)**()<br>Return if set as a contour.  |
-| std::map< int, int > | **[get_landmarks_map](../Classes/classshapeworks_1_1MeshWarper.md#function-get-landmarks-map)**()<br>Return the map of landmarks to vertices.  |
-| const Eigen::MatrixXd & | **[get_warp_matrix](../Classes/classshapeworks_1_1MeshWarper.md#function-get-warp-matrix)**() const<br>Return the warp matrix.  |
-| bool | **[has_bad_particles](../Classes/classshapeworks_1_1MeshWarper.md#function-has-bad-particles)**() const<br>Return true if warping has removed any bad particle(s)  |
-| vtkSmartPointer< vtkPolyData > | **[get_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-get-reference-mesh)**()<br>Return the reference mesh which has been cleaned and vertices added.  |
-| const Eigen::MatrixXd & | **[get_reference_particles](../Classes/classshapeworks_1_1MeshWarper.md#function-get-reference-particles)**() const<br>Return the reference particles.  |
-| vtkSmartPointer< vtkPolyData > | **[prep_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-prep-mesh)**(vtkSmartPointer< vtkPolyData > mesh)<br>Prep incoming mesh.  |
 
 
 ## Public Signals Documentation
@@ -98,4 +90,4 @@ For overriding to handle progress updates.
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

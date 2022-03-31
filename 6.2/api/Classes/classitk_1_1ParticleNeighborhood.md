@@ -26,7 +26,7 @@ Inherited by [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Clas
 | typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-constpointer)**  |
 | typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-constweakpointer)**  |
 | typedef Point< double, VDimension > | **[PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype)**  |
-| using [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) | **[DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#using-domaintype)**  |
+| typedef [ParticleDomain](../Classes/classitk_1_1ParticleDomain.md) | **[DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype)**  |
 | typedef [ParticleContainer](../Classes/classitk_1_1ParticleContainer.md)< [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) > | **[PointContainerType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointcontainertype)**  |
 | typedef std::vector< [ParticlePointIndexPair](../Classes/structitk_1_1ParticlePointIndexPair.md)< VDimension > > | **[PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype)**  |
 
@@ -43,8 +43,8 @@ Inherited by [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Clas
 | virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , double ) const |
 | virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , std::vector< double > & , double ) const |
 | virtual unsigned int | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, double , [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) & ) const |
-| virtual void | **[SetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-setdomain)**(DomainType::Pointer domain) |
-| DomainType::Pointer | **[GetDomain](../Classes/classitk_1_1ParticleNeighborhood.md#function-getdomain)**() const |
+| | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itksetobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
+| | **[itkGetConstObjectMacro](../Classes/classitk_1_1ParticleNeighborhood.md#function-itkgetconstobjectmacro)**(Domain , [DomainType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-domaintype) ) |
 | virtual void | **[AddPosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-addposition)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[SetPosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-setposition)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[RemovePosition](../Classes/classitk_1_1ParticleNeighborhood.md#function-removeposition)**(unsigned int idx, int threadId =0) |
@@ -117,10 +117,10 @@ typedef Point<double, VDimension> itk::ParticleNeighborhood< VDimension >::Point
 Point type used to store particle locations. 
 
 
-### using DomainType
+### typedef DomainType
 
 ```cpp
-using itk::ParticleNeighborhood< VDimension >::DomainType =  shapeworks::ParticleDomain;
+typedef ParticleDomain itk::ParticleNeighborhood< VDimension >::DomainType;
 ```
 
 
@@ -277,25 +277,26 @@ inline virtual unsigned int FindNeighborhoodPoints(
 ```
 
 
-### function SetDomain
+### function itkSetObjectMacro
 
 ```cpp
-inline virtual void SetDomain(
-    DomainType::Pointer domain
+itkSetObjectMacro(
+    Domain ,
+    DomainType 
 )
 ```
-
-
-**Reimplemented by**: [itk::ParticleRegionNeighborhood::SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain), [itk::ParticleRegionNeighborhood::SetDomain](../Classes/classitk_1_1ParticleRegionNeighborhood.md#function-setdomain)
 
 
 Set the Domain that this neighborhood will use. The Domain object is important because it defines bounds and distance measures. 
 
 
-### function GetDomain
+### function itkGetConstObjectMacro
 
 ```cpp
-inline DomainType::Pointer GetDomain() const
+itkGetConstObjectMacro(
+    Domain ,
+    DomainType 
+)
 ```
 
 
@@ -371,4 +372,4 @@ inline virtual ~ParticleNeighborhood()
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:16 -0600
+Updated on 2022-03-31 at 09:51:18 -0600

@@ -32,8 +32,6 @@ title: Libs/Common/Shapeworks.h
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
-#include <vtkPolyData.h>
-#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -47,23 +45,14 @@ using Matrix44      = itk::Matrix<double, 4, 4>;
 using Matrix33      = itk::Matrix<double, 3, 3>;
 using IPoint3       = itk::Point<int, 3>;
 using FPoint3       = itk::Point<float, 3>;
-using Covariant     = itk::CovariantVector<float, 3>;
 using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
-
-// While doubles are the most commonly stored items, vtkDataArray can store any
-// type, yet has a default interface that conveniently stores and retrieves
-// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray
-// explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
-using PointArray    = std::vector<Point3>;
 
 Vector3 makeVector(std::array<double, 3>&& arr);
-
-PointArray makePointArray(int size, Point3 value);
 
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
@@ -111,18 +100,11 @@ double length(const Vector3 &v);
 
 enum Axis { invalid = -1, X, Y, Z };
 Axis toAxis(const std::string &str);
-std::string axisToString(Axis axis);
 
 bool axis_is_valid(const Vector3 &axis);
 bool axis_is_valid(const Axis &axis);
 
 double degToRad(const double deg);
-
-double mean(const Field field);
-
-double stddev(const Field field);
-
-std::vector<double> range(const Field field);
 
 class Image;
 
@@ -289,4 +271,4 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 -------------------------------
 
-Updated on 2022-03-31 at 09:10:17 -0600
+Updated on 2022-03-31 at 09:51:19 -0600
