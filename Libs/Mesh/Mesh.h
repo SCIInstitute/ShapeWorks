@@ -27,11 +27,28 @@ public:
   using MeshType = vtkSmartPointer<vtkPolyData>;
   using MeshPoints = vtkSmartPointer<vtkPoints>;
 
-  Mesh(const std::string& pathname) : mesh(read(pathname)) {}
-  Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
-  Mesh(const Mesh& orig) : mesh(MeshType::New()) { mesh->DeepCopy(orig.mesh); }
+  Mesh(const std::string& pathname);
+
+  Mesh(MeshType meshPtr) : mesh(meshPtr) {
+    if (!mesh) throw std::invalid_argument("null meshPtr");
+    invalidateLocators();
+  }
+
+  Mesh(const Mesh& orig) : mesh(MeshType::New()) {
+    mesh->DeepCopy(orig.mesh);
+    invalidateLocators();
+  }
+
   Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
-  Mesh& operator=(const Mesh& orig) { mesh = MeshType::New(); mesh->DeepCopy(orig.mesh); return *this; }
+
+  Mesh& operator=(const Mesh& orig) {
+    mesh = MeshType::New();
+    mesh->DeepCopy(orig.mesh);
+    invalidateLocators();
+    return *this; }
+
+  Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces);
+
   Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
 
   /// append two meshes
@@ -209,8 +226,8 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  /// Splits the mesh for FFCs by setting scalar and vector fields
-  bool splitMesh(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, size_t dom, size_t num);
+  /// Prepares the mesh for FFCs by setting scalar and vector fields
+  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut = false);
 
   /// Gets values for FFCs
   double getFFCValue(Eigen::Vector3d query) const;
@@ -227,9 +244,6 @@ public:
 private:
   friend struct SharedCommandData;
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
-
-  /// reads mesh (used only by constructor)
-  static MeshType read(const std::string& pathname);
 
   /// Creates transform from source mesh to target using ICP registration
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
@@ -258,7 +272,7 @@ private:
   std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V, Eigen::MatrixXi F);
 
   /// Computes scalar distance field w.r.t. the boundary
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F, size_t dom);  // fixme: sets value, returns absvalues, not sure why
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts, vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V, Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
 
   /// Computes whether point is inside or outside the boundary
   vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh); // similar issues to above
@@ -270,5 +284,11 @@ private:
 
 /// stream insertion operators for Mesh
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
+
+/// reads mesh (used only by one of the Mesh constructors)
+class MeshReader {
+  static Mesh::MeshType read(const std::string& pathname);
+  friend Mesh::Mesh(const std::string& pathname);
+};
 
 } // shapeworks

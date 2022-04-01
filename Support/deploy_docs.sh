@@ -49,6 +49,5 @@ git pull --rebase
 git checkout master
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
-mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
-
-      
+cd "${GITHUB_WORKSPACE}" && mike deploy --title "6.3 (dev)" 6.3 dev
+mike set-default 6.2

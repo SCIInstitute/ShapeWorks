@@ -26,4 +26,15 @@ def infoTest2():
 
 success &= utils.test(infoTest2)
 
+def mesh_construct_from_matrixes():
+  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
+  com = mesh.centerOfMass()
+
+  compareMesh = Mesh(mesh.points(), mesh.faces())
+  compareCom = compareMesh.centerOfMass()
+
+  return com[0] == compareCom[0] and com[1] == compareCom[1] and com[2] == compareCom[2]
+
+success &= utils.test(mesh_construct_from_matrixes)
+
 sys.exit(not success)

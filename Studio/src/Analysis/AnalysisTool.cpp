@@ -14,6 +14,7 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Data/StudioLog.h>
 #include <Data/StudioMesh.h>
+#include <Data/QMeshWarper.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Python/PythonWorker.h>
@@ -747,7 +748,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
     this->update_domain_alignment_box();
   }
 
-  auto domain_types = this->session_->get_domain_types();
+  auto domain_types = this->session_->get_groomed_domain_types();
   bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
   this->ui_->distance_transfom_radio_button->setEnabled(this->session_->particles_present() &&
                                                         this->session_->get_groomed_present() && image_domain);

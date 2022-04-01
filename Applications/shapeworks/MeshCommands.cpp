@@ -1374,6 +1374,7 @@ void WarpMesh::buildParser()
   parser.prog(prog).description(desc);
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
   parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
+  parser.add_option("--landmark_file").action("store").type("string").set_default("").help("Optional Argument to specify the name of Landmark file, if landmarks are available for warping");
   parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
   parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
   Command::buildParser();
@@ -1396,18 +1397,36 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  bool warp_along_with_landmarks = false;
+  int numLandmarks = 0;
+  std::string landmarkFilename = options["landmark_file"];
+  if (!landmarkFilename.empty()) {
+    warp_along_with_landmarks = true;
+  }
+
   std::string saveDir = options["save_dir"];
   try {
+    MeshWarper warper;
     Mesh inputMesh(inputMeshFilename);
     targetPointsFilenames.push_back(inputPointsFilename);
     ParticleSystem particlesystem(targetPointsFilenames);
+    Eigen::MatrixXd landmarks;
+    if (warp_along_with_landmarks) {
+      std::vector<std::string> landmarks_ar = {landmarkFilename};
+      ParticleSystem landmarksystem(landmarks_ar);
+      Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
+      numLandmarks = landmarksPoints.rows() /3;
+      landmarksPoints.resize(3, numLandmarks);
+      landmarksPoints.transposeInPlace();
+      landmarks = landmarksPoints;
+    }
+
     Eigen::MatrixXd allPts = particlesystem.Particles();
     Eigen::MatrixXd staticPoints = allPts.col(targetPointsFilenames.size() - 1);
     int numParticles = staticPoints.rows() / 3;
     staticPoints.resize(3, numParticles);
     staticPoints.transposeInPlace();
-    MeshWarper warper;
-    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints, landmarks);
     std::string filenm;
 
     if (saveDir.length() > 0) {
@@ -1427,6 +1446,53 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
       movingPoints.transposeInPlace();
       Mesh output = warper.build_mesh(movingPoints);
       output.write(filenm);
+      if(warp_along_with_landmarks){
+        std::string warped_landmarks_filename = targetPointsFilenames[i];
+        warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')), warped_landmarks_filename.length(), "_warped_landmarks.particles");
+        if(saveDir.length() > 0)
+        {
+        int idx_ = static_cast<int>(warped_landmarks_filename.rfind('/'));
+        warped_landmarks_filename.replace(0, idx_, saveDir);
+        }
+        Eigen::MatrixXd warped_landmarks = Eigen::MatrixXd::Constant(numLandmarks, 3, 0);
+        Eigen::MatrixXd vertices_updated = output.points();
+        std::map<int, int> landmarks_map = warper.get_landmarks_map();
+
+        for (vtkIdType i = 0; i < warper.get_warp_matrix().rows(); i++)
+        {
+          if (landmarks_map.count(i))
+          {
+            // This vertex i corresponds to a landmark
+            int landmark_index = landmarks_map.lower_bound(i)->second; 
+            warped_landmarks(landmark_index, 0) = vertices_updated(i, 0);
+            warped_landmarks(landmark_index, 1) = vertices_updated(i, 1);
+            warped_landmarks(landmark_index, 2) = vertices_updated(i, 2);
+          }
+        }
+
+        //Write warped landmarks file
+        std::ofstream out(warped_landmarks_filename);
+        if (!out)
+        {
+          std::cerr << "Error in writing Warped Landmarks file\n";
+          return false;
+        }
+        for (int i = 0; i < warped_landmarks.rows(); i++)
+        {
+          for (int j = 0; j < warped_landmarks.cols(); j++)
+          {
+            out << warped_landmarks(i, j) << "    ";
+          }
+          out << "\n";
+        }
+        out.close();
+        if (out.bad())
+        {
+          std::cerr << "Error in writing Warped Landmarks file\n";
+          return false;
+        }
+      }
+
     }
     return true;
   } catch (std::exception &e) {

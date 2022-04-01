@@ -21,13 +21,10 @@ public:
   Subject();
   ~Subject();
 
-  //! Set segmentatation filenames (one per domain)
-  void set_segmentation_filenames(std::vector<std::string> filenames);
-  //! Get segmentation filenames
-  std::vector<std::string> get_segmentation_filenames();
-
-  //! Return the domain types
-  std::vector<DomainType> get_domain_types(bool groomed = false);
+  //! Set original filenames (one per domain)
+  void set_original_filenames(std::vector<std::string> filenames);
+  //! Get original filenames
+  std::vector<std::string> get_original_filenames();
 
   //! Set groomed filenames
   void set_groomed_filenames(std::vector<std::string> filenames);
@@ -108,7 +105,7 @@ private:
 
   std::string display_name_;
   std::vector<std::string> image_filenames_;
-  std::vector<std::string> segmentation_filenames_;
+  std::vector<std::string> original_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
@@ -121,5 +118,8 @@ private:
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
   std::map<std::string, std::string> table_values_;
+
+  std::vector<DomainType> original_domain_types_;
+  std::vector<DomainType> groomed_domain_types_;
 };
 }

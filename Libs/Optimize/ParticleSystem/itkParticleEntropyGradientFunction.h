@@ -1,23 +1,8 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleEntropyGradientFunction.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleEntropyGradientFunction_h
-#define __itkParticleEntropyGradientFunction_h
+#pragma once
 
 #include "itkParticleVectorFunction.h"
 #include "itkParticleContainerArrayAttribute.h"
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include <vector>
 
 namespace itk
@@ -131,7 +116,7 @@ public:
   
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
+  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
                                 const std::vector<double> &weights,
                                     const PointType &pos, double initial_sigma,  double precision,  int &err) const;
 
@@ -183,7 +168,7 @@ public:
   void ComputeAngularWeights(const PointType &,
                              int,
                              const typename ParticleSystemType::PointVectorType &,
-                             const ParticleDomain *,
+                             const shapeworks::ParticleDomain *,
                              std::vector<double> &) const;
 
 
@@ -237,4 +222,3 @@ protected:
 
 #include "itkParticleEntropyGradientFunction.txx"
 
-#endif

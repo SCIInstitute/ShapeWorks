@@ -269,20 +269,13 @@ sphere40_O_DT.nrrd
   -10 46 -10 -10 46 10 10 46 -10
 </cutting_planes>
 
-<num_ffcs_per_input>
-0
-1
-0
-1
-0
-1
-0
-1
-</num_ffcs_per_input>
-
 <ffcs>
+ffcs/empty.ffc
 ffcs/sphere10.ffc
+ffcs/empty.ffc
 ffcs/sphere20.ffc
+ffcs/empty.ffc
 ffcs/sphere30.ffc
+ffcs/empty.ffc
 ffcs/sphere40.ffc
 </ffcs>

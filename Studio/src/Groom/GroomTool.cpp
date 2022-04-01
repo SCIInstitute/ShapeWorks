@@ -154,9 +154,9 @@ void GroomTool::update_page() {
   int domain_id = ui_->domain_box->currentIndex();
 
   auto subjects = session_->get_project()->get_subjects();
-  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > domain_id) {
-    bool is_image = subjects[0]->get_domain_types()[domain_id] == DomainType::Image;
-    bool is_mesh = subjects[0]->get_domain_types()[domain_id] == DomainType::Mesh;
+  if (session_->get_project()->get_original_domain_types().size() > domain_id) {
+    bool is_image = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Image;
+    bool is_mesh = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Mesh;
 
     if (is_image) {
       ui_->image_panel->show();
@@ -287,14 +287,14 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
   auto subjects = session_->get_project()->get_subjects();
   int domain_id = std::max<int>(ui_->domain_box->currentIndex(), 0);
 
-  if (!subjects.empty() && !subjects[0]->get_domain_types().empty() &&
-      subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
+  if (!subjects.empty() && !session_->get_project()->get_original_domain_types().empty() &&
+      session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Image) {
     if (params.get_iso_spacing() == 0.0) {
       if (session_ && session_->get_project()->get_subjects().size() > 0) {
         auto subject = session_->get_project()->get_subjects()[0];
-        if (subject->get_segmentation_filenames().size() > domain_id) {
+        if (subject->get_original_filenames().size() > domain_id) {
           try {
-            auto path = subject->get_segmentation_filenames()[domain_id];
+            auto path = subject->get_original_filenames()[domain_id];
             if (path != "") {
               // load the image
               Image image(path);
@@ -391,7 +391,7 @@ void GroomTool::on_run_groom_button_clicked() {
   auto domain_names = session_->get_project()->get_domain_names();
   if (subjects.size() > 0) {
     for (int domain = 0; domain < domain_names.size(); domain++) {
-      if (subjects[0]->get_domain_types()[domain] == DomainType::Image) {
+      if (session_->get_project()->get_original_domain_types()[domain] == DomainType::Image) {
         auto params = GroomParameters(session_->get_project(), domain_names[domain]);
         if (!params.get_fast_marching()) {
           question_dt = true;
@@ -465,7 +465,7 @@ void GroomTool::on_skip_button_clicked() {
   auto domain_names = session_->get_project()->get_domain_names();
   if (subjects.size() > 0) {
     for (int domain = 0; domain < domain_names.size(); domain++) {
-      if (subjects[0]->get_domain_types()[domain] == DomainType::Image) {
+      if (session_->get_project()->get_original_domain_types()[domain] == DomainType::Image) {
         has_image = true;
       }
     }

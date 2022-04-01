@@ -56,7 +56,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   this->Modified();
 }
 
-void ParticleSystem::AddDomain(DomainType *input, int threadId) {
+void ParticleSystem::AddDomain(DomainType::Pointer input, int threadId) {
   this->Modified();
 
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx) {
@@ -273,10 +273,17 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         double norm = random.magnitude();
         random /= norm;
 
-        // Check where the update will take us after applying it to the point and th constraints.
+        // Check where the update will take us after applying it to the point and the constraints.
         newposs_good.clear();
         bool good = true;  // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
+
+          // Add epsilon times random direction to existing point and apply domain
+          // constraints to generate a new particle position.
+
+          size_t local_domain = dom_to_process + j * domains_per_shape;
+          auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
+          PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
 
           vnl_vector_fixed<double, VDimension> updateVector = random * 1000.;
           vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], j);
@@ -326,17 +333,19 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
+            size_t local_domain = dom_to_process + j * domains_per_shape;
             vnl_vector_fixed<double, VDimension> projected = newposs_good[j];
 
-            PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)->UpdateParticlePosition(lists[j][i], i, projected);
-            this->AddPosition(newpos, dom_to_process + j * domains_per_shape, 0);
+            PointType newpos = this->GetDomain(local_domain)->UpdateParticlePosition(lists[j][i], i, projected);
+            this->AddPosition(newpos, local_domain, 0);
 
             // Apply opposite update to each original point in the split.
             auto neg_projected = -projected;
-            newpos = this->GetDomain(dom_to_process + j * domains_per_shape)->UpdateParticlePosition(lists[j][i], i, neg_projected);
-            this->SetPosition(newpos, i, dom_to_process + j * domains_per_shape, 0);
-            const ParticleDomain *particle_domain = this->GetDomain(dom_to_process + j * domains_per_shape);
+            newpos = this->GetDomain(local_domain)->UpdateParticlePosition(lists[j][i], i, neg_projected);
+            this->SetPosition(newpos, i, local_domain, 0);
+            shapeworks::ParticleDomain *particle_domain = this->GetDomain(local_domain);
             particle_domain->InvalidateParticlePosition(i);
+
             // Debuggg
             // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
@@ -381,7 +390,7 @@ void ParticleSystem::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VD
     auto neg_projected = -projected;
     newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, k, neg_projected);
     this->SetPosition(newpos, k, domain, threadId);
-    const ParticleDomain *particle_domain = this->GetDomain(domain);
+    shapeworks::ParticleDomain *particle_domain = this->GetDomain(domain);
     particle_domain->InvalidateParticlePosition(k);
 
   }
