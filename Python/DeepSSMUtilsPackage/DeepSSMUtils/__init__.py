@@ -10,8 +10,14 @@ def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, do
 	testPytorch()
 	loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
 
-def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
+def getTrainLoader(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	testPytorch()
+	loaders.get_train_loader(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
+
+def getValidationLoader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+	loaders.get_validation_loader(loader_dir, val_img_list, val_particles, down_factor, down_dir)
+
+def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir)
 
 def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
@@ -39,7 +45,7 @@ def testPytorch():
 	if torch.cuda.is_available():
 		print("Running on GPU.")
 	else:
-		print("\n\n\n********************* WARNING ****************************")
+		print("********************* WARNING ****************************")
 		print("Pytorch is running on your CPU!")
 		print("This will be very slow. If your machine has a GPU,") 
 		print("please reinstall Pytorch to your shapeworks conda ")

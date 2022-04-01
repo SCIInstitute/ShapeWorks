@@ -294,36 +294,37 @@ def Run_Pipeline(args):
     train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
                     train_names, extension='nrrd', compressed=True, verbose=False)
 
-    ##########################################################################################################
+    ###########################################################################################
     """
     Step 6: Create additional training data
     """
-    print("\nStep 6. Augment data\n")
+    print("\nStep 6. Augment data")
     '''
     - num_samples is how many samples to generate 
     - num_dim is the number of PCA scores to use
     - percent_dim what percent of variablity to retain (used if num_dim is 0)
-    - sampler_type is the distribution to use for sampling. Can be gaussian, mixture, or kde
+    - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
     '''
     num_samples = 4 # 4960
     num_dim = 0
     percent_variability = 0.95
-    sampler_type = "kde"
+    sampler = "kde"
     if args.tiny_test:
         num_samples = 2
         num_dim = 0
         percent_variability = 0.99
     aug_dir = data_dir + "augmentation/"
-    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, train_world_particles,
-                                                             num_samples, num_dim, percent_variability, sampler_type,
-                                                             mixture_num=0, processes=1)
+    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, 
+                                                            train_world_particles, num_samples, 
+                                                            num_dim, percent_variability, 
+                                                            sampler, mixture_num=0, processes=1)
     print("Dimensions retained: " + str(embedded_dim))
     aug_data_csv = aug_dir + "TotalData.csv"
 
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
-    ##########################################################################################################
+    #############################################################################################
     print("\nStep 7. Find Test and Validation Transforms and Groom Images")
     """
     Step 7: Find test and validation transforms and images
@@ -333,6 +334,7 @@ def Run_Pipeline(args):
     4. Crop image
     """
     """
+    TODO - move to pymodule
     Helper function - Works best if moving and fixed images have been centered
     type can either be rigid or similarity (rigid + isotropic scale), default is rigid
     Returns vtk version of transform matrix
@@ -535,12 +537,14 @@ def Run_Pipeline(args):
     for val_name in val_names:
         val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
 
-    # TODO remove debug
-    for val_mesh_file, val_name, val_transform in zip(val_mesh_files, val_names, val_transforms):
-        sw.Mesh(val_mesh_file).applyTransform(val_transform).write(data_dir + 'debug/' + val_name + ".vtk")
+    # # TODO remove debug
+    # for val_mesh_file, val_name, val_transform in zip(val_mesh_files, val_names, val_transforms):
+    #     sw.Mesh(val_mesh_file).applyTransform(val_transform).write(data_dir + 'debug/' + val_name + ".vtk")
 
-    print("\nStep 9. Reformat Data for Pytorch\n")
+    #################################################################################################
+    print("\nStep 9. Create PyTorch loaders from data.")
     '''
+    Create training, validation, and test torch loaders
     If down_sample is true, model will train on images that are smaller by down_factor
     Hyper-parameter batch_size is for training
         Higher batch size will help speed up training but uses more cuda memory, 
@@ -551,17 +555,19 @@ def Run_Pipeline(args):
     loader_dir = output_directory + 'torch_loaders/'
     DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size, down_factor, 
                                 down_dir= data_dir + "train_downsampled_images/")
-    # DeepSSMUtils.getValLoader(loader_dir, val_image_files, val_world_parbatch_size, down_factor, down_dir)
-    # DeepSSMUtils.getTestLoader(loader_dir, test_image_files, down_factor, down_dir)
+    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles,  
+                                down_factor, down_dir= data_dir + "val_downsampled_images/")
+    DeepSSMUtils.getTestLoader(loader_dir, test_image_files, down_factor, 
+                                down_dir= data_dir + "test_downsampled_images/")
 
-    # print("\n\n\nStep 4. Train model.\n")
+    # print("\nStep 10. Train DeepSSM model.")
     # # Define model parameters
     # model_name = "femur_deepssm"
     # model_parameters = {
     #     "model_name": model_name,
     #     "num_latent_dim": int(embedded_dim),
     #     "paths": {
-    #         "out_dir": out_dir,
+    #         "out_dir": output_directory,
     #         "loader_dir": loader_dir,
     #         "aug_dir": aug_dir
     #     },
