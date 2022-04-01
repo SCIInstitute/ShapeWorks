@@ -176,8 +176,6 @@ def Run_Pipeline(args):
     # Set project
     project = sw.Project()
     project.set_subjects(subjects)
-    # project.set_original_domain_types([sw.DomainType.ContourDomain])
-    # project.set_groomed_domain_types([sw.DomainType.ContourDomain])
     parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
