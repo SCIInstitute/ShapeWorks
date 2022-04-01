@@ -20,7 +20,7 @@ def Run_Pipeline(args):
     process
     """
     print("\nStep 1. Extract Data\n")
-    dataset_name = "peanut-v0"
+    dataset_name = "peanut"
     output_directory = "Output/peanut_shared_boundary/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
