@@ -259,8 +259,8 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
       while (true) {
           // Auxiliary for debug
-          /*std::vector<vnl_vector_fixed<double, VDimension> > dbgprojected;
-          std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;*/
+          std::vector<vnl_vector_fixed<double, VDimension> > dbgprojected;
+          std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;
 
         // Generate random unit vector
         std::uniform_real_distribution<double> distribution(-1000., 1000.);
@@ -285,8 +285,8 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           vnl_vector_fixed<double, VDimension> normprojected = projected / projected.magnitude();
 
           // Auxiliary for debug
-          /*dbgoriginal.push_back(normupdateVector);
-          dbgprojected.push_back(normprojected);*/
+          dbgoriginal.push_back(normupdateVector);
+          dbgprojected.push_back(normprojected);
 
           double cosangle = normupdateVector[0]*normprojected[0] + normupdateVector[1]*normprojected[1] + normupdateVector[2]*normprojected[2];
 
@@ -297,17 +297,23 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
         // Useful for debugging and examining raw splitting performance
         // Should remain to examine whether splitting is going wrong
-        /*double allowedangle = 55;
+        double allowedangle = 55;
         for(size_t l = 0; l < dbgprojected.size(); l++){
             for(size_t m = 0; m < dbgprojected.size(); m++){
                 vnl_vector_fixed<double, VDimension> dbgpro1 = dbgprojected[l];
                 vnl_vector_fixed<double, VDimension> dbgpro2 = dbgprojected[m];
                 double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
                 double angledegrees = acos(cosangle)*180/3.14;
-                //std::cout << angledegrees << "\t";
-                if(angledegrees > allowedangle) std::cout << angledegrees << "\t";
-                //if(angledegrees > allowedangle) std::cout << angledegrees << std::endl;
                 if(angledegrees > allowedangle) {
+                    vnl_vector_fixed<double, VDimension> dbgpro11 = dbgprojected[l];
+                    vnl_vector_fixed<double, VDimension> dbgori11 = dbgoriginal[l];
+                    double cosangle1 = dbgpro11[0]*dbgori11[0] + dbgpro11[1]*dbgori11[1] + dbgpro11[2]*dbgori11[2];
+                    double angledegrees1 = acos(cosangle1)*180/3.14;
+                    dbgpro11 = dbgprojected[m];
+                    dbgori11 = dbgoriginal[m];
+                    double cosangle2 = dbgpro11[0]*dbgori11[0] + dbgpro11[1]*dbgori11[1] + dbgpro11[2]*dbgori11[2];
+                    double angledegrees2 = acos(cosangle2)*180/3.14;
+                    std::cout << " (" << l << ", " << m << ") violate at " << angledegrees << " with (" << angledegrees1 << ", " << angledegrees2 << ") projection degrees" << std::endl;
                     good = false;
                 }
             }
@@ -315,8 +321,8 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         }
         //std::cout << std::endl << std::endl;
         if(!good){
-            std::cout << "Violation" << std::endl;
-        }*/
+            std::cout << std::endl << "Violation at " << lists[0].size() << " particle split." << std::endl;
+        }
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {

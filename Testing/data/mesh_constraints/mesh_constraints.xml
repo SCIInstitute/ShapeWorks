@@ -60,11 +60,11 @@ mesh
 </initial_relative_weighting>
 
 <procrustes_interval>
-1
+0
 </procrustes_interval>
 
 <procrustes_scaling>
-1
+0
 </procrustes_scaling>
 
 <save_init_splits>
