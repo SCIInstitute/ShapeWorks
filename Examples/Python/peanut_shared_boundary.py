@@ -35,7 +35,7 @@ def Run_Pipeline(args):
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.stl"))
+                                     dataset_name + "/meshes/*.stl"))[:2]
 
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
@@ -56,7 +56,6 @@ def Run_Pipeline(args):
     groom_dir = output_directory + 'groomed/'
     if not os.path.exists(groom_dir):
         os.makedirs(groom_dir)
-
     """
     First, we need to loop over the mesh files and load them
     """
@@ -93,11 +92,14 @@ def Run_Pipeline(args):
     # 02. Extract shared boundaries and 03. Smooth the meshes
     extracted_shared_meshes = []
     extracted_meshes = []
+    extracted_shared_names = [mesh_names[i].replace("l","s") for i in domain1_indx]
     # distance threshold to consider two surfaces as "shared"
     tol = 1e-3
+    num_init_domains = 2 # left and right
     for i in range(len(domain1_indx)):
         mesh_l = mesh_list[domain1_indx[i]]
         mesh_r = mesh_list[domain2_indx[i]]
+        print("Extracting shared surface between files: ", mesh_names[i*num_init_domains],"\t",mesh_names[i*num_init_domains+1])
         extracted_l,extracted_r,extracted_s = sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
         #smooth the meshes 
         extracted_l.smooth()
@@ -110,19 +112,23 @@ def Run_Pipeline(args):
         extracted_shared_meshes.append(extracted_s)
 
 
+
     # 04. Extract boundary loop
     contours = []
+    contour_names = [mesh_names[i].replace("l","c") for i in domain1_indx]
     for i in range(len(extracted_shared_meshes)):
+        print("Extracting boundary of shared surface: ", extracted_shared_names[i])
         output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes[i])
+        # add to list
         contours.append(output_contour)
 
     # Save groomed meshes
     groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', extracted_meshes, mesh_names, extension='vtk')
     
-    extracted_shared_names = [mesh_names[i].replace("l","s") for i in domain1_indx]
+    
     groomed_shared_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', extracted_shared_meshes, extracted_shared_names, extension = "vtk")
     
-    contour_names = [mesh_names[i].replace("l","c") for i in domain1_indx]
+    
     contour_files = sw.utils.save_meshes(groom_dir + 'contours/', contours,contour_names, extension = "vtp")
     
     print("\nStep 3. Optimize - Particle Based Optimization\n")
@@ -142,7 +148,7 @@ def Run_Pipeline(args):
     domains_per_shape = 4
     # Set subjects
     subjects = []
-    num_init_domains = 2 # left and right
+    
     for i in range(len(domain1_indx)):
         subject = sw.Subject()
         subject.set_number_of_domains(domains_per_shape)
@@ -190,7 +196,7 @@ def Run_Pipeline(args):
         "procrustes_interval" : 3,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 5,
+        "verbosity" : 0,
         "multiscale_particles" : 8,
         "recompute_regularization_interval" : 2
 
@@ -216,8 +222,8 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
-    # # If tiny test or verify, check results and exit
-    # sw.utils.check_results(args, spreadsheet_file)
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
