@@ -230,6 +230,9 @@ def Run_Pipeline(args):
     optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
+    print("To analyze train shape model, call:")
+    print(" ShapeWorksStudio " + spreadsheet_file)
+
     # # TODO remove - Analyze - open in studio
     # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     # subprocess.check_call(AnalysisCmd)
@@ -329,13 +332,19 @@ def Run_Pipeline(args):
     3. Apply alignment to image
     4. Crop image
     """
-    # Helper function - Works best if moving and fixed images have been centered
-    def rigid_image_registration_transform(fixed_image_file, moving_image_file, out_image_file):
+    """
+    Helper function - Works best if moving and fixed images have been centered
+    type can either be rigid or similarity (rigid + isotropic scale), default is rigid
+    Returns vtk version of transform matrix
+    """
+    def image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid'):
         ref_image = sw.Image(fixed_image_file)
         image = sw.Image(moving_image_file)
-        # Import Default Parameter Map
+        # Import Default Parameter Map 
         parameter_object = itk.ParameterObject.New()
         parameter_map = parameter_object.GetDefaultParameterMap('rigid')
+        if transform_type == 'similarity':
+            parameter_map['Transform'] = ['SimilarityTransform']
         parameter_object.AddParameterMap(parameter_map)
         # Call registration function
         fixed_image = itk.imread(fixed_image_file, itk.F)
@@ -345,11 +354,16 @@ def Run_Pipeline(args):
         # Get transform matrix
         parameter_map = result_transform_parameters.GetParameterMap(0)
         transform_params = np.array(parameter_map['TransformParameters'], dtype=float)
-        thetas = transform_params[:3]
-        rotation_matrix = scipy.spatial.transform.Rotation.from_euler('xyz', thetas).as_matrix()
+        if transform_type == 'rigid':
+            itk_transform = SimpleITK.Euler3DTransform()
+        elif transform_type == 'similarity':
+            itk_transform = SimpleITK.Similarity3DTransform()
+        else:
+            print("Error: " + transform_type + " transform unimplemented.")
+        itk_transform.SetParameters(transform_params)
         itk_transform_matrix = np.eye(4)
-        itk_transform_matrix[:3,:3] = rotation_matrix
-        itk_transform_matrix[-1,:3] = transform_params[3:]
+        itk_transform_matrix[:3,:3] = np.array(itk_transform.GetMatrix()).reshape(3,3)
+        itk_transform_matrix[-1,:3] = np.array(itk_transform.GetTranslation())
         # Apply transform
         image.applyTransform(itk_transform_matrix,
                              ref_image.origin(),  ref_image.dims(),
@@ -357,6 +371,7 @@ def Run_Pipeline(args):
                              sw.InterpolationType.Linear, 
                              meshTransform=False).write(out_image_file)
         return sw.utils.getVTKtransform(itk_transform_matrix)
+    
     # Get reference
     ref_image_file = data_dir + 'reference_image.nrrd'
     ref_image = sw.Image(ref_image_file)
@@ -373,7 +388,7 @@ def Run_Pipeline(args):
     val_test_mesh_files = val_mesh_files + test_mesh_files
     # Loop over
     print("Grooming validation and test images...")
-    val_test_images = []
+    val_test_image_files = []
     val_test_transforms = []
     for vt_mesh_file in val_test_mesh_files:
         # Get name
@@ -385,36 +400,38 @@ def Run_Pipeline(args):
                 corresponding_image_file = image_files[index]
                 break
         vt_image = sw.Image(corresponding_image_file)
-        val_test_images.append(vt_image)
+        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
+        val_test_image_files.append(vt_image_file)
         # Apply reflection transform 
         reflection = np.eye(4) # Identity
         if ref_side in vt_name:
             reflection[0][0] = -1 # Reflect across X
-        # vt_image.reflect(sw.Axis(0))
         vt_image.applyTransform(reflection)
         # Translate to make rigid registration easier
         translation = ref_center - vt_image.center()
-        vt_image.setOrigin(vt_image.origin() + translation)
-        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
-        vt_image.write(vt_image_file)
-        # Get rigid transform from image registration and apply
-        # Roughly align, roughly crop, then realign and crop
-        print("Finding rigid transform for: " + vt_name)
-        rigid_transform1 = rigid_image_registration_transform(ref_image_file, vt_image_file, vt_image_file)
+        vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
+        # Get initial rigid transform from image registration and apply
+        rigid_transform = image_registration_transform(ref_image_file, vt_image_file, 
+                                vt_image_file, transform_type='rigid')
+        # Apply rough cropping to image
         sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
-        rigid_transform2 = rigid_image_registration_transform(cropped_ref_image_file, vt_image_file, vt_image_file)
+        # Get similarity transform from image registration and apply
+        similarity_transform = image_registration_transform(cropped_ref_image_file, 
+                                vt_image_file, vt_image_file, transform_type='similarity')
+        # Apply final cropping to image
         sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
-        # Get combined transform and write
+        # Combine transforms to get single matrix and save
         translation_marix = np.eye(4)
         translation_marix[:3,-1] = translation
-        transform = np.matmul(translation_marix, reflection)
-        transform = np.matmul(rigid_transform1, transform)
-        transform = np.matmul(rigid_transform2, transform)
+        transform = np.matmul(similarity_transform, np.matmul(rigid_transform, 
+                    np.matmul(translation_marix, reflection)))
         val_test_transforms.append(transform)
-    val_images = val_test_images[:len(val_mesh_files)]
+    # split val and test groomed images and transforms    
+    val_image_files = val_test_image_files[:len(val_mesh_files)]
     val_transforms = val_test_transforms[:len(val_mesh_files)]
-    test_images = val_test_images[len(val_mesh_files):]
+    test_image_files = val_test_image_files[len(val_mesh_files):]
     test_transforms = val_test_transforms[len(val_mesh_files):]
+
 
     #################################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")
@@ -506,6 +523,110 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
+    print("To analyze validation shape model, call:")
+    print(" ShapeWorksStudio " + spreadsheet_file)
+    
     # # TODO remove - Analyze - open in studio
     # analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
     # subprocess.check_call(analyze_cmd)
+
+    # Get validation world particle files
+    val_world_particles = []
+    for val_name in val_names:
+        val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
+
+    # TODO remove debug
+    for val_mesh_file, val_name, val_transform in zip(val_mesh_files, val_names, val_transforms):
+        sw.Mesh(val_mesh_file).applyTransform(val_transform).write(data_dir + 'debug/' + val_name + ".vtk")
+
+    print("\nStep 9. Reformat Data for Pytorch\n")
+    '''
+    If down_sample is true, model will train on images that are smaller by down_factor
+    Hyper-parameter batch_size is for training
+        Higher batch size will help speed up training but uses more cuda memory, 
+        if you get a memory error try reducing the batch size
+    '''
+    down_factor = 0.75
+    batch_size = 8
+    loader_dir = output_directory + 'torch_loaders/'
+    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size, down_factor, 
+                                down_dir= data_dir + "train_downsampled_images/")
+    # DeepSSMUtils.getValLoader(loader_dir, val_image_files, val_world_parbatch_size, down_factor, down_dir)
+    # DeepSSMUtils.getTestLoader(loader_dir, test_image_files, down_factor, down_dir)
+
+    # print("\n\n\nStep 4. Train model.\n")
+    # # Define model parameters
+    # model_name = "femur_deepssm"
+    # model_parameters = {
+    #     "model_name": model_name,
+    #     "num_latent_dim": int(embedded_dim),
+    #     "paths": {
+    #         "out_dir": out_dir,
+    #         "loader_dir": loader_dir,
+    #         "aug_dir": aug_dir
+    #     },
+    #     "encoder": {
+    #         "deterministic": True
+    #     },
+    #     "decoder": {
+    #         "deterministic": True,
+    #         "linear": True
+    #     },
+    #     "loss": {
+    #         "function": "MSE",
+    #         "supervised_latent": True,
+    #     },
+    #     "trainer": {
+    #         "epochs": 100,
+    #         "learning_rate": 0.001,
+    #         "decay_lr": True,
+    #         "val_freq": 1
+    #     },
+    #     "fine_tune": {
+    #         "enabled": True,
+    #         "loss": "MSE",
+    #         "epochs": 2,
+    #         "learning_rate": 0.001,
+    #         "decay_lr": True,
+    #         "val_freq": 1
+    #     },
+    #     "use_best_model": True
+    # }
+    # if args.tiny_test:
+    #     model_parameters["trainer"]["epochs"] = 1
+    #     model_parameters["fine_tune"]["epochs"] = 1
+    # # Save config file    
+    # config_file = out_dir + model_name + ".json"
+    # with open(config_file, "w") as outfile:
+    #     json.dump(model_parameters, outfile, indent=2)
+    # # Train
+    # DeepSSMUtils.trainDeepSSM(config_file)
+
+    # print("\n\n\nStep 5. Predict with DeepSSM\n")
+    # '''
+    # Test DeepSSM
+    # '''
+    # PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
+    # prediction_dir = out_dir + model_name + '/predictions/'
+    # DeepSSMUtils.testDeepSSM(config_file)
+    # print('Predicted particles saved at: ' + prediction_dir)
+
+    # # If tiny test or verify, check results and exit
+    # if args.tiny_test or args.verify:
+    #     if args.tiny_test:
+    #         if not os.path.exists("Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles"):
+    #             print("tiny test failed")
+    #             exit(-1)
+    #         # TODO: verify full run
+    #     print("Done with test, verification succeeded.")
+    #     exit()
+
+    # print("\n\n\nStep 6. Analyze results.\n")
+    # '''
+    # Analyze DeepSSM
+    # '''
+    # DT_dir = input_dir + "groomed/distance_transforms/"
+    # out_dir = out_dir + "Results/"
+    # mean_prefix = input_dir + "shape_models/femur/mean/femur"
+    # avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', mean_prefix)
+    # print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
