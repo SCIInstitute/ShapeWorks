@@ -35,7 +35,7 @@ def Run_Pipeline(args):
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.stl"))[:2]
+                                     dataset_name + "/meshes/*.stl"))
 
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
@@ -117,7 +117,7 @@ def Run_Pipeline(args):
     contours = []
     contour_names = [mesh_names[i].replace("l","c") for i in domain1_indx]
     for i in range(len(extracted_shared_meshes)):
-        print("Extracting boundary of shared surface: ", extracted_shared_names[i])
+        print("Extracting boundary loop of shared surface: ", extracted_shared_names[i])
         output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes[i])
         # add to list
         contours.append(output_contour)
@@ -179,7 +179,7 @@ def Run_Pipeline(args):
     parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
-    num_particles = [256,256,32,32]
+    num_particles = [128,128,128,128]
 
     parameter_dictionary = {
         "checkpointing_interval" : 200,
@@ -202,7 +202,7 @@ def Run_Pipeline(args):
 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        num_particles = [32,32,8,8]
+        num_particles = [32,32,32,32]
         parameter_dictionary["optimization_iterations"] = 30
         parameter_dictionary["iterations_per_split"] = 30
 
