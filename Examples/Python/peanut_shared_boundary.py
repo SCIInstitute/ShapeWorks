@@ -170,8 +170,8 @@ def Run_Pipeline(args):
     # Set project
     project = sw.Project()
     project.set_subjects(subjects)
-    project.set_original_domain_types([sw.DomainType.ContourDomain])
-    project.set_groomed_domain_types([sw.DomainType.ContourDomain])
+    # project.set_original_domain_types([sw.DomainType.ContourDomain])
+    # project.set_groomed_domain_types([sw.DomainType.ContourDomain])
     parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
@@ -190,7 +190,7 @@ def Run_Pipeline(args):
         "procrustes_interval" : 3,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3,
+        "verbosity" : 5,
         "multiscale_particles" : 8,
         "recompute_regularization_interval" : 2
 
