@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        # sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.stl"))[:2]
     # Else download the entire dataset
