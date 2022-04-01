@@ -229,8 +229,6 @@ Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh)
   Eigen::MatrixXd V = mesh.points();
   Eigen::MatrixXi F = mesh.faces();
   
-  // igl::readPLY(in_fname, V, F);
-
   std::vector<std::vector<int>> loops;
   igl::boundary_loop(F, loops);
   assert(loops.size() == 1);
@@ -261,10 +259,6 @@ Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh)
   polydata->SetPoints(pts);
   polydata->SetLines(lines);
 
-  // auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  // writer->SetFileName(filename.c_str());
-  // writer->SetInputData(polydata);
-  // writer->Write();
   Mesh output(polydata);
   return output;
 
@@ -390,8 +384,6 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
                       Eigen::MatrixXd& out_V,
                       Eigen::MatrixXi& out_F) 
 {
-  // Eigen::MatrixXd out_V;
-  // Eigen::MatrixXi out_F;
 
   std::vector<std::vector<int>> src_loops, shared_loops;
   igl::boundary_loop(src_F, src_loops);
@@ -429,7 +421,6 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
     out_V.row(src_loop[i]) = C.row(0);
   }
 
-  // std::make_tuple(out_V,out_F);
 }
 
 std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol)
@@ -460,7 +451,7 @@ std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const
 
   Eigen::MatrixXd bridge_V;
   Eigen::MatrixXi bridge_F;
-  // std::tie(bridge_V, bridge_F) = move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r);
+  
   move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r,bridge_V,bridge_F);
 
   
