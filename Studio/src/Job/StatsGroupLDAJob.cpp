@@ -80,51 +80,73 @@ QString StatsGroupLDAJob::name() { return "Group LDA"; }
 
 //---------------------------------------------------------------------------
 void StatsGroupLDAJob::plot(JKQTPlotter* plot) {
-
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
+  plot->clearGraphs();
 
-  QVector<double> x, y;
-  for (int i = 0; i < group1_x_.size(); i++) {
-    x << group1_x_(i);
-    y << group1_pdf_(i);
-  }
-
-  QString x_label = "x_label";
-  QString y_label = "y_label";
   QString title = "title";
 
-  size_t column_x = ds->addCopiedColumn(x, x_label);
-  size_t column_y = ds->addCopiedColumn(y, y_label);
+  {
+    QVector<double> x, y;
+    for (int i = 0; i < group1_x_.size(); i++) {
+      x << group1_x_(i);
+      y << group1_pdf_(i);
+      qDebug() << group1_pdf_(i);
+    }
 
-  plot->clearGraphs();
-  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-  graph->setColor(Qt::blue);
-  graph->setSymbolType(JKQTPNoSymbol);
-  graph->setXColumn(column_x);
-  graph->setYColumn(column_y);
-  graph->setTitle(title);
+    QString x_label = "x_label";
+    QString y_label = "y_label";
+
+    size_t column_x = ds->addCopiedColumn(x, x_label);
+    size_t column_y = ds->addCopiedColumn(y, y_label);
+
+    JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
+    graph->setColor(QColor(239,133,54));
+    graph->setSymbolType(JKQTPNoSymbol);
+    graph->setXColumn(column_x);
+    graph->setYColumn(column_y);
+    graph->setTitle(title);
+    plot->addGraph(graph);
+  }
+
+  {
+    QVector<double> x, y;
+    for (int i = 0; i < group2_x_.size(); i++) {
+      x << group2_x_(i);
+      y << group2_pdf_(i);
+    }
+
+    QString x_label = "x_label";
+    QString y_label = "y_label";
+
+    size_t column_x = ds->addCopiedColumn(x, x_label);
+    size_t column_y = ds->addCopiedColumn(y, y_label);
+
+    JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
+    graph->setColor(Qt::blue);
+    graph->setSymbolType(JKQTPNoSymbol);
+    graph->setXColumn(column_x);
+    graph->setYColumn(column_y);
+    graph->setTitle(title);
+    plot->addGraph(graph);
+  }
 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
   plot->getPlotter()->setUseAntiAliasingForText(true);
-  // plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
   plot->getPlotter()->setPlotLabelFontSize(18);
   plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
   plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
+  plot->getPlotter()->setShowKey(true);
 
-  plot->getXAxis()->setAxisLabel(x_label);
+  plot->getXAxis()->setAxisLabel("other x label");
   plot->getXAxis()->setLabelFontSize(14);
-  plot->getYAxis()->setAxisLabel(y_label);
+  plot->getYAxis()->setAxisLabel("other y label");
   plot->getYAxis()->setLabelFontSize(14);
 
   plot->clearAllMouseWheelActions();
   plot->setMousePositionShown(false);
   plot->setMinimumSize(250, 250);
-  plot->addGraph(graph);
   plot->zoomToFit();
-
-
 }
 }  // namespace shapeworks
