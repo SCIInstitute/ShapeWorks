@@ -223,16 +223,8 @@ bool is_clockwise(const Eigen::MatrixXd& V,
   return angle0 > angle1;
 }
 
-int MeshUtils::boundaryLoopExtractor(std::string filename, Mesh mesh) 
+Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh) 
 {
-
-  // if(argc != 3) {
-  //   std::cerr << "Usage: " << argv[0] << "<in_file.ply> <out_file.vtp>";
-  //   exit(1);
-  // }
-
-  // const std::string in_fname = argv[1];
-  // const std::string out_fname = argv[2];
 
   Eigen::MatrixXd V = mesh.points();
   Eigen::MatrixXi F = mesh.faces();
@@ -269,10 +261,13 @@ int MeshUtils::boundaryLoopExtractor(std::string filename, Mesh mesh)
   polydata->SetPoints(pts);
   polydata->SetLines(lines);
 
-  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  writer->SetFileName(filename.c_str());
-  writer->SetInputData(polydata);
-  writer->Write();
+  // auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  // writer->SetFileName(filename.c_str());
+  // writer->SetInputData(polydata);
+  // writer->Write();
+  Mesh output(polydata);
+  return output;
+
 }
 
 
@@ -437,7 +432,7 @@ void move_to_boundary(const Eigen::MatrixXd& src_V,
   // std::make_tuple(out_V,out_F);
 }
 
-int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string filename_l,std::string filename_r,std::string filename_shared,double tol)
+std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol)
 {
   
 
@@ -468,9 +463,13 @@ int MeshUtils::sharedBoundaryExtractor(Mesh mesh_l, Mesh mesh_r, std::string fil
   // std::tie(bridge_V, bridge_F) = move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r);
   move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r,bridge_V,bridge_F);
 
-  igl::writePLY(filename_l, bridge_V, bridge_F);
-  igl::writePLY(filename_r, rem_V_r, rem_F_r);
-  igl::writePLY(filename_shared, shared_V_r, shared_F_r);
+  
+  Mesh out_l(bridge_V,bridge_F);
+  Mesh out_r(rem_V_r,rem_F_r);
+  Mesh out_s(shared_V_r,shared_F_r);
+
+  // pass ownership since they will just go out of scope and be deleted anyway
+  return std::array<Mesh, 3>{ std::move(out_l), std::move(out_r), std::move(out_s) };
 
 }
 
