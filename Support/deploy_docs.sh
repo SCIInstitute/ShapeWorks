@@ -46,7 +46,7 @@ git checkout --track origin/gh-pages
 git pull --rebase
 
 # build docs from master
-git checkout master
+#git checkout master
 
 # clean out old api docs as mkdocs will just find whatever is there.
 rm -rf docs/api
