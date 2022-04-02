@@ -633,3 +633,36 @@ TEST(OptimizeTests, mesh_ffc_test) {
   bool good = check_constraint_violations(app, 3.0e-1);
   ASSERT_TRUE(good);
 }
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_femur_ffc) {
+  setupenv(std::string(TEST_DATA_DIR) + "/mesh_femur_ffc");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere_00_world.particles");
+  std::remove("output/sphere_01_world.particles");
+  std::remove("output/sphere_02_world.particles");
+  std::remove("output/sphere_03_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("mesh_femur.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  bool good = check_constraint_violations(app, 3.0e-1);
+  ASSERT_TRUE(good);
+}
