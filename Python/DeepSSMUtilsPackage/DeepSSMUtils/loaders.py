@@ -57,16 +57,14 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 Reads csv and makes just train data loaders
 '''
 def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
-	sw_message("Creating training torch loaders:")
+	sw_message("Creating training torch loader...")
 	# Get data
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
 	train_data = DeepSSMdataset(images, scores, models)
-	sw_message(str(len(train_data)) + ' in training set')
 	# Save
-	sw_message("Saving data loader...")
 	trainloader = DataLoader(
 			train_data,
 			batch_size=batch_size,
@@ -97,7 +95,6 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	val_data = DeepSSMdataset(images, scores, models)
 	# Make loader
-	sw_message("Creating and saving validation dataloader...")
 	val_loader = DataLoader(
 			val_data,
 			batch_size=1,
@@ -114,7 +111,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 Makes test data loader
 '''
 def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
-	sw_message("Creating test torch loader:")
+	sw_message("Creating test torch loader...")
 	# get data
 	image_paths = []
 	scores = []
@@ -137,7 +134,6 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	name_file.close()
 	sw_message("Test names saved to: " + loader_dir + "test_names.txt")
 	# Make loader
-	sw_message("Creating and saving test dataloader...")
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
@@ -157,7 +153,6 @@ returns images, scores, models, prefixes from CSV
 '''
 def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 	# get all data and targets
-	sw_message("Reading all data...")
 	image_paths = []
 	scores = []
 	models = []
@@ -173,7 +168,7 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 			prefix = get_prefix(image_path)
 			# data error check
 			if prefix not in get_prefix(model_path):
-				print("Error: Images and models mismatched in csv.")
+				print("Error: Images and particles are mismatched in csv.")
 				print(index)
 				print(prefix)
 				print(get_prefix(model_path))
@@ -196,7 +191,6 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 Shuffle all data
 '''
 def shuffle_data(images, scores, models, prefixes):
-	sw_message("Shuffling.")
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
 	images, scores, models, prefixes = zip(*c)

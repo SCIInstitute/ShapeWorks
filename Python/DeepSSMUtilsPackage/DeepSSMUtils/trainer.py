@@ -16,7 +16,6 @@ from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 
-
 '''
 Train helper
 	Initializes all weights using initialization function specified by initf
@@ -126,7 +125,7 @@ def supervised_train(config_file):
 	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
 	axe.set_xlabel('Epochs')
 	axe.set_xlim(0,num_epochs+1)
-	axe.set_ylabel('PCA MSE')
+	axe.set_ylabel('Particle MSE')
 	axe.legend()
 	train_plot.savefig(model_dir + "training_plot.png", dpi=300)
 	# initialize
@@ -152,13 +151,13 @@ def supervised_train(config_file):
 		for img, pca, mdl in train_loader:
 			opt.zero_grad()
 			img = img.to(device)
-			pca = pca.to(device)
+			mdl = mdl.to(device)
 			[pred_pca, pred_mdl] = net(img)
-			loss = loss_func(pred_pca, pca)
+			loss = loss_func(pred_mdl, mdl)
 			loss.backward()
 			opt.step()
 			train_losses.append(loss.item())
-			train_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
+			train_rel_loss = loss_func(pred_mdl, mdl) / loss_func(pred_mdl*0, mdl)
 			train_rel_losses.append(train_rel_loss.item())
 			pred_particles.extend(pred_mdl.detach().cpu().numpy())
 			true_particles.extend(mdl.detach().cpu().numpy())
@@ -173,11 +172,11 @@ def supervised_train(config_file):
 			for img, pca, mdl in val_loader:
 				opt.zero_grad()
 				img = img.to(device)
-				pca = pca.to(device)
+				mdl = mdl.to(device)
 				[pred_pca, pred_mdl] = net(img)
-				v_loss = loss_func(pred_pca, pca)
+				v_loss = loss_func(pred_mdl, mdl)
 				val_losses.append(v_loss.item())
-				val_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
+				val_rel_loss = loss_func(pred_mdl, mdl) / loss_func(pred_mdl*0, mdl)
 				val_rel_losses.append(val_rel_loss.item())
 				pred_particles.extend(pred_mdl.detach().cpu().numpy())
 				true_particles.extend(mdl.detach().cpu().numpy())
@@ -187,7 +186,7 @@ def supervised_train(config_file):
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
-			log_print(logger, [e, scheduler.get_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
+			log_print(logger, [e, scheduler.get_last_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
 			# plot
 			epochs.append(e)
 			plot_train_losses.append(train_mr_MSE)
