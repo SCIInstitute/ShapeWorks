@@ -984,7 +984,10 @@ void AnalysisTool::update_lda_graph()
     if (!group_lda_job_running_) {
       group_lda_job_running_ = true;
       ui_->lda_panel->show();
-      ui_->lda_progress->setValue(1);
+      ui_->lda_label->show();
+      ui_->lda_progress->setValue(0);
+      ui_->lda_progress->setMaximum(0);
+      ui_->lda_progress->update();
       group_lda_job_->set_stats(stats_);
       app_->get_py_worker()->run_job(group_lda_job_);
     }
@@ -1204,18 +1207,27 @@ void AnalysisTool::run_good_bad_particles() {
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_lda_progress(double progress)
 {
+  if (progress > 0) {
+    ui_->lda_progress->setMaximum(100);
+  } else {
+    ui_->lda_progress->setMaximum(0);
+  }
   ui_->lda_progress->setVisible(progress < 1);
   ui_->lda_progress->setValue(progress * 100);
+  ui_->lda_progress->update();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_lda_complete()
 {
-  std::cerr << "LDA complete";
   ui_->lda_progress->setVisible(false);
+  ui_->lda_label->setVisible(false);
   group_lda_job_running_ = false;
 
-  group_lda_job_->plot(ui_->lda_graph);
+  QString left_group = ui_->group_left->currentText();
+  QString right_group = ui_->group_right->currentText();
+
+  group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
 }
 

@@ -19,7 +19,6 @@ void StatsGroupLDAJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats
 //---------------------------------------------------------------------------
 void StatsGroupLDAJob::run() {
   emit progress(0.1);
-  std::cerr << "running1\n";
   stats_.PrincipalComponentProjections();
   auto pca_loadings = stats_.PCALoadings();
   emit progress(0.2);
@@ -44,9 +43,9 @@ void StatsGroupLDAJob::run() {
   int group_2_idx = 0;
   for (int i = 0; i < num_samples; i++) {
     if (group_ids[i] == 1) {
-      group_1_data(group_1_idx++) = pca_loadings(i);
+      group_1_data.row(group_1_idx++) = pca_loadings.row(i);
     } else {
-      group_2_data(group_2_idx++) = pca_loadings(i);
+      group_2_data.row(group_2_idx++) = pca_loadings.row(i);
     }
   }
 
@@ -66,46 +65,38 @@ void StatsGroupLDAJob::run() {
   group2_map_ = std::get<5>(result);
 
   emit progress(1.0);
-
-  std::cerr << "done running4\n";
-
-  //  this->group_pvalues_.resize(pvalues.rows());
-  //  for (int i = 0; i < pvalues.rows(); i++) {
-  //    this->group_pvalues_(i) = pvalues(i, 0);
-  // }
 }
 
 //---------------------------------------------------------------------------
 QString StatsGroupLDAJob::name() { return "Group LDA"; }
 
 //---------------------------------------------------------------------------
-void StatsGroupLDAJob::plot(JKQTPlotter* plot) {
+void StatsGroupLDAJob::plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name) {
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
   plot->clearGraphs();
 
-  QString title = "title";
+  QString title = "LDA";
 
   {
     QVector<double> x, y;
     for (int i = 0; i < group1_x_.size(); i++) {
       x << group1_x_(i);
       y << group1_pdf_(i);
-      qDebug() << group1_pdf_(i);
     }
 
-    QString x_label = "x_label";
-    QString y_label = "y_label";
+    QString x_label = group_1_name + " PDF";
+    QString y_label = "y_label 1";
 
     size_t column_x = ds->addCopiedColumn(x, x_label);
     size_t column_y = ds->addCopiedColumn(y, y_label);
 
     JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-    graph->setColor(QColor(239,133,54));
+    graph->setColor(QColor(239, 133, 54));
     graph->setSymbolType(JKQTPNoSymbol);
     graph->setXColumn(column_x);
     graph->setYColumn(column_y);
-    graph->setTitle(title);
+    graph->setTitle(group_1_name + " PDF");
     plot->addGraph(graph);
   }
 
@@ -116,8 +107,8 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot) {
       y << group2_pdf_(i);
     }
 
-    QString x_label = "x_label";
-    QString y_label = "y_label";
+    QString x_label = group_2_name + " PDF";
+    QString y_label = "y_label 2";
 
     size_t column_x = ds->addCopiedColumn(x, x_label);
     size_t column_y = ds->addCopiedColumn(y, y_label);
@@ -127,8 +118,44 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot) {
     graph->setSymbolType(JKQTPNoSymbol);
     graph->setXColumn(column_x);
     graph->setYColumn(column_y);
-    graph->setTitle(title);
+    graph->setTitle(group_2_name + " PDF");
     plot->addGraph(graph);
+  }
+
+  {
+    QVector<double> x, y;
+    for (int i = 0; i < group1_map_.size(); i++) {
+      x << group1_map_(i);
+      y << 0.01;
+    }
+
+    int column_x = ds->addCopiedColumn(x, "scatter_1_x");
+    int column_y = ds->addCopiedColumn(y, "scatter_1_y");
+
+    auto scatter = new JKQTPXYParametrizedScatterGraph(plot);
+    scatter->setColor(QColor(239, 133, 54));
+    scatter->setXColumn(column_x);
+    scatter->setYColumn(column_y);
+    scatter->setTitle(group_1_name + " Shape Mappings");
+    plot->addGraph(scatter);
+  }
+
+  {
+    QVector<double> x, y;
+    for (int i = 0; i < group2_map_.size(); i++) {
+      x << group2_map_(i);
+      y << 0.01;
+    }
+
+    int column_x = ds->addCopiedColumn(x, "scatter_2_x");
+    int column_y = ds->addCopiedColumn(y, "scatter_2_y");
+
+    auto scatter = new JKQTPXYParametrizedScatterGraph(plot);
+    scatter->setColor(Qt::blue);
+    scatter->setXColumn(column_x);
+    scatter->setYColumn(column_y);
+    scatter->setTitle(group_2_name + " Shape Mappings");
+    plot->addGraph(scatter);
   }
 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
@@ -139,9 +166,9 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot) {
   plot->getPlotter()->setDefaultTextSize(14);
   plot->getPlotter()->setShowKey(true);
 
-  plot->getXAxis()->setAxisLabel("other x label");
-  plot->getXAxis()->setLabelFontSize(14);
-  plot->getYAxis()->setAxisLabel("other y label");
+  plot->getXAxis()->setAxisLabel("Shape mapping to linear discrimination of variation between population means");
+  plot->getXAxis()->setLabelFontSize(8);
+  plot->getYAxis()->setAxisLabel("Probability Density");
   plot->getYAxis()->setLabelFontSize(14);
 
   plot->clearAllMouseWheelActions();

@@ -19,7 +19,7 @@ class StatsGroupLDAJob : public Job {
 
   Eigen::VectorXf get_group_pvalues();
 
-  void plot(JKQTPlotter* plot);
+  void plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name);
 
  private:
   ParticleShapeStatistics stats_;
