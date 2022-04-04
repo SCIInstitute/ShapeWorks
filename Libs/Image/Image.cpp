@@ -34,6 +34,7 @@
 #include <itkConnectedComponentImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkThresholdImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
@@ -81,7 +82,7 @@ vtkSmartPointer<vtkImageData> Image::getVTKImage() const
 
   return connector->GetOutput();
 }
-  
+
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
@@ -232,6 +233,18 @@ Image& Image::operator-=(const PixelType x)
   }
 
   return *this;
+}
+
+Image Image::operator*(const Image &other) const
+{
+  using FilterType = itk::MultiplyImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput1(this->image);
+  filter->SetInput2(other.image);
+  filter->Update();
+
+  return Image(filter->GetOutput());
 }
 
 Image Image::operator*(const PixelType x) const
@@ -990,6 +1003,12 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
+}
+
+Image::ImageIterator Image::setIterator()
+{ 
+  ImageIterator iter(this->image, image->GetRequestedRegion());
+  return iter;
 }
 
 Mesh Image::toMesh(PixelType isoValue) const

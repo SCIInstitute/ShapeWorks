@@ -376,8 +376,8 @@ bool Constraints::isAnyViolated(const Point3 &pos) {
       return true;
     }
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    if (freeFormConstraints_[i].isViolated(pt)) {
+  if (freeFormConstraint_.getMesh()) {
+    if (freeFormConstraint_.isViolated(pt)) {
       return true;
     }
   }
@@ -403,10 +403,6 @@ void Constraints::printAll() {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].print();
   }
-  std::cout << "Cutting Free form constraints " << freeFormConstraints_.size() << std::endl;
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].print();
-  }
 }
 
 std::string Constraints::violationReport(const Point3 &pos) {
@@ -426,17 +422,17 @@ std::string Constraints::violationReport(const Point3 &pos) {
       stream << "Sphere " << i << "/" << planeConstraints_.size() << ": " << sphereConstraints_[i].constraintEval(pt)
              << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1).transpose() << std::endl;
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    if (freeFormConstraints_[i].constraintEval(pt) > 0)
-      stream << "FreeForm " << i << "/" << planeConstraints_.size() << ": "
-             << freeFormConstraints_[i].constraintEval(pt) << " gradient(c=1) "
-             << freeFormConstraints_[i].lagragianGradient(pt, 1).transpose() << std::endl;
+  if (freeFormConstraint_.getMesh()) {
+    if (freeFormConstraint_.constraintEval(pt) > 0)
+      stream << "FreeForm "
+             << ": " << freeFormConstraint_.constraintEval(pt) << " gradient(c=1) "
+             << freeFormConstraint_.lagragianGradient(pt, 1).transpose() << std::endl;
   }
   return stream.str();
 }
 
-std::vector<std::vector<double> > Constraints::violationReportData(const Point3 &pos) {
-  std::vector<std::vector<double> > alls;
+std::vector<std::vector<double>> Constraints::violationReportData(const Point3 &pos) {
+  std::vector<std::vector<double>> alls;
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -453,8 +449,8 @@ std::vector<std::vector<double> > Constraints::violationReportData(const Point3 
   }
   alls.push_back(sp);
   std::vector<double> ff;
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    ff.push_back(freeFormConstraints_[i].constraintEval(pt));
+  if (freeFormConstraint_.readyForOptimize()) {
+    ff.push_back(freeFormConstraint_.constraintEval(pt));
   }
   alls.push_back(ff);
   return alls;
@@ -472,8 +468,8 @@ vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3 &pos) 
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     grad -= sphereConstraints_[i].constraintGradient(pt);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    grad -= freeFormConstraints_[i].constraintGradient(pt);
+  if (freeFormConstraint_.readyForOptimize()) {
+    grad -= freeFormConstraint_.constraintGradient(pt);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
@@ -503,8 +499,8 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     grad += sphereConstraints_[i].lagragianGradient(prept, pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    grad += freeFormConstraints_[i].lagragianGradient(pt, C);
+  if (freeFormConstraint_.readyForOptimize()) {
+    grad += freeFormConstraint_.lagragianGradient(pt, C);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
@@ -515,6 +511,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   return gradE;
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::InitializeLagrangianParameters(double lambda, double mu, double z) {
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].setLambda(lambda);
@@ -526,13 +523,14 @@ void Constraints::InitializeLagrangianParameters(double lambda, double mu, doubl
     sphereConstraints_[i].setMu(mu);
     sphereConstraints_[i].setZ(z);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].setLambda(lambda);
-    freeFormConstraints_[i].setMu(mu);
-    freeFormConstraints_[i].setZ(z);
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.setLambda(lambda);
+    freeFormConstraint_.setMu(mu);
+    freeFormConstraint_.setZ(z);
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::UpdateZs(const Point3 &pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -544,11 +542,12 @@ void Constraints::UpdateZs(const Point3 &pos, double C) {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].updateZ(pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].updateZ(pt, C);
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.updateZ(pt, C);
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::UpdateMus(const Point3 &pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -560,15 +559,15 @@ void Constraints::UpdateMus(const Point3 &pos, double C) {
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].updateMu(pt, C);
   }
-  for (size_t i = 0; i < freeFormConstraints_.size(); i++) {
-    freeFormConstraints_[i].updateMu(pt, C);
+
+  if (freeFormConstraint_.readyForOptimize()) {
+    freeFormConstraint_.updateMu(pt, C);
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh) {
-  FreeFormConstraint ffc;
-  ffc.setMesh(mesh);
-  this->freeFormConstraints_.push_back(ffc);
+  freeFormConstraint_.setMesh(mesh);
   active_ = true;
 }
 
@@ -609,28 +608,49 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 }
 */
 
+//-----------------------------------------------------------------------------
 void Constraints::Read(std::string filename) {
   std::ifstream in(filename);
   if (!in.good()) {
     throw std::runtime_error("Unable to open " + filename + " for reading");
   }
-  json j;
-  in >> j;
-  planeConstraints_.clear();
-  if (j.contains("planes")) {
-    for (const auto &planeJson : j["planes"]) {
-      PlaneConstraint plane;
-      if (planeJson.contains("points")) {
-        for (auto p : planeJson["points"]) {
-          plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+  try {
+    json j;
+    in >> j;
+    planeConstraints_.clear();
+    if (j.contains("planes")) {
+      for (const auto &planeJson : j["planes"]) {
+        PlaneConstraint plane;
+        if (planeJson.contains("points")) {
+          for (auto p : planeJson["points"]) {
+            plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+          }
+          if (plane.points().size() != 3) {
+            throw std::runtime_error("Planes should have three points");
+          }
         }
+        plane.updatePlaneFromPoints();
+        planeConstraints_.push_back(plane);
       }
-      plane.updatePlaneFromPoints();
-      planeConstraints_.push_back(plane);
     }
+    if (j.contains("free_form_constraints")) {
+      auto ffcJson = j["free_form_constraints"];
+      for (const auto &boundaryJson : ffcJson["boundaries"]) {
+        std::vector<Eigen::Vector3d> boundary;
+        for (auto p : boundaryJson["points"]) {
+          boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+        }
+        freeFormConstraint_.boundaries().push_back(boundary);
+      }
+      auto p = ffcJson["query_point"];
+      freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+    }
+  } catch (json::exception &e) {
+    throw std::runtime_error("Unabled to parse constraint file " + filename + " : " + e.what());
   }
 }
 
+//-----------------------------------------------------------------------------
 void Constraints::Write(std::string filename) {
   json planes;
   std::vector<json> planeJsons;
@@ -645,12 +665,53 @@ void Constraints::Write(std::string filename) {
   }
 
   json j;
-  j["planes"] = planeJsons;
+  if (!planeJsons.empty()) {
+    j["planes"] = planeJsons;
+  }
+
+  freeFormConstraint_.computeBoundaries();
+
+  if (!freeFormConstraint_.boundaries().empty()) {
+    json ffcJson;
+    std::vector<json> boundariesJson;
+    for (const auto &boundary : freeFormConstraint_.boundaries()) {
+      json boundaryJson;
+      std::vector<json> points;
+      for (const auto &point : boundary) {
+        points.push_back({point[0], point[1], point[2]});
+      }
+      boundaryJson["points"] = points;
+      boundariesJson.push_back(boundaryJson);
+    }
+
+    ffcJson["boundaries"] = boundariesJson;
+    auto query = freeFormConstraint_.getQueryPoint();
+    ffcJson["query_point"] = {query[0], query[1], query[2]};
+
+    j["free_form_constraints"] = ffcJson;
+  }
+
   std::ofstream file(filename);
   if (!file.good()) {
     throw std::runtime_error("Unable to open " + filename + " for writing");
   }
   file << j.dump(4);
+}
+
+//-----------------------------------------------------------------------------
+FreeFormConstraint &Constraints::getFreeformConstraint() { return freeFormConstraint_; }
+
+//-----------------------------------------------------------------------------
+bool Constraints::hasConstraints() {
+  if (!planeConstraints_.empty() || !sphereConstraints_.empty()) {
+    return true;
+  }
+
+  freeFormConstraint_.computeBoundaries();
+  if (!freeFormConstraint_.boundaries().empty()) {
+    return true;
+  }
+  return false;
 }
 
 }  // namespace shapeworks

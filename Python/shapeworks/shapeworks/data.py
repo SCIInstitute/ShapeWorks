@@ -56,19 +56,16 @@ def download_subset(use_case,datasetName,outputDirectory):
             imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
     elif(use_case=="deep_ssm"):
-        if(generate_download_flag(outputDirectory,"groomed/images/")):
-            imageFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)images(?:/|\\\).*nrrd$",files)])[:7]
+        if(generate_download_flag(outputDirectory,"images/")):
+            imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:7]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
-        if(generate_download_flag(outputDirectory,"groomed/distance_transforms/")):
-            dtFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)distance_transforms(?:/|\\\).*nrrd$",files)])[:7]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = dtFilesList)
-        if(generate_download_flag(outputDirectory,"shape_models/femur/1024/")):
-            wolrdFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)1024(?:/|\\\).*world.particles$",files)])[:7]
+        if(generate_download_flag(outputDirectory,"particles/")):
+            wolrdFilesList = sorted([files for files in fileList if re.search("^particles(?:/|\\\).*world.particles$",files)])[:7]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = wolrdFilesList)
-            localFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)1024(?:/|\\\).*local.particles$",files)])[:7]
+            localFilesList = sorted([files for files in fileList if re.search("^particles(?:/|\\\).*local.particles$",files)])[:7]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = localFilesList)
-        if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
-            meanFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)mean(?:/|\\\).*",files)])
+        if(generate_download_flag(outputDirectory,"mean/")):
+            meanFilesList = sorted([files for files in fileList if re.search("^mean(?:/|\\\).*",files)])
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
     elif(use_case=="ellipsoid_multiple_domain"):
         if(generate_download_flag(outputDirectory,"segmentations")):
@@ -82,6 +79,10 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"contours")):
             contourFilesList = sorted([files for files in fileList if re.search("^contours(?:/|\\\).*vtp$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = contourFilesList)
+    if(use_case in ["femur_cut","ellipsoid_cut"]):
+        if(generate_download_flag(outputDirectory,"constraints")):
+            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:3]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
 
 
 def download_and_unzip_dataset(datasetName, outputDirectory):

@@ -144,11 +144,11 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
                                                     10, true);
         // transform
         auto transform = createMeshTransform(matrix);
-        Mesh transformed = meshes[pair.first];
+        Mesh transformed = poly_data1;
         transformed.applyTransform(transform);
 
         // compute distance
-        auto distances = transformed.distance(meshes[pair.second])[0];
+        auto distances = transformed.distance(poly_data2)[0];
         double distance = mean(distances);
         {
           // lock and store results
@@ -282,7 +282,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
     normals->SetTuple3(i, mean_normals[i][0], mean_normals[i][1], mean_normals[i][2]);
   }
 
-  std::cerr << "WARNING: Added a multi-component mesh field\n";
+  //std::cerr << "WARNING: Added a multi-component mesh field\n";
 
   return normals;
 }
