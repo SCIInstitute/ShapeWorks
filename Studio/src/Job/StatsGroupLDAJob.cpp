@@ -78,85 +78,51 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot, QString group_1_name, QString gro
 
   QString title = "LDA";
 
-  {
-    QVector<double> x, y;
-    for (int i = 0; i < group1_x_.size(); i++) {
-      x << group1_x_(i);
-      y << group1_pdf_(i);
+  auto draw_line_plot = [&](Eigen::MatrixXd x, Eigen::MatrixXd y, QString name, QColor color) {
+    QVector<double> xv, yv;
+    for (int i = 0; i < x.size(); i++) {
+      xv << x(i);
+      yv << y(i);
     }
 
-    QString x_label = group_1_name + " PDF";
-    QString y_label = "y_label 1";
+    QString x_label = name + " PDF";
+    QString y_label = name + " y";
 
-    size_t column_x = ds->addCopiedColumn(x, x_label);
-    size_t column_y = ds->addCopiedColumn(y, y_label);
+    size_t column_x = ds->addCopiedColumn(xv, x_label);
+    size_t column_y = ds->addCopiedColumn(yv, y_label);
 
     JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-    graph->setColor(QColor(239, 133, 54));
+    graph->setColor(color);
     graph->setSymbolType(JKQTPNoSymbol);
     graph->setXColumn(column_x);
     graph->setYColumn(column_y);
-    graph->setTitle(group_1_name + " PDF");
+    graph->setTitle(name + " PDF");
     plot->addGraph(graph);
-  }
+  };
 
-  {
+  draw_line_plot(group1_x_, group1_pdf_, group_1_name, QColor(239, 133, 54));
+  draw_line_plot(group2_x_, group2_pdf_, group_2_name, Qt::blue);
+
+  auto draw_scatter_plot = [&](Eigen::MatrixXd map, QString name, QColor color) {
     QVector<double> x, y;
-    for (int i = 0; i < group2_x_.size(); i++) {
-      x << group2_x_(i);
-      y << group2_pdf_(i);
-    }
-
-    QString x_label = group_2_name + " PDF";
-    QString y_label = "y_label 2";
-
-    size_t column_x = ds->addCopiedColumn(x, x_label);
-    size_t column_y = ds->addCopiedColumn(y, y_label);
-
-    JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-    graph->setColor(Qt::blue);
-    graph->setSymbolType(JKQTPNoSymbol);
-    graph->setXColumn(column_x);
-    graph->setYColumn(column_y);
-    graph->setTitle(group_2_name + " PDF");
-    plot->addGraph(graph);
-  }
-
-  {
-    QVector<double> x, y;
-    for (int i = 0; i < group1_map_.size(); i++) {
-      x << group1_map_(i);
+    for (int i = 0; i < map.size(); i++) {
+      x << map(i);
       y << 0.01;
     }
 
-    int column_x = ds->addCopiedColumn(x, "scatter_1_x");
-    int column_y = ds->addCopiedColumn(y, "scatter_1_y");
+    int column_x = ds->addCopiedColumn(x, name + "scatter x");
+    int column_y = ds->addCopiedColumn(y, name + "scatter y");
 
     auto scatter = new JKQTPXYParametrizedScatterGraph(plot);
-    scatter->setColor(QColor(239, 133, 54));
+    scatter->setColor(color);
     scatter->setXColumn(column_x);
     scatter->setYColumn(column_y);
-    scatter->setTitle(group_1_name + " Shape Mappings");
+    scatter->setTitle(name + " Shape Mappings");
     plot->addGraph(scatter);
-  }
+  };
 
-  {
-    QVector<double> x, y;
-    for (int i = 0; i < group2_map_.size(); i++) {
-      x << group2_map_(i);
-      y << 0.01;
-    }
-
-    int column_x = ds->addCopiedColumn(x, "scatter_2_x");
-    int column_y = ds->addCopiedColumn(y, "scatter_2_y");
-
-    auto scatter = new JKQTPXYParametrizedScatterGraph(plot);
-    scatter->setColor(Qt::blue);
-    scatter->setXColumn(column_x);
-    scatter->setYColumn(column_y);
-    scatter->setTitle(group_2_name + " Shape Mappings");
-    plot->addGraph(scatter);
-  }
+  draw_scatter_plot(group1_map_, group_1_name, QColor(239, 133, 54));
+  draw_scatter_plot(group2_map_, group_2_name, Qt::blue);
 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
