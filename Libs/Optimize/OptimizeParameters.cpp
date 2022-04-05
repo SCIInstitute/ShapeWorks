@@ -206,6 +206,12 @@ int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 
 void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
 
 //---------------------------------------------------------------------------
+int OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_mesh_ffc_mode(int value) { this->params_.set("mesh_ffc_mode", value); }
+
+//---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
 
 //---------------------------------------------------------------------------
@@ -246,6 +252,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
   optimize->SetNarrowBand(this->get_narrow_band());
   optimize->SetOutputDir(this->get_output_prefix());
+  optimize->SetMeshFFCMode(this->get_mesh_ffc_mode());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
