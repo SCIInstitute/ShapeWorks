@@ -595,32 +595,10 @@ QWidget#particles_panel {
                    <string>Difference</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_8">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_3">
-                     <property name="text">
-                      <string>Group Set</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QPushButton" name="group1_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
+                   <item row="2" column="2">
+                    <widget class="QComboBox" name="group_right">
                      <property name="toolTip">
-                      <string>Mean of left group</string>
-                     </property>
-                     <property name="text">
-                      <string>Mean</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
+                      <string>Group 2</string>
                      </property>
                     </widget>
                    </item>
@@ -649,6 +627,50 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
+                   <item row="4" column="2">
+                    <widget class="QPushButton" name="group2_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of right group</string>
+                     </property>
+                     <property name="text">
+                      <string>Mean</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QPushButton" name="group1_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of left group</string>
+                     </property>
+                     <property name="text">
+                      <string>Mean</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="4" column="1">
                     <widget class="QPushButton" name="difference_button">
                      <property name="enabled">
@@ -668,17 +690,22 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" colspan="3">
-                    <widget class="Line" name="line">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                   <item row="5" column="1">
+                    <widget class="QPushButton" name="group_p_values_button">
+                     <property name="enabled">
+                      <bool>true</bool>
                      </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="2">
-                    <widget class="QComboBox" name="group_right">
                      <property name="toolTip">
-                      <string>Group 2</string>
+                      <string>Display p-values on surface</string>
+                     </property>
+                     <property name="text">
+                      <string>P-values</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -743,28 +770,6 @@ QWidget#particles_panel {
                      </layout>
                     </widget>
                    </item>
-                   <item row="4" column="2">
-                    <widget class="QPushButton" name="group2_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Mean of right group</string>
-                     </property>
-                     <property name="text">
-                      <string>Mean</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="1" colspan="2">
                     <widget class="QComboBox" name="group_box">
                      <property name="toolTip">
@@ -772,23 +777,78 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="5" column="1">
-                    <widget class="QPushButton" name="group_p_values_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Display p-values on surface</string>
-                     </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_3">
                      <property name="text">
-                      <string>P-values</string>
+                      <string>Group Set</string>
                      </property>
-                     <property name="checkable">
-                      <bool>true</bool>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="3">
+                    <widget class="Line" name="line">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
                      </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="3">
+                    <widget class="QWidget" name="lda_panel" native="true">
+                     <layout class="QGridLayout" name="gridLayout_20">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="JKQTPlotter" name="lda_graph" native="true">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>50</width>
+                          <height>50</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QWidget" name="lda_progress_widget" native="true">
+                        <layout class="QGridLayout" name="gridLayout_21">
+                         <item row="2" column="1">
+                          <widget class="QProgressBar" name="lda_progress">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="value">
+                            <number>0</number>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="0">
+                          <widget class="QLabel" name="lda_label">
+                           <property name="text">
+                            <string>Computing LDA...</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
