@@ -599,7 +599,7 @@ void ShapeWorksStudioApp::handle_pca_changed() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->updateSlider(); }
+void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->update_slider(); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
@@ -1104,7 +1104,7 @@ void ShapeWorksStudioApp::handle_optimize_start() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed() {
-  if (analysis_tool_->pcaAnimate()) {
+  if (analysis_tool_->pca_animate()) {
     return;
   }
   update_display(true);
@@ -1282,6 +1282,9 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
+  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
+  update_recent_files();
+
   session_->set_loading(true);
 
   try {
@@ -1314,8 +1317,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   preferences_window_->set_values_from_preferences();
   update_from_preferences();
 
-  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
-  update_recent_files();
 
   update_tool_mode();
 
@@ -1605,7 +1606,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape() {
-  int pca_mode = analysis_tool_->getPCAMode();
+  int pca_mode = analysis_tool_->get_pca_mode();
   double pca_value = analysis_tool_->get_pca_value();
 
   visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
@@ -1802,7 +1803,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
 
   double range = preferences_.get_pca_range();
   double steps = static_cast<double>(preferences_.get_pca_steps());
-  int mode = analysis_tool_->getPCAMode();
+  int mode = analysis_tool_->get_pca_mode();
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 

@@ -5,6 +5,7 @@ set(Particles_sources
  ParticleShapeStatistics.cpp
  ShapeEvaluation.cpp
  ReconstructSurface.cpp
+ ParticleNormalEvaluation.cpp
  )
 
 set(Particles_headers
@@ -15,6 +16,7 @@ set(Particles_headers
  EvaluationUtil.h
  ShapeEvaluation.h
  ReconstructSurface.h
+ ParticleNormalEvaluation.h
  )
 
 add_library(Particles STATIC

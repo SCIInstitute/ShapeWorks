@@ -8,6 +8,7 @@
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
 
+#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <QDebug>
@@ -841,6 +842,22 @@ bool Shape::has_planes() {
     }
   }
   return false;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_mesh_wrappers()
+{
+  if (!mesh_wrappers_.empty()) {
+    return mesh_wrappers_;
+  }
+
+  auto group = get_groomed_meshes(true /* wait */);
+  for (auto &mesh : group.meshes()) {
+    auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
+    mesh_wrappers_.push_back(wrapper);
+  }
+  return mesh_wrappers_;
+
 }
 
 }  // namespace shapeworks

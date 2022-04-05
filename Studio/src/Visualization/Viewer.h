@@ -111,7 +111,7 @@ class Viewer {
   void update_ffc_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
-  std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
+  std::vector<vtkSmartPointer<vtkActor>> get_unclipped_surface_actors();
 
   MeshGroup get_meshes();
 
@@ -192,8 +192,8 @@ class Viewer {
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
-  std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
-  std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> unclipped_surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> unclipped_surface_actors_;
   std::vector<vtkSmartPointer<vtkLookupTable>> ffc_luts_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
