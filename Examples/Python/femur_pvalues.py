@@ -24,26 +24,14 @@ def Run_Pipeline(args):
 
     print("Computing p-values")
     data["filename"] = output_directory + data["filename"]
-    #pvalues = sw.stats.compute_pvalues_for_group_difference(data, num_particles, permutations)
+    pvalues = sw.stats.compute_pvalues_for_group_difference(data, num_particles, permutations)
 
-    #filename = f"{output_directory}femur_pvalues.txt"
-    #print(f"Saving the pvalues for the group difference: {filename}")
-    #np.savetxt(filename, pvalues)
+    filename = f"{output_directory}femur_pvalues.txt"
+    print(f"Saving the pvalues for the group difference: {filename}")
+    np.savetxt(filename, pvalues)
 
     print("Performing LDA")
     group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map = sw.stats.lda(data)
     sw.plot.lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,output_directory,['Femur Pathology','Femur Control'])
 
-    print(f"group1_x.shape = {group1_x.shape}")
-    print(f"group2_x.shape = {group2_x.shape}")
-    print(f"group1_pdf.shape = {group1_pdf.shape}")
-    print(f"group2_pdf.shape = {group2_pdf.shape}")
-    print(f"group1_map.shape = {group1_map.shape}")
-    print(f"group2_map.shape = {group2_map.shape}")
 
-    np.savetxt("output.group1_x.txt", group1_x)
-    np.savetxt("output.group2_x.txt", group2_x)
-    np.savetxt("output.group1_pdf.txt", group1_pdf)
-    np.savetxt("output.group2_pdf.txt", group2_pdf)
-    np.savetxt("output.group1_map.txt", group1_map)
-    np.savetxt("output.group2_map.txt", group2_map)
