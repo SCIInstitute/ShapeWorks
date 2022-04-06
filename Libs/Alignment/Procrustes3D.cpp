@@ -24,7 +24,9 @@ void Procrustes3D::RemoveTranslation(SimilarityTransformListType& transforms, Sh
     ShapeType& shape = (*shapeListIt);
     center.fill(0.0);
 
-    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) center += (*shapeIt);
+    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+      center += (*shapeIt);
+    }
 
     center /= static_cast<RealType>(shape.size());
 
@@ -34,7 +36,9 @@ void Procrustes3D::RemoveTranslation(SimilarityTransformListType& transforms, Sh
     transforms.push_back(transform);
 
     // Apply translation to shape
-    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) (*shapeIt) -= center;
+    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+      (*shapeIt) -= center;
+    }
   }
 }
 
