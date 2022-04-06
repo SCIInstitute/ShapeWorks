@@ -281,7 +281,7 @@ void Optimize::SetParameters()
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = ParticleProcrustesRegistration::New();
+  this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
 

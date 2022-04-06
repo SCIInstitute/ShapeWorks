@@ -4,14 +4,17 @@
 
 namespace shapeworks {
 
+  //---------------------------------------------------------------------------
 void ParticleProcrustesRegistration::RunRegistration(int d) {
   // DOES NOT Assume all domains have the same number of particles.
   const int totalDomains = m_ParticleSystem->GetNumberOfDomains();
   const int numPoints = m_ParticleSystem->GetNumberOfParticles(d);
   const int numShapes = totalDomains / m_DomainsPerShape;
 
-  // Do not run procrsutes for this domain if number of points less than 10
-  if (numPoints < 10) return;
+  // Do not run procrustesfor this domain if number of points less than 10
+  if (numPoints < 10) {
+    return;
+  }
 
   Procrustes3D::ShapeListType shapelist;
   Procrustes3D::ShapeType shapevector;
@@ -37,30 +40,13 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
   procrustes.AlignShapes(transforms, shapelist);
 
   // Construct transform matrices for each particle system.
-  //    double avgscaleA = 1.0;
-  //    double avgscaleB = 1.0;
 
   int k = d % m_DomainsPerShape;
 
   for (int i = 0; i < numShapes; i++, k += m_DomainsPerShape) {
     if (m_Scaling == false) {
-      // DO NOT DO PROCRUSTES SCALING.
-      // If the user supplied some scales
-      if (m_FixedScales.size() != 0) {
-        transforms[i].scale = m_FixedScales[i];
-        //                std::cout << "Fixed scale " << i << " = " << m_FixedScales[i] << std::endl;
-      } else  // otherwise do not scale at all
-      {
-        transforms[i].scale = 1.0;
-      }
+      transforms[i].scale = 1.0;
     }
-    // else
-    //  {
-    //   DEBUG
-    //   std::cout << transforms[i].scale << std::endl;
-    //  }
-    //  if (i < 15) avgscaleA *= transforms[i].scale;
-    //  if (i >= 15) avgscaleB *= transforms[i].scale;
 
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
@@ -90,8 +76,8 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
       R(2, 3) = transforms[i].translation(0) * R(2, 0) + transforms[i].translation(1) * R(2, 1) +
                 transforms[i].translation(2) * R(2, 2);
       R(3, 3) = 1.0;
-    } else  // only use the scaling (could just be 1.0 depending on m_Scaling value)
-    {
+    } else {
+      // only use the scaling (could just be 1.0 depending on m_Scaling value)
       R(0, 0) = transforms[i].scale;
       R(1, 0) = 0.0;
       R(2, 0) = 0.0;
@@ -113,8 +99,13 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
       R(3, 3) = 1.0;
     }
     m_ParticleSystem->SetTransform(k, R);
-    //        std::cout << R << std::endl;
-    //        std::cout << std::endl;
+  }
+}
+
+//---------------------------------------------------------------------------
+void ParticleProcrustesRegistration::RunRegistration() {
+  for (int i = 0; i < m_DomainsPerShape; i++) {
+    this->RunRegistration(i);
   }
 }
 }  // namespace shapeworks

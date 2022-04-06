@@ -1,8 +1,6 @@
 #pragma once
 
-#include "itkDataObject.h"
 #include "itkParticleSystem.h"
-#include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 
 namespace shapeworks {
@@ -12,44 +10,24 @@ namespace shapeworks {
  *
  *
  */
-class ParticleProcrustesRegistration : public itk::DataObject {
+class ParticleProcrustesRegistration {
  public:
-  static constexpr int VDimension = 3;
-  /** Standard class typedefs */
-  typedef ParticleProcrustesRegistration Self;
-  typedef DataObject Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
+  using Pointer = std::shared_ptr<ParticleProcrustesRegistration>;
 
   /** Particle system typedefs. */
-  typedef itk::ParticleSystem ParticleSystemType;
-  typedef ParticleSystemType::PointType PointType;
-
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleProcrustesRegistration, DataObject);
+  using ParticleSystemType = itk::ParticleSystem;
+  using PointType = ParticleSystemType::PointType;
 
   /** Set/Get the target particle system. */
   void SetParticleSystem(ParticleSystemType *p) { m_ParticleSystem = p; }
-  const ParticleSystemType *GetParticleSystem() const { return m_ParticleSystem; }
+  ParticleSystemType *GetParticleSystem() const { return m_ParticleSystem; }
   ParticleSystemType *GetParticleSystem() { return m_ParticleSystem; }
-
-  /** Callback suitable for adding as an observer of itk object iteration
-      events. */
-  void IterationCallback(itk::Object *, const itk::EventObject &) { this->RunRegistration(); }
 
   /** Performs a procrustes registration and modifies the transforms of the
       particle system accordingly.  Assumes m_ParticleSystem has been set to
       point to a valid object.*/
   void RunRegistration(int i);
-  void RunRegistration() {
-    for (int i = 0; i < m_DomainsPerShape; i++) {
-      this->RunRegistration(i);
-    }
-  }
+  void RunRegistration();
 
   /** Set/Get the number of Domains in each shape.  Procrustes will be
       performed separately for each domain. */
@@ -64,25 +42,11 @@ class ParticleProcrustesRegistration : public itk::DataObject {
   void RotationTranslationOn() { m_RotationTranslation = true; }
   void RotationTranslationOff() { m_RotationTranslation = false; }
 
-  void SetFixedScales(const std::vector<double> v) { m_FixedScales = v; }
-
- protected:
-  ParticleProcrustesRegistration() : m_DomainsPerShape(1), m_Scaling(true), m_RotationTranslation(true) {}
-  virtual ~ParticleProcrustesRegistration(){};
-
-  void PrintSelf(std::ostream &os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
-
  private:
-  ParticleProcrustesRegistration(const Self &);  // purposely not implemented
-  void operator=(const Self &);                  // purposely not implemented
-
-  std::vector<double> m_FixedScales;
-
-  int m_DomainsPerShape;
-  bool m_Scaling;
-  bool m_RotationTranslation;
-  bool m_ComputeTransformation;
-  ParticleSystemType *m_ParticleSystem;
+  int m_DomainsPerShape = 1;
+  bool m_Scaling = true;
+  bool m_RotationTranslation = true;
+  ParticleSystemType *m_ParticleSystem = nullptr;
 };
 
 }  // namespace shapeworks
