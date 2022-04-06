@@ -13,6 +13,8 @@
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
+class vtkFloatArray;
+class vtkStaticPointLocator;
 
 namespace shapeworks {
 
@@ -64,6 +66,17 @@ class StudioMesh {
   //! Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)
   double get_largest_dimension_size();
 
+  //! Get or create and return an array with a given name
+  vtkFloatArray* get_or_create_array(std::string name, float default_value);
+
+  //! Paint free form constraint
+  void paint_ffc(double world_pos[], double radius, bool inclusive);
+
+  //! Does this mesh have free form constraint paint?
+  bool has_ffc_paint();
+
+  static constexpr const char* const FFC_PAINT = "ffc_paint";
+
  private:
   // metadata
   int dimensions_[3];
@@ -71,6 +84,8 @@ class StudioMesh {
 
   // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
+
+  vtkSmartPointer<vtkStaticPointLocator> locator_;
 
   // error message if the polydata didn't load
   std::string error_message_;

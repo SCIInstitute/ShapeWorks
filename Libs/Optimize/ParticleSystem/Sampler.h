@@ -3,7 +3,7 @@
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleImplicitSurfaceDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
@@ -393,6 +393,11 @@ public:
   MeanCurvatureCacheType* GetMeanCurvatureCache()
   { return m_MeanCurvatureCache.GetPointer(); }
 
+  void SetSharedBoundaryEnabled(bool enabled)
+  { m_IsSharedBoundaryEnabled = enabled; }
+  void SetSharedBoundaryWeight(double weight)
+  { m_SharedBoundaryWeight = weight; }
+
   void ReadTransforms();
   void ReadPointsFiles();
   virtual void AllocateDataCaches();
@@ -442,16 +447,18 @@ public:
     else{
         std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
         std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs." << std::endl;
-        exit (EXIT_FAILURE);
+        throw std::runtime_error("Error computing plane normal");
     }
 
   }
 
 
+
   std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
   std::shared_ptr<vnl_matrix<double>> GetInputCovarianceMatrix();
   double Get_MinimumVariance();
-  std::vector<std::vector<FFCType> > GetFFCs(){return m_FFCs;}
+  std::vector<FFCType> GetFFCs() { return m_FFCs; }
+
 
 
 protected:
@@ -501,7 +508,7 @@ protected:
 
   itk::ParticleSystem::Pointer m_ParticleSystem;
 
-  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
+  std::vector<ParticleDomain::Pointer> m_DomainList;
 
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
@@ -544,12 +551,14 @@ private:
   std::vector<int> m_AttributesPerDomain;
   int m_DomainsPerShape;
   double m_Spacing{0};
+  bool m_IsSharedBoundaryEnabled;
+  double m_SharedBoundaryWeight{0.5};
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
   std::vector<std::vector<SphereType>> m_Spheres;
-  std::vector<std::vector<FFCType>>  m_FFCs;
+  std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
 
   unsigned int m_verbosity;

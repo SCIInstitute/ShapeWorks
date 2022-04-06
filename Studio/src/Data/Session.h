@@ -8,6 +8,7 @@
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
+#include <Libs/Particles/ParticleSystem.h>
 #include <QSharedPointer>
 #include <QVector>
 #include <cstdlib>
@@ -30,7 +31,7 @@ using TransformType = vtkSmartPointer<vtkTransform>;
  * The Session class encapsulates everything about a session/project.
  *
  */
-class Session : public QObject {
+class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
@@ -44,7 +45,7 @@ class Session : public QObject {
   void set_parent(QWidget* parent);
 
   /// save project to file
-  bool save_project(std::string filename);
+  bool save_project(QString filename);
 
   /// load project from file
   bool load_project(QString filename);
@@ -68,6 +69,11 @@ class Session : public QObject {
   bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
+
+  //! Return the total number of particles for all domains, combined
+  int get_num_particles();
+
+  ParticleSystem get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 
@@ -105,7 +111,7 @@ class Session : public QObject {
 
   shapeworks::Parameters& parameters();
 
-  std::vector<DomainType> get_domain_types();
+  std::vector<DomainType> get_groomed_domain_types();
 
   double update_auto_glyph_size();
 
@@ -128,6 +134,7 @@ class Session : public QObject {
 
   void trigger_landmarks_changed();
   void trigger_planes_changed();
+  void trigger_ffc_changed();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -142,6 +149,9 @@ class Session : public QObject {
 
   void set_show_planes(bool show);
   bool get_show_planes();
+
+  void set_show_landmarks(bool show);
+  bool get_show_landmarks();
 
   // image volume
   bool set_image_name(std::string image_name);
@@ -167,6 +177,23 @@ class Session : public QObject {
   void set_tool_state(std::string state);
   std::string get_tool_state();
 
+  void set_ffc_paint_active(bool enabled);
+  bool get_ffc_paint_active();
+
+  void set_ffc_paint_mode_inclusive(bool inclusive);
+  bool get_ffc_paint_mode_inclusive();
+
+  void set_ffc_paint_size(double size);
+  double get_ffc_paint_size();
+
+  bool get_show_good_bad_particles();
+  void set_show_good_bad_particles(bool enabled);
+
+  std::vector<bool> get_good_bad_particles();
+  void set_good_bad_particles(const std::vector<bool>& good_bad);
+
+  void trigger_repaint();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -184,6 +211,7 @@ class Session : public QObject {
   void points_changed();
   void landmarks_changed();
   void planes_changed();
+  void ffc_changed();
   void update_display();
   void new_mesh();
   void message(QString);
@@ -191,6 +219,8 @@ class Session : public QObject {
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
+  void ffc_paint_mode_changed();
+  void repaint();
 
  public:
   // constants
@@ -240,6 +270,11 @@ class Session : public QObject {
   bool landmarks_active_ = false;
   bool planes_active_ = false;
   bool show_landmark_labels_ = false;
+
+  bool ffc_painting_active_ = false;
+  bool ffc_painting_inclusive_mode_ = false;
+  double ffc_paint_size = 50;
+
   bool is_loading_ = false;
 };
 

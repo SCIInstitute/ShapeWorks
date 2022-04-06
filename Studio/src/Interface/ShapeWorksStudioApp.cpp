@@ -217,7 +217,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // glyph options signals/slots
   connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(ui_->landmarks_visible_button, &QToolButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
@@ -285,12 +284,11 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
     handle_message("No project");
   }
 
-  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
-
   QProcess process;
   process.setReadChannelMode(QProcess::MergedChannels);
 
 #ifdef _WIN32
+  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
   qstring_path = qstring_path.replace(QString("/"), QString("\\"));
   process.start("explorer.exe", QStringList() << qstring_path);
 #else
@@ -308,7 +306,7 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
   if (session_->get_filename() == "") {
     return on_action_save_project_as_triggered();
   } else {
-    save_project(session_->get_filename().toStdString());
+    save_project(session_->get_filename());
   }
   return true;
 }
@@ -328,7 +326,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
 
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  save_project(filename.toStdString());
+  save_project(filename);
 
   preferences_.add_recent_file(filename, QDir::currentPath());
   update_recent_files();
@@ -392,8 +390,11 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
     update_table();
     enable_possible_actions();
     update_display(true);
+    visualizer_->update_viewer_properties();
 
     reset_num_viewers();
+
+    preferences_.set_last_directory(QFileInfo(file_names[0]).absolutePath());
 
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
@@ -459,7 +460,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   // export / save / new / open
   bool reconstructed = session_->particles_present();
 
-  bool original_present = session_->get_project()->get_segmentations_present();
+  bool original_present = session_->get_project()->get_originals_present();
 
   auto filename = session_->get_filename();
   bool save_enabled = filename == "" || filename.endsWith(".xlsx");
@@ -549,30 +550,38 @@ void ShapeWorksStudioApp::update_table() {
 
   data_tool_->update_table();
 
-  /// todo: check if the list has changed before changing
+  // update feature combobox if the list has changed
+  QStringList feature_list;
   auto current_feature = ui_->features->currentText();
-  ui_->features->clear();
-  ui_->features->addItem("-none-");
+  feature_list << "-none-";
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
     item = item.replace("feature_", "");
-    ui_->features->addItem(item);
+    feature_list << item;
   }
-  ui_->features->setCurrentText(current_feature);
+  if (feature_list != current_features_) {
+    ui_->features->clear();
+    ui_->features->addItems(feature_list);
+    ui_->features->setCurrentText(current_feature);
+    current_features_ = feature_list;
+  }
   ui_->feature_uniform_scale->setChecked(get_feature_uniform_scale());
 
-  // fill in image combo
-  auto current_image = ui_->image_combo_->currentText();
-  ui_->image_combo_->clear();
-  ui_->image_combo_->addItem("-none-");
+  // update image combobox if the list has changed
+  QStringList image_list;
+  image_list << "-none-";
   auto image_names = project->get_image_names();
   for (const std::string& name : image_names) {
     QString item = QString::fromStdString(name);
     item = item.replace("feature_", "");
-    ui_->image_combo_->addItem(item);
+    image_list << item;
   }
-  ui_->image_combo_->setCurrentText(current_image);
+  if (image_list != current_image_list_) {
+    ui_->image_combo_->clear();
+    ui_->image_combo_->addItems(image_list);
+    current_image_list_ = image_list;
+  }
   ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
   ui_->image_widget->setVisible(!image_names.empty());
 
@@ -605,7 +614,7 @@ void ShapeWorksStudioApp::handle_rppca_slider_update()
   analysis_tool_->updateRPPCASlider();
 }
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->updateSlider(); }
+void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->update_slider(); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
@@ -786,7 +795,6 @@ void ShapeWorksStudioApp::handle_clear_cache() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session() {
-  // project initializations
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
   setWindowTitle(session_->get_display_name());
@@ -818,6 +826,8 @@ void ShapeWorksStudioApp::new_session() {
           &Session::set_image_share_window_and_level);
 
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
+  connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);
+
 
   data_tool_->update_notes();
 
@@ -1114,7 +1124,7 @@ void ShapeWorksStudioApp::handle_optimize_start() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed() {
-  if (analysis_tool_->pcaAnimate()) {
+  if (analysis_tool_->pca_animate()) {
     return;
   }
 
@@ -1130,7 +1140,6 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
 void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_show_surface(ui_->surface_visible_button->isChecked());
   visualizer_->set_show_glyphs(ui_->glyphs_visible_button->isChecked());
-  visualizer_->set_show_landmarks(ui_->landmarks_visible_button->isChecked());
   preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
   preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());
@@ -1306,6 +1315,9 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
+  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
+  update_recent_files();
+
   session_->set_loading(true);
 
   try {
@@ -1338,8 +1350,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   preferences_window_->set_values_from_preferences();
   update_from_preferences();
 
-  preferences_.add_recent_file(QFileInfo(filename).absoluteFilePath(), QDir::currentPath());
-  update_recent_files();
 
   update_tool_mode();
 
@@ -1364,6 +1374,8 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   int zoom_value = session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
 
   ui_->zoom_slider->setValue(zoom_value);
+  ui_->landmarks_visible_button->setChecked(session_->get_show_landmarks());
+  ui_->planes_visible_button_->setChecked(session_->get_show_planes());
 
   data_tool_->update_notes();
 
@@ -1371,8 +1383,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   update_display(true);
 
   on_zoom_slider_valueChanged();
-
-  // update_table();
 
   session_->set_loading(false);
 
@@ -1390,8 +1400,9 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
     set_view_mode(Visualizer::MODE_ORIGINAL_C);
-    update_view_mode();
   }
+
+  update_display(true);
 
   create_iso_submenu();
   handle_progress(100);
@@ -1628,7 +1639,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape() {
-  int pca_mode = analysis_tool_->getPCAMode();
+  int pca_mode = analysis_tool_->get_pca_mode();
   double pca_value = analysis_tool_->get_pca_value();
 
   visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
@@ -1686,7 +1697,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::save_project(std::string filename) {
+void ShapeWorksStudioApp::save_project(QString filename) {
   session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
 
   session_->parameters().set("notes", data_tool_->get_notes());
@@ -1832,7 +1843,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
 
   double range = preferences_.get_pca_range();
   double steps = static_cast<double>(preferences_.get_pca_steps());
-  int mode = analysis_tool_->getPCAMode();
+  int mode = analysis_tool_->get_pca_mode();
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 

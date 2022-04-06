@@ -118,12 +118,17 @@ SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
   Job/RPPCAJob.cpp
+  Job/ParticleNormalEvaluationJob.cpp
+  Job/StatsGroupLDAJob.cpp
+
   )
 
 SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
   Job/RPPCAJob.h
+  Job/ParticleNormalEvaluationJob.h
+  Job/StatsGroupLDAJob.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -174,6 +179,7 @@ SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
   Utils/WindowsCrashHandler.cpp
   Utils/StudioUtils.cpp
+  Utils/AnalysisUtils.cpp
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -199,6 +205,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp
+  Visualization/PaintWidget.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
   Visualization/SliceView.cpp

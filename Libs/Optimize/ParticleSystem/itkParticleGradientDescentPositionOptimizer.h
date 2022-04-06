@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleGradientDescentPositionOptimizer.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleGradientDescentPositionOptimizer_h
-#define __itkParticleGradientDescentPositionOptimizer_h
+#pragma once
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -23,7 +8,7 @@
 #include <vector>
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include <algorithm>
 #include <limits>
 
@@ -56,7 +41,7 @@ public:
   itkNewMacro(Self);
 
   /** Type of the domain. */
-  typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+  typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
   
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);
@@ -169,6 +154,4 @@ private:
 } // end namespace
 
 #include "itkParticleGradientDescentPositionOptimizer.txx"
-
-#endif
 

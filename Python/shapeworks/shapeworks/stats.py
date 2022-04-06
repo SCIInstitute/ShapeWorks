@@ -1,4 +1,4 @@
-from shapeworks import ParticleSystem
+import shapeworks as sw
 import numpy as np
 from hotelling.stats import hotelling_t2
 import statsmodels.stats.multitest as multi
@@ -6,10 +6,10 @@ from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 from scipy import stats
-import torch
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-torch.manual_seed(21)
+
+
+
 '''
 This function calculates the p-values per correspondence point for the group difference.
 Input are:
@@ -24,18 +24,20 @@ def compute_pvalues_for_group_difference(data, number_of_particles, permutations
     group_0_filenames = list(data[data["group_ids"] == group_id[0]]["filename"])
     group_1_filenames = list(data[data["group_ids"] == group_id[1]]["filename"])
 
-    group_0_data = ParticleSystem(group_0_filenames).Particles()
+    group_0_data = sw.ParticleSystem(group_0_filenames).Particles()
     group_0_data = np.reshape(group_0_data, (number_of_particles, 3, -1))
-    group_1_data = ParticleSystem(group_1_filenames).Particles()
+    group_1_data = sw.ParticleSystem(group_1_filenames).Particles()
     group_1_data = np.reshape(group_1_data, (number_of_particles, 3, -1))
 
     return compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations)
+
 
 def compute_pvalues_for_group_difference_studio(group_0_data, group_1_data, permutations=100):
     number_of_particles = int(group_0_data.shape[0] / 3)
     group_0 = np.reshape(group_0_data, (number_of_particles, 3, -1))
     group_1 = np.reshape(group_1_data, (number_of_particles, 3, -1))
     return compute_pvalues_for_group_difference_data(group_0, group_1, permutations)
+
 
 def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations=100):
     number_of_particles = group_0_data.shape[0]
@@ -70,124 +72,7 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
         corrected_pvalue_matrix[particle_id, 0] = np.mean(pval)
     return corrected_pvalue_matrix
 
-# def get_estimate_dof(data):
-#     N,d = data.shape 
-#     dof = []
-#     for i in range(d):
-#         dof.append(stats.t.fit(data[:,i])[2])
-#     return np.mean(np.array(dof))
 
-
-# def robust_ppca(data,latent_dim,iters=1,lr=1e-3,alpha0=100,alpha1=0.1):
-#     data = np.transpose(data)
-    
-#     N,d = data.shape
-#     dof = get_estimate_dof(data) 
-    
-#     nu = torch.Tensor([dof])
-#     mu = torch.Tensor([np.mean(data,axis=0)]).reshape((1,-1))
-#     W = torch.rand(d,latent_dim)
-#     sigma2 = torch.Tensor([1])
-#     log_un = torch.ones(N)*2
-
-#     data = torch.from_numpy(data).float()
-#     data.requires_grad = False
-#     nu.requires_grad = True 
-#     mu.requires_grad = True
-#     W.requires_grad = True
-#     sigma2.requires_grad = True
-#     log_un.requires_grad = True
-
-#     un = torch.exp(log_un)
-#     eps = 1e-5
-    
-#     tn = torch.ones((N,latent_dim,1 ))
-#     tn.requires_grad = False
-#     loss_array = []
-#     if(d==2):
-#         alpha0 = 0
-#         opt = torch.optim.SGD([W,sigma2,log_un,mu], lr=lr)
-#         opt_nu = torch.optim.SGD([nu],lr=1e-4)
-#         rate = 1
-#     else:
-#         rate = -1*iters/np.log(alpha1)
-#         opt_W = torch.optim.Adam([W], lr=lr)
-#         opt_mu = torch.optim.Adam([mu], lr=lr)
-#         opt_sigma2 = torch.optim.Adam([sigma2], lr=lr)
-#         opt_un = torch.optim.Adam([log_un], lr=lr)
-#         opt_nu = torch.optim.SGD([nu],lr=lr)#1e-3
-#     # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt_nu, 'min')
-    
-#     for ite in range(iters):
-#         alpha = alpha0*np.exp(-ite/rate)
-
-#         un = torch.exp(log_un)
-
-#         tn = torch.bmm(torch.mm(torch.pinverse(torch.mm(W.t().clone(),W.clone()) + \
-#              sigma2*torch.eye(latent_dim) + alpha*torch.ones(latent_dim,latent_dim)),W.t().clone()).repeat(N,1,1),torch.unsqueeze(torch.sub(data,mu),2).clone())
-
-#         W2 = W.t().clone().repeat(N,1,1)
-        
-#         B = torch.unsqueeze(torch.sub(data,mu),2).clone()
-
-#         term1 = N*(d/2) * torch.log(sigma2 + eps) 
-
-#         new_data = torch.unsqueeze(torch.sub(data,mu),2)
-        
-#         term2 = ((0.5/sigma2) * torch.sum(un*torch.bmm(torch.transpose(new_data,1,2),new_data)[:,0,0]))[0]
-
-#         term3_1 = ((1/sigma2)*un.view(-1,1,1))*tn
-        
-#         term3_2 = torch.bmm(W2,B)
-        
-#         term3 = (torch.bmm(torch.transpose(term3_1,1,2),term3_2)).sum()
-
-#         term4 = (1/sigma2)* (torch.diagonal(torch.bmm(torch.mm(W.t().clone(),W).repeat(N,1,1),torch.bmm(un.view(-1,1,1)*tn,torch.transpose(tn,1,2))), dim1=-2, dim2=-1).sum(-1) ).sum()
-        
-#         term5 = N*torch.sum((nu/2)*torch.log((nu/2)+eps) - (nu/2).lgamma())
-        
-#         term6 = torch.sum((0.5*nu - 1)*torch.log(un+eps) - (nu/2)*un)
-
-#         loss = torch.stack([term1[0] ,term2, -1*term3,term4[0] ,term5 , term6 ]).sum()
-#         loss = loss/(N*d)
-
-#         opt_W.zero_grad()
-#         opt_un.zero_grad()
-#         opt_mu.zero_grad()
-#         opt_sigma2.zero_grad()
-#         opt_nu.zero_grad()
-#         loss.backward(retain_graph=True)
-#         opt_W.step()
-#         opt_mu.step()
-#         opt_un.step()
-#         opt_sigma2.step()
-#         opt_nu.step()
-#         loss_array.append(loss.detach().numpy())
-#         # scheduler.step(loss)
-
-#     # plt.figure()
-#     # plt.plot(loss_array)
-#     # plt.show()
-#     W = W.detach().numpy()
-#     un = torch.exp(log_un)
-#     sigma2 = sigma2.detach().numpy()
-#     mu = mu.detach().numpy()
-#     nu = nu.detach().numpy()
-#     un = un.detach().numpy()
-
-
-#     matrix = np.matmul(W.T,W)
-#     eigen_values,rotation = np.linalg.eigh(matrix)
-#     eigen_vector_W = np.matmul(W,rotation)
-#     index = eigen_values.argsort()[::-1]
-#     eigen_values = eigen_values[index]
-#     eigen_vector_W = eigen_vector_W[:,index]
-#     norms = np.linalg.norm(eigen_vector_W,axis=0)
-#     eigen_vector_W = eigen_vector_W/norms
-#     exp_var = (eigen_values/sum(eigen_values))*100
-#     X_minusMean = data.detach().numpy() - mu
-#     # return W,mu,sigma2,un,nu
-#     return eigen_values,eigen_vector_W,mu,exp_var,X_minusMean
 
 def calculate_minVariance(matrix):
     eigen_values,eigen_vectors = np.linalg.eigh(matrix)
@@ -397,9 +282,9 @@ class WPPCA():
             '''
 
             L = self.get_likelihood(E_tn,weighted_E_tn_tnT_sample,new_mu,W_new,sigma2_new)/self.num_samples#/self.feature_dim
-            plt.figure()
-            plt.bar(list(range(self.num_samples)),L)
-            plt.show()
+            # plt.figure()
+            # plt.bar(list(range(self.num_samples)),L)
+            # plt.show()
             
 
             coeff = np.zeros((self.num_samples,3))
@@ -485,6 +370,79 @@ def get_rppcamean(data,latent_dim,iters=10):
     wppca.wppca_em()
     return wppca.mu
 
-# def get_X_minsMean(data,latent_dim,iters=10): 
-#     eigen_values_W,eigen_vector_W,mu,exp_var,X_minusMean = robust_ppca(data,latent_dim,iters,lr,alpha0,alpha1)
-#     return np.asarray(np.transpose(X_minusMean))
+
+
+def normalize(subj_map, group1_mean_map, group2_mean_map):
+    slope = (2.0 / (group2_mean_map - group1_mean_map))
+    subj_diff = subj_map - group1_mean_map
+    subj_map_normalized = slope * subj_diff - 1
+    return subj_map_normalized
+
+
+def lda_loadings(group1_data, group2_data):
+    group1_num = np.shape(group1_data)[1]
+    group2_num = np.shape(group2_data)[1]
+
+    combined_data = np.concatenate((group1_data, group2_data), axis=1)
+    group1_mean = np.mean(group1_data, axis=1)
+    group2_mean = np.mean(group2_data, axis=1)
+
+    overall_mean = np.mean(combined_data, axis=1)
+
+    diffVect = group1_mean - group2_mean
+
+    group1_mean_diff = group1_mean - overall_mean
+    group2_mean_diff = group2_mean - overall_mean
+
+    group1_mean_map = np.dot(diffVect, group1_mean_diff)
+    group2_mean_map = np.dot(diffVect, group2_mean_diff)
+
+    group1_mean_map_normalized = normalize(group1_mean_map, group1_mean_map, group2_mean_map)
+    group2_mean_map_normalized = normalize(group2_mean_map, group1_mean_map, group2_mean_map)
+
+    group1_map = np.zeros((group1_num,))
+    group2_map = np.zeros((group2_num,))
+
+    for ii in range(group1_num):
+        subjDiff = group1_data[:, ii] - overall_mean
+        group1_map[ii] = np.dot(diffVect, subjDiff)
+        group1_map[ii] = normalize(group1_map[ii], group1_mean_map, group2_mean_map)
+
+    for ii in range(group2_num):
+        subjDiff = group2_data[:, ii] - overall_mean
+        group2_map[ii] = np.dot(diffVect, subjDiff)
+        group2_map[ii] = normalize(group2_map[ii], group1_mean_map, group2_mean_map)
+
+    group1_map_mean = group1_map.mean()
+    group2_map_mean = group2_map.mean()
+
+    group1_map_std = group1_map.std()
+    group2_map_std = group2_map.std()
+
+    group1_x = np.linspace(group1_map_mean - 6, group1_map_mean + 6, num=300)
+    group2_x = np.linspace(group2_map_mean - 6, group2_map_mean + 6, num=300)
+
+    group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
+    group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
+    return group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map
+
+
+def lda(data):
+    group_id = data["group_ids"].unique()
+    group1_idxs = data.index[data['group_ids'] == 0].tolist()
+    group2_idxs = data.index[data['group_ids'] == 1].tolist()
+    filenames = data["filename"]
+    # Provide the list of file names
+    particle_data = sw.ParticleSystem(filenames)
+
+    # Calculate the PCA for the read particle system
+    shape_statistics = sw.ParticleShapeStatistics()
+    shape_statistics.PCA(particleSystem=particle_data, domainsPerShape=1)
+
+    # Calculate the loadings
+    shape_statistics.principalComponentProjections()
+    pca_loadings = shape_statistics.pcaLoadings().T
+    group1_data = pca_loadings[:, group1_idxs]
+    group2_data = pca_loadings[:, group2_idxs]
+
+    return lda_loadings(group1_data, group2_data)

@@ -6,6 +6,7 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 #include <vtkCenterOfMass.h>
@@ -16,6 +17,9 @@
 #include <vector>
 
 using namespace shapeworks;
+
+// for concurrent access
+static tbb::mutex mutex;
 
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
@@ -44,8 +48,8 @@ bool Groom::run() {
           continue;
         }
 
-        bool is_image = subjects[0]->get_domain_types()[domain] == DomainType::Image;
-        bool is_mesh = subjects[0]->get_domain_types()[domain] == DomainType::Mesh;
+        bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
+        bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
 
         if (is_image) {
           if (!this->image_pipeline(subjects[i], domain)) {
@@ -65,6 +69,7 @@ bool Groom::run() {
   if (!this->run_alignment()) {
     success = false;
   }
+  increment_progress(10);  // alignment complete
 
   // store back to project
   this->project_->store_subjects();
@@ -76,7 +81,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_segmentation_filenames()[domain];
+  auto path = subject->get_original_filenames()[domain];
 
   // load the image
   Image image(path);
@@ -258,7 +263,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_segmentation_filenames()[domain];
+  auto path = subject->get_original_filenames()[domain];
 
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
@@ -362,7 +367,7 @@ int Groom::get_total_ops() {
   for (int i = 0; i < domains.size(); i++) {
     auto params = GroomParameters(this->project_, domains[i]);
 
-    if (subjects[i]->get_domain_types()[i] == DomainType::Image) {
+    if (project_->get_original_domain_types()[i] == DomainType::Image) {
       num_tools += params.get_isolate_tool() ? 1 : 0;
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
       num_tools += params.get_crop() ? 1 : 0;
@@ -373,8 +378,8 @@ int Groom::get_total_ops() {
       num_tools += params.get_blur_tool() ? 1 : 0;
     }
 
-    bool run_mesh = subjects[i]->get_domain_types()[i] == DomainType::Mesh ||
-                    (subjects[i]->get_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+    bool run_mesh = project_->get_original_domain_types()[i] == DomainType::Mesh ||
+                    (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -383,11 +388,13 @@ int Groom::get_total_ops() {
     }
   }
 
-  return num_subjects * num_tools;
+  // +10 for alignment
+  return num_subjects * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount) {
+  tbb::mutex::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
@@ -482,15 +489,15 @@ bool Groom::run_alignment() {
       assign_transforms(transforms, domain, true /* global */);
 
     } else {  // just center
-
+      std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
         Groom::add_center_transform(transform, meshes[i]);
-        // store transform
-        size_t domain = num_domains;  // end
-        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+        transforms.push_back(ProjectUtils::convert_transform(transform));
       }
+      size_t domain = num_domains;  // end
+      assign_transforms(transforms, domain, true /* global */);
     }
   }
 
@@ -573,12 +580,12 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 //---------------------------------------------------------------------------
 Mesh Groom::get_mesh(int subject, int domain) {
   auto subjects = this->project_->get_subjects();
-  auto path = subjects[subject]->get_segmentation_filenames()[domain];
+  auto path = subjects[subject]->get_original_filenames()[domain];
 
-  if (subjects[subject]->get_domain_types()[domain] == DomainType::Image) {
+  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
     Image image(path);
     return image.toMesh(0.5);
-  } else if (subjects[subject]->get_domain_types()[domain] == DomainType::Mesh) {
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     return mesh;
   }
@@ -685,7 +692,14 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       Mesh target = meshes[reference];
       if (i != reference) {
         Mesh source = meshes[i];
-        matrix = MeshUtils::createICPTransform(source.getVTKMesh(), target.getVTKMesh(), Mesh::Rigid, 100, true);
+
+        // create copies for thread safety
+        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(source.getVTKMesh());
+        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(target.getVTKMesh());
+
+        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
       }
 
       auto transform = createMeshTransform(matrix);

@@ -1,20 +1,15 @@
-/*---
- * Author - Praful Agrawal
- ---*/
-
-#ifndef __itkParticleMeshBasedGeneralEntropyGradientFunction_txx
-#define __itkParticleMeshBasedGeneralEntropyGradientFunction_txx
+#pragma once
 
 #include "TriMesh.h"
 #include <math.h>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
-#include "itkParticleImplicitSurfaceDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
 #include <ctime>
 #include <time.h>
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithGradN.h"
+#include "ParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradN.h"
 #include "Libs/Utils/Utils.h"
 
 namespace itk
@@ -280,4 +275,4 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 }
 
 } // end namespace
-#endif
+

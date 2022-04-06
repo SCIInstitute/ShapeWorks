@@ -42,6 +42,13 @@ public:
   /// determine the reference mesh
   static size_t findReferenceMesh(std::vector<Mesh> &meshes);
 
+
+  /// boundary loop extractor for a given mesh
+  static Mesh boundaryLoopExtractor(Mesh mesh);
+
+  /// shared boundary extractor for the left and right mesh
+  static std::array<Mesh, 3> sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
+
   /// generates and adds normals for points and faces for each mesh in given set of meshes
   static void generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen = false);
 
@@ -56,6 +63,7 @@ public:
 
   /// Used as an auxiliary function for vector field visualizations
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+
 };
 
 } // shapeworks

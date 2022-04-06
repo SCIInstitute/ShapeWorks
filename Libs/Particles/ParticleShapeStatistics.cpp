@@ -84,6 +84,9 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 
 int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids)
 {
+  // local copy of points
+  points_ = points;
+
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
 
@@ -230,7 +233,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
   // Read the point files.  Assumes all the same size.
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
+  itk::ParticlePositionReader::Pointer reader1 = itk::ParticlePositionReader::New();
   reader1->SetFileName(pointsfiles[0].c_str());
   reader1->Update();
   m_numSamples1 = 0;
@@ -286,8 +289,8 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      typename itk::ParticlePositionReader<VDimension>::Pointer reader
-        = itk::ParticlePositionReader<VDimension>::New();
+      itk::ParticlePositionReader::Pointer reader
+        = itk::ParticlePositionReader::New();
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -429,8 +432,8 @@ int ParticleShapeStatistics::ReloadPointFiles()
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      typename itk::ParticlePositionReader<VDimension>::Pointer reader
-        = itk::ParticlePositionReader<VDimension>::New();
+      itk::ParticlePositionReader::Pointer reader
+        = itk::ParticlePositionReader::New();
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -764,4 +767,13 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
 {
   return this->m_group_2_matrix;
 }
+
+
+void ParticleShapeStatistics::compute_good_bad_points()
+{
+
+
+}
+
+
 } // shapeworks

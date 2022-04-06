@@ -4,6 +4,7 @@
 #include <vnl_vector.h>
 #include <vtkSmartPointer.h>
 #include <itkPoint.h>
+#include <cassert>
 
 #include "Shapeworks.h"
 

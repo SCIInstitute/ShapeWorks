@@ -18,7 +18,7 @@
 #include <Libs/Mesh/MeshUtils.h>
 
 #include <Libs/Utils/StringUtils.h>
-
+#include <Data/QMeshWarper.h>
 #include <Data/LegacyMeshGenerator.h>
 
 namespace shapeworks {
@@ -54,6 +54,11 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape,
 
   auto& surface_reconstructors = this->reconstructors_->surface_reconstructors_;
   auto& mesh_warpers = this->reconstructors_->mesh_warpers_;
+  if(mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
+    auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+    mesh->set_poly_data(poly_data);
+    return mesh;
+  }
 
   // temporary support for contours
   if (mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {

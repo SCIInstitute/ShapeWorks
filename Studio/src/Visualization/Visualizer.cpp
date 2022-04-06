@@ -51,6 +51,8 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
+  connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
+  connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,6 +86,12 @@ void Visualizer::update_landmarks() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
   foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_ffc_mode() {
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
   lightbox_->redraw();
 }
 
@@ -203,9 +211,6 @@ void Visualizer::set_show_glyphs(bool show) { show_glyphs_ = show; }
 void Visualizer::set_show_surface(bool show) { show_surface_ = show; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_show_landmarks(bool show) { show_landmarks_ = show; }
-
-//-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties() {
   double size = preferences_.get_glyph_size();
   double quality = preferences_.get_glyph_quality();
@@ -219,7 +224,6 @@ void Visualizer::update_viewer_properties() {
       viewer->set_glyph_size_and_quality(size, quality);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
-      viewer->set_show_landmarks(show_landmarks_);
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
@@ -252,50 +256,58 @@ void Visualizer::handle_image_slice_settings_changed() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_lut() {
-  int num_points = this->cached_mean_.size() / 3;
+  int num_points = session_->get_num_particles();
 
-  if (num_points < 1) {
-    num_points = 512;
-  }
+  glyph_lut_->SetNumberOfTableValues(num_points + 1);
+  glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
 
-  this->glyph_lut_->SetNumberOfTableValues(num_points + 1);
-  this->glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
+  auto good_bad = session_->get_good_bad_particles();
 
-  if (this->selected_point_one_ < 0) {
-    this->glyph_lut_->ForceBuild();
+  if (selected_point_one_ < 0) {
+    if (session_->get_show_good_bad_particles() && good_bad.size() == num_points) {
+      for (int i = 0; i < num_points; i++) {
+        if (good_bad[i]) {
+          glyph_lut_->SetTableValue(i, 0, 1, 0);
+        } else {
+          glyph_lut_->SetTableValue(i, 1, 0, 0);
+        }
+      }
+    } else {
+      glyph_lut_->ForceBuild();
+    }
   } else {
-    if (this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0) {
+    if (selected_point_one_ >= 0 && selected_point_two_ >= 0) {
       // measurement mode
       for (int i = 0; i < num_points; i++) {
-        this->glyph_lut_->SetTableValue(i, 0, 0, 0);
+        glyph_lut_->SetTableValue(i, 0, 0, 0);
 
-        if (this->selected_point_one_ == i) {
-          this->glyph_lut_->SetTableValue(i, 1, 1, 1);
+        if (selected_point_one_ == i) {
+          glyph_lut_->SetTableValue(i, 1, 1, 1);
         }
 
-        if (this->selected_point_two_ == i) {
-          this->glyph_lut_->SetTableValue(i, 1, 1, 0);
+        if (selected_point_two_ == i) {
+          glyph_lut_->SetTableValue(i, 1, 1, 0);
         }
       }
     } else {
       // color by distance from the selected point
 
-      int check = this->selected_point_one_ * 3 + 2;
-      if (check >= this->cached_mean_.size()) {
+      int check = selected_point_one_ * 3 + 2;
+      if (check >= cached_mean_.size()) {
         return;
       }
       double p1[3];
-      p1[0] = this->cached_mean_[this->selected_point_one_ * 3 + 0];
-      p1[1] = this->cached_mean_[this->selected_point_one_ * 3 + 1];
-      p1[2] = this->cached_mean_[this->selected_point_one_ * 3 + 2];
+      p1[0] = cached_mean_[selected_point_one_ * 3 + 0];
+      p1[1] = cached_mean_[selected_point_one_ * 3 + 1];
+      p1[2] = cached_mean_[selected_point_one_ * 3 + 2];
 
       std::vector<double> distances;
       double max_distance = 0;
-      for (int i = 0; i < num_points; i++) {
+      for (int i = 0; i < cached_mean_.size() / 3.0; i++) {
         double p2[3];
-        p2[0] = this->cached_mean_[i * 3 + 0];
-        p2[1] = this->cached_mean_[i * 3 + 1];
-        p2[2] = this->cached_mean_[i * 3 + 2];
+        p2[0] = cached_mean_[i * 3 + 0];
+        p2[1] = cached_mean_[i * 3 + 1];
+        p2[2] = cached_mean_[i * 3 + 2];
 
         double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
         distances.push_back(distance);
@@ -314,22 +326,22 @@ void Visualizer::update_lut() {
       for (int i = 0; i < num_points; i++) {
         const unsigned char* color = lut->MapValue(max_distance - distances[i]);
 
-        // this->glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
-        this->glyph_lut_->SetTableValue(i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
+        // glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
+        glyph_lut_->SetTableValue(i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
 
-        if (this->selected_point_one_ == i) {
-          this->glyph_lut_->SetTableValue(i, 1, 1, 1);
+        if (selected_point_one_ == i) {
+          glyph_lut_->SetTableValue(i, 1, 1, 1);
         }
 
-        if (this->selected_point_two_ == i) {
-          this->glyph_lut_->SetTableValue(i, 0, 0, 0);
+        if (selected_point_two_ == i) {
+          glyph_lut_->SetTableValue(i, 0, 0, 0);
         }
       }
     }
   }
 
-  this->glyph_lut_->Modified();
-  this->lightbox_->set_glyph_lut(this->glyph_lut_);
+  glyph_lut_->Modified();
+  lightbox_->set_glyph_lut(glyph_lut_);
 }
 
 //-----------------------------------------------------------------------------
@@ -465,5 +477,8 @@ double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; 
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
+
+//-----------------------------------------------------------------------------
+void Visualizer::redraw() { lightbox_->redraw(); }
 
 }  // namespace shapeworks

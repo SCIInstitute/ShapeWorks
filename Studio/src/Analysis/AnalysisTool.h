@@ -27,6 +27,8 @@ class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
 class RPPCAJob;
+class StatsGroupLDAJob;
+
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -61,9 +63,9 @@ class AnalysisTool : public QWidget {
   std::string get_analysis_mode();
   void set_analysis_mode(std::string mode);
 
-  void setLabels(QString which, QString value);
+  void set_labels(QString which, QString value);
 
-  int getPCAMode();
+  int get_pca_mode();
 
   int getRPPCAMode();
 
@@ -71,9 +73,12 @@ class AnalysisTool : public QWidget {
 
   double get_pca_value();
 
+
   double get_rppca_value();
 
-  bool pcaAnimate();
+
+  bool pca_animate();
+
 
   bool rppcaAnimate();
 
@@ -81,7 +86,7 @@ class AnalysisTool : public QWidget {
 
   bool compute_stats();
 
-  void updateSlider();
+  void update_slider();
 
   void updateRPPCASlider();
 
@@ -175,10 +180,17 @@ class AnalysisTool : public QWidget {
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
+  void handle_eval_particle_normals_progress(float progress);
+  void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
   void handle_rppca_job_done();
   void handle_alignment_changed(int new_alignment);
+
+  void run_good_bad_particles();
+
+  void handle_lda_progress(double progress);
+  void handle_lda_complete();
 
  signals:
 
@@ -203,6 +215,7 @@ class AnalysisTool : public QWidget {
   void compute_mode_shape();
   void compute_rppca_mode_shape();
   void update_analysis_mode();
+  void update_interface();
 
   bool group_pvalues_valid();
 
@@ -212,6 +225,8 @@ class AnalysisTool : public QWidget {
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
+
+  void update_lda_graph();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 
@@ -255,7 +270,14 @@ class AnalysisTool : public QWidget {
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
+
   QSharedPointer<RPPCAJob> rppca_job_;
+
+  QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  bool group_lda_job_running_ = false;
+  bool block_group_change_ = false;
+
+
   AlignmentType current_alignment_{AlignmentType::Local};
 };
 }  // namespace shapeworks

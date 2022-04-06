@@ -1,24 +1,9 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleNeighborhood.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleNeighborhood_h
-#define __itkParticleNeighborhood_h
+#pragma once
 
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "itkParticleContainer.h"
 #include "itkParticlePointIndexPair.h"
 #include <vector>
@@ -59,7 +44,7 @@ public:
 
   /** Domain type.  The Domain object provides bounds and distance
       information. */
-  typedef ParticleDomain DomainType;
+  using DomainType = shapeworks::ParticleDomain;
   
   /** Container type for points.  This matches the itkParticleSystem container
       type. */
@@ -101,8 +86,10 @@ public:
 
   /** Set the Domain that this neighborhood will use.  The Domain object is
       important because it defines bounds and distance measures. */
-  itkSetObjectMacro(Domain, DomainType);
-  itkGetConstObjectMacro(Domain, DomainType);
+  //itkSetObjectMacro(Domain, DomainType);
+  //itkGetConstObjectMacro(Domain, DomainType);
+  virtual void SetDomain(DomainType::Pointer domain) { m_Domain = domain; this->Modified(); };
+  DomainType::Pointer GetDomain() const { return m_Domain; };
 
   /**  For efficiency, itkNeighborhoods are not necessarily observers of
       itkParticleSystem, but have specific methods invoked for various events.
@@ -131,13 +118,3 @@ private:
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleNeighborhood+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-//# include "itkParticleNeighborhood.txx"
-#endif
-
-#endif

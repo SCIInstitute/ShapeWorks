@@ -24,6 +24,7 @@
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Libs/Project/Project.h>
+#include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
 #include <tinyxml.h>
@@ -90,8 +91,7 @@ void Session::calculate_reconstructed_samples() {
 void Session::set_parent(QWidget* parent) { this->parent_ = parent; }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname) {
-  QString filename = QString::fromStdString(fname);
+bool Session::save_project(QString filename) {
   if (filename == "") {
     filename = this->filename_;
   }
@@ -453,13 +453,13 @@ void Session::set_project_path(QString relative_path) {
   auto subjects = this->project_->get_subjects();
   for (auto subject : subjects) {
     // segmentations
-    auto paths = subject->get_segmentation_filenames();
+    auto paths = subject->get_original_filenames();
     std::vector<std::string> new_paths;
     for (const auto& path : paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
-    subject->set_segmentation_filenames(new_paths);
+    subject->set_original_filenames(new_paths);
 
     // groomed
     paths = subject->get_groomed_filenames();
@@ -652,6 +652,20 @@ bool Session::update_particles(std::vector<StudioParticles> particles) {
 }
 
 //---------------------------------------------------------------------------
+int Session::get_num_particles() {
+  if (shapes_.empty()) {
+    return 0;
+  }
+  auto particles = shapes_[0]->get_particles();
+  return particles.get_combined_local_particles().size() / 3;
+}
+
+//---------------------------------------------------------------------------
+ParticleSystem Session::get_local_particle_system(int domain) {
+  return AnalysisUtils::get_local_particle_system(this, domain);
+}
+
+//---------------------------------------------------------------------------
 void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms) {
   for (size_t i = 0; i < transforms.size(); i++) {
     if (this->shapes_.size() > i) {
@@ -736,7 +750,7 @@ void Session::remove_shapes(QList<int> list) {
 }
 
 //---------------------------------------------------------------------------
-bool Session::original_present() { return this->project_->get_segmentations_present(); }
+bool Session::original_present() { return this->project_->get_originals_present(); }
 
 //---------------------------------------------------------------------------
 bool Session::groomed_present() { return this->project_->get_groomed_present(); }
@@ -848,7 +862,7 @@ int Session::get_num_shapes() { return this->shapes_.size(); }
 int Session::get_domains_per_shape() { return this->get_project()->get_number_of_domains_per_subject(); }
 
 //---------------------------------------------------------------------------
-Parameters& Session::parameters() { return this->params_; }
+Parameters& Session::parameters() { return params_; }
 
 //---------------------------------------------------------------------------
 QString Session::get_display_name() {
@@ -869,9 +883,9 @@ QString Session::get_display_name() {
 std::string Session::get_default_feature_map() {
   if (!this->get_project()->get_subjects().empty()) {
     auto subject = this->get_project()->get_subjects()[0];
-    if (!subject->get_segmentation_filenames().empty()) {
-      if (subject->get_domain_types()[0] == DomainType::Mesh) {
-        Mesh m = MeshUtils::threadSafeReadMesh(subject->get_segmentation_filenames()[0]);
+    if (!subject->get_original_filenames().empty()) {
+      if (project_->get_original_domain_types()[0] == DomainType::Mesh) {
+        Mesh m = MeshUtils::threadSafeReadMesh(subject->get_original_filenames()[0]);
         auto poly_data = m.getVTKMesh();
         if (poly_data) {
           auto scalars = poly_data->GetPointData()->GetScalars();
@@ -887,7 +901,7 @@ std::string Session::get_default_feature_map() {
 
 //---------------------------------------------------------------------------
 bool Session::is_supported_file_format(std::string filename) {
-  for (auto type : Mesh::getSupportedTypes()) {
+  for (const auto& type : Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       return true;
     }
@@ -901,13 +915,7 @@ bool Session::is_supported_file_format(std::string filename) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Session::get_domain_types() {
-  auto subjects = this->get_project()->get_subjects();
-  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
-    return subjects[0]->get_domain_types();
-  }
-  return std::vector<DomainType>();
-}
+std::vector<DomainType> Session::get_groomed_domain_types() { return project_->get_groomed_domain_types(); }
 
 //---------------------------------------------------------------------------
 Point3 Session::get_point(const Eigen::VectorXd& points, int i) {
@@ -984,6 +992,9 @@ void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
 void Session::trigger_planes_changed() { emit planes_changed(); }
 
 //---------------------------------------------------------------------------
+void Session::trigger_ffc_changed() { emit ffc_changed(); }
+
+//---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
 
 //---------------------------------------------------------------------------
@@ -1030,6 +1041,18 @@ void Session::set_show_planes(bool show) {
 
 //---------------------------------------------------------------------------
 bool Session::get_show_planes() { return params_.get("show_planes", true); }
+
+//---------------------------------------------------------------------------
+void Session::set_show_landmarks(bool show) {
+  bool old_value = get_show_landmarks();
+  if (show != old_value) {
+    params_.set("show_landmarks", show);
+    emit landmarks_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_show_landmarks() { return params_.get("show_landmarks", true); }
 
 //---------------------------------------------------------------------------
 bool Session::set_image_name(std::string image_name) {
@@ -1103,20 +1126,68 @@ void Session::set_loading(bool loading) { is_loading_ = loading; }
 bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
-void Session::set_tool_state(string state) {
+void Session::set_tool_state(std::string state) {
   parameters().set("tool_state", state);
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
+  Q_EMIT ffc_paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
+void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
+  ffc_painting_inclusive_mode_ = inclusive;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mode_; }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_size(double size) {
+  ffc_paint_size = size;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_ffc_paint_size() { return ffc_paint_size; }
+
+//---------------------------------------------------------------------------
+bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_show_good_bad_particles(bool enabled) {
+  if (enabled != get_show_good_bad_particles()) {
+    params_.set("show_good_bad_particles", enabled);
+    emit update_display();
+  }
+}
+//---------------------------------------------------------------------------
+
+std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_bad_particles", {}); }
+
+//---------------------------------------------------------------------------
+void Session::set_good_bad_particles(const std::vector<bool> &good_bad) { params_.set("good_bad_particles", good_bad); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_repaint() { Q_EMIT repaint(); }
+
+//---------------------------------------------------------------------------
+void Session::set_ffc_paint_active(bool enabled) {
+  ffc_painting_active_ = enabled;
+  Q_EMIT ffc_paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
-  emit landmarks_changed();
+  Q_EMIT landmarks_changed();
 }
 
 //---------------------------------------------------------------------------

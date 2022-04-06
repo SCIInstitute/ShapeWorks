@@ -9,6 +9,25 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, meshLocators)
+{
+  Mesh mesh1(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
+  Mesh mesh2(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+  Point center_1 = mesh1.center();
+  Point center_2 = mesh2.center();
+  int center_id_1 = mesh1.closestPointId(center_1);
+  int center_id_2 = mesh2.closestPointId(center_2);
+  Point center_point_1 = mesh1.getPoint(center_id_1);
+  Point center_point_2 = mesh2.getPoint(center_id_2);
+  ASSERT_TRUE(center_id_1 != center_id_2 &&  // ensure next test doesn't succeed by coincidene
+              center_point_1 != center_point_2);
+
+  mesh2 = mesh1; // mesh2 should no longer use cached locators from mesh1
+  ASSERT_TRUE(mesh2.center() != center_2); // function doesn't update any locators, so uses cached
+  ASSERT_TRUE(mesh2.getPoint(center_id_1) == center_point_1); // doesn't update locators
+  ASSERT_TRUE(mesh2.closestPointId(center_1) == center_id_1); // updates point locater, so noop
+}
+
 TEST(MeshTests, writeTest1)
 {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
@@ -851,4 +870,40 @@ TEST(MeshTests, addMesh)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/sphere_add.ply");
 
   ASSERT_TRUE(mesh1 == baseline);
+}
+
+TEST(MeshTests, constructFromMatrixes)
+{
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  ground_truth.computeNormals();
+  Mesh construct(ground_truth.points(), ground_truth.faces());
+  ASSERT_TRUE(construct == ground_truth);
+}
+
+TEST(MeshTests, sharedBoundaryExtractor)
+{
+  Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
+  Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
+  double tol = 0.001;
+  std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(left, right, tol);
+  Mesh output_l = output[0];
+  Mesh output_r = output[1];
+  Mesh output_s = output[2];
+
+  Mesh ground_truth_left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_l.vtk");
+  Mesh ground_truth_right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_r.vtk");
+  Mesh ground_truth_shared(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+
+  ASSERT_TRUE(ground_truth_left == output_l);
+  ASSERT_TRUE(ground_truth_right == output_r);
+  ASSERT_TRUE(ground_truth_shared == output_s);
+
+}
+
+TEST(MeshTests, boundaryLoopExtractor)
+{
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+  Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);
+  ASSERT_TRUE(loop == ground_truth);
 }

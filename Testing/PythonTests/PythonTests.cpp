@@ -21,6 +21,11 @@ void run_use_case(const std::string& name)
   boost::filesystem::current_path(initial_path);
 }
 
+TEST(pythonTests, shared_boundaryTest)
+{
+  run_use_case("shared_boundary.py");
+}
+
 TEST(pythonTests, reconstructsurfaceTest)
 {
   run_use_case("reconstructsurface.py");
@@ -391,3 +396,4 @@ TEST(pythonTests, isolateTest)
 {
   run_use_case("isolate.py");
 }
+
