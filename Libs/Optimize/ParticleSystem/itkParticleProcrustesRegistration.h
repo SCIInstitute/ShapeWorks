@@ -5,7 +5,7 @@
 #include "vnl/vnl_matrix.h"
 #include "itkParticleSystem.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleProcrustesRegistration
  *  \brief
@@ -13,21 +13,21 @@ namespace itk
  *  
  *
  */
-template <unsigned int VDimension>
-class ITK_EXPORT ParticleProcrustesRegistration: public DataObject
+class ParticleProcrustesRegistration: public itk::DataObject
 {
 public:
+  static constexpr int VDimension = 3;
   /** Standard class typedefs */
   //  typedef TDataType DataType;
   typedef ParticleProcrustesRegistration Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+  typedef itk::WeakPointer<const Self>  ConstWeakPointer;
 
   /** Particle system typedefs. */
-  typedef ParticleSystem ParticleSystemType;
-  typedef typename ParticleSystemType::PointType PointType;
+  typedef itk::ParticleSystem ParticleSystemType;
+  typedef ParticleSystemType::PointType PointType;
   
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -90,7 +90,7 @@ protected:
   ParticleProcrustesRegistration() : m_DomainsPerShape(1), m_Scaling(true), m_RotationTranslation(true) {  }
   virtual ~ParticleProcrustesRegistration() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {  Superclass::PrintSelf(os,indent);  }
 
 private:

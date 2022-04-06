@@ -353,7 +353,7 @@ protected:
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
