@@ -1,7 +1,9 @@
 #pragma once
 
+#ifndef Q_MOC_RUN
 #include <Data/StudioParticles.h>
 #include <Libs/Optimize/Optimize.h>
+#endif
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>

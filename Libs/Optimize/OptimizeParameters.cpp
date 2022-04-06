@@ -247,6 +247,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetNarrowBand(this->get_narrow_band());
   optimize->SetOutputDir(this->get_output_prefix());
 
+  // TODO Remove this once Studio has controls for shared boundary
+  optimize->SetSharedBoundaryEnabled(true);
+  optimize->SetSharedBoundaryWeight(0.5);
+
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
   std::vector<double> attr_scales;
@@ -406,8 +410,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
-          optimize->AddMesh(poly_data);
-        } else {
+          // TODO This is a HACK for detecting contours
+          if(poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+            optimize->AddContour(poly_data);
+          } else {
+            optimize->AddMesh(poly_data);
+          }
+        }
+        else {
           throw std::invalid_argument("Error loading mesh: " + filename);
         }
       } else if (domain_type == DomainType::Contour) {
