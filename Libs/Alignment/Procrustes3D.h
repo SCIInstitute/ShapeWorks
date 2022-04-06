@@ -29,6 +29,7 @@ class Procrustes3D {
   typedef std::vector<TransformMatrixType> TransformMatrixListType;
   typedef TransformMatrixListType::iterator TransformMatrixIteratorType;
 
+ public:
   Procrustes3D() : m_Scaling(true), m_RotationTranslation(true) {}
   Procrustes3D(bool do_scaling, bool do_rotation_translation)
       : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation) {}
@@ -79,8 +80,6 @@ class Procrustes3D {
  private:
   // Align two shapes (rotation & scale) using Ordinary Procrustes Analysis
   void AlignTwoShapes(SimilarityTransform3D& transform, ShapeType& shape1, ShapeType& shape2);
-
-  //  const RealType SOS_EPSILON = 1.0e-8;
 
   bool m_Scaling;              // a flag to factor out scaling
   bool m_RotationTranslation;  // a flag for rotation + translation + (scale depending on m_Scaling), if false, the

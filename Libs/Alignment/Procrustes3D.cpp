@@ -4,10 +4,10 @@
 
 #include <iostream>
 
+//---------------------------------------------------------------------------
 void Procrustes3D::RemoveTranslation(SimilarityTransformListType& transforms, ShapeListType& shapes) {
   PointType center;
   ShapeListIteratorType shapeListIt;
-  SimilarityTransformListIteratorType transformIt;
   ShapeIteratorType shapeIt;
 
   ShapeType mean;
@@ -38,6 +38,7 @@ void Procrustes3D::RemoveTranslation(SimilarityTransformListType& transforms, Sh
   }
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeListType& shapes) {
   const RealType SOS_EPSILON = 1.0e-8;
 
@@ -60,7 +61,9 @@ void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeLis
     ShapeType& shape = (*shapeListIt);
     center.fill(0.0);
 
-    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) center += (*shapeIt);
+    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+      center += (*shapeIt);
+    }
 
     center /= static_cast<RealType>(shape.size());
 
@@ -70,7 +73,9 @@ void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeLis
     transforms.push_back(transform);
 
     // Apply translation to shape
-    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) (*shapeIt) -= center;
+    for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+      (*shapeIt) -= center;
+    }
   }
 
   // Remove rotation and scale iteratively
@@ -92,8 +97,9 @@ void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeLis
 
     // Fix scalings so geometric average = 1
     RealType scaleAve = 0.0;
-    for (transformIt = transforms.begin(); transformIt != transforms.end(); transformIt++)
+    for (transformIt = transforms.begin(); transformIt != transforms.end(); transformIt++) {
       scaleAve += log((*transformIt).scale);
+    }
 
     scaleAve = exp(scaleAve / static_cast<RealType>(transforms.size()));
 
@@ -106,10 +112,11 @@ void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeLis
     transformIt = transforms.begin();
     while (shapeListIt != shapes.end()) {
       TransformShape((*shapeListIt), scaleSim);
-      if (m_Scaling)
+      if (m_Scaling) {
         (*transformIt).scale /= scaleAve;
-      else
+      } else {
         (*transformIt).scale = 1;
+      }
 
       shapeListIt++;
       transformIt++;
@@ -122,6 +129,7 @@ void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeLis
   }
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::TransformShape(ShapeType& shape, SimilarityTransform3D& transform) {
   ShapeIteratorType shapeIt;
 
@@ -134,6 +142,7 @@ void Procrustes3D::TransformShape(ShapeType& shape, SimilarityTransform3D& trans
   }
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::TransformShapes(ShapeListType& shapes, SimilarityTransformListType& transforms) {
   ShapeListIteratorType shapeListIt;
   SimilarityTransformListIteratorType transformListIt;
@@ -148,6 +157,7 @@ void Procrustes3D::TransformShapes(ShapeListType& shapes, SimilarityTransformLis
   }
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::ConstructTransformMatrices(SimilarityTransformListType& transforms,
                                               TransformMatrixListType& transformMatrices) {
   // Transform from Configuration space to Procrustes space.  Translation
@@ -156,7 +166,9 @@ void Procrustes3D::ConstructTransformMatrices(SimilarityTransformListType& trans
 
   SimilarityTransformListIteratorType transformListIt;
   for (transformListIt = transforms.begin(); transformListIt != transforms.end(); transformListIt++) {
-    if (!m_Scaling) (*transformListIt).scale = 1.0;
+    if (!m_Scaling) {
+      (*transformListIt).scale = 1.0;
+    }
 
     TransformMatrixType transformMatrix;
     ConstructTransformMatrix((*transformListIt), transformMatrix);
@@ -165,11 +177,14 @@ void Procrustes3D::ConstructTransformMatrices(SimilarityTransformListType& trans
   }
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, TransformMatrixType& transformMatrix) {
   // Transform from Configuration space to Procrustes space.  Translation
   // followed by rotation and scaling.
 
-  if (!m_Scaling) transform.scale = 1.0;
+  if (!m_Scaling) {
+    transform.scale = 1.0;
+  }
 
   if (m_RotationTranslation == true) {
     transformMatrix(0, 0) = transform.rotation(0, 0) * transform.scale;
@@ -197,8 +212,8 @@ void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, Tr
                             transform.translation(1) * transformMatrix(2, 1) +
                             transform.translation(2) * transformMatrix(2, 2);
     transformMatrix(3, 3) = 1.0;
-  } else  // only use the scaling (could just be 1.0 depending on m_Scaling value)
-  {
+  } else {
+    // only use the scaling (could just be 1.0 depending on m_Scaling value)
     transformMatrix(0, 0) = transform.scale;
     transformMatrix(1, 0) = 0.0;
     transformMatrix(2, 0) = 0.0;
@@ -221,6 +236,7 @@ void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, Tr
   }
 }
 
+//---------------------------------------------------------------------------
 Procrustes3D::RealType Procrustes3D::ComputeSumOfSquares(ShapeListType& shapes) {
   ShapeListIteratorType shapeIt1, shapeIt2;
   ShapeIteratorType pointIt1, pointIt2;
@@ -244,6 +260,7 @@ Procrustes3D::RealType Procrustes3D::ComputeSumOfSquares(ShapeListType& shapes) 
   return sum / static_cast<RealType>(shapes.size() * shapes[0].size());
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::AlignTwoShapes(SimilarityTransform3D& transform, ShapeType& shape1, ShapeType& shape2) {
   // Aligning shape2 to shape1
   ShapeIteratorType shapeIt1, shapeIt2;
@@ -306,6 +323,7 @@ void Procrustes3D::AlignTwoShapes(SimilarityTransform3D& transform, ShapeType& s
   TransformShape(shape2, newTransform);
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::ComputeMeanShape(ShapeType& mean, ShapeListType& shapeList) {
   ShapeListIteratorType shapeListIt;
   ShapeIteratorType shapeIt, meanIt;
@@ -314,7 +332,9 @@ void Procrustes3D::ComputeMeanShape(ShapeType& mean, ShapeListType& shapeList) {
 
   mean.clear();
   mean.reserve(numPoints);
-  for (size_t i = 0; i < numPoints; i++) mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
+  for (size_t i = 0; i < numPoints; i++) {
+    mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
+  }
 
   for (shapeListIt = shapeList.begin(); shapeListIt != shapeList.end(); shapeListIt++) {
     ShapeType& shape = (*shapeListIt);
@@ -327,9 +347,12 @@ void Procrustes3D::ComputeMeanShape(ShapeType& mean, ShapeListType& shapeList) {
     }
   }
 
-  for (meanIt = mean.begin(); meanIt != mean.end(); meanIt++) (*meanIt) /= static_cast<RealType>(shapeList.size());
+  for (meanIt = mean.begin(); meanIt != mean.end(); meanIt++) {
+    (*meanIt) /= static_cast<RealType>(shapeList.size());
+  }
 }
 
+//---------------------------------------------------------------------------
 int Procrustes3D::ComputeMedianShape(ShapeListType& shapeList) {
   int medianShapeIndex = -1;
   double minSum = 1e10;
@@ -339,14 +362,16 @@ int Procrustes3D::ComputeMedianShape(ShapeListType& shapeList) {
     double sum = 0.0;
 
     for (size_t jj = 0; jj < shapeList.size(); jj++) {
-      if (ii == jj) continue;
+      if (ii == jj) {
+        continue;
+      }
 
       ShapeType shape_jj = shapeList[jj];
 
-      for (size_t kk = 0; kk < shape_ii.size(); kk++)
+      for (size_t kk = 0; kk < shape_ii.size(); kk++) {
         sum += (fabs(shape_ii[kk](0) - shape_jj[kk](0)) + fabs(shape_ii[kk](1) - shape_jj[kk](1)) +
                 fabs(shape_ii[kk](2) - shape_jj[kk](2)));
-      // sum += sqrt((shape_ii[kk] - shape_jj[kk]).squared_magnitude());
+      }
     }
     sum /= shapeList.size();
 
@@ -359,24 +384,31 @@ int Procrustes3D::ComputeMedianShape(ShapeListType& shapeList) {
   return medianShapeIndex;
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::ComputeCenterOfMass(ShapeType& shape, PointType& center) {
   ShapeIteratorType shapeIt;
   center.fill(0.0);
 
-  for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) center += (*shapeIt);
+  for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+    center += (*shapeIt);
+  }
 
   center /= static_cast<RealType>(shape.size());
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::CenterShape(ShapeType& shape) {
   PointType center;
   ComputeCenterOfMass(shape, center);
 
   ShapeIteratorType shapeIt;
 
-  for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) (*shapeIt) -= center;
+  for (shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++) {
+    (*shapeIt) -= center;
+  }
 }
 
+//---------------------------------------------------------------------------
 // Align source shape to target using Ordinary Procrustes Analysis (translation, scaling and rotation)
 // the target shape is assumed to be centered at the origin
 void Procrustes3D::AlignSourceToTarget(SimilarityTransform3D& transform, ShapeType& shape1,
@@ -449,6 +481,7 @@ void Procrustes3D::AlignSourceToTarget(SimilarityTransform3D& transform, ShapeTy
   TransformShape(shape2, newTransform);
 }
 
+//---------------------------------------------------------------------------
 void Procrustes3D::ComputeCommonCenter(SimilarityTransformListType& transforms, PointType& center) {
   center.fill(0.0);
 
