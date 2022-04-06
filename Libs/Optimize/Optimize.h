@@ -18,7 +18,7 @@
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/itkParticleProcrustesRegistration.h"
+#include "ParticleSystem/ParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"

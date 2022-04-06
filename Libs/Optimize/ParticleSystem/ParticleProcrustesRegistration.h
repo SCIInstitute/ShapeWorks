@@ -16,7 +16,6 @@ class ParticleProcrustesRegistration : public itk::DataObject {
  public:
   static constexpr int VDimension = 3;
   /** Standard class typedefs */
-  //  typedef TDataType DataType;
   typedef ParticleProcrustesRegistration Self;
   typedef DataObject Superclass;
   typedef itk::SmartPointer<Self> Pointer;

@@ -1,4 +1,4 @@
-#include "itkParticleProcrustesRegistration.h"
+#include "ParticleProcrustesRegistration.h"
 
 #include "Procrustes3D.h"
 
