@@ -117,4 +117,4 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
     //        std::cout << std::endl;
   }
 }
-}  // namespace itk
+}  // namespace shapeworks
