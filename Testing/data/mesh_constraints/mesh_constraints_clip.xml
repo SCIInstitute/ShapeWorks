@@ -52,7 +52,7 @@ mesh
 </domain_type>
 
 <relative_weighting>
-10
+100
 </relative_weighting>
 
 <initial_relative_weighting>

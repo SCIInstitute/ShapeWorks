@@ -404,7 +404,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
 
 bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
-  std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
+  if (m_verbosity >= 1) std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
   if (m_FFCs[dom].boundaries.size() > 0) {
     if (m_verbosity >= 1) {
