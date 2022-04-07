@@ -284,13 +284,8 @@ void Optimize::SetParameters()
   this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
-
-  if (this->m_procrustes_scaling == 0) {
-    this->m_procrustes->ScalingOff();
-  }
-  else {
-    this->m_procrustes->ScalingOn();
-  }
+  this->m_procrustes->SetScaling(this->m_procrustes_scaling);
+  this->m_procrustes->SetRotationTranslation(this->m_procrustes_rotation_translation);
 
   this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
@@ -2103,8 +2098,12 @@ void Optimize::SetProcrustesInterval(int procrustes_interval)
 { this->m_procrustes_interval = procrustes_interval; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetProcrustesScaling(int procrustes_scaling)
+void Optimize::SetProcrustesScaling(bool procrustes_scaling)
 { this->m_procrustes_scaling = procrustes_scaling; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcrustesRotationTranslation(bool procrustes_rotation_translation)
+{ this->m_procrustes_rotation_translation = procrustes_rotation_translation; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetRelativeWeighting(double relative_weighting)

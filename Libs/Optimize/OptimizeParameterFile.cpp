@@ -343,6 +343,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
   if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("procrustes_rotation_translation").Element();
+  if (elem) { optimize->SetProcrustesRotationTranslation(atoi(elem->GetText())); }
+
   elem = docHandle->FirstChild("relative_weighting").Element();
   if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 

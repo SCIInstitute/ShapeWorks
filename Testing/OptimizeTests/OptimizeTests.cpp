@@ -670,6 +670,7 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
   project->load("procrustes.xlsx");
   OptimizeParameters params(project);
   params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
   params.set_use_procrustes_scaling(false);
 
   Optimize app;
@@ -694,13 +695,14 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, procrustes_enabled_test) {
-  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_enabled_test");
+TEST(OptimizeTests, procrustes_both_enabled_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_both_enabled_test");
 
   ProjectHandle project = std::make_shared<Project>();
   project->load("procrustes.xlsx");
   OptimizeParameters params(project);
   params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
   params.set_use_procrustes_scaling(true);
 
   Optimize app;
@@ -722,4 +724,36 @@ TEST(OptimizeTests, procrustes_enabled_test) {
   }
   // should be tiny with all of procrustes enabled
   ASSERT_LT(values[values.size() - 1], 1.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_scale_only_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_scale_only_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(false);
+  params.set_use_procrustes_scaling(true);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 275.0);
+  ASSERT_LT(values[values.size() - 1], 325.0);
 }
