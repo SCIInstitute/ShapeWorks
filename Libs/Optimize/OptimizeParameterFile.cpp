@@ -385,6 +385,12 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("mesh_ffc_mode").Element();
   if (elem) { optimize->SetMeshFFCMode(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("shared_boundary_enabled").Element();
+  if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_weight").Element();
+  if (elem) { optimize->SetSharedBoundaryWeight( atof(elem->GetText())); }
+
   return true;
 }
 
