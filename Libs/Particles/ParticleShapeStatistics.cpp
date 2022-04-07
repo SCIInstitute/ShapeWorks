@@ -1,6 +1,8 @@
 
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
+#include <Libs/Project/Project.h>
+
 
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 #include <tinyxml.h>
@@ -342,6 +344,28 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   return 0;
 }
 
+//---------------------------------------------------------------------------
+ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> project) {
+
+  std::vector<Eigen::VectorXd> points;
+  std::vector<int> groups;
+  for (auto& s : project->get_subjects()) {
+    auto world_files = s->get_world_particle_filenames();
+    Eigen::VectorXd particles;
+    for (auto& file : world_files) {
+      Eigen::VectorXd domain_particles;
+      ParticleSystem::ReadParticleFile(file, domain_particles);
+      Eigen::VectorXd combined(particles.size() + domain_particles.size());
+      combined << particles, domain_particles;
+      particles = combined;
+    }
+    points.push_back(particles);
+    groups.push_back(1);
+  }
+  ImportPoints(points, groups);
+}
+
+//---------------------------------------------------------------------------
 int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;

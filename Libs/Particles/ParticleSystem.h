@@ -42,6 +42,8 @@ public:
 
   bool EvaluationCompare(const ParticleSystem& other) const;
 
+  static bool ReadParticleFile(std::string filename, Eigen::VectorXd& points);
+
 private:
   friend struct SharedCommandData;
 
