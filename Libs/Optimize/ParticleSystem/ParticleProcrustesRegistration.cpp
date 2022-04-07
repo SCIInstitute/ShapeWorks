@@ -36,69 +36,18 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
 
   // Run alignment
   Procrustes3D::SimilarityTransformListType transforms;
-  Procrustes3D procrustes;
+  Procrustes3D procrustes(m_Scaling, m_RotationTranslation);
   procrustes.AlignShapes(transforms, shapelist);
 
   // Construct transform matrices for each particle system.
 
   int k = d % m_DomainsPerShape;
 
+  Procrustes3D::TransformMatrixListType matrices;
+  procrustes.ConstructTransformMatrices(transforms, matrices);
+
   for (int i = 0; i < numShapes; i++, k += m_DomainsPerShape) {
-    if (m_Scaling == false) {
-      transforms[i].scale = 1.0;
-    }
-
-    // Transform from Configuration space to Procrustes space.  Translation
-    // followed by rotation and scaling.
-
-    ParticleSystemType::TransformType R;
-
-    if (m_RotationTranslation == true) {
-      R(0, 0) = transforms[i].rotation(0, 0) * transforms[i].scale;
-      R(1, 0) = transforms[i].rotation(1, 0) * transforms[i].scale;
-      R(2, 0) = transforms[i].rotation(2, 0) * transforms[i].scale;
-      R(3, 0) = 0.0;
-
-      R(0, 1) = transforms[i].rotation(0, 1) * transforms[i].scale;
-      R(1, 1) = transforms[i].rotation(1, 1) * transforms[i].scale;
-      R(2, 1) = transforms[i].rotation(2, 1) * transforms[i].scale;
-      R(3, 1) = 0.0;
-
-      R(0, 2) = transforms[i].rotation(0, 2) * transforms[i].scale;
-      R(1, 2) = transforms[i].rotation(1, 2) * transforms[i].scale;
-      R(2, 2) = transforms[i].rotation(2, 2) * transforms[i].scale;
-      R(3, 2) = 0.0;
-
-      R(0, 3) = transforms[i].translation(0) * R(0, 0) + transforms[i].translation(1) * R(0, 1) +
-                transforms[i].translation(2) * R(0, 2);
-      R(1, 3) = transforms[i].translation(0) * R(1, 0) + transforms[i].translation(1) * R(1, 1) +
-                transforms[i].translation(2) * R(1, 2);
-      R(2, 3) = transforms[i].translation(0) * R(2, 0) + transforms[i].translation(1) * R(2, 1) +
-                transforms[i].translation(2) * R(2, 2);
-      R(3, 3) = 1.0;
-    } else {
-      // only use the scaling (could just be 1.0 depending on m_Scaling value)
-      R(0, 0) = transforms[i].scale;
-      R(1, 0) = 0.0;
-      R(2, 0) = 0.0;
-      R(3, 0) = 0.0;
-
-      R(0, 1) = 0.0;
-      R(1, 1) = transforms[i].scale;
-      R(2, 1) = 0.0;
-      R(3, 1) = 0.0;
-
-      R(0, 2) = 0.0;
-      R(1, 2) = 0.0;
-      R(2, 2) = transforms[i].scale;
-      R(3, 2) = 0.0;
-
-      R(0, 3) = 0.0;
-      R(1, 3) = 0.0;
-      R(2, 3) = 0.0;
-      R(3, 3) = 1.0;
-    }
-    m_ParticleSystem->SetTransform(k, R);
+    m_ParticleSystem->SetTransform(k, matrices[i]);
   }
 }
 
