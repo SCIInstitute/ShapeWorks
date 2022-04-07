@@ -100,10 +100,7 @@ class ContourDomain : public ParticleDomain {
                                   const VectorDoubleType& global_direction, double epsilon) const override;
 
  private:
-  void ComputeBounds();
-  void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
-  int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
   double ComputeLineCoordinate(const double pt[3], int line) const;
 
   // Return the number of lines that consist of i-th point
@@ -131,6 +128,15 @@ class ContourDomain : public ParticleDomain {
   mutable int geo_lq_idx_ = -1;
   mutable int geo_lq_line_ = -1;
   mutable double geo_lq_dist_ = -1;
+
+  double avg_edge_length_{0.0};
+
+  void ComputeBounds();
+  void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
+  void ComputeAvgEdgeLength();
+
+  int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
+
 };
 
 }  // namespace shapeworks

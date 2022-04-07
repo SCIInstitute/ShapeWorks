@@ -2378,7 +2378,7 @@ bool Optimize::LoadParameterFile(std::string filename)
 
 bool Optimize::SetUpOptimize(ProjectHandle projectFile)
 {
-  
+
   OptimizeParameters param(projectFile);
   param.set_up_optimize(this);
   return true;
@@ -2486,5 +2486,17 @@ vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixe
   return output;
 }
 
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryEnabled(bool enabled)
+{
+  m_sampler->SetSharedBoundaryEnabled(enabled);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryWeight(double weight)
+{
+  m_sampler->SetSharedBoundaryWeight(weight);
+}
 
 }

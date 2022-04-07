@@ -117,6 +117,7 @@ def main():
     run_case("ellipsoid_multiple_domain --tiny_test")
     run_case("ellipsoid_multiple_domain_mesh --tiny_test")
     run_case("ellipsoid_pca --tiny_test")
+    run_case("peanut_shared_boundary --tiny_test")
 
     if not args.tiny_test:
         run_case("ellipsoid --verify")
@@ -130,6 +131,7 @@ def main():
         run_case("lumps --verify")
         run_case("thin_cavity_bean --verify")
         run_case("supershapes_1mode_contour --verify")
+        run_case("peanut_shared_boundary --verify")
     #        run_case("deep_ssm --verify")
 
     end = time.time()
