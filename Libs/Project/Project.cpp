@@ -239,11 +239,11 @@ void Project::load_subjects() {
     if (name_column >= 0) {
       name = this->get_value(name_column, i + 2);  //+1 for header, +1 for 1-based index
     } else if (subject->get_original_filenames().size() != 0) {
-      name = StringUtils::getFileNameWithoutExtension(subject->get_original_filenames()[0]);
+      name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);
     } else if (subject->get_groomed_filenames().size() != 0) {
-      name = StringUtils::getFileNameWithoutExtension(subject->get_groomed_filenames()[0]);
+      name = StringUtils::getBaseFilenameWithoutExtension(subject->get_groomed_filenames()[0]);
     } else if (locals.size() > 0) {
-      name = StringUtils::getFileNameWithoutExtension(locals[0]);
+      name = StringUtils::getBaseFilenameWithoutExtension(locals[0]);
     }
     subject->set_display_name(name);
 
@@ -704,7 +704,7 @@ bool Project::get_particles_present() const { return this->particles_present_; }
 bool Project::get_images_present() { return this->get_matching_columns(IMAGE_PREFIX).size() > 0; }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_parameters(const std::string& name, const std::string& domain_name) {
+Parameters Project::get_parameters(const std::string& name, std::string domain_name) {
   Parameters params;
   std::map<std::string, std::string> map;
 
@@ -718,6 +718,10 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
   }
 
   auto rows = ws.rows(false);
+
+  if (get_number_of_domains_per_subject() == 1) {
+    domain_name = "";
+  }
 
   int value_column = 1;  // single domain
   if (domain_name != "") {

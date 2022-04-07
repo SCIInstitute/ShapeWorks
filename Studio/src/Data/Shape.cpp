@@ -212,13 +212,13 @@ bool Shape::store_landmarks() {
   auto filenames = subject_->get_landmarks_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
     std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
   }
   for (int i = 0; i < filenames.size(); i++) {
     if (filenames[i] == "") {
       std::string filename = subject_->get_original_filenames()[i];
-      filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+      filenames[i] = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     }
   }
 
@@ -268,7 +268,7 @@ bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
     std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
     filenames.push_back(filename);
   }
 
