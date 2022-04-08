@@ -70,7 +70,7 @@ public:
   VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                            VectorType &vector) const override;
 
-  NormalType SampleNormalAtPoint(PointType p, int idx) const override;
+  NormalType SampleNormalAtPoint(PointType p, int idx = -1) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
 
   PointType SnapToMesh(PointType pointa, int idx) const override;
@@ -209,4 +209,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

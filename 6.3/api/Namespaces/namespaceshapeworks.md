@@ -12,6 +12,7 @@ title: shapeworks
 |                | Name           |
 | -------------- | -------------- |
 | class | **[shapeworks::AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)**  |
+| class | **[shapeworks::AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)**  |
 | class | **[shapeworks::Command](../Classes/classshapeworks_1_1Command.md)**  |
 | class | **[shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**  |
 | class | **[shapeworks::Constraints](../Classes/classshapeworks_1_1Constraints.md)**  |
@@ -72,6 +73,8 @@ title: shapeworks
 | class | **[shapeworks::ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)**  |
 | class | **[shapeworks::ParticleImageDomainWithGradN](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md)**  |
 | class | **[shapeworks::ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)**  |
+| class | **[shapeworks::ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)**  |
+| class | **[shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)**  |
 | class | **[shapeworks::ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)**  |
 | class | **[shapeworks::ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)**  |
 | class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)**  |
@@ -102,6 +105,7 @@ title: shapeworks
 | class | **[shapeworks::SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView]().  |
 | class | **[shapeworks::SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)**  |
 | class | **[shapeworks::SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)**  |
+| class | **[shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)**  |
 | class | **[shapeworks::StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget]().  |
 | class | **[shapeworks::StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions.  |
 | class | **[shapeworks::StudioHandleWidget](../Classes/classshapeworks_1_1StudioHandleWidget.md)**  |
@@ -2344,4 +2348,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:53 +0000

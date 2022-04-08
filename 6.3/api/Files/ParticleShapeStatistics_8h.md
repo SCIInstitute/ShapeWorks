@@ -40,9 +40,11 @@ title: Libs/Particles/ParticleShapeStatistics.h
 #include "Shapeworks.h"
 #include "ParticleSystem.h"
 
+
 namespace shapeworks {
-class ParticleShapeStatistics
-{
+
+class ParticleShapeStatistics {
+
 public:
 
   constexpr static int VDimension = 3;
@@ -71,25 +73,24 @@ public:
 
   int FisherLinearDiscriminant(unsigned int numModes);
 
-  const int SampleSize() { return m_numSamples; }
-  const int Group1SampleSize() { return m_numSamples1; }
-  const int Group2SampleSize() { return m_numSamples2; }
+  int SampleSize() const { return m_numSamples; }
+  int Group1SampleSize() const { return m_numSamples1; }
+  int Group2SampleSize() const { return m_numSamples2; }
 
-  const int NumberOfDimensions() { return m_numDimensions; }
+  int NumberOfDimensions() const { return m_numDimensions; }
 
-  const int GroupID(unsigned int i) { return m_groupIDs[i]; }
-  const std::vector<int> &GroupID() { return m_groupIDs;}
+  int GroupID(unsigned int i) const { return m_groupIDs[i]; }
+  const std::vector<int> &GroupID() const { return m_groupIDs; }
 
-  const Eigen::MatrixXd &Eigenvectors() { return m_eigenvectors; }
-  const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
+  const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
+  const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
 
-  const Eigen::VectorXd &Mean() { return m_mean; }
-  const Eigen::VectorXd &Group1Mean() { return m_mean1; }
-  const Eigen::VectorXd &Group2Mean() { return m_mean2; }
+  const Eigen::VectorXd &Mean() const { return m_mean; }
+  const Eigen::VectorXd &Group1Mean() const { return m_mean1; }
+  const Eigen::VectorXd &Group2Mean() const { return m_mean2; }
 
-  // Returns group2 - group1 mean
-  const Eigen::VectorXd &NormalizedGroupDifference() { return m_groupdiffnorm; }
-  const Eigen::VectorXd &GroupDifference() { return m_groupdiff; }
+  const Eigen::VectorXd &NormalizedGroupDifference() const { return m_groupdiffnorm; }
+  const Eigen::VectorXd &GroupDifference() const { return m_groupdiff; }
 
   int ComputeMedianShape(const int ID);
 
@@ -97,13 +98,13 @@ public:
 
   Eigen::MatrixXd &PCALoadings() { return m_principals; }
 
-  const Eigen::VectorXd &FishersLDA() { return m_fishersLD; }
+  const Eigen::VectorXd &FishersLDA() const { return m_fishersLD; }
 
-  const Eigen::MatrixXd &ShapeMatrix() { return m_shapes; }
+  const Eigen::MatrixXd &ShapeMatrix() const { return m_shapes; }
 
-  const Eigen::MatrixXd &RecenteredShape() { return m_pointsMinusMean; }
+  const Eigen::MatrixXd &RecenteredShape() const { return m_pointsMinusMean; }
 
-  std::vector<double> PercentVarByMode() { return m_percentVarByMode; }
+  const std::vector<double>& PercentVarByMode() const { return m_percentVarByMode; }
 
   int SimpleLinearRegression(const std::vector<double> &y,
                              const std::vector<double> &x,
@@ -117,6 +118,8 @@ public:
   Eigen::MatrixXd get_group2_matrix();
 
 private:
+
+  void compute_good_bad_points();
 
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
@@ -151,6 +154,10 @@ private:
 
   Eigen::MatrixXd m_group_1_matrix;
   Eigen::MatrixXd m_group_2_matrix;
+
+  // 0 = bad, 1 = good
+  std::vector<bool> m_goodPoints;
+  std::vector<Eigen::VectorXd> points_;
 };
 
 } // shapeworks
@@ -159,4 +166,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

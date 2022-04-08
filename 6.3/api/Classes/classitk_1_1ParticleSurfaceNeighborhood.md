@@ -42,6 +42,9 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 | virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , std::vector< double > & , double ) const override |
 | virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , double ) const override |
 | void | **[SetWeightingEnabled](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-setweightingenabled)**(bool is_enabled) |
+| bool | **[IsWeightingEnabled](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-isweightingenabled)**() const |
+| void | **[SetForceEuclidean](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-setforceeuclidean)**(bool is_enabled) |
+| bool | **[IsForceEuclidean](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-isforceeuclidean)**() const |
 | void | **[PrintSelf](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-printself)**(std::ostream & os, Indent indent) const |
 
 ## Protected Functions
@@ -307,6 +310,29 @@ inline void SetWeightingEnabled(
 ```
 
 
+### function IsWeightingEnabled
+
+```cpp
+inline bool IsWeightingEnabled() const
+```
+
+
+### function SetForceEuclidean
+
+```cpp
+inline void SetForceEuclidean(
+    bool is_enabled
+)
+```
+
+
+### function IsForceEuclidean
+
+```cpp
+inline bool IsForceEuclidean() const
+```
+
+
 ### function PrintSelf
 
 ```cpp
@@ -335,4 +361,4 @@ inline virtual ~ParticleSurfaceNeighborhood()
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:53 +0000

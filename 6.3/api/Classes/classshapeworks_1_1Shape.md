@@ -91,6 +91,7 @@ Representation of a single shape/patient/subject.
 | std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
+| std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > | **[get_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-mesh-wrappers)**() |
 
 ## Public Functions Documentation
 
@@ -660,6 +661,13 @@ bool has_planes()
 ```
 
 
+### function get_mesh_wrappers
+
+```cpp
+std::vector< std::shared_ptr< VtkMeshWrapper > > get_mesh_wrappers()
+```
+
+
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

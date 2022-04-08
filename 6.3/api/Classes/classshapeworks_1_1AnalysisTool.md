@@ -52,8 +52,13 @@ Inherits from QWidget
 | void | **[group_p_values_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-p-values-clicked)**() |
 | void | **[handle_eval_thread_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-complete)**(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) |
 | void | **[handle_eval_thread_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-progress)**(ShapeEvaluationJob::JobType job_type, float progress) |
+| void | **[handle_eval_particle_normals_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-progress)**(float progress) |
+| void | **[handle_eval_particle_normals_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-complete)**(std::vector< bool > good_bad) |
 | void | **[handle_group_pvalues_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-group-pvalues-complete)**() |
 | void | **[handle_alignment_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-alignment-changed)**(int new_alignment) |
+| void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
+| void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
+| void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
 
 ## Public Signals
 
@@ -81,14 +86,14 @@ Inherits from QWidget
 | std::vector< [Shape::Point](../Classes/classshapeworks_1_1Shape_1_1Point.md) > | **[get_group_difference_vectors](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-difference-vectors)**() |
 | std::string | **[get_analysis_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-analysis-mode)**() |
 | void | **[set_analysis_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-analysis-mode)**(std::string mode) |
-| void | **[setLabels](../Classes/classshapeworks_1_1AnalysisTool.md#function-setlabels)**(QString which, QString value) |
-| int | **[getPCAMode](../Classes/classshapeworks_1_1AnalysisTool.md#function-getpcamode)**() |
+| void | **[set_labels](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-labels)**(QString which, QString value) |
+| int | **[get_pca_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-mode)**() |
 | double | **[get_group_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-value)**() |
 | double | **[get_pca_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-value)**() |
-| bool | **[pcaAnimate](../Classes/classshapeworks_1_1AnalysisTool.md#function-pcaanimate)**() |
+| bool | **[pca_animate](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-animate)**() |
 | int | **[get_sample_number](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-sample-number)**() |
 | bool | **[compute_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-compute-stats)**() |
-| void | **[updateSlider](../Classes/classshapeworks_1_1AnalysisTool.md#function-updateslider)**() |
+| void | **[update_slider](../Classes/classshapeworks_1_1AnalysisTool.md#function-update-slider)**() |
 | void | **[reset_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-reset-stats)**() |
 | void | **[enable_actions](../Classes/classshapeworks_1_1AnalysisTool.md#function-enable-actions)**(bool newly_enabled =false) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
@@ -358,6 +363,24 @@ void handle_eval_thread_progress(
 ```
 
 
+### slot handle_eval_particle_normals_progress
+
+```cpp
+void handle_eval_particle_normals_progress(
+    float progress
+)
+```
+
+
+### slot handle_eval_particle_normals_complete
+
+```cpp
+void handle_eval_particle_normals_complete(
+    std::vector< bool > good_bad
+)
+```
+
+
 ### slot handle_group_pvalues_complete
 
 ```cpp
@@ -371,6 +394,29 @@ void handle_group_pvalues_complete()
 void handle_alignment_changed(
     int new_alignment
 )
+```
+
+
+### slot run_good_bad_particles
+
+```cpp
+void run_good_bad_particles()
+```
+
+
+### slot handle_lda_progress
+
+```cpp
+void handle_lda_progress(
+    double progress
+)
+```
+
+
+### slot handle_lda_complete
+
+```cpp
+void handle_lda_complete()
 ```
 
 
@@ -519,20 +565,20 @@ void set_analysis_mode(
 ```
 
 
-### function setLabels
+### function set_labels
 
 ```cpp
-void setLabels(
+void set_labels(
     QString which,
     QString value
 )
 ```
 
 
-### function getPCAMode
+### function get_pca_mode
 
 ```cpp
-int getPCAMode()
+int get_pca_mode()
 ```
 
 
@@ -550,10 +596,10 @@ double get_pca_value()
 ```
 
 
-### function pcaAnimate
+### function pca_animate
 
 ```cpp
-bool pcaAnimate()
+bool pca_animate()
 ```
 
 
@@ -571,10 +617,10 @@ bool compute_stats()
 ```
 
 
-### function updateSlider
+### function update_slider
 
 ```cpp
-void updateSlider()
+void update_slider()
 ```
 
 
@@ -711,4 +757,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:53 +0000

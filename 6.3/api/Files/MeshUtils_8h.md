@@ -56,6 +56,11 @@ public:
 
   static size_t findReferenceMesh(std::vector<Mesh> &meshes);
 
+
+  static Mesh boundaryLoopExtractor(Mesh mesh);
+
+  static std::array<Mesh, 3> sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
+
   static void generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen = false);
 
   static Field computeMeanNormals(const std::vector<std::string>& filenames, bool autoGenerateNormals = true);
@@ -65,6 +70,7 @@ public:
   void visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh);
 
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+
 };
 
 } // shapeworks
@@ -73,4 +79,4 @@ public:
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

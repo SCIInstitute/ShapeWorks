@@ -13,7 +13,7 @@ Representation of a session.  [More...](#detailed-description)
 
 `#include <Session.h>`
 
-Inherits from QObject
+Inherits from QObject, QEnableSharedFromThis< Session >
 
 ## Public Slots
 
@@ -63,6 +63,8 @@ Inherits from QObject
 | void | **[load_groomed_files](../Classes/classshapeworks_1_1Session.md#function-load-groomed-files)**(std::vector< std::string > file_names, double iso, int domains_per_shape)<br>load groomed files  |
 | bool | **[load_point_files](../Classes/classshapeworks_1_1Session.md#function-load-point-files)**(std::vector< std::string > local, std::vector< std::string > world, int domains_per_shape) |
 | bool | **[update_particles](../Classes/classshapeworks_1_1Session.md#function-update-particles)**(std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > particles) |
+| int | **[get_num_particles](../Classes/classshapeworks_1_1Session.md#function-get-num-particles)**()<br>Return the total number of particles for all domains, combined.  |
+| [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
 | void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double >>> transforms) |
 | bool | **[is_light_project](../Classes/classshapeworks_1_1Session.md#function-is-light-project)**() |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Session.md#function-get-groomed-present)**() |
@@ -127,6 +129,10 @@ Inherits from QObject
 | bool | **[get_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-mode-inclusive)**() |
 | void | **[set_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-size)**(double size) |
 | double | **[get_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-size)**() |
+| bool | **[get_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-show-good-bad-particles)**() |
+| void | **[set_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-show-good-bad-particles)**(bool enabled) |
+| std::vector< bool > | **[get_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-good-bad-particles)**() |
+| void | **[set_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-good-bad-particles)**(const std::vector< bool > & good_bad) |
 | void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
@@ -438,6 +444,23 @@ bool load_point_files(
 ```cpp
 bool update_particles(
     std::vector< StudioParticles > particles
+)
+```
+
+
+### function get_num_particles
+
+```cpp
+int get_num_particles()
+```
+
+Return the total number of particles for all domains, combined. 
+
+### function get_local_particle_system
+
+```cpp
+ParticleSystem get_local_particle_system(
+    int domain
 )
 ```
 
@@ -940,6 +963,38 @@ double get_ffc_paint_size()
 ```
 
 
+### function get_show_good_bad_particles
+
+```cpp
+bool get_show_good_bad_particles()
+```
+
+
+### function set_show_good_bad_particles
+
+```cpp
+void set_show_good_bad_particles(
+    bool enabled
+)
+```
+
+
+### function get_good_bad_particles
+
+```cpp
+std::vector< bool > get_good_bad_particles()
+```
+
+
+### function set_good_bad_particles
+
+```cpp
+void set_good_bad_particles(
+    const std::vector< bool > & good_bad
+)
+```
+
+
 ### function trigger_repaint
 
 ```cpp
@@ -1005,4 +1060,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

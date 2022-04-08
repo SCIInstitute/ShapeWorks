@@ -46,6 +46,7 @@ namespace shapeworks {
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
+class VtkMeshWrapper;
 
 class Shape {
  public:
@@ -176,6 +177,8 @@ class Shape {
 
   bool has_planes();
 
+  std::vector<std::shared_ptr<VtkMeshWrapper>> get_mesh_wrappers();
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
@@ -190,6 +193,7 @@ class Shape {
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
+  std::vector<std::shared_ptr<VtkMeshWrapper>> mesh_wrappers_;
 
   int group_id_ = 1;
 
@@ -228,4 +232,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

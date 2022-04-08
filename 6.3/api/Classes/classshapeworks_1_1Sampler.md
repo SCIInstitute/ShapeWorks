@@ -98,6 +98,8 @@ title: shapeworks::Sampler
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1Sampler.md#function-setverbosity)**(unsigned int val) |
 | unsigned int | **[GetVerbosity](../Classes/classshapeworks_1_1Sampler.md#function-getverbosity)**() |
 | [MeanCurvatureCacheType](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md) * | **[GetMeanCurvatureCache](../Classes/classshapeworks_1_1Sampler.md#function-getmeancurvaturecache)**() |
+| void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryenabled)**(bool enabled) |
+| void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryweight)**(double weight) |
 | void | **[ReadTransforms](../Classes/classshapeworks_1_1Sampler.md#function-readtransforms)**() |
 | void | **[ReadPointsFiles](../Classes/classshapeworks_1_1Sampler.md#function-readpointsfiles)**() |
 | virtual void | **[AllocateDataCaches](../Classes/classshapeworks_1_1Sampler.md#function-allocatedatacaches)**() |
@@ -782,6 +784,24 @@ inline MeanCurvatureCacheType * GetMeanCurvatureCache()
 ```
 
 
+### function SetSharedBoundaryEnabled
+
+```cpp
+inline void SetSharedBoundaryEnabled(
+    bool enabled
+)
+```
+
+
+### function SetSharedBoundaryWeight
+
+```cpp
+inline void SetSharedBoundaryWeight(
+    double weight
+)
+```
+
+
 ### function ReadTransforms
 
 ```cpp
@@ -1115,4 +1135,4 @@ itk::ParticleMeshBasedGeneralEntropyGradientFunction< Dimension >::Pointer m_Mes
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

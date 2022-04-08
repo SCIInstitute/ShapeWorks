@@ -50,6 +50,8 @@ class MeshWarper {
 
   bool get_warp_available();
 
+  bool is_contour() const { return is_contour_; }
+
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
   Eigen::MatrixXd extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh);
@@ -119,4 +121,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

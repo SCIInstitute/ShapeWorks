@@ -104,6 +104,8 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetFidsFiles](../Classes/classshapeworks_1_1Optimize.md#function-setfidsfiles)**(const std::vector< std::string > & files)<br>Set FIDS files (TODO: details)  |
 | void | **[SetParticleFlags](../Classes/classshapeworks_1_1Optimize.md#function-setparticleflags)**(std::vector< int > flags)<br>Set Particle Flags (TODO: details)  |
 | void | **[SetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-setdomainflags)**(std::vector< int > flags)<br>Set Domain Flags (TODO: details)  |
+| void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryenabled)**(bool enabled)<br>Shared boundary settings.  |
+| void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryweight)**(double weight) |
 | const std::vector< int > & | **[GetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-getdomainflags)**() |
 | void | **[SetFileOutputEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setfileoutputenabled)**(bool enabled)<br>Set if file output is enabled.  |
 | std::vector< bool > | **[GetUseXYZ](../Classes/classshapeworks_1_1Optimize.md#function-getusexyz)**()<br>Return if XYZ is used, per shape.  |
@@ -1041,6 +1043,25 @@ void SetDomainFlags(
 ```
 
 Set Domain Flags (TODO: details) 
+
+### function SetSharedBoundaryEnabled
+
+```cpp
+void SetSharedBoundaryEnabled(
+    bool enabled
+)
+```
+
+Shared boundary settings. 
+
+### function SetSharedBoundaryWeight
+
+```cpp
+void SetSharedBoundaryWeight(
+    double weight
+)
+```
+
 
 ### function GetDomainFlags
 
@@ -2091,4 +2112,4 @@ std::shared_ptr< Project > project_;
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

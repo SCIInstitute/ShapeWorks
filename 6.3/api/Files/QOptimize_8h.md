@@ -27,8 +27,10 @@ title: Studio/src/Optimize/QOptimize.h
 ```cpp
 #pragma once
 
+#ifndef Q_MOC_RUN
 #include <Data/StudioParticles.h>
 #include <Libs/Optimize/Optimize.h>
+#endif
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>
@@ -75,4 +77,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

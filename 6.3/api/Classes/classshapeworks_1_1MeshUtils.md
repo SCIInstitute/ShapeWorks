@@ -24,6 +24,8 @@ title: shapeworks::MeshUtils
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::string > & filenames, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | size_t | **[findReferenceMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-findreferencemesh)**(std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes)<br>determine the reference mesh  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[boundaryLoopExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-boundaryloopextractor)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>boundary loop extractor for a given mesh  |
+| std::array< [Mesh](../Classes/classshapeworks_1_1Mesh.md), 3 > | **[sharedBoundaryExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-sharedboundaryextractor)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_l, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_r, double tol)<br>shared boundary extractor for the left and right mesh  |
 | void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::string > & filenames, bool autoGenerateNormals =true)<br>computes average normals for each point in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes)<br>computes average normals for each point in given set of meshes  |
@@ -108,6 +110,28 @@ static size_t findReferenceMesh(
 
 determine the reference mesh 
 
+### function boundaryLoopExtractor
+
+```cpp
+static Mesh boundaryLoopExtractor(
+    Mesh mesh
+)
+```
+
+boundary loop extractor for a given mesh 
+
+### function sharedBoundaryExtractor
+
+```cpp
+static std::array< Mesh, 3 > sharedBoundaryExtractor(
+    const Mesh & mesh_l,
+    const Mesh & mesh_r,
+    double tol
+)
+```
+
+shared boundary extractor for the left and right mesh 
+
 ### function generateNormals
 
 ```cpp
@@ -163,4 +187,4 @@ Used as an auxiliary function for vector field visualizations.
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:48 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

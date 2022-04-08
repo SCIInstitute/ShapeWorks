@@ -30,7 +30,7 @@ Inherits from [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrappe
 | virtual bool | **[IsWithinDistance](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-iswithindistance)**(const PointType & pointa, int idxa, const PointType & pointb, int idxb, double test_dist, double & dist) const override |
 | virtual PointType | **[GeodesicWalk](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-geodesicwalk)**(PointType p, int idx, VectorType vector) const override |
 | virtual VectorType | **[ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-projectvectortosurfacetangent)**(const PointType & pointa, int idx, VectorType & vector) const override |
-| virtual NormalType | **[SampleNormalAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplenormalatpoint)**(PointType p, int idx) const override |
+| virtual NormalType | **[SampleNormalAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplenormalatpoint)**(PointType p, int idx =-1) const override |
 | virtual GradNType | **[SampleGradNAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplegradnatpoint)**(PointType p, int idx) const override |
 | virtual PointType | **[SnapToMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-snaptomesh)**(PointType pointa, int idx) const override |
 | virtual PointType | **[GetPointOnMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpointonmesh)**() const override |
@@ -151,7 +151,7 @@ virtual VectorType ProjectVectorToSurfaceTangent(
 ```cpp
 virtual NormalType SampleNormalAtPoint(
     PointType p,
-    int idx
+    int idx =-1
 ) const override
 ```
 
@@ -229,4 +229,4 @@ virtual void InvalidateParticle(
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:48 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

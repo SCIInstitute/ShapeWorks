@@ -43,6 +43,7 @@ Inherits from QObject, [shapeworks::MeshWarper](../Classes/classshapeworks_1_1Me
 | void | **[set_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-set-reference-mesh)**(vtkSmartPointer< vtkPolyData > reference_mesh, const Eigen::MatrixXd & reference_particles, const Eigen::MatrixXd & landmarks ={})<br>Set the reference mesh and particles.  |
 | bool | **[generate_warp](../Classes/classshapeworks_1_1MeshWarper.md#function-generate-warp)**()<br>Generate warp, return true on success.  |
 | bool | **[get_warp_available](../Classes/classshapeworks_1_1MeshWarper.md#function-get-warp-available)**()<br>Return if the warp is available.  |
+| bool | **[is_contour](../Classes/classshapeworks_1_1MeshWarper.md#function-is-contour)**() const |
 | vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-build-mesh)**(const Eigen::MatrixXd & particles)<br>Build a mesh for a given set of particles.  |
 | Eigen::MatrixXd | **[extract_landmarks](../Classes/classshapeworks_1_1MeshWarper.md#function-extract-landmarks)**(vtkSmartPointer< vtkPolyData > warped_mesh)<br>Return the landmarks (matrix [Nx3]) from the warped builded mesh.  |
 | bool | **[is_contour](../Classes/classshapeworks_1_1MeshWarper.md#function-is-contour)**()<br>Return if set as a contour.  |
@@ -98,4 +99,4 @@ For overriding to handle progress updates.
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

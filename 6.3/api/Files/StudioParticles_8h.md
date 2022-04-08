@@ -31,6 +31,7 @@ title: Studio/src/Data/StudioParticles.h
 #include <vnl_vector.h>
 #include <vtkSmartPointer.h>
 #include <itkPoint.h>
+#include <cassert>
 
 #include "Shapeworks.h"
 
@@ -90,4 +91,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

@@ -35,6 +35,7 @@ title: Studio/src/Data/Session.h
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
+#include <Libs/Particles/ParticleSystem.h>
 #include <QSharedPointer>
 #include <QVector>
 #include <cstdlib>
@@ -52,7 +53,7 @@ typedef QSharedPointer<Session> SessionHandle;
 using TransformType = vtkSmartPointer<vtkTransform>;
 
 
-class Session : public QObject {
+class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
@@ -81,6 +82,10 @@ class Session : public QObject {
   bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
+
+  int get_num_particles();
+
+  ParticleSystem get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 
@@ -188,6 +193,12 @@ class Session : public QObject {
   void set_ffc_paint_size(double size);
   double get_ffc_paint_size();
 
+  bool get_show_good_bad_particles();
+  void set_show_good_bad_particles(bool enabled);
+
+  std::vector<bool> get_good_bad_particles();
+  void set_good_bad_particles(const std::vector<bool>& good_bad);
+
   void trigger_repaint();
 
  public Q_SLOTS:
@@ -277,4 +288,4 @@ class Session : public QObject {
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

@@ -128,6 +128,7 @@ title: Files
         * **file [Libs/Optimize/OptimizeParameters.h](../Files/OptimizeParameters_8h.md#file-optimizeparameters.h)** 
     * **dir [Libs/Particles](../Files/dir_f6c26397dfcef1d1f5f1786f8168e7dd.md#dir-libs/particles)** 
         * **file [Libs/Particles/EvaluationUtil.h](../Files/EvaluationUtil_8h.md#file-evaluationutil.h)** 
+        * **file [Libs/Particles/ParticleNormalEvaluation.h](../Files/ParticleNormalEvaluation_8h.md#file-particlenormalevaluation.h)** 
         * **file [Libs/Particles/ParticleShapeStatistics.h](../Files/ParticleShapeStatistics_8h.md#file-particleshapestatistics.h)** 
         * **file [Libs/Particles/ParticleSystem.h](../Files/ParticleSystem_8h.md#file-particlesystem.h)** 
         * **file [Libs/Particles/ReconstructSurface.h](../Files/ReconstructSurface_8h.md#file-reconstructsurface.h)** 
@@ -196,6 +197,8 @@ title: Files
         * **dir [Studio/src/Job](../Files/dir_3e441cbfff25a2e63cb70556b317072d.md#dir-studio/src/job)** 
             * **file [Studio/src/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)** 
             * **file [Studio/src/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
+            * **file [Studio/src/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
+            * **file [Studio/src/Job/StatsGroupLDAJob.h](../Files/StatsGroupLDAJob_8h.md#file-statsgroupldajob.h)** 
         * **dir [Studio/src/Optimize](../Files/dir_502f02e7679d4b0b85423ea2b48b81cb.md#dir-studio/src/optimize)** 
             * **file [Studio/src/Optimize/OptimizeTool.h](../Files/OptimizeTool_8h.md#file-optimizetool.h)** 
             * **file [Studio/src/Optimize/QOptimize.h](../Files/QOptimize_8h.md#file-qoptimize.h)** 
@@ -204,6 +207,7 @@ title: Files
         * **dir [Studio/src/Resources](../Files/dir_f61e18dd1eaf83b576d05cfa79718e5e.md#dir-studio/src/resources)** 
             * **file [Studio/src/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
         * **dir [Studio/src/Utils](../Files/dir_6dabbda62b442fabee487c4141c09499.md#dir-studio/src/utils)** 
+            * **file [Studio/src/Utils/AnalysisUtils.h](../Files/AnalysisUtils_8h.md#file-analysisutils.h)** 
             * **file [Studio/src/Utils/StackWalker.h](../Files/StackWalker_8h.md#file-stackwalker.h)** 
             * **file [Studio/src/Utils/StudioUtils.h](../Files/StudioUtils_8h.md#file-studioutils.h)** 
             * **file [Studio/src/Utils/WindowsCrashHandler.h](../Files/WindowsCrashHandler_8h.md#file-windowscrashhandler.h)** 
@@ -227,4 +231,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

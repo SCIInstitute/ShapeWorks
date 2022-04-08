@@ -46,7 +46,6 @@ title: Classes
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
 * **class [OptimizeParameterFile](../Classes/classOptimizeParameterFile.md)** 
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
-* **class [ParticleShapeStatistics](../Classes/classParticleShapeStatistics.md)** 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
 * **class [PreferencesWindow](../Classes/classPreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
@@ -73,6 +72,7 @@ title: Classes
     * **class [ParticleContainer](../Classes/classitk_1_1ParticleContainer.md)** 
     * **class [ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)** 
     * **class [ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md)** 
+        * **struct [CrossDomainNeighborhood](../Classes/structitk_1_1ParticleCurvatureEntropyGradientFunction_1_1CrossDomainNeighborhood.md)** 
     * **class [ParticleDualVectorFunction](../Classes/classitk_1_1ParticleDualVectorFunction.md)** 
     * **class [ParticleEnsembleEntropyFunction](../Classes/classitk_1_1ParticleEnsembleEntropyFunction.md)** 
     * **class [ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. 
@@ -116,6 +116,7 @@ title: Classes
 * **class [quatd](../Classes/classquatd.md)** 
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
+    * **class [AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
     * **class [Constraint](../Classes/classshapeworks_1_1Constraint.md)** 
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
@@ -176,6 +177,8 @@ title: Classes
     * **class [ParticleImageDomainWithGradN](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md)** 
     * **class [ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)** 
     * **class [ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)** 
+    * **class [ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)** 
+    * **class [ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)** 
     * **class [ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)** 
     * **class [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)** 
     * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** 
@@ -209,6 +212,7 @@ title: Classes
     * **class [SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView](). 
     * **class [SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)** 
     * **class [SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)** 
+    * **class [StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)** 
     * **class [StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget](). 
     * **class [StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions. 
     * **class [StudioHandleWidget](../Classes/classshapeworks_1_1StudioHandleWidget.md)** 
@@ -242,4 +246,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:49 +0000
+Updated on 2022-04-08 at 01:06:55 +0000

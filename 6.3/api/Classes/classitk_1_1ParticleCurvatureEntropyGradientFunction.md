@@ -14,6 +14,12 @@ title: itk::ParticleCurvatureEntropyGradientFunction
 
 Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleEntropyGradientFunction.md), [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_1ParticleVectorFunction.md), LightObject
 
+## Protected Classes
+
+|                | Name           |
+| -------------- | -------------- |
+| struct | **[CrossDomainNeighborhood](../Classes/structitk_1_1ParticleCurvatureEntropyGradientFunction_1_1CrossDomainNeighborhood.md)**  |
+
 ## Public Types
 
 |                | Name           |
@@ -55,12 +61,16 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | double | **[ComputeKappa](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-computekappa)**(double mc, unsigned int d) const |
 | virtual void | **[AfterIteration](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-afteriteration)**() |
 | virtual void | **[BeforeIteration](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-beforeiteration)**() |
-| virtual double | **[EstimateSigma](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-estimatesigma)**(unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType & neighborhood, const [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) * domain, const std::vector< double > & weights, const std::vector< double > & distances, const PointType & pos, double initial_sigma, double precision, int & err, double & avgKappa) const |
+| virtual double | **[EstimateSigma](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-estimatesigma)**(unsigned int idx, unsigned int dom, const [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) * domain, const PointType & pos, double initial_sigma, double precision, int & err, double & avgKappa) const |
 | void | **[SetMeanCurvatureCache](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-setmeancurvaturecache)**([MeanCurvatureCacheType](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md) * s) |
 | [MeanCurvatureCacheType](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md) * | **[GetMeanCurvatureCache](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-getmeancurvaturecache)**() |
 | const [MeanCurvatureCacheType](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md) * | **[GetMeanCurvatureCache](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-getmeancurvaturecache)**() const |
 | void | **[SetRho](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-setrho)**(double g) |
 | double | **[GetRho](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-getrho)**() const |
+| void | **[SetSharedBoundaryWeight](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-setsharedboundaryweight)**(double w) |
+| double | **[GetSharedBoundaryWeight](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-getsharedboundaryweight)**() const |
+| void | **[SetSharedBoundaryEnabled](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-setsharedboundaryenabled)**(bool enabled) |
+| bool | **[GetSharedBoundaryEnabled](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-getsharedboundaryenabled)**() const |
 | virtual [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< VDimension >::Pointer | **[Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone)**() |
 | | **[itkTypeMacro](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-itktypemacro)**([ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md) , [ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md) ) |
 | | **[itkNewMacro](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-itknewmacro)**([Self](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#typedef-self) ) |
@@ -87,6 +97,7 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | virtual | **[~ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-~particlecurvatureentropygradientfunction)**() |
 | void | **[operator=](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-operator=)**(const [ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md) & ) |
 | | **[ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-particlecurvatureentropygradientfunction)**(const [ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md) & ) |
+| void | **[UpdateNeighborhood](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-updateneighborhood)**(const PointType & pos, int idx, int d, double radius, const [ParticleSystemType](../Classes/classitk_1_1ParticleSystem.md) * system) |
 | | **[ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-particlecurvatureentropygradientfunction)**() |
 | virtual | **[~ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-~particlecurvatureentropygradientfunction)**() |
 | void | **[operator=](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-operator=)**(const [ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md) & ) |
@@ -100,10 +111,13 @@ Inherits from [itk::ParticleEntropyGradientFunction< TGradientNumericType, VDime
 | unsigned int | **[m_Counter](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-counter)**  |
 | double | **[m_Rho](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-rho)**  |
 | double | **[m_avgKappa](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-avgkappa)**  |
+| bool | **[m_IsSharedBoundaryEnabled](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-issharedboundaryenabled)**  |
+| double | **[m_SharedBoundaryWeight](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-sharedboundaryweight)**  |
 | double | **[m_CurrentSigma](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-currentsigma)**  |
+| std::vector< [CrossDomainNeighborhood](../Classes/structitk_1_1ParticleCurvatureEntropyGradientFunction_1_1CrossDomainNeighborhood.md) > | **[m_CurrentNeighborhood](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-currentneighborhood)**  |
+| float | **[m_MaxMoveFactor](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-maxmovefactor)**  |
 | ParticleSystemType::PointVectorType | **[m_CurrentNeighborhood](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-currentneighborhood)**  |
 | std::vector< double > | **[m_CurrentWeights](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-currentweights)**  |
-| float | **[m_MaxMoveFactor](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#variable-m-maxmovefactor)**  |
 
 ## Additional inherited members
 
@@ -485,10 +499,7 @@ This method is called by a solver before each iteration. Subclasses may or may n
 virtual double EstimateSigma(
     unsigned int idx,
     unsigned int dom,
-    const typename ParticleSystemType::PointVectorType & neighborhood,
     const shapeworks::ParticleDomain * domain,
-    const std::vector< double > & weights,
-    const std::vector< double > & distances,
     const PointType & pos,
     double initial_sigma,
     double precision,
@@ -543,6 +554,38 @@ Set/Get the parameters in the kappa function.
 
 ```cpp
 inline double GetRho() const
+```
+
+
+### function SetSharedBoundaryWeight
+
+```cpp
+inline void SetSharedBoundaryWeight(
+    double w
+)
+```
+
+
+### function GetSharedBoundaryWeight
+
+```cpp
+inline double GetSharedBoundaryWeight() const
+```
+
+
+### function SetSharedBoundaryEnabled
+
+```cpp
+inline void SetSharedBoundaryEnabled(
+    bool enabled
+)
+```
+
+
+### function GetSharedBoundaryEnabled
+
+```cpp
+inline bool GetSharedBoundaryEnabled() const
 ```
 
 
@@ -777,6 +820,19 @@ ParticleCurvatureEntropyGradientFunction(
 ```
 
 
+### function UpdateNeighborhood
+
+```cpp
+inline void UpdateNeighborhood(
+    const PointType & pos,
+    int idx,
+    int d,
+    double radius,
+    const ParticleSystemType * system
+)
+```
+
+
 ### function ParticleCurvatureEntropyGradientFunction
 
 ```cpp
@@ -839,10 +895,38 @@ double m_avgKappa;
 ```
 
 
+### variable m_IsSharedBoundaryEnabled
+
+```cpp
+bool m_IsSharedBoundaryEnabled {false};
+```
+
+
+### variable m_SharedBoundaryWeight
+
+```cpp
+double m_SharedBoundaryWeight {1.0};
+```
+
+
 ### variable m_CurrentSigma
 
 ```cpp
 double m_CurrentSigma;
+```
+
+
+### variable m_CurrentNeighborhood
+
+```cpp
+std::vector< CrossDomainNeighborhood > m_CurrentNeighborhood;
+```
+
+
+### variable m_MaxMoveFactor
+
+```cpp
+float m_MaxMoveFactor;
 ```
 
 
@@ -860,13 +944,6 @@ std::vector< double > m_CurrentWeights;
 ```
 
 
-### variable m_MaxMoveFactor
-
-```cpp
-float m_MaxMoveFactor;
-```
-
-
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:46 +0000
+Updated on 2022-04-08 at 01:06:53 +0000

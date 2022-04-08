@@ -50,7 +50,7 @@ summary: 3D Viewer
 | void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-ffc-mode)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-actors)**() |
-| std::vector< vtkSmartPointer< vtkActor > > | **[get_clipped_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-clipped-surface-actors)**() |
+| std::vector< vtkSmartPointer< vtkActor > > | **[get_unclipped_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-unclipped-surface-actors)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-transform)**(int alignment_domain, int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
@@ -340,10 +340,10 @@ std::vector< vtkSmartPointer< vtkActor > > get_surface_actors()
 ```
 
 
-### function get_clipped_surface_actors
+### function get_unclipped_surface_actors
 
 ```cpp
-std::vector< vtkSmartPointer< vtkActor > > get_clipped_surface_actors()
+std::vector< vtkSmartPointer< vtkActor > > get_unclipped_surface_actors()
 ```
 
 
@@ -465,4 +465,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:48 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

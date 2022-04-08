@@ -17,8 +17,8 @@ title: shapeworks::ParticleSystem
 | | **[ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md#function-particlesystem)**(const Eigen::MatrixXd & matrix) |
 | const Eigen::MatrixXd & | **[Particles](../Classes/classshapeworks_1_1ParticleSystem.md#function-particles)**() const |
 | const std::vector< std::string > & | **[Paths](../Classes/classshapeworks_1_1ParticleSystem.md#function-paths)**() const |
-| int | **[N](../Classes/classshapeworks_1_1ParticleSystem.md#function-n)**() const |
-| int | **[D](../Classes/classshapeworks_1_1ParticleSystem.md#function-d)**() const |
+| int | **[N](../Classes/classshapeworks_1_1ParticleSystem.md#function-n)**() const<br>Number of samples.  |
+| int | **[D](../Classes/classshapeworks_1_1ParticleSystem.md#function-d)**() const<br>Dimensions (e.g. x/y/z * number of particles)  |
 | bool | **[ExactCompare](../Classes/classshapeworks_1_1ParticleSystem.md#function-exactcompare)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) & other) const |
 | bool | **[EvaluationCompare](../Classes/classshapeworks_1_1ParticleSystem.md#function-evaluationcompare)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) & other) const |
 
@@ -68,6 +68,7 @@ inline const std::vector< std::string > & Paths() const
 inline int N() const
 ```
 
+Number of samples. 
 
 ### function D
 
@@ -75,6 +76,7 @@ inline int N() const
 inline int D() const
 ```
 
+Dimensions (e.g. x/y/z * number of particles) 
 
 ### function ExactCompare
 
@@ -105,4 +107,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:54 +0000

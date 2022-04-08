@@ -110,7 +110,7 @@ Inherits from DataObject
 | bool | **[GetFixedParticleFlag](../Classes/classitk_1_1ParticleSystem.md#function-getfixedparticleflag)**(unsigned int d, unsigned int i) const |
 | void | **[ResetFixedParticleFlags](../Classes/classitk_1_1ParticleSystem.md#function-resetfixedparticleflags)**() |
 | void | **[SetDomainsPerShape](../Classes/classitk_1_1ParticleSystem.md#function-setdomainspershape)**(unsigned int num) |
-| unsigned int | **[GetDomainsPerShape](../Classes/classitk_1_1ParticleSystem.md#function-getdomainspershape)**() |
+| unsigned int | **[GetDomainsPerShape](../Classes/classitk_1_1ParticleSystem.md#function-getdomainspershape)**() const |
 | void | **[SetNumberOfDomains](../Classes/classitk_1_1ParticleSystem.md#function-setnumberofdomains)**(unsigned int ) |
 
 ## Protected Functions
@@ -1069,7 +1069,7 @@ inline void SetDomainsPerShape(
 ### function GetDomainsPerShape
 
 ```cpp
-inline unsigned int GetDomainsPerShape()
+inline unsigned int GetDomainsPerShape() const
 ```
 
 
@@ -1226,4 +1226,4 @@ static constexpr int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-03-31 at 23:33:47 +0000
+Updated on 2022-04-08 at 01:06:53 +0000
