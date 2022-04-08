@@ -1317,6 +1317,22 @@ PYBIND11_MODULE(shapeworks_py, m)
               "find reference mesh from a set of meshes",
               "meshes"_a)
 
+
+  .def_static("boundaryLoopExtractor",
+               &MeshUtils::boundaryLoopExtractor,
+               "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file",
+               "mesh"_a)
+
+  .def_static("sharedBoundaryExtractor",
+       [](const Mesh &mesh_l, const Mesh &mesh_r, float tol) -> decltype(auto) {
+         std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(mesh_l, mesh_r, tol);
+
+         // std::move passes ownership to Python
+         return py::make_tuple(std::move(output[0]), std::move(output[1]), std::move(output[2]));
+       },
+       "extract the shared boundary for the given left and right meshes and save the individual meshes",
+       "mesh_l"_a,"mesh_r"_a,"tol"_a = 1e-3)
+
   .def_static("generateNormals",
               &MeshUtils::generateNormals,
               "generates and adds normals for points and faces for each mesh in given set of meshes",
@@ -1337,6 +1353,7 @@ PYBIND11_MODULE(shapeworks_py, m)
                },
                "computes average normals for each point in given set of meshes",
                "meshes"_a)
+
   ;
 
   // ParticleSystem

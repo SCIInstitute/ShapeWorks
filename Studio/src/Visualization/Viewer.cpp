@@ -527,9 +527,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 void Viewer::update_clipping_planes() {
   for (int i = 0; i < surface_mappers_.size(); i++) {
     auto mapper = surface_mappers_[i];
-    auto clipped_mapper = clipped_surface_mappers_[i];
     mapper->RemoveAllClippingPlanes();
-    clipped_mapper->RemoveAllClippingPlanes();
     auto& constraints = shape_->get_constraints(i);
     for (auto& plane : constraints.getPlaneConstraints()) {
       if (plane.points().size() == 3) {
@@ -554,8 +552,8 @@ void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
   prop_picker_->Pick(display_pos[0], display_pos[1], 0, renderer_);
 
   int domain = 0;
-  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
-    if (prop_picker_->GetActor() == clipped_surface_actors_[i]) {
+  for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
+    if (prop_picker_->GetActor() == unclipped_surface_actors_[i]) {
       domain = i;
     }
   }
@@ -611,7 +609,7 @@ void Viewer::update_ffc_mode() {
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
 
 //-----------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkActor>> Viewer::get_clipped_surface_actors() { return clipped_surface_actors_; }
+std::vector<vtkSmartPointer<vtkActor>> Viewer::get_unclipped_surface_actors() { return unclipped_surface_actors_; }
 
 //-----------------------------------------------------------------------------
 MeshGroup Viewer::get_meshes() { return meshes_; }
@@ -688,9 +686,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         poly_data = reverse_filter->GetOutput();
       }
       actor->SetUserTransform(transform);
-      clipped_surface_actors_[i]->SetUserTransform(transform);
+      unclipped_surface_actors_[i]->SetUserTransform(transform);
       mapper->SetInputData(poly_data);
-      clipped_surface_mappers_[i]->SetInputData(poly_data);
+      unclipped_surface_mappers_[i]->SetInputData(poly_data);
 
       int domain_scheme = (scheme_ + i) % color_schemes_.size();
 
@@ -700,6 +698,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
                                             color_schemes_[domain_scheme].foreground.b);
       actor->GetProperty()->SetSpecular(0.2);
       actor->GetProperty()->SetSpecularPower(15);
+      actor->GetProperty()->SetOpacity(1.0);
 
       if (feature_map != "" && poly_data) {
         poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
@@ -954,8 +953,8 @@ void Viewer::update_actors() {
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
-  for (size_t i = 0; i < clipped_surface_actors_.size(); i++) {
-    renderer_->RemoveActor(clipped_surface_actors_[i]);
+  for (size_t i = 0; i < unclipped_surface_actors_.size(); i++) {
+    renderer_->RemoveActor(unclipped_surface_actors_[i]);
   }
 
   if (show_glyphs_) {
@@ -973,14 +972,14 @@ void Viewer::update_actors() {
 
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
-      renderer_->AddActor(clipped_surface_actors_[i]);
+      renderer_->AddActor(unclipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      cell_picker_->AddPickList(clipped_surface_actors_[i]);
-      prop_picker_->AddPickList(clipped_surface_actors_[i]);
-      point_placer_->AddProp(clipped_surface_actors_[i]);
+      unclipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      cell_picker_->AddPickList(unclipped_surface_actors_[i]);
+      prop_picker_->AddPickList(unclipped_surface_actors_[i]);
+      point_placer_->AddProp(unclipped_surface_actors_[i]);
       point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
     }
   }
@@ -1063,8 +1062,8 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
   cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
-  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
-    if (cell_picker_->GetActor() == clipped_surface_actors_[i]) {
+  for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
+    if (cell_picker_->GetActor() == unclipped_surface_actors_[i]) {
       double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
@@ -1174,6 +1173,7 @@ void Viewer::update_opacities() {
   auto opacities = visualizer_->get_opacities();
   if (opacities.size() == surface_mappers_.size()) {
     for (size_t i = 0; i < opacities.size(); i++) {
+      unclipped_surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
       surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
     }
   }
@@ -1187,21 +1187,21 @@ void Viewer::initialize_surfaces() {
   if (number_of_domains_ > surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
-    clipped_surface_mappers_.resize(number_of_domains_);
-    clipped_surface_actors_.resize(number_of_domains_);
+    unclipped_surface_mappers_.resize(number_of_domains_);
+    unclipped_surface_actors_.resize(number_of_domains_);
     ffc_luts_.resize(number_of_domains_);
 
     for (int i = 0; i < number_of_domains_; i++) {
       surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
       surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       surface_actors_[i]->SetMapper(surface_mappers_[i]);
-      clipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
-      clipped_surface_mappers_[i]->ScalarVisibilityOff();
+      unclipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      unclipped_surface_mappers_[i]->ScalarVisibilityOff();
 
-      clipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
+      unclipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
-      clipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
-      clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
+      unclipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
+      unclipped_surface_actors_[i]->SetMapper(unclipped_surface_mappers_[i]);
 
       ffc_luts_[i] = vtkSmartPointer<vtkLookupTable>::New();
       ffc_luts_[i]->SetHueRange(.667, 0.0);

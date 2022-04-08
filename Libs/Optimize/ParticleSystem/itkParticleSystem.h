@@ -368,7 +368,8 @@ class ParticleSystem : public DataObject {
     m_DomainsPerShape = num;
     m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape() { return m_DomainsPerShape; }
+  unsigned int GetDomainsPerShape() const
+  { return m_DomainsPerShape; }
 
   /** Set the number of domains.  This method modifies the size of the
     m_Domains, m_Positions, and m_Transform lists. */

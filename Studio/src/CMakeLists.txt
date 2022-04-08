@@ -117,11 +117,15 @@ SET(STUDIO_DATA_MOC_HDRS
 SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
+  Job/ParticleNormalEvaluationJob.cpp
+  Job/StatsGroupLDAJob.cpp
   )
 
 SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
+  Job/ParticleNormalEvaluationJob.h
+  Job/StatsGroupLDAJob.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -172,6 +176,7 @@ SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
   Utils/WindowsCrashHandler.cpp
   Utils/StudioUtils.cpp
+  Utils/AnalysisUtils.cpp
   )
 
 SET(STUDIO_INTERFACE_SRCS

@@ -343,6 +343,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
   if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("procrustes_rotation_translation").Element();
+  if (elem) { optimize->SetProcrustesRotationTranslation(atoi(elem->GetText())); }
+
   elem = docHandle->FirstChild("relative_weighting").Element();
   if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 
@@ -381,6 +384,12 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_enabled").Element();
+  if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_weight").Element();
+  if (elem) { optimize->SetSharedBoundaryWeight( atof(elem->GetText())); }
 
   return true;
 }

@@ -6,6 +6,7 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 #include <vtkCenterOfMass.h>
@@ -16,6 +17,9 @@
 #include <vector>
 
 using namespace shapeworks;
+
+// for concurrent access
+static tbb::mutex mutex;
 
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
@@ -65,6 +69,7 @@ bool Groom::run() {
   if (!this->run_alignment()) {
     success = false;
   }
+  increment_progress(10);  // alignment complete
 
   // store back to project
   this->project_->store_subjects();
@@ -383,11 +388,13 @@ int Groom::get_total_ops() {
     }
   }
 
-  return num_subjects * num_tools;
+  // +10 for alignment
+  return num_subjects * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount) {
+  tbb::mutex::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
@@ -482,15 +489,15 @@ bool Groom::run_alignment() {
       assign_transforms(transforms, domain, true /* global */);
 
     } else {  // just center
-
+      std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
         Groom::add_center_transform(transform, meshes[i]);
-        // store transform
-        size_t domain = num_domains;  // end
-        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+        transforms.push_back(ProjectUtils::convert_transform(transform));
       }
+      size_t domain = num_domains;  // end
+      assign_transforms(transforms, domain, true /* global */);
     }
   }
 
@@ -565,7 +572,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     }
   }
 
-  auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
+  auto output = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input) + suffix;
 
   return output;
 }

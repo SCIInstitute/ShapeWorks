@@ -137,6 +137,7 @@ function install_conda() {
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
+  if ! pip install mkdocs-material==8.2.8;              then return 1; fi # theme for mkdocs
   if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
   if ! pip install jinja2==3.0.3;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs

@@ -56,41 +56,10 @@ bool StringUtils::hasSuffix(const std::string& filename, const std::string& suff
 }
 
 //---------------------------------------------------------------------------
-std::string StringUtils::getFileNameWithoutExtension(std::string path) {
-  if (path == "") {
-    return path;
-  }
-  char* str = new char[path.length() + 1];
-  strcpy(str, path.c_str());
-
-  // separate filename from the full path
-  char* fname;
-  char* pch;
-  pch = strtok(str, "/");
-  while (pch != nullptr) {
-    fname = pch;
-    pch = strtok(nullptr, "/");
-  }
-
-  // separate filename from the extension
-  char* pch2 = strrchr(fname, '.');
-  if (pch2 == nullptr) {
-    delete[] str;
-    return path;
-  }
-  int num = pch2 - fname + 1;
-  int num2 = strlen(fname);
-  strncpy(pch2, "", num2 - num);
-  std::string ret_string(fname);
-  delete[] str;
-  return ret_string;
-}
-
-//---------------------------------------------------------------------------
 std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<std::string>& paths) {
   std::vector<std::string> filenames;
   for (int i = 0; i < paths.size(); i++) {
-    std::string fname = StringUtils::getFileNameWithoutExtension(paths[i]);
+    std::string fname = StringUtils::getBaseFilenameWithoutExtension(paths[i]);
     filenames.push_back(std::string(fname));
   }
   return filenames;
