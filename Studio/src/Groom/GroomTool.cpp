@@ -180,7 +180,7 @@ void GroomTool::update_reflect_columns() {
   auto headers = project->get_headers();
 
   QStringList reflect_columns;
-  for (auto header : headers) {
+  for (const auto &header : headers) {
     if (header != "") {
       reflect_columns << QString::fromStdString(header);
     }
@@ -447,7 +447,7 @@ void GroomTool::handle_thread_complete() {
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
-  for (auto shape : session_->get_shapes()) {
+  Q_FOREACH (auto shape, session_->get_shapes()) {
     shape->reset_groomed_mesh();
   }
 

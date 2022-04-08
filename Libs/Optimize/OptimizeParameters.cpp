@@ -161,7 +161,7 @@ std::string OptimizeParameters::get_output_prefix() {
     base = ".";
   }
 
-  auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
+  auto project_name = StringUtils::getBaseFilenameWithoutExtension(this->project_->get_filename());
 
   if (project_name == "") {
     project_name = "new_project";
@@ -458,7 +458,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++, prefix_transform);
 
-      auto name = StringUtils::getFileNameWithoutExtension(filename);
+      auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 
       auto prefix = this->get_output_prefix();
       local_particle_filenames.push_back(prefix + name + "_local.particles");
