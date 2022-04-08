@@ -9,22 +9,12 @@
  * Values persist via the QSettings class.
  */
 class Preferences : public QObject {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
+  enum OrientationMarkerType { medical = 0, triad = 1, none = 2 };
 
-  enum OrientationMarkerType {
-    medical = 0,
-    triad = 1,
-    none = 2
-  };
-
-  enum OrientationMarkerCorner {
-    upper_right = 0,
-    lower_right = 1,
-    lower_left = 2,
-    upper_left = 3
-  };
+  enum OrientationMarkerCorner { upper_right = 0, lower_right = 1, lower_left = 2, upper_left = 3 };
 
   Preferences();
 
@@ -59,9 +49,6 @@ public:
 
   int get_num_threads();
   void set_num_threads(int num_threads);
-
-  float get_cache_epsilon();
-  void set_cache_epsilon(float value);
 
   float get_glyph_size();
   void set_glyph_size(float value);
@@ -99,15 +86,14 @@ public:
   QString get_optimize_file_template();
   void set_optimize_file_template(QString optimize_file_template);
 
-Q_SIGNALS:
+ Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
   void threading_changed_signal();
   void sliders_changed_signal();
 
-private:
-
+ private:
   void update_recent_files();
   QStringList recent_files_;
   QStringList recent_paths_;

@@ -37,7 +37,6 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state) {
   ui_->mesh_cache_memory->setEnabled(b);
   ui_->parallel_enabled->setEnabled(b);
   ui_->num_threads->setEnabled(b);
-  ui_->caching_epsilon->setEnabled(b);
   emit clear_cache();
 }
 
@@ -70,14 +69,11 @@ void PreferencesWindow::restore_defaults() {
   preferences_.restore_defaults();
   set_values_from_preferences();
 }
-`
 
-    //-----------------------------------------------------------------------------
-    void
-    PreferencesWindow::set_values_from_preferences() {
+//-----------------------------------------------------------------------------
+void PreferencesWindow::set_values_from_preferences() {
   ui_->mesh_cache_enabled->setChecked(preferences_.get_cache_enabled());
   ui_->mesh_cache_memory->setValue(preferences_.get_memory_cache_percent());
-  ui_->caching_epsilon->setValue(std::log10(preferences_.get_cache_epsilon()));
   ui_->color_scheme->setCurrentIndex(preferences_.get_color_scheme());
   ui_->num_threads->setValue(preferences_.get_num_threads());
   ui_->parallel_enabled->setChecked(preferences_.get_parallel_enabled());
@@ -102,12 +98,6 @@ void PreferencesWindow::on_parallel_enabled_toggled(bool b) {
 void PreferencesWindow::on_num_threads_valueChanged(int i) {
   preferences_.set_num_threads(i);
   update_labels();
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_caching_epsilon_valueChanged(int i) {
-  preferences_.set_cache_epsilon(std::pow(10., static_cast<double>(i)));
-  emit clear_cache();
 }
 
 //-----------------------------------------------------------------------------
