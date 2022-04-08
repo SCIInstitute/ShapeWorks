@@ -43,8 +43,6 @@ title: shapeworks::OptimizeParameters
 | void | **[set_use_procrustes](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-procrustes)**(bool value) |
 | bool | **[get_use_procrustes_scaling](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-procrustes-scaling)**() |
 | void | **[set_use_procrustes_scaling](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-procrustes-scaling)**(bool value) |
-| bool | **[get_use_procrustes_rotation_translation](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-procrustes-rotation-translation)**() |
-| void | **[set_use_procrustes_rotation_translation](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-procrustes-rotation-translation)**(bool value) |
 | int | **[get_procrustes_interval](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-procrustes-interval)**() |
 | void | **[set_procrustes_interval](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-procrustes-interval)**(int value) |
 | bool | **[get_use_multiscale](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-multiscale)**() |
@@ -310,22 +308,6 @@ void set_use_procrustes_scaling(
 ```
 
 
-### function get_use_procrustes_rotation_translation
-
-```cpp
-bool get_use_procrustes_rotation_translation()
-```
-
-
-### function set_use_procrustes_rotation_translation
-
-```cpp
-void set_use_procrustes_rotation_translation(
-    bool value
-)
-```
-
-
 ### function get_procrustes_interval
 
 ```cpp
@@ -508,4 +490,4 @@ bool is_subject_fixed(
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:14:06 +0000
+Updated on 2022-04-08 at 15:18:25 +0000

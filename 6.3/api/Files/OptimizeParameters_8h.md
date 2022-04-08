@@ -82,9 +82,6 @@ class OptimizeParameters {
   bool get_use_procrustes_scaling();
   void set_use_procrustes_scaling(bool value);
 
-  bool get_use_procrustes_rotation_translation();
-  void set_use_procrustes_rotation_translation(bool value);
-
   int get_procrustes_interval();
   void set_procrustes_interval(int value);
 
@@ -135,4 +132,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:14:07 +0000
+Updated on 2022-04-08 at 15:18:27 +0000
