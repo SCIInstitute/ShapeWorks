@@ -17,6 +17,7 @@ title: shapeworks::ParticleShapeStatistics
 |                | Name           |
 | -------------- | -------------- |
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**() |
+| | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | | **[~ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-~particleshapestatistics)**() |
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point >> global_pts, int domainsPerShape =1) |
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) particleSystem, int domainsPerShape =1) |
@@ -77,6 +78,15 @@ This class computes various statistics for a set of correspondence positions and
 
 ```cpp
 inline ParticleShapeStatistics()
+```
+
+
+### function ParticleShapeStatistics
+
+```cpp
+ParticleShapeStatistics(
+    std::shared_ptr< Project > project
+)
 ```
 
 
@@ -423,4 +433,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:54 +0000
+Updated on 2022-04-08 at 15:14:06 +0000

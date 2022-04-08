@@ -21,6 +21,7 @@ title: shapeworks::ParticleSystem
 | int | **[D](../Classes/classshapeworks_1_1ParticleSystem.md#function-d)**() const<br>Dimensions (e.g. x/y/z * number of particles)  |
 | bool | **[ExactCompare](../Classes/classshapeworks_1_1ParticleSystem.md#function-exactcompare)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) & other) const |
 | bool | **[EvaluationCompare](../Classes/classshapeworks_1_1ParticleSystem.md#function-evaluationcompare)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) & other) const |
+| bool | **[ReadParticleFile](../Classes/classshapeworks_1_1ParticleSystem.md#function-readparticlefile)**(std::string filename, Eigen::VectorXd & points) |
 
 ## Friends
 
@@ -96,6 +97,16 @@ bool EvaluationCompare(
 ```
 
 
+### function ReadParticleFile
+
+```cpp
+static bool ReadParticleFile(
+    std::string filename,
+    Eigen::VectorXd & points
+)
+```
+
+
 ## Friends
 
 ### friend SharedCommandData
@@ -107,4 +118,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:54 +0000
+Updated on 2022-04-08 at 15:14:06 +0000

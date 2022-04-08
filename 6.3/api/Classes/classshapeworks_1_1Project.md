@@ -38,7 +38,7 @@ Representation of a project.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_image_names](../Classes/classshapeworks_1_1Project.md#function-get-image-names)**()<br>Get image names.  |
 | std::vector< std::string > | **[get_group_names](../Classes/classshapeworks_1_1Project.md#function-get-group-names)**()<br>Get group names.  |
 | std::vector< std::string > | **[get_group_values](../Classes/classshapeworks_1_1Project.md#function-get-group-values)**(const std::string & group_name) const<br>Get possible group values.  |
-| [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1Project.md#function-get-parameters)**(const std::string & name, const std::string & domain_name ="")<br>Retrieve parameters based on key.  |
+| [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1Project.md#function-get-parameters)**(const std::string & name, std::string domain_name ="")<br>Retrieve parameters based on key.  |
 | void | **[set_parameters](../Classes/classshapeworks_1_1Project.md#function-set-parameters)**(const std::string & name, [Parameters](../Classes/classshapeworks_1_1Parameters.md) params, std::string domain_name ="")<br>Store parameters based on key.  |
 | void | **[clear_parameters](../Classes/classshapeworks_1_1Project.md#function-clear-parameters)**(const std::string & name)<br>Clear parameters based on key.  |
 | void | **[store_subjects](../Classes/classshapeworks_1_1Project.md#function-store-subjects)**()<br>Store from subject list to spreadsheet.  |
@@ -249,7 +249,7 @@ Get possible group values.
 ```cpp
 Parameters get_parameters(
     const std::string & name,
-    const std::string & domain_name =""
+    std::string domain_name =""
 )
 ```
 
@@ -386,4 +386,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:54 +0000
+Updated on 2022-04-08 at 15:14:06 +0000

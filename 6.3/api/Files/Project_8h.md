@@ -106,7 +106,7 @@ public:
 
   std::vector<std::string> get_group_values(const std::string& group_name) const;
 
-  Parameters get_parameters(const std::string& name, const std::string& domain_name = "");
+  Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
   void
   set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
@@ -251,4 +251,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:55 +0000
+Updated on 2022-04-08 at 15:14:07 +0000

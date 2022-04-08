@@ -76,7 +76,8 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetOptimizationCriterion](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationcriterion)**(double opt_criterion)<br>Set the optimization criterion (TODO: details)  |
 | void | **[SetUseShapeStatisticsInInit](../Classes/classshapeworks_1_1Optimize.md#function-setuseshapestatisticsininit)**(bool use_shape_statistics_in_init)<br>Set if shape statistics should be used in initialization.  |
 | void | **[SetProcrustesInterval](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesinterval)**(int procrustes_interval)<br>Set the interval for running procrustes (0 to disable)  |
-| void | **[SetProcrustesScaling](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesscaling)**(int procrustes_scaling)<br>Set if procrustes scaling should be used (0=disabled, 1=enabled)  |
+| void | **[SetProcrustesScaling](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesscaling)**(bool procrustes_scaling)<br>Set if procrustes scaling should be used.  |
+| void | **[SetProcrustesRotationTranslation](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesrotationtranslation)**(bool procrustes_rotation_translation)<br>Set if procrustes rotation/translation should be used.  |
 | void | **[SetRelativeWeighting](../Classes/classshapeworks_1_1Optimize.md#function-setrelativeweighting)**(double relative_weighting)<br>Set the relative weighting (TODO: details)  |
 | void | **[SetInitialRelativeWeighting](../Classes/classshapeworks_1_1Optimize.md#function-setinitialrelativeweighting)**(double initial_relative_weighting)<br>Set the initial relative weigting (TODO: details)  |
 | void | **[SetStartingRegularization](../Classes/classshapeworks_1_1Optimize.md#function-setstartingregularization)**(double starting_regularization)<br>Set the starting regularization (TODO: details)  |
@@ -171,7 +172,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 |                | Name           |
 | -------------- | -------------- |
 | std::shared_ptr< [Sampler](../Classes/classshapeworks_1_1Sampler.md) > | **[m_sampler](../Classes/classshapeworks_1_1Optimize.md#variable-m-sampler)**  |
-| [itk::ParticleProcrustesRegistration](../Classes/classitk_1_1ParticleProcrustesRegistration.md)< 3 >::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
+| ParticleProcrustesRegistration::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
 | [itk::ParticleGoodBadAssessment](../Classes/classitk_1_1ParticleGoodBadAssessment.md)< float, 3 >::Pointer | **[m_good_bad](../Classes/classshapeworks_1_1Optimize.md#variable-m-good-bad)**  |
 | unsigned int | **[m_verbosity_level](../Classes/classshapeworks_1_1Optimize.md#variable-m-verbosity-level)**  |
 | std::vector< std::vector< itk::Point< double > > > | **[m_local_points](../Classes/classshapeworks_1_1Optimize.md#variable-m-local-points)**  |
@@ -210,7 +211,8 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | double | **[m_optimization_criterion](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-criterion)**  |
 | bool | **[m_use_shape_statistics_in_init](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-shape-statistics-in-init)**  |
 | unsigned int | **[m_procrustes_interval](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-interval)**  |
-| int | **[m_procrustes_scaling](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-scaling)**  |
+| bool | **[m_procrustes_scaling](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-scaling)**  |
+| bool | **[m_procrustes_rotation_translation](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-rotation-translation)**  |
 | double | **[m_relative_weighting](../Classes/classshapeworks_1_1Optimize.md#variable-m-relative-weighting)**  |
 | double | **[m_initial_relative_weighting](../Classes/classshapeworks_1_1Optimize.md#variable-m-initial-relative-weighting)**  |
 | double | **[m_starting_regularization](../Classes/classshapeworks_1_1Optimize.md#variable-m-starting-regularization)**  |
@@ -771,11 +773,21 @@ Set the interval for running procrustes (0 to disable)
 
 ```cpp
 void SetProcrustesScaling(
-    int procrustes_scaling
+    bool procrustes_scaling
 )
 ```
 
-Set if procrustes scaling should be used (0=disabled, 1=enabled) 
+Set if procrustes scaling should be used. 
+
+### function SetProcrustesRotationTranslation
+
+```cpp
+void SetProcrustesRotationTranslation(
+    bool procrustes_rotation_translation
+)
+```
+
+Set if procrustes rotation/translation should be used. 
 
 ### function SetRelativeWeighting
 
@@ -1532,7 +1544,7 @@ std::shared_ptr< Sampler > m_sampler;
 ### variable m_procrustes
 
 ```cpp
-itk::ParticleProcrustesRegistration< 3 >::Pointer m_procrustes;
+ParticleProcrustesRegistration::Pointer m_procrustes;
 ```
 
 
@@ -1805,7 +1817,14 @@ unsigned int m_procrustes_interval = 3;
 ### variable m_procrustes_scaling
 
 ```cpp
-int m_procrustes_scaling = 1;
+bool m_procrustes_scaling = true;
+```
+
+
+### variable m_procrustes_rotation_translation
+
+```cpp
+bool m_procrustes_rotation_translation = true;
 ```
 
 
@@ -2112,4 +2131,4 @@ std::shared_ptr< Project > project_;
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:54 +0000
+Updated on 2022-04-08 at 15:14:06 +0000

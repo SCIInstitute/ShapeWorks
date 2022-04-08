@@ -24,7 +24,6 @@ String utility functions.
 | std::string | **[toLower](../Classes/classshapeworks_1_1StringUtils.md#function-tolower)**(std::string s) |
 | bool | **[hasSuffix](../Classes/classshapeworks_1_1StringUtils.md#function-hassuffix)**(std::string const & filename, std::string const & suffix) |
 | std::vector< std::string > | **[getFileNamesFromPaths](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamesfrompaths)**(const std::vector< std::string > & paths) |
-| std::string | **[getFileNameWithoutExtension](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamewithoutextension)**(std::string path)<br>TODO: is this a duplicate of removeExtension?  |
 
 ## Public Functions Documentation
 
@@ -94,16 +93,6 @@ static std::vector< std::string > getFileNamesFromPaths(
 ```
 
 
-### function getFileNameWithoutExtension
-
-```cpp
-static std::string getFileNameWithoutExtension(
-    std::string path
-)
-```
-
-TODO: is this a duplicate of removeExtension? 
-
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:54 +0000
+Updated on 2022-04-08 at 15:14:06 +0000

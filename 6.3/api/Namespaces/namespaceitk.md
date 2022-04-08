@@ -45,7 +45,6 @@ title: itk
 | struct | **[itk::ParticlePointIndexPair](../Classes/structitk_1_1ParticlePointIndexPair.md)**  |
 | class | **[itk::ParticlePositionReader](../Classes/classitk_1_1ParticlePositionReader.md)**  |
 | class | **[itk::ParticlePositionWriter](../Classes/classitk_1_1ParticlePositionWriter.md)**  |
-| class | **[itk::ParticleProcrustesRegistration](../Classes/classitk_1_1ParticleProcrustesRegistration.md)** <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017.  |
 | class | **[itk::ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md)**  |
 | class | **[itk::ParticleShapeLinearRegressionMatrixAttribute](../Classes/classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.md)**  |
 | class | **[itk::ParticleShapeMatrixAttribute](../Classes/classitk_1_1ParticleShapeMatrixAttribute.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
@@ -296,4 +295,4 @@ static int nbh26Table = {
 
 -------------------------------
 
-Updated on 2022-04-08 at 01:06:53 +0000
+Updated on 2022-04-08 at 15:14:05 +0000

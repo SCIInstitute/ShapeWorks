@@ -2346,6 +2346,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setprocrustesrotationtranslation" class="md-nav__link">
+    function SetProcrustesRotationTranslation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setrelativeweighting" class="md-nav__link">
     function SetRelativeWeighting
   </a>
@@ -3240,6 +3247,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-m_procrustes_rotation_translation" class="md-nav__link">
+    variable m_procrustes_rotation_translation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-m_relative_weighting" class="md-nav__link">
     variable m_relative_weighting
   </a>
@@ -3801,7 +3815,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocrustesscaling">SetProcrustesScaling</a></strong>(int procrustes_scaling)<br>Set if procrustes scaling should be used (0=disabled, 1=enabled)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocrustesscaling">SetProcrustesScaling</a></strong>(bool procrustes_scaling)<br>Set if procrustes scaling should be used.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocrustesrotationtranslation">SetProcrustesRotationTranslation</a></strong>(bool procrustes_rotation_translation)<br>Set if procrustes rotation/translation should be used.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4162,7 +4180,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampler">m_sampler</a></strong></td>
 </tr>
 <tr>
-<td><a href="classitk_1_1ParticleProcrustesRegistration.html">itk::ParticleProcrustesRegistration</a>&lt; 3 &gt;::Pointer</td>
+<td>ParticleProcrustesRegistration::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
 </tr>
 <tr>
@@ -4318,8 +4336,12 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-interval">m_procrustes_interval</a></strong></td>
 </tr>
 <tr>
-<td>int</td>
+<td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-scaling">m_procrustes_scaling</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-rotation-translation">m_procrustes_rotation_translation</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -4783,10 +4805,16 @@
 <p>Set the interval for running procrustes (0 to disable) </p>
 <h3 id="function-setprocrustesscaling">function SetProcrustesScaling</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcrustesScaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">procrustes_scaling</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_scaling</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Set if procrustes scaling should be used (0=disabled, 1=enabled) </p>
+<p>Set if procrustes scaling should be used. </p>
+<h3 id="function-setprocrustesrotationtranslation">function SetProcrustesRotationTranslation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcrustesRotationTranslation</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_rotation_translation</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set if procrustes rotation/translation should be used. </p>
 <h3 id="function-setrelativeweighting">function SetRelativeWeighting</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeWeighting</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">relative_weighting</span><span class="w"></span>
@@ -5192,7 +5220,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Sampler</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_procrustes">variable m_procrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_good_bad">variable m_good_bad</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGoodBadAssessment</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span><span class="w"></span>
@@ -5309,7 +5337,10 @@
 <div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_procrustes_scaling">variable m_procrustes_scaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_procrustes_rotation_translation">variable m_procrustes_rotation_translation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_rotation_translation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_relative_weighting">variable m_relative_weighting</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_relative_weighting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"></span>
@@ -5441,7 +5472,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-08 at 01:06:54 +0000</p>
+<p>Updated on 2022-04-08 at 15:14:06 +0000</p>
 
               
             </article>
