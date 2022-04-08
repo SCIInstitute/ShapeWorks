@@ -115,6 +115,16 @@ bool OptimizeParameters::get_use_procrustes_scaling() { return this->params_.get
 void OptimizeParameters::set_use_procrustes_scaling(bool value) { this->params_.set("procrustes_scaling", value); }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_procrustes_rotation_translation() {
+  return this->params_.get("procrustes_rotation_translation", true);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_procrustes_rotation_translation(bool value) {
+  this->params_.set("procrustes_rotation_translation", value);
+}
+
+//---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval() { return this->params_.get("procrustes_interval", 10); }
 
 //---------------------------------------------------------------------------
@@ -289,7 +299,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     procrustes_interval = this->get_procrustes_interval();
   }
   optimize->SetProcrustesInterval(procrustes_interval);
-  optimize->SetProcrustesScaling(this->get_use_procrustes_scaling());
+  optimize->SetProcrustesScaling(get_use_procrustes_scaling());
+  optimize->SetProcrustesRotationTranslation(get_use_procrustes_rotation_translation());
 
   int multiscale_particles = 0;
   if (this->get_use_multiscale()) {
@@ -362,7 +373,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
         }
 
-        auto &ffc = constraint.getFreeformConstraint();
+        auto& ffc = constraint.getFreeformConstraint();
         if (ffc.isSet()) {
           optimize->GetSampler()->AddFreeFormConstraint(domain_count, ffc.boundaries(), ffc.getQueryPoint());
         }

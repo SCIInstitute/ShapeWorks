@@ -477,33 +477,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
-  std::ifstream in(filename.toStdString().c_str());
-  if (!in.good()) {
-    return false;
-  }
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  int num_points = 0;
-  while (in.good()) {
-    double x, y, z;
-    in >> x >> y >> z;
-    if (!in.good()) {
-      break;
-    }
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  in.close();
-  points.setZero();
-  points.resize(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    points[idx++] = pos[0];
-    points[idx++] = pos[1];
-    points[idx++] = pos[2];
-  }
-  return true;
+  return ParticleSystem::ReadParticleFile(filename.toStdString(), points);
 }
 
 //---------------------------------------------------------------------------
