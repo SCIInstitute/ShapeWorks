@@ -46,7 +46,7 @@ title: Libs/Optimize/Optimize.h
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/itkParticleProcrustesRegistration.h"
+#include "ParticleSystem/ParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"
@@ -153,7 +153,8 @@ public:
   void SetOptimizationCriterion(double opt_criterion);
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   void SetProcrustesInterval(int procrustes_interval);
-  void SetProcrustesScaling(int procrustes_scaling);
+  void SetProcrustesScaling(bool procrustes_scaling);
+  void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
   void SetRelativeWeighting(double relative_weighting);
   void SetInitialRelativeWeighting(double initial_relative_weighting);
   void SetStartingRegularization(double starting_regularization);
@@ -283,7 +284,7 @@ protected:
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
@@ -329,7 +330,8 @@ protected:
   double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
-  int m_procrustes_scaling = 1;
+  bool m_procrustes_scaling = true;
+  bool m_procrustes_rotation_translation = true;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
@@ -396,4 +398,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:18:27 +0000
+Updated on 2022-04-08 at 20:03:15 +0000

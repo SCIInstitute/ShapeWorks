@@ -46,6 +46,7 @@ title: Classes
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
 * **class [OptimizeParameterFile](../Classes/classOptimizeParameterFile.md)** 
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
+* **class [ParticleProcrustesRegistration](../Classes/classParticleProcrustesRegistration.md)** <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017. 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
 * **class [PreferencesWindow](../Classes/classPreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
@@ -92,7 +93,6 @@ title: Classes
     * **struct [ParticlePointIndexPair](../Classes/structitk_1_1ParticlePointIndexPair.md)** 
     * **class [ParticlePositionReader](../Classes/classitk_1_1ParticlePositionReader.md)** 
     * **class [ParticlePositionWriter](../Classes/classitk_1_1ParticlePositionWriter.md)** 
-    * **class [ParticleProcrustesRegistration](../Classes/classitk_1_1ParticleProcrustesRegistration.md)** <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017. 
     * **class [ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md)** 
         * **struct [IteratorNodePair](../Classes/structitk_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.md)** 
     * **class [ParticleShapeLinearRegressionMatrixAttribute](../Classes/classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.md)** 
@@ -179,6 +179,7 @@ title: Classes
     * **class [ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)** 
     * **class [ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)** 
     * **class [ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)** 
+    * **class [ParticleProcrustesRegistration](../Classes/classshapeworks_1_1ParticleProcrustesRegistration.md)** 
     * **class [ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)** 
     * **class [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)** 
     * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** 
@@ -246,4 +247,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:18:27 +0000
+Updated on 2022-04-08 at 20:03:15 +0000

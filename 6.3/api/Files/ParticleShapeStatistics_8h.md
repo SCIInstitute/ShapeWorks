@@ -43,14 +43,17 @@ title: Libs/Particles/ParticleShapeStatistics.h
 
 namespace shapeworks {
 
+class Project;
+
 class ParticleShapeStatistics {
 
 public:
 
   constexpr static int VDimension = 3;
 
-  ParticleShapeStatistics() {}
-  ~ParticleShapeStatistics() {}
+  ParticleShapeStatistics() {};
+  ParticleShapeStatistics(std::shared_ptr<Project> project);
+  ~ParticleShapeStatistics() {};
 
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
@@ -166,4 +169,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:18:27 +0000
+Updated on 2022-04-08 at 20:03:15 +0000

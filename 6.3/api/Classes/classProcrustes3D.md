@@ -112,7 +112,7 @@ typedef SimilarityTransformListType::iterator Procrustes3D::SimilarityTransformL
 ### typedef TransformMatrixType
 
 ```cpp
-typedef vnl_matrix_fixed<double, 3+1, 3+1> Procrustes3D::TransformMatrixType;
+typedef vnl_matrix_fixed<double, 3 + 1, 3 + 1> Procrustes3D::TransformMatrixType;
 ```
 
 
@@ -321,4 +321,4 @@ static RealType ComputeSumOfSquares(
 
 -------------------------------
 
-Updated on 2022-04-08 at 15:18:26 +0000
+Updated on 2022-04-08 at 20:03:15 +0000

@@ -2004,7 +2004,7 @@
 <span class="c1">// shapeworks particle system</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleSystem.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/Sampler.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleProcrustesRegistration.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/ParticleProcrustesRegistration.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleGoodBadAssessment.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleVectorFunction.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/DomainType.h&quot;</span><span class="cp"></span>
@@ -2111,7 +2111,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptimizationCriterion</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">opt_criterion</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseShapeStatisticsInInit</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_shape_statistics_in_init</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesInterval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">procrustes_interval</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesScaling</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">procrustes_scaling</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesScaling</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_scaling</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesRotationTranslation</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_rotation_translation</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetRelativeWeighting</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">relative_weighting</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitialRelativeWeighting</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">initial_relative_weighting</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetStartingRegularization</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">starting_regularization</span><span class="p">);</span><span class="w"></span>
@@ -2241,7 +2242,7 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">GetCheckpointDir</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Sampler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGoodBadAssessment</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -2287,7 +2288,8 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_optimization_criterion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_shape_statistics_in_init</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_rotation_translation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_relative_weighting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_initial_relative_weighting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.05</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_starting_regularization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span><span class="w"></span>
@@ -2351,7 +2353,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-08 at 15:18:27 +0000</p>
+<p>Updated on 2022-04-08 at 20:03:15 +0000</p>
 
               
             </article>

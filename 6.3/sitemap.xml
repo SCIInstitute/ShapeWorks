@@ -201,6 +201,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classParticleProcrustesRegistration.html</loc>
+         <lastmod>2022-04-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classPreferences.html</loc>
          <lastmod>2022-04-08</lastmod>
          <changefreq>daily</changefreq>
@@ -372,11 +377,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classitk_1_1ParticlePositionWriter.html</loc>
-         <lastmod>2022-04-08</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classitk_1_1ParticleProcrustesRegistration.html</loc>
          <lastmod>2022-04-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -777,6 +777,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1ParticleNormalEvaluationJob.html</loc>
+         <lastmod>2022-04-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1ParticleProcrustesRegistration.html</loc>
          <lastmod>2022-04-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1586,6 +1591,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ParticleProcrustesRegistration_8h.html</loc>
+         <lastmod>2022-04-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ParticleRegionDomain_8h.html</loc>
          <lastmod>2022-04-08</lastmod>
          <changefreq>daily</changefreq>
@@ -2162,11 +2172,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/itkParticlePositionWriter_8h.html</loc>
-         <lastmod>2022-04-08</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/itkParticleProcrustesRegistration_8h.html</loc>
          <lastmod>2022-04-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
