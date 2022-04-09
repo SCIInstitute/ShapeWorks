@@ -77,7 +77,6 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
 
 	return sorted(outmeshes)
 
-
 def surface_to_surface_distance(orig_list, pred_list, out_dir):
 	orig_out_dir = out_dir + "OriginalMeshesWithDistance/"
 	if not os.path.exists(orig_out_dir):
@@ -98,8 +97,8 @@ def surface_to_surface_distance(orig_list, pred_list, out_dir):
 		pred_out_list.append(pred_out)
 		orig_mesh = sw.Mesh(orig)
 		pred_mesh = sw.Mesh(pred)
-		dist1 = np.mean(orig_mesh.distance(pred_mesh))
-		dist2 = np.mean(pred_mesh.distance(orig_mesh))
+		dist1 = sw.mean(orig_mesh.distance(pred_mesh).write(orig_out).getField("distance", Mesh.Point))
+		dist2 = sw.mean(pred_mesh.distance(orig_mesh).write(pred_out).getField("distance", Mesh.Point))
 		mean_distances.append(dist1)
 		mean_distances.append(dist2)
 	return orig_out_list, pred_out_list, np.mean(np.array(mean_distances))
@@ -116,7 +115,12 @@ def get_MSE(pred_particle_files, true_particle_files):
 def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir):
 	# Step 1: Get predicted meshes from predicted particles
 	print("Getting meshes from predicted local particles...")
-	pred_mesh_list = sorted(get_mesh_from_particles(pred_particle_files, out_dir + "PredictedMeshes/", template_particles, template_mesh))
+	pred_mesh_list = sorted(get_mesh_from_particles(pred_particle_files, out_dir+"/predcited_meshes/", template_particles, template_mesh))
 	# Step 2: Get distance between original and predicted mesh
-	orig_dist_mesh_list, pred_dist_mesh_list, avg_distance = surface_to_surface_distance(mesh_list, pred_mesh_list, out_dir)
-	return avg_distance
+	mean_distances = []
+	for index in range(len(mesh_list)):
+		orig_mesh = sw.Mesh(mesh_list[index])
+		pred_mesh = sw.Mesh(pred_mesh_list[index])
+		mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)))
+		mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)))
+	return np.mean(np.array(mean_distances))
