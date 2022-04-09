@@ -193,7 +193,7 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 			models.append(mdl)
 			index += 1
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
-	# scores = whiten_PCA_scores(scores, loader_dir)
+	scores = whiten_PCA_scores(scores, loader_dir)
 	return images, scores, models, prefixes 
 
 '''

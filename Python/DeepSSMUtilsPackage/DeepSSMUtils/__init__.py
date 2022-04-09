@@ -4,6 +4,7 @@ from DeepSSMUtils import eval
 from DeepSSMUtils import eval_utils
 from DeepSSMUtils import config_file
 from DeepSSMUtils import train_viz
+from DeepSSMUtils import image_utils
 import torch
 
 def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
@@ -47,6 +48,10 @@ def analyzeMeshDistance(predicted_particles, mesh_files, template_particles, tem
 def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 	avg_distance = eval_utils.get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix)
 	return avg_distance
+
+def image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid'):
+	itk_transform = image_utils.image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid')
+	return itk_transform
 
 def testPytorch():
 	if torch.cuda.is_available():

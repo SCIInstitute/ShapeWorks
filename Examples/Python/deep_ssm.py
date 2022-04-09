@@ -16,8 +16,6 @@ import random
 import math
 import numpy as np
 import subprocess
-import itk
-import SimpleITK
 import scipy
 import json
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -233,10 +231,6 @@ def Run_Pipeline(args):
     print("To analyze train shape model, call:")
     print(" ShapeWorksStudio " + spreadsheet_file)
 
-    # # TODO remove - Analyze - open in studio
-    # AnalysisCmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # subprocess.check_call(AnalysisCmd)
-
     # Get transforms and particle files from updated project spreadsheet
     # spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
     project = sw.Project()
@@ -305,7 +299,7 @@ def Run_Pipeline(args):
     - percent_dim what percent of variablity to retain (used if num_dim is 0)
     - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
     '''
-    num_samples = 4 # 4960
+    num_samples = 3960
     num_dim = 0
     percent_variability = 0.95
     sampler = "kde"
@@ -333,47 +327,6 @@ def Run_Pipeline(args):
     3. Apply alignment to image
     4. Crop image
     """
-    """
-    TODO - move to pymodule
-    Helper function - Works best if moving and fixed images have been centered
-    type can either be rigid or similarity (rigid + isotropic scale), default is rigid
-    Returns vtk version of transform matrix
-    """
-    def image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid'):
-        ref_image = sw.Image(fixed_image_file)
-        image = sw.Image(moving_image_file)
-        # Import Default Parameter Map 
-        parameter_object = itk.ParameterObject.New()
-        parameter_map = parameter_object.GetDefaultParameterMap('rigid')
-        if transform_type == 'similarity':
-            parameter_map['Transform'] = ['SimilarityTransform']
-        parameter_object.AddParameterMap(parameter_map)
-        # Call registration function
-        fixed_image = itk.imread(fixed_image_file, itk.F)
-        moving_image = itk.imread(moving_image_file, itk.F)
-        result_image, result_transform_parameters = itk.elastix_registration_method(
-            fixed_image, moving_image, parameter_object=parameter_object)
-        # Get transform matrix
-        parameter_map = result_transform_parameters.GetParameterMap(0)
-        transform_params = np.array(parameter_map['TransformParameters'], dtype=float)
-        if transform_type == 'rigid':
-            itk_transform = SimpleITK.Euler3DTransform()
-        elif transform_type == 'similarity':
-            itk_transform = SimpleITK.Similarity3DTransform()
-        else:
-            print("Error: " + transform_type + " transform unimplemented.")
-        itk_transform.SetParameters(transform_params)
-        itk_transform_matrix = np.eye(4)
-        itk_transform_matrix[:3,:3] = np.array(itk_transform.GetMatrix()).reshape(3,3)
-        itk_transform_matrix[-1,:3] = np.array(itk_transform.GetTranslation())
-        # Apply transform
-        image.applyTransform(itk_transform_matrix,
-                             ref_image.origin(),  ref_image.dims(),
-                             ref_image.spacing(), ref_image.coordsys(),
-                             sw.InterpolationType.Linear, 
-                             meshTransform=False).write(out_image_file)
-        return sw.utils.getVTKtransform(itk_transform_matrix)
-    
     # Get reference
     ref_image_file = data_dir + 'reference_image.nrrd'
     ref_image = sw.Image(ref_image_file)
@@ -381,7 +334,6 @@ def Run_Pipeline(args):
     cropped_ref_image_file = data_dir + 'roughly_cropped_reference_image.nrrd'
     cropped_ref_image = sw.Image(ref_image_file).crop(padded_bb).write(cropped_ref_image_file)
     ref_center = ref_image.center() # get center
-    ref_side = "L" # chosen arbitrarily
     # Make dirs 
     val_test_images_dir = data_dir + 'val_and_test_images/'
     if not os.path.exists(val_test_images_dir):
@@ -413,12 +365,12 @@ def Run_Pipeline(args):
         translation = ref_center - vt_image.center()
         vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
         # Get initial rigid transform from image registration and apply
-        rigid_transform = image_registration_transform(ref_image_file, vt_image_file, 
+        rigid_transform = DeepSSMUtils.image_registration_transform(ref_image_file, vt_image_file, 
                                 vt_image_file, transform_type='rigid')
         # Apply rough cropping to image
         sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
         # Get similarity transform from image registration and apply
-        similarity_transform = image_registration_transform(cropped_ref_image_file, 
+        similarity_transform = DeepSSMUtils.image_registration_transform(cropped_ref_image_file, 
                                 vt_image_file, vt_image_file, transform_type='similarity')
         # Apply final cropping to image
         sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
@@ -527,19 +479,11 @@ def Run_Pipeline(args):
 
     print("To analyze validation shape model, call:")
     print(" ShapeWorksStudio " + spreadsheet_file)
-    
-    # # TODO remove - Analyze - open in studio
-    # analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    # subprocess.check_call(analyze_cmd)
 
     # Get validation world particle files
     val_world_particles = []
     for val_name in val_names:
         val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
-
-    # # TODO remove debug
-    # for val_mesh_file, val_name, val_transform in zip(val_mesh_files, val_names, val_transforms):
-    #     sw.Mesh(val_mesh_file).applyTransform(val_transform).write(data_dir + 'debug/' + val_name + ".vtk")
 
     #################################################################################################
     print("\nStep 9. Create PyTorch loaders from data.")
@@ -553,12 +497,9 @@ def Run_Pipeline(args):
     down_factor = 0.75
     batch_size = 8
     loader_dir = output_directory + 'torch_loaders/'
-    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size, down_factor, 
-                                down_dir= data_dir + "train_downsampled_images/")
-    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles,  
-                                down_factor, down_dir= data_dir + "val_downsampled_images/")
-    DeepSSMUtils.getTestLoader(loader_dir, test_image_files, down_factor, 
-                                down_dir= data_dir + "test_downsampled_images/")
+    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)#, down_factor, down_dir= data_dir + "train_downsampled_images/")
+    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles) #,  down_factor, down_dir= data_dir + "val_downsampled_images/")
+    DeepSSMUtils.getTestLoader(loader_dir, test_image_files) #, down_factor, down_dir= data_dir + "test_downsampled_images/")
 
     print("\nStep 10. Train DeepSSM model.")
     # Define model parameters
@@ -614,10 +555,11 @@ def Run_Pipeline(args):
     Use trained DeepSSM model to predict validation particles
     and apply inverse transforms to get local predcitions
     '''
+    val_out_dir = output_directory + model_name + '/validation_predictions/'
     predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
     print("Validation world predictions saved.")
     # Generate local predictions
-    local_val_prediction_dir = output_directory + model_name + '/validation_predictions/local_predictions/'
+    local_val_prediction_dir = val_out_dir + 'local_predictions/'
     if not os.path.exists(local_val_prediction_dir):
         os.makedirs(local_val_prediction_dir)
     predicted_val_local_particles = []
@@ -635,23 +577,25 @@ def Run_Pipeline(args):
     '''
     mean_MSE, std_MSE = DeepSSMUtils.analyzeMSE(predicted_val_world_particles, val_world_particles)
     print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
-    out_dir = output_directory + model_name + "/validation_results/"
     template_mesh = train_mesh_files[ref_index]
     template_particles = train_local_particles[ref_index].replace("./", data_dir)
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
-                                                    template_particles, template_mesh, out_dir)
+                                                    template_particles, template_mesh, val_out_dir)
     print("Validation mean mesh surface-to-surface distance: "+str(mean_dist))
 
-
+    # If tiny test or verify, check results and exit
+    check_results(args, mean_dist)
+    
     print("\nStep 12. Predict test particles with trained DeepSSM and analyze accuracy.")
     '''
     Use trained DeepSSM model to predict test particles
     and apply inverse transforms to get local predcitions
     '''
+    test_out_dir = output_directory + model_name + '/test_predictions/'
     predicted_test_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='test')
     print("Test world predictions saved.")
     # Generate local predictions
-    local_test_prediction_dir = output_directory + model_name + '/test_predictions/local_predictions/'
+    local_test_prediction_dir = test_out_dir + 'local_predictions/'
     if not os.path.exists(local_test_prediction_dir):
         os.makedirs(local_test_prediction_dir)
     predicted_test_local_particles = []
@@ -666,17 +610,21 @@ def Run_Pipeline(args):
     Analyze test accuracy in terms of surface to surface distance between 
     true mesh and mesh generated from predicted local particles
     '''
-    out_dir = output_directory + model_name + "/test_results/"
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files, 
-                                                    template_particles, template_mesh, out_dir)
+                                                    template_particles, template_mesh, test_out_dir)
     print("Test mean mesh surface-to-surface distance: "+str(mean_dist))
 
-    # # If tiny test or verify, check results and exit
-    # if args.tiny_test or args.verify:
-    #     if args.tiny_test:
-    #         if not os.path.exists("Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles"):
-    #             print("tiny test failed")
-    #             exit(-1)
-    #         # TODO: verify full run
-    #     print("Done with test, verification succeeded.")
-    #     exit()
+# Verification 
+def check_results(args, mean_dist):
+    if args.tiny_test or args.verify:
+        print("\nVerifying use case results.")
+        if args.tiny_test and not math.isclose(mean_dist, 8000, rel_tol=10):
+            print("Test failed.")
+            exit(-1)
+        if args.verify and not math.isclose(mean_dist, 7900, rel_tol=10):
+            print("Test failed.")
+            exit(-1)
+        print("Done with test, verification succeeded.")
+        exit()
+    else:
+        return
