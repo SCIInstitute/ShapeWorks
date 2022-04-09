@@ -86,12 +86,21 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 	image_paths = []
 	scores = []
 	models = []
+	names = []
 	for index in range(len(val_img_list)):
 		image_path = val_img_list[index]
+		# add name
+		prefix = get_prefix(image_path)
+		names.append(prefix)
 		image_paths.append(image_path)
 		scores.append([1]) # placeholder
 		mdl = get_particles(val_particles[index])
 		models.append(mdl)
+	# Write test names to file so they are saved somewhere
+	name_file = open(loader_dir + 'validation_names.txt', 'w+')
+	name_file.write(str(names))
+	name_file.close()
+	sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	val_data = DeepSSMdataset(images, scores, models)
 	# Make loader

@@ -22,7 +22,6 @@ def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 
 def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
 					  decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate):
-	testPytorch()
 	config_file.prepare_config_file(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs,
 									learning_rate, decay_lr, fine_tune,
                                                                         fine_tune_epochs, fine_tune_learning_rate)
@@ -32,10 +31,18 @@ def trainDeepSSM(config_file):
 	trainer.train(config_file)
 	return
 
-def testDeepSSM(config_file):
-	testPytorch()
-	eval.test(config_file)
-	return
+def testDeepSSM(config_file, loader="test"):
+	predicted_particle_files = eval.test(config_file, loader)
+	return predicted_particle_files
+
+def analyzeMSE(predicted_particles, true_particles):
+	mean_MSE, STD_MSE = eval_utils.get_MSE(predicted_particles, true_particles)
+	return mean_MSE, STD_MSE
+
+def analyzeMeshDistance(predicted_particles, mesh_files, template_particles, template_mesh, out_dir):
+	mean_distance = eval_utils.get_mesh_distance(predicted_particles, mesh_files,
+													template_particles, template_mesh, out_dir)
+	return mean_distance
 
 def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 	avg_distance = eval_utils.get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix)

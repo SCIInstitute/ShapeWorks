@@ -608,25 +608,68 @@ def Run_Pipeline(args):
     # Train
     DeepSSMUtils.trainDeepSSM(config_file)
 
-    print("\nStep 11. Predict validation particles with trained DeepSSM")
-    '''
-    Test DeepSSM
-    '''
-    PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
-    prediction_dir = out_dir + model_name + '/predictions/'
-    DeepSSMUtils.testDeepSSM(config_file)
-    print('Predicted particles saved at: ' + prediction_dir)
 
-   
-    # print("\n\n\nStep 6. Analyze results.\n")
-    # '''
-    # Analyze DeepSSM
-    # '''
-    # DT_dir = input_dir + "groomed/distance_transforms/"
-    # out_dir = out_dir + "Results/"
-    # mean_prefix = input_dir + "shape_models/femur/mean/femur"
-    # avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', mean_prefix)
-    # print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
+    print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")
+    '''
+    Use trained DeepSSM model to predict validation particles
+    and apply inverse transforms to get local predcitions
+    '''
+    predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
+    print("Validation world predictions saved.")
+    # Generate local predictions
+    local_val_prediction_dir = output_directory + model_name + '/validation_predictions/local_predictions/'
+    if not os.path.exists(local_val_prediction_dir):
+        os.makedirs(local_val_prediction_dir)
+    predicted_val_local_particles = []
+    for particle_file, transform in zip(predicted_val_world_particles, val_transforms):
+        particles = np.loadtxt(particle_file)
+        local_particle_file = particle_file.replace("FT_Predictions/", "local_predictions/")
+        local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
+        np.savetxt(local_particle_file, local_particles)
+        predicted_val_local_particles.append(local_particle_file)
+    print("Validation local predictions written to: " + local_val_prediction_dir)
+    '''
+    Analyze validation accuracy in terms of:
+    - MSE between true and predcited world partcles
+    - Surface to surface distance between true mesh and mesh generated from predicted local particles
+    '''
+    mean_MSE, std_MSE = DeepSSMUtils.analyzeMSE(predicted_val_world_particles, val_world_particles)
+    print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
+    out_dir = output_directory + model_name + "/validation_results/"
+    template_mesh = train_mesh_files[ref_index]
+    template_particles = train_local_particles[ref_index].replace("./", data_dir)
+    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
+                                                    template_particles, template_mesh, out_dir)
+    print("Validation mean mesh surface-to-surface distance: "+str(mean_dist))
+
+
+    print("\nStep 12. Predict test particles with trained DeepSSM and analyze accuracy.")
+    '''
+    Use trained DeepSSM model to predict test particles
+    and apply inverse transforms to get local predcitions
+    '''
+    predicted_test_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='test')
+    print("Test world predictions saved.")
+    # Generate local predictions
+    local_test_prediction_dir = output_directory + model_name + '/test_predictions/local_predictions/'
+    if not os.path.exists(local_test_prediction_dir):
+        os.makedirs(local_test_prediction_dir)
+    predicted_test_local_particles = []
+    for particle_file, transform in zip(predicted_test_world_particles, test_transforms):
+        particles = np.loadtxt(particle_file)
+        local_particle_file = particle_file.replace("FT_Predictions/", "local_predictions/")
+        local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
+        np.savetxt(local_particle_file, local_particles)
+        predicted_test_local_particles.append(local_particle_file)
+    print("Test local predictions written to: " + local_test_prediction_dir)
+    '''
+    Analyze test accuracy in terms of surface to surface distance between 
+    true mesh and mesh generated from predicted local particles
+    '''
+    out_dir = output_directory + model_name + "/test_results/"
+    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files, 
+                                                    template_particles, template_mesh, out_dir)
+    print("Test mean mesh surface-to-surface distance: "+str(mean_dist))
 
     # # If tiny test or verify, check results and exit
     # if args.tiny_test or args.verify:
