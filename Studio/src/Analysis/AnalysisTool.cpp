@@ -202,10 +202,10 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 int AnalysisTool::get_pca_mode() { return ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
-double AnalysisTool::get_group_value() {
-  double groupSliderValue = ui_->group_slider->value();
-  double groupRatio = groupSliderValue / static_cast<double>(ui_->group_slider->maximum());
-  return groupRatio;
+double AnalysisTool::get_group_ratio() {
+  double group_slider_value = ui_->group_slider->value();
+  double group_ratio = group_slider_value / static_cast<double>(ui_->group_slider->maximum());
+  return group_ratio;
 }
 
 //---------------------------------------------------------------------------
@@ -512,8 +512,8 @@ StudioParticles AnalysisTool::get_mean_shape_points() {
   }
 
   if (groups_active()) {
-    auto group_value = get_group_value();
-    temp_shape_ = stats_.Group1Mean() + (stats_.GroupDifference() * group_value);
+    auto group_ratio = get_group_ratio();
+    temp_shape_ = stats_.Group1Mean() + (stats_.GroupDifference() * group_ratio);
     return convert_from_combined(temp_shape_);
   }
 
@@ -871,8 +871,8 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       Eigen::VectorXf right_mean = sum_right / static_cast<double>(group2_list_.size());
 
       if (ready) {
-        double ratio = get_group_value();
-        auto blend = left_mean * (1 - ratio) + right_mean * ratio;
+        double group_ratio = get_group_ratio();
+        auto blend = left_mean * (1 - group_ratio) + right_mean * group_ratio;
         shape->set_point_features(feature_map_, blend);
       }
     }

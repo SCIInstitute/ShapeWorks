@@ -65,7 +65,7 @@ class AnalysisTool : public QWidget {
 
   int get_pca_mode();
 
-  double get_group_value();
+  double get_group_ratio();
 
   double get_pca_value();
 
