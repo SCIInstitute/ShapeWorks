@@ -376,17 +376,17 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
     point_data->SetPoints(glyph_points_);
 
-    vtkPointLocator* point_locator = vtkPointLocator::New();
+    auto point_locator = vtkSmartPointer<vtkPointLocator>::New();
     point_locator->SetDataSet(point_data);
     point_locator->SetDivisions(100, 100, 100);
     point_locator->BuildLocator();
 
-    vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
+    auto surface_magnitudes = vtkSmartPointer<vtkFloatArray>::New();
     surface_magnitudes->SetName("surface_difference");
     surface_magnitudes->SetNumberOfComponents(1);
     surface_magnitudes->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
-    vtkFloatArray* surface_vectors = vtkFloatArray::New();
+    auto surface_vectors = vtkSmartPointer<vtkFloatArray>::New();
     surface_vectors->SetNumberOfComponents(3);
     surface_vectors->SetName("surface_vectors");
     surface_vectors->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
