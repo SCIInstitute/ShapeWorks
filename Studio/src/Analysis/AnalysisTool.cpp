@@ -848,7 +848,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       Eigen::VectorXf sum_right(num_points);
       sum_right.setZero();
 
-      for (auto shape : group1_list_) {
+      Q_FOREACH (auto shape, group1_list_) {
         shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
@@ -859,7 +859,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       }
       Eigen::VectorXf left_mean = sum_left / static_cast<double>(group1_list_.size());
 
-      for (auto shape : group2_list_) {
+      Q_FOREACH (auto shape, group2_list_) {
         shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
@@ -970,7 +970,7 @@ void AnalysisTool::update_domain_alignment_box() {
   if (multiple_domains) {
     ui_->reference_domain->addItem("Global Alignment");
     ui_->reference_domain->addItem("Local Alignment");
-    for (auto name : domain_names) {
+    for (const auto &name : domain_names) {
       ui_->reference_domain->addItem(QString::fromStdString(name));
     }
     ui_->reference_domain->setCurrentIndex(0);
