@@ -97,34 +97,6 @@ Viewer::Viewer() {
   glyph_actor_->GetProperty()->SetSpecularPower(10.0);
   glyph_actor_->SetMapper(glyph_mapper_);
 
-  // exclusion spheres
-  exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
-  exclusion_sphere_points_->SetDataTypeToDouble();
-  exclusion_sphere_point_set_ = vtkSmartPointer<vtkPolyData>::New();
-  exclusion_sphere_point_set_->SetPoints(exclusion_sphere_points_);
-  exclusion_sphere_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
-
-  exclusion_sphere_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-  exclusion_sphere_glyph_->SetInputData(exclusion_sphere_point_set_);
-  exclusion_sphere_glyph_->ScalingOn();
-  exclusion_sphere_glyph_->ClampingOff();
-  exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
-  exclusion_sphere_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
-  // exclusion_sphere_glyph_->SetColorModeToColorByScale();
-
-  exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  exclusion_sphere_mapper_->SetInputConnection(exclusion_sphere_glyph_->GetOutputPort());
-  exclusion_sphere_mapper_->SetScalarVisibility(0);
-
-  exclusion_sphere_actor_ = vtkSmartPointer<vtkActor>::New();
-  // exclusion_sphere_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 0.0 );
-  // exclusion_sphere_actor_->GetProperty()->SetDiffuse( 0.8 );
-  // exclusion_sphere_actor_->GetProperty()->SetSpecular( 0.3 );
-  // exclusion_sphere_actor_->GetProperty()->SetSpecularPower( 10.0 );
-  exclusion_sphere_actor_->GetProperty()->SetOpacity(0.5);
-  exclusion_sphere_actor_->GetProperty()->SetColor(0, 1, 0);
-  exclusion_sphere_actor_->SetMapper(exclusion_sphere_mapper_);
-
   arrow_flip_filter_ = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   arrow_glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
   arrow_glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -674,8 +646,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       auto mapper = surface_mappers_[i];
       auto actor = surface_actors_[i];
 
-      draw_exclusion_spheres(shape);
-
       auto transform = get_transform(visualizer_->get_alignment_domain(), i);
       if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
         vtkSmartPointer<vtkReverseSense> reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
@@ -960,7 +930,6 @@ void Viewer::update_actors() {
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
 
-    renderer_->AddActor(exclusion_sphere_actor_);
     if (arrows_visible_) {
       renderer_->AddActor(arrow_glyph_actor_);
     }
@@ -1090,36 +1059,6 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen) {
   // image_actor_->SetInputData(loading_screen);
-}
-
-//-----------------------------------------------------------------------------
-void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object) {
-  QList<Shape::Point> centers = object->get_exclusion_sphere_centers();
-  QList<double> radii = object->get_exclusion_sphere_radii();
-
-  int num_points = centers.size();
-
-  if (num_points <= 0) {
-    exclusion_sphere_points_->Reset();
-  } else {
-    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
-    scalars->Reset();
-    scalars->SetNumberOfTuples(num_points);
-
-    exclusion_sphere_glyph_->SetRange(0.0, (double)num_points + 1);
-    exclusion_sphere_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
-
-    exclusion_sphere_points_->Reset();
-    exclusion_sphere_points_->SetNumberOfPoints(num_points);
-
-    for (int i = 0; i < num_points; i++) {
-      Shape::Point p = centers[i];
-      scalars->InsertValue(i, radii[i]);
-      exclusion_sphere_points_->InsertPoint(i, p.x, p.y, p.z);
-    }
-  }
-
-  exclusion_sphere_points_->Modified();
 }
 
 //-----------------------------------------------------------------------------

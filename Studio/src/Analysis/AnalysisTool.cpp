@@ -1336,7 +1336,6 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
   plot->getPlotter()->setUseAntiAliasingForText(true);
-  // plot->getPlotter()->setPlotLabel("\\textbf{"+title+"}");
   plot->getPlotter()->setPlotLabelFontSize(18);
   plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
   plot->getPlotter()->setDefaultTextSize(14);

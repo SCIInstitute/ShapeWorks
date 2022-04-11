@@ -152,8 +152,6 @@ class Viewer {
 
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
-  void draw_exclusion_spheres(QSharedPointer<Shape> object);
-
   void update_difference_lut(float r0, float r1);
 
   void update_actors();
@@ -183,12 +181,6 @@ class Viewer {
   vtkSmartPointer<vtkGlyph3D> glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
-
-  vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
-  vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
-  vtkSmartPointer<vtkGlyph3D> exclusion_sphere_glyph_;
-  vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
-  vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
