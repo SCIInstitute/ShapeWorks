@@ -185,26 +185,6 @@ void Visualizer::display_sample(int i) {
 }
 
 //-----------------------------------------------------------------------------
-ShapeHandle Visualizer::create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors) {
-  ShapeHandle shape = ShapeHandle(new Shape());
-  shape->set_mesh_manager(this->session_->get_mesh_manager());
-  shape->set_particles(points);
-  shape->set_vectors(vectors);
-  shape->get_reconstructed_meshes();
-
-  QStringList annotations;
-  // annotations for the 4 corners of the view box
-  /// annotations << "computed shape";
-  annotations << "";
-  annotations << "";
-  annotations << "";
-  annotations << "";
-  shape->set_annotations(annotations);
-
-  return shape;
-}
-
-//-----------------------------------------------------------------------------
 void Visualizer::set_show_glyphs(bool show) { show_glyphs_ = show; }
 
 //-----------------------------------------------------------------------------
