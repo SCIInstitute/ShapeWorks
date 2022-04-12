@@ -629,7 +629,6 @@ QWidget#image_widget {
      <addaction name="action_export_mesh_scalars"/>
      <addaction name="actionExport_Eigenvectors"/>
      <addaction name="actionExport_Eigenvalues"/>
-     <addaction name="actionExport_Variance_Graph"/>
      <addaction name="action_export_pca_scores"/>
      <addaction name="actionExport_PCA_Mode_Points"/>
     </widget>

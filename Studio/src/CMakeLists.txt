@@ -198,7 +198,6 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   )
 
 SET(STUDIO_VISUALIZATION_SRCS
-  Visualization/BarGraph.cpp
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp
@@ -214,7 +213,6 @@ SET(STUDIO_VISUALIZATION_SRCS
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
-  Visualization/BarGraph.h
   Visualization/Lightbox.h
   Visualization/Visualizer.h
   Visualization/StudioVtkOutputWindow.h

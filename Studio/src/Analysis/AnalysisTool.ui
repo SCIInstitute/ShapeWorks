@@ -535,7 +535,7 @@ QWidget#particles_panel {
             <item row="1" column="0">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -1363,7 +1363,55 @@ Reference Domain</string>
       <item>
        <widget class="QWidget" name="metrics_content" native="true">
         <layout class="QGridLayout" name="gridLayout_12">
-         <item row="3" column="0">
+         <item row="4" column="0">
+          <widget class="QWidget" name="generalization_panel" native="true">
+           <layout class="QGridLayout" name="gridLayout_17">
+            <item row="0" column="0">
+             <widget class="JKQTPlotter" name="generalization_graph" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>50</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QWidget" name="generalization_progress_widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_13">
+               <item row="2" column="1">
+                <widget class="QProgressBar" name="generalization_progress">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="generalization_label">
+                 <property name="text">
+                  <string>Generalization</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
           <widget class="QWidget" name="compactness_panel" native="true">
            <layout class="QGridLayout" name="gridLayout_14">
             <item row="0" column="0">
@@ -1411,140 +1459,7 @@ Reference Domain</string>
            </layout>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QWidget" name="explained_variance_panel" native="true">
-           <layout class="QGridLayout" name="gridLayout_15">
-            <item row="0" column="0">
-             <widget class="QScrollArea" name="chart_scroll_area">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>250</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>250</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
-              </property>
-              <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOn</enum>
-              </property>
-              <property name="sizeAdjustPolicy">
-               <enum>QAbstractScrollArea::AdjustToContents</enum>
-              </property>
-              <property name="widgetResizable">
-               <bool>true</bool>
-              </property>
-              <widget class="QWidget" name="scrollAreaWidgetContents">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>392</width>
-                 <height>236</height>
-                </rect>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_6">
-                <property name="leftMargin">
-                 <number>3</number>
-                </property>
-                <property name="topMargin">
-                 <number>3</number>
-                </property>
-                <property name="rightMargin">
-                 <number>3</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>3</number>
-                </property>
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <item row="1" column="0">
-                 <widget class="BarGraph" name="graph_" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string/>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QRadioButton" name="log_radio">
-                 <property name="text">
-                  <string>Log Scale</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="linear_radio">
-                 <property name="text">
-                  <string>Linear Scale</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QWidget" name="specificity_panel" native="true">
            <layout class="QGridLayout" name="gridLayout_16">
             <item row="0" column="0">
@@ -1583,54 +1498,6 @@ Reference Domain</string>
                 <widget class="QLabel" name="specificity_label">
                  <property name="text">
                   <string>Specificity</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QWidget" name="generalization_panel" native="true">
-           <layout class="QGridLayout" name="gridLayout_17">
-            <item row="0" column="0">
-             <widget class="JKQTPlotter" name="generalization_graph" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>50</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QWidget" name="generalization_progress_widget" native="true">
-              <layout class="QGridLayout" name="gridLayout_13">
-               <item row="2" column="1">
-                <widget class="QProgressBar" name="generalization_progress">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="generalization_label">
-                 <property name="text">
-                  <string>Generalization</string>
                  </property>
                 </widget>
                </item>
@@ -2165,12 +2032,6 @@ Reference Domain</string>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>BarGraph</class>
-   <extends>QWidget</extends>
-   <header location="global">Visualization/BarGraph.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>JKQTPlotter</class>
    <extends>QWidget</extends>

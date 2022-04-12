@@ -49,10 +49,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->surface_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->metrics_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-  // default to linear scale
-  ui_->log_radio->setChecked(false);
-  ui_->linear_radio->setChecked(true);
-
   connect(ui_->allSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
   connect(ui_->singleSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
   connect(ui_->sampleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handle_analysis_options()));
@@ -86,15 +82,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   /// TODO nothing there yet (regression tab)
   ui_->tabWidget->removeTab(3);
 
-  ui_->graph_->set_y_label("Explained Variance");
-
   for (auto button : {ui_->distance_transfom_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
   }
 
   connect(ui_->run_good_bad, &QPushButton::clicked, this, &AnalysisTool::run_good_bad_particles);
 
-  ui_->explained_variance_panel->hide();
   ui_->reconstruction_options->hide();
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
@@ -146,17 +139,6 @@ std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
     vecs.push_back(tmp);
   }
   return vecs;
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::on_linear_radio_toggled(bool b) {
-  if (b) {
-    ui_->graph_->set_log_scale(false);
-    ui_->graph_->repaint();
-  } else {
-    ui_->graph_->set_log_scale(true);
-    ui_->graph_->repaint();
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -455,6 +437,8 @@ bool AnalysisTool::compute_stats() {
   stats_.ImportPoints(points, group_ids);
   stats_.ComputeModes();
 
+  update_difference_particles();
+
   compute_shape_evaluations();
 
   stats_ready_ = true;
@@ -462,9 +446,6 @@ bool AnalysisTool::compute_stats() {
   for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(stats_.Eigenvalues()[i]);
   }
-  ui_->graph_->set_data(vals);
-  ui_->graph_->repaint();
-
   ////  Uncomment this to write out long format sample data
   /*
   if (groups_enabled) {
@@ -601,9 +582,6 @@ void AnalysisTool::store_settings() {
 void AnalysisTool::shutdown() { pca_animate_timer_.stop(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::export_variance_graph(QString filename) { return ui_->graph_->grab().save(filename); }
-
-//---------------------------------------------------------------------------
 void AnalysisTool::compute_shape_evaluations() {
   if (evals_ready_) {
     return;
@@ -614,9 +592,9 @@ void AnalysisTool::compute_shape_evaluations() {
   eval_specificity_ = Eigen::VectorXd();
   eval_generalization_ = Eigen::VectorXd();
 
-  ui_->compactness_graph->setMinimumSize(ui_->graph_->minimumSize());
-  ui_->generalization_graph->setMinimumSize(ui_->graph_->minimumSize());
-  ui_->specificity_graph->setMinimumSize(ui_->graph_->minimumSize());
+  ui_->compactness_graph->setMinimumSize(QSize(250, 250));
+  ui_->generalization_graph->setMinimumSize(QSize(250, 250));
+  ui_->specificity_graph->setMinimumSize(QSize(250, 250));
 
   ui_->compactness_progress_widget->show();
   ui_->generalization_progress_widget->show();

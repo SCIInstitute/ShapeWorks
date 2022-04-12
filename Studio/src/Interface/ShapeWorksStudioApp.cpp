@@ -1855,24 +1855,6 @@ bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::Vecto
   return true;
 }
 
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered() {
-  QString fname("Untitled.png");
-  auto dir = preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Variance Graph"),
-                                                  QString::fromStdString(dir) + fname, tr("PNG files (*.png)"));
-  if (filename.isEmpty()) {
-    return;
-  }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
-
-  if (!analysis_tool_->export_variance_graph(filename)) {
-    handle_error("Error writing variance graph");
-  } else {
-    handle_message("Successfully exported Variance Graph: " + filename);
-  }
-}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map) {

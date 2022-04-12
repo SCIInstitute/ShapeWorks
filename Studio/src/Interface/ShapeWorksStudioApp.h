@@ -76,7 +76,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
-  void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
   void on_action_export_current_mesh_triggered();
   void on_action_export_current_particles_triggered();

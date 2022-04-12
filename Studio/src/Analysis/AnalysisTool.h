@@ -14,7 +14,6 @@
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
-#include <Visualization/BarGraph.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
@@ -126,7 +125,6 @@ class AnalysisTool : public QWidget {
   void handle_group_animate_state_changed();
   void handle_group_timer();
 
-  void on_linear_radio_toggled(bool b);
 
   void handle_reconstruction_complete();
 

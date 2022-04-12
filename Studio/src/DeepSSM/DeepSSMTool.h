@@ -14,8 +14,6 @@
 // Studio
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
-#include <Visualization/Visualizer.h>
-#include <Visualization/BarGraph.h>
 #include <Python/PythonWorker.h>
 
 class Ui_DeepSSMTool;
