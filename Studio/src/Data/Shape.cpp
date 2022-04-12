@@ -819,18 +819,18 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_mesh_wrappers()
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers()
 {
-  if (!mesh_wrappers_.empty()) {
-    return mesh_wrappers_;
+  if (!groomed_mesh_wrappers_.empty()) {
+    return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
   for (auto &mesh : group.meshes()) {
     auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
-    mesh_wrappers_.push_back(wrapper);
+    groomed_mesh_wrappers_.push_back(wrapper);
   }
-  return mesh_wrappers_;
+  return groomed_mesh_wrappers_;
 
 }
 

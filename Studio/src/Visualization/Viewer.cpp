@@ -331,8 +331,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   double maxmag = std::numeric_limits<double>::min();
 
   // Compute difference vector dot product with normal.  Length of vector is
-  // stored in the "scalars" so that the vtk color mapping and glyph scaling
-  // happens properly.
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling happens properly.
   for (unsigned int i = 0; i < point_set->GetNumberOfPoints(); i++) {
     int domain = shape_->get_particles().get_domain_for_combined_id(i);
 
@@ -363,7 +362,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     return;
   }
 
-  for (size_t i = 0; i < surface_mappers_.size(); i++) {
+  for (size_t i = 0; i < surface_mappers_.size(); i++) {  // for each domain
     vtkPolyData* poly_data = surface_mappers_[i]->GetInput();
     if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
       return;
@@ -387,9 +386,9 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     surface_vectors->SetName("surface_vectors");
     surface_vectors->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
-    for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
-      // find the 8 closest correspondence points the to current point
-      vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    for (vtkIdType i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
+      // find the 8 closest correspondence points the to current vertex
+      auto closest_points = vtkSmartPointer<vtkIdList>::New();
       point_locator->FindClosestNPoints(8, poly_data->GetPoint(i), closest_points);
       // assign scalar value based on a weighted scheme
       float weighted_scalar = 0.0f;
@@ -399,7 +398,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       bool exactly_on_point = false;
       float exact_scalar = 0.0f;
 
-      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      for (vtkIdType p = 0; p < closest_points->GetNumberOfIds(); p++) {
         // get a particle position
         vtkIdType id = closest_points->GetId(p);
 
@@ -424,7 +423,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       float vecY = 0.0f;
       float vecZ = 0.0f;
 
-      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      for (vtkIdType p = 0; p < closest_points->GetNumberOfIds(); p++) {
         vtkIdType currID = closest_points->GetId(p);
         weighted_scalar += distance[p] / distance_sum * magnitudes->GetValue(currID);
         vecX += distance[p] / distance_sum * vectors->GetComponent(currID, 0);
