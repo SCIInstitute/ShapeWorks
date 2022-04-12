@@ -25,7 +25,8 @@ nav:
    - 'Revelant Papers':                      'users/papers.md'
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
-   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
+   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'
+   - 'How to Use Parameters for Optimization': 'workflow/parameters.md'        
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorks Studio':             'new/new-studio.md'
