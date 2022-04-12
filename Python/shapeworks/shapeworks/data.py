@@ -43,7 +43,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["femur_cut","lumps","thin_cavity_bean"]):
+    elif(use_case in ["femur_cut","lumps","thin_cavity_bean","incremental_supershapes"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
