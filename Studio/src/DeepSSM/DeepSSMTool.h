@@ -1,14 +1,11 @@
 #pragma once
 
-// Qt
+// qt
 #include <QSharedPointer>
 #include <QWidget>
 #include <QElapsedTimer>
 
-// ShapeWorks
-#include <ParticleShapeStatistics.h>
-
-// Studio
+// studio
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 
