@@ -15,9 +15,9 @@ Subject::~Subject()
 {}
 
 //---------------------------------------------------------------------------
-void Subject::set_segmentation_filenames(std::vector<std::string> filenames)
+void Subject::set_original_filenames(std::vector<std::string> filenames)
 {
-  this->segmentation_filenames_ = filenames;
+  this->original_filenames_ = filenames;
 }
 
 //---------------------------------------------------------------------------
@@ -33,9 +33,9 @@ std::vector<std::string> Subject::get_groomed_filenames()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_segmentation_filenames()
+std::vector<std::string> Subject::get_original_filenames()
 {
-  return this->segmentation_filenames_;
+  return this->original_filenames_;
 }
 
 //---------------------------------------------------------------------------
@@ -114,36 +114,6 @@ std::string Subject::get_group_value(std::string group_name)
 }
 
 //---------------------------------------------------------------------------
-std::vector<DomainType> Subject::get_domain_types(bool groomed)
-{
-  std::vector<DomainType> domain_types;
-  auto list = this->segmentation_filenames_;
-  if (this->segmentation_filenames_.empty() || groomed) {
-    list = this->groomed_filenames_;
-  }
-  for (auto name: list) {
-    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-    bool mesh = false;
-
-    for (auto type : Mesh::getSupportedTypes()) {
-      if (StringUtils::hasSuffix(name, type)) {
-        mesh = true;
-      }
-    }
-
-    if (mesh) {
-      domain_types.push_back(DomainType::Mesh);
-    }
-    else {
-      domain_types.push_back(DomainType::Image);
-    }
-
-  }
-  return domain_types;
-}
-
-//---------------------------------------------------------------------------
 std::map<std::string, std::string> Subject::get_extra_values() const
 {
   return this->extra_values_;
@@ -213,6 +183,18 @@ void Subject::set_landmarks_filenames(std::vector<std::string> filenames)
 std::vector<std::string> Subject::get_landmarks_filenames()
 {
   return this->landmarks_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_constraints_filenames(std::vector<std::string> filenames)
+{
+  constraints_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_constraints_filenames()
+{
+  return constraints_filenames_;
 }
 
 //---------------------------------------------------------------------------

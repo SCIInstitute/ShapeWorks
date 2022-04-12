@@ -21,7 +21,7 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 XLNT_VER="v1.5.0"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v7.0.0"
-libigl_VER="v2.2.0-fix"
+libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 ACVD_VER="8880802204ce0ccd3944dcfa62ba687203a75fa5" # This library isn't using tagged version
 
@@ -247,7 +247,7 @@ build_xlnt()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_DEBUG_POSTFIX="" ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -317,7 +317,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/akenmorris/libigl.git
+  git clone https://github.com/libigl/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 

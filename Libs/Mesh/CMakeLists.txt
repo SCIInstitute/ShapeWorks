@@ -65,14 +65,17 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
+
+
+
+#ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
+#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)
+#INSTALL(TARGETS ComputeGeodesicDistanceToCurve RUNTIME DESTINATION bin)
+
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFiles GenerateFidsFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
-# TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
-# INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)
 
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx)
@@ -80,6 +83,6 @@ install(TARGETS Mesh
 #INSTALL(TARGETS GenerateFidsFilesFromMeshes RUNTIME DESTINATION bin)
 
 # Added to backlog
-ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
-TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
+# ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
+# TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
+# INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)

@@ -81,6 +81,7 @@ public:
 
   bool get_use_icp();
   bool get_use_center();
+  bool get_use_landmarks();
 
   bool get_crop();
   void set_crop(bool crop);
@@ -97,7 +98,7 @@ public:
   std::string get_reflect_choice();
   void set_reflect_choice(std::string choice);
   std::string get_reflect_axis();
-  void  set_reflect_axis(std::string axies);
+  void set_reflect_axis(std::string axies);
 
   // resampling
   bool get_resample();
@@ -133,6 +134,7 @@ public:
 
   const static std::string GROOM_ALIGNMENT_CENTER_C;
   const static std::string GROOM_ALIGNMENT_ICP_C;
+  const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 private:
 

@@ -9,7 +9,9 @@ target_link_libraries(shapeworks_py PUBLIC
   Image
   Mesh
   Optimize
+  Project
   Particles
+  Project
   ${ITK_LIBRARIES}
   Eigen3::Eigen
   ${DTAG_EXTRA_FLAGS}

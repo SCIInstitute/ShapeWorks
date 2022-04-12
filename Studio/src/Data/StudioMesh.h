@@ -1,27 +1,26 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QString>
-#include <QSharedPointer>
-
+#include <itkImage.h>
+#include <vnl/vnl_vector.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <itkImage.h>
 
-#include <vnl/vnl_vector.h>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
+class vtkFloatArray;
+class vtkStaticPointLocator;
 
 namespace shapeworks {
 
 class StudioMesh;
 using MeshHandle = std::shared_ptr<StudioMesh>;
 using MeshList = std::vector<MeshHandle>;
-
 
 //! Representation of a single mesh.
 /*!
@@ -30,8 +29,7 @@ using MeshList = std::vector<MeshHandle>;
  *
  */
 class StudioMesh {
-public:
-
+ public:
   //! Constructor
   StudioMesh();
 
@@ -63,11 +61,23 @@ public:
   void apply_scalars(MeshHandle mesh);
 
   //! Interpolation scalars at positions to this mesh
-  void interpolate_scalars_to_mesh(std::string name,
-                                   vnl_vector<double> positions, Eigen::VectorXf scalar_values);
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
 
-private:
+  //! Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)
+  double get_largest_dimension_size();
 
+  //! Get or create and return an array with a given name
+  vtkFloatArray* get_or_create_array(std::string name, float default_value);
+
+  //! Paint free form constraint
+  void paint_ffc(double world_pos[], double radius, bool inclusive);
+
+  //! Does this mesh have free form constraint paint?
+  bool has_ffc_paint();
+
+  static constexpr const char* const FFC_PAINT = "ffc_paint";
+
+ private:
   // metadata
   int dimensions_[3];
   vnl_vector<double> center_transform_;
@@ -75,8 +85,9 @@ private:
   // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
 
+  vtkSmartPointer<vtkStaticPointLocator> locator_;
+
   // error message if the polydata didn't load
   std::string error_message_;
-
 };
-}
+}  // namespace shapeworks

@@ -37,8 +37,8 @@ jobs:
 
     - name: Acquire 10.13 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
-        cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
+        curl -L -o $HOME/MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.13.sdk.tar.xz
+        cd $HOME && tar -xJf MacOSX10.13.sdk.tar.xz
         
     - name: Checkout code
       uses: actions/checkout@v2
@@ -124,3 +124,8 @@ jobs:
     - name: Store ccache
       shell: bash -l {0}
       run: .github/workflows/store_ccache.sh
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts
+      

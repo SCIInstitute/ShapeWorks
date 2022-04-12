@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleShapeLinearRegressionMatrixAttribute.h,v $
-  Date:      $Date: 2011/03/24 01:17:34 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleShapeLinearRegressionMatrixAttribute_h
-#define __itkParticleShapeLinearRegressionMatrixAttribute_h
+#pragma once
 
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
@@ -137,11 +122,11 @@ public:
   {
     const itk::ParticlePositionAddEvent &event
       = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
-    const itk::ParticleSystem<VDimension> *ps
-      = dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
+    const itk::ParticleSystem *ps
+      = dynamic_cast<const itk::ParticleSystem *>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem<VDimension>::PointType pos
+    const typename itk::ParticleSystem::PointType pos
       = ps->GetTransformedPosition(idx, d);
     
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
@@ -174,11 +159,11 @@ public:
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   
-    const itk::ParticleSystem<VDimension> *ps
-      = dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
+    const itk::ParticleSystem *ps
+      = dynamic_cast<const itk::ParticleSystem *>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
     
     // Modify matrix info
@@ -340,5 +325,3 @@ private:
 };
 
 } // end namespace
-
-#endif

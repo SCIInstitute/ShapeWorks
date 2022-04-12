@@ -13,9 +13,12 @@ Coord toCoord(const Dims &d) {
                 static_cast<itk::IndexValueType>(d[1]),
                 static_cast<itk::IndexValueType>(d[2])}); }
 Dims toDims(const Coord &c) {
-  return Dims({static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[0])),
-               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[1])),
-               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[2]))}); }
+  return Dims({
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[0]))),
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[1]))),
+      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[2])))
+    });
+}
 Dims toDims(const Point &p) {
   return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[0]))),
                static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[1]))),
@@ -28,6 +31,15 @@ Coord toCoord(const Point &p) {
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
 /// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
+
+PointArray makePointArray(int size, Point3 value)
+{
+  PointArray arr;
+  for (int i = 0; i < size; i++)
+    arr.push_back(value);
+  
+  return arr;
+}
 
 Plane makePlane(const Point &p, const Vector3 &n)
 {
@@ -146,6 +158,34 @@ double degToRad(const double deg)
   return deg * Pi / 180.0;
 }
 
+double mean(const Field field) {
+  size_t N = field->GetNumberOfTuples();
+  double mean = 0.0;
+  for (int i = 0; i < N; i++) {
+    // compute running mean to avoid overflow
+    auto value = field->GetTuple1(i);
+    mean += (value - mean) / (i+1);
+  }
+  return mean;
+}
+
+double stddev(const Field field) {
+  size_t N = field->GetNumberOfTuples();
+  double mean_ = mean(field);
+  double squaredDiff = 0.0;
+  for (int i = 0; i < N; i++) {
+    auto value = field->GetTuple1(i);
+    squaredDiff += (value - mean_) * (value - mean_);
+  }
+  return sqrt(squaredDiff / N);
+}
+
+std::vector<double> range(const Field field) {
+  std::vector<double> r(2);
+  field->GetRange(&r[0]);
+  return r;
+}
+
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate) 
 {
   AffineTransformPtr xform(AffineTransform::New());
@@ -159,6 +199,20 @@ MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
   MeshTransform xform(MeshTransform::New());
   xform->SetMatrix(mat);
   return xform;
+}
+
+std::string axisToString(Axis axis)
+{
+  switch (axis) {
+    case Axis::X:
+      return "X";
+    case Axis::Y:
+      return "Y";
+    case Axis::Z:
+      return "Z";
+    case Axis::invalid:
+      return "Invalid";
+  }
 }
 
 }; //shapeworks

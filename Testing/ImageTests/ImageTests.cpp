@@ -1,11 +1,38 @@
 #include "Testing.h"
 
+#include "Exception.h"
 #include "Image.h"
 #include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 
 using namespace shapeworks;
+
+TEST(ImageTests, exceptionTestString)
+{
+  try {
+    throw shapeworks_exception(std::string("ShapeWorks"));
+  } catch(shapeworks_exception const& exp) {
+    std::cerr << exp.what() << std::endl;
+    ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, exceptionTestChar)
+{
+  try {
+    throw shapeworks_exception("ShapeWorks");
+  } catch(shapeworks_exception const& exp) {
+    std::cerr << exp.what() << std::endl;
+    ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
 
 TEST(ImageTests, dicomReadTest)
 {
@@ -429,6 +456,20 @@ TEST(ImageTests, cropTest2)
   Image ground_truth(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, cropTest3)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  auto region = image.physicalBoundingBox(0.5);
+  image.crop(region);
+  image.write(std::string(TEST_DATA_DIR) + "/ellipsoid_crop.nrrd");
+  image.resample(1.0);
+
+  Image cropped(std::string(TEST_DATA_DIR) + "/ellipsoid_crop.nrrd");
+  cropped.resample(1.0);
+
+  ASSERT_TRUE(image == cropped);
 }
 
 TEST(ImageTests, boundingBoxSingleTest1)

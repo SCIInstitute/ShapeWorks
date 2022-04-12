@@ -1,19 +1,4 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleAttribute.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleAttribute_h
-#define __itkParticleAttribute_h
+#pragma once
 
 #include "itkDataObject.h"
 #include "itkPoint.h"
@@ -24,9 +9,7 @@
 namespace itk
 {
 
-#ifndef __itkParticleSystem_h
-template<unsigned int VDimension> class ParticleSystem;
-#endif
+//class ParticleSystem;
 
 /** \class ParticleAttribute
  *  \brief 
@@ -115,13 +98,3 @@ private:
 
 } // end namespace itk
 
-
-//#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleAttribute+-.h"
-//#endif
-
-//#if ITK_TEMPLATE_TXX
-//# include "itkParticleAttribute.txx"
-//#endif
-
-#endif

@@ -530,6 +530,26 @@ shapeworks  intensity [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
+### isolate
+
+
+**Usage:**
+
+```
+shapeworks  isolate [args]...
+```  
+
+
+**Description:** finds the largest object in a binary segmentation and removes all other objects  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
 ### multiply
 
 
@@ -1236,54 +1256,6 @@ shapeworks  coverage [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
-### cvd-decimate
-
-
-**Usage:**
-
-```
-shapeworks  cvd-decimate [args]...
-```  
-
-
-**Description:** applies cvd (centroidal voronoi diagram) decimation filter  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--percentage=DOUBLE:** Percentage of target number of clusters/vertices [default: 0.5].  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Mesh Commands](#mesh-commands)
-### decimate
-
-
-**Usage:**
-
-```
-shapeworks  decimate [args]...
-```  
-
-
-**Description:** applies filter to reduce number of triangles in mesh  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--reduction=DOUBLE:** Percent reduction of total number of polygons [default: 0.5].
-
-**--angle=DOUBLE:** Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: 15].
-
-**--preservetopology=BOOL:**  Whether to preserve topology [default: true].  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Mesh Commands](#mesh-commands)
 ### distance
 
 
@@ -1778,6 +1750,54 @@ shapeworks  reflect-mesh [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
+### remesh
+
+
+**Usage:**
+
+```
+shapeworks  remesh [args]...
+```  
+
+
+**Description:** applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--target=DOUBLE:** Target number of vertices.
+
+**--adaptivity=DOUBLE:** 0-2, low adaptivity to high adaptivity  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
+### remesh-percent
+
+
+**Usage:**
+
+```
+shapeworks  remesh-percent [args]...
+```  
+
+
+**Description:** applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--percentage=DOUBLE:** Target percentage number of vertices
+
+**--adaptivity=DOUBLE:** 0-2, low adaptivity to high adaptivity  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
 ### scale-mesh
 
 
@@ -1997,7 +2017,9 @@ shapeworks  write-mesh [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Name of file to write.  
+**--name=STRING:** Name of file to write.
+
+**--binary=BOOL:** Whether to write file as binary.  
   
 <a href="#top">Back to Top</a>
   

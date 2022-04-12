@@ -18,16 +18,18 @@
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/itkParticleProcrustesRegistration.h"
+#include "ParticleSystem/ParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
-
+#include <Libs/Project/Project.h>
 
 
 namespace shapeworks {
+
+class Project;
 
 class MatrixContainer {
   public:
@@ -63,6 +65,12 @@ public:
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+
+  bool SetUpOptimize(ProjectHandle projectFile);
+
+  //! Set the Projects
+  void SetProject(std::shared_ptr<Project> project);
+
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -179,8 +187,10 @@ public:
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   //! Set the interval for running procrustes (0 to disable)
   void SetProcrustesInterval(int procrustes_interval);
-  //! Set if procrustes scaling should be used (0=disabled, 1=enabled)
-  void SetProcrustesScaling(int procrustes_scaling);
+  //! Set if procrustes scaling should be used
+  void SetProcrustesScaling(bool procrustes_scaling);
+  //! Set if procrustes rotation/translation should be used
+  void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
@@ -250,6 +260,10 @@ public:
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
+  //! Shared boundary settings
+  void SetSharedBoundaryEnabled(bool enabled);
+  void SetSharedBoundaryWeight(double weight);
+
   const std::vector<int>& GetDomainFlags();
 
   //! Set if file output is enabled
@@ -296,6 +310,9 @@ public:
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
+
+  //! transform a point if necessary
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
 protected:
 
@@ -348,11 +365,15 @@ protected:
 
   virtual void UpdateExportablePoints();
 
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
+
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
@@ -399,7 +420,8 @@ protected:
   double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
-  int m_procrustes_scaling = 1;
+  bool m_procrustes_scaling = true;
+  bool m_procrustes_rotation_translation = true;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
@@ -460,6 +482,8 @@ protected:
   std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }

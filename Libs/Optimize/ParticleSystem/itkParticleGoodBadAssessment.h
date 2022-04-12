@@ -1,9 +1,8 @@
-#ifndef ITKPARTICLEGOODBADASSESSMENT_H
-#define ITKPARTICLEGOODBADASSESSMENT_H
+#pragma once
 
 #include "itkParticleSystem.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithCurvature.h"
+#include "ParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithCurvature.h"
 #include <algorithm>
 namespace itk
 {
@@ -25,11 +24,11 @@ public:
     typedef WeakPointer<const Self>  ConstWeakPointer;
 
     /** Particle system typedefs. */
-    typedef ParticleSystem<VDimension> ParticleSystemType;
+    typedef ParticleSystem ParticleSystemType;
     typedef typename ParticleSystemType::PointType PointType;
 
     /** Type of the domain. */
-    typedef ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+    typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
     typedef typename DomainType::VnlVectorType NormalType;
 
     typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
@@ -93,10 +92,5 @@ private:
 
 } //end namespace
 
-#if ITK_TEMPLATE_TXX
-# include "itkParticleGoodBadAssessment.txx"
-#endif
 
 #include "itkParticleGoodBadAssessment.txx"
-
-#endif // ITKPARTICLEGOODBADASSESSMENT_H

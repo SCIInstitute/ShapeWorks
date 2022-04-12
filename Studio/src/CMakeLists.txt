@@ -72,8 +72,11 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 #--------------------------------------------------------------------------------
 
 
-FILE(GLOB STUDIO_DATA_SRCS
+SET(STUDIO_DATA_SRCS
   Data/CustomSurfaceReconstructionFilter.cpp
+  Data/LandmarkItemDelegate.cpp
+  Data/LandmarkTableModel.cpp
+  Data/DataTool.cpp
   Data/LegacyMeshGenerator.cpp
   Data/MeshCache.cpp
   Data/MeshGenerator.cpp
@@ -96,17 +99,10 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/Worker.cpp
   )
 
-FILE(GLOB STUDIO_JOB_SRCS
-  Job/Job.cpp
-  Job/GroupPvalueJob.cpp
-  )
-
-FILE(GLOB STUDIO_JOB_MOC_HDRS
-  Job/Job.h
-  Job/GroupPvalueJob.h
-  )
-
-FILE(GLOB STUDIO_DATA_MOC_HDRS
+SET(STUDIO_DATA_MOC_HDRS
+  Data/LandmarkItemDelegate.h
+  Data/LandmarkTableModel.h
+  Data/DataTool.h
   Data/MeshManager.h
   Data/QMeshWarper.h
   Data/MeshWorker.h
@@ -115,6 +111,21 @@ FILE(GLOB STUDIO_DATA_MOC_HDRS
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Worker.h
+  Data/StudioLog.h
+  )
+
+SET(STUDIO_JOB_SRCS
+  Job/Job.cpp
+  Job/GroupPvalueJob.cpp
+  Job/ParticleNormalEvaluationJob.cpp
+  Job/StatsGroupLDAJob.cpp
+  )
+
+SET(STUDIO_JOB_MOC_HDRS
+  Job/Job.h
+  Job/GroupPvalueJob.h
+  Job/ParticleNormalEvaluationJob.h
+  Job/StatsGroupLDAJob.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -165,6 +176,7 @@ SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
   Utils/WindowsCrashHandler.cpp
   Utils/StudioUtils.cpp
+  Utils/AnalysisUtils.cpp
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -188,11 +200,19 @@ SET(STUDIO_INTERFACE_MOC_HDRS
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/BarGraph.cpp
   Visualization/Lightbox.cpp
+  Visualization/LandmarkWidget.cpp
+  Visualization/PlaneWidget.cpp
+  Visualization/PaintWidget.cpp
   Visualization/StudioInteractorStyle.cpp
+  Visualization/StudioSliceInteractorStyle.cpp
+  Visualization/SliceView.cpp
+  Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
   Visualization/StudioVtkOutputWindow.cpp
+  Visualization/StudioHandleWidget.cpp
 )
+
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/BarGraph.h
   Visualization/Lightbox.h

@@ -271,8 +271,8 @@ void SparseKernelTransform<TScalarType, NDimensions>
     //        ++i;
     //    } while (solver.info()!= Eigen::Success && i<100);
 
-    std::cout << "#iterations: " << solver.iterations() << std::endl;
-    std::cout << "estimated error: " << solver.error() << std::endl;
+    // std::cout << "#iterations: " << solver.iterations() << std::endl;
+    // std::cout << "estimated error: " << solver.error() << std::endl;
 
     std::cout  << solver.error() << std::endl;
     if(solver.info() != Eigen::Success) {
@@ -282,9 +282,9 @@ void SparseKernelTransform<TScalarType, NDimensions>
     }
 
     clock.Stop();
-    std::cout << "Computing Wmatrix:" << std::endl;
-    std::cout << "Mean: " << clock.GetMean() << std::endl;
-    std::cout << "Total: " << clock.GetTotal() << std::endl;
+    // std::cout << "Computing Wmatrix:" << std::endl;
+    // std::cout << "Mean: " << clock.GetMean() << std::endl;
+    // std::cout << "Total: " << clock.GetTotal() << std::endl;
 
     this->ReorganizeW();
     m_WMatrixComputed=true;
@@ -407,7 +407,7 @@ ComputeL(void) const
     //    ofs.close();
 
 
-    std::cout << "Lmatrix - nnz = "  << m_LMatrix.nonZeros() << std::endl;
+    // std::cout << "Lmatrix - nnz = "  << m_LMatrix.nonZeros() << std::endl;
     m_LMatrix.makeCompressed();
 
     //m_LMatrix.setFromTriplets(tripletList.begin(), tripletList.end());
@@ -502,7 +502,7 @@ ComputeK(void) const
     //            ofs << it.row()  << ", " << it.col()  << ", " << it.value() << std::endl;
     //    ofs.close();
 
-    std::cout << "Kmatrix - nnz = "  << m_KMatrix.nonZeros() << std::endl;
+    // std::cout << "Kmatrix - nnz = "  << m_KMatrix.nonZeros() << std::endl;
     m_KMatrix.makeCompressed();
 
     //m_KMatrix.setFromTriplets(tripletList.begin(), tripletList.end());
@@ -554,7 +554,7 @@ ComputeP() const
         //m_PMatrix.update(I, i*NDimensions, NDimensions*NDimensions);
     }
 
-    std::cout << "Pmatrix - nnz = "  << m_PMatrix.nonZeros() << std::endl;
+    // std::cout << "Pmatrix - nnz = "  << m_PMatrix.nonZeros() << std::endl;
     m_PMatrix.makeCompressed();
     //m_PMatrix.setFromTriplets(tripletList.begin(), tripletList.end());
 }

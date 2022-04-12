@@ -87,7 +87,7 @@ bool SurfaceReconstructor::get_surface_reconstruction_available()
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const vnl_vector<double> &shape)
+vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const Eigen::VectorXd &shape)
 {
   PointArrayType points;
 

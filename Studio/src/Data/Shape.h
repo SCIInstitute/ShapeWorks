@@ -1,39 +1,41 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-#include <QSharedPointer>
-#include <QString>
-
+#include <Data/MeshGroup.h>
+#include <Data/MeshManager.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioParticles.h>
+#include <Libs/Optimize/ParticleSystem/Constraints.h>
 #include <Libs/Project/Subject.h>
-#include <Data/MeshManager.h>
-#include <Data/MeshGroup.h>
-
 #include <itkMatrixOffsetTransformBase.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 namespace shapeworks {
 
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
+class VtkMeshWrapper;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
-
-public:
-
+ public:
   //! TODO: replace this wherever it is used
   class Point {
-public:
+   public:
+    Point(){};
+    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
     double x, y, z;
   };
 
   Shape();
 
   ~Shape();
+
+  QString get_display_name();
 
   MeshGroup get_meshes(const string& display_mode);
 
@@ -61,11 +63,23 @@ public:
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
-  /// Import global correspondence point file
+  /// Import global correspondence point files
   bool import_global_point_files(QStringList filenames);
 
-  /// Import local correspondence point file
+  /// Import local correspondence point files
   bool import_local_point_files(QStringList filenames);
+
+  /// Import landmarks files
+  bool import_landmarks_files(QStringList filenames);
+
+  //! Store landmarks
+  bool store_landmarks();
+
+  //! import constraints
+  bool import_constraints(QStringList filenames);
+
+  //! Store constraints
+  bool store_constraints();
 
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
@@ -73,13 +87,13 @@ public:
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
   /// Get the global correspondence points
-  vnl_vector<double> get_global_correspondence_points();
+  Eigen::VectorXd get_global_correspondence_points();
 
   /// Get the global correspondence points for display
-  vnl_vector<double> get_global_correspondence_points_for_display();
+  Eigen::VectorXd get_global_correspondence_points_for_display();
 
   /// Get the local correspondence points
-  vnl_vector<double> get_local_correspondence_points();
+  Eigen::VectorXd get_local_correspondence_points();
 
   void clear_reconstructed_mesh();
 
@@ -134,6 +148,8 @@ public:
 
   void load_feature(std::string display_mode, std::string feature);
 
+  vtkSmartPointer<vtkImageData> get_image_volume(std::string image_volume_name);
+
   Eigen::VectorXf get_point_features(std::string feature);
 
   void set_point_features(std::string feature, Eigen::VectorXf values);
@@ -143,12 +159,21 @@ public:
   void set_override_feature(std::string feature);
   std::string get_override_feature();
 
-private:
+  Eigen::MatrixXd& landmarks();
 
-  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
-                       bool save_transform, bool wait = false);
+  std::vector<Constraints>& constraints();
 
-  static bool import_point_file(QString filename, vnl_vector<double>& points);
+  Constraints& get_constraints(int domain_id);
+
+  bool has_planes();
+
+  std::vector<std::shared_ptr<VtkMeshWrapper>> get_mesh_wrappers();
+
+ private:
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
+                       bool wait = false);
+
+  static bool import_point_file(QString filename, Eigen::VectorXd& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void load_feature_from_mesh(std::string feature, MeshHandle mesh);
@@ -158,6 +183,7 @@ private:
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
+  std::vector<std::shared_ptr<VtkMeshWrapper>> mesh_wrappers_;
 
   int group_id_ = 1;
 
@@ -182,5 +208,12 @@ private:
   QStringList corner_annotations_;
 
   QSharedPointer<MeshManager> mesh_manager_;
+
+  Eigen::MatrixXd landmarks_;
+
+  vtkSmartPointer<vtkImageData> image_volume_;
+  std::string image_volume_filename_;
+
+  std::vector<Constraints> constraints_;  // one set for each domain
 };
-}
+}  // namespace shapeworks

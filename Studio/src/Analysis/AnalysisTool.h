@@ -12,10 +12,10 @@
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
-#include <Data/Shape.h>
 #include <Data/Preferences.h>
-#include <Visualization/Visualizer.h>
+#include <Data/Shape.h>
 #include <Visualization/BarGraph.h>
+#include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
 class JKQTPlotter;
@@ -26,12 +26,13 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
+class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
-public:
 
-    enum AlignmentType {
+ public:
+  enum AlignmentType {
     Global = -2,
     Local = -1,
   };
@@ -60,28 +61,26 @@ public:
   std::string get_analysis_mode();
   void set_analysis_mode(std::string mode);
 
-  void setLabels(QString which, QString value);
+  void set_labels(QString which, QString value);
 
-  int getPCAMode();
+  int get_pca_mode();
 
   int getMCAMode();
 
   double get_group_value();
 
   double get_pca_value();
-
   double get_mca_value();
 
   int get_mca_level();
-
-  bool pcaAnimate();
   bool mcaAnimate();
+  bool pca_animate();
 
   int get_sample_number();
 
   bool compute_stats();
 
-  void updateSlider();
+  void update_slider();
   
   void updateMcaSlider();
 
@@ -117,7 +116,7 @@ public:
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   // analysis mode
   void on_tabWidget_currentChanged();
@@ -181,11 +180,18 @@ public Q_SLOTS:
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
+  void handle_eval_particle_normals_progress(float progress);
+  void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
 
-signals:
+  void run_good_bad_particles();
+
+  void handle_lda_progress(double progress);
+  void handle_lda_complete();
+
+ signals:
 
   void update_view();
   void pca_update();
@@ -196,8 +202,7 @@ signals:
   void warning(QString);
   void reconstruction_complete();
 
-private:
-
+ private:
   void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
 
   void compute_reconstructed_domain_transforms();
@@ -208,16 +213,19 @@ private:
   void mca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void compute_mca_mode_shape();
-  void update_analysis_mode(); // TODO: Recheck here
+  void update_analysis_mode();
+  void update_interface();
 
   bool group_pvalues_valid();
 
   //! Break apart combined points into per-domain
-  StudioParticles convert_from_combined(const vnl_vector<double>& points);
+  StudioParticles convert_from_combined(const Eigen::VectorXd& points);
 
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
+
+  void update_lda_graph();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 
@@ -241,8 +249,8 @@ private:
   std::vector<int> number_of_particles_ar;
 
   vnl_vector<double> empty_shape_;
-  vnl_vector<double> temp_shape_;
   vnl_vector<double> temp_shape_mca;
+  Eigen::VectorXd temp_shape_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
@@ -266,7 +274,10 @@ private:
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
+  QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  bool group_lda_job_running_ = false;
+  bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
 };
-}
+}  // namespace shapeworks
