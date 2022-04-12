@@ -347,12 +347,8 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     if (std::isnan(mag)) {
       mag = 0;
     }
-    if (mag < minmag) {
-      minmag = mag;
-    }
-    if (mag > maxmag) {
-      maxmag = mag;
-    }
+    minmag = std::min<float>(minmag, mag);
+    maxmag = std::max<float>(maxmag, mag);
 
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
