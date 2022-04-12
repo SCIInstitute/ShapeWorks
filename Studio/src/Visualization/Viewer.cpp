@@ -312,7 +312,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   std::vector<vtkSmartPointer<vtkKdTreePointLocator>> locators;
 
   for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
-    vtkSmartPointer<vtkPolyData> poly_data = mesh_group.meshes()[i]->get_poly_data();
+    auto poly_data = mesh_group.meshes()[i]->get_poly_data();
 
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputData(poly_data);
@@ -332,7 +332,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling happens properly.
-  for (unsigned int i = 0; i < point_set->GetNumberOfPoints(); i++) {
+  for (vtkIdType i = 0; i < point_set->GetNumberOfPoints(); i++) {
     int domain = shape_->get_particles().get_domain_for_combined_id(i);
 
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
@@ -358,12 +358,13 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 //-----------------------------------------------------------------------------
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors) {
-  if (!mesh_ready_) {
+  auto mesh_group = shape_->get_meshes(visualizer_->get_display_mode());
+  if (!mesh_group.valid()) {
     return;
   }
 
-  for (size_t i = 0; i < surface_mappers_.size(); i++) {  // for each domain
-    vtkPolyData* poly_data = surface_mappers_[i]->GetInput();
+  for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
+    auto poly_data = mesh_group.meshes()[i]->get_poly_data();
     if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
       return;
     }
