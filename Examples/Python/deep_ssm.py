@@ -42,11 +42,11 @@ def Run_Pipeline(args):
     if args.tiny_test:
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.ply"))[:7]
+                            dataset_name + "/meshes/*.ply"))[:5]
         image_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/images/*.nrrd"))[:7]
+                            dataset_name + "/images/*.nrrd"))[:5]
         plane_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/constraints/*.json"))[:7]
+                            dataset_name + "/constraints/*.json"))[:5]
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
@@ -64,7 +64,7 @@ def Run_Pipeline(args):
     # Shuffle files
     random.shuffle(mesh_files)
     # Get size of validation and test sets
-    test_val_size = int(math.ceil(len(mesh_files)*.15))
+    test_val_size = int(math.ceil(len(mesh_files)*.10))
     # Split data
     test_mesh_files = sorted(mesh_files[:test_val_size])
     val_mesh_files = sorted(mesh_files[test_val_size: test_val_size*2])
@@ -214,7 +214,7 @@ def Run_Pipeline(args):
     } 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 128 # 32
+        parameter_dictionary["number_of_particles"] = 128 
         parameter_dictionary["optimization_iterations"] = 25
 
     for key in parameter_dictionary:
@@ -247,8 +247,9 @@ def Run_Pipeline(args):
     Step 5: Load training images and apply transforms
     """
     print("\nStep 5. Groom Training Images")
-    # Get transfroms from spreadsheet
+    # Get transforms from spreadsheet
     train_image_list = []
+    train_transforms = []
     print("Preparing training images...")
     for train_name in train_names:
         ID = train_name.split("_")[0]
@@ -273,6 +274,7 @@ def Run_Pipeline(args):
     # Applying rigid transform
     for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
         train_transform = np.matmul(train_proc, train_align)
+        train_transforms.append(train_transform)
         train_image.applyTransform(train_transform,
                              ref_image.origin(),  ref_image.dims(),
                              ref_image.spacing(), ref_image.coordsys(),
@@ -287,36 +289,6 @@ def Run_Pipeline(args):
     print("Writing groomed train images.")
     train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
                     train_names, extension='nrrd', compressed=True, verbose=False)
-
-    ###########################################################################################
-    """
-    Step 6: Create additional training data
-    """
-    print("\nStep 6. Augment data")
-    '''
-    - num_samples is how many samples to generate 
-    - num_dim is the number of PCA scores to use
-    - percent_dim what percent of variablity to retain (used if num_dim is 0)
-    - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
-    '''
-    num_samples = 3960
-    num_dim = 0
-    percent_variability = 0.95
-    sampler = "kde"
-    if args.tiny_test:
-        num_samples = 2
-        num_dim = 0
-        percent_variability = 0.99
-    aug_dir = data_dir + "augmentation/"
-    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, 
-                                                            train_world_particles, num_samples, 
-                                                            num_dim, percent_variability, 
-                                                            sampler, mixture_num=0, processes=1)
-    print("Dimensions retained: " + str(embedded_dim))
-    aug_data_csv = aug_dir + "TotalData.csv"
-
-    if not args.tiny_test and not args.verify:
-        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
     #############################################################################################
     print("\nStep 7. Find Test and Validation Transforms and Groom Images")
@@ -386,7 +358,36 @@ def Run_Pipeline(args):
     test_image_files = val_test_image_files[len(val_mesh_files):]
     test_transforms = val_test_transforms[len(val_mesh_files):]
 
+    ###########################################################################################
+    """
+    Step 6: Create additional training data
+    """
+    print("\nStep 6. Augment data")
+    '''
+    - num_samples is how many samples to generate 
+    - num_dim is the number of PCA scores to use
+    - percent_dim what percent of variablity to retain (used if num_dim is 0)
+    - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
+    '''
+    num_samples = 2961
+    num_dim = 0
+    percent_variability = 0.95
+    sampler = "kde"
+    if args.tiny_test:
+        num_samples = 2
+        percent_variability = 0.99
+    aug_dir = data_dir + "augmentation/"
+    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, 
+                                                            train_world_particles, num_samples, 
+                                                            num_dim, percent_variability, 
+                                                            sampler, mixture_num=0, processes=1)
+    print("Dimensions retained: " + str(embedded_dim))
+    aug_data_csv = aug_dir + "TotalData.csv"
 
+    if not args.tiny_test and not args.verify:
+        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+
+    
     #################################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")
     # Get validation plane files
@@ -524,7 +525,7 @@ def Run_Pipeline(args):
             "supervised_latent": True,
         },
         "trainer": {
-            "epochs": 100,
+            "epochs": 30,
             "learning_rate": 0.001,
             "decay_lr": True,
             "val_freq": 1
@@ -616,12 +617,9 @@ def Run_Pipeline(args):
 
 # Verification 
 def check_results(args, mean_dist):
-    if args.tiny_test or args.verify:
+    if args.tiny_test:
         print("\nVerifying use case results.")
-        if args.tiny_test and not math.isclose(mean_dist, 8000, rel_tol=10):
-            print("Test failed.")
-            exit(-1)
-        if args.verify and not math.isclose(mean_dist, 7900, rel_tol=10):
+        if not math.isclose(mean_dist, 8000, rel_tol=10):
             print("Test failed.")
             exit(-1)
         print("Done with test, verification succeeded.")
