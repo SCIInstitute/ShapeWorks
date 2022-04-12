@@ -35,6 +35,7 @@
 #include <Interface/StatusBarWidget.h>
 #include <Interface/WheelEventForwarder.h>
 #include <Optimize/OptimizeTool.h>
+#include <Python/PythonWorker.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -808,7 +809,6 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
   connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);
 
-
   data_tool_->update_notes();
 
   visualizer_->clear_viewers();
@@ -1316,7 +1316,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   optimize_tool_->load_params();
   preferences_window_->set_values_from_preferences();
   update_from_preferences();
-
 
   update_tool_mode();
 
@@ -1854,7 +1853,6 @@ bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::Vecto
 
   return true;
 }
-
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map) {
