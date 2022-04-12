@@ -220,8 +220,8 @@ void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; 
 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
-  std::vector<Shape::Point> vecs = shape_->get_vectors();
-  if (vecs.empty()) {
+  auto vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
+  if (!session_->get_show_difference_vectors() || vecs.size() == 0) {
     // restore things to normal
     glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     glyphs_->ScalingOn();
@@ -299,11 +299,10 @@ void Viewer::display_vector_field() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
-                                       vtkSmartPointer<vtkFloatArray> magnitudes,
+void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors) {
   auto mesh_group = shape_->get_meshes(visualizer_->get_display_mode());
-  if (!mesh_group.valid() || points.empty()) {
+  if (!mesh_group.valid() || vecs.size() == 0) {
     return;
   }
 
@@ -338,9 +337,9 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
     double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
 
-    float xd = points[i].x;
-    float yd = points[i].y;
-    float zd = points[i].z;
+    float xd = vecs(i * 3 + 0);
+    float yd = vecs(i * 3 + 1);
+    float zd = vecs(i * 3 + 2);
 
     float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
     if (std::isnan(mag)) {
@@ -628,7 +627,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       auto feature_map = get_displayed_feature_map();
 
       std::vector<Shape::Point> vecs = shape_->get_vectors();
-      if (!vecs.empty()) {
+      if (session_->get_show_difference_vectors()) {
         feature_map = "";
       }
 

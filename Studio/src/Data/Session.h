@@ -3,12 +3,12 @@
 #include <Data/MeshManager.h>
 #include <Data/Preferences.h>
 #include <Data/StudioParticles.h>
+#include <Libs/Particles/ParticleSystem.h>
 #include <Libs/Project/Project.h>
 #include <Shapeworks.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
-#include <Libs/Particles/ParticleSystem.h>
 #include <QSharedPointer>
 #include <QVector>
 #include <cstdlib>
@@ -189,8 +189,15 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool get_show_good_bad_particles();
   void set_show_good_bad_particles(bool enabled);
 
+  bool get_show_difference_vectors();
+  void set_show_difference_vectors(bool enabled);
+
   std::vector<bool> get_good_bad_particles();
   void set_good_bad_particles(const std::vector<bool>& good_bad);
+
+  // for setting difference to mean, etc
+  void set_difference_particles(StudioParticles particles) { difference_particles_ = particles; }
+  StudioParticles get_difference_particles() { return difference_particles_; }
 
   void trigger_repaint();
 
@@ -231,7 +238,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-  Preferences& preferences_;
 
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
@@ -243,6 +249,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   QWidget* parent_{nullptr};
 
+  Preferences& preferences_;
+
   /// project filename
   QString filename_;
 
@@ -250,6 +258,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   /// collection of shapes
   QVector<QSharedPointer<Shape>> shapes_;
+
+  StudioParticles difference_particles_;
 
   QSharedPointer<MeshManager> mesh_manager_;
 
@@ -270,6 +280,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool landmarks_active_ = false;
   bool planes_active_ = false;
   bool show_landmark_labels_ = false;
+  bool show_difference_vectors_ = false;
 
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;

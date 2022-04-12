@@ -201,6 +201,8 @@ class AnalysisTool : public QWidget {
 
   void update_lda_graph();
 
+  void update_difference_particles();
+
   ShapeHandle create_shape_from_points(StudioParticles points);
 
   Preferences& preferences_;

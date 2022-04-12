@@ -9,21 +9,21 @@
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
+#include <Data/QMeshWarper.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/StudioLog.h>
 #include <Data/StudioMesh.h>
-#include <Data/QMeshWarper.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
+#include <Job/StatsGroupLDAJob.h>
 #include <Python/PythonWorker.h>
 #include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
-#include <Job/StatsGroupLDAJob.h>
 
 namespace shapeworks {
 
@@ -237,6 +237,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group_p_values_button->setChecked(false);
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
+  update_difference_particles();
 
   connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
@@ -248,8 +249,7 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 void AnalysisTool::update_analysis_mode() { handle_analysis_options(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_interface()
-{
+void AnalysisTool::update_interface() {
   ui_->show_good_bad->setEnabled(session_->get_good_bad_particles().size() == session_->get_num_particles());
   ui_->show_good_bad->setChecked(ui_->show_good_bad->isEnabled() && session_->get_show_good_bad_particles());
 }
@@ -324,6 +324,7 @@ void AnalysisTool::on_mean_button_clicked() {
   ui_->difference_button->setChecked(false);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->mean_button->setChecked(true);
+  update_difference_particles();
   emit update_view();
 }
 
@@ -336,6 +337,7 @@ void AnalysisTool::on_group1_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->group1_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
+  update_difference_particles();
   emit update_view();
 }
 
@@ -348,6 +350,7 @@ void AnalysisTool::on_group2_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->group2_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
+  update_difference_particles();
   emit update_view();
 }
 
@@ -360,6 +363,7 @@ void AnalysisTool::on_difference_button_clicked() {
   ui_->group_p_values_button->setChecked(false);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(true);
+  update_difference_particles();
   emit update_view();
 }
 
@@ -372,6 +376,7 @@ void AnalysisTool::group_p_values_clicked() {
   ui_->group_p_values_button->setChecked(true);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(false);
+  update_difference_particles();
 
   if (group_pvalues_valid()) {
     handle_group_pvalues_complete();
@@ -806,7 +811,9 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
 ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
+  session_->set_show_difference_vectors(get_group_difference_mode());
   if (get_group_difference_mode()) {
+    session_->set_show_difference_vectors(true);
     shape->set_vectors(get_group_difference_vectors());
   }
   if (ui_->group_p_values_button->isChecked() && group_pvalue_job_ &&
@@ -970,7 +977,7 @@ void AnalysisTool::update_domain_alignment_box() {
   if (multiple_domains) {
     ui_->reference_domain->addItem("Global Alignment");
     ui_->reference_domain->addItem("Local Alignment");
-    for (const auto &name : domain_names) {
+    for (const auto& name : domain_names) {
       ui_->reference_domain->addItem(QString::fromStdString(name));
     }
     ui_->reference_domain->setCurrentIndex(0);
@@ -978,8 +985,7 @@ void AnalysisTool::update_domain_alignment_box() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_lda_graph()
-{
+void AnalysisTool::update_lda_graph() {
   if (groups_active()) {
     if (!group_lda_job_running_) {
       group_lda_job_running_ = true;
@@ -994,6 +1000,31 @@ void AnalysisTool::update_lda_graph()
   } else {
     ui_->lda_graph->setVisible(false);
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_difference_particles() {
+  if (session_->get_num_shapes() < 1) {
+    return;
+  }
+
+  // start with a copy from the first shape so that the sizes of domains are already filled out
+  StudioParticles target = session_->get_shapes()[1]->get_particles();
+  auto all_particles = target.get_combined_global_particles();
+
+  Eigen::VectorXd mean = stats_.Mean();
+
+  if (get_group_difference_mode()) {
+    mean = stats_.Group2Mean();
+  }
+
+  for (unsigned int i = 0; i < stats_.Mean().size(); i++) {
+    all_particles[i] = mean[i];
+  }
+
+  target.set_combined_global_particles(all_particles);
+
+  session_->set_difference_particles(target);
 }
 
 //---------------------------------------------------------------------------
@@ -1205,8 +1236,7 @@ void AnalysisTool::run_good_bad_particles() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_lda_progress(double progress)
-{
+void AnalysisTool::handle_lda_progress(double progress) {
   if (progress > 0) {
     ui_->lda_progress->setMaximum(100);
   } else {
@@ -1218,8 +1248,7 @@ void AnalysisTool::handle_lda_progress(double progress)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::handle_lda_complete()
-{
+void AnalysisTool::handle_lda_complete() {
   ui_->lda_progress->setVisible(false);
   ui_->lda_label->setVisible(false);
   group_lda_job_running_ = false;

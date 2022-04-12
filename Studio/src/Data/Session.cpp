@@ -1165,12 +1165,18 @@ void Session::set_show_good_bad_particles(bool enabled) {
     emit update_display();
   }
 }
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
+bool Session::get_show_difference_vectors() { return true; return show_difference_vectors_; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_difference_vectors(bool enabled) { show_difference_vectors_ = enabled; }
+
+//---------------------------------------------------------------------------
 std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_bad_particles", {}); }
 
 //---------------------------------------------------------------------------
-void Session::set_good_bad_particles(const std::vector<bool> &good_bad) { params_.set("good_bad_particles", good_bad); }
+void Session::set_good_bad_particles(const std::vector<bool>& good_bad) { params_.set("good_bad_particles", good_bad); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }
