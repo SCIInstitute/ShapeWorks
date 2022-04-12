@@ -29,7 +29,6 @@ Here are the resulting groomed femurs:
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
 [--num_subsample](../use-cases.md#-use_subsample)
-[--skip_grooming](../use-cases.md#-skip_grooming)
 [--use_single_scale](../use-cases.md#-use_single_scale)
 [--tiny_test](../use-cases.md#-tiny_test)
 

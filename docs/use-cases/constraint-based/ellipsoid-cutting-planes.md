@@ -13,7 +13,6 @@ This use case starts with pre-aligned segmentations. The only grooming step is [
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
 [--num_subsample](../use-cases.md#-use_subsample)
-[--skip_grooming](../use-cases.md#-skip_grooming)
 [--use_single_scale](../use-cases.md#-use_single_scale)
 [--mesh_mode](../use-cases.md#-mesh_mode)
 [--tiny_test](../use-cases.md#-tiny_test)
