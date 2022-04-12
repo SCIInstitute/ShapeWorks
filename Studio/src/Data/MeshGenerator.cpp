@@ -59,9 +59,9 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
                                       surface_reconstructors[domain]->get_surface_reconstruction_available();
 
   if (this->reconstruction_method_ == RECONSTRUCTION_DISTANCE_TRANSFORM_C && distance_transform_available) {
-    vtkSmartPointer<vtkPolyData> poly_data = surface_reconstructors[domain]->build_mesh(shape);
+    auto poly_data = surface_reconstructors[domain]->build_mesh(shape);
 
-    vtkSmartPointer<vtkPolyDataNormals> polydata_normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    auto polydata_normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polydata_normals->SetInputData(poly_data);
     polydata_normals->Update();
     poly_data = polydata_normals->GetOutput();
@@ -73,7 +73,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     points.resize(3, shape.size() / 3);
     points.transposeInPlace();
 
-    vtkSmartPointer<vtkPolyData> poly_data = mesh_warpers[domain]->build_mesh(points);
+    auto poly_data = mesh_warpers[domain]->build_mesh(points);
 
     if (!poly_data) {
       std::string message = std::string("Unable to warp mesh");
@@ -81,7 +81,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
       mesh->set_error_message(message);
       return mesh;
     }
-    vtkSmartPointer<vtkPolyDataNormals> polydata_normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    auto polydata_normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polydata_normals->SetInputData(poly_data);
     polydata_normals->Update();
     poly_data = polydata_normals->GetOutput();
