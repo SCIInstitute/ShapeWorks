@@ -38,13 +38,14 @@ Note: You are only required to enter your credentials the first time you run a u
 
 When a use case runs, the appropriate zipped data downloads to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all the output from running the use case is also saved.
 
-The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and XML). 
+The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). 
 
-An "analyze.xml" file is included so that the resulting shape model can be visualized in Studio without running the use case.
+An "project.xlsx" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
 ```
-$ cd Examples/Python/Output/ellipsoid/
-$ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
+$ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
+$ cp shape_model ../
+$ ShapeWorksStudio ellipsoid_multiscale.xlsx
 ```
 
 ### Use Cases Arguments
@@ -61,13 +62,6 @@ Users can run a use case on a subset of the data by adding the `--use_subsample`
 
 ```
 $ python RunUseCase.py [use case name] --use_subsample --num_subsample 10
-```
-
-#### --skip_grooming
-When this argument is used, the grooming steps (if any) are skipped. Instead the expected groomed output from the downloaded .zip folder is used in optimization. This arguement is useful a user wishes to start with the optimization step.
-
-```
-$ python RunUseCase.py [use case name] --skip_grooming
 ```
       
 #### --use_single_scale
@@ -97,49 +91,26 @@ Users can run a fast version of the use case using the `--tiny_test` argument. T
 $ python RunUseCase.py [use case name] --tiny_test
 ```
 
+#### --verify
+
+
 ## Use Case Workflow Overview
 
 The use cases which demomstrate the [Shape Modeling Workflow](../getting-started/workflow.md) follow this general outline:
 
 ### [Grooming](../workflow/groom.md)
-Grooming involves pre-processing steps to prepare the data for optimization. This involves generating aligned distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes. The grooming steps are unique to each use case, but common steps are explained here: [Common Grooming Steps](../workflow/groom.md#Common-Pre-Processing-Steps-for-Segmentations).
+Grooming involves pre-processing steps to prepare the data for optimization and calculate the alignment transforms which will be passed to the optimizer. This involves generating distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes and calculating the alignment transformation matrix for each shape. The grooming steps are unique to each use case, but common steps are explained here: [Common Grooming Steps](../workflow/groom.md#Common-Pre-Processing-Steps-for-Segmentations).
 
 Note some use cases start with pre-aligned data that does not require grooming. 
 
 ### [Optimization](../workflow/optimize.md)
-Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in a python dictionary which is used to generate a parameter XML file and optimization is run from the command line. 
+Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx and optimization is run from the command line. 
 
-Below is a list of the currently exposed algorithmic parameters in the use cases:
-```
-{
-        "number_of_particles": 1024,
-        "use_shape_statistics_after": 32, 
-        "use_normals": 0, 
-        "normal_weight": 0.0, 
-        "checkpointing_interval" : 10000, 
-        "keep_checkpoints" : 0, 
-        "iterations_per_split" : 4000, 
-        "optimization_iterations" : 500, 
-        "starting_regularization" : 10, 
-        "ending_regularization" : 1, 
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 1,
-        "procrustes_interval" : 1,
-        "procrustes_scaling" : 1,
-        "save_init_splits" : 0,
-        "verbosity" : 2,
-        "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes
-}
-```
-For a full decription of parameters, please see: [optimization parameters](../workflow/optimize.md#On-Algorithmic-Parameters). All the keys of in this parameter dictionary correspond to the [XML tags](../workflow/optimize.md#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
+For a full decription of parameters, please see: [optimization parameters](../workflow/parameters.md). 
 
 ### [Analysis of Results](../workflow/analyze.md)
 The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `analyze.xml` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-This `anaylze.xml` file can be reopened at any time after running the use case for subsequent analysis by calling `ShapeworksStudio analyze.xml`. For a full description of how to analyze results in Studio, see [Analyzing Results](../workflow/analyze.md).
+This `project.xlsx` file can be reopened at any time after running the use case for subsequent analysis by calling `ShapeworksStudio project.xlsx`. For a full description of how to analyze results in Studio, see [Analyzing Results](../workflow/analyze.md).

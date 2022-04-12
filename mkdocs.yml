@@ -79,6 +79,8 @@ nav:
       - 'Ellipsoid: Shape Evaluation in Python':                     'use-cases/stats-based/ellipsoid-evaluate.md'
    - Deep Learning Based Use Cases:
       - 'Femur SSM Directly from Images':                            'use-cases/deep-learning-based/deep-ssm-femur.md'
+   - Shared Boundary Based Use Cases: 
+      - 'Peanut:Shape Model of Multiple Domains with Shared Boundaries': 'use-cases/shared-boundary-based/peanut.md'
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
    
 - For Developers:
