@@ -1167,7 +1167,7 @@ void Session::set_show_good_bad_particles(bool enabled) {
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_show_difference_vectors() { return true; return show_difference_vectors_; }
+bool Session::get_show_difference_vectors() { return show_difference_vectors_; }
 
 //---------------------------------------------------------------------------
 void Session::set_show_difference_vectors(bool enabled) { show_difference_vectors_ = enabled; }

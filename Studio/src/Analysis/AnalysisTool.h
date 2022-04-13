@@ -166,6 +166,8 @@ class AnalysisTool : public QWidget {
   void handle_lda_progress(double progress);
   void handle_lda_complete();
 
+  void show_difference_to_mean_clicked();
+
  signals:
 
   void update_view();

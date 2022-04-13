@@ -98,6 +98,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::message, this, &AnalysisTool::message);
+
+  connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
 }
 
 //---------------------------------------------------------------------------
@@ -1002,6 +1004,9 @@ void AnalysisTool::update_difference_particles() {
 
   target.set_combined_global_particles(all_particles);
 
+
+  session_->set_show_difference_vectors(get_group_difference_mode() || ui_->show_difference_to_mean->isChecked());
+
   session_->set_difference_particles(target);
 }
 
@@ -1236,6 +1241,13 @@ void AnalysisTool::handle_lda_complete() {
 
   group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::show_difference_to_mean_clicked()
+{
+  update_difference_particles();
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
