@@ -1,7 +1,7 @@
 #ifndef __itkParticleEnsembleMlpcaEntropyFunction_txx
 #define __itkParticleEnsembleMlpcaEntropyFunction_txx
 
-#include "itkParticleImageDomainWithGradients.h"
+#include "ParticleImageDomainWithGradients.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "itkParticleGaussianModeWriter.h"
 #include "Libs/Utils/Utils.h"

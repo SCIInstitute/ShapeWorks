@@ -249,8 +249,9 @@ class AnalysisTool : public QWidget {
   std::vector<int> number_of_particles_ar;
 
   vnl_vector<double> empty_shape_;
-  vnl_vector<double> temp_shape_mca;
   Eigen::VectorXd temp_shape_;
+  Eigen::VectorXd temp_shape_mca;
+
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;

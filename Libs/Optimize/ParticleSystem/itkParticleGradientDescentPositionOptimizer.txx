@@ -335,7 +335,7 @@ namespace itk
 //             return;
 //           }
 
-//           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+//           const shapeworks::ParticleDomain *domain  = m_ParticleSystem->GetDomain(dom);
 
 //           typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
 
@@ -618,7 +618,7 @@ namespace itk
           {
             return;
           }
-          const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+          const shapeworks::ParticleDomain *domain  = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
           localGradientFunction_ = m_GradientFunction->Clone();
@@ -720,7 +720,7 @@ namespace itk
             return;
           }
 
-          const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+         const shapeworks::ParticleDomain *domain  = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction_ = m_GradientFunction;
           localGradientFunction_ = m_GradientFunction->Clone();

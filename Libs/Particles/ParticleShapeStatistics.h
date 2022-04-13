@@ -1,10 +1,4 @@
 #pragma once
-#include "vnl/vnl_vector.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/algo/vnl_svd.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector_fixed.h"
-#include "vnl/algo/vnl_matrix_inverse.h"
 #include <Eigen/Eigen>
 
 #include <iostream>
@@ -50,7 +44,8 @@ public:
   int ComputeWithinModesForMca();
   int ComputeBetweenModesForMca();
   int MultiLevelPrincipalComponentProjections();
-  int ImportPointsAndComputeMlpca(std::vector<vnl_vector<double>> points, unsigned int dps);
+  int ImportPointsAndComputeMlpca(std::vector<Eigen::VectorXd> points, unsigned int dps);
+
   void SetNumberOfParticlesAr(std::vector<int> num_particles_ar);
 
   //! Loads a set of point files and pre-computes some statistics.
@@ -96,17 +91,15 @@ public:
   const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
   
-  const vnl_matrix<double> &BetweenEigenvectors() { return m_betweenEigenvectors; }
+  const Eigen::MatrixXd &BetweenEigenvectors() { return m_betweenEigenvectors; }
   const std::vector<double> &BetweenEigenvalues() { return m_betweenEigenvalues; }
-  const vnl_matrix<double> &WithinEigenvectors() { return m_withinEigenvectors; }
+  const Eigen::MatrixXd &WithinEigenvectors() { return m_withinEigenvectors; }
   const std::vector<double> &WithinEigenvalues() { return m_withinEigenvalues; }
-
 
   //! Returns the mean shape.
   const Eigen::VectorXd &Mean() const { return m_mean; }
-  
-  const vnl_vector<double> &WithinMean() { return m_mean_within; }
-  const vnl_vector<double> &BetweenMean() { return m_mean_between; }
+  const Eigen::VectorXd &WithinMean() { return m_mean_within; }
+  const Eigen::VectorXd &BetweenMean() { return m_mean_between; }
   
   const Eigen::VectorXd &Group1Mean() const { return m_mean1; }
   const Eigen::VectorXd &Group2Mean() const { return m_mean2; }
@@ -180,38 +173,16 @@ private:
   Eigen::MatrixXd m_eigenvectors;
   std::vector<double> m_eigenvalues;
   
-  // For MCA
-  vnl_matrix<double> m_betweenEigenvectors;
-  vnl_matrix<double> m_withinEigenvectors;
+  Eigen::MatrixXd m_betweenEigenvectors;
+  Eigen::MatrixXd m_withinEigenvectors;
   std::vector<double> m_betweenEigenvalues;
   std::vector<double> m_withinEigenvalues;
-  vnl_matrix<double> m_pointsMinusMean_for_between;
-  vnl_matrix<double> m_pointsMinusMean_for_within;
-  vnl_vector<double> m_mean_within;
-  vnl_vector<double> m_mean_between;
-
-  vnl_vector<double> m_mean;
-  vnl_vector<double> m_mean1;
-  vnl_vector<double> m_mean2;
-  vnl_matrix<double> m_pointsMinusMean;
-  vnl_matrix<double> m_shapes;
-  vnl_matrix<double> m_super_matrix;
-  std::vector<vnl_matrix<double>> m_shapes_mca;
-  vnl_matrix<double> m_projectedPMM1;
-  vnl_matrix<double> m_projectedPMM2;
-  vnl_vector<double> m_projectedMean1;
-  vnl_vector<double> m_projectedMean2;
-  
-  vnl_matrix<double> m_betweenEigenvectors;
-  vnl_matrix<double> m_withinEigenvectors;
-  std::vector<double> m_betweenEigenvalues;
-  std::vector<double> m_withinEigenvalues;
-  vnl_matrix<double> m_pointsMinusMean_for_between;
-  vnl_matrix<double> m_pointsMinusMean_for_within;
-  vnl_vector<double> m_mean_within;
-  vnl_vector<double> m_mean_between;
-  vnl_matrix<double> m_super_matrix;
-  std::vector<vnl_matrix<double>> m_shapes_mca;
+  Eigen::MatrixXd m_pointsMinusMean_for_between;
+  Eigen::MatrixXd m_pointsMinusMean_for_within;
+  Eigen::VectorXd m_mean_within;
+  Eigen::VectorXd m_mean_between;
+  Eigen::MatrixXd m_super_matrix;
+  std::vector<Eigen::MatrixXd> m_shapes_mca;
 
   Eigen::VectorXd m_mean;
   Eigen::VectorXd m_mean1;
