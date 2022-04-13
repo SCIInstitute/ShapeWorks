@@ -341,7 +341,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<Eigen::Vect
   // Step 3.Compute Between Covariance matrix
 
   Eigen::MatrixXd z_between_centred;
-  z_between_centred.set_size(m, n);
+  z_between_centred.resize(m, n);
 
   for (unsigned int i = 0; i < n; i++){
     Eigen::MatrixXd p_i = m_super_matrix.col(i);

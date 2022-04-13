@@ -63,11 +63,11 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
   //TODO: make connections for mca
-  connect(this->ui_->mcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
+  connect(ui_->mcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_mca_animate_state_changed()));
-  connect(this->ui_->mcaLevelBetweenButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
-  connect(this->ui_->mcaLevelWithinButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
-  connect(&this->mca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_mca_timer()));
+  connect(ui_->mcaLevelBetweenButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
+  connect(ui_->mcaLevelWithinButton, SIGNAL(clicked()), this, SLOT(on_mca_between_radio_toggled));
+  connect(&mca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_mca_timer()));
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -249,13 +249,13 @@ void AnalysisTool::set_labels(QString which, QString value) {
     ui_->pcaLambdaLabel->setText(value);
   }
   else if (which == QString("mca")) {
-    this->ui_->mcaValueLabel->setText(value);
+    ui_->mcaValueLabel->setText(value);
   }
   else if (which == QString("mcaeigen")) {
-    this->ui_->mcaEigenValueLabel->setText(value);
+    ui_->mcaEigenValueLabel->setText(value);
   }
   else if (which == QString("mcalambda")) {
-    this->ui_->mcaLambdaLabel->setText(value);
+    ui_->mcaLambdaLabel->setText(value);
   }
 }
 
@@ -498,7 +498,7 @@ bool AnalysisTool::compute_stats() {
         std::cerr << "Inconsistency in number of particles size";
       }
       for(int i = 0; i < dps; i++){
-        this->number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
+        number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
         // std::cout << "domain = " << i << " num_part = " << number_of_particles_ar[i] << std::endl;
       }
 
@@ -517,8 +517,8 @@ bool AnalysisTool::compute_stats() {
       return false;
     }
   }
-  this->stats_.ComputeBetweenModesForMca();
-  this->stats_.ComputeWithinModesForMca();
+  stats_.ComputeBetweenModesForMca();
+  stats_.ComputeWithinModesForMca();
     // this->stats_.MultiLevelPrincipalComponentProjections();
   
   
@@ -793,7 +793,7 @@ void AnalysisTool::compute_shape_evaluations() {
   if (evals_ready_) {
     return;
   }
-  auto domain_names_ = this->session_->get_project()->get_domain_names();
+  auto domain_names_ = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names_.size();
   // reset
   eval_compactness_ = Eigen::VectorXd();
@@ -817,8 +817,8 @@ void AnalysisTool::compute_shape_evaluations() {
   if(dps > 1){
     eval_compactness_within_ = Eigen::VectorXd();
     eval_compactness_between_ = Eigen::VectorXd();
-    ui_->compactness_graph_within->setMinimumSize(this->ui_->graph_->minimumSize());
-    ui_->compactness_graph_between->setMinimumSize(this->ui_->graph_->minimumSize());
+    ui_->compactness_graph_within->setMinimumSize(ui_->graph_->minimumSize());
+    ui_->compactness_graph_between->setMinimumSize(ui_->graph_->minimumSize());
     ui_->compactness_progress_widget_within->show();
     ui_->compactness_progress_widget_between->show();
     ui_->compactness_progress_within->setValue(0);
@@ -1026,9 +1026,9 @@ void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lamb
 //---------------------------------------------------------------------------
 void AnalysisTool::mca_labels_changed(QString value, QString eigen, QString lambda)
 {
-  this->setLabels(QString("mca"), value);
-  this->setLabels(QString("mcaeigen"), eigen);
-  this->setLabels(QString("mcalambda"), lambda);
+  set_labels(QString("mca"), value);
+  set_labels(QString("mcaeigen"), eigen);
+  set_labels(QString("mcalambda"), lambda);
 
 }
 
