@@ -1,5 +1,6 @@
 import os
 import glob
+import math
 import subprocess
 import numpy as np
 import shapeworks as sw
@@ -25,7 +26,7 @@ def Run_Pipeline(args):
                             dataset_name + "/meshes/*.ply"))[:3]
     # else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        # sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
 
@@ -48,17 +49,16 @@ def Run_Pipeline(args):
         meshes.append(sw.Mesh(mesh_file))
     # Get distances
     print("Sorting based on surface-to-surface distance...")
-    distances = []
+    distances = np.zeros(len(meshes))
     ref_index = sw.find_reference_mesh_index(meshes)
     ref_mesh = meshes[ref_index]
     for i in range(len(meshes)):
-        distances.append(np.mean(meshes[i].distance(ref_mesh)))
+        distances[i] = np.mean(meshes[i].distance(ref_mesh)[0])
     # Sort
-    sorted_mesh_files = [mesh_file for _, mesh_file in sorted(zip(distances, mesh_files))]
-    # Make batches
-    batch_size = 10
-    if args.tiny_test:
-    	batch_size = 1
+    sorted_indices = np.argsort(distances)
+    sorted_mesh_files = np.array(mesh_files)[sorted_indices]
+    # Make 5 batches
+    batch_size = math.ceil(len(mesh_files)/5)
     batches = [sorted_mesh_files[i:i + batch_size] for i in range(0, len(sorted_mesh_files), batch_size)]
     print("Created " + str(len(batches))+ " batches of size " + str(len(batches[0])))
     
@@ -93,10 +93,10 @@ def Run_Pipeline(args):
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
-        "checkpointing_interval": 500,
+        "checkpointing_interval": 300,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
-        "optimization_iterations": 500,
+        "iterations_per_split": 300,
+        "optimization_iterations": 300,
         "starting_regularization": 10,
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
@@ -108,6 +108,10 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0
     }
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
@@ -124,7 +128,6 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
-
     """
     Step 4: Incrementally optimize 
     Next we incrementally add meshes in optimization using the previous shape model to
@@ -134,9 +137,10 @@ def Run_Pipeline(args):
     shape_model_dir = project_location + 'incremental_supershapes_particles/'
 
     # Update parameters for incremental optimization 
-    parameter_dictionary["use_landmarks"] = 1 # For particle initialization
-    parameter_dictionary["iterations_per_split"] = 100 # Fewer initialization iterations
-    parameter_dictionary["optimization_iterations"] = 100 # Fewer optimization iterations
+    parameter_dictionary["use_landmarks"] = 1 				# For particle initialization
+    parameter_dictionary["iterations_per_split"] = 0 		# No initialization iterations
+    parameter_dictionary["optimization_iterations"] = 100 	# Fewer optimization iterations
+    parameter_dictionary["multiscale"] = 0 					# Single scale
     if args.tiny_test:
         parameter_dictionary["optimization_iterations"] = 20
 
@@ -187,7 +191,6 @@ def Run_Pipeline(args):
         optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
         subprocess.check_call(optimize_cmd)
 
-
     # If tiny test or verify, check results and exit
     sw.utils.check_results(args, spreadsheet_file)
     
@@ -208,3 +211,6 @@ def generate_data(num_samples=50):
     out_dir = "Output/incremental_supershapes/supershapes3D/"
     ss_generator = ShapeCohortGen.SupershapesCohortGenerator(out_dir)
     meshFiles = ss_generator.generate(num_samples, randomize_center=False, randomize_rotation=False, m=-1)
+
+
+# generate_data()
