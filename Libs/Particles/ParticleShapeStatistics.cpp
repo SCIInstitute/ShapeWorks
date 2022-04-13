@@ -220,9 +220,9 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<Eigen::Vect
   // debug
   std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
   unsigned int num_points = (int)(points[0].size() / (3 * dps));
-  this->m_dps = dps;
-  this->m_numPoints = num_points;
-  this->m_N = points.size();
+  m_dps = dps;
+  m_numPoints = num_points;
+  m_N = points.size();
   std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
   std::cout << "points[0].size() = " << points[0].size() << std::endl;
 
@@ -409,80 +409,80 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<Eigen::Vect
 
  std::cout << "Between Covariance Matrix computed " << std::endl;
  std::cout << "MLPCA base part done" << std::endl;
- std::cout << "writing within compactness" << std::endl;
- std::string fn = "/home/sci/nawazish.khan/Desktop/result/within_compactness.txt";
- std::ofstream outfile;
- outfile.open(fn.c_str());
+//  std::cout << "writing within compactness" << std::endl;
+//  std::string fn = "/home/sci/nawazish.khan/Desktop/result/within_compactness.txt";
+//  std::ofstream outfile;
+//  outfile.open(fn.c_str());
 
- Eigen::MatrixXd WithinMatrix = this->m_MatrixWithin;
+//   Eigen::MatrixXd WithinMatrix = m_MatrixWithin;
 
-  const int N = WithinMatrix.cols();
-  const int D = WithinMatrix.rows();
-  const int num_modes = N-1; // the number of modes is one less than the number of samples
+//   const int N = WithinMatrix.cols();
+//   const int D = WithinMatrix.rows();
+//   const int num_modes = N-1; // the number of modes is one less than the number of samples
 
-  if (num_modes < 1) {
-    std::cout << "no modes" << std::endl;
-  }
-  Eigen::MatrixXd Y = WithinMatrix;
+//   if (num_modes < 1) {
+//     std::cout << "no modes" << std::endl;
+//   }
+//   Eigen::MatrixXd Y = WithinMatrix;
 
-  // Compute Within subspace here
+//   // Compute Within subspace here
   
-  const Eigen::VectorXd mu = Y.rowwise().mean();
-  Y.colwise() -= mu;
+//   const Eigen::VectorXd mu = Y.rowwise().mean();
+//   Y.colwise() -= mu;
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
-  const auto S = svd.singularValues().array().pow(2) / (N * D);
+//   Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
+//   const auto S = svd.singularValues().array().pow(2) / (N * D);
 
-  // Compute cumulative sum
-  Eigen::VectorXd cumsum(num_modes);
-  cumsum(0) = S(0);
-  for (int i = 1; i < num_modes; i++) {
-    cumsum(i) = cumsum(i-1) + S(i);
-  }
-  cumsum /= S.sum();
-  outfile << cumsum << "\n";
-  outfile.close();
+//   // Compute cumulative sum
+//   Eigen::VectorXd cumsum(num_modes);
+//   cumsum(0) = S(0);
+//   for (int i = 1; i < num_modes; i++) {
+//     cumsum(i) = cumsum(i-1) + S(i);
+//   }
+//   cumsum /= S.sum();
+//   outfile << cumsum << "\n";
+//   outfile.close();
 
 
- std::cout << "gen ml file opened" << std::endl;
- std::cout << "writing between  part compactness" << std::endl;
-  std::string fn1 = "/home/sci/nawazish.khan/Desktop/result/between_compactness.txt";
- std::ofstream outfile1;
- outfile1.open(fn1.c_str());
+//  std::cout << "gen ml file opened" << std::endl;
+//  std::cout << "writing between  part compactness" << std::endl;
+//   std::string fn1 = "/home/sci/nawazish.khan/Desktop/result/between_compactness.txt";
+//  std::ofstream outfile1;
+//  outfile1.open(fn1.c_str());
 
- Eigen::MatrixXd BetweenMatrix = this->m_MatrixBetween;
+//  Eigen::MatrixXd BetweenMatrix = m_MatrixBetween;
 
-   const int N1 = BetweenMatrix.cols();
-  const int D1 = BetweenMatrix.rows();
-  const int num_modes1 = N1-1; // the number of modes is one less than the number of samples
+//    const int N1 = BetweenMatrix.cols();
+//   const int D1 = BetweenMatrix.rows();
+//   const int num_modes1 = N1-1; // the number of modes is one less than the number of samples
 
-  if (num_modes1 < 1) {
-    std::cout << "no modes" << std::endl;
-  }
-  Eigen::MatrixXd Y1 = BetweenMatrix;
+//   if (num_modes1 < 1) {
+//     std::cout << "no modes" << std::endl;
+//   }
+//   Eigen::MatrixXd Y1 = BetweenMatrix;
 
-  // Compute Within subspace here
+//   // Compute Within subspace here
   
-  const Eigen::VectorXd mu1 = Y1.rowwise().mean();
-  Y1.colwise() -= mu1;
-  std::cout << "before svd done of Y" << std::endl;
+//   const Eigen::VectorXd mu1 = Y1.rowwise().mean();
+//   Y1.colwise() -= mu1;
+//   std::cout << "before svd done of Y" << std::endl;
 
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd1(Y1);
-  std::cout << "svd done of Y" << std::endl;
-  const auto S1 = svd1.singularValues().array().pow(2) / (N1 * D1);
+//   Eigen::JacobiSVD<Eigen::MatrixXd> svd1(Y1);
+//   std::cout << "svd done of Y" << std::endl;
+//   const auto S1 = svd1.singularValues().array().pow(2) / (N1 * D1);
 
-  // Compute cumulative sum
-  Eigen::VectorXd cumsum1(num_modes1);
-  cumsum1(0) = S1(0);
-  for (int i = 1; i < num_modes1; i++) {
+//   // Compute cumulative sum
+//   Eigen::VectorXd cumsum1(num_modes1);
+//   cumsum1(0) = S1(0);
+//   for (int i = 1; i < num_modes1; i++) {
  
-    cumsum1(i) = cumsum1(i-1) + S1(i);
-  }
-  cumsum1 /= S1.sum();
-  outfile1 << cumsum1 << "\n";
-  outfile1.close();
-  std::cout << "done " << std::endl;
+//     cumsum1(i) = cumsum1(i-1) + S1(i);
+//   }
+//   cumsum1 /= S1.sum();
+//   outfile1 << cumsum1 << "\n";
+//   outfile1.close();
+//   std::cout << "done " << std::endl;
 
 }
 
@@ -1170,30 +1170,30 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness_between_subspace(std::f
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  if (m_dps > 1)
-  { 
-    std::cout << "Computing Specificity for Multi-level Modeling" << std::endl;
-    Eigen::VectorXd specificity =  shapeworks::ShapeEvaluation::ComputeFullSpecificityMultiLevel(ps, this->m_num_particles_ar, progress_callback);
-    // std::string fn = "/home/sci/nawazish.khan/Desktop/spec.csv";
-    // this->WriteEvaluationResults(specificity, fn);
-    return specificity;
-  }
-  else
+  // if (m_dps > 1)
+  // { 
+  //   std::cout << "Computing Specificity for Multi-level Modeling" << std::endl;
+  //   Eigen::VectorXd specificity =  shapeworks::ShapeEvaluation::ComputeFullSpecificityMultiLevel(ps, this->m_num_particles_ar, progress_callback);
+  //   // std::string fn = "/home/sci/nawazish.khan/Desktop/spec.csv";
+  //   // this->WriteEvaluationResults(specificity, fn);
+  //   return specificity;
+  // }
+  // else
     return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  if (m_dps > 1)
-  { 
-    std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
-    Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel( ps, this->m_num_particles_ar, progress_callback);
-    // std::string fn = this->m_results_dir + "generalization_multi_level.csv";
-    // this->WriteEvaluationResults(generalization, fn);
-    return generalization;
-  }
-  else 
+  // if (m_dps > 1)
+  // { 
+  //   std::cout << "Computing Generalization for Multi-level Modeling" << std::endl;
+  //   Eigen::VectorXd generalization = shapeworks::ShapeEvaluation::ComputeFullGeneralizationMultiLevel( ps, this->m_num_particles_ar, progress_callback);
+  //   // std::string fn = this->m_results_dir + "generalization_multi_level.csv";
+  //   // this->WriteEvaluationResults(generalization, fn);
+  //   return generalization;
+  // }
+  // else 
     return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 

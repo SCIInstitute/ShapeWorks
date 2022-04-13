@@ -468,6 +468,7 @@ bool AnalysisTool::compute_stats() {
   group2_list_.clear();
   auto domain_names = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names.size();
+  std::cout << "DPS is " << dps << std::endl;
   number_of_particles_ar.resize(dps);
   bool flag_get_num_part = false;
 
@@ -517,13 +518,6 @@ bool AnalysisTool::compute_stats() {
       return false;
     }
   }
-  stats_.ComputeBetweenModesForMca();
-  stats_.ComputeWithinModesForMca();
-    // this->stats_.MultiLevelPrincipalComponentProjections();
-  
-  
-  // this->stats_.PrincipalComponentProjections();
-  // this->stats_.MCADecomposition();
   auto results_dir = preferences_.get_last_directory().toStdString();
   results_dir = results_dir.substr(0, results_dir.find_last_of("/") + 1);
   std::cout << "results dir will be" << results_dir << std::endl;
@@ -532,12 +526,16 @@ bool AnalysisTool::compute_stats() {
   stats_.SetNumberOfParticlesAr(number_of_particles_ar);
   if(dps> 1)
   {
+    std::cout << "importing points for mlpca" << std::endl;
     stats_.ImportPointsAndComputeMlpca(points, dps);
   }
   // this->stats_.ImportPointsForMca(points, dps);
   stats_.ComputeModes();
-  stats_.ComputeBetweenModesForMca();
-  stats_.ComputeWithinModesForMca();
+  if(dps > 1){
+      stats_.ComputeBetweenModesForMca();
+      stats_.ComputeWithinModesForMca();
+  }
+
     // this->stats_.MultiLevelPrincipalComponentProjections();
   
   
