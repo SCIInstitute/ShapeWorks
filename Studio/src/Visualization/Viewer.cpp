@@ -223,7 +223,6 @@ void Viewer::display_vector_field() {
   auto vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
   if (!session_->should_difference_vectors_show() || vecs.size() == 0) {
     // restore things to normal
-    glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
     glyphs_->SetScaleModeToDataScalingOff();
@@ -360,7 +359,6 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
 
   update_difference_lut(minmag, maxmag);
   visualizer_->update_feature_range(minmag, maxmag);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -687,7 +685,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
           visualizer_->update_feature_range(range);
         }
       } else {
-
         try {
           auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
           if (ffc.getDefinition() != poly_data) {
@@ -903,10 +900,14 @@ void Viewer::update_points() {
     }
   }
 
-  if (reverse) {
-    glyphs_->SetSourceConnection(reverse_sphere_->GetOutputPort());
+  if (session_->should_difference_vectors_show()) {
+    /// TODO:  probalby need reverse arrows?
   } else {
-    glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+    if (reverse) {
+      glyphs_->SetSourceConnection(reverse_sphere_->GetOutputPort());
+    } else {
+      glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+    }
   }
   glyph_points_->Modified();
 }

@@ -222,7 +222,7 @@ class Viewer {
 
   QSharedPointer<Session> session_;
 
-  std::string current_image_name_;
+  std::string current_image_name_ = "-none-";
 
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
