@@ -1078,11 +1078,25 @@ QWidget#image_widget {
  </customwidgets>
  <tabstops>
   <tabstop>auto_view_button</tabstop>
+  <tabstop>planes_visible_button_</tabstop>
+  <tabstop>landmarks_visible_button</tabstop>
   <tabstop>glyphs_visible_button</tabstop>
   <tabstop>surface_visible_button</tabstop>
   <tabstop>view_mode_combobox</tabstop>
   <tabstop>center_checkbox</tabstop>
+  <tabstop>alignment_combo</tabstop>
   <tabstop>zoom_slider</tabstop>
+  <tabstop>feature_line</tabstop>
+  <tabstop>features</tabstop>
+  <tabstop>feature_uniform_scale</tabstop>
+  <tabstop>feature_min</tabstop>
+  <tabstop>feature_max</tabstop>
+  <tabstop>feature_auto_scale</tabstop>
+  <tabstop>image_combo_</tabstop>
+  <tabstop>image_axis_</tabstop>
+  <tabstop>image_3d_mode_</tabstop>
+  <tabstop>image_share_window_and_level_</tabstop>
+  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
