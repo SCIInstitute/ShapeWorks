@@ -89,7 +89,7 @@ static bool check_constraint_violations(Optimize &app, double slack) {
   return good;
 };
 
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, sample) {
   setupenv(std::string(TEST_DATA_DIR) + "/sphere");
 
@@ -663,6 +663,6 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_constraint_violations(app, 4.0e-1);
+  bool good = check_constraint_violations(app, 15.0e-1);
   ASSERT_TRUE(good);
 }

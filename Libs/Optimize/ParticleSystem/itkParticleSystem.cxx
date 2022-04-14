@@ -285,7 +285,8 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
           PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
 
-          vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
+          vnl_vector_fixed<double, VDimension> updateVector;
+          updateVector[0] = newpos[0]-lists[j][i][0]; updateVector[1] = newpos[1]-lists[j][i][1]; updateVector[2] = newpos[2]-lists[j][i][2];
           vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], j);
 
           vnl_vector_fixed<double, VDimension> normupdateVector = updateVector / updateVector.magnitude();
