@@ -274,6 +274,7 @@ void Viewer::display_vector_field() {
 
   glyphs_->SetSourceConnection(arrow_source_->GetOutputPort());
   glyphs_->SetScaleModeToScaleByVector();
+  glyphs_->SetScaleFactor(1.0);
 
   // update glyph rendering
   glyph_mapper_->SetLookupTable(surface_lut_);
@@ -781,8 +782,13 @@ void Viewer::update_glyph_properties() {
     glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
   }
 
-  glyphs_->SetScaleFactor(glyph_size_);
-  arrow_glyphs_->SetScaleFactor(glyph_size_);
+  if (session_ && session_->get_show_difference_vectors()) {
+    glyphs_->SetScaleFactor(1.0);
+    arrow_glyphs_->SetScaleFactor(1.0);
+  } else {
+    glyphs_->SetScaleFactor(glyph_size_);
+    arrow_glyphs_->SetScaleFactor(glyph_size_);
+  }
 
   sphere_source_->SetThetaResolution(glyph_quality_);
   sphere_source_->SetPhiResolution(glyph_quality_);
