@@ -32,10 +32,10 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
 {
-  std::cout << "writing original  compactness" << std::endl;
- std::string fn = "/home/sci/nawazish.khan/Desktop/result/pca_compactness.txt";
- std::ofstream outfile;
- outfile.open(fn.c_str());
+//   std::cout << "writing original  compactness" << std::endl;
+//  std::string fn = "/home/sci/nawazish.khan/Desktop/result/pca_compactness.txt";
+//  std::ofstream outfile;
+//  outfile.open(fn.c_str());
   const int N = particleSystem.N();
   const int D = particleSystem.D();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
@@ -60,8 +60,8 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
     cumsum(i) = cumsum(i-1) + S(i);
   }
   cumsum /= S.sum();
-  outfile << cumsum << "\n";
-  outfile.close();
+  // outfile << cumsum << "\n";
+  // outfile.close();
   return cumsum;
 }
 
