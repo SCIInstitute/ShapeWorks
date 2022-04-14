@@ -11,9 +11,6 @@ set +e
 # based on root folder
 cd /
 
-echo "List cache files"
-ssh runner@${CACHE_HOST} ls github
-
 if [[ "$USE_CCACHE" == "ON" ]]; then
     # Restore ccache
     scp runner@${CACHE_HOST}:github/${CCACHE_FILE} /tmp || true
