@@ -359,44 +359,6 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
   }      // if end
 }
 
-void ParticleSystem::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, double epsilon, size_t domain, int threadId)
-{
-  // Loop through all particle positions in the domain and add a new position
-  // at an epsilon distance and random direction. Since we are going to add
-  // positions to the list, we need to first copy the list.
-
-  this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1,1,1);
-
-  std::vector<PointType> list;
-
-  for (auto k = 0; k < GetPositions(domain)->GetSize(); k++) {
-    list.push_back(GetPositions(domain)->Get(k));
-  }
-
-  int k = 0;
-  for (typename std::vector<PointType>::const_iterator it = list.begin(); it != list.end(); it++, k++) {
-    // Add epsilon times random direction to existing point and apply domain
-    // constraints to generate a new particle position.  Add the new position.
-    PointType startingPos = *it;
-
-    vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
-    vnl_vector_fixed<double, VDimension> projected = this->GetDomain(domain)->ProjectVectorToSurfaceTangent(updateVector, startingPos, k);
-
-    projected = projected * epsilon / projected.magnitude();
-
-    PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, k, projected);
-    this->AddPosition(newpos, domain, threadId);
-
-    // Apply opposite update to each original point in the split.
-    auto neg_projected = -projected;
-    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, k, neg_projected);
-    this->SetPosition(newpos, k, domain, threadId);
-    shapeworks::ParticleDomain *particle_domain = this->GetDomain(domain);
-    particle_domain->InvalidateParticlePosition(k);
-
-  }
-}
-
 void ParticleSystem::RegisterAttribute(ParticleAttribute<3> *attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
