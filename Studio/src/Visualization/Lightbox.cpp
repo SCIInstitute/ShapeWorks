@@ -20,16 +20,16 @@ namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Lightbox::Lightbox() {
-  this->renderer_ = vtkSmartPointer<vtkRenderer>::New();
-  this->camera_ = this->renderer_->GetActiveCamera();
+  renderer_ = vtkSmartPointer<vtkRenderer>::New();
+  camera_ = renderer_->GetActiveCamera();
 
-  this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
-  this->slice_style_ = vtkSmartPointer<StudioSliceInteractorStyle>::New();
-  this->orientation_marker_widget_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  slice_style_ = vtkSmartPointer<StudioSliceInteractorStyle>::New();
+  orientation_marker_widget_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
 
-  this->style_->AutoAdjustCameraClippingRangeOn();
-  this->style_->set_lightbox(this);
-  this->slice_style_->set_lightbox(this);
+  style_->AutoAdjustCameraClippingRangeOn();
+  style_->set_lightbox(this);
+  slice_style_->set_lightbox(this);
 
   // prepare the loading spinner
   QPixmap pixmap;
@@ -44,43 +44,43 @@ Lightbox::Lightbox() {
     qimage_to_image_source->Update();
     vtkImageData* image = qimage_to_image_source->GetOutput();
 
-    this->spinner_images_.push_back(image);
+    spinner_images_.push_back(image);
   }
 
-  QObject::connect(&this->loading_timer_, SIGNAL(timeout()), this, SLOT(handle_timer_callback()));
+  QObject::connect(&loading_timer_, SIGNAL(timeout()), this, SLOT(handle_timer_callback()));
 
-  this->loading_timer_.setInterval(50);
+  loading_timer_.setInterval(50);
 }
 
 //-----------------------------------------------------------------------------
 Lightbox::~Lightbox() {}
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_interactor(vtkRenderWindowInteractor* interactor) { this->interactor_ = interactor; }
+void Lightbox::set_interactor(vtkRenderWindowInteractor* interactor) { interactor_ = interactor; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int position) {
-  if (position >= this->viewers_.size()) {
+  if (position >= viewers_.size()) {
     return;
   }
 
-  QSharedPointer<Viewer> viewer = this->viewers_[position];
+  QSharedPointer<Viewer> viewer = viewers_[position];
 
   viewer->display_shape(shape);
 
-  this->check_for_first_draw();
+  check_for_first_draw();
 }
 
 //-----------------------------------------------------------------------------
-std::array<double, 3> Lightbox::initPos() { return this->initPos_; }
+std::array<double, 3> Lightbox::initPos() { return initPos_; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::handle_new_mesh() {
-  for (int i = 0; i < this->viewers_.size(); i++) {
-    this->viewers_[i]->handle_new_mesh();
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->handle_new_mesh();
   }
-  this->redraw();
-  this->check_for_first_draw();
+  redraw();
+  check_for_first_draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -93,71 +93,71 @@ void Lightbox::reset_camera() {
 //-----------------------------------------------------------------------------
 void Lightbox::reset_camera_clipping_range() {
   vtkBoundingBox bbox;
-  for (int i = 0; i < this->viewers_.size(); i++) {
-    bbox.AddBox(this->viewers_[i]->get_renderer()->ComputeVisiblePropBounds());
+  for (int i = 0; i < viewers_.size(); i++) {
+    bbox.AddBox(viewers_[i]->get_renderer()->ComputeVisiblePropBounds());
   }
   double bounds[6];
   bbox.GetBounds(bounds);
-  this->renderer_->ResetCameraClippingRange(bounds);
+  renderer_->ResetCameraClippingRange(bounds);
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::clear_renderers() {
-  for (int i = 0; i < this->viewers_.size(); i++) {
-    this->viewers_[i]->clear_viewer();
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->clear_viewer();
   }
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::display_shapes() {
-  for (int i = 0; i < this->viewers_.size(); i++) {
-    this->viewers_[i]->clear_viewer();
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->clear_viewer();
   }
 
   // skip based on scrollbar
-  int start_object = this->start_row_ * this->tile_layout_width_;
+  int start_object = start_row_ * tile_layout_width_;
 
-  int end_object = std::min<int>(start_object + this->viewers_.size(), this->shapes_.size());
+  int end_object = std::min<int>(start_object + viewers_.size(), shapes_.size());
 
   int position = 0;
 
   // bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
     // std::cerr << "insert shape into viewer\n";
-    this->insert_shape_into_viewer(this->shapes_[i], position);
+    insert_shape_into_viewer(shapes_[i], position);
 
     position++;
   }
 
-  this->update_feature_range();
+  update_feature_range();
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_render_window(vtkRenderWindow* renderWindow) {
-  this->render_window_ = renderWindow;
-  this->render_window_->AddRenderer(this->renderer_);
-  this->render_window_->GetInteractor()->SetInteractorStyle(this->style_);
+  render_window_ = renderWindow;
+  render_window_->AddRenderer(renderer_);
+  render_window_->GetInteractor()->SetInteractorStyle(style_);
 
-  auto interactor = this->renderer_->GetRenderWindow()->GetInteractor();
-  this->orientation_marker_widget_->SetInteractor(interactor);
-  if (this->orientation_marker_widget_->GetEnabled()) {
-    this->orientation_marker_widget_->InteractiveOff();
+  auto interactor = renderer_->GetRenderWindow()->GetInteractor();
+  orientation_marker_widget_->SetInteractor(interactor);
+  if (orientation_marker_widget_->GetEnabled()) {
+    orientation_marker_widget_->InteractiveOff();
   }
 
-  this->setup_renderers();
+  setup_renderers();
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::setup_renderers() {
   clear_renderers();
-  for (int i = 0; i < this->viewers_.size(); i++) {
-    this->render_window_->RemoveRenderer(this->viewers_[i]->get_renderer());
+  for (int i = 0; i < viewers_.size(); i++) {
+    render_window_->RemoveRenderer(viewers_[i]->get_renderer());
   }
 
-  this->viewers_.clear();
+  viewers_.clear();
 
-  int width = this->tile_layout_width_;
-  int height = this->tile_layout_height_;
+  int width = tile_layout_width_;
+  int height = tile_layout_height_;
   int total = width * height;
   float margin = 0.005;
 
@@ -167,36 +167,34 @@ void Lightbox::setup_renderers() {
   float step_x = tile_width + margin;
   float step_y = tile_height + margin;
 
-  this->set_orientation_marker_viewport();
+  set_orientation_marker_viewport();
 
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
       int i = (y * width) + x;
       vtkSmartPointer<vtkRenderer> renderer;
       // create/get a renderer for the viewer
-      if (i >= this->viewers_.size()) {
+      if (i >= viewers_.size()) {
         renderer = vtkSmartPointer<vtkRenderer>::New();
-        this->render_window_->AddRenderer(renderer);
+        render_window_->AddRenderer(renderer);
       } else {
-        renderer = this->viewers_[i]->get_renderer();
+        renderer = viewers_[i]->get_renderer();
       }
 
-      // renderer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(this->style_);
-
-      renderer->SetActiveCamera(this->camera_);
+      renderer->SetActiveCamera(camera_);
 
       // create/ set the viewer
       QSharedPointer<Viewer> viewer;
-      if (i >= this->viewers_.size()) {
+      if (i >= viewers_.size()) {
         viewer = QSharedPointer<Viewer>(new Viewer());
-        viewer->set_visualizer(this->visualizer_);
+        viewer->set_visualizer(visualizer_);
         viewer->set_renderer(renderer);
         viewer->set_session(session_);
-        this->viewers_.push_back(viewer);
+        viewers_.push_back(viewer);
       } else {
-        viewer = this->viewers_[i];
+        viewer = viewers_[i];
       }
-      viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
+      viewer->set_loading_screen(spinner_images_[timer_callback_count_]);
 
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 
@@ -216,12 +214,12 @@ void Lightbox::setup_renderers() {
       renderer->SetBackground(color, color, color);
     }
   }
-  for (size_t i = total; i < this->viewers_.size(); i++) {
-    this->viewers_[i]->get_renderer()->DrawOff();
+  for (size_t i = total; i < viewers_.size(); i++) {
+    viewers_[i]->get_renderer()->DrawOff();
   }
 
-  if (this->render_window_->IsDrawable()) {
-    this->render_window_->Render();
+  if (render_window_->IsDrawable()) {
+    render_window_->Render();
   }
 }
 
@@ -238,36 +236,36 @@ void Lightbox::set_tile_layout(int width, int height) {
 }
 
 //-----------------------------------------------------------------------------
-int Lightbox::get_num_rows() { return std::ceil((float)this->shapes_.size() / (float)this->tile_layout_width_); }
+int Lightbox::get_num_rows() { return std::ceil((float)shapes_.size() / (float)tile_layout_width_); }
 
 //-----------------------------------------------------------------------------
-int Lightbox::get_num_rows_visible() { return this->tile_layout_height_; }
+int Lightbox::get_num_rows_visible() { return tile_layout_height_; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_start_row(int row) {
-  this->start_row_ = row;
-  this->display_shapes();
-  this->render_window_->Render();
+  start_row_ = row;
+  display_shapes();
+  render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_shapes(QVector<QSharedPointer<Shape>> shapes) {
-  this->shapes_ = shapes;
-  this->display_shapes();
+  shapes_ = shapes;
+  display_shapes();
 }
 
 //-----------------------------------------------------------------------------
-QVector<ShapeHandle> Lightbox::get_shapes() { return this->shapes_; }
+QVector<ShapeHandle> Lightbox::get_shapes() { return shapes_; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::redraw() {
-  if (this->render_window_) {
-    this->render_window_->Render();
+  if (render_window_) {
+    render_window_->Render();
   }
 }
 
 //-----------------------------------------------------------------------------
-ViewerList Lightbox::get_viewers() { return this->viewers_; }
+ViewerList Lightbox::get_viewers() { return viewers_; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
@@ -282,7 +280,7 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
     }
   } else {
     int id = -1;
-    foreach (ViewerHandle viewer, this->viewers_) {
+    foreach (ViewerHandle viewer, viewers_) {
       int vid = viewer->handle_pick(click_pos);
       if (vid != -1) {
         id = vid;
@@ -290,9 +288,9 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
     }
 
     if (one) {
-      this->visualizer_->set_selected_point_one(id);
+      visualizer_->set_selected_point_one(id);
     } else {
-      this->visualizer_->set_selected_point_two(id);
+      visualizer_->set_selected_point_two(id);
     }
   }
 }
@@ -309,49 +307,47 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  foreach (ViewerHandle viewer, this->viewers_) { viewer->set_lut(lut); }
+  foreach (ViewerHandle viewer, viewers_) { viewer->set_lut(lut); }
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_session(QSharedPointer<Session> session) {
   session_ = session;
-  foreach (ViewerHandle viewer, this->viewers_) { viewer->set_session(session); }
+  foreach (ViewerHandle viewer, viewers_) { viewer->set_session(session); }
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_visualizer(Visualizer* visualizer) { this->visualizer_ = visualizer; }
+void Lightbox::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback() {
-  this->timer_callback_count_ = (this->timer_callback_count_ + 1) % 19;
+  timer_callback_count_ = (timer_callback_count_ + 1) % 19;
 
   // std::cerr << "timer!\n";
-  foreach (ViewerHandle viewer, this->get_viewers()) {
-    viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
-  }
-  // this->renderer_->ResetCameraClippingRange();
-  this->renderer_->GetRenderWindow()->Render();
+  foreach (ViewerHandle viewer, get_viewers()) { viewer->set_loading_screen(spinner_images_[timer_callback_count_]); }
+  // renderer_->ResetCameraClippingRange();
+  renderer_->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::check_for_first_draw() {
-  if (this->first_draw_) {
+  if (first_draw_) {
     int ready_viewer = -1;
-    for (int i = 0; i < this->viewers_.size(); i++) {
-      if (this->viewers_[i]->is_viewer_ready()) {
+    for (int i = 0; i < viewers_.size(); i++) {
+      if (viewers_[i]->is_viewer_ready()) {
         ready_viewer = i;
       }
     }
     if (ready_viewer >= 0) {
       // std::cerr << "First draw!\n";
-      this->first_draw_ = false;
-      this->redraw();
-      this->viewers_[ready_viewer]->get_renderer()->Render();
-      this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
-      this->viewers_[ready_viewer]->get_renderer()->Render();
-      this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
-      auto pos = this->viewers_[ready_viewer]->get_renderer()->GetActiveCamera()->GetPosition();
-      this->initPos_ = {{pos[0], pos[1], pos[2]}};
+      first_draw_ = false;
+      redraw();
+      viewers_[ready_viewer]->get_renderer()->Render();
+      viewers_[ready_viewer]->get_renderer()->ResetCamera();
+      viewers_[ready_viewer]->get_renderer()->Render();
+      viewers_[ready_viewer]->get_renderer()->ResetCamera();
+      auto pos = viewers_[ready_viewer]->get_renderer()->GetActiveCamera()->GetPosition();
+      initPos_ = {{pos[0], pos[1], pos[2]}};
     }
   }
 }
@@ -359,17 +355,17 @@ void Lightbox::check_for_first_draw() {
 //-----------------------------------------------------------------------------
 void Lightbox::set_orientation_marker(Preferences::OrientationMarkerType type,
                                       Preferences::OrientationMarkerCorner corner) {
-  if (!this->render_window_) {
+  if (!render_window_) {
     return;
   }
-  if (type == this->current_orientation_marker_type_ && corner == this->current_orientation_marker_corner_) {
+  if (type == current_orientation_marker_type_ && corner == current_orientation_marker_corner_) {
     return;
   }
 
-  this->current_orientation_marker_type_ = type;
-  this->current_orientation_marker_corner_ = corner;
+  current_orientation_marker_type_ = type;
+  current_orientation_marker_corner_ = corner;
 
-  this->orientation_marker_widget_->EnabledOff();
+  orientation_marker_widget_->EnabledOff();
 
   if (type == Preferences::OrientationMarkerType::none) {
     return;
@@ -401,7 +397,7 @@ void Lightbox::set_orientation_marker(Preferences::OrientationMarkerType type,
     prop->SetColor(1, 0, 0);
     prop = cube_actor->GetZMinusFaceProperty();
     prop->SetColor(1, 0, 0);
-    this->orientation_marker_widget_->SetOrientationMarker(cube_actor);
+    orientation_marker_widget_->SetOrientationMarker(cube_actor);
   } else if (type == Preferences::OrientationMarkerType::triad) {
     vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
     axes->SetShaftTypeToCylinder();
@@ -409,22 +405,22 @@ void Lightbox::set_orientation_marker(Preferences::OrientationMarkerType type,
     axes->GetZAxisTipProperty()->SetColor(0, 1, 0);
     axes->GetYAxisShaftProperty()->SetColor(1, 1, 0);
     axes->GetYAxisTipProperty()->SetColor(1, 1, 0);
-    this->orientation_marker_widget_->SetOrientationMarker(axes);
+    orientation_marker_widget_->SetOrientationMarker(axes);
   }
 
-  this->set_orientation_marker_viewport();
+  set_orientation_marker_viewport();
 
-  this->orientation_marker_widget_->EnabledOn();
+  orientation_marker_widget_->EnabledOn();
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_orientation_marker_viewport() {
-  if (!this->orientation_marker_widget_) {
+  if (!orientation_marker_widget_) {
     return;
   }
 
-  int width = this->tile_layout_width_;
-  int height = this->tile_layout_height_;
+  int width = tile_layout_width_;
+  int height = tile_layout_height_;
   float margin = 0.005;
 
   float tile_height = (1.0f - (margin * (height + 1))) / height;
@@ -435,17 +431,17 @@ void Lightbox::set_orientation_marker_viewport() {
   double view_height = tile_height * 0.2;
   double view_width = tile_width * 0.2;
 
-  if (this->current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::lower_right) {
+  if (current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::lower_right) {
     cube_viewport[0] = 1.0 - view_width;
     cube_viewport[1] = 0;
     cube_viewport[2] = 1.0;
     cube_viewport[3] = view_height;
-  } else if (this->current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::upper_left) {
+  } else if (current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::upper_left) {
     cube_viewport[0] = 0;
     cube_viewport[1] = 1.0 - view_height;
     cube_viewport[2] = view_width;
     cube_viewport[3] = 1.0;
-  } else if (this->current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::lower_left) {
+  } else if (current_orientation_marker_corner_ == Preferences::OrientationMarkerCorner::lower_left) {
     cube_viewport[0] = 0;
     cube_viewport[1] = 0;
     cube_viewport[2] = view_width;
@@ -456,17 +452,15 @@ void Lightbox::set_orientation_marker_viewport() {
     cube_viewport[2] = 1.0;
     cube_viewport[3] = 1.0;
   }
-  this->orientation_marker_widget_->SetCurrentRenderer(this->renderer_);
-  this->orientation_marker_widget_->SetViewport(cube_viewport);
+  orientation_marker_widget_->SetCurrentRenderer(renderer_);
+  orientation_marker_widget_->SetViewport(cube_viewport);
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::update_feature_range() {
-  if (this->visualizer_->get_feature_map() != "" && this->visualizer_->get_uniform_feature_range()) {
-    for (int i = 0; i < this->viewers_.size(); i++) {
-      //if (!session_->get_show_difference_vectors()) {
-        this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
-      //}
+  if (visualizer_->get_feature_map() != "" && visualizer_->get_uniform_feature_range()) {
+    for (int i = 0; i < viewers_.size(); i++) {
+      viewers_[i]->update_feature_range(visualizer_->get_feature_range());
     }
   }
 }
@@ -477,7 +471,7 @@ void Lightbox::update_interactor_style() {
     return;
   }
 
-  auto current_style = this->render_window_->GetInteractor()->GetInteractorStyle();
+  auto current_style = render_window_->GetInteractor()->GetInteractorStyle();
   vtkInteractorObserver* new_style = nullptr;
 
   if (session_->get_image_name() == "-none-" || session_->get_image_3d_mode()) {

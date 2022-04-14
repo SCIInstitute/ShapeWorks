@@ -221,7 +221,7 @@ void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
   auto vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
-  if (!session_->get_show_difference_vectors() || vecs.size() == 0) {
+  if (!session_->should_difference_vectors_show() || vecs.size() == 0) {
     // restore things to normal
     glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     glyphs_->ScalingOn();
@@ -635,8 +635,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
       auto feature_map = get_displayed_feature_map();
 
-      std::vector<Shape::Point> vecs = shape_->get_vectors();
-      if (session_->get_show_difference_vectors()) {
+      if (session_->should_difference_vectors_show()) {
         feature_map = "";
       }
 
@@ -688,9 +687,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
           visualizer_->update_feature_range(range);
         }
       } else {
-        if (mesh->has_ffc_paint()) {
-        }
-        ////mapper->ScalarVisibilityOff();
 
         try {
           auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
@@ -790,7 +786,7 @@ void Viewer::update_glyph_properties() {
     glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
   }
 
-  if (session_ && session_->get_show_difference_vectors()) {
+  if (session_ && session_->should_difference_vectors_show()) {
     glyphs_->SetScaleFactor(1.0);
     arrow_glyphs_->SetScaleFactor(1.0);
   } else {
@@ -840,7 +836,7 @@ void Viewer::update_points() {
   vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
   Eigen::VectorXf scalar_values;
-  if (showing_feature_map() && !session_->get_show_difference_vectors()) {
+  if (showing_feature_map() && !session_->should_difference_vectors_show()) {
     auto feature_map = get_displayed_feature_map();
     shape_->load_feature(visualizer_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);

@@ -1170,7 +1170,14 @@ void Session::set_show_good_bad_particles(bool enabled) {
 bool Session::get_show_difference_vectors() { return show_difference_vectors_; }
 
 //---------------------------------------------------------------------------
-void Session::set_show_difference_vectors(bool enabled) { show_difference_vectors_ = enabled; }
+void Session::set_show_difference_vectors(bool enabled) {
+  std::cerr << "show_difference_vector : " << enabled << "\n";
+  show_difference_vectors_ = enabled; }
+
+//---------------------------------------------------------------------------
+bool Session::should_difference_vectors_show() {
+  return get_show_difference_vectors() && (get_tool_state() == Session::ANALYSIS_C);
+}
 
 //---------------------------------------------------------------------------
 std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_bad_particles", {}); }

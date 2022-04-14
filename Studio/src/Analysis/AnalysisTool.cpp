@@ -791,16 +791,10 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
 ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
-  session_->set_show_difference_vectors(get_group_difference_mode());
-  if (get_group_difference_mode()) {
-    session_->set_show_difference_vectors(true);
-    shape->set_vectors(get_group_difference_vectors());
-  }
   if (ui_->group_p_values_button->isChecked() && group_pvalue_job_ &&
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
     shape->set_override_feature("p_values");
-    shape->set_vectors({});
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1006,7 +1000,6 @@ void AnalysisTool::update_difference_particles() {
   }
 
   target.set_combined_global_particles(all_particles);
-
 
   session_->set_show_difference_vectors(get_group_difference_mode() || ui_->show_difference_to_mean->isChecked());
 

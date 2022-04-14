@@ -401,12 +401,6 @@ void Shape::set_group_id(int id) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<Shape::Point> Shape::get_vectors() { return this->vectors_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Shape::Point> vectors) { this->vectors_ = vectors; }
-
-//---------------------------------------------------------------------------
 void Shape::set_transform(vtkSmartPointer<vtkTransform> transform) { this->transform_ = transform; }
 
 //---------------------------------------------------------------------------

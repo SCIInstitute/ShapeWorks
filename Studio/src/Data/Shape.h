@@ -127,9 +127,6 @@ class Shape {
   int get_group_id();
   void set_group_id(int id);
 
-  std::vector<Point> get_vectors();
-  void set_vectors(std::vector<Point> vectors);
-
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
   bool has_alignment();

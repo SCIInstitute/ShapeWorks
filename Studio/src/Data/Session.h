@@ -191,6 +191,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool get_show_difference_vectors();
   void set_show_difference_vectors(bool enabled);
+  bool should_difference_vectors_show();
 
   std::vector<bool> get_good_bad_particles();
   void set_good_bad_particles(const std::vector<bool>& good_bad);
