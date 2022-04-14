@@ -87,16 +87,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
-    // Adding cutting planes to constraint object
-    if (m_CuttingPlanes.size() > i) {
-      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
-        domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
-        if (m_verbosity >= 1)
-          std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
-                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
-                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
-      }
-    }
 
     // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
@@ -108,8 +98,18 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
     }
 
-
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
+        // Adding cutting planes to constraint object
+        if (m_CuttingPlanes.size() > i) {
+          for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
+            domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+            if (m_verbosity >= 1)
+              std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
+                        << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
+                        << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
+          }
+        }
+
       auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
 
@@ -166,6 +166,17 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
             //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
             if (m_FFCs.size() > i) {
                initialize_ffcs(i);
+            }
+
+            // Adding cutting planes to constraint object
+            if (m_CuttingPlanes.size() > i) {
+              for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
+                domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+                if (m_verbosity >= 1)
+                  std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
+                            << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
+                            << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
+              }
             }
         }
     }
