@@ -404,13 +404,16 @@ double* Visualizer::get_feature_raw_range() { return this->feature_range_; }
 bool Visualizer::get_feature_range_valid() { return this->feature_range_valid_; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::update_feature_range(double* range) {
+void Visualizer::update_feature_range(double* range) { update_feature_range(range[0], range[1]); }
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_feature_range(double min, double max) {
   if (!this->feature_range_valid_) {
-    this->feature_range_[0] = range[0];
-    this->feature_range_[1] = range[1];
+    this->feature_range_[0] = min;
+    this->feature_range_[1] = max;
   }
-  this->feature_range_[0] = std::min(this->feature_range_[0], range[0]);
-  this->feature_range_[1] = std::max(this->feature_range_[1], range[1]);
+  this->feature_range_[0] = std::min(this->feature_range_[0], min);
+  this->feature_range_[1] = std::max(this->feature_range_[1], max);
   this->feature_range_valid_ = true;
   this->lightbox_->update_feature_range();
 }

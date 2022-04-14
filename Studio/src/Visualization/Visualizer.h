@@ -117,6 +117,9 @@ class Visualizer : public QObject {
   //! Update the feature range with a given range
   void update_feature_range(double* range);
 
+  //! Update the feature range with a given range
+  void update_feature_range(double min, double max);
+
   //! Request the transform for a given shape and domain
   vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
 

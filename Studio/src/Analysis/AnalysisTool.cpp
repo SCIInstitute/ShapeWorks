@@ -883,6 +883,9 @@ void AnalysisTool::set_feature_map(const std::string& feature_map) { feature_map
 
 //---------------------------------------------------------------------------
 std::string AnalysisTool::get_display_feature_map() {
+  if (session_->get_show_difference_vectors()) {
+    return "surface_difference";
+  }
   if (ui_->group_p_values_button->isChecked() && group_pvalue_job_ &&
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     return "p_values";

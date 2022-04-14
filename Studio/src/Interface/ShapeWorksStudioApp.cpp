@@ -935,7 +935,8 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     auto feature_maps = session_->get_project()->get_feature_names();
-    ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "");
+    ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "" ||
+                                    session_->get_tool_state() == Session::ANALYSIS_C);
 
     visualizer_->set_feature_map(feature_map);
     visualizer_->set_uniform_feature_range(get_feature_uniform_scale());

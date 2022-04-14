@@ -352,7 +352,15 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
   }
+
+  if (!session_->get_feature_auto_scale()) {
+    minmag = session_->get_feature_range_min();
+    maxmag = session_->get_feature_range_max();
+  }
+
   update_difference_lut(minmag, maxmag);
+  visualizer_->update_feature_range(minmag, maxmag);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -832,7 +840,7 @@ void Viewer::update_points() {
   vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
   Eigen::VectorXf scalar_values;
-  if (showing_feature_map()) {
+  if (showing_feature_map() && !session_->get_show_difference_vectors()) {
     auto feature_map = get_displayed_feature_map();
     shape_->load_feature(visualizer_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);
@@ -1064,13 +1072,6 @@ void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen) {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_difference_lut(float r0, float r1) {
-  float maxrange = 0;
-  if (fabs(r0) > fabs(r1)) {
-    maxrange = fabs(r0);
-  } else {
-    maxrange = fabs(r1);
-  }
-
   double rd = r1 - r0;
 
   double range[2];
