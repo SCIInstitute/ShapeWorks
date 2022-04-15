@@ -1583,6 +1583,11 @@ void ShapeWorksStudioApp::action_export_pca_montage_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_screenshot_triggered()
+{
+
+}
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close the preferences window in case it is open
   preferences_window_->close();
@@ -2030,6 +2035,7 @@ void ShapeWorksStudioApp::toggle_log_window() { log_window_.setVisible(!log_wind
 
 //---------------------------------------------------------------------------
 QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker() { return py_worker_; }
+
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

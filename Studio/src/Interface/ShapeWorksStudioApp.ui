@@ -632,6 +632,7 @@ QWidget#image_widget {
      <addaction name="action_export_pca_scores"/>
      <addaction name="actionExport_PCA_Mode_Points"/>
      <addaction name="action_export_pca_montage"/>
+     <addaction name="action_export_screenshot"/>
     </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
@@ -1071,6 +1072,11 @@ QWidget#image_widget {
   <action name="action_export_pca_montage">
    <property name="text">
     <string>Export PCA Montage...</string>
+   </property>
+  </action>
+  <action name="action_export_screenshot">
+   <property name="text">
+    <string>Export Screenshot...</string>
    </property>
   </action>
  </widget>
