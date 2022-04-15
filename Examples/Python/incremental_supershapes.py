@@ -1,6 +1,7 @@
 import os
 import glob
 import math
+import shutil
 import subprocess
 import numpy as np
 import shapeworks as sw
@@ -58,7 +59,7 @@ def Run_Pipeline(args):
     sorted_indices = np.argsort(distances)
     sorted_mesh_files = np.array(mesh_files)[sorted_indices]
     # Make 5 batches
-    batch_size = math.ceil(len(mesh_files)/5)
+    batch_size = math.ceil(len(mesh_files))
     batches = [sorted_mesh_files[i:i + batch_size] for i in range(0, len(sorted_mesh_files), batch_size)]
     print("Created " + str(len(batches))+ " batches of size " + str(len(batches[0])))
     
@@ -73,6 +74,10 @@ def Run_Pipeline(args):
     project_location = output_directory + "shape_models/"
     if not os.path.exists(project_location):
         os.makedirs(project_location)
+    # Remove particle dir if it already exists
+    shape_model_dir = project_location + 'incremental_supershapes_particles/'
+    if os.path.exists(shape_model_dir):
+    	shutil.rmtree(shape_model_dir)
     # Set subjects
     subjects = []
     number_domains = 1
@@ -134,7 +139,6 @@ def Run_Pipeline(args):
     initialize particles. The mean particles are used as initalization for new shapes.
     """
     print("\nStep 4: Incremental optimization")
-    shape_model_dir = project_location + 'incremental_supershapes_particles/'
 
     # Update parameters for incremental optimization 
     parameter_dictionary["use_landmarks"] = 1 				# For particle initialization
