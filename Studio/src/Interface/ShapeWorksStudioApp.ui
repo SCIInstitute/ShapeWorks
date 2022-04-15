@@ -631,6 +631,7 @@ QWidget#image_widget {
      <addaction name="actionExport_Eigenvalues"/>
      <addaction name="action_export_pca_scores"/>
      <addaction name="actionExport_PCA_Mode_Points"/>
+     <addaction name="action_export_pca_montage"/>
     </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
@@ -1065,6 +1066,11 @@ QWidget#image_widget {
    </property>
    <property name="text">
     <string>DeepSSM</string>
+   </property>
+  </action>
+  <action name="action_export_pca_montage">
+   <property name="text">
+    <string>Export PCA Montage...</string>
    </property>
   </action>
  </widget>

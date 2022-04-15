@@ -226,6 +226,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(ui_->actionKeyboard_Shortcuts, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
 
+  connect(ui_->action_export_pca_montage, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
+
+
   update_feature_map_scale();
   handle_message("ShapeWorks Studio Initialized");
 }
@@ -1571,6 +1574,12 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   stats.PrincipalComponentProjections();
 
   stats.WriteCSVFile2(filename.toStdString());
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_pca_montage_triggered()
+{
+
 }
 
 //---------------------------------------------------------------------------

@@ -81,6 +81,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
+  void action_export_pca_montage_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_zoom_slider_valueChanged();
