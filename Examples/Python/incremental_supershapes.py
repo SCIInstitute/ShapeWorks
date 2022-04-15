@@ -113,6 +113,7 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0
     }
+
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
