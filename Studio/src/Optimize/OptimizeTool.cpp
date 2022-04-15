@@ -40,6 +40,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   ui_->procrustes->setToolTip("Use procrustes registration during optimization");
   ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
   ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
+  ui_->procrustes_rotation_translation->setToolTip("Use procrustes rotation and translation");
   ui_->multiscale->setToolTip("Use multiscale optimization mode");
   ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
   ui_->use_landmarks->setToolTip("Use landmarks as initial particles");
@@ -243,6 +244,7 @@ void OptimizeTool::load_params() {
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
+  ui_->procrustes_rotation_translation->setCheckable(params.get_use_procrustes_rotation_translation());
   ui_->procrustes_interval->setText(QString::number(params.get_procrustes_interval()));
 
   ui_->multiscale->setChecked(params.get_use_multiscale());
@@ -284,6 +286,7 @@ void OptimizeTool::store_params() {
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
   params.set_use_procrustes_scaling(ui_->procrustes_scaling->isChecked());
+  params.set_use_procrustes_rotation_translation(ui_->procrustes_rotation_translation->isChecked());
   params.set_procrustes_interval(ui_->procrustes_interval->text().toDouble());
 
   params.set_use_multiscale(ui_->multiscale->isChecked());
@@ -323,6 +326,7 @@ void OptimizeTool::shutdown_threads() {
 void OptimizeTool::update_ui_elements() {
   ui_->normals_strength->setEnabled(ui_->use_normals->isChecked());
   ui_->procrustes_scaling->setEnabled(ui_->procrustes->isChecked());
+  ui_->procrustes_rotation_translation->setEnabled(ui_->procrustes->isChecked());
   ui_->procrustes_interval->setEnabled(ui_->procrustes->isChecked());
   ui_->multiscale_particles->setEnabled(ui_->multiscale->isChecked());
 }
@@ -420,7 +424,8 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->use_normals, ui_->normals_strength);
   QWidget::setTabOrder(ui_->normals_strength, ui_->procrustes);
   QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_scaling);
-  QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_interval);
+  QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);
+  QWidget::setTabOrder(ui_->procrustes_rotation_translation, ui_->procrustes_interval);
   QWidget::setTabOrder(ui_->procrustes_interval, ui_->multiscale);
   QWidget::setTabOrder(ui_->multiscale, ui_->multiscale_particles);
   QWidget::setTabOrder(ui_->multiscale_particles, ui_->use_landmarks);

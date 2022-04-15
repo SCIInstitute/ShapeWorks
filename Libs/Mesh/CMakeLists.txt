@@ -67,13 +67,6 @@ install(TARGETS Mesh
 
 
 
-ADD_EXECUTABLE(shared_boundary_extractor shared_boundary_extractor.cpp)
-TARGET_LINK_LIBRARIES(shared_boundary_extractor ${VTK_LIBRARIES} igl::core)
-INSTALL(TARGETS shared_boundary_extractor RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(boundary_loop_extractor boundary_loop_extractor.cpp)
-TARGET_LINK_LIBRARIES(boundary_loop_extractor ${VTK_LIBRARIES} igl::core)
-INSTALL(TARGETS boundary_loop_extractor RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)

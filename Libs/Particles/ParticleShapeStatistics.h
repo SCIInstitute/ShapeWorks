@@ -16,6 +16,8 @@
 
 namespace shapeworks {
 
+class Project;
+
 /**
   * \class ParticleShapeStatistics
   * This class computes various statistics for a set of correspondence positions
@@ -27,8 +29,9 @@ public:
 
   constexpr static int VDimension = 3;
 
-  ParticleShapeStatistics() {}
-  ~ParticleShapeStatistics() {}
+  ParticleShapeStatistics() {};
+  ParticleShapeStatistics(std::shared_ptr<Project> project);
+  ~ParticleShapeStatistics() {};
 
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 

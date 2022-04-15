@@ -16,8 +16,10 @@ import subprocess
 
 def Run_Pipeline(args):
     """
-    Download supershapes data. Refer to `generate_supershapes` in this file to see the generation
-    process
+    Step 1: EXTRACT DATA
+
+    We define dataset_name which determines which dataset to download from 
+    the portal and the directory to save output from the use case in. 
     """
     print("\nStep 1. Extract Data\n")
     dataset_name = "peanut"
@@ -48,7 +50,7 @@ def Run_Pipeline(args):
     The required grooming steps are: 
     1. Remesh 
     2. Extract Shared Boundary Surface
-    3. Smooth? 
+    3. Smooth
     4. Extract Boundary Loop contours
     """
 

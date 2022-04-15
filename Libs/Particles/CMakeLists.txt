@@ -33,6 +33,7 @@ target_link_libraries(Particles PUBLIC
   Mesh
   tinyxml
   Eigen3::Eigen
+  Project
   )
 
 # set

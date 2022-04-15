@@ -41,13 +41,24 @@ git reset --hard HEAD
 git remote rm origin
 git remote add origin "${remote_repo}"
 
-# remove local gh-pages branch, if any
-git branch -D gh-pages
 # get remote gh-pages branch
 git checkout --track origin/gh-pages
 git pull --rebase
+
+# build docs from master
 git checkout master
+
+# clean out old api docs as mkdocs will just find whatever is there.
+rm -rf docs/api
+mkdir docs/api
+
+# update command line docs and generate markdown using doxygen
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
-cd "${GITHUB_WORKSPACE}" && mike deploy --title "6.3 (dev)" 6.3 dev
-mike set-default 6.2
+
+# use mike to mkdocs w/ version
+mike deploy --config-file ./mkdocs.yml --title "6.3.0b (dev)" 6.3 dev --branch gh-pages --update-aliases
+mike set-default dev
+
+# update docs on github
+git push origin gh-pages

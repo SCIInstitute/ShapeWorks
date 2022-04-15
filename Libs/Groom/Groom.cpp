@@ -572,7 +572,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     }
   }
 
-  auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
+  auto output = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input) + suffix;
 
   return output;
 }

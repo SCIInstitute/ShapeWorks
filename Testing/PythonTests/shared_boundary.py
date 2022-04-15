@@ -28,4 +28,4 @@ def boundaryLoopExtractor():
 
 	return ground_truth == loop
 
-success &= utils.test(sharedBoundaryExtractor)
+success &= utils.test(boundaryLoopExtractor)

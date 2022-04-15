@@ -102,7 +102,7 @@ public:
   std::vector<std::string> get_group_values(const std::string& group_name) const;
 
   //! Retrieve parameters based on key
-  Parameters get_parameters(const std::string& name, const std::string& domain_name = "");
+  Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
   //! Store parameters based on key
   void

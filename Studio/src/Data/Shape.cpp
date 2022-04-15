@@ -212,13 +212,13 @@ bool Shape::store_landmarks() {
   auto filenames = subject_->get_landmarks_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
     std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
   }
   for (int i = 0; i < filenames.size(); i++) {
     if (filenames[i] == "") {
       std::string filename = subject_->get_original_filenames()[i];
-      filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+      filenames[i] = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     }
   }
 
@@ -268,7 +268,7 @@ bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
     std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
     filenames.push_back(filename);
   }
 
@@ -477,33 +477,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
-  std::ifstream in(filename.toStdString().c_str());
-  if (!in.good()) {
-    return false;
-  }
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  int num_points = 0;
-  while (in.good()) {
-    double x, y, z;
-    in >> x >> y >> z;
-    if (!in.good()) {
-      break;
-    }
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  in.close();
-  points.setZero();
-  points.resize(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    points[idx++] = pos[0];
-    points[idx++] = pos[1];
-    points[idx++] = pos[2];
-  }
-  return true;
+  return ParticleSystem::ReadParticleFile(filename.toStdString(), points);
 }
 
 //---------------------------------------------------------------------------
