@@ -26,7 +26,7 @@ def Run_Pipeline(args):
                             dataset_name + "/meshes/*.ply"))[:3]
     # else download the entire dataset
     else:
-        # sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
 
