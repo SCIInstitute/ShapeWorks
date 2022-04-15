@@ -180,17 +180,19 @@ SET(STUDIO_UTILS_SRCS
   )
 
 SET(STUDIO_INTERFACE_SRCS
-  Interface/LogWindow.cpp
+  Interface/ExportImageDialog.cpp
   Interface/KeyboardShortcuts.cpp
+  Interface/LogWindow.cpp
   Interface/ShapeWorksStudioApp.cpp
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
-  Interface/WheelEventForwarder.cpp
   Interface/Style.cpp
+  Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
-  Interface/LogWindow.h
+  Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
+  Interface/LogWindow.h
   Interface/ShapeWorksStudioApp.h
   Interface/SplashScreen.h
   Interface/StatusBarWidget.h
