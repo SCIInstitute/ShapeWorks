@@ -86,6 +86,14 @@ class Preferences : public QObject {
   QString get_optimize_file_template();
   void set_optimize_file_template(QString optimize_file_template);
 
+  QSize get_export_override_size();
+  void set_export_override_size(QSize size);
+
+  bool get_export_override_size_enabled();
+  void set_export_override_size_enabled(bool enabled);
+
+
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

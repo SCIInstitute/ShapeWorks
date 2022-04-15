@@ -29,6 +29,7 @@
 #include <Data/StudioLog.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
+#include <Interface/ExportImageDialog.h>
 #include <Interface/KeyboardShortcuts.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/SplashScreen.h>
@@ -226,8 +227,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
   connect(ui_->actionKeyboard_Shortcuts, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
 
-  connect(ui_->action_export_pca_montage, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
-
+  connect(ui_->action_export_pca_montage, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_pca_montage_triggered);
+  connect(ui_->action_export_screenshot, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_screenshot_triggered);
 
   update_feature_map_scale();
   handle_message("ShapeWorks Studio Initialized");
@@ -1577,15 +1580,14 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::action_export_pca_montage_triggered()
-{
-
-}
+void ShapeWorksStudioApp::action_export_pca_montage_triggered() {}
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::action_export_screenshot_triggered()
-{
-
+void ShapeWorksStudioApp::action_export_screenshot_triggered() {
+  ExportImageDialog dialog(this, preferences_);
+  if (dialog.exec() != QDialog::Accepted) {
+    return;
+  }
 }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
@@ -2035,7 +2037,6 @@ void ShapeWorksStudioApp::toggle_log_window() { log_window_.setVisible(!log_wind
 
 //---------------------------------------------------------------------------
 QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker() { return py_worker_; }
-
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

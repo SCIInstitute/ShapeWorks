@@ -201,6 +201,24 @@ void Preferences::set_optimize_file_template(QString optimize_file_template) {
 }
 
 //-----------------------------------------------------------------------------
+QSize Preferences::get_export_override_size() {
+  return settings_.value("Export/override_size", QSize(1024, 1204)).toSize();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_override_size(QSize size) { settings_.setValue("Export/override_size", size); }
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_export_override_size_enabled() {
+  return settings_.value("Export/override_size_enabled", false).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_override_size_enabled(bool enabled) {
+  settings_.setValue("Export/override_size_enabled", enabled);
+}
+
+//-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }
 
 //-----------------------------------------------------------------------------

@@ -18,19 +18,21 @@ class ExportImageDialog : public QDialog {
 
  public:
   //! constructor
-  ExportImageDialog(QWidget* parent, Preferences& preferences);
+  ExportImageDialog(QWidget* parent, Preferences& prefs);
 
   //! destructor
   virtual ~ExportImageDialog();
 
  private Q_SLOTS:
 
+  void export_clicked();
+
  Q_SIGNALS:
 
  private:
   Ui_ExportImageDialog* ui_;
 
-  Preferences& preferences_;
+  Preferences& prefs_;
 };
 
 }  // namespace shapeworks
