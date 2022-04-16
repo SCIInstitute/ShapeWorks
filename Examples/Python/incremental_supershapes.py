@@ -1,3 +1,4 @@
+
 import os
 import glob
 import math
@@ -121,7 +122,7 @@ def Run_Pipeline(args):
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["optimization_iterations"] = 10
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
