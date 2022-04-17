@@ -23,6 +23,7 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
 fi
 
 # Restore conda installs
+ssh runner@${CACHE_HOST} ls github/${CONDA_FILE}
 scp runner@${CACHE_HOST}:github/${CONDA_FILE} /tmp || true
 if [ -f /tmp/${CONDA_FILE} ] ; then
     echo "Conda Cache file was found"
@@ -31,6 +32,7 @@ if [ -f /tmp/${CONDA_FILE} ] ; then
 fi
 
 # Restore dependencies
+ssh runner@${CACHE_HOST} ls github/${DEP_FILE}
 scp runner@${CACHE_HOST}:github/${DEP_FILE} /tmp || true
 if [ -f /tmp/${DEP_FILE} ] ; then
     echo "Dependency Cache file was found"
