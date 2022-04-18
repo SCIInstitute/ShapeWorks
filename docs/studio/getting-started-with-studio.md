@@ -174,6 +174,7 @@ The File -> Export menu is shown below.
 * Export PCA Mode Points - Export the PCA mode points at each step of the PCA slider
 
 
-
-
+## Project setup
+ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX. The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
+See [Here](../workflow/parameters.md) for more details regaring the project sheet and the python API available to generate the project sheet. 
 

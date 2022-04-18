@@ -11,3 +11,8 @@ The peanut dataset,consists of two aligned spheres, but one of the spheres is su
 2. [**Extract Shared Boundary**](../../workflow/groom.md#extract-shared-boundary): In this step, we ingest the two original shapes and output three new shapes, two of which correspond to the original shapes and one for the shared boundary.
 3. [**Smoothing**](../../workflow/groom.md#smoothing):Applied laplacian smoothing.
 4. [**Extract Contour**](../../workflow/groom.md#extract-contour): The boundary loop of the shared surface is obtained.
+
+## Relevant Arguments
+[--use_subsample](../use-cases.md#-use_subsample)
+[--num_subsample](../use-cases.md#-use_subsample)
+[--tiny_test](../use-cases.md#-tiny_test)

@@ -1,4 +1,11 @@
 ![Optimization Parameters](../img/workflow/params.png)
+`ShapeWorks` supports two formats for handling the data for performing grooming and optimization via the python interface and `ShapeWorksStudio`:
+
+* [XML Parameter file](parameters.md#xml-parameter-file)
+
+* [Project excel file](parameters.md#project-excel-file)
+
+The project excel file format is continiously under development where new features are being added. The XML format is a legacy tool and will be depriciated soon. 
 
 ### XML Parameter File
         
@@ -33,8 +40,7 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<cutting_planes>`: A list of cutting planes to be used for all shapes. Each cutting plane is defined by three points in an order that indicates the plane's normal, i.e., the direction where particles are allowed to be distributed.
 
 ### Parameter Dictionary in Python
-
-In `Examples/Python/<use-case-name.py>`, we use a python dictionary to expose important algorithmic parameters and automatically generate the XML parameter file. 
+Prior to `ShapeWorks 6.3`, all the ![use cases](../getting-started/examples.md)In `Examples/Python/<use-case-name.py>`,we used XML files to run optimization. A python code - `Examples/Python/OptimizeUtils.py` was used to convert a list of parameter dictionary in python to an XML file. 
 
 Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
 
@@ -63,7 +69,7 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
 ```
 
 
-## Project setup
+## Project excel file
 
 ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX.  The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
 
@@ -91,3 +97,4 @@ After completing groom and optimize steps, this worksheet will look like this:
 
 There will also be new worksheets with parameters from those tools and other studio settings.
 
+### Python API for generation project sheets
