@@ -122,7 +122,9 @@ def Run_Pipeline(args):
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 100
+        parameter_dictionary["optimization_iterations"] = 50
+        parameter_dictionary["starting_regularization"] = 1000
+        parameter_dictionary["ending_regularization"] = 100
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
@@ -133,6 +135,7 @@ def Run_Pipeline(args):
 
     # Run optimization
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    print(optimize_cmd)
     subprocess.check_call(optimize_cmd)
 
     """
