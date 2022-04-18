@@ -18,13 +18,14 @@ This use case starts with pre-aligned segmentations. The only grooming step is [
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 ```python
+{
         "number_of_particles": 32,
         "use_normals": 1,
-        "normal_weight": 15.0,
+        "normals_strength": 15,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 3000,
@@ -33,16 +34,10 @@ Below are the default optimization parameters for this use case.
         "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "domain_type": 'image',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 0,
-        "save_init_splits": 0,
         "verbosity": 0,
-        "adaptivity_mode": 0,
-        "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes
+}
 ```
 
 Here `cutting_plane_counts` is two for every ellipsoid and there are 15 ellipsoids so it is a list of twos of length 15.

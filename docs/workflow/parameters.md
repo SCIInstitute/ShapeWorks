@@ -44,7 +44,7 @@ Prior to `ShapeWorks 6.3`, all the ![use cases](../getting-started/examples.md)I
 
 Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
 
-```
+```python
 {
 	"number_of_particles": 1024,
 	"use_shape_statistics_after": 32, 

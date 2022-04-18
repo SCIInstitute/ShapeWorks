@@ -34,29 +34,30 @@ Here are the resulting groomed ditsance transforms.The left atriums are now cent
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
-Below are the default optimization parameters when running this use case.
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
+Below are the default optimization parameters for this use case.
+
 ```python
 {
-    "number_of_particles" : 512, 
-    "use_normals": 0,
-    "normal_weight": 10.0,
-    "checkpointing_interval" : 200,
-    "keep_checkpoints" : 0,
-    "iterations_per_split" : 4000,
-    "optimization_iterations" : 4000,
-    "starting_regularization" : 1000,
-    "ending_regularization" : 10,
-    "recompute_regularization_interval" : 2,
-    "domains_per_shape" : 1,
-    "relative_weighting" : 10,
-    "initial_relative_weighting" : 0.1,
-    "procrustes_interval" : 1,
-    "procrustes_scaling" : 1,
-    "save_init_splits" : 0,
-    "verbosity" : 0,
-    "use_shape_statistics_after": 128
-}
+        "number_of_particles": 512,
+        "use_normals": 0,
+        "normals_strength": 10.0,
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 4000,
+        "optimization_iterations": 4000,
+        "starting_regularization": 1000,
+        "ending_regularization": 10,
+        "recompute_regularization_interval": 2,
+        "domains_per_shape": 1,
+        "relative_weighting": 10,
+        "procrustes": 1,
+        "initial_relative_weighting": 0.1,
+        "procrustes_interval": 1,
+        "procrustes_scaling": 1,
+        "save_init_splits": 0,
+        "verbosity": 0
+    }
 ```
 ## Analyzing Shape Model
 Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 

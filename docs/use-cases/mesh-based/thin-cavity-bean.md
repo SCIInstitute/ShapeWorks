@@ -19,32 +19,30 @@ In this use case, we download pre-groomed data. Here are some examples of the me
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 ```python
-{
+ {
         "number_of_particles": 1024,
         "use_normals": 1,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 150,
+        "iterations_per_split": 300,
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": 'mesh',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.01,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "use_shape_statistics_after": 32,
-        "geodesics_enabled": 1
-}
+        "use_geodesic_distance": 1,
+    }
 ```
 
 Note `geodesics_enabled` is set to on.

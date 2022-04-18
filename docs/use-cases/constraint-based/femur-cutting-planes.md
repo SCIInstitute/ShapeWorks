@@ -33,9 +33,10 @@ Here are the resulting groomed femurs:
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 ```python        
+{
         "number_of_particles" : 512,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -47,19 +48,17 @@ Below are the default optimization parameters for this use case.
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "initial_relative_weighting" : 0.1,
+        "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "debug_projection" : 0,
         "verbosity" : 0,
         "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0,
-        "cutting_plane_counts": cutting_plane_counts,
-        "cutting_planes": cutting_planes,
-        "use_shape_statistics_after" = 64
+        "adaptivity_mode": 0
+} 
 ```
 
 Here `cutting_plane_counts` is 49, one for every femur and the `cutting_planes` is the same cutting plane points for every femur.

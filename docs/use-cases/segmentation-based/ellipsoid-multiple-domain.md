@@ -35,31 +35,28 @@ Distance transform obtained after grooming.The ellipsoid joints are now centred 
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details.
-NOTE: The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
+
 ```python
 {
-        "number_of_particles" : [512,512],
-        "use_normals": [0,0],
-        "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 1000,
-        "optimization_iterations" : 1000,
+        "iterations_per_split" : 200,
+        "optimization_iterations" : 200,
         "starting_regularization" :1000,
-        "ending_regularization" : 0.5,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 2,
-        "domain_type" : 'image',
-        "relative_weighting" : 100, 
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 1,
+        "domains_per_shape" : domains_per_shape,
+        "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "verbosity" : 0
-
       }
+    num_particles = [128,128]
+
 ```
 
 ## Analyzing Shape Model

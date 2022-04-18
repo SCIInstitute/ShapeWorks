@@ -15,40 +15,34 @@ Below are the pre-existing (first fifteen) and new (last five) groomed distance 
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
-Below are the default optimization parameters for this use case. Note the `number_fixed_domains` and `fixed_domain_model_dir` parameters.
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
+Below are the default optimization parameters for this use case.
 
 ```python
-{
+ {
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 15.0,
-        "checkpointing_interval": 200,
+        "checkpointing_interval": 0,
         "keep_checkpoints": 0,
-        "iterations_per_split": 100,
-        "optimization_iterations": 2000,
+        "iterations_per_split": 10,
+        "optimization_iterations": 10,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
-        "domain_type": 'image',
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "number_fixed_domains": len(file_list_dts),
-        "fixed_domain_model_dir": shape_model_dir,
-        "mean_shape_path": mean_shape_path
-}
+        "use_landmarks": 1,
+        "use_fixed_subjects": 1,
+        "narrow_band": 1e10,
+        "fixed_subjects_column": "fixed",
+        "fixed_subjects_choice": "yes"
+    }
 ```
-
-In `ellipsoid_fd.py`, the following is defined.
-
-- `fileListDT` is the list of distance transforms for the existing shape model
-- `shapemodelDir` is the directory path to the new shape model
-- `meanShapePath` is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape
 
 ## Analyzing Shape Model
 
