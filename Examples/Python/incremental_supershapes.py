@@ -122,9 +122,9 @@ def Run_Pipeline(args):
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 100
-        parameter_dictionary["starting_regularization"] = 1000
-        parameter_dictionary["ending_regularization"] = 100
+        parameter_dictionary["optimization_iterations"] = 1
+        parameter_dictionary["starting_regularization"] = 10000
+        parameter_dictionary["ending_regularization"] = 1000
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
@@ -152,9 +152,9 @@ def Run_Pipeline(args):
     parameter_dictionary["multiscale"] = 0 					# Single scale
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 100
-        parameter_dictionary["starting_regularization"] = 1000
-        parameter_dictionary["ending_regularization"] = 100
+        parameter_dictionary["optimization_iterations"] = 1
+        parameter_dictionary["starting_regularization"] = 10000
+        parameter_dictionary["ending_regularization"] = 1000
 
     # Run optimization on each batch
     for batch_index in range(1, len(batches)):
