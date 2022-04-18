@@ -1301,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.html" class="md-nav__link">
+      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.md" class="md-nav__link">
         Fixed Domains Ellipsoid: Shape Model on New Shapes
       </a>
     </li>
@@ -1542,12 +1542,73 @@
       
       
         <label class="md-nav__link" for="__nav_10_6">
+          Multi-Step Optimization Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Multi-Step Optimization Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Multi-Step Optimization Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/incremental_supershapes.html" class="md-nav__link">
+        Incremental Supershapes: Building a Shape Model Incrementally
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
           Statistics Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_6">
+        <label class="md-nav__title" for="__nav_10_7">
           <span class="md-nav__icon md-icon"></span>
           Statistics Based Use Cases
         </label>
@@ -1611,18 +1672,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_8" type="checkbox" id="__nav_10_8" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_7">
+        <label class="md-nav__link" for="__nav_10_8">
           Deep Learning Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_7">
+        <label class="md-nav__title" for="__nav_10_8">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning Based Use Cases
         </label>
@@ -2393,7 +2454,7 @@
 <li><strong>Bad Correspondence</strong>: If particles are not in good correspondence, try increasing relative weighting. If particles are flipping sides on thin structures, enabling normals can resolve this.</li>
 </ul>
 <h2 id="correspondences-on-new-samples">Correspondences on New Samples</h2>
-<p>ShapeWorks supports an optimization mode, namely <em>fixed domains</em>, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.html">Fixed Domains for Ellipsoid: Correspondences on New Shape</a> for an example. </p>
+<p>ShapeWorks supports an optimization mode, namely <em>fixed domains</em>, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See <a href="../use-cases/multistep/fixed-domain-ellipsoid.html">Fixed Domains for Ellipsoid: Correspondences on New Shape</a> for an example. </p>
 <p>To enable the fixed domains mode, the XML should have the below additional tags. For this mode, you can use <code>"use_shape_statistics_after": 0</code> to enable shape statistics in all the steps as the pre-existing shape model already has enough particles optimized to reflect the covariance structure in the shape space.</p>
 <ul>
 <li><code>&lt;point_files&gt;</code>: A list of <em>local.particles</em> files to be fixed, i.e., the pre-existing shape model. The new (to be optimized) samples/domains should be initialized with the mean particles.</li>

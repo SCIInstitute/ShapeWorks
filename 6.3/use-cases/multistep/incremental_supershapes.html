@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/use-cases/segmentation-based/fixed-domain-ellipsoid.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/use-cases/multistep/incremental_supershapes.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
     
     
       
-        <title>Fixed Domains Ellipsoid: Shape Model on New Shapes - ShapeWorks</title>
+        <title>Incremental Supershapes: Building a Shape Model Incrementally - ShapeWorks</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#fixed-domains-ellipsoid-shape-model-on-new-shapes" class="md-skip">
+        <a href="#incremental-supershapes-building-a-shape-model-incrementally" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Fixed Domains Ellipsoid: Shape Model on New Shapes
+              Incremental Supershapes: Building a Shape Model Incrementally
             
           </span>
         </div>
@@ -1067,14 +1067,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
       
       
       
@@ -1097,7 +1095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ellipsoid.html" class="md-nav__link">
+      <a href="../segmentation-based/ellipsoid.html" class="md-nav__link">
         Ellipsoid: Basic Example
       </a>
     </li>
@@ -1111,7 +1109,7 @@
   
   
     <li class="md-nav__item">
-      <a href="left-atrium.html" class="md-nav__link">
+      <a href="../segmentation-based/left-atrium.html" class="md-nav__link">
         Left Atrium: Shape Model from Segmentations
       </a>
     </li>
@@ -1123,80 +1121,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Fixed Domains Ellipsoid: Shape Model on New Shapes
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="fixed-domain-ellipsoid.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../segmentation-based/fixed-domain-ellipsoid.md" class="md-nav__link">
         Fixed Domains Ellipsoid: Shape Model on New Shapes
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-the-use-case" class="md-nav__link">
-    What is the Use Case?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#grooming-steps" class="md-nav__link">
-    Grooming Steps
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#relevant-arguments" class="md-nav__link">
-    Relevant Arguments
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#optimization-parameters" class="md-nav__link">
-    Optimization Parameters
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#analyzing-shape-model" class="md-nav__link">
-    Analyzing Shape Model
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1208,7 +1137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ellipsoid-multiple-domain.html" class="md-nav__link">
+      <a href="../segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
         Shape Model for Multiple Domains from Segmentations
       </a>
     </li>
@@ -1424,23 +1353,189 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" checked>
       
       
       
       
         <label class="md-nav__link" for="__nav_10_6">
+          Multi-Step Optimization Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Multi-Step Optimization Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Multi-Step Optimization Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Incremental Supershapes: Building a Shape Model Incrementally
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="incremental_supershapes.html" class="md-nav__link md-nav__link--active">
+        Incremental Supershapes: Building a Shape Model Incrementally
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-the-use-case" class="md-nav__link">
+    What is the Use Case?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#grooming-steps" class="md-nav__link">
+    Grooming Steps
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relevant-arguments" class="md-nav__link">
+    Relevant Arguments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incremental-optimization" class="md-nav__link">
+    Incremental Optimization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimization-parameters" class="md-nav__link">
+    Optimization Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analyzing-shape-model" class="md-nav__link">
+    Analyzing Shape Model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-to-single-optimization" class="md-nav__link">
+    Comparison to Single Optimization
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison to Single Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-dataset" class="md-nav__link">
+    Full Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsample-of-dataset" class="md-nav__link">
+    Subsample of Dataset
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
           Statistics Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_6">
+        <label class="md-nav__title" for="__nav_10_7">
           <span class="md-nav__icon md-icon"></span>
           Statistics Based Use Cases
         </label>
@@ -1504,18 +1599,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_8" type="checkbox" id="__nav_10_8" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_7">
+        <label class="md-nav__link" for="__nav_10_8">
           Deep Learning Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_7">
+        <label class="md-nav__title" for="__nav_10_8">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning Based Use Cases
         </label>
@@ -2006,6 +2101,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#incremental-optimization" class="md-nav__link">
+    Incremental Optimization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#optimization-parameters" class="md-nav__link">
     Optimization Parameters
   </a>
@@ -2016,6 +2118,33 @@
   <a href="#analyzing-shape-model" class="md-nav__link">
     Analyzing Shape Model
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-to-single-optimization" class="md-nav__link">
+    Comparison to Single Optimization
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison to Single Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-dataset" class="md-nav__link">
+    Full Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsample-of-dataset" class="md-nav__link">
+    Subsample of Dataset
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2031,60 +2160,83 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/segmentation-based/fixed-domain-ellipsoid.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/multistep/incremental_supershapes.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-<h1 id="fixed-domains-ellipsoid-shape-model-on-new-shapes">Fixed Domains Ellipsoid: Shape Model on New Shapes</h1>
+<h1 id="incremental-supershapes-building-a-shape-model-incrementally">Incremental Supershapes: Building a Shape Model Incrementally</h1>
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
-<p>The <code>ellipsoid_fd</code> use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. Fixed domains is used in cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use a dataset which contains a previously generated shape model on ellipsoids (see <a href="ellipsoid.html">Ellispoid Use Case</a>) and prepped segmentations of five new ellipsoids.</p>
-<p><img alt="Fixed Domains" src="../../img/use-cases/fixed-domains.png" /></p>
+<p>The <code>incremental_supershapes</code> use case demonstrates how a shape model can be built incrementally. This approach is beneficial in two scenarios. The first is when the cohort of shapes is very large, where optimizing particle position across all shapes at once would take a very long time. In this case, by fitting a shape model on a subset of the data, then incrementally updating the shape model using the previous model as initialization, the total time for optimization can be greatly reduced. The second scenario is when the dataset is small but contains a large amount of shape variation. In this case, by initally fitting a model on the most similar shapes, then incrementally adding outlier shapes, we can achieve a more compact shape model with better correspondence then if we were to optimize on the whole dataset at once.</p>
+<p>The use case dataset is comprised of parameterized meshes called Supershapes generated using the ShapeWorks <a href="../../notebooks/getting-started-with-shape-cohort-generation.html">Shape Cohort Generation</a> package.
+There are 50 meshes that vary greatly in shape. They have 2 to 7 lobes and the parameters are sampled from a chi-squared distribution. The function used to generate the data is included in the Python script.</p>
 <h2 id="grooming-steps">Grooming Steps</h2>
-<p>This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance transform for each new segmentation.</p>
-<p>Below are the pre-existing (first fifteen) and new (last five) groomed distance transforms.
-<img alt="Fixed domain ellipsoid distance transforms" src="../../img/use-cases/ellipsoids_fd_input.png" /></p>
+<p>In this use case, the Superhapes are generated so that they are already aligned/groomed.
+Here are some examples of the meshes:
+<img alt="Supershapes contour" src="../../img/use-cases/supershapes3D.png" /></p>
 <h2 id="relevant-arguments">Relevant Arguments</h2>
-<p><a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
+<p><a href="../use-cases.html#-use_subsample">--use_subsample</a>
+<a href="../use-cases.html#-use_subsample">--num_subsample</a>
+<a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
+<h2 id="incremental-optimization">Incremental Optimization</h2>
+<p>In incremental optimization an intial shape model is fit by running optimization as usual. Additional shapes are then added and the shape model is incrementally updated by initalizing particles using the previous shape model and running optimization again. The mean particles from the existing shape model are used to initalize particles on new shapes.</p>
+<p>We define the order in which shapes are added so that particles are fit to inlier shapes first, then outliers. This results in quicker optimization and a better shape model. To determine this order we sort the meshes using surface-to-surface distance to a reference mesh so that they are ordered from least unque to most unique, then create batches.</p>
+<p>The first batch is used to create an initial shape model and the remaining batches are incrementally added and optimized on.</p>
 <h2 id="optimization-parameters">Optimization Parameters</h2>
-<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. 
-Below are the default optimization parameters for this use case. Note the <code>number_fixed_domains</code> and <code>fixed_domain_model_dir</code> parameters.</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. </p>
+<p>Here are the parameters used for optimizing the intial shape model:
+<div class="highlight"><pre><span></span><code><span class="p">{</span>        
         <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span>
-        <span class="s2">&quot;checkpointing_interval&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="s2">&quot;checkpointing_interval&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
         <span class="s2">&quot;keep_checkpoints&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;ending_regularization&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="s2">&quot;recompute_regularization_interval&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">1400</span><span class="p">,</span>
+        <span class="s2">&quot;starting_regularization&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;ending_regularization&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;recompute_regularization_interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;domains_per_shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;domain_type&quot;</span><span class="p">:</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s2">&quot;relative_weighting&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;initial_relative_weighting&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_interval&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;procrustes_scaling&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;save_init_splits&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;number_fixed_domains&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_list_dts</span><span class="p">),</span>
-        <span class="s2">&quot;fixed_domain_model_dir&quot;</span><span class="p">:</span> <span class="n">shape_model_dir</span><span class="p">,</span>
-        <span class="s2">&quot;mean_shape_path&quot;</span><span class="p">:</span> <span class="n">mean_shape_path</span>
+        <span class="s2">&quot;multiscale&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;multiscale_particles&quot;</span><span class="p">:</span> <span class="mi">32</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>In <code>ellipsoid_fd.py</code>, the following is defined.</p>
-<ul>
-<li><code>fileListDT</code> is the list of distance transforms for the existing shape model</li>
-<li><code>shapemodelDir</code> is the directory path to the new shape model</li>
-<li><code>meanShapePath</code> is the path to the mean (average) shape particles to be used for initializing correspondences on the new shape</li>
-</ul>
+After the initial optimization, the follwoing parameters are updated for each incremental optimization:
+<div class="highlight"><pre><span></span><code><span class="p">{</span>        
+        <span class="s2">&quot;use_landmarks&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;multiscale&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div>
+Here "use_landmarks" enables particle initalization. We use single scale optimization with no initialization iterations since the particles are already intialzed by the former shape model or mean particles. We can also reduce the optization iterations as we are not starting from scratch.</p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>Here we can see the optimized particles for the new samples (numbers 15-19). The particles for the original samples (0-14) have remained the same.
-<img alt="Ellipsoid FD Optimization" src="../../img/use-cases/ellipsoid_fd.png" /></p>
-<p>The primary mode of variation is along the x-axis as it was before adding the new shapes.
-<img alt="Ellipsoid FD Mode 1" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_fd_mode1.gif" /></p>
+<p>Below is the intial shape model after optimizing on the first batch of 10 meshes. We can see all 10 are relatively similar. 
+<img alt="Intial Incremental Optimization" src="../../img/use-cases/intial_supershapes_model.png" /></p>
+<p>Below is the final shape model after incrementally adding batches and running optimization. We can see the shape model accurately captures the original shapes as well as the more unique ones.
+<img alt="Final Incremental Optimization" src="../../img/use-cases/final_supershapes_model.png" /></p>
+<p>Here is the mean shape of the final shape model along the first PCA mode. Almost all of the variance is captured by the first four PCA modes.
+<img alt="Mean" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/mean_supershapes.gif" /></p>
+<h2 id="comparison-to-single-optimization">Comparison to Single Optimization</h2>
+<h3 id="full-dataset">Full Dataset</h3>
+<p>To see the benefit of incremental optimization, we can compare the results of this use case to the results we'd get from running a single optimization on all of the shapes at once. For a far comparison, the single optimization is done using the same parameters as the intial optimization in the incremental case, except the number of optimization iterations is increased to match the total number of optimization iterations performed across the entire incremental process.</p>
+<p>By comparing the vairance graphs below, we can see that the incremental optimization results in a mode compact shape model. In the shape model optimized incrementally the primary mode of variation exaplins 82.1% of the shape variation whereas in the shape model optimized all at once, the primary mode only captures 71.6% of the shape variation. If we double the amount of optimization iterations in the single optimization case, we get closer to the incremental model, with 75.3% of the variation captured by the first mode. But the model is still not as compact and takes much longer to run.</p>
+<p><img alt="Variance Graphs" src="../../img/use-cases/variance_graphs.png" /></p>
+<h3 id="subsample-of-dataset">Subsample of Dataset</h3>
+<p>The benefit of incremental optimization is even more apparent in the case where the datsaset is small and varies greatly. To see this we can run the use case with the <code>--use_subsample</code> tag. The subsample is automatically selected using clustering so that it is representative of the entire dataset, thus it is defined to have as much variation as possible. For example, when <code>--num_subsample</code> is set to 9, the selected meshes are shown below.</p>
+<p><img alt="Subset Meshes" src="../../img/use-cases/subsample_supershapes.png" /></p>
+<p>Below is the first mode of variation from the shape model optimized incrementally on the subset. 
+<img alt="Subset Incremental Model" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/incremental_supershapes_subset.gif" /></p>
+<p>Below is the first mode of variation from a shape model optimized on the whole subset at once for the same total number of optimization iterations as the incremental model. 
+<img alt="Subset Single Model" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/single_supershapes_subset.gif" /></p>
+<p>We can see that the incremental optimization approach resulted in a much better shape model.</p>
 
               
             </article>
@@ -2098,7 +2250,7 @@ Below are the default optimization parameters for this use case. Note the <code>
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="left-atrium.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Left Atrium: Shape Model from Segmentations" rel="prev">
+        <a href="fixed-domain-ellipsoid.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Fixed Domains Ellipsoid: Shape Model on New Shapes" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -2107,20 +2259,20 @@ Below are the default optimization parameters for this use case. Note the <code>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Left Atrium: Shape Model from Segmentations
+              Fixed Domains Ellipsoid: Shape Model on New Shapes
             </div>
           </div>
         </a>
       
       
         
-        <a href="ellipsoid-multiple-domain.html" class="md-footer__link md-footer__link--next" aria-label="Next: Shape Model for Multiple Domains from Segmentations" rel="next">
+        <a href="../stats-based/ellipsoid-pca.html" class="md-footer__link md-footer__link--next" aria-label="Next: Ellipsoid: Shape Statistics in Python" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Shape Model for Multiple Domains from Segmentations
+              Ellipsoid: Shape Statistics in Python
             </div>
           </div>
           <div class="md-footer__button md-icon">
