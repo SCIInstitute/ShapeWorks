@@ -16,3 +16,31 @@ The peanut dataset,consists of two aligned spheres, but one of the spheres is su
 [--use_subsample](../use-cases.md#-use_subsample)
 [--num_subsample](../use-cases.md#-use_subsample)
 [--tiny_test](../use-cases.md#-tiny_test)
+
+## Optimization Parameters
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
+Below are the default optimization parameters for this use case.
+
+```python
+# Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+        "number_of_particles": 128,
+        "use_normals": 0,
+        "normals_strength": 10.0,
+        "checkpointing_interval": 1000,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 1000,
+        "optimization_iterations": 1000,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
+        "recompute_regularization_interval": 1,
+        "domains_per_shape": 1,
+        "relative_weighting": 1,
+        "initial_relative_weighting": 0.05,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "verbosity": 0
+    }
+```
+

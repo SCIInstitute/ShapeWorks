@@ -5,10 +5,10 @@
 
 * [Project excel file](parameters.md#project-excel-file)
 
-The project excel file format is continiously under development where new features are being added. The XML format is a legacy tool and will be depriciated soon. 
+The project excel file format is continiously under development where new features are being added. The XML will be depriciated soon and users are encouraged to use the project excel file.  
 
 ### XML Parameter File
-        
+	
 Here is the list of the parameters to be included in the `<parameters.xml>` file.
 
 * `<inputs>`: List of surface meshes or distance transforms (i.e., groom stage output) that comprises your dataset.
@@ -46,25 +46,25 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
 
 ```
 {
-        "number_of_particles": 1024,
-        "use_shape_statistics_after": 32, 
-        "use_normals": 0, 
-        "normal_weight": 0.0, 
-        "checkpointing_interval" : 10000, 
-        "keep_checkpoints" : 0, 
-        "iterations_per_split" : 4000, 
-        "optimization_iterations" : 500, 
-        "starting_regularization" : 10, 
-        "ending_regularization" : 1, 
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 1,
-        "procrustes_interval" : 1,
-        "procrustes_scaling" : 1,
-        "save_init_splits" : 0,
-        "verbosity" : 2,
+	"number_of_particles": 1024,
+	"use_shape_statistics_after": 32, 
+	"use_normals": 0, 
+	"normal_weight": 0.0, 
+	"checkpointing_interval" : 10000, 
+	"keep_checkpoints" : 0, 
+	"iterations_per_split" : 4000, 
+	"optimization_iterations" : 500, 
+	"starting_regularization" : 10, 
+	"ending_regularization" : 1, 
+	"recompute_regularization_interval" : 2,
+	"domains_per_shape" : 1,
+	"domain_type" : 'mesh',
+	"relative_weighting" : 10,
+	"initial_relative_weighting" : 1,
+	"procrustes_interval" : 1,
+	"procrustes_scaling" : 1,
+	"save_init_splits" : 0,
+	"verbosity" : 2,
 }
 ```
 
@@ -98,3 +98,100 @@ After completing groom and optimize steps, this worksheet will look like this:
 There will also be new worksheets with parameters from those tools and other studio settings.
 
 ### Python API for generation project sheets
+The `Project` class of `ShapeWorks` let you create the project excel sheet. It comprises of various functions to add the input shape names, groomed file names, optimization parameters, transform matrices etc. A details description of the C++ class and its functions can be found [here](http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description). The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
+## Transforms are passed to the optimizers: ADD DETAILS
+
+1. **Subjects:** Each input shape(segmentation/mesh) is called a `subject`. This represents a single row of the `data` sheet. Using the python API, an object of type `Subject` can be initialized and the following properties can be set: 
+
+
+	1. **Number of domains**
+	2. **Original filename**: Filename (including the relative path) of the input shape
+	3. **Groomed filename**: Filename (including the relative path) of the groomed shape
+	4. **Groomed transform**: Transform matrix obtained after grooming( list of 16 numbers). The 4x4 matrix should follow [VTK transform matrix](https://vtk.org/doc/nightly/html/classvtkTransform.html) format. 
+
+```python
+# Set subjects
+    subjects = []
+    number_domains = 1
+    transforms = np.eye(4) # 4x4 matrix
+    for i in range(number_of_shapes):
+	subject = sw.Subject()
+	subject.set_number_of_domains(number_domains)
+	subject.set_original_filenames(input_shape_name[i])
+	subject.set_groomed_filenames(groomed_shape_name[i])
+	transform = [ transforms.flatten() ] #flatten into a vector and convert to list
+	subject.set_groomed_transforms(transform)
+	subject.set_constraints_filenames(plane_name[i]) #name pf the json file of the constraint plane
+	subjects.append(subject) # create a list of all subjects
+	# specify if the shape is part of fixed domain.
+	"""
+	If the shape is marked with "fixed" = "yes", they refer to the shapes of the pre-existing model
+	If the shape is marked with "fixed" = "no", new correspondences will be placed on these new shapes using a pre-existing shape model. 
+	"""
+	subject.set_extra_values({"fixed": "yes"}) 
+```
+
+If there are multiple domains, the subjects will contain list of string of filenames. 
+```python
+# Set subjects
+    subjects = []
+    domains_per_shape = 2
+    for i in range(number_of_shapes):
+        subject = sw.Subject()
+        subject.set_number_of_domains(domains_per_shape)
+        rel_seg_files = []
+        rel_groom_files = []
+        transform = []
+        for d in range(domains_per_shape):
+            shape_files += input_shape_name[i*domains_per_shape+d]
+            groom_files += groomed_shape_name[i*domains_per_shape+d]
+            transform.append(transforms[i*domains_per_shape+d].flatten())
+
+        subject.set_groomed_transforms(transform)
+        subject.set_groomed_filenames(groom_files)
+        subject.set_original_filenames(shape_files)
+        subjects.append(subject)
+```
+2. **Parameters:** Each optimization parameter can be set using `Parameter` object. The `parameter` object consists of a list of type `Variant`
+```python
+    parameters = sw.Parameters()
+
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+	"number_of_particles" : 512,
+	"use_normals": 0,
+	"normal_weight": 10.0,
+	"checkpointing_interval" : 200,
+	"keep_checkpoints" : 0,
+	"iterations_per_split" : 1000,
+	"optimization_iterations" : 500,
+	"starting_regularization" : 100,
+	"ending_regularization" : 0.1,
+	"recompute_regularization_interval" : 2,
+	"domains_per_shape" : 1,
+	"relative_weighting" : 10,
+	"initial_relative_weighting" : 0.1,
+	"procrustes" : 1,
+	"procrustes_interval" : 1,
+	"procrustes_scaling" : 1,
+	"save_init_splits" : 1,
+	"debug_projection" : 0,
+	"verbosity" : 0,
+	"use_statistics_in_init" : 0,
+	"adaptivity_mode": 0
+    } 
+
+    for key in parameter_dictionary:
+	parameters.set(key,sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+```
+3. **Project:**Once the list of subjects and parameters are created they can be set in the project file using the `Project` object
+
+```python
+    # Set project
+    project = sw.Project()
+    project.set_subjects(subjects)
+    # provide the sheet name - 'optimize' for the optimization parameter
+    project.set_parameters("optimize",parameters)
+    project.save(spreadsheet_file)
+```
