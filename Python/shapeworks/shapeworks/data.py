@@ -43,7 +43,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["femur_cut","lumps","thin_cavity_bean"]):
+    elif(use_case in ["femur_cut","lumps","thin_cavity_bean","incremental_supershapes"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
@@ -201,7 +201,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
         for j in range(i, len(inMeshList)):
             mesh1 = inMeshList[i]
             mesh2 = inMeshList[j]
-            dist = sw.mean(mesh1.distance(mesh2).getField("distance", sw.Mesh.FieldType.Point))
+            dist = np.mean(mesh1.distance(mesh2)[0])
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
