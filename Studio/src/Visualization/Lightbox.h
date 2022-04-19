@@ -89,6 +89,8 @@ class Lightbox : public QObject {
 
   void set_shared_window_and_level(double window, double level);
 
+  vtkRenderWindow* get_render_window();
+
  public Q_SLOTS:
   void handle_timer_callback();
 

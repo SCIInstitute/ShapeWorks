@@ -494,4 +494,7 @@ void Lightbox::set_shared_window_and_level(double window, double level) {
     viewers_[i]->set_window_and_level(window, level);
   }
 }
+
+//-----------------------------------------------------------------------------
+vtkRenderWindow* Lightbox::get_render_window() { return render_window_; }
 }  // namespace shapeworks

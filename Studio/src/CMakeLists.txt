@@ -177,6 +177,11 @@ SET(STUDIO_UTILS_SRCS
   Utils/WindowsCrashHandler.cpp
   Utils/StudioUtils.cpp
   Utils/AnalysisUtils.cpp
+  Utils/ImageLabel.cpp
+  )
+
+SET(STUDIO_UTILS_MOC_HDRS
+  Utils/ImageLabel.h
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -242,6 +247,7 @@ SET(STUDIO_MOC_HDRS
   ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
+  ${STUDIO_UTILS_MOD_HDRS}
   ${STUDIO_VISUALIZATION_MOC_HDRS}
 )
 

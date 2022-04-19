@@ -138,6 +138,12 @@ class Visualizer : public QObject {
   //! Redraw renderers
   void redraw();
 
+  //! Export render window to pixmap
+  QPixmap export_to_pixmap(QSize size, bool transparent_background);
+
+  //! Return render window size
+  QSize get_render_size();
+
  public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

@@ -1,14 +1,18 @@
 #include <Data/MeshManager.h>
 #include <Data/Shape.h>
+#include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAppendPolyData.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkRendererCollection.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkWindowToImageFilter.h>
 
 #include <QColor>
+#include <QPixmap>
 #include <QThread>
 
 namespace shapeworks {
@@ -463,5 +467,88 @@ void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_cl
 
 //-----------------------------------------------------------------------------
 void Visualizer::redraw() { lightbox_->redraw(); }
+
+//-----------------------------------------------------------------------------
+QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background) {
+  auto render_window = lightbox_->get_render_window();
+
+  auto window_to_image_filter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+
+  int original_size[2];
+  original_size[0] = render_window->GetSize()[0];
+  original_size[1] = render_window->GetSize()[1];
+  auto off_render_window = vtkSmartPointer<vtkRenderWindow>::New();
+  //auto off_render_window = render_window;
+  off_render_window->OffScreenRenderingOn();
+  off_render_window->SetNumberOfLayers(render_window->GetNumberOfLayers());
+  off_render_window->SwapBuffersOff();
+
+  window_to_image_filter->SetInput(off_render_window);
+
+  if (transparent_background == true) {
+    // If the background color is transparent then add alpha channel to output image.
+    window_to_image_filter->SetInputBufferTypeToRGBA();
+  }
+
+  vtkRendererCollection* collection = render_window->GetRenderers();
+  collection->InitTraversal();
+  vtkRenderer* renderer = collection->GetNextItem();
+
+  bool show_orientation_marker = true;
+  if (show_orientation_marker) {
+    while (renderer) {
+      off_render_window->AddRenderer(renderer);
+      renderer->SetRenderWindow(off_render_window);
+      renderer->Modified();
+      renderer = collection->GetNextItem();
+    }
+  } else {
+    //     renderWindow->AddRenderer( ren );
+    //     ren->SetRenderWindow( renderWindow );
+    //     ren->Modified();
+  }
+
+  off_render_window->SetSize(size.width(), size.height());
+  off_render_window->Modified();
+  off_render_window->Render();
+
+  window_to_image_filter->Update();
+  auto qimage = StudioUtils::vtk_image_to_qimage(window_to_image_filter->GetOutput());
+
+
+  // set back to the original render window
+
+  collection->InitTraversal();
+  renderer = collection->GetNextItem();
+
+  if (show_orientation_marker) {
+    while (renderer) {
+
+      off_render_window->RemoveRenderer( renderer );
+      renderer->SetRenderWindow( render_window );
+      renderer = collection->GetNextItem();
+
+    }
+  } else {
+    //     renderWindow->AddRenderer( ren );
+    //     ren->SetRenderWindow( renderWindow );
+    //     ren->Modified();
+  }
+
+
+  //render_window->SetOffScreenRendering(false);
+  //render_window->SetSize(original_size);
+
+
+  return QPixmap::fromImage(qimage);
+}
+
+//-----------------------------------------------------------------------------
+QSize Visualizer::get_render_size() {
+  auto render_window = lightbox_->get_render_window();
+  int* size = render_window->GetSize();
+  return QSize(size[0], size[1]);
+}
+//-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

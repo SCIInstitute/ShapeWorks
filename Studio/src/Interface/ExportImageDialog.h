@@ -10,6 +10,8 @@ class Ui_ExportImageDialog;
 
 namespace shapeworks {
 
+class Visualizer;
+
 /*!
  * The ExportImageDialog is a QDialog that implements the user interface for exporting images
  */
@@ -18,10 +20,8 @@ class ExportImageDialog : public QDialog {
 
  public:
   //! constructor
-  ExportImageDialog(QWidget* parent, Preferences& prefs);
+  ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer);
 
-  //! destructor
-  virtual ~ExportImageDialog();
 
  private Q_SLOTS:
 
@@ -30,9 +30,16 @@ class ExportImageDialog : public QDialog {
  Q_SIGNALS:
 
  private:
+
+  void update_preview();
+
   Ui_ExportImageDialog* ui_;
 
+  QSharedPointer<Visualizer> visualizer_;
+
   Preferences& prefs_;
+
+  QPixmap pixmap_;
 };
 
 }  // namespace shapeworks

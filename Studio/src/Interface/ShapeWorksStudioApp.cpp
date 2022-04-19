@@ -1584,7 +1584,7 @@ void ShapeWorksStudioApp::action_export_pca_montage_triggered() {}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_screenshot_triggered() {
-  ExportImageDialog dialog(this, preferences_);
+  ExportImageDialog dialog(this, preferences_, visualizer_);
   if (dialog.exec() != QDialog::Accepted) {
     return;
   }
