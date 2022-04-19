@@ -141,8 +141,6 @@ class Viewer {
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
-  void set_override_hide_color_scale(bool value) { override_hide_scalar_bar_ = value; }
-
   void update_actors();
 
   void remove_scalar_bar();
@@ -158,7 +156,6 @@ class Viewer {
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
   void update_difference_lut(float r0, float r1);
-
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
@@ -213,7 +210,6 @@ class Viewer {
   bool mesh_ready_ = false;
   bool viewer_ready_ = false;
   bool loading_displayed_ = false;
-  bool override_hide_scalar_bar_ = false;
 
   MeshGroup meshes_;
 

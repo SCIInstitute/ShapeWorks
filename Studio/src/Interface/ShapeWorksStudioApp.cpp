@@ -1584,7 +1584,7 @@ void ShapeWorksStudioApp::action_export_pca_montage_triggered() {}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_screenshot_triggered() {
-  ExportImageDialog dialog(this, preferences_, visualizer_);
+  ExportImageDialog dialog(this, preferences_, visualizer_, false);
   if (dialog.exec() != QDialog::Accepted) {
     return;
   }
@@ -1594,7 +1594,6 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close the preferences window in case it is open
   preferences_window_->close();
   if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
-    // save the size of the window to preferences
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
     msgBox.setInformativeText("This will reload generated files and changed settings.");
@@ -1612,6 +1611,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
     }
   }
   analysis_tool_->shutdown();
+  // save the size of the window to preferences
   preferences_.set_window_geometry(saveGeometry());
   preferences_.set_window_state(saveState());
 

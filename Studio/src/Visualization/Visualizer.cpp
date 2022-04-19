@@ -25,16 +25,16 @@ const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
 
 //-----------------------------------------------------------------------------
 Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs) {
-  this->display_mode_ = Visualizer::MODE_ORIGINAL_C;
+  display_mode_ = Visualizer::MODE_ORIGINAL_C;
 
   QObject::connect(&preferences_, SIGNAL(glyph_properties_changed()), this, SLOT(update_viewer_properties()));
 
-  this->show_glyphs_ = true;
-  this->show_surface_ = true;
+  show_glyphs_ = true;
+  show_surface_ = true;
 
-  this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  this->selected_point_one_ = -1;
-  this->selected_point_two_ = -1;
+  glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
+  selected_point_one_ = -1;
+  selected_point_two_ = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -42,8 +42,8 @@ Visualizer::~Visualizer() {}
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_lightbox(LightboxHandle lightbox) {
-  this->lightbox_ = lightbox;
-  this->lightbox_->set_visualizer(this);
+  lightbox_ = lightbox;
+  lightbox_->set_visualizer(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -60,25 +60,25 @@ void Visualizer::set_session(SessionHandle session) {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_display_mode(std::string mode) { this->display_mode_ = mode; }
+void Visualizer::set_display_mode(std::string mode) { display_mode_ = mode; }
 
 //-----------------------------------------------------------------------------
-std::string Visualizer::get_display_mode() { return this->display_mode_; }
+std::string Visualizer::get_display_mode() { return display_mode_; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_center(bool center) { this->center_ = center; }
+void Visualizer::set_center(bool center) { center_ = center; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples() {
-  this->update_viewer_properties();
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
-  this->display_shapes(shapes);
+  update_viewer_properties();
+  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
+  display_shapes(shapes);
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples() {
-  foreach (ViewerHandle viewer, this->lightbox_->get_viewers()) { viewer->update_points(); }
-  this->lightbox_->redraw();
+  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+  lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -110,16 +110,16 @@ void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes) {
 void Visualizer::display_shape(ShapeHandle shape) {
   QVector<ShapeHandle> shapes;
   shapes.push_back(shape);
-  this->lightbox_->set_shapes(shapes);
-  this->update_viewer_properties();
-  // this->reset_camera();
-  this->lightbox_->redraw();
-  this->current_shape_ = shape->get_particles();
+  lightbox_->set_shapes(shapes);
+  update_viewer_properties();
+  // reset_camera();
+  lightbox_->redraw();
+  current_shape_ = shape->get_particles();
 }
 
 //-----------------------------------------------------------------------------
 StudioParticles Visualizer::get_current_shape() {
-  auto shapes = this->lightbox_->get_shapes();
+  auto shapes = lightbox_->get_shapes();
   if (shapes.size() > 0) {
     return shapes[0]->get_particles();
   }
@@ -129,15 +129,15 @@ StudioParticles Visualizer::get_current_shape() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_new_mesh() {
-  this->lightbox_->handle_new_mesh();
-  if (this->needs_camera_reset_) {
-    this->reset_camera();
+  lightbox_->handle_new_mesh();
+  if (needs_camera_reset_) {
+    reset_camera();
   }
 }
 
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh() {
-  auto meshes = this->get_current_meshes_transformed();
+  auto meshes = get_current_meshes_transformed();
   if (meshes.empty()) {
     return nullptr;
   }
@@ -153,10 +153,10 @@ vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh() {
 //-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed() {
   std::vector<vtkSmartPointer<vtkPolyData>> list;
-  auto shapes = this->lightbox_->get_shapes();
+  auto shapes = lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    if (shapes[0]->get_meshes(this->display_mode_).valid()) {
-      auto meshes = shapes[0]->get_meshes(this->display_mode_).meshes();
+    if (shapes[0]->get_meshes(display_mode_).valid()) {
+      auto meshes = shapes[0]->get_meshes(display_mode_).meshes();
 
       for (int domain = 0; domain < meshes.size(); domain++) {
         if (!meshes[domain]->get_poly_data()) {
@@ -164,7 +164,7 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
         }
         // we have to transform each domain to its location in order to export an appended mesh
         auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        filter->SetTransform(this->get_transform(shapes[0], this->get_alignment_domain(), domain));
+        filter->SetTransform(get_transform(shapes[0], get_alignment_domain(), domain));
         filter->SetInputData(meshes[domain]->get_poly_data());
         filter->Update();
         list.push_back(filter->GetOutput());
@@ -176,16 +176,16 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_sample(int i) {
-  this->update_viewer_properties();
+  update_viewer_properties();
   QVector<ShapeHandle> display_shapes;
-  QVector<ShapeHandle> shapes = this->session_->get_shapes();
+  QVector<ShapeHandle> shapes = session_->get_shapes();
   if (i < shapes.size()) {
     display_shapes.push_back(shapes[i]);
   }
 
-  this->lightbox_->set_shapes(display_shapes);
-  this->lightbox_->redraw();
-  this->update_viewer_properties();
+  lightbox_->set_shapes(display_shapes);
+  lightbox_->redraw();
+  update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -211,8 +211,6 @@ void Visualizer::update_viewer_properties() {
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
-    lightbox_->set_override_hide_color_scales(false);
-
     lightbox_->set_orientation_marker(preferences_.get_orientation_marker_type(),
                                       preferences_.get_orientation_marker_corner());
     update_lut();
@@ -234,7 +232,7 @@ void Visualizer::handle_feature_range_changed() {
 void Visualizer::handle_image_slice_settings_changed() {
   lightbox_->update_interactor_style();
 
-  if (this->lightbox_) {
+  if (lightbox_) {
     Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) { v->update_image_volume(); }
   }
   lightbox_->redraw();
@@ -332,39 +330,39 @@ void Visualizer::update_lut() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_selected_point_one(int id) {
-  this->selected_point_one_ = id;
-  this->update_lut();
+  selected_point_one_ = id;
+  update_lut();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_selected_point_two(int id) {
-  this->selected_point_two_ = id;
-  this->update_lut();
+  selected_point_two_ = id;
+  update_lut();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::compute_measurements() {
-  if (this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0) {
+  if (selected_point_one_ >= 0 && selected_point_two_ >= 0) {
   }
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_mean(const Eigen::VectorXd& mean) { this->cached_mean_ = mean; }
+void Visualizer::set_mean(const Eigen::VectorXd& mean) { cached_mean_ = mean; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera() {
-  this->needs_camera_reset_ = false;
-  if (this->lightbox_) {
-    auto trans = this->lightbox_->initPos();
-    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) {
+  needs_camera_reset_ = false;
+  if (lightbox_) {
+    auto trans = lightbox_->initPos();
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
       if (!v->is_viewer_ready()) {
-        this->needs_camera_reset_ = true;
+        needs_camera_reset_ = true;
       }
       v->reset_camera(trans);
     }
   }
 
-  this->update_viewer_properties();
+  update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -372,60 +370,60 @@ const std::string& Visualizer::get_feature_map() const { return feature_map_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_feature_map(const std::string& feature_map) {
-  this->feature_map_ = feature_map;
-  this->reset_feature_range();
+  feature_map_ = feature_map;
+  reset_feature_range();
 }
 
 //-----------------------------------------------------------------------------
-bool Visualizer::get_center() { return this->center_; }
+bool Visualizer::get_center() { return center_; }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_alignment_domain(int domain) { this->alignment_domain_ = domain; }
+void Visualizer::set_alignment_domain(int domain) { alignment_domain_ = domain; }
 
 //-----------------------------------------------------------------------------
-int Visualizer::get_alignment_domain() { return this->alignment_domain_; }
+int Visualizer::get_alignment_domain() { return alignment_domain_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::clear_viewers() {
   QVector<ShapeHandle> shapes;
-  this->lightbox_->set_shapes(shapes);
+  lightbox_->set_shapes(shapes);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::reset_feature_range() { this->feature_range_valid_ = false; }
+void Visualizer::reset_feature_range() { feature_range_valid_ = false; }
 
 //-----------------------------------------------------------------------------
 double* Visualizer::get_feature_range() {
   if (session_->get_feature_auto_scale()) {
-    return this->feature_range_;
+    return feature_range_;
   } else {
-    return this->feature_manual_range_;
+    return feature_manual_range_;
   }
 }
 
 //-----------------------------------------------------------------------------
-double* Visualizer::get_feature_raw_range() { return this->feature_range_; }
+double* Visualizer::get_feature_raw_range() { return feature_range_; }
 
 //-----------------------------------------------------------------------------
-bool Visualizer::get_feature_range_valid() { return this->feature_range_valid_; }
+bool Visualizer::get_feature_range_valid() { return feature_range_valid_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_feature_range(double* range) { update_feature_range(range[0], range[1]); }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_feature_range(double min, double max) {
-  if (!this->feature_range_valid_) {
-    this->feature_range_[0] = min;
-    this->feature_range_[1] = max;
+  if (!feature_range_valid_) {
+    feature_range_[0] = min;
+    feature_range_[1] = max;
   }
-  this->feature_range_[0] = std::min(this->feature_range_[0], min);
-  this->feature_range_[1] = std::max(this->feature_range_[1], max);
-  this->feature_range_valid_ = true;
-  this->lightbox_->update_feature_range();
+  feature_range_[0] = std::min(feature_range_[0], min);
+  feature_range_[1] = std::max(feature_range_[1], max);
+  feature_range_valid_ = true;
+  lightbox_->update_feature_range();
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_uniform_feature_range(bool value) { this->feature_range_uniform_ = value; }
+void Visualizer::set_uniform_feature_range(bool value) { feature_range_uniform_ = value; }
 
 //-----------------------------------------------------------------------------
 bool Visualizer::get_uniform_feature_range(void) { return feature_range_uniform_; }
@@ -434,12 +432,12 @@ bool Visualizer::get_uniform_feature_range(void) { return feature_range_uniform_
 vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain) {
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 
-  if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
-    if (this->get_center()) {
+  if (get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (get_center()) {
       transform = shape->get_transform(alignment_domain);
     }
-  } else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    if (this->get_center()) {
+  } else if (get_display_mode() == Visualizer::MODE_GROOMED_C) {
+    if (get_center()) {
       transform = shape->get_alignment(alignment_domain);
     }
   } else {
@@ -451,18 +449,18 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_opacities(std::vector<float> opacities) {
-  this->opacities_ = opacities;
-  if (this->lightbox_) {
-    foreach (ViewerHandle viewer, this->lightbox_->get_viewers()) { viewer->update_opacities(); }
-    this->lightbox_->redraw();
+  opacities_ = opacities;
+  if (lightbox_) {
+    foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
+    lightbox_->redraw();
   }
 }
 
 //-----------------------------------------------------------------------------
-std::vector<float> Visualizer::get_opacities() { return this->opacities_; }
+std::vector<float> Visualizer::get_opacities() { return opacities_; }
 
 //-----------------------------------------------------------------------------
-double Visualizer::get_current_glyph_size() { return this->current_glyph_size_; }
+double Visualizer::get_current_glyph_size() { return current_glyph_size_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_click(result); }
@@ -500,11 +498,7 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
   }
 
   if (!show_color_scale) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
-      //viewer->set_override_hide_color_scale(true);
-      //viewer->update_actors();
-      viewer->remove_scalar_bar();
-    }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->remove_scalar_bar(); }
   }
 
   vtkRendererCollection* collection = render_window->GetRenderers();
@@ -526,7 +520,6 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
   auto qimage = StudioUtils::vtk_image_to_qimage(window_to_image_filter->GetOutput());
 
   // set back to the original render window
-
   collection->InitTraversal();
   renderer = collection->GetNextItem();
 
@@ -538,10 +531,7 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
 
   // restore changes
   update_viewer_properties();
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
-    viewer->set_override_hide_color_scale(false);
-    viewer->update_actors();
-  }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_actors(); }
 
   return QPixmap::fromImage(qimage);
 }

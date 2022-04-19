@@ -91,8 +91,6 @@ class Lightbox : public QObject {
 
   vtkRenderWindow* get_render_window();
 
-  void set_override_hide_color_scales(bool value);
-
  public Q_SLOTS:
   void handle_timer_callback();
 

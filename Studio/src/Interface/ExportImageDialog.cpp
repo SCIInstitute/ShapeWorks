@@ -18,7 +18,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer)
+ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer, bool pca_mode)
     : QDialog(parent), visualizer_(visualizer), prefs_(prefs) {
   ui_ = new Ui_ExportImageDialog;
   ui_->setupUi(this);
@@ -53,6 +53,8 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
+
+  ui_->pca_widget->setVisible(pca_mode);
 
   update_preview();
 }

@@ -940,7 +940,7 @@ void Viewer::update_actors() {
       renderer_->AddActor(arrow_glyph_actor_);
     }
 
-    if ((arrows_visible_ || showing_feature_map()) && !override_hide_scalar_bar_) {
+    if (arrows_visible_ || showing_feature_map()) {
       renderer_->AddActor(scalar_bar_actor_);
     }
   }

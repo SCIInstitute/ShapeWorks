@@ -497,11 +497,6 @@ void Lightbox::set_shared_window_and_level(double window, double level) {
 
 //-----------------------------------------------------------------------------
 vtkRenderWindow* Lightbox::get_render_window() { return render_window_; }
-
 //-----------------------------------------------------------------------------
-void Lightbox::set_override_hide_color_scales(bool value) {
-  for (int i = 0; i < viewers_.size(); i++) {
-    viewers_[i]->set_override_hide_color_scale(value);
-  }
-}
+
 }  // namespace shapeworks

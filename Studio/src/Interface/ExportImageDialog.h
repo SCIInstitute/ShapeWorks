@@ -19,7 +19,7 @@ class ExportImageDialog : public QDialog {
   Q_OBJECT
 
  public:
-  ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer);
+  ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer, bool pca_mode);
 
  private Q_SLOTS:
 
