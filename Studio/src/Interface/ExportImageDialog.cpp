@@ -48,6 +48,7 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->override_width, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
   connect(ui_->override_height, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
+  connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
 
   update_preview();
 }
@@ -56,13 +57,18 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
 void ExportImageDialog::export_clicked() {
   QString filter = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)";
 
-  auto dir = prefs_.get_last_directory() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Image"), dir + "Untitled", filter);
-  if (filename.isEmpty()) {
-    return;
+  try {
+    auto dir = prefs_.get_last_directory() + "/";
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export Image"), dir, filter);
+    if (filename.isEmpty()) {
+      return;
+    }
+    prefs_.set_last_directory(QFileInfo(filename).absolutePath());
+    pixmap_.save(filename);
+  } catch (std::exception& e) {
+    STUDIO_LOG_ERROR(e.what());
   }
 
-  pixmap_.save(filename);
   accept();
 }
 
@@ -80,7 +86,7 @@ void ExportImageDialog::update_preview() {
     size = visualizer_->get_render_size();
   }
 
-  pixmap_ = visualizer_->export_to_pixmap(size, true);
+  pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked());
   ui_->preview->setPixmap(pixmap_);
 }
 

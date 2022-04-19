@@ -478,15 +478,16 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background) {
   original_size[0] = render_window->GetSize()[0];
   original_size[1] = render_window->GetSize()[1];
   auto off_render_window = vtkSmartPointer<vtkRenderWindow>::New();
-  //auto off_render_window = render_window;
   off_render_window->OffScreenRenderingOn();
   off_render_window->SetNumberOfLayers(render_window->GetNumberOfLayers());
   off_render_window->SwapBuffersOff();
 
   window_to_image_filter->SetInput(off_render_window);
+  window_to_image_filter->ReadFrontBufferOff(); // read from the back buffer
 
-  if (transparent_background == true) {
+  if (transparent_background) {
     // If the background color is transparent then add alpha channel to output image.
+    off_render_window->SetAlphaBitPlanes(1); //Enable usage of alpha channel
     window_to_image_filter->SetInputBufferTypeToRGBA();
   }
 

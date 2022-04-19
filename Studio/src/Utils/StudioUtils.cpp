@@ -41,7 +41,9 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
   /// \todo retrieve just the UpdateExtent
   int width = image_data->GetDimensions()[0];
   int height = image_data->GetDimensions()[1];
-  QImage image(width, height, QImage::Format_RGB32);
+  int num_components = image_data->GetNumberOfScalarComponents();
+
+  QImage image(width, height, QImage::Format_ARGB32);
   QRgb* rgb_ptr = reinterpret_cast<QRgb*>(image.bits()) + width * (height - 1);
   unsigned char* colors_ptr = reinterpret_cast<unsigned char*>(image_data->GetScalarPointer());
 
@@ -49,8 +51,12 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
       // Swap the vtkImageData RGB values with an equivalent QColor
-      *(rgb_ptr++) = QColor(colors_ptr[0], colors_ptr[1], colors_ptr[2]).rgb();
-      colors_ptr += image_data->GetNumberOfScalarComponents();
+      if (num_components == 4) {
+        *(rgb_ptr++) = QColor(colors_ptr[0], colors_ptr[1], colors_ptr[2], colors_ptr[3]).rgba();
+      } else {
+        *(rgb_ptr++) = QColor(colors_ptr[0], colors_ptr[1], colors_ptr[2]).rgb();
+      }
+      colors_ptr += num_components;
     }
 
     rgb_ptr -= width * 2;

@@ -19,9 +19,7 @@ class ExportImageDialog : public QDialog {
   Q_OBJECT
 
  public:
-  //! constructor
   ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer);
-
 
  private Q_SLOTS:
 
@@ -30,7 +28,6 @@ class ExportImageDialog : public QDialog {
  Q_SIGNALS:
 
  private:
-
   void update_preview();
 
   Ui_ExportImageDialog* ui_;
