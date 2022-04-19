@@ -78,3 +78,6 @@ TEST(UseCaseTests, femur_pvalues) { run_use_case("femur_pvalues"); }
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, peanut_shared_boundary) { run_use_case("peanut_shared_boundary"); }
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, incremental_supershapes) { run_use_case("incremental_supershapes"); }
