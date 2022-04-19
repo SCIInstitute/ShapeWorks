@@ -44,11 +44,15 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->override_width->setText(QString::number(prefs_.get_export_override_size().width()));
   ui_->override_height->setText(QString::number(prefs_.get_export_override_size().height()));
   ui_->override_window_size->setChecked(prefs_.get_export_override_size_enabled());
+  ui_->show_corner_widget->setChecked(prefs_.get_export_show_orientation_marker());
+  ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
 
   connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->override_width, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
   connect(ui_->override_height, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
+  connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
+  connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
 
   update_preview();
 }
@@ -81,12 +85,15 @@ void ExportImageDialog::update_preview() {
   }
   prefs_.set_export_override_size(size);
   prefs_.set_export_override_size_enabled(ui_->override_window_size->isChecked());
+  prefs_.set_export_show_orientation_marker(ui_->show_corner_widget->isChecked());
+  prefs_.set_export_show_color_scale(ui_->show_color_scale->isChecked());
 
   if (!prefs_.get_export_override_size_enabled()) {
     size = visualizer_->get_render_size();
   }
 
-  pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked());
+  pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
+                                          ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
   ui_->preview->setPixmap(pixmap_);
 }
 

@@ -940,7 +940,7 @@ void Viewer::update_actors() {
       renderer_->AddActor(arrow_glyph_actor_);
     }
 
-    if (arrows_visible_ || showing_feature_map()) {
+    if ((arrows_visible_ || showing_feature_map()) && !override_hide_scalar_bar_) {
       renderer_->AddActor(scalar_bar_actor_);
     }
   }
@@ -962,6 +962,12 @@ void Viewer::update_actors() {
   slice_view_.update_renderer();
 
   update_opacities();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::remove_scalar_bar()
+{
+  renderer_->RemoveActor(scalar_bar_actor_);
 }
 
 //-----------------------------------------------------------------------------

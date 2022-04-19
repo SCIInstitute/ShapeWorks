@@ -92,7 +92,11 @@ class Preferences : public QObject {
   bool get_export_override_size_enabled();
   void set_export_override_size_enabled(bool enabled);
 
+  bool get_export_show_orientation_marker();
+  void set_export_show_orientation_marker(bool value);
 
+  bool get_export_show_color_scale();
+  void set_export_show_color_scale(bool value);
 
  Q_SIGNALS:
 

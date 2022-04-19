@@ -219,6 +219,22 @@ void Preferences::set_export_override_size_enabled(bool enabled) {
 }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_export_show_orientation_marker() {
+  return settings_.value("Export/show_orientation_marker", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_show_orientation_marker(bool value) {
+  settings_.setValue("Export/show_orientation_marker", value);
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_export_show_color_scale() { return settings_.value("Export/show_color_scale", true).toBool(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_show_color_scale(bool value) { settings_.setValue("Export/show_color_scale", value); }
+
+//-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }
 
 //-----------------------------------------------------------------------------

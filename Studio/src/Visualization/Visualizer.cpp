@@ -211,6 +211,8 @@ void Visualizer::update_viewer_properties() {
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
+    lightbox_->set_override_hide_color_scales(false);
+
     lightbox_->set_orientation_marker(preferences_.get_orientation_marker_type(),
                                       preferences_.get_orientation_marker_corner());
     update_lut();
@@ -233,7 +235,7 @@ void Visualizer::handle_image_slice_settings_changed() {
   lightbox_->update_interactor_style();
 
   if (this->lightbox_) {
-    Q_FOREACH (ViewerHandle v, this->lightbox_->get_viewers()) { v->update_image_volume(); }
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) { v->update_image_volume(); }
   }
   lightbox_->redraw();
 }
@@ -469,7 +471,8 @@ void Visualizer::handle_ctrl_click(PickResult result) { session_->handle_ctrl_cl
 void Visualizer::redraw() { lightbox_->redraw(); }
 
 //-----------------------------------------------------------------------------
-QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background) {
+QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker,
+                                     bool show_color_scale) {
   auto render_window = lightbox_->get_render_window();
 
   auto window_to_image_filter = vtkSmartPointer<vtkWindowToImageFilter>::New();
@@ -483,30 +486,36 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background) {
   off_render_window->SwapBuffersOff();
 
   window_to_image_filter->SetInput(off_render_window);
-  window_to_image_filter->ReadFrontBufferOff(); // read from the back buffer
+  window_to_image_filter->ReadFrontBufferOff();  // read from the back buffer
 
   if (transparent_background) {
     // If the background color is transparent then add alpha channel to output image.
-    off_render_window->SetAlphaBitPlanes(1); //Enable usage of alpha channel
+    off_render_window->SetAlphaBitPlanes(1);  // Enable usage of alpha channel
     window_to_image_filter->SetInputBufferTypeToRGBA();
+  }
+
+  if (!show_orientation_marker) {
+    lightbox_->set_orientation_marker(Preferences::OrientationMarkerType::none,
+                                      Preferences::OrientationMarkerCorner::upper_right);
+  }
+
+  if (!show_color_scale) {
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      //viewer->set_override_hide_color_scale(true);
+      //viewer->update_actors();
+      viewer->remove_scalar_bar();
+    }
   }
 
   vtkRendererCollection* collection = render_window->GetRenderers();
   collection->InitTraversal();
   vtkRenderer* renderer = collection->GetNextItem();
 
-  bool show_orientation_marker = true;
-  if (show_orientation_marker) {
-    while (renderer) {
-      off_render_window->AddRenderer(renderer);
-      renderer->SetRenderWindow(off_render_window);
-      renderer->Modified();
-      renderer = collection->GetNextItem();
-    }
-  } else {
-    //     renderWindow->AddRenderer( ren );
-    //     ren->SetRenderWindow( renderWindow );
-    //     ren->Modified();
+  while (renderer) {
+    off_render_window->AddRenderer(renderer);
+    renderer->SetRenderWindow(off_render_window);
+    renderer->Modified();
+    renderer = collection->GetNextItem();
   }
 
   off_render_window->SetSize(size.width(), size.height());
@@ -516,30 +525,23 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background) {
   window_to_image_filter->Update();
   auto qimage = StudioUtils::vtk_image_to_qimage(window_to_image_filter->GetOutput());
 
-
   // set back to the original render window
 
   collection->InitTraversal();
   renderer = collection->GetNextItem();
 
-  if (show_orientation_marker) {
-    while (renderer) {
-
-      off_render_window->RemoveRenderer( renderer );
-      renderer->SetRenderWindow( render_window );
-      renderer = collection->GetNextItem();
-
-    }
-  } else {
-    //     renderWindow->AddRenderer( ren );
-    //     ren->SetRenderWindow( renderWindow );
-    //     ren->Modified();
+  while (renderer) {
+    off_render_window->RemoveRenderer(renderer);
+    renderer->SetRenderWindow(render_window);
+    renderer = collection->GetNextItem();
   }
 
-
-  //render_window->SetOffScreenRendering(false);
-  //render_window->SetSize(original_size);
-
+  // restore changes
+  update_viewer_properties();
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->set_override_hide_color_scale(false);
+    viewer->update_actors();
+  }
 
   return QPixmap::fromImage(qimage);
 }
