@@ -97,14 +97,14 @@ After completing the grooming and optimization steps, this worksheet will look l
 
 There will also be new worksheets with parameters from those tools and other studio settings.
 
-### Features of the Project Sheet:
--Transforms are passed to the optimizers: ADD DETAILS
+### Features of the Project Sheet:(Not complete)
+-Transforms are passed to the optimizers: switched from transforming the data (e.g. centering) to passing the transform as the “prefix transform”
 
 ### Python API for Generation Project Sheet
 The `Project` class of `ShapeWorks` lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found [here](http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description). The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
 Setting up the project sheet using the python API entails the following steps:
 
-1. Subjects:** Each input shape(segmentation/mesh) is called a `subject`. This represents a single row of the datasheet. Using the Python API, an object of type `Subject` can be initialized, and the following properties can be set:
+1. **Subjects:** Each input shape(segmentation/mesh) is called a `subject`. This represents a single row of the datasheet. Using the Python API, an object of type `Subject` can be initialized, and the following properties can be set:
 
 	1. **Number of domains**
 	2. **Original filename**: Filename (including the relative path) of the input shape
@@ -207,7 +207,7 @@ If there are multiple domains, the subjects will contain list of string of filen
 	parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
 ```
-3. **Project:**Once, the list of subjects and parameters, are created, they can be set in the project file using the `Project` object
+3. **Project:** Once, the list of subjects and parameters, are created, they can be set in the project file using the `Project` object
 
 ```python
     # Set project

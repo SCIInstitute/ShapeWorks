@@ -84,7 +84,7 @@ def Run_Pipeline(args):
         mesh = sw.Mesh(mesh_file)
         # do initial grooming steps
         print("Grooming: " + mesh_name)
-        mesh.remeshPercent(percentage=60, adaptivity=1.0)
+        mesh.remeshPercent(percentage=0.9, adaptivity=1.0)
         # append to the mesh list
         mesh_list.append(mesh)
 
