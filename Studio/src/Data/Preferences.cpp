@@ -235,6 +235,12 @@ bool Preferences::get_export_show_color_scale() { return settings_.value("Export
 void Preferences::set_export_show_color_scale(bool value) { settings_.setValue("Export/show_color_scale", value); }
 
 //-----------------------------------------------------------------------------
+int Preferences::get_export_num_pca_images() { return settings_.value("Export/num_pca_images", 1).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_num_pca_images(int number) { settings_.setValue("Export/num_pca_images", number); }
+
+//-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }
 
 //-----------------------------------------------------------------------------

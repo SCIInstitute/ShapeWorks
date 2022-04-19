@@ -1580,15 +1580,17 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::action_export_pca_montage_triggered() {}
+void ShapeWorksStudioApp::action_export_pca_montage_triggered() {
+  ExportImageDialog dialog(this, preferences_, visualizer_, true);
+  dialog.exec();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_screenshot_triggered() {
   ExportImageDialog dialog(this, preferences_, visualizer_, false);
-  if (dialog.exec() != QDialog::Accepted) {
-    return;
-  }
+  dialog.exec();
 }
+
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close the preferences window in case it is open

@@ -191,6 +191,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>5</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

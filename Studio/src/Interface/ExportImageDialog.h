@@ -37,6 +37,8 @@ class ExportImageDialog : public QDialog {
   Preferences& prefs_;
 
   QPixmap pixmap_;
+
+  bool pca_mode_ = false;
 };
 
 }  // namespace shapeworks

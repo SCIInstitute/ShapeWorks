@@ -98,6 +98,9 @@ class Preferences : public QObject {
   bool get_export_show_color_scale();
   void set_export_show_color_scale(bool value);
 
+  int get_export_num_pca_images();
+  void set_export_num_pca_images(int number);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QImageWriter>
 #include <QMessageBox>
+#include <QPainter>
 
 // studio
 #include <Applications/Configuration.h>
@@ -18,8 +19,9 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer, bool pca_mode)
-    : QDialog(parent), visualizer_(visualizer), prefs_(prefs) {
+ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer,
+                                     bool pca_mode)
+    : QDialog(parent), visualizer_(visualizer), prefs_(prefs), pca_mode_(pca_mode) {
   ui_ = new Ui_ExportImageDialog;
   ui_->setupUi(this);
 
@@ -46,6 +48,7 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->override_window_size->setChecked(prefs_.get_export_override_size_enabled());
   ui_->show_corner_widget->setChecked(prefs_.get_export_show_orientation_marker());
   ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
+  ui_->pca_num_images_slider->setValue(prefs_.get_export_num_pca_images());
 
   connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->override_width, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
@@ -53,6 +56,7 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
+  connect(ui_->pca_num_images_slider, &QSlider::valueChanged, this, &ExportImageDialog::update_preview);
 
   ui_->pca_widget->setVisible(pca_mode);
 
@@ -89,13 +93,36 @@ void ExportImageDialog::update_preview() {
   prefs_.set_export_override_size_enabled(ui_->override_window_size->isChecked());
   prefs_.set_export_show_orientation_marker(ui_->show_corner_widget->isChecked());
   prefs_.set_export_show_color_scale(ui_->show_color_scale->isChecked());
+  prefs_.set_export_num_pca_images(ui_->pca_num_images_slider->value());
+  int num_pca_steps = ui_->pca_num_images_slider->value();
+  ui_->pca_num_images_label->setText(QString::number(num_pca_steps));
 
   if (!prefs_.get_export_override_size_enabled()) {
     size = visualizer_->get_render_size();
   }
 
-  pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
-                                          ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
+  if (pca_mode_) {
+    int num_images = 2 * num_pca_steps + 1;
+    auto canvas = QPixmap(size.width() * num_images, size.height());
+    canvas.fill(QColor(0,0,0,0));
+    int x = 0;
+
+    for (int i=0;i<num_images;i++) {
+      //visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
+      auto pixmap =
+          visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
+                                        ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
+      QPainter painter(&canvas);
+      painter.drawPixmap(x, 0, pixmap);
+      x += size.width();
+    }
+
+    pixmap_ = canvas;
+
+  } else {
+    pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
+                                            ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
+  }
   ui_->preview->setPixmap(pixmap_);
 }
 
