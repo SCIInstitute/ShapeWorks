@@ -470,8 +470,15 @@ void Visualizer::redraw() { lightbox_->redraw(); }
 
 //-----------------------------------------------------------------------------
 QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker,
-                                     bool show_color_scale) {
+                                     bool show_color_scale, bool& ready) {
   auto render_window = lightbox_->get_render_window();
+
+  ready = true;
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    if (!viewer->is_ready()) {
+      ready = false;
+    }
+  };
 
   auto window_to_image_filter = vtkSmartPointer<vtkWindowToImageFilter>::New();
 

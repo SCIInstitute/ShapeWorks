@@ -9,6 +9,7 @@
 #include <QPainter>
 
 // studio
+#include <Analysis/AnalysisTool.h>
 #include <Applications/Configuration.h>
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
@@ -19,9 +20,9 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<Visualizer> visualizer,
-                                     bool pca_mode)
-    : QDialog(parent), visualizer_(visualizer), prefs_(prefs), pca_mode_(pca_mode) {
+ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QSharedPointer<AnalysisTool> analysis_tool,
+                                     QSharedPointer<Visualizer> visualizer, bool pca_mode)
+    : QDialog(parent), visualizer_(visualizer), prefs_(prefs), pca_mode_(pca_mode), analysis_tool_(analysis_tool) {
   ui_ = new Ui_ExportImageDialog;
   ui_->setupUi(this);
 
@@ -36,12 +37,6 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   rect = rect.marginsRemoved(QMargins(width_margin, height_margin, width_margin, height_margin));
   setGeometry(rect);
 
-  connect(ui_->export_button, &QPushButton::clicked, this, &ExportImageDialog::export_clicked);
-  connect(ui_->cancel_button, &QPushButton::clicked, this, &ExportImageDialog::reject);
-
-  connect(&update_preview_timer_, &QTimer::timeout, this, &ExportImageDialog::update_preview);
-  update_preview_timer_.setSingleShot(true);
-
   // load state from prefs
   QIntValidator* size_validator = new QIntValidator(1, 65535, this);
   ui_->override_width->setValidator(size_validator);
@@ -51,20 +46,28 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->override_window_size->setChecked(prefs_.get_export_override_size_enabled());
   ui_->show_corner_widget->setChecked(prefs_.get_export_show_orientation_marker());
   ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
-  ui_->pca_num_images_slider->setValue(prefs_.get_export_num_pca_images());
+  ui_->pca_num_images->setValue(prefs_.get_export_num_pca_images());
+  ui_->pca_range->setValue(prefs_.get_export_pca_range());
+
+  connect(ui_->export_button, &QPushButton::clicked, this, &ExportImageDialog::export_clicked);
+  connect(ui_->cancel_button, &QPushButton::clicked, this, &ExportImageDialog::reject);
+
+  connect(&update_preview_timer_, &QTimer::timeout, this, &ExportImageDialog::update_preview);
+  update_preview_timer_.setSingleShot(true);
 
   auto start_timer = [=]() { update_preview_timer_.start(1000); };
-
-  connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->override_width, &QLineEdit::textChanged, start_timer);
   connect(ui_->override_height, &QLineEdit::textChanged, start_timer);
+  connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
-  connect(ui_->pca_num_images_slider, &QSlider::valueChanged, this, &ExportImageDialog::update_preview);
+  connect(ui_->pca_num_images, qOverload<int>(&QSpinBox::valueChanged), this, &ExportImageDialog::update_preview);
+  connect(ui_->pca_range, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &ExportImageDialog::update_preview);
 
   ui_->pca_widget->setVisible(pca_mode);
 
+  ui_->progress_widget->hide();
   update_preview();
 }
 
@@ -98,25 +101,36 @@ void ExportImageDialog::update_preview() {
   prefs_.set_export_override_size_enabled(ui_->override_window_size->isChecked());
   prefs_.set_export_show_orientation_marker(ui_->show_corner_widget->isChecked());
   prefs_.set_export_show_color_scale(ui_->show_color_scale->isChecked());
-  prefs_.set_export_num_pca_images(ui_->pca_num_images_slider->value());
-  int num_pca_steps = ui_->pca_num_images_slider->value();
-  ui_->pca_num_images_label->setText(QString::number(num_pca_steps));
+  prefs_.set_export_num_pca_images(ui_->pca_num_images->value());
+  prefs_.set_export_pca_range(ui_->pca_range->value());
+  int num_pca_steps = ui_->pca_num_images->value();
+  double pca_range = ui_->pca_range->value();
 
   if (!prefs_.get_export_override_size_enabled()) {
     size = visualizer_->get_render_size();
   }
 
+  bool all_ready = true;
+
   if (pca_mode_) {
     int num_images = 2 * num_pca_steps + 1;
+    double increment = pca_range / num_pca_steps;
     auto canvas = QPixmap(size.width() * num_images, size.height());
     canvas.fill(QColor(0, 0, 0, 0));
     int x = 0;
 
-    for (int i = 0; i < num_images; i++) {
-      // visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
-      auto pixmap =
-          visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
-                                        ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
+    int mode = analysis_tool_->get_pca_mode();
+
+    for (int step = -num_pca_steps; step <= num_pca_steps; step++) {
+      double pca_value = step * increment;
+      visualizer_->display_shape(analysis_tool_->get_mode_shape(mode, pca_value));
+      bool ready = false;
+      auto pixmap = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
+                                                  ui_->show_corner_widget->isChecked(),
+                                                  ui_->show_color_scale->isChecked(), ready);
+      if (!ready) {
+        all_ready = false;
+      }
       QPainter painter(&canvas);
       painter.drawPixmap(x, 0, pixmap);
       x += size.width();
@@ -126,8 +140,15 @@ void ExportImageDialog::update_preview() {
 
   } else {
     pixmap_ = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
-                                            ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());
+                                            ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked(),
+                                            all_ready);
   }
+
+  ui_->progress_widget->setVisible(!all_ready);
+  if (!all_ready) {
+    update_preview_timer_.start(2000);
+  }
+
   ui_->preview->setPixmap(pixmap_);
 }
 

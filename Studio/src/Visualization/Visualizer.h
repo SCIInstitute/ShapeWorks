@@ -140,7 +140,7 @@ class Visualizer : public QObject {
 
   //! Export render window to pixmap
   QPixmap export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker,
-                           bool show_color_scale);
+                           bool show_color_scale, bool &ready);
 
   //! Return render window size
   QSize get_render_size();

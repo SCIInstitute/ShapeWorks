@@ -145,6 +145,8 @@ class Viewer {
 
   void remove_scalar_bar();
 
+  bool is_ready() { return mesh_ready_; }
+
  private:
   void initialize_surfaces();
 
@@ -162,7 +164,7 @@ class Viewer {
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
-  bool visible_;
+  bool visible_ = false;
 
   QSharedPointer<Shape> shape_;
 
@@ -205,7 +207,7 @@ class Viewer {
   bool arrows_visible_ = false;
 
   ColorSchemes color_schemes_;
-  int scheme_;
+  int scheme_ = 0;
 
   bool mesh_ready_ = false;
   bool viewer_ready_ = false;

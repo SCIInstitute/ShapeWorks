@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>735</width>
-    <height>339</height>
+    <height>362</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -183,25 +183,6 @@
          <item row="0" column="0">
           <widget class="QWidget" name="pca_widget" native="true">
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="1">
-             <widget class="QSlider" name="pca_num_images_slider">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>5</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="pca_images_label">
               <property name="text">
@@ -209,10 +190,36 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="pca_num_images_label">
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="pca_num_images">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="pca_range_label">
               <property name="text">
-               <string>Number</string>
+               <string>PCA Range</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="pca_range">
+              <property name="suffix">
+               <string> SD</string>
+              </property>
+              <property name="minimum">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>2.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -260,6 +267,41 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item>
+       <widget class="QWidget" name="progress_widget" native="true">
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QProgressBar" name="progress">
+           <property name="maximum">
+            <number>0</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="progress_label">
+           <property name="text">
+            <string>Generating Images</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">

@@ -101,6 +101,9 @@ class Preferences : public QObject {
   int get_export_num_pca_images();
   void set_export_num_pca_images(int number);
 
+  double get_export_pca_range();
+  void set_export_pca_range(double range);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

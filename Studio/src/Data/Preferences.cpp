@@ -241,6 +241,12 @@ int Preferences::get_export_num_pca_images() { return settings_.value("Export/nu
 void Preferences::set_export_num_pca_images(int number) { settings_.setValue("Export/num_pca_images", number); }
 
 //-----------------------------------------------------------------------------
+double Preferences::get_export_pca_range() { return settings_.value("Export/pca_range", 2.0).toDouble(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_pca_range(double range) { settings_.setValue("Export/pca_range", range); }
+
+//-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }
 
 //-----------------------------------------------------------------------------
