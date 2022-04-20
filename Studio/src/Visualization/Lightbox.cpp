@@ -72,6 +72,12 @@ void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int positio
 }
 
 //-----------------------------------------------------------------------------
+int Lightbox::get_start_shape()
+{
+  return start_row_ * tile_layout_width_;
+}
+
+//-----------------------------------------------------------------------------
 std::array<double, 3> Lightbox::initPos() { return initPos_; }
 
 //-----------------------------------------------------------------------------
@@ -115,7 +121,7 @@ void Lightbox::display_shapes() {
   }
 
   // skip based on scrollbar
-  int start_object = start_row_ * tile_layout_width_;
+  int start_object = get_start_shape();
 
   int end_object = std::min<int>(start_object + viewers_.size(), shapes_.size());
 
@@ -273,7 +279,7 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
     for (int i = 0; i < viewers_.size(); i++) {
       auto result = viewers_[i]->handle_ctrl_click(click_pos);
       if (result.domain_ != -1) {
-        result.subject_ = i;
+        result.subject_ = i + get_start_shape();
         visualizer_->handle_ctrl_click(result);
         return;
       }

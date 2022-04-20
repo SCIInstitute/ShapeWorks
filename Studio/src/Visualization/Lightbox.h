@@ -103,6 +103,8 @@ class Lightbox : public QObject {
 
   void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
 
+  int get_start_shape();
+
   vtkSmartPointer<vtkRenderer> renderer_;
 
   QVector<QSharedPointer<Shape>> shapes_;
