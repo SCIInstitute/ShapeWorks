@@ -39,6 +39,9 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->export_button, &QPushButton::clicked, this, &ExportImageDialog::export_clicked);
   connect(ui_->cancel_button, &QPushButton::clicked, this, &ExportImageDialog::reject);
 
+  connect(&update_preview_timer_, &QTimer::timeout, this, &ExportImageDialog::update_preview);
+  update_preview_timer_.setSingleShot(true);
+
   // load state from prefs
   QIntValidator* size_validator = new QIntValidator(1, 65535, this);
   ui_->override_width->setValidator(size_validator);
@@ -50,9 +53,11 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
   ui_->pca_num_images_slider->setValue(prefs_.get_export_num_pca_images());
 
+  auto start_timer = [=]() { update_preview_timer_.start(1000); };
+
   connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
-  connect(ui_->override_width, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
-  connect(ui_->override_height, &QLineEdit::textChanged, this, &ExportImageDialog::update_preview);
+  connect(ui_->override_width, &QLineEdit::textChanged, start_timer);
+  connect(ui_->override_height, &QLineEdit::textChanged, start_timer);
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
@@ -104,11 +109,11 @@ void ExportImageDialog::update_preview() {
   if (pca_mode_) {
     int num_images = 2 * num_pca_steps + 1;
     auto canvas = QPixmap(size.width() * num_images, size.height());
-    canvas.fill(QColor(0,0,0,0));
+    canvas.fill(QColor(0, 0, 0, 0));
     int x = 0;
 
-    for (int i=0;i<num_images;i++) {
-      //visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
+    for (int i = 0; i < num_images; i++) {
+      // visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
       auto pixmap =
           visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
                                         ui_->show_corner_widget->isChecked(), ui_->show_color_scale->isChecked());

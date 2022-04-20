@@ -2,6 +2,7 @@
 
 // qt
 #include <QDialog>
+#include <QTimer>
 
 // studio
 #include <Data/Preferences.h>
@@ -39,6 +40,8 @@ class ExportImageDialog : public QDialog {
   QPixmap pixmap_;
 
   bool pca_mode_ = false;
+
+  QTimer update_preview_timer_;
 };
 
 }  // namespace shapeworks
