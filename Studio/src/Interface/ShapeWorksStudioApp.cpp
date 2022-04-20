@@ -853,6 +853,8 @@ void ShapeWorksStudioApp::update_tool_mode() {
 
   analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
+  ui_->action_export_pca_montage->setEnabled(tool_state == Session::ANALYSIS_C);
+
   for (int i = 0; i < ui_->stacked_widget->count(); i++) {
     ui_->stacked_widget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
