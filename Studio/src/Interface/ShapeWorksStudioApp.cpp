@@ -46,9 +46,9 @@
 
 namespace shapeworks {
 
-static QVariant ITEM_DISABLE(0);
-static QVariant ITEM_ENABLE(1 | 32);
-static int ITEM_ROLE = Qt::UserRole - 1;
+static constexpr int ITEM_DISABLE = 0;
+static constexpr int ITEM_ENABLE = (1 | 32);
+static constexpr int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
 
