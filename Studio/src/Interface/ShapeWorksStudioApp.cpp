@@ -892,6 +892,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
     // ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
     ui_->controlsDock->setWindowTitle("Data");
     ui_->action_import_mode->setChecked(true);
+    update_display();
   }
 
   ui_->stacked_widget->widget(ui_->stacked_widget->currentIndex())
