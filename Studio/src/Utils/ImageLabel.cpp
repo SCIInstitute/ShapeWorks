@@ -10,6 +10,6 @@ void ImageLabel::resizeEvent(QResizeEvent *resize_event) {
 //-----------------------------------------------------------------------------
 void ImageLabel::setPixmap(const QPixmap &pixmap, const QSize &size) {
   pixmap_ = pixmap;
-  QLabel::setPixmap(pixmap_.scaled(size, Qt::KeepAspectRatio));
+  QLabel::setPixmap(pixmap_.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 }  // namespace shapeworks

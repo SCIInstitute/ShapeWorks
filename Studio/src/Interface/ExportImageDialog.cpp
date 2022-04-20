@@ -12,6 +12,7 @@
 #include <Analysis/AnalysisTool.h>
 #include <Applications/Configuration.h>
 #include <Data/StudioLog.h>
+#include <Visualization/ColorSchemes.h>
 #include <Visualization/Visualizer.h>
 
 #include "ExportImageDialog.h"
@@ -55,15 +56,18 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(&update_preview_timer_, &QTimer::timeout, this, &ExportImageDialog::update_preview);
   update_preview_timer_.setSingleShot(true);
 
-  auto start_timer = [=]() { update_preview_timer_.start(1000); };
+  auto start_timer = [=]() {
+    ui_->progress_widget->show();
+    update_preview_timer_.start(1000);
+  };
   connect(ui_->override_width, &QLineEdit::textChanged, start_timer);
   connect(ui_->override_height, &QLineEdit::textChanged, start_timer);
   connect(ui_->override_window_size, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->transparent_background, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_corner_widget, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
-  connect(ui_->pca_num_images, qOverload<int>(&QSpinBox::valueChanged), this, &ExportImageDialog::update_preview);
-  connect(ui_->pca_range, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &ExportImageDialog::update_preview);
+  connect(ui_->pca_num_images, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
+  connect(ui_->pca_range, qOverload<double>(&QDoubleSpinBox::valueChanged), this, start_timer);
 
   ui_->pca_widget->setVisible(pca_mode);
 
@@ -110,13 +114,20 @@ void ExportImageDialog::update_preview() {
     size = visualizer_->get_render_size();
   }
 
+  bool transparent = ui_->transparent_background->isChecked();
+
   bool all_ready = true;
+
+  ColorSchemes color_schemes;
+  ColorScheme colors = color_schemes[prefs_.get_color_scheme()];
 
   if (pca_mode_) {
     int num_images = 2 * num_pca_steps + 1;
     double increment = pca_range / num_pca_steps;
-    auto canvas = QPixmap(size.width() * num_images, size.height());
-    canvas.fill(QColor(0, 0, 0, 0));
+    double margin = size.height() * 0.2;
+    auto canvas = QPixmap(size.width() * num_images, size.height() + margin);  // extra 20% for labels
+
+    canvas.fill(colors.background_qcolor(transparent ? 0 : 255));
     int x = 0;
 
     int mode = analysis_tool_->get_pca_mode();
@@ -125,14 +136,36 @@ void ExportImageDialog::update_preview() {
       double pca_value = step * increment;
       visualizer_->display_shape(analysis_tool_->get_mode_shape(mode, pca_value));
       bool ready = false;
-      auto pixmap = visualizer_->export_to_pixmap(size, ui_->transparent_background->isChecked(),
-                                                  ui_->show_corner_widget->isChecked(),
-                                                  ui_->show_color_scale->isChecked(), ready);
+
+      bool orientation_marker = ui_->show_corner_widget->isChecked() && step == num_pca_steps;
+      bool color_scale = ui_->show_color_scale->isChecked() && step == num_pca_steps;
+      auto pixmap = visualizer_->export_to_pixmap(size, transparent, orientation_marker, color_scale, ready);
       if (!ready) {
         all_ready = false;
       }
+
+      QString text = QString::number(pca_value, 'g', 2) + " SD";
+      if (step == 0) {
+        text = "Mean Shape";
+      }
+
       QPainter painter(&canvas);
       painter.drawPixmap(x, 0, pixmap);
+      painter.setPen(colors.get_text_color());
+      QFont font = painter.font();
+      font.setPixelSize(margin * 0.75);
+      painter.setFont(font);
+
+      auto metrics = QFontMetrics(font);
+      auto rect = metrics.boundingRect(text);
+
+      double mid = x + pixmap.width() / 2.0;
+
+      QRect draw_rect = QRect(QPoint(x, pixmap.height()), QPoint(x + pixmap.width(), pixmap.height() + margin));
+
+      QPointF anchor(mid - rect.width() / 2.0, pixmap.height() + (margin / 2.0));
+
+      painter.drawText(draw_rect, Qt::AlignCenter, text);
       x += size.width();
     }
 

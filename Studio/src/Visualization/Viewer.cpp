@@ -193,15 +193,7 @@ void Viewer::set_color_scheme(int scheme) {
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
                            color_schemes_[scheme].background.b);
 
-  double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
-                    color_schemes_[scheme].background.b) /
-                   3.0;
-
-  double color = 1;
-  if (average > 0.5) {
-    color = 0;
-  }
-
+  double color = color_schemes_[scheme].get_text_intensity();
   scalar_bar_actor_->GetLabelTextProperty()->SetColor(color, color, color);
 }
 
