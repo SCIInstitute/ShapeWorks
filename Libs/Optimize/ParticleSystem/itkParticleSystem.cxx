@@ -249,19 +249,13 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
     lists.push_back(list);
   }
 
-  size_t counter = 0;
-
   if (lists.size() > 0) {
     for (size_t i = 0; i < lists[0].size(); i++) {
       // While the random vector updated violates plane constraints
       // Breaks when it doesn't violate for any domain
-      std::vector<vnl_vector_fixed<double, VDimension> > newposs_good;
+      std::vector<PointType> newposs_good;
 
       while (true) {
-          // Auxiliary for debug
-          std::vector<vnl_vector_fixed<double, VDimension> > dbgprojected;
-          std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;
-
         // Generate random unit vector
         std::uniform_real_distribution<double> distribution(-1000., 1000.);
 
@@ -277,76 +271,32 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         newposs_good.clear();
         bool good = true;  // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
-
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
 
-          size_t local_domain = dom_to_process + j * domains_per_shape;
+          int local_domain = dom_to_process + j * domains_per_shape;
           auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
           PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
 
-          vnl_vector_fixed<double, VDimension> updateVector;
-          updateVector[0] = newpos[0]-lists[j][i][0]; updateVector[1] = newpos[1]-lists[j][i][1]; updateVector[2] = newpos[2]-lists[j][i][2];
-          vnl_vector_fixed<double, VDimension> projected = this->GetDomain(dom_to_process + j * domains_per_shape)->ProjectVectorToSurfaceTangent(updateVector, lists[j][i], j);
+          // Go to surface
+          if (!this->m_DomainFlags[local_domain] &&
+              !this->GetDomain(local_domain)->GetConstraints()->isAnyViolated(newpos)) {
+            this->GetDomain(local_domain)->ApplyConstraints(newpos, -1);
+          }
+          newposs_good.push_back(newpos);
+          // Check for plane constraint violations
 
-          vnl_vector_fixed<double, VDimension> normupdateVector = updateVector / updateVector.magnitude();
-          vnl_vector_fixed<double, VDimension> normprojected = projected / projected.magnitude();
-
-          // Auxiliary for debug
-          dbgoriginal.push_back(normupdateVector);
-          dbgprojected.push_back(normprojected);
-
-          double cosangle = normupdateVector[0]*normprojected[0] + normupdateVector[1]*normprojected[1] + normupdateVector[2]*normprojected[2];
-
-          projected = projected * epsilon / projected.magnitude();
-
-          newposs_good.push_back(projected);
+          /*if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
+            good = false;
+            //std::cout << "violation " << lists[j][i] << " new point " << std::endl;
+            break;
+          }*/
         }
-
-//        // Useful for debugging and examining raw splitting performance
-//        // Should remain to examine whether splitting is going wrong
-//        double allowedangle = 55;
-//        for(size_t l = 0; l < dbgprojected.size(); l++){
-//            for(size_t m = 0; m < dbgprojected.size(); m++){
-//                vnl_vector_fixed<double, VDimension> dbgpro1 = dbgprojected[l];
-//                vnl_vector_fixed<double, VDimension> dbgpro2 = dbgprojected[m];
-//                double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
-//                double angledegrees = acos(cosangle)*180/3.14;
-//                if(angledegrees > allowedangle) {
-//                    vnl_vector_fixed<double, VDimension> dbgpro11 = dbgprojected[l];
-//                    vnl_vector_fixed<double, VDimension> dbgori11 = dbgoriginal[l];
-//                    double cosangle1 = dbgpro11[0]*dbgori11[0] + dbgpro11[1]*dbgori11[1] + dbgpro11[2]*dbgori11[2];
-//                    double angledegrees1 = acos(cosangle1)*180/3.14;
-//                    dbgpro11 = dbgprojected[m];
-//                    dbgori11 = dbgoriginal[m];
-//                    double cosangle2 = dbgpro11[0]*dbgori11[0] + dbgpro11[1]*dbgori11[1] + dbgpro11[2]*dbgori11[2];
-//                    double angledegrees2 = acos(cosangle2)*180/3.14;
-//                    std::cout << " (" << l << ", " << m << ") violate at " << angledegrees << " with (" << angledegrees1 << ", " << angledegrees2 << ") projection degrees" << std::endl;
-//                    good = false;
-//                }
-//            }
-//            //std::cout << std::endl;
-//        }
-//        //std::cout << std::endl << std::endl;
-//        if(!good){
-//            std::cout << std::endl << "Violation at " << lists[0].size() << " particle split." << std::endl;
-//        }
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
-            size_t local_domain = dom_to_process + j * domains_per_shape;
-            vnl_vector_fixed<double, VDimension> projected = newposs_good[j];
-
-            PointType newpos = this->GetDomain(local_domain)->UpdateParticlePosition(lists[j][i], i, projected);
-            this->AddPosition(newpos, local_domain, 0);
-
-            // Apply opposite update to each original point in the split.
-            auto neg_projected = -projected;
-            newpos = this->GetDomain(local_domain)->UpdateParticlePosition(lists[j][i], i, neg_projected);
-            this->SetPosition(newpos, i, local_domain, 0);
-            shapeworks::ParticleDomain *particle_domain = this->GetDomain(local_domain);
-            particle_domain->InvalidateParticlePosition(i);
-
+            int local_domain = dom_to_process + j * domains_per_shape;
+            this->AddPosition(newposs_good[j], local_domain, 0);
             // Debuggg
             // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
