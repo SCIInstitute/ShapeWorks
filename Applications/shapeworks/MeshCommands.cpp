@@ -1354,12 +1354,12 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
 
   if (sharedData.mesh->compare(Mesh(filename), eps))
   {
-    std::cout << "compare success\n";
+    std::cout << "meshes are the same\n";
     return true;
   }
   else
   {
-    std::cout << "compare failure\n";
+    std::cout << "meshes are different\n";
     return false;
   }
 }

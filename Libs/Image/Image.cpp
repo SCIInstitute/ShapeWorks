@@ -348,8 +348,9 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(iterations);
-  if (layers)
+  if (layers) {
     filter->SetNumberOfLayers(layers);
+  }
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();
