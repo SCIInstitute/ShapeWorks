@@ -747,7 +747,7 @@ void Optimize::Initialize()
   random = random.normalize() * this->m_spacing;
   */
 
-  double epsilon = this->m_spacing/5;
+  double epsilon = this->m_spacing;
   bool flag_split = false;
 
   for (int i = 0; i < n; i++) {
