@@ -378,7 +378,6 @@ bool OptimizeTool::validate_inputs() {
 //---------------------------------------------------------------------------
 void OptimizeTool::update_run_button() {
   bool inputs_valid = validate_inputs();
-  std::cerr << "update run button\n";
   ui_->run_optimize_button->setEnabled(inputs_valid && session_->get_groomed_present());
 
   if (optimization_is_running_) {
