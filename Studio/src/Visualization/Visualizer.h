@@ -159,6 +159,8 @@ class Visualizer : public QObject {
 
   void compute_measurements();
 
+  void setup_single_selected_point_lut();
+
   std::string display_mode_;
   std::string feature_map_;
   int alignment_domain_;

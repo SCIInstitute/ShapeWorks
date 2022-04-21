@@ -1138,6 +1138,9 @@ void Session::set_tool_state(std::string state) {
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
+bool Session::is_analysis_mode() { return get_tool_state() == Session::ANALYSIS_C; }
+
+//---------------------------------------------------------------------------
 void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
   ffc_painting_inclusive_mode_ = inclusive;
   Q_EMIT ffc_paint_mode_changed();

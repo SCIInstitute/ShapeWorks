@@ -176,6 +176,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void set_tool_state(std::string state);
   std::string get_tool_state();
+  bool is_analysis_mode();
 
   void set_ffc_paint_active(bool enabled);
   bool get_ffc_paint_active();

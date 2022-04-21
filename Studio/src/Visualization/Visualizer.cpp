@@ -245,83 +245,40 @@ void Visualizer::update_lut() {
   glyph_lut_->SetNumberOfTableValues(num_points + 1);
   glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
 
-  auto good_bad = session_->get_good_bad_particles();
+  bool analysis_mode = session_->is_analysis_mode();
 
-  if (selected_point_one_ < 0) {
-    if (session_->get_show_good_bad_particles() && good_bad.size() == num_points) {
-      for (int i = 0; i < num_points; i++) {
-        if (good_bad[i]) {
-          glyph_lut_->SetTableValue(i, 0, 1, 0);
-        } else {
-          glyph_lut_->SetTableValue(i, 1, 0, 0);
-        }
+  auto good_bad = session_->get_good_bad_particles();
+  bool good_bad_active = session_->get_show_good_bad_particles() && good_bad.size() == num_points && analysis_mode;
+
+  bool single_point_selected_mode = analysis_mode && selected_point_one_ >= 0 && selected_point_two_ < 0;
+  bool dual_point_selected_mode = analysis_mode && selected_point_one_ >= 0 && selected_point_two_ >= 0;
+
+  if (single_point_selected_mode) {
+    setup_single_selected_point_lut();
+  } else if (dual_point_selected_mode) {
+    // dual particle coloring mode
+    for (int i = 0; i < num_points; i++) {
+      glyph_lut_->SetTableValue(i, 0, 0, 0);
+
+      if (selected_point_one_ == i) {
+        glyph_lut_->SetTableValue(i, 1, 1, 1);
       }
-    } else {
-      glyph_lut_->ForceBuild();
+
+      if (selected_point_two_ == i) {
+        glyph_lut_->SetTableValue(i, 1, 1, 0);
+      }
+    }
+  } else if (good_bad_active) {
+    for (int i = 0; i < num_points; i++) {
+      if (good_bad[i]) {
+        glyph_lut_->SetTableValue(i, 0, 1, 0);
+      } else {
+        glyph_lut_->SetTableValue(i, 1, 0, 0);
+      }
     }
   } else {
-    if (selected_point_one_ >= 0 && selected_point_two_ >= 0) {
-      // measurement mode
-      for (int i = 0; i < num_points; i++) {
-        glyph_lut_->SetTableValue(i, 0, 0, 0);
-
-        if (selected_point_one_ == i) {
-          glyph_lut_->SetTableValue(i, 1, 1, 1);
-        }
-
-        if (selected_point_two_ == i) {
-          glyph_lut_->SetTableValue(i, 1, 1, 0);
-        }
-      }
-    } else {
-      // color by distance from the selected point
-
-      int check = selected_point_one_ * 3 + 2;
-      if (check >= cached_mean_.size()) {
-        return;
-      }
-      double p1[3];
-      p1[0] = cached_mean_[selected_point_one_ * 3 + 0];
-      p1[1] = cached_mean_[selected_point_one_ * 3 + 1];
-      p1[2] = cached_mean_[selected_point_one_ * 3 + 2];
-
-      std::vector<double> distances;
-      double max_distance = 0;
-      for (int i = 0; i < cached_mean_.size() / 3.0; i++) {
-        double p2[3];
-        p2[0] = cached_mean_[i * 3 + 0];
-        p2[1] = cached_mean_[i * 3 + 1];
-        p2[2] = cached_mean_[i * 3 + 2];
-
-        double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
-        distances.push_back(distance);
-        if (distance > max_distance) {
-          max_distance = distance;
-        }
-      }
-
-      vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
-      lut->SetTableRange(0, max_distance);
-      lut->SetHueRange(0, 1);
-      lut->SetSaturationRange(1, 1);
-      lut->SetValueRange(1, 1);
-      lut->Build();
-
-      for (int i = 0; i < num_points; i++) {
-        const unsigned char* color = lut->MapValue(max_distance - distances[i]);
-
-        // glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
-        glyph_lut_->SetTableValue(i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
-
-        if (selected_point_one_ == i) {
-          glyph_lut_->SetTableValue(i, 1, 1, 1);
-        }
-
-        if (selected_point_two_ == i) {
-          glyph_lut_->SetTableValue(i, 0, 0, 0);
-        }
-      }
-    }
+    // normal particle coloring mode
+    glyph_lut_->ForceBuild();
   }
 
   glyph_lut_->Modified();
@@ -343,6 +300,59 @@ void Visualizer::set_selected_point_two(int id) {
 //-----------------------------------------------------------------------------
 void Visualizer::compute_measurements() {
   if (selected_point_one_ >= 0 && selected_point_two_ >= 0) {
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::setup_single_selected_point_lut() {
+  int num_points = session_->get_num_particles();
+
+  // color by distance from the selected point
+
+  int check = selected_point_one_ * 3 + 2;
+  if (check >= cached_mean_.size()) {
+    return;
+  }
+  double p1[3];
+  p1[0] = cached_mean_[selected_point_one_ * 3 + 0];
+  p1[1] = cached_mean_[selected_point_one_ * 3 + 1];
+  p1[2] = cached_mean_[selected_point_one_ * 3 + 2];
+
+  std::vector<double> distances;
+  double max_distance = 0;
+  for (int i = 0; i < cached_mean_.size() / 3.0; i++) {
+    double p2[3];
+    p2[0] = cached_mean_[i * 3 + 0];
+    p2[1] = cached_mean_[i * 3 + 1];
+    p2[2] = cached_mean_[i * 3 + 2];
+
+    double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+    distances.push_back(distance);
+    if (distance > max_distance) {
+      max_distance = distance;
+    }
+  }
+
+  vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+  lut->SetTableRange(0, max_distance);
+  lut->SetHueRange(0, 1);
+  lut->SetSaturationRange(1, 1);
+  lut->SetValueRange(1, 1);
+  lut->Build();
+
+  for (int i = 0; i < num_points; i++) {
+    const unsigned char* color = lut->MapValue(max_distance - distances[i]);
+
+    // glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
+    glyph_lut_->SetTableValue(i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
+
+    if (selected_point_one_ == i) {
+      glyph_lut_->SetTableValue(i, 1, 1, 1);
+    }
+
+    if (selected_point_two_ == i) {
+      glyph_lut_->SetTableValue(i, 0, 0, 0);
+    }
   }
 }
 
