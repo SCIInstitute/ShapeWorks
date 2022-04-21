@@ -13,7 +13,6 @@ TEST(ImageTests, exceptionTestString)
   try {
     throw shapeworks_exception(std::string("ShapeWorks"));
   } catch(shapeworks_exception const& exp) {
-    std::cerr << exp.what() << std::endl;
     ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
     return;
   }
@@ -26,7 +25,6 @@ TEST(ImageTests, exceptionTestChar)
   try {
     throw shapeworks_exception("ShapeWorks");
   } catch(shapeworks_exception const& exp) {
-    std::cerr << exp.what() << std::endl;
     ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
     return;
   }
