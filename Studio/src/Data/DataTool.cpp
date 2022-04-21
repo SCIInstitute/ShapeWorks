@@ -30,11 +30,15 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->delete_button, &QPushButton::clicked, this, &DataTool::delete_button_clicked);
 
   connect(ui_->table_open_button, &QPushButton::toggled, ui_->table_content, &QWidget::setVisible);
+  connect(ui_->table_header, &QPushButton::clicked, ui_->table_open_button, &QPushButton::toggle);
   connect(ui_->landmarks_open_button, &QPushButton::toggled, ui_->landmarks_content, &QWidget::setVisible);
   connect(ui_->landmarks_open_button, &QPushButton::toggled, this, &DataTool::handle_landmark_mode_changed);
+  connect(ui_->landmarks_header, &QPushButton::clicked, ui_->landmarks_open_button, &QPushButton::toggle);
   connect(ui_->constraints_open_button, &QPushButton::toggled, ui_->constraints_content, &QWidget::setVisible);
   connect(ui_->constraints_open_button, &QPushButton::toggled, this, &DataTool::handle_constraints_mode_changed);
+  connect(ui_->constraints_header, &QPushButton::clicked, ui_->constraints_open_button, &QPushButton::toggle);
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
+  connect(ui_->notes_header, &QPushButton::clicked, ui_->notes_open_button, &QPushButton::toggle);
 
   connect(ui_->landmark_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &DataTool::landmark_domain_changed);
@@ -42,6 +46,12 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
+
+  ui_->table_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->landmarks_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->constraints_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->notes_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+
 
   ui_->landmark_help->setText("Place landmarks using " + click_message);
   ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +

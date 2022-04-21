@@ -494,13 +494,15 @@ void Viewer::update_clipping_planes() {
   for (int i = 0; i < surface_mappers_.size(); i++) {
     auto mapper = surface_mappers_[i];
     mapper->RemoveAllClippingPlanes();
-    auto& constraints = shape_->get_constraints(i);
-    for (auto& plane : constraints.getPlaneConstraints()) {
-      if (plane.points().size() == 3) {
-        auto vtk_plane = plane.getVTKPlane();
-        auto transform = get_transform(visualizer_->get_alignment_domain(), i);
-        vtk_plane = transform_plane(vtk_plane, transform);
-        mapper->AddClippingPlane(vtk_plane);
+    if (shape_) {
+      auto& constraints = shape_->get_constraints(i);
+      for (auto& plane : constraints.getPlaneConstraints()) {
+        if (plane.points().size() == 3) {
+          auto vtk_plane = plane.getVTKPlane();
+          auto transform = get_transform(visualizer_->get_alignment_domain(), i);
+          vtk_plane = transform_plane(vtk_plane, transform);
+          mapper->AddClippingPlane(vtk_plane);
+        }
       }
     }
   }
