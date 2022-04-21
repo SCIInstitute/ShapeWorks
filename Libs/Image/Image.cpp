@@ -463,29 +463,17 @@ bool Image::compare(const Image& other, bool verifyall, double tolerance, double
   diff->SetToleranceRadius(0);
   diff->SetVerifyInputInformation(verifyall);
 
-  try
-  {
+  try {
     diff->UpdateLargestPossibleRegion();
   }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
-
-    // if metadata differs but dims do not, re-run compare to identify pixel differences (but still return false)
-    if (std::string(exp.what()).find("Inputs do not occupy the same physical space!") != std::string::npos)
-      if (dims() == other.dims())
-        if (compare(other, false, precision))
-          std::cerr << "0 pixels differ\n";
-
+  catch (itk::ExceptionObject &exp) {
     return false;
   }
 
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
   Dims dim = dims();
   auto allowedPixelDifference = tolerance * dim[0] * dim[1] * dim[2];
-  if (numberOfPixelsWithDifferences > allowedPixelDifference)
-  {
-    std::cerr << numberOfPixelsWithDifferences << " pixels differ\n";
+  if (numberOfPixelsWithDifferences > allowedPixelDifference) {
     return false;
   }
 
