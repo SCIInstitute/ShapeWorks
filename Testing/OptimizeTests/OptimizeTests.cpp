@@ -663,7 +663,7 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_constraint_violations(app, 15.0e-1);
+  bool good = check_constraint_violations(app, 20.0e-1);
   ASSERT_TRUE(good);
 }
 
