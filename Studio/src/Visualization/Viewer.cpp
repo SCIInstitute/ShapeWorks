@@ -643,7 +643,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
       auto transform = get_transform(visualizer_->get_alignment_domain(), i);
       if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
-        vtkSmartPointer<vtkReverseSense> reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
+        auto reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
         reverse_filter->SetInputData(poly_data);
         reverse_filter->ReverseNormalsOff();
         reverse_filter->ReverseCellsOn();
@@ -1149,7 +1149,9 @@ void Viewer::initialize_surfaces() {
       ffc_luts_[i]->SetTableRange(0, 1);
       ffc_luts_[i]->Build();
     }
+    set_color_scheme(scheme_);
   }
+
 }
 
 //-----------------------------------------------------------------------------
