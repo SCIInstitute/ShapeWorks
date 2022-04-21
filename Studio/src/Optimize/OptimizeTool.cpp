@@ -1,18 +1,22 @@
+// qt
+#include <QFileDialog>
+#include <QIntValidator>
+#include <QMessageBox>
+#include <QThread>
+#include <QTimer>
+
+// shapeworks
+#include <Libs/Optimize/OptimizeParameters.h>
+
+// studio
 #include <Data/Preferences.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Libs/Optimize/OptimizeParameters.h>
+#include <Interface/Style.h>
 #include <Optimize/OptimizeTool.h>
 #include <Optimize/QOptimize.h>
 #include <ui_OptimizeTool.h>
-
-#include <QFileDialog>
-#include <QIntValidator>
-#include <QMessageBox>
-#include <QTemporaryDir>
-#include <QThread>
-#include <iostream>
 
 using namespace shapeworks;
 
@@ -82,6 +86,8 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
   }
+
+  Style::apply_normal_button_style(ui_->restoreDefaults);
 }
 
 //---------------------------------------------------------------------------
@@ -142,18 +148,20 @@ void OptimizeTool::handle_optimize_failed() {
 
 //---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked() {
+  // ensure someone doesn't accidentally abort right after clicking RUN
+  ui_->run_optimize_button->setEnabled(false);
+
   if (optimization_is_running_) {
+    ui_->run_optimize_button->setText("Aborting...");
     optimization_is_running_ = false;
     shutdown_threads();
-    enable_actions();
-    emit progress(100);
-    emit message("Optimize Aborted");
-    emit optimize_complete();
+    emit message("Aborted Optimize");
     return;
   }
 
   if (session_->get_filename() == "") {
     emit error_message("Project must be saved before running Optimize");
+    ui_->run_optimize_button->setEnabled(true);
     return;
   } else {
     session_->save_project(session_->get_filename());
@@ -161,8 +169,6 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 
   optimization_is_running_ = true;
   emit optimize_start();
-
-  enable_actions();
 
   store_params();
   emit message("Please wait: running optimize step...");
@@ -197,6 +203,9 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   thread->start();
 
   threads_ << thread;
+
+  // re-enable after 2 seconds
+  QTimer::singleShot(1000, this, [&]() { update_run_button(); });
 }
 
 //---------------------------------------------------------------------------
@@ -369,12 +378,14 @@ bool OptimizeTool::validate_inputs() {
 //---------------------------------------------------------------------------
 void OptimizeTool::update_run_button() {
   bool inputs_valid = validate_inputs();
-
+  std::cerr << "update run button\n";
   ui_->run_optimize_button->setEnabled(inputs_valid && session_->get_groomed_present());
 
   if (optimization_is_running_) {
+    Style::apply_abort_button_style(ui_->run_optimize_button);
     ui_->run_optimize_button->setText("Abort Optimize");
   } else {
+    Style::apply_normal_button_style(ui_->run_optimize_button);
     ui_->run_optimize_button->setText("Run Optimize");
   }
 }

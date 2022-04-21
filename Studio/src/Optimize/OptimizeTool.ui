@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
-    <height>599</height>
+    <width>347</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -724,24 +724,60 @@ background: rgb(255, 255, 127)
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="run_optimize_button">
-     <property name="text">
-      <string>Run Optimize</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="restoreDefaults">
-     <property name="text">
-      <string>Restore Defaults</string>
-     </property>
+    <widget class="QWidget" name="buttons_widget" native="true">
+     <layout class="QGridLayout" name="gridLayout_11">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="run_optimize_button">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Run Optimize</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="restoreDefaults">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Restore Defaults</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>361</width>
+        <height>3</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>
@@ -777,8 +813,6 @@ background: rgb(255, 255, 127)
   <tabstop>multiscale_particles</tabstop>
   <tabstop>use_landmarks</tabstop>
   <tabstop>narrow_band</tabstop>
-  <tabstop>run_optimize_button</tabstop>
-  <tabstop>restoreDefaults</tabstop>
  </tabstops>
  <resources/>
  <connections/>
