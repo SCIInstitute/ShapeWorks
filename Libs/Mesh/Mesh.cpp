@@ -859,26 +859,20 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
 
   auto itkimg = img.getITKImage();
 
-  bool outside;
-  double distance;
-  vtkIdType face_id;
+  using IteratorType = itk::ImageRegionIterator< Image::ImageType >;
+  IteratorType it( itkimg, itkimg->GetLargestPossibleRegion() );
 
-  // for each pixel, set value to be its distance to the mesh
-  for (int z = 0; z < dims[0]; z++)
-  {
-    for (int y = 0; y < dims[1]; y++)
-    {
-      for (int x = 0; x < dims[2]; x++)
-      {
-        auto idx = Image::ImageType::IndexType({z,y,x}); // itk images are indexed by slice,row,col
-        Point3 loc = Point3({origin[0]+x*spacing[0], origin[1]+y*spacing[1], origin[2]+z*spacing[2]});
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
+    Image::ImageType::PointType p;
+    itkimg->TransformIndexToPhysicalPoint( it.GetIndex(), p );
 
-        auto cp = closestPoint(loc, outside, distance, face_id);
+    bool outside = false;
+    double distance = 0.0;
+    vtkIdType face_id = 0;
+    closestPoint(p, outside, distance, face_id);
 
-        // NOTE: distance is positive inside, negative outside
-        itkimg->SetPixel(idx, outside ? -distance : distance);
-      }
-    }
+    // NOTE: distance is positive inside, negative outside
+    it.Set(outside ? -distance : distance);
   }
 
   return img;
