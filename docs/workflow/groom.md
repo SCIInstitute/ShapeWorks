@@ -270,7 +270,7 @@ Remeshing creates meshes with evenly spaced vertices.
 - `remeshPercent` remeshes the mesh to have a given percent of the current number of vertices
 
 ```python
-mesh.remeshPercent(percentage=80, adaptivity=1.0)
+mesh.remeshPercent(percentage=0.80, adaptivity=1.0)
 ```
 ![Remeshing](https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png)
 

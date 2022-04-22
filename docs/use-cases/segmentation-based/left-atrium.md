@@ -18,13 +18,13 @@ The grooming stage entails rigid transformations to align samples for groupwise 
 3. [**Apply Padding**](../../workflow/groom.md#cropping-and-padding-segmentations): Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
 4. [**Center-of-Mass Alignment**](../../workflow/groom.md#aligning-segmentations): This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
 5. [**Reference Selection**](../../workflow/groom.md#aligning-segmentations): The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-6. [**Rigid Alignment**](../../workflow/groom.md#aligning-segmentations): All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. 
+6. [**Rigid Alignment**](../../workflow/groom.md#aligning-segmentations): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 7. [**Bounding Box**](../../workflow/groom.md#cropping-and-padding-segmentations): The smallest region which fits all of the samples is found.
 8. [**Cropping**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are cropped to the size of the bounding box.
 9. [**Distance Transform**](../../workflow/groom.md#converting-segmentations-to-smooth-signed-distance-transforms): Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-Here are the resulting groomed ditsance transforms.The left atriums are now centred and aligned ready to be sent to the optimizer.
-![left Atrium Groom](../../img/use-cases/leftatrium_groom.png)
+Here are the resulting groomed ditsance transforms.Here we show how the shapes would look like if the transforms are applied.
+![left Atrium Groom](https://sci.utah.edu/~shapeworks/doc-resources/pngs/left_atrium_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
