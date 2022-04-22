@@ -318,14 +318,18 @@ In this step, we ingest the two original shapes and the output consists of three
  extracted_l,extracted_r,extracted_s = 
  sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
 ```
-#### INSERT IMAGE 
+#### Input shapes with shared surface
+![Shared Boundary Input](../img/workflow/peanut_shared_input.png)
+
+#### Output extracted surfaces
+![Shared Boundary Output](../img/workflow/peanut_shared_output.png)
 
 ### Extract Contour
 The boundary loop of the shared surface M obtained using the `sharedBoundaryExtractor` is computed. 
 ```python
 output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes)
 ```
-#### INSERT IMAGE
+![Shared Surface Contour](../img/workflow/peanut_shared_contour.png)
 
 ### Smoothing 
 Laplacian Smoothing
