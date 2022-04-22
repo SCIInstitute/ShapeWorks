@@ -36,17 +36,17 @@ public:
 
   // constructors and assignment operators //
   Image(const Dims dims);
-  Image(const std::string &pathname) : image(read(pathname)) {}
-  Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
+  Image(const std::string &pathname) : itk_image_(read(pathname)) {}
+  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) { if (!itk_image_) throw std::invalid_argument("null imagePtr"); }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
-  Image(Image&& img) : image(nullptr) { this->image.Swap(img.image); }
-  Image(const Image& img) : image(cloneData(img.image)) {}
+  Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
+  Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
   Image& operator=(const Image& img); /// lvalue assignment operator
   Image& operator=(Image&& img);      /// rvalue assignment operator
 
   /// return this as an ITK image
-  operator ImageType::Pointer() { return image; }
-  ImageType::Pointer getITKImage() const { return image; }
+  operator ImageType::Pointer() { return itk_image_; }
+  ImageType::Pointer getITKImage() const { return itk_image_; }
 
   /// creates a VTK filter for the given image
   vtkSmartPointer<vtkImageData> getVTKImage() const;
@@ -191,22 +191,22 @@ public:
   // query functions //
 
   /// logical dimensions of the image
-  Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
+  Dims dims() const { return itk_image_->GetLargestPossibleRegion().GetSize(); }
 
   /// physical dimensions of the image (dims * spacing)
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
 
   /// physical spacing of the image
-  Vector spacing() const { return image->GetSpacing(); }
+  Vector spacing() const { return itk_image_->GetSpacing(); }
 
   /// physical coordinates of image origin
-  Point3 origin() const { return image->GetOrigin(); }
+  Point3 origin() const { return itk_image_->GetOrigin(); }
 
   /// physical coordinates of center of this image
   Point3 center() const { return origin() + size() / 2.0; }
 
   /// return coordinate system in which this image lives in physical space
-  ImageType::DirectionType coordsys() const { return image->GetDirection(); };
+  ImageType::DirectionType coordsys() const { return itk_image_->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
@@ -245,7 +245,7 @@ public:
   Coord physicalToLogical(const Point3 &p) const;
 
   /// creates an image iterator and returns it
-  ImageIterator setIterator();
+  ImageIterator iterator();
 
   /// compares this with another image using the region of interest filter
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
@@ -266,7 +266,7 @@ public:
 
 private:
   friend struct SharedCommandData;
-  Image() : image(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
+  Image() : itk_image_(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
 
   /// reads image (used only by constructor)
   static ImageType::Pointer read(const std::string &filename);
@@ -283,7 +283,7 @@ private:
 
   StatsPtr statsFilter();
 
-  ImageType::Pointer image;
+  ImageType::Pointer itk_image_;
 
   InterpolatorType::Pointer interpolator_;
 
