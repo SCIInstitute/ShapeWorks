@@ -51,4 +51,4 @@ Note `geodesics_enabled` is set to on.
 
 Here we can see the resulting shape model correctly captures the moving cavity as the only mode of variation.
 
-![Thin cavity bean analyze](https://sci.utah.edu/~shapeworks/doc-resources/pngs/thin_cavity_bean.gif)
+![Thin cavity bean analyze](https://sci.utah.edu/~shapeworks/doc-resources/gifs/thin_cavity_bean.gif)
