@@ -216,10 +216,10 @@ int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 
 void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
+bool OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_mesh_ffc_mode(int value) { this->params_.set("mesh_ffc_mode", value); }
+void OptimizeParameters::set_mesh_ffc_mode(bool value) { this->params_.set("mesh_ffc_mode", value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }

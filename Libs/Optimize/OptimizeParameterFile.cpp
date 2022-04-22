@@ -386,7 +386,7 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
 
   elem = docHandle->FirstChild("mesh_ffc_mode").Element();
-  if (elem) { optimize->SetMeshFFCMode(atoi(elem->GetText())); }
+  if (elem) { optimize->SetMeshFFCMode((bool) atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("shared_boundary_enabled").Element();
   if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }

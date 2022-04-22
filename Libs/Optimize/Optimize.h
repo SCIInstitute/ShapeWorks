@@ -161,7 +161,7 @@ public:
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
-  //! Set Mesh FFC Mode 0 = mesh clipping mode, 1 = mesh augmented lagrangian mode
+  //! Set Mesh FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode
   void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
@@ -299,7 +299,7 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
-  int GetMeshFFCMode(){return m_mesh_ffc_mode;}
+  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
 
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
@@ -401,7 +401,7 @@ protected:
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
-  int m_mesh_ffc_mode = 0;
+  bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
