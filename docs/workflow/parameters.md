@@ -97,9 +97,6 @@ After completing the grooming and optimization steps, this worksheet will look l
 
 There will also be new worksheets with parameters from those tools and other studio settings.
 
-### Features of the Project Sheet:(Not complete)
--Transforms are passed to the optimizers: switched from transforming the data (e.g. centering) to passing the transform as the “prefix transform”
-
 ### Python API for Generation Project Sheet
 The `Project` class of `ShapeWorks` lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found [here](http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description). The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
 Setting up the project sheet using the python API entails the following steps:

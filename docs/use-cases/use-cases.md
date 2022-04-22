@@ -102,6 +102,10 @@ The use cases which demomstrate the [Shape Modeling Workflow](../getting-started
 Grooming involves pre-processing steps to prepare the data for optimization and calculate the alignment transforms which will be passed to the optimizer. This involves generating distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes and calculating the alignment transformation matrix for each shape. The grooming steps are unique to each use case, but common steps are explained here: [Common Grooming Steps](../workflow/groom.md#Common-Pre-Processing-Steps-for-Segmentations).
 
 Note some use cases start with pre-aligned data that does not require grooming. 
+!!! important "**Prefix Transforms**" 
+    **Worflow Switched from Transforming the Data (e.g. centering) to Passing the Transform as the Prefix Transform.**
+
+    Instead of passing groomed and aligned shapes to the optimizer, now, the use cases only perform the grooming steps that do not change the co-ordinates of the shape. For the grooming steps that alter the co-ordinates, the transformation matrices are calculated and sent to the optimizer to be applied(pre-multiplied) after optimization. See [How to Step Up Optimization?](../workflow/parameters.md#project-excel-file) page for details regarding setting up the project sheet.
 
 ### [Optimization](../workflow/optimize.md)
 Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx and optimization is run from the command line. 
