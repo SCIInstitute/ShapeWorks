@@ -1,16 +1,17 @@
 #pragma once
 
-#include "Shapeworks.h"
-#include "Region.h"
-
 #include <itkImage.h>
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-#include <vtkImageData.h>
-#include <itkStatisticsImageFilter.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
+#include <itkStatisticsImageFilter.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+
 #include <limits>
+
+#include "Region.h"
+#include "Shapeworks.h"
 
 namespace shapeworks {
 
@@ -23,9 +24,8 @@ class Mesh;
  * This class represents a 3D image volume and operations that can be performed on images.
  *
  */
-class Image
-{
-public:
+class Image {
+ public:
   enum InterpolationType { Linear, NearestNeighbor };
 
   using PixelType = float;
@@ -36,13 +36,15 @@ public:
 
   // constructors and assignment operators //
   Image(const Dims dims);
-  Image(const std::string &pathname) : itk_image_(read(pathname)) {}
-  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) { if (!itk_image_) throw std::invalid_argument("null imagePtr"); }
+  Image(const std::string& pathname) : itk_image_(read(pathname)) {}
+  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
+    if (!itk_image_) throw std::invalid_argument("null imagePtr");
+  }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
   Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
   Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
-  Image& operator=(const Image& img); /// lvalue assignment operator
-  Image& operator=(Image&& img);      /// rvalue assignment operator
+  Image& operator=(const Image& img);  /// lvalue assignment operator
+  Image& operator=(Image&& img);       /// rvalue assignment operator
 
   /// return this as an ITK image
   operator ImageType::Pointer() { return itk_image_; }
@@ -50,7 +52,7 @@ public:
 
   /// creates a VTK filter for the given image
   vtkSmartPointer<vtkImageData> getVTKImage() const;
-  
+
   // modification functions //
 
   /// negation operator
@@ -85,20 +87,24 @@ public:
 
   /// antialiases image
   Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
-  
-  /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
+
+  /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the
+  /// image
   Image& recenter();
 
-  /// resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
-  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
+  /// resamples by applying transform then sampling from given origin along direction axes at spacing physical units per
+  /// pixel for dims pixels using specified interpolator
+  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
+                  const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
-  
+
   /// resamples image using isotropic physical spacing
   Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
 
-  /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
+  /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains
+  /// the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   /// pads an image by same number of voxels in all directions with constant value
@@ -108,16 +114,16 @@ public:
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
   /// pads an image to include the given region with constant value
-  Image& pad(IndexRegion &region, PixelType value = 0.0);
+  Image& pad(IndexRegion& region, PixelType value = 0.0);
 
   /// helper to simply translate image
-  Image& translate(const Vector3 &v);
+  Image& translate(const Vector3& v);
 
   /// helper to simply scale image around center (not origin)
-  Image& scale(const Vector3 &v);
+  Image& scale(const Vector3& v);
 
   /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
-  Image& rotate(const double angle, const Vector3 &axis);
+  Image& rotate(const double angle, const Vector3& axis);
 
   /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
   Image& rotate(const double angle, Axis axis);
@@ -125,23 +131,29 @@ public:
   /// creates a transform that translates center of mass to center of image
   TransformPtr createCenterOfMassTransform();
 
-  /// creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations
-  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
+  /// creates transform to target image using iterative closest point (ICP) registration; images MUST be distance
+  /// transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP
+  /// for the given number of iterations
+  TransformPtr createRigidRegistrationTransform(const Image& target_dt, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
-  /// applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values
-  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
+  /// applies the given transformation to the image by using resampling filter with new origin, dims, spacing and
+  /// direction values
+  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
+                        const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
+  /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary
+  /// image
   Image& extractLabel(const PixelType label = 1.0);
 
   /// closes holes in a given volume, default foreground value assumes a binary volume
   Image& closeHoles(const PixelType foreground = 0.0);
-  
+
   /// threholds image into binary label based on upper and lower intensity bounds given by user
-  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(), PixelType innerVal = 1.0, PixelType outerVal = 0.0);
+  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(),
+                  PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image& computeDT(PixelType isoValue = 0.0);
@@ -158,7 +170,8 @@ public:
   /// segements structures in images using topology preserving geodesic active contour level set filter
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
 
-  /// creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]
+  /// creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter
+  /// [curvature flow filter is often applied to the image before this filter]
   Image& topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
 
   /// applies intensity windowing image filter
@@ -173,7 +186,8 @@ public:
   /// clips an image using a cutting plane
   Image& clip(const Plane plane, const PixelType val = 0.0);
 
-  /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
+  /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across
+  /// YZ-plane).
   Image& reflect(const Axis& axis);
 
   /// sets the image origin in physical space to the given value
@@ -239,10 +253,10 @@ public:
   IndexRegion physicalToLogical(PhysicalRegion region) const;
 
   /// converts from pixel coordinates to physical space
-  Point3 logicalToPhysical(const Coord &c) const;
+  Point3 logicalToPhysical(const Coord& c) const;
 
   /// converts from a physical coordinate to a logical coordinate
-  Coord physicalToLogical(const Point3 &p) const;
+  Coord physicalToLogical(const Point3& p) const;
 
   /// creates an image iterator and returns it
   ImageIterator iterator();
@@ -256,7 +270,7 @@ public:
   // export functions //
 
   /// writes image, format specified by filename extension
-  Image& write(const std::string &filename, bool compressed = true);
+  Image& write(const std::string& filename, bool compressed = true);
 
   /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
@@ -264,13 +278,15 @@ public:
   //! Evaluates the image at a given position
   Image::PixelType evaluate(Point p);
 
-private:
+ private:
   friend struct SharedCommandData;
-  Image() : itk_image_(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
+  Image()
+      : itk_image_(nullptr) {
+  }  // only for use by SharedCommandData since an Image should always be valid, never "empty"
 
   /// reads image (used only by constructor)
-  static ImageType::Pointer read(const std::string &filename);
-  static ImageType::Pointer readDICOMImage(const std::string &pathname);
+  static ImageType::Pointer read(const std::string& filename);
+  static ImageType::Pointer readDICOMImage(const std::string& pathname);
 
   /// clones the underlying ImageType (ITK) data
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
@@ -286,20 +302,19 @@ private:
   ImageType::Pointer itk_image_;
 
   InterpolatorType::Pointer interpolator_;
-
 };
 
 /// stream insertion operators for Image
-std::ostream& operator<<(std::ostream &os, const Image& img);
+std::ostream& operator<<(std::ostream& os, const Image& img);
 
 /// override templates defined in Shapeworks.h
-template<>
+template <>
 Image operator*(const Image& img, const double x);
-template<>
+template <>
 Image operator/(const Image& img, const double x);
-template<>
+template <>
 Image& operator*=(Image& img, const double x);
-template<>
+template <>
 Image& operator/=(Image& img, const double x);
 
-} // shapeworks
+}  // namespace shapeworks
