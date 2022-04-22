@@ -422,8 +422,8 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
   VectorImage vectorImage(dt);
   dt.applyGradientFilter();
 
-  VectorImage::ImageIterator gradIter = vectorImage.setIterator();
-  Image::ImageIterator magIter = dt.setIterator();
+  VectorImage::ImageIterator gradIter = vectorImage.iterator();
+  Image::ImageIterator magIter = dt.iterator();
 
   Image::ImageType::Pointer nxImage = Image::ImageType::New();
   nxImage->SetRegions(dt.getITKImage()->GetLargestPossibleRegion());
