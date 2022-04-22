@@ -6,11 +6,17 @@ The `peanut_shared_boundary` use case demonstrates using ShapeWorks tools to per
 The peanut dataset,consists of two aligned spheres, but one of the spheres is subtracted from the other. There exists a shared surface between the two spheres. The radii of the two spheres vary inversely, ie: as one gets bigger the other gets smaller.
 
 ## Grooming Steps
+This is how the meshes in the dataset look before grooming.
+
+![This is how the meshes in the dataset look before grooming.](../../img/use-cases/peanut_original.png)
 
 1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
 2. [**Extract Shared Boundary**](../../workflow/groom.md#extract-shared-boundary): In this step, we ingest the two original shapes and output three new shapes, two of which correspond to the original shapes and one for the shared boundary.
 3. [**Smoothing**](../../workflow/groom.md#smoothing):Applied laplacian smoothing.
 4. [**Extract Contour**](../../workflow/groom.md#extract-contour): The boundary loop of the shared surface is obtained.
+
+Groomed dataset. 
+![Groomed dataset](../../img/use-cases/peanut_groomed.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
