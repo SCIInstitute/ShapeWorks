@@ -639,6 +639,14 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("isolate",
        &Image::isolate,
        "isolate largest object")
+
+  .def("evaluate",
+       [](Image &image, std::vector<double> &pt) -> decltype(auto) {
+             return image.evaluate(Point({pt[0], pt[1], pt[2]}));
+           },
+           "evaluate the image at any given point in space",
+           "pt"_a)
+
   ;
 
   // PhysicalRegion
