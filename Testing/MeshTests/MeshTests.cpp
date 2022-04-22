@@ -541,9 +541,9 @@ TEST(MeshTests, antialiasTest3)
 
 TEST(MeshTests, toDistanceTransformTest1)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toDistanceTransform();
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur_remesh.ply");
+  Image image = femur.toDistanceTransform(PhysicalRegion(), Point3({5., 5., 5.}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femur_remesh_dt.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
