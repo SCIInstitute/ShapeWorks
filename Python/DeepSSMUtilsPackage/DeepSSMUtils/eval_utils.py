@@ -121,6 +121,6 @@ def get_mesh_distance(pred_particle_files, mesh_list, template_particles, templa
 	for index in range(len(mesh_list)):
 		orig_mesh = sw.Mesh(mesh_list[index])
 		pred_mesh = sw.Mesh(pred_mesh_list[index])
-		mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)))
-		mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)))
+		mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)[0]))
+		mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)[0]))
 	return np.mean(np.array(mean_distances))
