@@ -161,7 +161,7 @@ public:
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
-  //! Set adaptivity mode (TODO: details)
+  //! Set Mesh FFC Mode 0 = mesh clipping mode, 1 = mesh augmented lagrangian mode
   void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
