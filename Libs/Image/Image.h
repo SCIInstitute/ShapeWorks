@@ -9,7 +9,7 @@
 #include <vtkImageData.h>
 #include <itkStatisticsImageFilter.h>
 #include <itkImageRegionIterator.h>
-
+#include <itkLinearInterpolateImageFunction.h>
 #include <limits>
 
 namespace shapeworks {
@@ -32,6 +32,7 @@ public:
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
 
   // constructors and assignment operators //
   Image(const Dims dims);
@@ -260,6 +261,9 @@ public:
   /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
+  //! Evaluates the image at a given position
+  Image::PixelType evaluate(Point p);
+
 private:
   friend struct SharedCommandData;
   Image() : image(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
@@ -280,6 +284,9 @@ private:
   StatsPtr statsFilter();
 
   ImageType::Pointer image;
+
+  InterpolatorType::Pointer interpolator_;
+
 };
 
 /// stream insertion operators for Image

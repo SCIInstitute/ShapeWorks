@@ -1012,6 +1012,15 @@ Mesh Image::toMesh(PixelType isoValue) const
   return Mesh(targetContour->GetOutput());
 }
 
+Image::PixelType Image::evaluate(Point p)
+{
+  if (!interpolator_) {
+    interpolator_ = InterpolatorType::New();
+    interpolator_->SetInputImage(image);
+  }
+  return interpolator_->Evaluate(p);
+}
+
 TransformPtr Image::createCenterOfMassTransform()
 {
   AffineTransformPtr xform(AffineTransform::New());
