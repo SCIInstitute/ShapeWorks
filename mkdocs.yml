@@ -62,7 +62,6 @@ nav:
    - Segmentation Based Use Cases:
       - 'Ellipsoid: Basic Example':                                  'use-cases/segmentation-based/ellipsoid.md'
       - 'Left Atrium: Shape Model from Segmentations':               'use-cases/segmentation-based/left-atrium.md'
-      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/segmentation-based/fixed-domain-ellipsoid.md'
       - 'Shape Model for Multiple Domains from Segmentations':       'use-cases/segmentation-based/ellipsoid-multiple-domain.md'
    - Mesh Based Use Cases:
       - 'Ellipsoid Mesh: Basic Example':                             'use-cases/mesh-based/ellipsoid_mesh.md'

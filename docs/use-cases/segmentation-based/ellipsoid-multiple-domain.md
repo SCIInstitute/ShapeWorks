@@ -3,14 +3,10 @@
 ## What is the Use Case?
 
 The `ellipsoid_multiple_domain` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints, to capture inter-domains correlations and interactions.
-There are three datasets available for this use case:
+The dataset available for this use case:
 
 * ellipsoid_joint_rotation - two stacked ellipsoids with the same radii, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
-* ellipsoid_joint_size - two stacked ellipsoids, with the top ellipsoid displaying varying radii in all three directions
-* ellipsoid_joint_size_rotation - two stacked ellipsoids, with the top ellipsoid displaying varying radii and rotating w.r.t the bottom ellipsoid
 
-By default, the use case runs on the ellipsoid_joint_rotation dataset. The dataset can be changed by changing the name and output folder at the beginning of the Python script. 
- 
 ## Grooming Steps
 This is how the segmentations in the dataset look before grooming.Here it can been seen that the ellipsoids have random centers andn orientations.![This is how the segmentations in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_pre_groom.png)
 
@@ -18,7 +14,7 @@ This is how the segmentations in the dataset look before grooming.Here it can be
 2. [**Reference Selection**](../../workflow/groom.md#aligning-segmentations): 
 For the ellipsoid_joint datasets available on the ShapeWorks portal, the mode of variation is rotation and/or size of the second ellipsoid w.r.t to the first ellipsoid. Hence, we align the shapes using the first domain as the reference. This is domain-specific alignment. 
 The reference is selected by first computing the mean (average) distance transform of the segmentations belonging to the reference domain, then selecting the sample closest to that mean (i.e., medoid).
-3. [**Rigid Alignment**](../../workflow/groom.md#aligning-segmentations): For all the shapes in the reference domain selected, the transformation is calculated to factor out translation and rotation. The same transformation is applied to the corresponding shape of the other domain.
+3. [**Rigid Alignment**](../../workflow/groom.md#aligning-segmentations): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 4.[**Bounding Box**](../../workflow/groom.md#cropping-and-padding-segmentations):  The smallest region which fits all of the samples is found.
 5. [**Cropping**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are cropped to the size of the bounding box.
 6. [**Padding**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are padded with zeros on every side.

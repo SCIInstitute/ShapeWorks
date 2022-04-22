@@ -113,7 +113,7 @@ Optimization involves automatically computing a dense set of corresponding landm
 For a full decription of parameters, please see: [optimization parameters](../workflow/parameters.md). 
 
 ### [Analysis of Results](../workflow/analyze.md)
-The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `analyze.xml` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
+The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `project.xlsx` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 

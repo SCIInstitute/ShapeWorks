@@ -4,13 +4,16 @@
 
 
 The `ellipsoid_multiple_domain_mesh` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains), e.g., joints to capture inter-domains correlations and interactions directly on triangular surface meshes
-The dataset used by this use case:
+The dataset available for this use case:
 
-* ellipsoid_joint_size_aligned - two stacked ellipsoids, with the top ellipsoid displaying varying radiis in all 3 directions
+* ellipsoid_joint_rotation - two stacked ellipsoids with the same radii, with the top ellipsoid rotating w.r.t the bottom ellipsoid. 
+
 
 ## Grooming Data
 
-In this use case, we download pre-groomed data. The use case will be updated soon to demonstrate the full mesh grooming process.
+1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
+2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid). The reference is selected based on domain 1 shapes. 
+3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
@@ -31,7 +34,7 @@ Below are the default optimization parameters for this use case.
         "starting_regularization" :1000,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 1,
-        "domains_per_shape" : domains_per_shape,
+        "domains_per_shape" : 2,
         "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,

@@ -11,7 +11,7 @@ This is how the meshes in the dataset look before grooming. The ellipsoids have 
 
 1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
 2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid).
-3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
+3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 
 The ellipsoids are now aligned ready to be sent to the optimizer.
 ![Meshes obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_post_groom.png)
