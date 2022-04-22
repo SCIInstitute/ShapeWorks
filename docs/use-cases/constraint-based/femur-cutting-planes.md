@@ -12,8 +12,8 @@ There are both left and right femurs in this dataset, thus some must be relfecte
 
 ## Grooming Steps
 
-Here is what the femur meshes look like before grooming:
-![Ungroomed femurs](../../img/use-cases/femur_ungroomed.png)
+Here is what the femur meshes look like before grooming. Some femurs are out of frame because they are not centered or aligned. 
+![Ungroomed femurs](https://sci.utah.edu/~shapeworks/doc-resources/pngs/femur_pre_groom.png)
 
 The femur mesh grooming steps are:
 
@@ -23,8 +23,8 @@ The femur mesh grooming steps are:
 4. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the mesh closest to that mean (i.e., medoid).
 5. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 
-Here are the resulting groomed femurs:
-![Groomed femurs](../../img/use-cases/femur_groomed.png)
+Here we show how the shapes would look like if the transforms are applied along with respective cutting planes:
+![Groomed femurs](https://sci.utah.edu/~shapeworks/doc-resources/pngs/femur_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
