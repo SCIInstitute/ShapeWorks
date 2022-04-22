@@ -46,5 +46,4 @@ The `cutting_planes` parameter is a list of the two cutting plane points of leng
 ## Analyzing Shape Models
 Below we can see the resulting shape model where correspondence points do not lie beyond the cutting planes and only a secton of the ellipsoids are modeled. 
 
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_studio.mp4" autoplay muted loop controls style="width:100%"></p>
-
+![Ellipsoid Cut](https://sci.utah.edu/~shapeworks/doc-resources/gifs/ellipsoid_cut.gif)

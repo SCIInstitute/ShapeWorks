@@ -73,9 +73,6 @@ Note the particles are not placed below the cutting plane constraint. The surfac
 Here are femur samples with their optimized correspondences.
 ![Femur Samples](../../img/use-cases/femur_samples.png)
 
-Zooming in some femur samples.
-![Zoom Femur Samples](../../img/use-cases/femur_samples_zoom.png)
-
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset.
 
 ![Femur PCA](https://sci.utah.edu/~shapeworks/doc-resources/gifs/femur_pca.gif)
