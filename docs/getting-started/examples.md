@@ -59,7 +59,7 @@ This use case demonstrates the functionality of shape evaluation tools of ShapeW
 ### [Femur Shape Model Directly from Images](../use-cases/deep-learning-based/deep-ssm-femur.md)
 This use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training, and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../deep-learning/deep-ssm.md).
 
-## Shared Boundary Based Use Cases
+## Shared Boundary Use Cases
 ### [Peanut: Shape Model of Multiple Domains with Shared Boundaries](../use-cases/shared-boundary-based/peanut.md)
 
 ## Your Use Case
