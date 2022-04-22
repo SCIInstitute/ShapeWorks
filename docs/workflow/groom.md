@@ -332,5 +332,8 @@ output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes)
 ![Shared Surface Contour](../img/workflow/peanut_shared_contour.png)
 
 ### Smoothing 
-Laplacian Smoothing
-#### INSERT IMAGE
+Laplacian Smoothing allows you to reduce noise on a mesh’s surface with minimal changes to its shape.The effect is to "relax" the mesh, making the cells better shaped and the vertices more evenly distributed.
+```python
+mesh.smooth(iterations, relaxation)
+```
+![Mesh Smoothing](../img/workflow/femur_smooth.png)
