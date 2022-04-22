@@ -23,8 +23,8 @@ The grooming stage entails rigid transformations to align samples for groupwise 
 8. [**Cropping**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are cropped to the size of the bounding box.
 9. [**Distance Transform**](../../workflow/groom.md#converting-segmentations-to-smooth-signed-distance-transforms): Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-Here are the resulting groomed ditsance transforms.The left atriums are now centred and aligned ready to be sent to the optimizer.
-![left Atrium Groom](../../img/use-cases/leftatrium_groom.png)
+Here are the resulting groomed ditsance transforms.Here we show how the shapes would look like if the transforms are applied.
+![left Atrium Groom](https://sci.utah.edu/~shapeworks/doc-resources/pngs/left_atrium_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)

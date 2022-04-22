@@ -20,7 +20,7 @@ This is how the segmentations in the dataset look before grooming.Here it can be
 7. [**Padding**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are padded with zeros on every side.
 8. [**Distance Transform**](../../workflow/groom.md#converting-segmentations-to-smooth-signed-distance-transforms): Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-Distance transform obtained after grooming.The ellipsoids are now centred and aligned ready to be sent to the optimizer![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_post_groom.png)
+Distance transform obtained after grooming.Here we show how the shapes would look like if the transforms are applied.![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)

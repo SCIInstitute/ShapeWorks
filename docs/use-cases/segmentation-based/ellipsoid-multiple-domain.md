@@ -20,7 +20,7 @@ The reference is selected by first computing the mean (average) distance transfo
 6. [**Padding**](../../workflow/groom.md#cropping-and-padding-segmentations): The segmentations are padded with zeros on every side.
 7. [**Distance Transform**](../../workflow/groom.md#converting-segmentations-to-smooth-signed-distance-transforms): Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
-Distance transform obtained after grooming.The ellipsoid joints are now centred and aligned ready to be sent to the optimizer![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_post_groom.png)
+Distance transform obtained after grooming.Here we show how the shapes would look like if the transforms are applied.![Distance transform obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_multi_post_groom.png)
 
 ## Relevant Arguments
 

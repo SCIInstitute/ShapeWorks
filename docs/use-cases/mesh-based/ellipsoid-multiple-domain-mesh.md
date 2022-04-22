@@ -10,10 +10,14 @@ The dataset available for this use case:
 
 
 ## Grooming Data
+This is how the meshes in the dataset look before grooming.Here it can been seen that the ellipsoids have random centers andn orientations.![This is how the joints in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_multi_pre_groom.png)
 
 1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
 2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid). The reference is selected based on domain 1 shapes. 
 3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
+
+Here we show how the shapes would look like if the transforms are applied.
+![Meshes obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_multi_post_groom.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
