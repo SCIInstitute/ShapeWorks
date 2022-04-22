@@ -123,7 +123,7 @@ Mesh::MeshType MeshReader::read(const std::string &pathname)
 
 Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces)
 {
-    this->mesh = MeshType::New();
+    this->poly_data_ = MeshType::New();
 
     vtkNew<vtkPoints> vertices;
     vtkNew<vtkCellArray> polys;
@@ -151,26 +151,26 @@ Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces)
         polys->InsertNextCell(3, pts);
     }
 
-    this->mesh->SetPoints(vertices);
-    this->mesh->SetPolys(polys);
+    this->poly_data_->SetPoints(vertices);
+    this->poly_data_->SetPolys(polys);
     this->computeNormals();
 }
 
 
-Mesh::Mesh(const std::string& pathname) : mesh(MeshReader::read(pathname)) {
+Mesh::Mesh(const std::string& pathname) : poly_data_(MeshReader::read(pathname)) {
   invalidateLocators();
 }
 
 Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 {
-  if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
+  if (!this->poly_data_) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
-      writer->SetInputData(this->mesh);
+      writer->SetInputData(this->poly_data_);
       writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
       if (binaryFile)
         writer->SetFileTypeToBinary();
@@ -183,7 +183,7 @@ Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
     if (StringUtils::hasSuffix(pathname, ".vtp")) {
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
-      writer->SetInputData(this->mesh);
+      writer->SetInputData(this->poly_data_);
       if (binaryFile)
         writer->SetDataModeToBinary();
       else
@@ -198,7 +198,7 @@ Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
-      writer->SetInputData(this->mesh);
+      writer->SetInputData(this->poly_data_);
       if (binaryFile)
         writer->SetFileTypeToBinary();
       else
@@ -213,7 +213,7 @@ Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 
       auto writer = vtkSmartPointer<vtkOBJWriter>::New();
       writer->SetFileName(pathname.c_str());
-      writer->SetInputData(this->mesh);
+      writer->SetInputData(this->poly_data_);
       writer->Update();
       return *this;
     }
@@ -224,7 +224,7 @@ Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
-      writer->SetInputData(this->mesh);
+      writer->SetInputData(this->poly_data_);
       if (binaryFile)
         writer->SetFileTypeToBinary();
       else
@@ -243,8 +243,8 @@ Mesh& Mesh::write(const std::string &pathname, bool binaryFile)
 Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double angleThreshold, double backSearchRadius)
 {
   FEVTKimport import;
-  std::shared_ptr<FEMesh> surf1{import.Load(this->mesh)};
-  std::shared_ptr<FEMesh> surf2{import.Load(otherMesh.mesh)};
+  std::shared_ptr<FEMesh> surf1{import.Load(this->poly_data_)};
+  std::shared_ptr<FEMesh> surf2{import.Load(otherMesh.poly_data_)};
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
@@ -262,7 +262,7 @@ Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double 
   VTKEXPORT ops = {false, true};
   vtkOut.SetOptions(ops);
 
-  this->mesh = vtkOut.ExportToVTK(*surf1);
+  this->poly_data_ = vtkOut.ExportToVTK(*surf1);
   this->invalidateLocators();
 
   return *this;
@@ -272,7 +272,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
 {
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
 
-  smoother->SetInputData(this->mesh);
+  smoother->SetInputData(this->poly_data_);
   smoother->SetNumberOfIterations(iterations);
   if (relaxation)
   {
@@ -281,7 +281,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
     smoother->BoundarySmoothingOn();
   }
   smoother->Update();
-  this->mesh = smoother->GetOutput();
+  this->poly_data_ = smoother->GetOutput();
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -293,13 +293,13 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
 Mesh& Mesh::smoothSinc(int iterations, double passband)
 {
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
-  smoother->SetInputData(this->mesh);
+  smoother->SetInputData(this->poly_data_);
   // minimum of 2.  See docs of vtkWindowedSincPolyDataFilter for explanation
   iterations = std::max<int>(iterations, 2);
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
   smoother->Update();
-  this->mesh = smoother->GetOutput();
+  this->poly_data_ = smoother->GetOutput();
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -315,7 +315,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
   std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
-  surf->CreateFromPolyData(this->mesh);
+  surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
   surf->DisplayMeshProperties();
@@ -336,7 +336,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
   // Restore std::cout
   std::cout.clear();
 
-  this->mesh = remesh->GetOutput();
+  this->poly_data_ = remesh->GetOutput();
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -347,7 +347,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity)
 
 Mesh& Mesh::remeshPercent(double percentage, double adaptivity)
 {
-  int numVertices = mesh->GetNumberOfPoints() * percentage;
+  int numVertices = poly_data_->GetNumberOfPoints() * percentage;
   return remesh(numVertices, adaptivity);
 }
 
@@ -355,11 +355,11 @@ Mesh &Mesh::invertNormals()
 {
   vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
 
-  reverseSense->SetInputData(this->mesh);
+  reverseSense->SetInputData(this->poly_data_);
   reverseSense->ReverseNormalsOff();
   reverseSense->ReverseCellsOn();
   reverseSense->Update();
-  this->mesh = reverseSense->GetOutput();
+  this->poly_data_ = reverseSense->GetOutput();
 
   return *this;
 }
@@ -388,9 +388,9 @@ Mesh &Mesh::applyTransform(const MeshTransform transform)
   auto resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
   resampler->SetTransform(transform);
-  resampler->SetInputData(this->mesh);
+  resampler->SetInputData(this->poly_data_);
   resampler->Update();
-  this->mesh = resampler->GetOutput();
+  this->poly_data_ = resampler->GetOutput();
 
   this->invalidateLocators();
   return *this;
@@ -399,18 +399,18 @@ Mesh &Mesh::applyTransform(const MeshTransform transform)
 Mesh &Mesh::fillHoles()
 {
   vtkSmartPointer<vtkFillHolesFilter> filter = vtkSmartPointer<vtkFillHolesFilter>::New();
-  filter->SetInputData(this->mesh);
+  filter->SetInputData(this->poly_data_);
   filter->SetHoleSize(1000.0);
   filter->Update();
-  this->mesh = filter->GetOutput();
+  this->poly_data_ = filter->GetOutput();
 
-  auto origNormal = mesh->GetPointData()->GetNormals();
+  auto origNormal = poly_data_->GetPointData()->GetNormals();
 
   // Make the triangle window order consistent
   computeNormals();
 
   // Restore the original normals
-  mesh->GetPointData()->SetNormals(origNormal);
+  poly_data_->GetPointData()->SetNormals(origNormal);
 
   this->invalidateLocators();
   return *this;
@@ -419,10 +419,10 @@ Mesh &Mesh::fillHoles()
 Mesh &Mesh::probeVolume(const Image &image)
 {
   vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
-  probeFilter->SetInputData(this->mesh);
+  probeFilter->SetInputData(this->poly_data_);
   probeFilter->SetSourceData(image.getVTKImage());
   probeFilter->Update();
-  this->mesh = probeFilter->GetPolyDataOutput();
+  this->poly_data_ = probeFilter->GetPolyDataOutput();
 
   this->invalidateLocators();
   return *this;
@@ -431,10 +431,10 @@ Mesh &Mesh::probeVolume(const Image &image)
 Mesh &Mesh::clip(const Plane plane)
 {
   vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
-  clipper->SetInputData(this->mesh);
+  clipper->SetInputData(this->poly_data_);
   clipper->SetClipFunction(plane);
   clipper->Update();
-  this->mesh = clipper->GetOutput();
+  this->poly_data_ = clipper->GetOutput();
 
   this->invalidateLocators();
   return *this;
@@ -460,7 +460,7 @@ PhysicalRegion Mesh::boundingBox() const
 {
   PhysicalRegion bbox;
   double bb[6];
-  mesh->GetBounds(bb);
+  poly_data_->GetBounds(bb);
 
   for(int i = 0; i < 3; i++)
   {
@@ -474,7 +474,7 @@ PhysicalRegion Mesh::boundingBox() const
 Mesh& Mesh::fixElement()
 {
   FEVTKimport import;
-  FEMesh* meshFE = import.Load(this->mesh);
+  FEMesh* meshFE = import.Load(this->poly_data_);
 
   if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
 
@@ -484,7 +484,7 @@ Mesh& Mesh::fixElement()
   meshFix = fix.FixElementWinding(meshFE);
 
   FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFix);
+  this->poly_data_ = vtkOut.ExportToVTK(*meshFix);
 
   this->invalidateLocators();
   return *this;
@@ -514,14 +514,14 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
     {
       // build point locator for target mesh
       vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-      targetPointLocator->SetDataSet(target.mesh);
+      targetPointLocator->SetDataSet(target.poly_data_);
       targetPointLocator->BuildLocator();
 
       for (int i = 0; i < numPoints(); i++)
       {
-        mesh->GetPoint(i, currentPoint.GetDataPointer());
+        poly_data_->GetPoint(i, currentPoint.GetDataPointer());
         vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint.GetDataPointer());
-        target.mesh->GetPoint(closestPointId, closestPoint.GetDataPointer());
+        target.poly_data_->GetPoint(closestPointId, closestPoint.GetDataPointer());
         ids->SetValue(i, closestPointId);
         distance->SetValue(i, length(currentPoint - closestPoint));
       }
@@ -532,7 +532,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
     {
       // build cell locator for target mesh
       vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
-      targetCellLocator->SetDataSet(target.mesh);
+      targetCellLocator->SetDataSet(target.poly_data_);
       targetCellLocator->BuildLocator();
 
       double dist2;
@@ -542,7 +542,7 @@ std::vector<Field> Mesh::distance(const Mesh &target, const DistanceMethod metho
 
       for (int i = 0; i < numPoints(); i++)
       {
-        mesh->GetPoint(i, currentPoint.GetDataPointer());
+        poly_data_->GetPoint(i, currentPoint.GetDataPointer());
         targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(),
                                             closestPoint.GetDataPointer(),
                                             cell, cellId, subId, dist2);
@@ -569,10 +569,10 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
 
   vtkSmartPointer<vtkClipClosedSurface> clipper = vtkSmartPointer<vtkClipClosedSurface>::New();
   clipper->SetClippingPlanes(planeCollection);
-  clipper->SetInputData(this->mesh);
+  clipper->SetInputData(this->poly_data_);
   clipper->SetGenerateFaces(1);
   clipper->Update();
-  this->mesh = clipper->GetOutput();
+  this->poly_data_ = clipper->GetOutput();
 
   this->invalidateLocators();
   return *this;
@@ -582,13 +582,13 @@ Mesh& Mesh::computeNormals()
 {
   vtkSmartPointer<vtkPolyDataNormals> normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
-  normal->SetInputData(this->mesh);
+  normal->SetInputData(this->poly_data_);
   normal->ComputeCellNormalsOn();
   normal->ComputePointNormalsOn();
   normal->AutoOrientNormalsOn();
   normal->SplittingOff();
   normal->Update();
-  this->mesh = normal->GetOutput();
+  this->poly_data_ = normal->GetOutput();
 
   return *this;
 }
@@ -604,7 +604,7 @@ void Mesh::updatePointLocator() const
   if (!this->pointLocator)
   {
     this->pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-    this->pointLocator->SetDataSet(this->mesh);
+    this->pointLocator->SetDataSet(this->poly_data_);
     this->pointLocator->BuildLocator();
   }
 }
@@ -614,7 +614,7 @@ void Mesh::updateCellLocator() const
   if (!this->cellLocator)
   {
     this->cellLocator = vtkSmartPointer<vtkCellLocator>::New();
-    this->cellLocator->SetDataSet(this->mesh);
+    this->cellLocator->SetDataSet(this->poly_data_);
     this->cellLocator->BuildLocator();
   }
 }
@@ -666,7 +666,7 @@ double Mesh::geodesicDistance(int source, int target) const
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
   }
 
-  VtkMeshWrapper wrap(this->mesh, true);
+  VtkMeshWrapper wrap(this->poly_data_, true);
   return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
 }
 
@@ -677,7 +677,7 @@ Field Mesh::geodesicDistance(const Point3 landmark) const
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
-  VtkMeshWrapper wrap(this->mesh, true);
+  VtkMeshWrapper wrap(this->poly_data_, true);
 
   for (int i = 0; i < numPoints(); i++)
   {
@@ -778,18 +778,18 @@ Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision)
   if (type == Mesh::SubdivisionType::Loop)
   {
     vtkSmartPointer<vtkLoopSubdivisionFilter> filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
-    filter->SetInputData(this->mesh);
+    filter->SetInputData(this->poly_data_);
     filter->SetNumberOfSubdivisions(subdivision);
     filter->Update();
-    this->mesh = filter->GetOutput();
+    this->poly_data_ = filter->GetOutput();
   }
   else
   {
     vtkSmartPointer<vtkButterflySubdivisionFilter> filter = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
-    filter->SetInputData(this->mesh);
+    filter->SetInputData(this->poly_data_);
     filter->SetNumberOfSubdivisions(subdivision);
     filter->Update();
-    this->mesh = filter->GetOutput();
+    this->poly_data_ = filter->GetOutput();
   }
 
   return *this;
@@ -824,7 +824,7 @@ Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const
 
   // cut stencil from mesh silhouette (same size as output image)
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
-  pol2stenc->SetInputData(this->mesh);
+  pol2stenc->SetInputData(this->poly_data_);
   pol2stenc->SetInformationInput(whiteImage);
   pol2stenc->Update();
 
@@ -881,14 +881,14 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
 Point3 Mesh::center() const
 {
   double c[3];
-  mesh->GetCenter(c);
+  poly_data_->GetCenter(c);
   return Point3({c[0], c[1], c[2]});
 }
 
 Point3 Mesh::centerOfMass() const
 {
   auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-  com->SetInputData(this->mesh);
+  com->SetInputData(this->poly_data_);
   com->Update();
   double center[3];
   com->GetCenter(center);
@@ -900,17 +900,17 @@ Point3 Mesh::getPoint(int id) const
   if (this->numPoints() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
   double point[3];
-  mesh->GetPoint(id, point);
+  poly_data_->GetPoint(id, point);
   return Point3({point[0], point[1], point[2]});
 }
 
 IPoint3 Mesh::getFace(int id) const
 {
-  if (mesh->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
+  if (poly_data_->GetNumberOfCells() < id) { throw std::invalid_argument("mesh has fewer indices than requested"); }
 
   IPoint3 face;
   auto cells = vtkSmartPointer<vtkIdList>::New();
-  mesh->GetCellPoints(id, cells);
+  poly_data_->GetCellPoints(id, cells);
 
   for(int i = 0; i <3; i++)
   {
@@ -925,7 +925,7 @@ Eigen::MatrixXd Mesh::points() const
   int num_points = numPoints();
   Eigen::MatrixXd points_(num_points, 3);
 
-  vtkSmartPointer<vtkDataArray> data_array = mesh->GetPoints()->GetData();
+  vtkSmartPointer<vtkDataArray> data_array = poly_data_->GetPoints()->GetData();
 
   for (int i = 0; i < num_points; i++) {
     points_(i, 0) = data_array->GetComponent(i, 0);
@@ -944,7 +944,7 @@ Eigen::MatrixXi Mesh::faces() const
   vtkSmartPointer<vtkIdList> cells = vtkSmartPointer<vtkIdList>::New();
 
   for (int j = 0; j < num_faces; j++) {
-    mesh->GetCellPoints(j, cells);
+    poly_data_->GetCellPoints(j, cells);
     faces(j, 0) = cells->GetId(0);
     faces(j, 1) = cells->GetId(1);
     faces(j, 2) = cells->GetId(2);
@@ -956,10 +956,10 @@ Eigen::MatrixXi Mesh::faces() const
 std::vector<std::string> Mesh::getFieldNames() const
 {
   std::vector<std::string> fields;
-  int numFields = mesh->GetPointData()->GetNumberOfArrays();
+  int numFields = poly_data_->GetPointData()->GetNumberOfArrays();
 
   for (int i=0; i<numFields; i++) {
-    auto name = mesh->GetPointData()->GetArrayName(i);
+    auto name = poly_data_->GetPointData()->GetArrayName(i);
     fields.push_back(name ? std::string(name) : std::string("default"));
   }
 
@@ -970,10 +970,10 @@ Field Mesh::getField(const std::string& name, const FieldType type) const
 {
   if (type == Mesh::Point)
   {
-    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    if (poly_data_->GetPointData()->GetNumberOfArrays() < 1)
       throw std::invalid_argument("Mesh has no fields.");
 
-    Field rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    Field rawarr = poly_data_->GetPointData()->GetArray(name.c_str());
     if (!rawarr)
       throw std::invalid_argument("Mesh does not contain a point field called " + name);
 
@@ -989,10 +989,10 @@ Field Mesh::getField(const std::string& name, const FieldType type) const
 
 Field Mesh::getFieldForFaces(const std::string& name) const
 {
-  if (mesh->GetCellData()->GetNumberOfArrays() < 1)
+  if (poly_data_->GetCellData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no face fields.");
 
-  Field rawarr = mesh->GetCellData()->GetArray(name.c_str());
+  Field rawarr = poly_data_->GetCellData()->GetArray(name.c_str());
   if (!rawarr)
     throw std::invalid_argument("Mesh does not contain a cell field called " + name);
 
@@ -1015,7 +1015,7 @@ Mesh& Mesh::setField(std::string name, Array array, const FieldType type)
     }
 
     array->SetName(name.c_str());
-    mesh->GetPointData()->AddArray(array);
+    poly_data_->GetPointData()->AddArray(array);
 
     return *this;
   }
@@ -1041,7 +1041,7 @@ Mesh& Mesh::setFieldForFaces(std::string name, Array array)
   }
 
   array->SetName(name.c_str());
-  mesh->GetCellData()->AddArray(array);
+  poly_data_->GetCellData()->AddArray(array);
 
   return *this;
 }
@@ -1051,10 +1051,10 @@ void Mesh::setFieldValue(const std::string& name, int idx, double val)
   if (name.empty())
     throw std::invalid_argument("Provide name for the field");
 
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+  if (poly_data_->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields for which to set a value.");
 
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  auto arr = poly_data_->GetPointData()->GetArray(name.c_str());
   if (arr->GetNumberOfTuples() > idx)
     arr->SetTuple1(idx, val);
   else
@@ -1066,10 +1066,10 @@ double Mesh::getFieldValue(const std::string& name, int idx) const
   if (name.empty())
     throw std::invalid_argument("Provide name for field");
 
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+  if (poly_data_->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  auto arr = poly_data_->GetPointData()->GetArray(name.c_str());
   if (!arr)
     throw std::invalid_argument("Field does not exist.");
 
@@ -1084,10 +1084,10 @@ Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const
   if (name.empty())
     throw std::invalid_argument("Provide name for field");
 
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+  if (poly_data_->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
-  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  auto arr = poly_data_->GetPointData()->GetArray(name.c_str());
   if (!arr)
     throw std::invalid_argument("Field does not exist.");
 
@@ -1105,7 +1105,7 @@ Eigen::VectorXd Mesh::getMultiFieldValue(const std::string& name, int idx) const
 
 bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 {
-  if (!this->mesh || !other_mesh.mesh)
+  if (!this->poly_data_ || !other_mesh.poly_data_)
     throw std::invalid_argument("invalid meshes");
 
   if (this->numPoints() != other_mesh.numPoints())
@@ -1116,8 +1116,8 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 
   for (int i = 0; i < this->numPoints(); i++)
   {
-    Point3 p1(this->mesh->GetPoint(i));
-    Point3 p2(other_mesh.mesh->GetPoint(i));
+    Point3 p1(this->poly_data_->GetPoint(i));
+    Point3 p2(other_mesh.poly_data_->GetPoint(i));
     if (!epsEqual(p1, p2, 0.011)) {
       printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
              i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
@@ -1131,10 +1131,10 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 
 bool Mesh::compareAllFaces(const Mesh &other_mesh) const
 {
-  if (!this->mesh || !other_mesh.mesh)
+  if (!this->poly_data_ || !other_mesh.poly_data_)
     throw std::invalid_argument("invalid meshes");
 
-  if (this->mesh->GetNumberOfCells() != other_mesh.mesh->GetNumberOfCells())
+  if (this->poly_data_->GetNumberOfCells() != other_mesh.poly_data_->GetNumberOfCells())
   {
     std::cerr << "meshes differ in number of faces";
     return false;
@@ -1153,10 +1153,10 @@ bool Mesh::compareAllFaces(const Mesh &other_mesh) const
     printf("]");
   };
 
-  for (int i = 0; i < this->mesh->GetNumberOfCells(); i++)
+  for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++)
   {
-    vtkCell* cell1 = this->mesh->GetCell(i);
-    vtkCell* cell2 = other_mesh.mesh->GetCell(i);
+    vtkCell* cell1 = this->poly_data_->GetCell(i);
+    vtkCell* cell2 = other_mesh.poly_data_->GetCell(i);
 
     if(cell1->GetNumberOfPoints() != cell2->GetNumberOfPoints())
     {
@@ -1183,7 +1183,7 @@ bool Mesh::compareAllFaces(const Mesh &other_mesh) const
 
 bool Mesh::compareAllFields(const Mesh &other_mesh, const double eps) const
 {
-  if (!this->mesh || !other_mesh.mesh)
+  if (!this->poly_data_ || !other_mesh.poly_data_)
     throw std::invalid_argument("Invalid meshes");
 
   auto fields1 = getFieldNames();
@@ -1267,7 +1267,7 @@ bool Mesh::compare(const Mesh& other, const double eps) const
 
 MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations) const
 {
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->poly_data_, target.getVTKMesh(), align, iterations, true));
   return createMeshTransform(mat);
 }
 
@@ -1296,8 +1296,8 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   std::vector<bool> member;
 
   // copy points
-  for (vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++) {
-    points->InsertNextPoint(mesh->GetPoint(i));
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfPoints(); i++) {
+    points->InsertNextPoint(poly_data_->GetPoint(i));
     if (this->getFieldValue(name, i) == value) {
       member.push_back(true);
     } else {
@@ -1306,8 +1306,8 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   }
 
   // copy triangles
-  for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
-    vtkCell* cell = this->mesh->GetCell(i);
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells(); i++) {
+    vtkCell* cell = this->poly_data_->GetCell(i);
 
     if (cell->GetCellType() != VTK_EMPTY_CELL) { // VTK_EMPTY_CELL means it was deleted
       vtkIdType pts[3];
@@ -1328,9 +1328,9 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
 bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut)
 {
-  if (mesh->GetPointData()->GetArray("inout")) {
+  if (poly_data_->GetPointData()->GetArray("inout")) {
     // clear out any old versions of the inout array or else they will get merged in
-    mesh->GetPointData()->RemoveArray("inout");
+    poly_data_->GetPointData()->RemoveArray("inout");
   }
 
   // Extract mesh vertices and faces
@@ -1352,19 +1352,19 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
     // the locator is continuously rebuilt during this function, so don't use the cached version
     vtkSmartPointer<vtkKdTreePointLocator> tmp_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-    tmp_locator->SetDataSet(this->mesh);
+    tmp_locator->SetDataSet(this->poly_data_);
     tmp_locator->BuildLocator();
 
     // Create path creator
     auto dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
-    dijkstra->SetInputData(this->mesh);
+    dijkstra->SetInputData(this->poly_data_);
 
     vtkIdType lastId = 0;
     for (size_t i = 0; i < boundaries[bound].size(); i++) {
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
       vtkIdType ptid = tmp_locator->FindClosestPoint(ptdob);
-      mesh->GetPoint(ptid, ptdob);
+      poly_data_->GetPoint(ptid, ptdob);
 
       // Add first point in boundary
       if (i == 0) {
@@ -1407,7 +1407,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
     auto select = vtkSmartPointer<vtkSelectPolyData>::New();
     select->SetLoop(selectionPoints);
-    select->SetInputData(this->mesh);
+    select->SetInputData(this->poly_data_);
     select->GenerateSelectionScalarsOn();
     select->SetSelectionModeToLargestRegion();
 
@@ -1429,7 +1429,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     if (!onlyGenerateInOut) {
       auto values = vtkSmartPointer<vtkDoubleArray>::New();
       auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
-      this->mesh->GetPointData()->SetActiveScalars("value");
+      this->poly_data_->GetPointData()->SetActiveScalars("value");
       std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
     }
 
@@ -1451,7 +1451,7 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   double pcoords[3];
   double dist2;
   Eigen::Vector3d bary;
-  this->mesh->GetCell(face)->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
+  this->poly_data_->GetCell(face)->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
   return bary;
 }
 
@@ -1465,7 +1465,7 @@ double Mesh::getFFCValue(Eigen::Vector3d query) const
   double dist;
   this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
 
-  auto cell = this->mesh->GetCell(cellId);
+  auto cell = this->poly_data_->GetCell(cellId);
 
   size_t v1 = cell->GetPointId(0);
   size_t v2 = cell->GetPointId(1);
@@ -1493,7 +1493,7 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const
   double dist;
   this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
 
-  double* gradAr = mesh->GetCellData()->GetArray("vff")->GetTuple3(cellId);
+  double* gradAr = poly_data_->GetCellData()->GetArray("vff")->GetTuple3(cellId);
   Eigen::Vector3d grad(gradAr[0], gradAr[1], gradAr[2]);
 
   return grad;
@@ -1502,13 +1502,13 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const
 // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
-  const int n_verts = this->mesh->GetNumberOfPoints();
-  const int n_faces = this->mesh->GetNumberOfCells();
+  const int n_verts = this->poly_data_->GetNumberOfPoints();
+  const int n_faces = this->poly_data_->GetNumberOfCells();
 
   V.resize(n_verts, 3);
   F.resize(n_faces, 3);
 
-  auto points = this->mesh->GetPoints();
+  auto points = this->poly_data_->GetPoints();
   for (int i = 0; i < n_verts; i++) {
     double p[3];
     points->GetPoint(i, p);
@@ -1517,7 +1517,7 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
     V(i, 2) = p[2];
   }
   for (int i = 0; i < n_faces; i++) {
-    auto cell = this->mesh->GetCell(i);
+    auto cell = this->poly_data_->GetCell(i);
     assert (cell->GetNumberOfPoints() == 3);
     F(i, 0) = cell->GetPointId(0);
     F(i, 1) = cell->GetPointId(1);
@@ -1532,7 +1532,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
 
   // Finding which half is in and which is out.
   bool halfmeshisin = true;
-  auto* arr = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("inout")); // Check if an inout already exists
+  auto* arr = vtkDoubleArray::SafeDownCast(poly_data_->GetPointData()->GetArray("inout")); // Check if an inout already exists
 
   // Create half-mesh tree
   auto kdhalf_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
@@ -1552,7 +1552,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   halfmesh->GetPoint(halfi, halfp);
 
   double fullp[3];
-  this->mesh->GetPoint(fulli, fullp);
+  this->poly_data_->GetPoint(fulli, fullp);
 
   if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2]) {
     halfmeshisin = false; // If the closest point in halfmesh is not the closest point in fullmesh, then halfmesh is not the in mesh.
@@ -1560,11 +1560,11 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
   inout->SetNumberOfComponents(1);
-  inout->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
+  inout->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   inout->SetName("inout");
 
-  for (vtkIdType i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
-    this->mesh->GetPoint(i, fullp);
+  for (vtkIdType i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
+    this->poly_data_->GetPoint(i, fullp);
 
     halfi = kdhalf_locator->FindClosestPoint(fullp);
     halfmesh->GetPoint(halfi, halfp);
@@ -1600,23 +1600,23 @@ Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> val
                                              vtkSmartPointer<vtkDoubleArray> inout,
                                              Eigen::MatrixXd V, Eigen::MatrixXi F)
 {
-  auto* arr = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("value")); // Check if a value field already exists
+  auto* arr = vtkDoubleArray::SafeDownCast(poly_data_->GetPointData()->GetArray("value")); // Check if a value field already exists
 
   values->SetNumberOfComponents(1);
-  values->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
+  values->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   values->SetName("values");
   for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
     values->SetValue(i, INFINITY);
   }
   vtkSmartPointer<vtkDoubleArray> absvalues = vtkSmartPointer<vtkDoubleArray>::New();
   absvalues->SetNumberOfComponents(1);
-  absvalues->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
+  absvalues->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   absvalues->SetName("absvalues");
 
   //std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
 
   // debug
-  Eigen::MatrixXd C(this->mesh->GetNumberOfPoints(), 3);
+  Eigen::MatrixXd C(this->poly_data_->GetNumberOfPoints(), 3);
 
   // Load the mesh on Geometry central
   {
@@ -1675,7 +1675,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   // Definition of gradient field
   vtkSmartPointer<vtkDoubleArray> vf = vtkSmartPointer<vtkDoubleArray>::New();
   vf->SetNumberOfComponents(3);
-  vf->SetNumberOfTuples(this->mesh->GetNumberOfPoints());
+  vf->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   vf->SetName("vf");
 
   // *Computing gradients for FFCs for each face
@@ -1686,7 +1686,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   // Flattened version of libigl's gradient operator
   std::vector<Eigen::Matrix3d> face_grad;
 
-  Eigen::MatrixXd grads(this->mesh->GetNumberOfPoints(), 3);
+  Eigen::MatrixXd grads(this->poly_data_->GetNumberOfPoints(), 3);
   grads.fill(0.);
 
   // Flatten the gradient operator so we can quickly compute the gradient at a given point
@@ -1715,7 +1715,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   // Definition of gradient field for faces
   vtkSmartPointer<vtkDoubleArray> vff = vtkSmartPointer<vtkDoubleArray>::New();
   vff->SetNumberOfComponents(3);
-  vff->SetNumberOfTuples(this->mesh->GetNumberOfCells());
+  vff->SetNumberOfTuples(this->poly_data_->GetNumberOfCells());
   vff->SetName("vff");
 
   // Computes grad vec for each face
@@ -1734,7 +1734,7 @@ Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::
   }
 
   // Setting gradient field
-  for (size_t i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
+  for (size_t i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
     vf->SetTuple3(i, grads(i, 0), grads(i, 1), grads(i, 2));
   }
 
@@ -1750,15 +1750,15 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh)
 {
   // Append the two meshes
   vtkSmartPointer<vtkAppendPolyData> appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
-  appendFilter->AddInputData(this->mesh);
-  appendFilter->AddInputData(otherMesh.mesh);
+  appendFilter->AddInputData(this->poly_data_);
+  appendFilter->AddInputData(otherMesh.poly_data_);
 
   // Remove any duplicate points.
   vtkSmartPointer<vtkCleanPolyData> cleanFilter= vtkSmartPointer<vtkCleanPolyData>::New();
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());
   cleanFilter->Update();
 
-  this->mesh = cleanFilter->GetOutput();
+  this->poly_data_ = cleanFilter->GetOutput();
 
   this->invalidateLocators();
   return *this;

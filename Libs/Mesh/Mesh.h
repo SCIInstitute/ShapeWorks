@@ -29,33 +29,33 @@ public:
 
   Mesh(const std::string& pathname);
 
-  Mesh(MeshType meshPtr) : mesh(meshPtr) {
-    if (!mesh) throw std::invalid_argument("null meshPtr");
+  Mesh(MeshType meshPtr) : poly_data_(meshPtr) {
+    if (!poly_data_) throw std::invalid_argument("null meshPtr");
     invalidateLocators();
   }
 
-  Mesh(const Mesh& orig) : mesh(MeshType::New()) {
-    mesh->DeepCopy(orig.mesh);
+  Mesh(const Mesh& orig) : poly_data_(MeshType::New()) {
+    poly_data_->DeepCopy(orig.poly_data_);
     invalidateLocators();
   }
 
-  Mesh(Mesh&& orig) : mesh(orig.mesh) { orig.mesh = nullptr; }
+  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_) { orig.poly_data_ = nullptr; }
 
   Mesh& operator=(const Mesh& orig) {
-    mesh = MeshType::New();
-    mesh->DeepCopy(orig.mesh);
+    poly_data_ = MeshType::New();
+    poly_data_->DeepCopy(orig.poly_data_);
     invalidateLocators();
     return *this; }
 
   Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces);
 
-  Mesh& operator=(Mesh&& orig) { mesh = orig.mesh; orig.mesh = nullptr; return *this; }
+  Mesh& operator=(Mesh&& orig) { poly_data_ = orig.poly_data_; orig.poly_data_ = nullptr; return *this; }
 
   /// append two meshes
   Mesh& operator+=(const Mesh& otherMesh);
 
   /// return the current mesh
-  MeshType getVTKMesh() const { return this->mesh; }
+  MeshType getVTKMesh() const { return this->poly_data_; }
 
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string &pathname, bool binaryFile = false);
@@ -162,10 +162,10 @@ public:
   Point3 centerOfMass() const;
 
   /// number of points
-  int numPoints() const { return mesh->GetNumberOfPoints(); }
+  int numPoints() const { return poly_data_->GetNumberOfPoints(); }
 
   /// number of faces
-  int numFaces() const { return mesh->GetNumberOfCells(); }
+  int numFaces() const { return poly_data_->GetNumberOfCells(); }
 
   /// matrix with number of points with (x,y,z) coordinates of each point
   Eigen::MatrixXd points() const;
@@ -243,12 +243,12 @@ public:
 
 private:
   friend struct SharedCommandData;
-  Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
+  Mesh() : poly_data_(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
 
   /// Creates transform from source mesh to target using ICP registration
   MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10) const;
 
-  MeshType mesh;
+  MeshType poly_data_;
 
   /// sets the given field for faces with array (*does not copy array's values)
   Mesh& setFieldForFaces(const std::string name, Array array);
