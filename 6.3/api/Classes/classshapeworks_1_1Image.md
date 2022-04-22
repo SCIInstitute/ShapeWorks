@@ -23,6 +23,7 @@ title: shapeworks::Image
 | using itk::Image< PixelType, 3 > | **[ImageType](../Classes/classshapeworks_1_1Image.md#using-imagetype)**  |
 | using itk::StatisticsImageFilter< ImageType >::Pointer | **[StatsPtr](../Classes/classshapeworks_1_1Image.md#using-statsptr)**  |
 | using itk::ImageRegionIterator< ImageType > | **[ImageIterator](../Classes/classshapeworks_1_1Image.md#using-imageiterator)**  |
+| using itk::LinearInterpolateImageFunction< ImageType, Image::PixelType > | **[InterpolatorType](../Classes/classshapeworks_1_1Image.md#using-interpolatortype)**  |
 
 ## Public Functions
 
@@ -54,11 +55,11 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator-](../Classes/classshapeworks_1_1Image.md#function-operator-)**(const PixelType x) const<br>minus operator to shift contents of an image  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator-=](../Classes/classshapeworks_1_1Image.md#function-operator-=)**(const PixelType x) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[antialias](../Classes/classshapeworks_1_1Image.md#function-antialias)**(unsigned iterations =50, double maxRMSErr =0.01f, int layers =3)<br>antialiases image  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[recenter](../Classes/classshapeworks_1_1Image.md#function-recenter)**()<br>helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[recenter](../Classes/classshapeworks_1_1Image.md#function-recenter)**() |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(const Vector & physicalSpacing, InterpolationType interp =Linear)<br>resamples image using new physical spacing, updating logical dims to keep all image data for this spacing  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(double isoSpacing =1.0, InterpolationType interp =Linear)<br>resamples image using isotropic physical spacing  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[resize](../Classes/classshapeworks_1_1Image.md#function-resize)**(Dims logicalDims, InterpolationType interp =Linear)<br>changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[resize](../Classes/classshapeworks_1_1Image.md#function-resize)**(Dims logicalDims, InterpolationType interp =Linear) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[pad](../Classes/classshapeworks_1_1Image.md#function-pad)**(int padding, PixelType value =0.0)<br>pads an image by same number of voxels in all directions with constant value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[pad](../Classes/classshapeworks_1_1Image.md#function-pad)**(int padx, int pady, int padz, PixelType value =0.0)<br>pads an image by desired number of voxels in each direction with constant value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[pad](../Classes/classshapeworks_1_1Image.md#function-pad)**([IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & region, PixelType value =0.0)<br>pads an image to include the given region with constant value  |
@@ -67,10 +68,10 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[rotate](../Classes/classshapeworks_1_1Image.md#function-rotate)**(const double angle, const Vector3 & axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[rotate](../Classes/classshapeworks_1_1Image.md#function-rotate)**(const double angle, Axis axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)  |
 | TransformPtr | **[createCenterOfMassTransform](../Classes/classshapeworks_1_1Image.md#function-createcenterofmasstransform)**()<br>creates a transform that translates center of mass to center of image  |
-| TransformPtr | **[createRigidRegistrationTransform](../Classes/classshapeworks_1_1Image.md#function-createrigidregistrationtransform)**(const [Image](../Classes/classshapeworks_1_1Image.md) & target_dt, float isoValue =0.0, unsigned iterations =20)<br>creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations  |
+| TransformPtr | **[createRigidRegistrationTransform](../Classes/classshapeworks_1_1Image.md#function-createrigidregistrationtransform)**(const [Image](../Classes/classshapeworks_1_1Image.md) & target_dt, float isoValue =0.0, unsigned iterations =20) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, InterpolationType interp =Linear)<br>applies the given transformation to the image by using resampling filter  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[extractLabel](../Classes/classshapeworks_1_1Image.md#function-extractlabel)**(const PixelType label =1.0)<br>extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor) |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[extractLabel](../Classes/classshapeworks_1_1Image.md#function-extractlabel)**(const PixelType label =1.0) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[closeHoles](../Classes/classshapeworks_1_1Image.md#function-closeholes)**(const PixelType foreground =0.0)<br>closes holes in a given volume, default foreground value assumes a binary volume  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[binarize](../Classes/classshapeworks_1_1Image.md#function-binarize)**(PixelType minVal =0.0, PixelType maxVal =std::numeric_limits< PixelType >::[max](../Classes/classshapeworks_1_1Image.md#function-max)(), PixelType innerVal =1.0, PixelType outerVal =0.0)<br>threholds image into binary label based on upper and lower intensity bounds given by user  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[computeDT](../Classes/classshapeworks_1_1Image.md#function-computedt)**(PixelType isoValue =0.0)<br>computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue  |
@@ -78,12 +79,12 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyGradientFilter](../Classes/classshapeworks_1_1Image.md#function-applygradientfilter)**()<br>computes gradient magnitude at each pixel using gradient magnitude filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applySigmoidFilter](../Classes/classshapeworks_1_1Image.md#function-applysigmoidfilter)**(double alpha =10.0, double beta =10.0)<br>computes sigmoid function pixel-wise using sigmoid image filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTPLevelSetFilter](../Classes/classshapeworks_1_1Image.md#function-applytplevelsetfilter)**(const [Image](../Classes/classshapeworks_1_1Image.md) & featureImage, double scaling =20.0)<br>segements structures in images using topology preserving geodesic active contour level set filter  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[topologyPreservingSmooth](../Classes/classshapeworks_1_1Image.md#function-topologypreservingsmooth)**(float scaling =20.0, float sigmoidAlpha =10.5, float sigmoidBeta =10.0)<br>creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[topologyPreservingSmooth](../Classes/classshapeworks_1_1Image.md#function-topologypreservingsmooth)**(float scaling =20.0, float sigmoidAlpha =10.5, float sigmoidBeta =10.0) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyIntensityFilter](../Classes/classshapeworks_1_1Image.md#function-applyintensityfilter)**(double minVal, double maxVal)<br>applies intensity windowing image filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[gaussianBlur](../Classes/classshapeworks_1_1Image.md#function-gaussianblur)**(double sigma =0.0)<br>applies gaussian blur with given sigma  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[crop](../Classes/classshapeworks_1_1Image.md#function-crop)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region, const int padding =0)<br>crops the image down to the given region, with optional padding added  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[clip](../Classes/classshapeworks_1_1Image.md#function-clip)**(const Plane plane, const PixelType val =0.0)<br>clips an image using a cutting plane  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const Axis & axis)<br>reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const Axis & axis) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setOrigin](../Classes/classshapeworks_1_1Image.md#function-setorigin)**(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setSpacing](../Classes/classshapeworks_1_1Image.md#function-setspacing)**(Vector3 spacing)<br>sets the image spacing to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setCoordsys](../Classes/classshapeworks_1_1Image.md#function-setcoordsys)**(ImageType::DirectionType coordsys)<br>sets the coordinate system in which this image lives in physical space  |
@@ -106,11 +107,12 @@ title: shapeworks::Image
 | [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region) const<br>converts a bounding box in physical space to this image's logical (index) coordinates  |
 | Point3 | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**(const Coord & c) const<br>converts from pixel coordinates to physical space  |
 | Coord | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
-| ImageIterator | **[setIterator](../Classes/classshapeworks_1_1Image.md#function-setiterator)**()<br>creates an image iterator and returns it  |
+| ImageIterator | **[iterator](../Classes/classshapeworks_1_1Image.md#function-iterator)**()<br>creates an image iterator and returns it  |
 | bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[toMesh](../Classes/classshapeworks_1_1Image.md#function-tomesh)**(PixelType isovalue) const<br>converts image to mesh  |
+| Image::PixelType | **[evaluate](../Classes/classshapeworks_1_1Image.md#function-evaluate)**(Point p)<br>Evaluates the image at a given position.  |
 
 ## Friends
 
@@ -164,6 +166,13 @@ using shapeworks::Image::StatsPtr =  itk::StatisticsImageFilter<ImageType>::Poin
 
 ```cpp
 using shapeworks::Image::ImageIterator =  itk::ImageRegionIterator<ImageType>;
+```
+
+
+### using InterpolatorType
+
+```cpp
+using shapeworks::Image::InterpolatorType =  itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
 ```
 
 
@@ -418,7 +427,9 @@ antialiases image
 Image & recenter()
 ```
 
+
 helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image 
+
 
 ### function resample
 
@@ -433,7 +444,9 @@ Image & resample(
 )
 ```
 
+
 resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator 
+
 
 ### function resample
 
@@ -466,7 +479,9 @@ Image & resize(
 )
 ```
 
+
 changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same) 
+
 
 ### function pad
 
@@ -563,7 +578,9 @@ TransformPtr createRigidRegistrationTransform(
 )
 ```
 
+
 creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations 
+
 
 ### function applyTransform
 
@@ -589,7 +606,9 @@ Image & applyTransform(
 )
 ```
 
+
 applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values 
+
 
 ### function extractLabel
 
@@ -599,7 +618,9 @@ Image & extractLabel(
 )
 ```
 
+
 extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image 
+
 
 ### function closeHoles
 
@@ -684,7 +705,9 @@ Image & topologyPreservingSmooth(
 )
 ```
 
+
 creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter] 
+
 
 ### function applyIntensityFilter
 
@@ -737,7 +760,9 @@ Image & reflect(
 )
 ```
 
+
 reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane). 
+
 
 ### function setOrigin
 
@@ -934,10 +959,10 @@ Coord physicalToLogical(
 
 converts from a physical coordinate to a logical coordinate 
 
-### function setIterator
+### function iterator
 
 ```cpp
-ImageIterator setIterator()
+ImageIterator iterator()
 ```
 
 creates an image iterator and returns it 
@@ -986,6 +1011,16 @@ Mesh toMesh(
 
 converts image to mesh 
 
+### function evaluate
+
+```cpp
+Image::PixelType evaluate(
+    Point p
+)
+```
+
+Evaluates the image at a given position. 
+
 ## Friends
 
 ### friend SharedCommandData
@@ -997,4 +1032,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:29 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

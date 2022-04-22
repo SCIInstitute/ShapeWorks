@@ -27,47 +27,50 @@ title: Libs/Image/Image.h
 ```cpp
 #pragma once
 
-#include "Shapeworks.h"
-#include "Region.h"
-
 #include <itkImage.h>
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-#include <vtkImageData.h>
-#include <itkStatisticsImageFilter.h>
 #include <itkImageRegionIterator.h>
+#include <itkLinearInterpolateImageFunction.h>
+#include <itkStatisticsImageFilter.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 #include <limits>
+
+#include "Region.h"
+#include "Shapeworks.h"
 
 namespace shapeworks {
 
 class Mesh;
 
-class Image
-{
-public:
+class Image {
+ public:
   enum InterpolationType { Linear, NearestNeighbor };
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
 
   // constructors and assignment operators //
   Image(const Dims dims);
-  Image(const std::string &pathname) : image(read(pathname)) {}
-  Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
+  Image(const std::string& pathname) : itk_image_(read(pathname)) {}
+  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
+    if (!itk_image_) throw std::invalid_argument("null imagePtr");
+  }
   Image(const vtkSmartPointer<vtkImageData> vtkImage);
-  Image(Image&& img) : image(nullptr) { this->image.Swap(img.image); }
-  Image(const Image& img) : image(cloneData(img.image)) {}
-  Image& operator=(const Image& img); 
-  Image& operator=(Image&& img);      
+  Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
+  Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
+  Image& operator=(const Image& img);  
+  Image& operator=(Image&& img);       
 
-  operator ImageType::Pointer() { return image; }
-  ImageType::Pointer getITKImage() const { return image; }
+  operator ImageType::Pointer() { return itk_image_; }
+  ImageType::Pointer getITKImage() const { return itk_image_; }
 
   vtkSmartPointer<vtkImageData> getVTKImage() const;
-  
+
   // modification functions //
 
   Image& operator-();
@@ -93,13 +96,14 @@ public:
   Image& operator-=(const PixelType x);
 
   Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
-  
+
   Image& recenter();
 
-  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
+  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
+                  const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
-  
+
   Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
 
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
@@ -108,29 +112,31 @@ public:
 
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
-  Image& pad(IndexRegion &region, PixelType value = 0.0);
+  Image& pad(IndexRegion& region, PixelType value = 0.0);
 
-  Image& translate(const Vector3 &v);
+  Image& translate(const Vector3& v);
 
-  Image& scale(const Vector3 &v);
+  Image& scale(const Vector3& v);
 
-  Image& rotate(const double angle, const Vector3 &axis);
+  Image& rotate(const double angle, const Vector3& axis);
 
   Image& rotate(const double angle, Axis axis);
 
   TransformPtr createCenterOfMassTransform();
 
-  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
+  TransformPtr createRigidRegistrationTransform(const Image& target_dt, float isoValue = 0.0, unsigned iterations = 20);
 
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
-  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
+  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
+                        const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   Image& extractLabel(const PixelType label = 1.0);
 
   Image& closeHoles(const PixelType foreground = 0.0);
-  
-  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(), PixelType innerVal = 1.0, PixelType outerVal = 0.0);
+
+  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(),
+                  PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   Image& computeDT(PixelType isoValue = 0.0);
 
@@ -164,17 +170,17 @@ public:
 
   // query functions //
 
-  Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
+  Dims dims() const { return itk_image_->GetLargestPossibleRegion().GetSize(); }
 
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
 
-  Vector spacing() const { return image->GetSpacing(); }
+  Vector spacing() const { return itk_image_->GetSpacing(); }
 
-  Point3 origin() const { return image->GetOrigin(); }
+  Point3 origin() const { return itk_image_->GetOrigin(); }
 
   Point3 center() const { return origin() + size() / 2.0; }
 
-  ImageType::DirectionType coordsys() const { return image->GetDirection(); };
+  ImageType::DirectionType coordsys() const { return itk_image_->GetDirection(); };
 
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
@@ -196,11 +202,11 @@ public:
 
   IndexRegion physicalToLogical(PhysicalRegion region) const;
 
-  Point3 logicalToPhysical(const Coord &c) const;
+  Point3 logicalToPhysical(const Coord& c) const;
 
-  Coord physicalToLogical(const Point3 &p) const;
+  Coord physicalToLogical(const Point3& p) const;
 
-  ImageIterator setIterator();
+  ImageIterator iterator();
 
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
 
@@ -208,16 +214,20 @@ public:
 
   // export functions //
 
-  Image& write(const std::string &filename, bool compressed = true);
+  Image& write(const std::string& filename, bool compressed = true);
 
   Mesh toMesh(PixelType isovalue) const;
 
-private:
-  friend struct SharedCommandData;
-  Image() : image(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
+  Image::PixelType evaluate(Point p);
 
-  static ImageType::Pointer read(const std::string &filename);
-  static ImageType::Pointer readDICOMImage(const std::string &pathname);
+ private:
+  friend struct SharedCommandData;
+  Image()
+      : itk_image_(nullptr) {
+  }  // only for use by SharedCommandData since an Image should always be valid, never "empty"
+
+  static ImageType::Pointer read(const std::string& filename);
+  static ImageType::Pointer readDICOMImage(const std::string& pathname);
 
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
 
@@ -227,24 +237,26 @@ private:
 
   StatsPtr statsFilter();
 
-  ImageType::Pointer image;
+  ImageType::Pointer itk_image_;
+
+  InterpolatorType::Pointer interpolator_;
 };
 
-std::ostream& operator<<(std::ostream &os, const Image& img);
+std::ostream& operator<<(std::ostream& os, const Image& img);
 
-template<>
+template <>
 Image operator*(const Image& img, const double x);
-template<>
+template <>
 Image operator/(const Image& img, const double x);
-template<>
+template <>
 Image& operator*=(Image& img, const double x);
-template<>
+template <>
 Image& operator/=(Image& img, const double x);
 
-} // shapeworks
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:30 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

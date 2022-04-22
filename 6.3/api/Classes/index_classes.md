@@ -228,7 +228,7 @@ title: Classes
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
     * **class [TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)** 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
-    * **class [VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>[Image](../Classes/classshapeworks_1_1Image.md) composed of vectors instead of just scalars. 
+    * **class [VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image. 
     * **class [Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]()
     * **class [Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers. 
     * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
@@ -247,4 +247,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:30 +0000
+Updated on 2022-04-22 at 21:29:13 +0000

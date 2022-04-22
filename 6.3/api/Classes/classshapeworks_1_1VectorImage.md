@@ -1,6 +1,6 @@
 ---
 title: shapeworks::VectorImage
-summary: Image composed of vectors instead of just scalars. 
+summary: Gradient (vector) image. 
 
 ---
 
@@ -8,7 +8,7 @@ summary: Image composed of vectors instead of just scalars.
 
 
 
-[Image](../Classes/classshapeworks_1_1Image.md) composed of vectors instead of just scalars. 
+Gradient (vector) image. 
 
 
 `#include <VectorImage.h>`
@@ -19,7 +19,7 @@ summary: Image composed of vectors instead of just scalars.
 | -------------- | -------------- |
 | using itk::GradientImageFilter< Image::ImageType > | **[GradientImageFilter](../Classes/classshapeworks_1_1VectorImage.md#using-gradientimagefilter)**  |
 | using itk::Image< Covariant, 3 > | **[ImageType](../Classes/classshapeworks_1_1VectorImage.md#using-imagetype)**  |
-| using itk::VectorLinearInterpolateImageFunction< ImageType, typename Image::PixelType > | **[GradientInterpolator](../Classes/classshapeworks_1_1VectorImage.md#using-gradientinterpolator)**  |
+| using itk::VectorLinearInterpolateImageFunction< ImageType, Image::PixelType > | **[GradientInterpolatorType](../Classes/classshapeworks_1_1VectorImage.md#using-gradientinterpolatortype)**  |
 | using itk::ImageRegionIterator< ImageType > | **[ImageIterator](../Classes/classshapeworks_1_1VectorImage.md#using-imageiterator)**  |
 
 ## Public Functions
@@ -30,7 +30,7 @@ summary: Image composed of vectors instead of just scalars.
 | | **[VectorImage](../Classes/classshapeworks_1_1VectorImage.md#function-vectorimage)**() =delete |
 | | **[~VectorImage](../Classes/classshapeworks_1_1VectorImage.md#function-~vectorimage)**() =default |
 | Vector | **[evaluate](../Classes/classshapeworks_1_1VectorImage.md#function-evaluate)**(Point p)<br>Returns a Vector (which can be normalized using `v.Normalize()`).  |
-| ImageIterator | **[setIterator](../Classes/classshapeworks_1_1VectorImage.md#function-setiterator)**() |
+| ImageIterator | **[iterator](../Classes/classshapeworks_1_1VectorImage.md#function-iterator)**() |
 
 ## Public Types Documentation
 
@@ -48,10 +48,10 @@ using shapeworks::VectorImage::ImageType =  itk::Image<Covariant, 3>;
 ```
 
 
-### using GradientInterpolator
+### using GradientInterpolatorType
 
 ```cpp
-using shapeworks::VectorImage::GradientInterpolator =  itk::VectorLinearInterpolateImageFunction< ImageType, typename Image::PixelType>;
+using shapeworks::VectorImage::GradientInterpolatorType =  itk::VectorLinearInterpolateImageFunction<ImageType, Image::PixelType>;
 ```
 
 
@@ -91,20 +91,20 @@ VectorImage() =delete
 ### function evaluate
 
 ```cpp
-inline Vector evaluate(
+Vector evaluate(
     Point p
 )
 ```
 
 Returns a Vector (which can be normalized using `v.Normalize()`). 
 
-### function setIterator
+### function iterator
 
 ```cpp
-ImageIterator setIterator()
+ImageIterator iterator()
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:29 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

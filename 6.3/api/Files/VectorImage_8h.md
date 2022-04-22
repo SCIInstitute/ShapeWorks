@@ -17,7 +17,7 @@ title: Libs/Image/VectorImage.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>[Image](../Classes/classshapeworks_1_1Image.md) composed of vectors instead of just scalars.  |
+| class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image.  |
 
 
 
@@ -27,42 +27,36 @@ title: Libs/Image/VectorImage.h
 ```cpp
 #pragma once
 
-#include "Image.h"
-
-#include <itkVectorLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>
+#include <itkVectorLinearInterpolateImageFunction.h>
+
+#include "Image.h"
 
 namespace shapeworks {
 
-//
-// TODO: generalize Image class instead of this:
-//       https://github.com/SCIInstitute/ShapeWorks/issues/1053
-class VectorImage
-{
-public:
-
+class VectorImage {
+ public:
   using GradientImageFilter = itk::GradientImageFilter<Image::ImageType>;
   using ImageType = itk::Image<Covariant, 3>;
-  using GradientInterpolator = itk::VectorLinearInterpolateImageFunction<
-    ImageType, typename Image::PixelType>;
+  using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<ImageType, Image::PixelType>;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   VectorImage(const Image& dt_img);
   VectorImage() = delete;
   ~VectorImage() = default;
 
-  Vector evaluate(Point p) { return toVector(interpolator->Evaluate(p)); }
-  ImageIterator setIterator();
+  Vector evaluate(Point p);
+  ImageIterator iterator();
 
-private:
-  itk::SmartPointer<ImageType> image;
-  itk::SmartPointer<GradientInterpolator> interpolator;
+ private:
+  itk::SmartPointer<ImageType> itk_image_;
+  itk::SmartPointer<GradientInterpolatorType> interpolator_;
 };
 
-} // shapeworks
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:30 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

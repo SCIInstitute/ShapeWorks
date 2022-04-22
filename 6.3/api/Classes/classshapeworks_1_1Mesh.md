@@ -46,8 +46,8 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remesh](../Classes/classshapeworks_1_1Mesh.md#function-remesh)**(int numVertices, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remeshPercent](../Classes/classshapeworks_1_1Mesh.md#function-remeshpercent)**(double percentage, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[invertNormals](../Classes/classshapeworks_1_1Mesh.md#function-invertnormals)**()<br>handle flipping normals  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const Axis & axis, const Vector3 & origin =makeVector({ 0.0, 0.0, 0.0 }))<br>reflect meshes with respect to a specified center and specific axis  |
-| MeshTransform | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10)<br>creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const Axis & axis, const Vector3 & origin =makeVector({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis  |
+| MeshTransform | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const MeshTransform transform)<br>applies the given transformation to the mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**()<br>finds holes in a mesh and closes them  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[probeVolume](../Classes/classshapeworks_1_1Mesh.md#function-probevolume)**(const [Image](../Classes/classshapeworks_1_1Image.md) & image)<br>samples image data values at point locations specified by image  |
@@ -343,7 +343,7 @@ handle flipping normals
 ```cpp
 Mesh & reflect(
     const Axis & axis,
-    const Vector3 & origin =makeVector({ 0.0, 0.0, 0.0 })
+    const Vector3 & origin =makeVector({0.0, 0.0, 0.0})
 )
 ```
 
@@ -359,7 +359,9 @@ MeshTransform createTransform(
 )
 ```
 
+
 creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations 
+
 
 ### function applyTransform
 
@@ -841,4 +843,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:29 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

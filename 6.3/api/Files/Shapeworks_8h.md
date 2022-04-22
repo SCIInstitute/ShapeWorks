@@ -283,10 +283,12 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
   return std::abs(a[0]-b[0]) < eps && std::abs(a[1]-b[1]) < eps && std::abs(a[2]-b[2]) < eps;
 }
 
+bool epsEqual(double a, double b, double eps);
+
 } // shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:29 +0000
+Updated on 2022-04-22 at 21:29:12 +0000

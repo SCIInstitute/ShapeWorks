@@ -2043,6 +2043,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#using-interpolatortype" class="md-nav__link">
+    using InterpolatorType
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2603,8 +2610,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setiterator" class="md-nav__link">
-    function setIterator
+  <a href="#function-iterator" class="md-nav__link">
+    function iterator
   </a>
   
 </li>
@@ -2633,6 +2640,13 @@
           <li class="md-nav__item">
   <a href="#function-tomesh" class="md-nav__link">
     function toMesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-evaluate" class="md-nav__link">
+    function evaluate
   </a>
   
 </li>
@@ -2712,6 +2726,10 @@
 <tr>
 <td>using itk::ImageRegionIterator&lt; ImageType &gt;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#using-imageiterator">ImageIterator</a></strong></td>
+</tr>
+<tr>
+<td>using itk::LinearInterpolateImageFunction&lt; ImageType, Image::PixelType &gt;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#using-interpolatortype">InterpolatorType</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2830,11 +2848,11 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-recenter">recenter</a></strong>()<br>helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-recenter">recenter</a></strong>()</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-resample">resample</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resample">resample</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -2846,7 +2864,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-resize">resize</a></strong>(Dims logicalDims, InterpolationType interp =Linear)<br>changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-resize">resize</a></strong>(Dims logicalDims, InterpolationType interp =Linear)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -2882,7 +2900,7 @@
 </tr>
 <tr>
 <td>TransformPtr</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-createrigidregistrationtransform">createRigidRegistrationTransform</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; target_dt, float isoValue =0.0, unsigned iterations =20)<br>creates transform to target image using iterative closest point (ICP) registration; images MUST be distance transforms; isovalue is used to create meshes from these distance transform images, which are then passed to ICP for the given number of iterations</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-createrigidregistrationtransform">createRigidRegistrationTransform</a></strong>(const <a href="classshapeworks_1_1Image.html">Image</a> &amp; target_dt, float isoValue =0.0, unsigned iterations =20)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -2890,11 +2908,11 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-applytransform">applyTransform</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)<br>applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-applytransform">applyTransform</a></strong>(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-extractlabel">extractLabel</a></strong>(const PixelType label =1.0)<br>extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-extractlabel">extractLabel</a></strong>(const PixelType label =1.0)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -2926,7 +2944,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-topologypreservingsmooth">topologyPreservingSmooth</a></strong>(float scaling =20.0, float sigmoidAlpha =10.5, float sigmoidBeta =10.0)<br>creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-topologypreservingsmooth">topologyPreservingSmooth</a></strong>(float scaling =20.0, float sigmoidAlpha =10.5, float sigmoidBeta =10.0)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -2946,7 +2964,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-reflect">reflect</a></strong>(const Axis &amp; axis)<br>reflect image around the plane specified by the logical center and the given normal (ex: &lt;1,0,0&gt; reflects across YZ-plane).</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-reflect">reflect</a></strong>(const Axis &amp; axis)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
@@ -3038,7 +3056,7 @@
 </tr>
 <tr>
 <td>ImageIterator</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-setiterator">setIterator</a></strong>()<br>creates an image iterator and returns it</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-iterator">iterator</a></strong>()<br>creates an image iterator and returns it</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3055,6 +3073,10 @@
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-tomesh">toMesh</a></strong>(PixelType isovalue) const<br>converts image to mesh</td>
+</tr>
+<tr>
+<td>Image::PixelType</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-evaluate">evaluate</a></strong>(Point p)<br>Evaluates the image at a given position.</td>
 </tr>
 </tbody>
 </table>
@@ -3111,6 +3133,9 @@
 </code></pre></div>
 <h3 id="using-imageiterator">using ImageIterator</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-interpolatortype">using InterpolatorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-image">function Image</h3>
@@ -3564,8 +3589,8 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>converts from a physical coordinate to a logical coordinate </p>
-<h3 id="function-setiterator">function setIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">setIterator</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-iterator">function iterator</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">iterator</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>creates an image iterator and returns it </p>
 <h3 id="function-compare">function compare</h3>
@@ -3596,12 +3621,18 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>converts image to mesh </p>
+<h3 id="function-evaluate">function evaluate</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Evaluates the image at a given position. </p>
 <h2 id="friends_1">Friends</h2>
 <h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-22 at 07:13:29 +0000</p>
+<p>Updated on 2022-04-22 at 21:29:12 +0000</p>
 
               
             </article>

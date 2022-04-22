@@ -121,7 +121,7 @@ title: shapeworks
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
 | class | **[shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)**  |
 | class | **[shapeworks::Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types.  |
-| class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>[Image](../Classes/classshapeworks_1_1Image.md) composed of vectors instead of just scalars.  |
+| class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image.  |
 | class | **[shapeworks::Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]() |
 | class | **[shapeworks::Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers.  |
 | class | **[shapeworks::VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)**  |
@@ -316,6 +316,7 @@ title: shapeworks
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>P & | **[operator/=](../Namespaces/namespaceshapeworks.md#function-operator/=)**(P & p, const double x) |
 | template <typename T \> <br>bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(T a, T b, T epsilon) |
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Vector, P>::value ||                                                 std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(const P & a, const P & b, const typename P::ValueType & eps) |
+| bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(double a, double b, double eps) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [Image](../Classes/classshapeworks_1_1Image.md) & img)<br>stream insertion operators for [Image]() |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator*](../Namespaces/namespaceshapeworks.md#function-operator*)**(const [Image](../Classes/classshapeworks_1_1Image.md) & img, const double x)<br>override templates defined in [Shapeworks.h] |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator/](../Namespaces/namespaceshapeworks.md#function-operator/)**(const [Image](../Classes/classshapeworks_1_1Image.md) & img, const double x) |
@@ -2069,6 +2070,17 @@ bool epsEqual(
 ```
 
 
+### function epsEqual
+
+```cpp
+bool epsEqual(
+    double a,
+    double b,
+    double eps
+)
+```
+
+
 ### function operator<<
 
 ```cpp
@@ -2349,4 +2361,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-04-22 at 07:13:28 +0000
+Updated on 2022-04-22 at 21:29:11 +0000
