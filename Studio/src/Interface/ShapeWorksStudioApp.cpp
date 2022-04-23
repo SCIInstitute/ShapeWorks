@@ -66,7 +66,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning, this, &ShapeWorksStudioApp::handle_message);
   connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error, this, &ShapeWorksStudioApp::handle_error);
-  connect(&(StudioLog::Instance()), &StudioLog::error, this, &ShapeWorksStudioApp::handle_error);
+  connect(&(StudioLog::Instance()), &StudioLog::error_signal, this, &ShapeWorksStudioApp::handle_error);
+  connect(&(StudioLog::Instance()), &StudioLog::message_signal, this, &ShapeWorksStudioApp::handle_message);
 
   // default hide
   ui_->feature_widget->hide();

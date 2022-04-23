@@ -485,7 +485,7 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
 
   ready = true;
   Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
-    if (!viewer->is_ready()) {
+    if (viewer->get_shape() && !viewer->is_ready()) {
       ready = false;
     }
   };

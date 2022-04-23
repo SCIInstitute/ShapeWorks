@@ -86,14 +86,17 @@ void ExportImageDialog::export_clicked() {
     if (filename.isEmpty()) {
       return;
     }
+    if (QFileInfo(filename).suffix() == "") {
+      filename = filename + ".png";  // default PNG
+    }
     prefs_.set_last_directory(QFileInfo(filename).absolutePath());
     if (pixmap_.save(filename)) {
-      STUDIO_LOG_ERROR("Error saving " + filename);
+      STUDIO_SHOW_MESSAGE("Saved: " + filename);
     } else {
-      STUDIO_LOG_MESSAGE("Saved " + filename);
+      STUDIO_SHOW_ERROR("Error saving: " + filename);
     }
   } catch (std::exception& e) {
-    STUDIO_LOG_ERROR("Error saving " + filename + " : " + e.what());
+    STUDIO_LOG_ERROR("Error saving: " + filename + " : " + e.what());
   }
 
   accept();
