@@ -1586,7 +1586,7 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   try {
     stats.WriteCSVFile2(filename.toStdString());
   } catch (std::exception &e) {
-    STUDIO_LOG_ERROR(e.what());
+    handle_error(e.what());
   }
   handle_message("Saved: " + filename);
 }
