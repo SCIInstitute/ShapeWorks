@@ -79,16 +79,21 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
 void ExportImageDialog::export_clicked() {
   QString filter = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)";
 
+  QString filename;
   try {
     auto dir = prefs_.get_last_directory() + "/";
-    QString filename = QFileDialog::getSaveFileName(this, tr("Export Image"), dir, filter);
+    filename = QFileDialog::getSaveFileName(this, tr("Export Image"), dir, filter);
     if (filename.isEmpty()) {
       return;
     }
     prefs_.set_last_directory(QFileInfo(filename).absolutePath());
-    pixmap_.save(filename);
+    if (pixmap_.save(filename)) {
+      STUDIO_LOG_ERROR("Error saving " + filename);
+    } else {
+      STUDIO_LOG_MESSAGE("Saved " + filename);
+    }
   } catch (std::exception& e) {
-    STUDIO_LOG_ERROR(e.what());
+    STUDIO_LOG_ERROR("Error saving " + filename + " : " + e.what());
   }
 
   accept();
