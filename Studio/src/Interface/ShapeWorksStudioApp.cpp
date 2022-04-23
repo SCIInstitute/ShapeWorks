@@ -1576,6 +1576,9 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
     return;
   }
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+  if (QFileInfo(filename).suffix() == "") {
+    filename = filename + ".csv";
+  }
 
   auto stats = analysis_tool_->get_stats();
   stats.PrincipalComponentProjections();

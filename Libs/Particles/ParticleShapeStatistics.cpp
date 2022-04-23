@@ -679,7 +679,7 @@ int ParticleShapeStatistics::WriteCSVFile2(const std::string &s)
   // Write csv file
   std::ofstream outfile;
   outfile.open(s.c_str());
-  if (outfile.bad()) {
+  if (!outfile.good()) {
     throw std::runtime_error("Unable to open " + s + " for writing");
   }
 
