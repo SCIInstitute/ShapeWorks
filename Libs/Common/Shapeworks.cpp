@@ -213,6 +213,7 @@ std::string axisToString(Axis axis)
     case Axis::invalid:
       return "Invalid";
   }
+  return "Invalid";
 }
 
 }; //shapeworks
