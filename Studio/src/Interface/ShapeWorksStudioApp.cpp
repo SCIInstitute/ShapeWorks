@@ -319,18 +319,10 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
-  QString last_directory = preferences_.get_last_directory();
-  QString filename =
-      QFileDialog::getSaveFileName(this, tr("Save Project As..."), last_directory, tr("XLSX files (*.xlsx)"));
+  QString filename = get_save_filename(tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
   if (filename.isEmpty()) {
     return false;
   }
-
-  if (!StringUtils::hasSuffix(filename.toStdString(), ".xlsx")) {
-    filename = filename + ".xlsx";
-  }
-
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   save_project(filename);
 
@@ -1393,13 +1385,11 @@ void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  auto dir = preferences_.get_last_directory() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"), dir + "mesh",
-                                                  tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"));
+  QString filename =
+      get_save_filename(tr("Export Current Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   if (single) {
     write_mesh(visualizer_->get_current_mesh(), filename);
@@ -1494,13 +1484,11 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
 void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  auto dir = preferences_.get_last_directory() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Particles"), dir + "shape",
-                                                  tr("Particle files (*.particles)"));
+  QString filename =
+      get_save_filename(tr("Export Current Particles"), tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   if (single) {
     auto particles = visualizer_->get_current_shape().get_combined_global_particles();
@@ -1532,13 +1520,10 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Mesh Scalars"),
-                                                  QString::fromStdString(dir) + "scalars", tr("CSV files (*.csv)"));
+  QString filename = get_save_filename(tr("Export Mesh Scalars"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   if (single) {
     auto poly_data = visualizer_->get_current_mesh();
@@ -1569,15 +1554,9 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
-  auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Scores"), QString::fromStdString(dir) + "scores",
-                                                  tr("CSV files (*.csv)"));
+  QString filename = get_save_filename(tr("Export PCA Scores"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
-  }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
-  if (QFileInfo(filename).suffix() == "") {
-    filename = filename + ".csv";
   }
 
   auto stats = analysis_tool_->get_stats();
@@ -1585,7 +1564,7 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
 
   try {
     stats.WriteCSVFile2(filename.toStdString());
-  } catch (std::exception &e) {
+  } catch (std::exception& e) {
     handle_error(e.what());
   }
   handle_message("Saved: " + filename);
@@ -1734,14 +1713,12 @@ void ShapeWorksStudioApp::on_auto_view_button_clicked() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
-  auto dir = preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Mesh"), QString::fromStdString(dir) + "newMesh",
-                                                  tr("VTK files (*.vtk)"));
+  QString filename =
+      get_save_filename(tr("Export PCA Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
   if (analysis_tool_->get_analysis_mode() == "all samples") {
     auto shapes = session_->get_shapes();
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -1749,7 +1726,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
       auto msh = shapes[i]->get_reconstructed_meshes().meshes()[0]->get_poly_data();
       vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
       auto name = filename.toStdString();
-      name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
+      QFileInfo fi(filename);
+      name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + "." + fi.completeSuffix().toStdString();
       writer->SetFileName(name.c_str());
       writer->SetInputData(msh);
       writer->WriteArrayMetaDataOff();
@@ -1773,17 +1751,13 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
-  auto stats = analysis_tool_->get_stats();
-  auto values = stats.Eigenvalues();
-  QString fname("Untitled.eval");
-
-  auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvalue EVAL file..."),
-                                                  QString::fromStdString(dir) + fname, tr("EVAL files (*.eval)"));
+  QString filename = get_save_filename(tr("Export Eigenvalue EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
+  auto stats = analysis_tool_->get_stats();
+  auto values = stats.Eigenvalues();
   std::ofstream out(filename.toStdString().c_str());
   for (size_t i = values.size() - 1; i > 0; i--) {
     out << values[i] << std::endl;
@@ -1794,16 +1768,13 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
-  auto stats = analysis_tool_->get_stats();
-  auto values = stats.Eigenvectors();
-  QString fname("Untitled.eval");
-  auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvector EVAL files..."),
-                                                  QString::fromStdString(dir) + fname, tr("EVAL files (*.eval)"));
+  QString filename = get_save_filename(tr("Export Eigenvector EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
+  auto stats = analysis_tool_->get_stats();
+  auto values = stats.Eigenvectors();
   auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
     auto col = values.col(i);
@@ -1820,16 +1791,11 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
-  QString fname("Untitled.particles");
-  auto dir = preferences_.get_last_directory().toStdString() + "/";
   QString filename =
-      QFileDialog::getSaveFileName(this, tr("Save PCA Mode Particle files..."), QString::fromStdString(dir) + fname,
-                                   tr("Particle files (*.particles)"));
-  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".particles") - 9);
+      get_save_filename(tr("Save PCA Mode Particle files"), tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   double range = preferences_.get_pca_range();
   double steps = static_cast<double>(preferences_.get_pca_steps());
@@ -1837,6 +1803,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
+  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".particles") - 9);
   auto mean_pts = analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
   QString mean_name = QString::fromStdString(basename) + "_mean.particles";
   if (!ShapeWorksStudioApp::write_particle_file(mean_name.toStdString(), mean_pts)) {
@@ -1883,6 +1850,21 @@ bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::Vecto
   }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+QString ShapeWorksStudioApp::get_save_filename(QString title, QString filetypes, QString default_ext) {
+  QString last_directory = preferences_.get_last_directory();
+  QString filename = QFileDialog::getSaveFileName(this, title, last_directory, filetypes);
+  if (filename.isEmpty()) {
+    return "";
+  }
+
+  if (QFileInfo(filename).suffix() == "") {
+    filename = filename + default_ext;
+  }
+  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+  return filename;
 }
 
 //---------------------------------------------------------------------------
