@@ -1385,8 +1385,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename =
-      get_save_filename(tr("Export Current Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
+  QString filename = get_save_filename(tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
@@ -1865,6 +1864,11 @@ QString ShapeWorksStudioApp::get_save_filename(QString title, QString filetypes,
   }
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   return filename;
+}
+
+//---------------------------------------------------------------------------
+QString ShapeWorksStudioApp::get_mesh_file_filter() {
+  return tr("VTK files (*.vtk);;PLY files (*.ply);;VTP files (*.vtp);;OBJ files (*.obj);;STL files (*.stl)");
 }
 
 //---------------------------------------------------------------------------
