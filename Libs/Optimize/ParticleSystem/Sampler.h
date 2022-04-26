@@ -550,7 +550,7 @@ private:
   std::vector<std::vector<SphereType>> m_Spheres;
   std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
-  bool m_meshFFCMode;
+  bool m_meshFFCMode = false;
 
   unsigned int m_verbosity;
 };

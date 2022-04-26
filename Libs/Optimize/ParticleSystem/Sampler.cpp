@@ -318,8 +318,6 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
-//    vtkSmartPointer<vtkPolyData> polydataCopy = vtkSmartPointer<vtkPolyData>();
-//    polydataCopy->DeepCopy(mesh->GetPolydata());
     this->m_meshes.push_back(mesh->GetPolydata());
     m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled()); // disable weighting for geodesics
   }

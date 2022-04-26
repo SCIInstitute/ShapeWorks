@@ -63,7 +63,7 @@ public:
   virtual void InvalidateParticle(int idx) override;
 
   inline vtkSmartPointer<vtkPolyData> GetPolydata() const override {
-      return og_mesh_;
+      return original_mesh_;
   }
 
 private:
@@ -106,7 +106,7 @@ private:
                      const Eigen::Vector3d &vector) const;
 
   vtkSmartPointer<vtkPolyData> poly_data_;
-  vtkSmartPointer<vtkPolyData> og_mesh_;
+  vtkSmartPointer<vtkPolyData> original_mesh_;
 
   NormalType CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const;
 
