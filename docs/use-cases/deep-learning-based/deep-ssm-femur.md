@@ -25,7 +25,7 @@ The femur data is downloaded from the [ShapeWorks Data Portal](https://girder.sh
 The data is randomly split into training (70%), validation (15%), and test (15%) sets. Of the 49 examples in the femur dataset, 33 are used to create training set, 8 are held out for the validation set, and the remaining 8 are held out for a test set. 
 
 ### Step 3: Find training alignment transforms
-Training DeepSSM requires labels or ground truth particles, thus we run optimization on the training set. As the femur meshes are unaligned, this requires finiding the alignment transforms to use in optimization. The steps for computing the transforms are the same as in the [Femur Use Case](../constraint-based/femur-cutting-planes.md). See [Groom](http://sciinstitute.github.io/ShapeWorks/workflow/groom.html) for more information on specific steps. In addition to computing the transforms, the smallest bounding box which contains all aligned meshes is computed. 
+Training DeepSSM requires labels or ground truth particles, thus we run optimization on the training set. As the femur meshes are unaligned, this requires finiding the alignment transforms to use in optimization. The steps for computing the transforms are the same as in the [Femur Use Case](../constraint-based/femur-cutting-planes.md). See [Groom](../../workflow/groom.md) for more information on specific steps. In addition to computing the transforms, the smallest bounding box which contains all aligned meshes is computed. 
 
 ### Step 4: Optimize training particles
 Particles are optimized on the training femur meshes using corresponding alignment transforms and cutting planes as is done in the [Femur Use Case](../constraint-based/femur-cutting-planes.md).
@@ -42,7 +42,7 @@ The functions relevant to this step are [runDataAugmentation](../../deep-learnin
 To prepare the input images for the validation and test sets, the original MRIs are reflected if neccesar then aligned to a reference image using rigid image registration. The reference image is selected as the groomed image corresponded to the training sample used in mesh alignment in step 3. The images are then cropped using the same bounding box computed in step 3 and the combined transforms are saved. Note this step does not use the validation or test meshes and can be performed without segmentation.
 
 ### Step 8: Optimize validation particles with fixed domains
-In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the [Fixed Domain Use Case](../segmentation-based/fixed-domain-ellipsoid.md).
+In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the [Fixed Domain Use Case](../multistep/fixed-domain-ellipsoid.md).
 
 ### Step 9: Create PyTorch loaders from data
 The groomed images and particle files are reformatted into tensors for training and testing the DeepSSM network. In the case of the test loader, a place holder is used for the particles as we do not have ground truth particles.
