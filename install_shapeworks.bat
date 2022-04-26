@@ -36,6 +36,7 @@ call pip install hotelling==0.5.0
 call pip install statsmodels==0.13.0
 call pip install itk==5.2.1.post1
 call pip install itk-elastix==0.13.0
+call pip install SimpleITK==2.1.1
 call pip install vtk==8.1.2
 call pip install bokeh==2.2.0
 call pip install shapely==1.8.0
