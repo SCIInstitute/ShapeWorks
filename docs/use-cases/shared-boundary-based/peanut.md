@@ -49,4 +49,7 @@ Below are the default optimization parameters for this use case.
         "verbosity": 0
     }
 ```
+## Analyzing Shape Model
+Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 
+![Shape Model](https://sci.utah.edu/~shapeworks/doc-resources/gifs/peanut_model.gif)
