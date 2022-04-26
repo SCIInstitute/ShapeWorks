@@ -5,21 +5,20 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 """
 import os
-import pandas as pd
 import glob
-import shapeworks as sw
 import platform
-import DataAugmentationUtils
-import DeepSSMUtils
 import torch
 import random
 import math
 import numpy as np
 import subprocess
-import scipy
 import json
+import shapeworks as sw
+import DataAugmentationUtils
+import DeepSSMUtils
+
 torch.multiprocessing.set_sharing_strategy('file_system')
-random.seed(1)
+random.seed(4)
 
 def Run_Pipeline(args):
     ######################################################################################
@@ -104,7 +103,9 @@ def Run_Pipeline(args):
         # Get shape name
         train_name = os.path.basename(train_mesh_filename).replace('.ply', '')
         train_names.append(train_name)
-        # Get mesh
+        """
+        Grooming step 1: Load mesg
+        """
         train_mesh = sw.Mesh(train_mesh_filename)
         train_mesh_list.append(train_mesh)
         """
@@ -166,6 +167,11 @@ def Run_Pipeline(args):
 
     ######################################################################################
     print("\nStep 4. Optimize Training Particles")
+    """
+    Step 4: Optimize particles on training meshes
+    For more information about optimization see:
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
     # Create project spreadsheet
     project_location = data_dir
     # Set subjects
@@ -195,9 +201,9 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 1000,
-        "optimization_iterations" : 500,
-        "starting_regularization" : 100,
+        "iterations_per_split" : 1500,
+        "optimization_iterations" : 1000,
+        "starting_regularization" : 200,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
@@ -232,7 +238,6 @@ def Run_Pipeline(args):
     print(" ShapeWorksStudio " + spreadsheet_file)
 
     # Get transforms and particle files from updated project spreadsheet
-    # spreadsheet_file = '/home/sci/jadie/ShapeWorks/Examples/Python/Output/deep_ssm/data/train.xlsx'
     project = sw.Project()
     project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
@@ -242,11 +247,15 @@ def Run_Pipeline(args):
     train_local_particles = project.get_string_column("local_particles_1")
     train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
 
-    ##########################################################################################################
-    """
-    Step 5: Load training images and apply transforms
-    """
+    ######################################################################################
     print("\nStep 5. Groom Training Images")
+    """
+    Step 5: Prep training images
+    This includes:
+    - Creating a reference image
+    - Applying transforms found in step 3
+    - Crop using bounding box 
+    """
     # Get transforms from spreadsheet
     train_image_list = []
     train_transforms = []
@@ -260,10 +269,9 @@ def Run_Pipeline(args):
                 break
         train_image = sw.Image(corresponding_image_file)
         train_image_list.append(train_image)
-    # Get reference image
+    # Get reference image and transform it so it matches reference mesh
     ref_image = train_image_list[ref_index].copy()
     if ref_side in train_names[ref_index]:
-        print("Reflecting ref image.")
         reflection = np.eye(4) # Identity
         reflection[0][0] = -1 # Reflect across X
         ref_image.applyTransform(reflection)
@@ -279,9 +287,8 @@ def Run_Pipeline(args):
                              ref_image.origin(),  ref_image.dims(),
                              ref_image.spacing(), ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=True)
-    # Get bounding box
-    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list)
-    bounding_box.pad(10)
+    # Get bounding box using groomed meshes
+    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list).pad(10)
     # Crop images
     for train_image in train_image_list:
         train_image.crop(bounding_box)
@@ -290,85 +297,16 @@ def Run_Pipeline(args):
     train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
                     train_names, extension='nrrd', compressed=True, verbose=False)
 
-    #############################################################################################
-    print("\nStep 7. Find Test and Validation Transforms and Groom Images")
-    """
-    Step 7: Find test and validation transforms and images
-    1. Find reflection
-    2. Find alignment transform using rigid image registration
-    3. Apply alignment to image
-    4. Crop image
-    """
-    # Get reference
-    ref_image_file = data_dir + 'reference_image.nrrd'
-    ref_image = sw.Image(ref_image_file)
-    padded_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(30)
-    cropped_ref_image_file = data_dir + 'roughly_cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(padded_bb).write(cropped_ref_image_file)
-    ref_center = ref_image.center() # get center
-    # Make dirs 
-    val_test_images_dir = data_dir + 'val_and_test_images/'
-    if not os.path.exists(val_test_images_dir):
-        os.makedirs(val_test_images_dir)
-    # Combine mesh files
-    val_test_mesh_files = val_mesh_files + test_mesh_files
-    # Loop over
-    print("Grooming validation and test images...")
-    val_test_image_files = []
-    val_test_transforms = []
-    for vt_mesh_file in val_test_mesh_files:
-        # Get name
-        vt_name = os.path.basename(vt_mesh_file).replace('.ply', '')
-        ID = vt_name.split("_")[0]
-        # Get corresponding image
-        for index in range(len(image_files)):
-            if ID in image_files[index]:
-                corresponding_image_file = image_files[index]
-                break
-        vt_image = sw.Image(corresponding_image_file)
-        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
-        val_test_image_files.append(vt_image_file)
-        # Apply reflection transform 
-        reflection = np.eye(4) # Identity
-        if ref_side in vt_name:
-            reflection[0][0] = -1 # Reflect across X
-        vt_image.applyTransform(reflection)
-        # Translate to make rigid registration easier
-        translation = ref_center - vt_image.center()
-        vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
-        # Get initial rigid transform from image registration and apply
-        rigid_transform = DeepSSMUtils.image_registration_transform(ref_image_file, vt_image_file, 
-                                vt_image_file, transform_type='rigid')
-        # Apply rough cropping to image
-        sw.Image(vt_image_file).crop(padded_bb).write(vt_image_file)
-        # Get similarity transform from image registration and apply
-        similarity_transform = DeepSSMUtils.image_registration_transform(cropped_ref_image_file, 
-                                vt_image_file, vt_image_file, transform_type='similarity')
-        # Apply final cropping to image
-        sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
-        # Combine transforms to get single matrix and save
-        translation_marix = np.eye(4)
-        translation_marix[:3,-1] = translation
-        transform = np.matmul(similarity_transform, np.matmul(rigid_transform, 
-                    np.matmul(translation_marix, reflection)))
-        val_test_transforms.append(transform)
-    # split val and test groomed images and transforms    
-    val_image_files = val_test_image_files[:len(val_mesh_files)]
-    val_transforms = val_test_transforms[:len(val_mesh_files)]
-    test_image_files = val_test_image_files[len(val_mesh_files):]
-    test_transforms = val_test_transforms[len(val_mesh_files):]
-
-    ###########################################################################################
-    """
-    Step 6: Create additional training data
-    """
+    ######################################################################################
     print("\nStep 6. Augment data")
-    '''
+    """
+    Step 6: Create additional training data via augmentation
+    Parameters:
     - num_samples is how many samples to generate 
     - num_dim is the number of PCA scores to use
     - percent_dim what percent of variablity to retain (used if num_dim is 0)
     - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
-    '''
+    """
     num_samples = 2961
     num_dim = 0
     percent_variability = 0.95
@@ -387,9 +325,98 @@ def Run_Pipeline(args):
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
+    ######################################################################################
+    print("\nStep 7. Find Test and Validation Transforms and Groom Images")
+    """
+    Step 7: Find test and validation transforms and images
+    1. Find reflection
+    2. Transalte to have the same center as ref image
+    3. Crop with large bounding box and transalte
+    4. Crop with medium bounding box and find rigid transform
+    5. Apply full croppping and find similarity transform
+    """
+    # Get reference image
+    ref_image_file = data_dir + 'reference_image.nrrd'
+    ref_image = sw.Image(ref_image_file)
+    ref_center = ref_image.center() # get center
+    # Slightly cropped ref image
+    large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(50)
+    large_cropped_ref_image_file = data_dir + 'large_cropped_reference_image.nrrd'
+    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)  
+    # Further croppped ref image 
+    medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
+    medium_cropped_ref_image_file = data_dir + 'medium_cropped_reference_image.nrrd'
+    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)   
+    # Fully cropped ref image
+    cropped_ref_image_file = data_dir + 'cropped_reference_image.nrrd'
+    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)   
+
+    # Make dirs 
+    val_test_images_dir = data_dir + 'val_and_test_images/'
+    if not os.path.exists(val_test_images_dir):
+        os.makedirs(val_test_images_dir)
+    # Combine mesh files
+    val_test_mesh_files = val_mesh_files + test_mesh_files
     
-    #################################################################################################
+    # Loop over
+    print("Grooming validation and test images...")
+    val_test_image_files = []
+    val_test_transforms = []
+    for vt_mesh_file in val_test_mesh_files:
+        # Get name
+        vt_name = os.path.basename(vt_mesh_file).replace('.ply', '')
+        ID = vt_name.split("_")[0]
+        # Get corresponding image
+        for index in range(len(image_files)):
+            if ID in image_files[index]:
+                corresponding_image_file = image_files[index]
+                break
+        vt_image = sw.Image(corresponding_image_file)
+        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
+        val_test_image_files.append(vt_image_file)
+        # 1. Apply reflection transform 
+        reflection = np.eye(4) # Identity
+        if ref_side in vt_name:
+            reflection[0][0] = -1 # Reflect across X
+            reflection[-1][0] = 2*vt_image.center()[0] # account for offset
+        vt_image.applyTransform(reflection)
+        transform = sw.utils.getVTKtransform(reflection)
+        # 2. Translate to have ref center to make rigid registration easier
+        translation = ref_center - vt_image.center()
+        vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
+        transform[:3,-1] += translation
+        # 3. Transalte with respect to slightly cropped ref
+        sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
+        translation_transform = DeepSSMUtils.image_registration_transform(large_cropped_ref_image_file, 
+                                vt_image_file, vt_image_file, transform_type='translation')
+        transform = np.matmul(translation_transform, transform)
+        # 4. Crop with medium bounding box and find rigid transform
+        sw.Image(vt_image_file).crop(medium_bb).write(vt_image_file)
+        rigid_transform = DeepSSMUtils.image_registration_transform(medium_cropped_ref_image_file, 
+                            vt_image_file, vt_image_file, transform_type='rigid')
+        transform = np.matmul(rigid_transform, transform)
+        # Get similarity transform from image registration and apply
+        sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
+        similarity_transform = DeepSSMUtils.image_registration_transform(cropped_ref_image_file, 
+                                vt_image_file, vt_image_file, transform_type='similarity')
+        transform = np.matmul(similarity_transform, transform)
+        # Save transform
+        val_test_transforms.append(transform)
+    # split val and test groomed images and transforms    
+    val_image_files = val_test_image_files[:len(val_mesh_files)]
+    val_transforms = val_test_transforms[:len(val_mesh_files)]
+    test_image_files = val_test_image_files[len(val_mesh_files):]
+    test_transforms = val_test_transforms[len(val_mesh_files):]
+    print("Done.")
+    
+    ######################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")
+    """
+    Step 8: Optimize particles on validation and training meshes, keeping
+    training particles fixed and initializing validation particles to mean
+    For more information about optimization see:
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
     # Get validation plane files
     val_plane_files = []
     val_names = []
@@ -450,7 +477,7 @@ def Run_Pipeline(args):
     project.set_subjects(subjects)
     parameters = sw.Parameters()
 
-    # Update parameter dictionary
+    # Update parameter dictionary from step 4
     parameter_dictionary["procrustes"] = 0 
     parameter_dictionary["procrustes_interval"] = 0
     parameter_dictionary["procrustes_scaling"] = 0
@@ -484,25 +511,30 @@ def Run_Pipeline(args):
     # Get validation world particle files
     val_world_particles = []
     for val_name in val_names:
-        val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
+        val_world_particles.append(data_dir+'validation_particles/'+val_name+"_world.particles")
 
-    #################################################################################################
+    ######################################################################################
     print("\nStep 9. Create PyTorch loaders from data.")
-    '''
+    """
+    Step 9: Create PyTorch loaders from data
     Create training, validation, and test torch loaders
     If down_sample is true, model will train on images that are smaller by down_factor
     Hyper-parameter batch_size is for training
         Higher batch size will help speed up training but uses more cuda memory, 
         if you get a memory error try reducing the batch size
-    '''
-    down_factor = 0.75
+    """
     batch_size = 8
     loader_dir = output_directory + 'torch_loaders/'
-    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)#, down_factor, down_dir= data_dir + "train_downsampled_images/")
-    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles) #,  down_factor, down_dir= data_dir + "val_downsampled_images/")
-    DeepSSMUtils.getTestLoader(loader_dir, test_image_files) #, down_factor, down_dir= data_dir + "test_downsampled_images/")
+    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
+    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
+    DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
 
+    ######################################################################################
     print("\nStep 10. Train DeepSSM model.")
+    """
+    Step 10: Train DeepSSM model on training loader
+    This requires creating a json config file of model parameters
+    """
     # Define model parameters
     model_name = "femur_deepssm"
     model_parameters = {
@@ -525,7 +557,7 @@ def Run_Pipeline(args):
             "supervised_latent": True,
         },
         "trainer": {
-            "epochs": 30,
+            "epochs": 10,
             "learning_rate": 0.001,
             "decay_lr": True,
             "val_freq": 1
@@ -550,12 +582,14 @@ def Run_Pipeline(args):
     # Train
     DeepSSMUtils.trainDeepSSM(config_file)
 
-
+    ######################################################################################
     print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")
-    '''
-    Use trained DeepSSM model to predict validation particles
+    """
+    Step 11: Validation analysis
+    Use trained DeepSSM model to predict world validation particles
     and apply inverse transforms to get local predcitions
-    '''
+    Analyze accuracy
+    """
     val_out_dir = output_directory + model_name + '/validation_predictions/'
     predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
     print("Validation world predictions saved.")
@@ -586,12 +620,15 @@ def Run_Pipeline(args):
 
     # If tiny test or verify, check results and exit
     check_results(args, mean_dist)
-    
+
+    ######################################################################################
     print("\nStep 12. Predict test particles with trained DeepSSM and analyze accuracy.")
-    '''
-    Use trained DeepSSM model to predict test particles
+    """
+    Step 12: Test analysis
+    Use trained DeepSSM model to predict world validation particles
     and apply inverse transforms to get local predcitions
-    '''
+    Analyze accuracy
+    """
     test_out_dir = output_directory + model_name + '/test_predictions/'
     predicted_test_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='test')
     print("Test world predictions saved.")
@@ -619,7 +656,7 @@ def Run_Pipeline(args):
 def check_results(args, mean_dist):
     if args.tiny_test:
         print("\nVerifying use case results.")
-        if not math.isclose(mean_dist, 8000, rel_tol=10):
+        if not math.isclose(mean_dist, 10, rel_tol=1):
             print("Test failed.")
             exit(-1)
         print("Done with test, verification succeeded.")
