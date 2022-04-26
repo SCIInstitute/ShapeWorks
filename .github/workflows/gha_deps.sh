@@ -28,7 +28,7 @@ else
 
     echo "Create and store cache"
     cd /
-    compress_file ${DEP_FILE} "${DEP_PATH}"
-    scp ${DEP_FILE} runner@${CACHE_HOST}:github
-    rm ${DEP_FILE}
+    compress_file ${FILE} "${DEP_PATH}"
+    scp ${FILE} runner@${CACHE_HOST}:github
+    rm ${FILE}
 fi
