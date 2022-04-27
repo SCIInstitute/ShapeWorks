@@ -215,4 +215,8 @@ std::string axisToString(Axis axis)
   }
 }
 
+bool epsEqual(double a, double b, double eps) {
+  return std::abs(a-b) < eps;
+}
+
 }; //shapeworks

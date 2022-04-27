@@ -503,7 +503,6 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, b
 
   if (autoGenerateNormals)
   {
-    std::cerr << "NOTE: Auto generating normals\n";
     MeshUtils::generateNormals(rmeshes);
   }
 
