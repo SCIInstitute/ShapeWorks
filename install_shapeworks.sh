@@ -17,6 +17,7 @@ CONDAENV=shapeworks
 if [[ "$#" -eq 1 ]]; then
    CONDAENV=$1
 fi
+
 echo "Creating new conda environment for ShapeWorks called $CONDAENV..."
 
 # PyTorch installation
