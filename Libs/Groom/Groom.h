@@ -62,6 +62,9 @@ class Groom {
 
   bool run_mesh_pipeline(Mesh& mesh, GroomParameters params);
 
+  //! Run the contour based pipeline on a single subject
+  bool contour_pipeline(std::shared_ptr<Subject> subject, size_t domain);
+
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
 

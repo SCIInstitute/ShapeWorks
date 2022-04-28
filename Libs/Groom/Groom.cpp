@@ -50,6 +50,7 @@ bool Groom::run() {
 
         bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
         bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
+        bool is_contour = project_->get_original_domain_types()[domain] == DomainType::Contour;
 
         if (is_image) {
           if (!this->image_pipeline(subjects[i], domain)) {
@@ -59,6 +60,12 @@ bool Groom::run() {
 
         if (is_mesh) {
           if (!this->mesh_pipeline(subjects[i], domain)) {
+            success = false;
+          }
+        }
+
+        if (is_contour) {
+          if (!this->contour_pipeline(subjects[i], domain)) {
             success = false;
           }
         }
@@ -324,6 +331,10 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
   }
 
   if (params.get_remesh()) {
+    auto poly_data = mesh.getVTKMesh();
+    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      throw std::runtime_error("malformed mesh, mesh should be triangular");
+    }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
     int num_vertices = params.get_remesh_num_vertices();
     if (params.get_remesh_percent_mode()) {
@@ -341,6 +352,62 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
     }
     this->increment_progress();
   }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
+  // grab parameters
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+  auto path = subject->get_original_filenames()[domain];
+
+  // groomed mesh name
+  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+
+  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+
+  // define a groom transform
+  auto transform = vtkSmartPointer<vtkTransform>::New();
+
+  if (!this->skip_grooming_) {
+    // reflection
+    if (params.get_reflect()) {
+      auto table = subject->get_table_values();
+      if (table.find(params.get_reflect_column()) != table.end()) {
+        if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+          this->add_reflect_transform(transform, params.get_reflect_axis());
+        }
+      }
+    }
+
+    // centering
+    if (params.get_use_center()) {
+      this->add_center_transform(transform, mesh);
+    }
+  }
+
+  // save the groomed contour
+  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // store transform
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groom_name;
+
+    // store filename back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
+
   return true;
 }
 
@@ -586,6 +653,9 @@ Mesh Groom::get_mesh(int subject, int domain) {
     Image image(path);
     return image.toMesh(0.5);
   } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
+    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    return mesh;
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     return mesh;
   }
