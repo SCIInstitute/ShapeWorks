@@ -20,7 +20,7 @@ else
     if [[ "$PLATFORM" == "windows" ]]; then
 	export INSTALL_DIR="C:\deps"
 	export BUILD_DIR="/c/bdeps"
-	export FILE="C:\{DEP_FILE}"
+	export FILE="${DEP_FILE}"
     fi
     export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
     ./build_dependencies.sh --build-type=$BUILD_TYPE
@@ -28,7 +28,7 @@ else
 
     echo "Create and store cache"
     cd /
-    compress_file ${DEP_FILE} "${DEP_PATH}"
-    scp ${DEP_FILE} runner@${CACHE_HOST}:github
-    rm ${DEP_FILE}
+    compress_file ${FILE} "${DEP_PATH}"
+    scp ${FILE} runner@${CACHE_HOST}:github
+    rm ${FILE}
 fi

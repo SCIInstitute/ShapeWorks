@@ -44,6 +44,8 @@ public:
   virtual void InvalidateParticle(int idx) {};
 
   virtual bool IsGeodesicsEnabled() const = 0;
+
+  virtual vtkSmartPointer<vtkPolyData> GetPolydata() const = 0;
 };
 
 }
