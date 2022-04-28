@@ -125,10 +125,10 @@ class WPPCA():
         self.mu = np.mean(self.x,axis=1).reshape((-1,1))
         self.W = np.random.random((self.feature_dim,self.latent_dim))
         self.sigma2 = 1
-        # self.a = 0.1
-        # self.b = 0.1
-        self.a = self.num_samples/1e5
-        self.b = self.num_samples/1e6
+        self.a = 0.9
+        self.b = 0.9
+        # self.a = self.num_samples/1e3
+        # self.b = self.num_samples/1e6
 
     def standarize(self):
         self.mean = np.mean(self.x, axis=1).reshape((-1,1))
@@ -298,9 +298,9 @@ class WPPCA():
                 print(roots)
                 weights_new[ids] = roots[0]
             weights_new = np.absolute(weights_new)
-            # scaler = MinMaxScaler(feature_range=(0.2, 0.9))
-            # un_array = weights_new.reshape(-1,1)
-            # weights_new = scaler.fit_transform(un_array)[:,0] 
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            un_array = weights_new.reshape(-1,1)
+            weights_new = scaler.fit_transform(un_array)[:,0] 
 
 
             '''
@@ -308,9 +308,10 @@ class WPPCA():
             '''
             _,E_tn_sample,E_tn_tnT_sample = self.get_expectation_terms_per_sample(W_new,new_mu,sigma2_new)
             
-            L = self.get_likelihood(E_tn_sample,E_tn_tnT_sample,new_mu,W_new,sigma2_new)
-            total_likelihood = np.sum((self.a-1)*np.log(weights_new) + np.log(1-weights_new)*(1-self.b)  + weights_new*L)
-            total_likelihood = total_likelihood/self.num_samples
+            L = self.get_likelihood(E_tn_sample,E_tn_tnT_sample,new_mu,W_new,sigma2_new)/self.num_samples/self.feature_dim
+            eps = 1e-5
+            total_likelihood = np.sum((self.a-1)*np.log(weights_new+eps) + np.log(1-weights_new+eps)*(self.b-1)  + weights_new*L)
+            # total_likelihood = total_likelihood/self.num_samples
             print("Total Likelihood: ",total_likelihood)
             
             if(total_likelihood>L_old):
@@ -320,14 +321,16 @@ class WPPCA():
                 self.W = np.copy(W_new)
                 self.sigma2 = np.copy(sigma2_new)
                 self.mu = np.copy(new_mu.reshape((-1,1)))
-                
+                print("final weights")
+                print(self.weights)
+                self.W = self.W/np.linalg.norm(self.W,axis=0)
                 
             else:
                 
                 break
             
 
-        self.W = self.W/np.linalg.norm(self.W,axis=0)
+            
         matrix = np.matmul(self.W.T,self.W)
 
         eigen_values, rotation_matrix = np.linalg.eigh(matrix)
@@ -361,7 +364,8 @@ def get_expVar(data,latent_dim,iters=10):
     wppca = WPPCA(data.T,latent_dim,iters)
     wppca.wppca_em()
     expVar = wppca.eigen_values*100/np.sum(wppca.eigen_values)
-    
+    np.savetxt("/home/sci/iyerkrithika/MultiDomainStructures/weighted_ppca/data/ellpsoidsmeshes/wppca_expvar.txt",expVar)
+    np.savetxt("/home/sci/iyerkrithika/MultiDomainStructures/weighted_ppca/data/ellpsoidsmeshes/weights.txt", wppca.weights)
     return expVar
 
 def get_rppcamean(data,latent_dim,iters=10): 

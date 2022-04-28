@@ -150,7 +150,7 @@ void Preferences::set_glyph_auto_size(bool value)
 //-----------------------------------------------------------------------------
 float Preferences::get_pca_range()
 {
-  return this->settings_.value("Analysis/pca_range", 2.0).toFloat();
+  return this->settings_.value("Analysis/pca_range", 3.0).toFloat();
 }
 
 //-----------------------------------------------------------------------------
