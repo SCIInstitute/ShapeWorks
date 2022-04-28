@@ -1109,7 +1109,11 @@ void AnalysisTool::initialize_mesh_warper() {
       points.resize(3, points.size() / 3);
       points.transposeInPlace();
 
-      session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(meshes[i]->get_poly_data(), points);
+      auto poly_data = meshes[i]->get_poly_data();
+      Mesh mesh(poly_data);
+      median_shape->get_constraints(i).clipMesh(mesh);
+
+      session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
     }
   }
 }

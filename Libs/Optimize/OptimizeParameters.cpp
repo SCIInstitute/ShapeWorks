@@ -407,15 +407,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
         if (domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
-          for (auto& plane : constraint.getPlaneConstraints()) {
-            mesh.clip(plane.getVTKPlane());
-          }
-
-          if (constraint.getFreeformConstraint().isSet()) {
-            auto& ffc = constraint.getFreeformConstraint();
-            mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-            mesh = Mesh(mesh.clipByField("inout", 1.0));
-          }
+          constraint.clipMesh(mesh);
         }
 
         auto poly_data = mesh.getVTKMesh();
