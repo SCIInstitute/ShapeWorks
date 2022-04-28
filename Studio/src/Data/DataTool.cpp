@@ -333,8 +333,10 @@ void DataTool::update_ffc_table() {
   int ffc_count = 0;
   for (int i = 0; i < shapes.size(); i++) {
     auto shape = shapes[i];
-    if (shape->get_constraints(i).getFreeformConstraint().isSet()) {
-      ffc_count++;
+    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
+      if (shape->get_constraints(domain_id).getFreeformConstraint().isSet()) {
+        ffc_count++;
+      }
     }
   }
 
@@ -354,7 +356,7 @@ void DataTool::update_ffc_table() {
   for (int i = 0; i < shapes.size(); i++) {
     auto shape = shapes[i];
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
-      if (shape->get_constraints(i).getFreeformConstraint().isSet()) {
+      if (shape->get_constraints(domain_id).getFreeformConstraint().isSet()) {
         // shape
         auto* new_item = new QTableWidgetItem(shape->get_display_name());
         new_item->setData(Qt::UserRole, i);  // shape id
