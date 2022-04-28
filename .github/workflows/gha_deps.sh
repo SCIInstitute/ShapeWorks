@@ -20,7 +20,7 @@ else
     if [[ "$PLATFORM" == "windows" ]]; then
 	export INSTALL_DIR="C:\deps"
 	export BUILD_DIR="/c/bdeps"
-	export FILE="C:\${DEP_FILE}"
+	export FILE="${DEP_FILE}"
     fi
     export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
     ./build_dependencies.sh --build-type=$BUILD_TYPE
