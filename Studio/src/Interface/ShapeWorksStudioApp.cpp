@@ -200,9 +200,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   update_display();
 
   // setup modes
-  ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
-  ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
-  ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
+  ui_->view_mode_combobox->addItem(Session::MODE_ORIGINAL_C.c_str());
+  ui_->view_mode_combobox->addItem(Session::MODE_GROOMED_C.c_str());
+  ui_->view_mode_combobox->addItem(Session::MODE_RECONSTRUCTION_C.c_str());
   ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
   set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
   set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
@@ -855,7 +855,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
   if (tool_state == Session::ANALYSIS_C) {
     ui_->stacked_widget->setCurrentWidget(analysis_tool_.data());
     ui_->controlsDock->setWindowTitle("Analysis");
-    set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+    set_view_mode(Session::MODE_RECONSTRUCTION_C);
     on_actionShow_Tool_Window_triggered();
     update_display(true);
     ui_->action_analysis_mode->setChecked(true);
@@ -863,14 +863,14 @@ void ShapeWorksStudioApp::update_tool_mode() {
     ui_->stacked_widget->setCurrentWidget(groom_tool_.data());
     groom_tool_->activate();
     ui_->controlsDock->setWindowTitle("Groom");
-    set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    set_view_mode(Session::MODE_ORIGINAL_C);
     ui_->action_groom_mode->setChecked(true);
   } else if (tool_state == Session::OPTIMIZE_C) {
     ui_->stacked_widget->setCurrentWidget(optimize_tool_.data());
     optimize_tool_->activate();
     ui_->controlsDock->setWindowTitle("Optimize");
     if (session_->groomed_present()) {
-      set_view_mode(Visualizer::MODE_GROOMED_C);
+      set_view_mode(Session::MODE_GROOMED_C);
     }
     update_display();
     ui_->action_optimize_mode->setChecked(true);
@@ -879,7 +879,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
     ui_->controlsDock->setWindowTitle("DeepSSM");
     update_display();
     ui_->action_deepssm_mode->setChecked(true);
-    set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+    set_view_mode(Session::MODE_RECONSTRUCTION_C);
   } else {  // DATA
     ui_->stacked_widget->setCurrentWidget(data_tool_.data());
     // ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
@@ -949,7 +949,7 @@ void ShapeWorksStudioApp::update_view_mode() {
 
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_view_mode() {
-  return session_->parameters().get("view_state", Visualizer::MODE_ORIGINAL_C);
+  return session_->parameters().get("view_state", Session::MODE_ORIGINAL_C);
 }
 
 //---------------------------------------------------------------------------
@@ -1237,14 +1237,14 @@ void ShapeWorksStudioApp::update_display(bool force) {
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
-        set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        set_view_mode(Session::MODE_RECONSTRUCTION_C);
 
         visualizer_->display_shape(analysis_tool_->get_mean_shape());
       } else if (mode == AnalysisTool::MODE_PCA_C) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-        set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        set_view_mode(Session::MODE_RECONSTRUCTION_C);
         compute_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
@@ -1368,7 +1368,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
-    set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    set_view_mode(Session::MODE_ORIGINAL_C);
   }
 
   update_display(true);

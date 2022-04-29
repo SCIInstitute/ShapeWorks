@@ -809,7 +809,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
 
     if (!groups_active()) {
       for (int i = 0; i < shapes.size(); i++) {
-        shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, feature_map_);
+        shapes[i]->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
         auto value = shapes[i]->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
@@ -830,7 +830,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       sum_right.setZero();
 
       Q_FOREACH (auto shape, group1_list_) {
-        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, feature_map_);
+        shape->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
@@ -841,7 +841,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       Eigen::VectorXf left_mean = sum_left / static_cast<double>(group1_list_.size());
 
       Q_FOREACH (auto shape, group2_list_) {
-        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, feature_map_);
+        shape->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;

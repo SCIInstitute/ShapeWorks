@@ -71,9 +71,6 @@ class Visualizer : public QObject {
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
 
-  static const std::string MODE_ORIGINAL_C;
-  static const std::string MODE_GROOMED_C;
-  static const std::string MODE_RECONSTRUCTION_C;
 
   void set_mean(const Eigen::VectorXd& mean);
 
@@ -161,7 +158,6 @@ class Visualizer : public QObject {
 
   void setup_single_selected_point_lut();
 
-  std::string display_mode_;
   std::string feature_map_;
   int alignment_domain_;
 

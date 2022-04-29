@@ -149,6 +149,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void set_show_planes(bool show);
   bool get_show_planes();
+  bool should_show_planes();
 
   void set_show_landmarks(bool show);
   bool get_show_landmarks();
@@ -202,6 +203,17 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   StudioParticles get_difference_particles() { return difference_particles_; }
 
   void trigger_repaint();
+
+  /// set display mode (original, groomed, reconstructed)
+  void set_display_mode(std::string mode);
+
+  //! return the current display mode
+  std::string get_display_mode();
+
+  static const std::string MODE_ORIGINAL_C;
+  static const std::string MODE_GROOMED_C;
+  static const std::string MODE_RECONSTRUCTION_C;
+
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -287,6 +299,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size = 50;
+
+  std::string display_mode_ = Session::MODE_ORIGINAL_C;
 
   bool is_loading_ = false;
 };

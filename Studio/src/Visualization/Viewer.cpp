@@ -494,7 +494,7 @@ void Viewer::update_clipping_planes() {
   for (int i = 0; i < surface_mappers_.size(); i++) {
     auto mapper = surface_mappers_[i];
     mapper->RemoveAllClippingPlanes();
-    if (shape_) {
+    if (shape_ && visualizer_->get_display_mode() != Session::MODE_RECONSTRUCTION_C) {
       auto& constraints = shape_->get_constraints(i);
       for (auto& plane : constraints.getPlaneConstraints()) {
         if (plane.points().size() == 3) {
@@ -816,7 +816,7 @@ void Viewer::update_points() {
   }
 
   Eigen::VectorXd correspondence_points;
-  if (visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
+  if (visualizer_->get_display_mode() == Session::MODE_RECONSTRUCTION_C) {
     correspondence_points = shape_->get_global_correspondence_points_for_display();
   } else {
     correspondence_points = shape_->get_local_correspondence_points();
@@ -877,8 +877,8 @@ void Viewer::update_points() {
   glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
-  if (visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
-      visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
+  if (visualizer_->get_display_mode() == Session::MODE_ORIGINAL_C ||
+      visualizer_->get_display_mode() == Session::MODE_GROOMED_C) {
     if (visualizer_->get_center()) {
       auto transform = shape_->get_alignment(alignment_domain);
       reverse = Viewer::is_reverse(transform);
