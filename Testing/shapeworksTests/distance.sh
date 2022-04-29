@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 shapeworks readmesh --name $DATA/femur.vtk \
            distance --name $DATA/pelvis.vtk --method "point-to-point" \

@@ -87,16 +87,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
-    // Adding cutting planes to constraint object
-    if (m_CuttingPlanes.size() > i) {
-      for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
-        domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
-        if (m_verbosity >= 1)
-          std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
-                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
-                    << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
-      }
-    }
 
     // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
@@ -109,7 +99,19 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     }
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
+        // Adding cutting planes to constraint object
+        if (m_CuttingPlanes.size() > i) {
+          for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
+            domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+            if (m_verbosity >= 1)
+              std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
+                        << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
+                        << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
+          }
+        }
+
       auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
+
 
       // Adding free-form constraints to constraint object
       // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
@@ -156,6 +158,27 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
           }
         }
       }
+    }
+    else if(domain->GetDomainType() == shapeworks::DomainType::Mesh){
+
+        if(m_meshFFCMode == 1){
+            // Adding free-form constraints to constraint object
+            //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+            if (m_FFCs.size() > i) {
+               initialize_ffcs(i);
+            }
+
+            // Adding cutting planes to constraint object
+            if (m_CuttingPlanes.size() > i) {
+              for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
+                domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+                if (m_verbosity >= 1)
+                  std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
+                            << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
+                            << domain->GetConstraints()->getPlaneConstraints()[j].getPlanePoint().transpose() << std::endl;
+              }
+            }
+        }
     }
 
     // END TEST CUTTING PLANE
@@ -295,7 +318,8 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
-    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
+    this->m_meshes.push_back(mesh->GetPolydata());
+    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled()); // disable weighting for geodesics
   }
   m_DomainList.push_back(domain);
 }
@@ -393,6 +417,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
 
 bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
+  if (m_verbosity >= 1) std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
   if (m_FFCs[dom].boundaries.size() > 0) {
     if (m_verbosity >= 1) {

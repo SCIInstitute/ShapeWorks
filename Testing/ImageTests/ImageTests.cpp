@@ -13,7 +13,6 @@ TEST(ImageTests, exceptionTestString)
   try {
     throw shapeworks_exception(std::string("ShapeWorks"));
   } catch(shapeworks_exception const& exp) {
-    std::cerr << exp.what() << std::endl;
     ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
     return;
   }
@@ -26,7 +25,6 @@ TEST(ImageTests, exceptionTestChar)
   try {
     throw shapeworks_exception("ShapeWorks");
   } catch(shapeworks_exception const& exp) {
-    std::cerr << exp.what() << std::endl;
     ASSERT_TRUE(std::string(exp.what()) == std::string("ShapeWorks"));
     return;
   }
@@ -1284,4 +1282,20 @@ TEST(ImageTests, isolateTest1)
   image.isolate();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/isolate_output.nrrd");
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, evaluateTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/computedt2.nrrd");
+  Point pt1({37.0, 46.0, 50.0});  // outside close
+  Point pt2({60.0, 58.2, 62.5});  // outside other side
+  Point pt3({58.0, 44.0, 52.0});  // inside
+  Point pt4({12.0, 18.0, 20.0});  // outside far
+  Point pt5({-12.0, -18.0, 20.0});// outside original image's space!
+
+  EXPECT_TRUE(epsEqual(image.evaluate(pt1), -4.334231377, 1e-6));
+  EXPECT_TRUE(epsEqual(image.evaluate(pt2), -9.491417885, 1e-6));
+  EXPECT_TRUE(epsEqual(image.evaluate(pt3), -1.236827493, 1e-6));
+  EXPECT_TRUE(epsEqual(image.evaluate(pt4), -50.785587311, 1e-6));
+  EXPECT_TRUE(epsEqual(image.evaluate(pt5), -69.377281189, 1e-6));
 }

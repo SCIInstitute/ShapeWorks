@@ -52,6 +52,8 @@ public:
     return false;
   }
 
+  inline vtkSmartPointer<vtkPolyData> GetPolydata() const override {return vtkSmartPointer<vtkPolyData>();}
+
 private:
 
   Eigen::Vector3d

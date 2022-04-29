@@ -4,7 +4,7 @@
 #include "Testing.h"
 
 //---------------------------------------------------------------------------
-void run_use_case(const std::string& name) {
+void run_test(const std::string& name) {
   // change to the python examples directory
   boost::filesystem::current_path(PYTHON_EXAMPLES_DIR);
 
@@ -32,52 +32,52 @@ void run_use_case(const std::string& name) {
 }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid) { run_use_case("ellipsoid"); }
+TEST(UseCaseTests, ellipsoid) { run_test("ellipsoid"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_mesh) { run_use_case("ellipsoid_mesh"); }
+TEST(UseCaseTests, ellipsoid_mesh) { run_test("ellipsoid_mesh"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_fd) { run_use_case("ellipsoid_fd"); }
+TEST(UseCaseTests, ellipsoid_fd) { run_test("ellipsoid_fd"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_cut) { run_use_case("ellipsoid_cut"); }
+TEST(UseCaseTests, ellipsoid_cut) { run_test("ellipsoid_cut"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_evaluate) { run_use_case("ellipsoid_evaluate"); }
+TEST(UseCaseTests, ellipsoid_evaluate) { run_test("ellipsoid_evaluate"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, lumps) { run_use_case("lumps"); }
+TEST(UseCaseTests, lumps) { run_test("lumps"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, left_atrium) { run_use_case("left_atrium"); }
+TEST(UseCaseTests, left_atrium) { run_test("left_atrium"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, femur_cut) { run_use_case("femur_cut"); }
+TEST(UseCaseTests, femur_cut) { run_test("femur_cut"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, deep_ssm) { run_use_case("deep_ssm"); }
+TEST(UseCaseTests, deep_ssm) { run_test("deep_ssm"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, supershapes_1mode_contour) { run_use_case("supershapes_1mode_contour"); }
+TEST(UseCaseTests, supershapes_1mode_contour) { run_test("supershapes_1mode_contour"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, thin_cavity_bean) { run_use_case("thin_cavity_bean"); }
+TEST(UseCaseTests, thin_cavity_bean) { run_test("thin_cavity_bean"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_multiple_domain) { run_use_case("ellipsoid_multiple_domain"); }
+TEST(UseCaseTests, ellipsoid_multiple_domain) { run_test("ellipsoid_multiple_domain"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_multiple_domain_mesh) { run_use_case("ellipsoid_multiple_domain_mesh"); }
+TEST(UseCaseTests, ellipsoid_multiple_domain_mesh) { run_test("ellipsoid_multiple_domain_mesh"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, ellipsoid_pca) { run_use_case("ellipsoid_pca"); }
+TEST(UseCaseTests, ellipsoid_pca) { run_test("ellipsoid_pca"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, femur_pvalues) { run_use_case("femur_pvalues"); }
+TEST(UseCaseTests, femur_pvalues) { run_test("femur_pvalues"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, peanut_shared_boundary) { run_use_case("peanut_shared_boundary"); }
+TEST(UseCaseTests, peanut_shared_boundary) { run_test("peanut_shared_boundary"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, incremental_supershapes) { run_use_case("incremental_supershapes"); }
+TEST(UseCaseTests, incremental_supershapes) { run_test("incremental_supershapes"); }
